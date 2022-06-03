@@ -147,14 +147,14 @@
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="OpenglRenderer.cpp" />
-    <ClCompile Include="Renderer.cpp" />
+    <ClCompile Include="Debuger.cpp" />
     <ClCompile Include="ShaderCompiler.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shader.shdr" />
+    <None Include="Shaders\Shader.shdr" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Renderer.h" />
+    <ClInclude Include="Debuger.h" />
     <ClInclude Include="ShaderCompiler.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

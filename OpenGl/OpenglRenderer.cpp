@@ -5,7 +5,7 @@
 #include <string>
 #include <sstream>
 
-#include "Renderer.h"
+#include "Debuger.h"
 #include "ShaderCompiler.h"
 
 int main() {
@@ -15,6 +15,7 @@ int main() {
 	glfwMakeContextCurrent(window);
 	glfwSwapInterval(1);
 	glewInit();
+
 	float verticies[] = {
 		-0.5f, -0.5f,
 		0.5f, -0.5f,
@@ -42,7 +43,7 @@ int main() {
 	GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer));
 	GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), triangles, GL_STATIC_DRAW));
 
-	Shader shader_file = read_shader("Shader.shdr");
+	Shader shader_file = read_shader("Shaders/Shader.shdr");
 
 	unsigned int program = compile_program(shader_file.vertex_shader, shader_file.fragment_shader);
 	GLCall(glUseProgram(program));
@@ -50,7 +51,10 @@ int main() {
 	unsigned int unform_color = glGetUniformLocation(program, "u_color");
 	float r = 0.2f;
 	float change = 0.005f;
+	int index = 0;
 	while (!glfwWindowShouldClose(window)){
+		std::cout << index << '\n';
+		index++;
 		glfwPollEvents();
 
 		GLCall(glClear(GL_COLOR_BUFFER_BIT));

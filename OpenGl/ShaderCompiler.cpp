@@ -3,7 +3,7 @@
 #include <fstream>
 #include <iostream>
 #include <GL\glew.h>
-#include "Renderer.h"
+#include "Debuger.h"
 
 struct Shader {
 	std::string vertex_shader;

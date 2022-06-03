@@ -23,3 +23,9 @@ OpenGl.sln
 Debug/OpenGl.exe
 Debug/OpenGl.ilk
 Debug/OpenGl.pdb
+.vs/OpenGl/v16/ipch/AutoPCH/69ef14cfb254e902/DEBUGER.ipch
+.vs/OpenGl/v16/ipch/AutoPCH/ec399e0ece06ee5f/DEBUGER.ipch
+OpenGl/Debug/Debuger.obj
+OpenGl/Debug/openglrenderer.obj.enc
+OpenGl/OpenGl.vcxproj.filters
+OpenGl/OpenGl.vcxproj
