@@ -7,6 +7,7 @@
 
 #include "Debuger.h"
 #include "ShaderCompiler.h"
+#include "Buffer.h";
 
 int main() {
 	glfwInit();
@@ -16,47 +17,42 @@ int main() {
 	glfwSwapInterval(1);
 	glewInit();
 
+	// define verticies of geometry
 	float verticies[] = {
 		-0.5f, -0.5f,
 		0.5f, -0.5f,
 		0.5f, 0.5f,
 		-0.5f, 0.5f
 	};
-	
-	unsigned int buffer;
-	GLCall(glGenBuffers(1, &buffer));
-	GLCall(glBindBuffer(GL_ARRAY_BUFFER, buffer));
-	GLCall(glBufferData(GL_ARRAY_BUFFER, 8 * sizeof(float), verticies, GL_STATIC_DRAW));
-	
-	GLCall(glEnableVertexAttribArray(0));
-	GLCall(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), 0));
+	ArrayBuffer buffer(verticies, 2, sizeof(verticies)/sizeof(float));
+	buffer.bind();
 
+	// define triangles to create the geometry
 	unsigned int triangles[] = {
 		0, 1, 2,
 		0, 3, 2
 	};
-	unsigned int index_buffer;
-	GLCall(glGenBuffers(1, &index_buffer));
-	GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer));
-	GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), triangles, GL_STATIC_DRAW));
-
+	IndexBuffer index_buffer(triangles, 3, sizeof(triangles) / sizeof(*triangles));
+	index_buffer.bind();
+	
+	// compile the shaders
 	Shader shader_file = read_shader("Shaders/Shader.shdr");
 	Program program(shader_file.vertex_shader, shader_file.fragment_shader);
 	program.bind();
 	
+	// access uniform to set color from cpu and transfer it to gpu's vram real-time
 	unsigned int unform_color = glGetUniformLocation(program.id, "u_color");
 	
+	// parameters to change color
 	float r = 0.2f;
 	float change = 0.005f;
-	int index = 0;
 	while (!glfwWindowShouldClose(window)){
-		std::cout << index << '\n';
-		index++;
 		glfwPollEvents();
-
+		
 		GLCall(glClear(GL_COLOR_BUFFER_BIT));
 		GLCall(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
-
+		
+		// update color 
 		r += change;
 		if (r > 1){ 
 			r = 1;
@@ -66,8 +62,10 @@ int main() {
 			r = 0;
 			change *= -1;
 		}
-
+		// send the uniform to vram
 		GLCall(glUniform4f(unform_color, r, 0.25f + 0.5f * cos(5*(1.6f + r*6.28f)), 0.25f + 0.5f * sin(5*(r * 6.28f)), 1.0f));
+		
+		// draw currently binded data
 		GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
 
 		glfwSwapBuffers(window);
