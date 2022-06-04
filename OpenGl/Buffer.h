@@ -8,15 +8,12 @@ public:
 	unsigned int id;
 	int vertex_dim;
 	int data_count;
-	ArrayBuffer() {
-		id = 0;
-		vertex_dim = 2;
-		data_count = 0;
-	}
+	ArrayBuffer()
+		: id(0), vertex_dim(2), data_count(0) {};
 
-	ArrayBuffer(float verticies[], int vertex_dim, int data_count) {
-		this->vertex_dim = vertex_dim;
-		this->data_count = vertex_dim;
+	ArrayBuffer(float verticies[], int vertex_dim, int data_count)
+		: vertex_dim(vertex_dim), data_count(data_count)
+	{
 		initialize_buffer(verticies, vertex_dim, data_count);
 	}
 
@@ -42,17 +39,13 @@ public:
 	unsigned int id;
 	int vertex_dim;
 	int data_count;
-	IndexBuffer() {
-		id = 0;
-		vertex_dim = 2;
-		data_count = 0;
-	}
+	IndexBuffer() : id(0), vertex_dim(2), data_count(0) {}
 
-	IndexBuffer(unsigned int verticies[], int vertex_dim, int data_count) {
-		this->vertex_dim = vertex_dim;
-		this->data_count = vertex_dim;
+	IndexBuffer(unsigned int verticies[], int vertex_dim, int data_count)
+		: vertex_dim(vertex_dim), data_count(data_count)
+	{
 		initialize_buffer(verticies, vertex_dim, data_count);
-	}
+	};
 
 	void initialize_buffer(unsigned int verticies[], int vertex_dim, int data_count) {
 		GLCall(glGenBuffers(1, &id));
