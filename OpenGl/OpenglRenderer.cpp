@@ -22,9 +22,6 @@ int main() {
 		0.5f, 0.5f,
 		-0.5f, 0.5f
 	};
-	unsigned int vertex_array;
-	GLCall(glGenVertexArrays(1, &vertex_array));
-	GLCall(glBindVertexArray(vertex_array));
 	
 	unsigned int buffer;
 	GLCall(glGenBuffers(1, &buffer));
@@ -44,11 +41,11 @@ int main() {
 	GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), triangles, GL_STATIC_DRAW));
 
 	Shader shader_file = read_shader("Shaders/Shader.shdr");
-
-	unsigned int program = compile_program(shader_file.vertex_shader, shader_file.fragment_shader);
-	GLCall(glUseProgram(program));
+	Program program(shader_file.vertex_shader, shader_file.fragment_shader);
+	program.bind();
 	
-	unsigned int unform_color = glGetUniformLocation(program, "u_color");
+	unsigned int unform_color = glGetUniformLocation(program.id, "u_color");
+	
 	float r = 0.2f;
 	float change = 0.005f;
 	int index = 0;

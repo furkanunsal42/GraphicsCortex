@@ -31,3 +31,4 @@ void clear_errors() {
 		std::cout << "there was a previous error: " << error << '\n';
 	}
 }
+
