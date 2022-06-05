@@ -1,5 +1,7 @@
 #pragma once
 
+#include <vector>
+
 #include "GL/glew.h"
 #include "Debuger.h"
 
@@ -17,6 +19,12 @@ public:
 		initialize_buffer(verticies, vertex_dim, data_count);
 	}
 
+	ArrayBuffer(std::vector<float> verticies, int vertex_dim)
+		: vertex_dim(vertex_dim), data_count(verticies.size())
+	{
+		initialize_buffer((float*)&verticies[0], vertex_dim, data_count);
+	}
+	
 	void initialize_buffer(float verticies[], int vertex_dim, int data_count) {
 		GLCall(glGenBuffers(1, &id));
 		GLCall(glBindBuffer(GL_ARRAY_BUFFER, id));
@@ -46,6 +54,12 @@ public:
 	{
 		initialize_buffer(verticies, vertex_dim, data_count);
 	};
+
+	IndexBuffer(std::vector<unsigned int> verticies, int vertex_dim)
+		: vertex_dim(vertex_dim), data_count(verticies.size())
+	{
+		initialize_buffer((unsigned int*)&verticies[0], vertex_dim, data_count);
+	}
 
 	void initialize_buffer(unsigned int verticies[], int vertex_dim, int data_count) {
 		GLCall(glGenBuffers(1, &id));

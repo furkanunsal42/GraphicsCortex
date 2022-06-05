@@ -157,6 +157,7 @@
   <ItemGroup>
     <ClInclude Include="Buffer.h" />
     <ClInclude Include="Debuger.h" />
+    <ClInclude Include="Graphic.h" />
     <ClInclude Include="ShaderCompiler.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

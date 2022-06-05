@@ -4,10 +4,12 @@
 #include <fstream>
 #include <string>
 #include <sstream>
+#include <vector>
 
 #include "Debuger.h"
 #include "ShaderCompiler.h"
 #include "Buffer.h";
+#include "Graphic.h"
 
 int main() {
 	glfwInit();
@@ -17,28 +19,23 @@ int main() {
 	glfwSwapInterval(1);
 	glewInit();
 
-	// define verticies of geometry
-	float verticies[] = {
+	std::vector<float> verticies = {
 		-0.5f, -0.5f,
 		0.5f, -0.5f,
 		0.5f, 0.5f,
 		-0.5f, 0.5f
 	};
-	ArrayBuffer buffer(verticies, 2, sizeof(verticies)/sizeof(float));
-	buffer.bind();
-
-	// define triangles to create the geometry
-	unsigned int triangles[] = {
+	std::vector<unsigned int> triangles = {
 		0, 1, 2,
 		0, 3, 2
 	};
-	IndexBuffer index_buffer(triangles, 3, sizeof(triangles) / sizeof(*triangles));
-	index_buffer.bind();
-	
+	ArrayBuffer buffer(verticies, 2);
+	IndexBuffer index_buffer(triangles, 3);
+	Graphic square = Graphic(buffer, index_buffer);
+
 	// compile the shaders
 	Shader shader_file = read_shader("Shaders/Shader.shdr");
 	Program program(shader_file.vertex_shader, shader_file.fragment_shader);
-	program.bind();
 	
 	// access uniform to set color from cpu and transfer it to gpu's vram real-time
 	unsigned int unform_color = glGetUniformLocation(program.id, "u_color");
@@ -62,11 +59,13 @@ int main() {
 			r = 0;
 			change *= -1;
 		}
+		
 		// send the uniform to vram
+		program.bind();
 		GLCall(glUniform4f(unform_color, r, 0.25f + 0.5f * cos(5*(1.6f + r*6.28f)), 0.25f + 0.5f * sin(5*(r * 6.28f)), 1.0f));
 		
-		// draw currently binded data
-		GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
+		// draw currently binded data using program shader
+		square.draw(program);
 
 		glfwSwapBuffers(window);
 	}
