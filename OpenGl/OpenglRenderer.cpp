@@ -38,8 +38,8 @@ int main() {
 	Program program(shader_file.vertex_shader, shader_file.fragment_shader);
 	
 	// access uniform to set color from cpu and transfer it to gpu's vram real-time
-	unsigned int unform_color = glGetUniformLocation(program.id, "u_color");
-	
+	program.define_uniform("u_color");
+
 	// parameters to change color
 	float r = 0.2f;
 	float change = 0.005f;
@@ -61,8 +61,7 @@ int main() {
 		}
 		
 		// send the uniform to vram
-		program.bind();
-		GLCall(glUniform4f(unform_color, r, 0.25f + 0.5f * cos(5*(1.6f + r*6.28f)), 0.25f + 0.5f * sin(5*(r * 6.28f)), 1.0f));
+		program.update_uniform4f("u_color", r, 0.25f + 0.5f * cos(5 * (1.6f + r * 6.28f)), 0.25f + 0.5f * sin(5 * (r * 6.28f)), 1.0f);
 		
 		// draw currently binded data using program shader
 		square.draw(program);
