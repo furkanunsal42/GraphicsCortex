@@ -47,3 +47,6 @@ OpenGl/OpenGl.vcxproj
 .vs/OpenGl/v16/ipch/AutoPCH/cbb54b1ff357145d/BUFFER.ipch
 .vs/OpenGl/v16/ipch/AutoPCH/2cafade1c891fd63/DRAWER.ipch
 .vs/OpenGl/v16/ipch/AutoPCH/f38f712e739626a2/GRAPHIC.ipch
+.vs/OpenGl/v16/ipch/AutoPCH/9062908ddd31f826/FRAME.ipch
+.vs/OpenGl/v16/ipch/AutoPCH/e9e461cda9f4d6db/FRAME.ipch
+OpenGl/Debug/Frame.obj

@@ -29,6 +29,9 @@ public:
 		GLCall(uniforms.insert(std::pair<std::string, unsigned int>(name, glGetUniformLocation(this->id, name.c_str()))));
 	}
 	void update_uniform4f(std::string name, float a, float b, float c, float d) {
+		// if uniform haven't defined yet, define it
+		if (uniforms.find(name) == uniforms.end())
+			define_uniform(name);
 		bind();
 		GLCall(glUniform4f(uniforms[name], a, b, c, d));
 	}

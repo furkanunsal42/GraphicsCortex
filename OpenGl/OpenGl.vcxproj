@@ -147,6 +147,7 @@
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="Buffer.cpp" />
+    <ClCompile Include="Frame.cpp" />
     <ClCompile Include="OpenglRenderer.cpp" />
     <ClCompile Include="Debuger.cpp" />
     <ClCompile Include="ShaderCompiler.cpp" />
@@ -157,6 +158,7 @@
   <ItemGroup>
     <ClInclude Include="Buffer.h" />
     <ClInclude Include="Debuger.h" />
+    <ClInclude Include="Frame.h" />
     <ClInclude Include="Graphic.h" />
     <ClInclude Include="ShaderCompiler.h" />
   </ItemGroup>

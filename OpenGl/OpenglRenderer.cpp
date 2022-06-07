@@ -7,17 +7,14 @@
 #include <vector>
 
 #include "Debuger.h"
-#include "Buffer.h";
+#include "Frame.h"
+#include "Buffer.h"
 #include "ShaderCompiler.h"
 #include "Graphic.h"
 
 int main() {
-	glfwInit();
-
-	GLFWwindow* window = glfwCreateWindow(640, 480, "Opengl_Window", nullptr, nullptr);
-	glfwMakeContextCurrent(window);
-	glfwSwapInterval(1);
-	glewInit();
+	
+	GLFWwindow* window = frame::create_window(640, 480, "My Window");
 
 	std::vector<float> verticies = {
 		-0.5f, -0.5f,
@@ -36,15 +33,12 @@ int main() {
 	Shader shader_file = read_shader("Shaders/Shader.shdr");
 	Program program(shader_file.vertex_shader, shader_file.fragment_shader);
 	
-	program.define_uniform("u_color");
-
 	float r = 0;
 	float change = 0.005f;
 	while (!glfwWindowShouldClose(window)){
 		glfwPollEvents();
 		
-		GLCall(glClear(GL_COLOR_BUFFER_BIT));
-		GLCall(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
+		frame::clear_window();
 		
 		r += change;
 		if (r > 1 || r < 0) 

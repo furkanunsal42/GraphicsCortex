@@ -2,6 +2,7 @@
 
 #include <vector>
 #include "Buffer.h"
+#include "ShaderCompiler.h"
 
 class Graphic {
 public:
@@ -27,7 +28,4 @@ public:
 		index_buffer.bind();
 		GLCall(glDrawElements(mode, index_buffer.data_count, GL_UNSIGNED_INT, nullptr));
 	}
-
-
-
 };
