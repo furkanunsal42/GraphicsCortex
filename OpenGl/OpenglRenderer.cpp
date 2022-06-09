@@ -16,19 +16,14 @@ int main() {
 	
 	GLFWwindow* window = frame::create_window(640, 480, "My Window");
 
-	std::vector<float> verticies = {
+	std::vector<float> custom_verticies{
 		-0.5f, -0.5f,
+		0, -0.8f,
 		0.5f, -0.5f,
 		0.5f, 0.5f,
 		-0.5f, 0.5f
 	};
-	std::vector<unsigned int> triangles = {
-		0, 1, 2,
-		0, 3, 2
-	};
-	ArrayBuffer buffer(verticies, 2);
-	IndexBuffer index_buffer(triangles, 3);
-	Graphic square = Graphic(buffer, index_buffer);
+	Graphic square(custom_verticies);
 
 	Shader shader_file = read_shader("Shaders/Shader.shdr");
 	Program program(shader_file.vertex_shader, shader_file.fragment_shader);
