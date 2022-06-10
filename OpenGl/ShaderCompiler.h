@@ -3,6 +3,8 @@
 #include <string>
 #include <map>
 
+#include "Debuger.h"
+
 struct Shader {
 	std::string vertex_shader;
 	std::string fragment_shader;
@@ -28,14 +30,13 @@ public:
 	void define_uniform(std::string name) {
 		GLCall(uniforms.insert(std::pair<std::string, unsigned int>(name, glGetUniformLocation(this->id, name.c_str()))));
 	}
-	void update_uniform4f(std::string name, float a, float b, float c, float d) {
+	void update_uniformf(std::string name, float a, float b, float c, float d) {
 		// if uniform haven't defined yet, define it
 		if (uniforms.find(name) == uniforms.end())
 			define_uniform(name);
 		bind();
 		GLCall(glUniform4f(uniforms[name], a, b, c, d));
 	}
-
 	void compile(std::string vertex_shader_code, std::string fragment_shader_code) {
 		id = compile_program(vertex_shader_code, fragment_shader_code);
 	}

@@ -7,9 +7,35 @@
 struct Shader {
 	std::string vertex_shader;
 	std::string fragment_shader;
+	Shader() {};
+
+	Shader(std::string target_file) {
+		std::string type = "";
+		std::ifstream file(target_file);
+		std::string line;
+
+		while (std::getline(file, line)) {
+			if (line.find("#<vertex shader>") != std::string::npos) {
+				type = "vertex";
+				continue;
+			}
+			else if (line.find("#<fragment shader>") != std::string::npos) {
+				type = "fragment";
+				continue;
+			}
+			if (type == "vertex") {
+				this->vertex_shader += line + '\n';
+			}
+			else if (type == "fragment") {
+				this->fragment_shader += line + '\n';
+			}
+		}
+	}
+
+
 };
 
-Shader read_shader(const std::string target_file) {
+Shader read_shader(std::string target_file) {
 	Shader shader;
 	std::string type = "";
 	std::ifstream file(target_file);

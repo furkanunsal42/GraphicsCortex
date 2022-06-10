@@ -2,6 +2,7 @@
 #include "GL\glew.h"
 #include "GLFW\glfw3.h"
 #include "iostream"
+#include "ShaderCompiler.h"
 
 int main() {
 	glfwInit();
@@ -21,29 +22,10 @@ int main() {
 	glShaderSource(vertex_shader, 1, &vertex_pointer, nullptr);
 	glCompileShader(vertex_shader);
 
-	// define fragment shader
-	unsigned int fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
-	const std::string fragment_shader_code =
-		"#version 330 core\n"
-		"layout(location = 0) out vec4 color;\n"
-		"void main(){\n"
-		"	color = vec4(0.2f, 0.4f, 0.6f, 1.0f);\n"
-		"}\n";
-	const char* fragment_pointer = &fragment_shader_code[0];
-	glShaderSource(fragment_shader, 1, &fragment_pointer, nullptr);
-	glCompileShader(fragment_shader);
-
-	// concatinate the shaders into single program
-	unsigned int program = glCreateProgram();
-	glAttachShader(program, vertex_shader);
-	glAttachShader(program, fragment_shader);
-	glLinkProgram(program);
-	glValidateProgram(program);
-
-	// since shaders are now compiled into single program, we can remove them from memory
-	glDeleteShader(vertex_shader);
-	glDeleteShader(fragment_shader);
-
+	Shader shader = read_shader("Shaders\Shader.shdr");
+	Program program(shader.vertex_shader, shader.fragment_shader);
+	program.bind();
+	
 	// create float array for triangle's verticies
 	float positions[] =
 	{	-0.5f, -0.5f,
@@ -63,9 +45,6 @@ int main() {
 	
 	// enable the buffer to be used when draw functions are called
 	glEnableVertexAttribArray(0);
-
-	// use compiled program in the gpu
-	glUseProgram(program);
 
 	unsigned int index = 0;
 	while (!glfwWindowShouldClose(window)) {

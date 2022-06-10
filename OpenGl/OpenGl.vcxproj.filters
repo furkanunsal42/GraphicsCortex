@@ -36,6 +36,9 @@
     <ClCompile Include="Frame.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
+    <ClCompile Include="External\stb_image\stb_image.cpp">
+      <Filter>Kaynak Dosyalar</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\Shader.shdr" />
@@ -56,5 +59,13 @@
     <ClInclude Include="Frame.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
+    <ClInclude Include="External\stb_image\stb_image.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="orange.png">
+      <Filter>Kaynak Dosyaları</Filter>
+    </Image>
   </ItemGroup>
 </Project>

@@ -50,3 +50,6 @@ OpenGl/OpenGl.vcxproj
 .vs/OpenGl/v16/ipch/AutoPCH/9062908ddd31f826/FRAME.ipch
 .vs/OpenGl/v16/ipch/AutoPCH/e9e461cda9f4d6db/FRAME.ipch
 OpenGl/Debug/Frame.obj
+.vs/OpenGl/v16/ipch/AutoPCH/9d3fa7e654e00690/STB_IMAGE.ipch
+OpenGl/Debug/application.new.obj.enc
+OpenGl/Debug/stb_image.obj

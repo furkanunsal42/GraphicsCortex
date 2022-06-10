@@ -147,6 +147,7 @@
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="Buffer.cpp" />
+    <ClCompile Include="External\stb_image\stb_image.cpp" />
     <ClCompile Include="Frame.cpp" />
     <ClCompile Include="OpenglRenderer.cpp" />
     <ClCompile Include="Debuger.cpp" />
@@ -158,9 +159,13 @@
   <ItemGroup>
     <ClInclude Include="Buffer.h" />
     <ClInclude Include="Debuger.h" />
+    <ClInclude Include="External\stb_image\stb_image.h" />
     <ClInclude Include="Frame.h" />
     <ClInclude Include="Graphic.h" />
     <ClInclude Include="ShaderCompiler.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="orange.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
