@@ -23,32 +23,43 @@ int main() {
 		-0.5f, -0.5f,	1.0f, 0.0f, 0.0f,	0.0f, 0.0f,
 		 0.5f, -0.5f,	0.0f, 1.0f, 0.0f,	1.0f, 0.0f,
 		 0.5f,  0.5f,	0.0f, 0.0f, 1.0f,	1.0f, 1.0f,
-		-0.5f,  0.5f,	0.2f, 0.2f, 0.5f,	0.0f, 1.0f
+		-0.5f,  0.5f,	0.2f, 1.0f, 0.5f,	0.0f, 1.0f
 	};
-
+	
+	/*
 	unsigned int buffer;
 	glGenBuffers(1, &buffer);
 	glBindBuffer(GL_ARRAY_BUFFER, buffer);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(float)*custom_verticies.size(), (float*)&custom_verticies[0], GL_STATIC_DRAW);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 7 * sizeof(float), 0);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)(0*sizeof(float)));
 
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (char*)(2*sizeof(float)));
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)(2*sizeof(float)));
 
 	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (char*)(5*sizeof(float)));
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)(5*sizeof(float)));
+	*/
+
+	ArrayBuffer array_buffer(custom_verticies);
+	array_buffer.push_attribute(2);
+	array_buffer.push_attribute(3);
+	array_buffer.push_attribute(2);
 
 	std::vector<unsigned int> triangles{
 		0, 1, 2,
 		0, 2, 3
 	};
-
+	/*
 	unsigned int index_buffer;
 	glGenBuffers(1, &index_buffer);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), (unsigned int*)&triangles[0], GL_STATIC_DRAW);
+	*/
 
+	IndexBuffer index_buffer(triangles, 3);
+	
+	Graphic orange(array_buffer, index_buffer);
 	
 	int height, width, channels;
 	stbi_set_flip_vertically_on_load(1);
@@ -81,7 +92,8 @@ int main() {
 
 		program.bind();
 
-		GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
+		//GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
+		orange.draw(program);
 
 		glfwSwapBuffers(window);
 	}

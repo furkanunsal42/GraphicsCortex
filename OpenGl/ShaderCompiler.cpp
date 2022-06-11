@@ -1,39 +1,34 @@
-#include <string>
+#include "ShaderCompiler.h"
+
 #include <fstream>
 #include <iostream>
 #include <GL\glew.h>
 #include "Debuger.h"
 
-struct Shader {
-	std::string vertex_shader;
-	std::string fragment_shader;
-	Shader() {};
+Shader::Shader() {};
 
-	Shader(std::string target_file) {
-		std::string type = "";
-		std::ifstream file(target_file);
-		std::string line;
+Shader::Shader(std::string target_file) {
+	std::string type = "";
+	std::ifstream file(target_file);
+	std::string line;
 
-		while (std::getline(file, line)) {
-			if (line.find("#<vertex shader>") != std::string::npos) {
-				type = "vertex";
-				continue;
-			}
-			else if (line.find("#<fragment shader>") != std::string::npos) {
-				type = "fragment";
-				continue;
-			}
-			if (type == "vertex") {
-				this->vertex_shader += line + '\n';
-			}
-			else if (type == "fragment") {
-				this->fragment_shader += line + '\n';
-			}
+	while (std::getline(file, line)) {
+		if (line.find("#<vertex shader>") != std::string::npos) {
+			type = "vertex";
+			continue;
+		}
+		else if (line.find("#<fragment shader>") != std::string::npos) {
+			type = "fragment";
+			continue;
+		}
+		if (type == "vertex") {
+			this->vertex_shader += line + '\n';
+		}
+		else if (type == "fragment") {
+			this->fragment_shader += line + '\n';
 		}
 	}
-
-
-};
+}
 
 Shader read_shader(std::string target_file) {
 	Shader shader;
@@ -102,4 +97,28 @@ unsigned int compile_program(const std::string vertex_shader_source, const std::
 	return program;
 }
 
-
+Program::Program() {
+	id = 0;
+}
+Program::Program(std::string vertex_shader_code, std::string fragment_shader_code) {
+	compile(vertex_shader_code, fragment_shader_code);
+}
+void Program::define_uniform(std::string name) {
+	GLCall(uniforms.insert(std::pair<std::string, unsigned int>(name, glGetUniformLocation(this->id, name.c_str()))));
+}
+void Program::update_uniformf(std::string name, float a, float b, float c, float d) {
+	// if uniform haven't defined yet, define it
+	if (uniforms.find(name) == uniforms.end())
+		define_uniform(name);
+	bind();
+	GLCall(glUniform4f(uniforms[name], a, b, c, d));
+}
+void Program::compile(std::string vertex_shader_code, std::string fragment_shader_code) {
+	id = compile_program(vertex_shader_code, fragment_shader_code);
+}
+void Program::bind() {
+	GLCall(glUseProgram(id));
+}
+void Program::unbind() {
+	GLCall(glUseProgram(0));
+}

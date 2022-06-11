@@ -53,3 +53,7 @@ OpenGl/Debug/Frame.obj
 .vs/OpenGl/v16/ipch/AutoPCH/9d3fa7e654e00690/STB_IMAGE.ipch
 OpenGl/Debug/application.new.obj.enc
 OpenGl/Debug/stb_image.obj
+.vs/OpenGl/v16/ipch/AutoPCH/9aaeb11b17d0417f/GRAPHIC.ipch
+*.obj
+*.obj
+OpenGl/Debug/Buffer.obj

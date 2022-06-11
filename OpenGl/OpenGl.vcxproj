@@ -149,6 +149,7 @@
     <ClCompile Include="Buffer.cpp" />
     <ClCompile Include="External\stb_image\stb_image.cpp" />
     <ClCompile Include="Frame.cpp" />
+    <ClCompile Include="Graphic.cpp" />
     <ClCompile Include="OpenglRenderer.cpp" />
     <ClCompile Include="Debuger.cpp" />
     <ClCompile Include="ShaderCompiler.cpp" />

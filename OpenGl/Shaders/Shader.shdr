@@ -1,7 +1,7 @@
 #<vertex shader>
 
 #version 330 core
-layout(location = 0) in vec4 position;
+layout(location = 0) in vec2 position;
 layout(location = 1) in vec3 vertex_color;
 layout(location = 2) in vec2 texture_coordinates;
 out vec3 color;
@@ -9,7 +9,7 @@ out vec2 tex_coords;
 void main(){
 	color = vertex_color;
 	tex_coords = texture_coordinates;
-	gl_Position = position;
+	gl_Position = vec4(position.x, position.y, 1, 1);
 }
 
 #<fragment shader>
@@ -25,5 +25,5 @@ void main(){
 	//frag_color = vec4(color.x, color.y, color.z, 0.0f) + u_color;
 	//frag_color = vec4(color.x, color.y, color.z, 1.0f);
 	//frag_color = vec4(1.0f, 1.0f, 0.2f, 1.0f);
-	frag_color = texture(texture_slot, tex_coords);
+	frag_color = texture(texture_slot, tex_coords) + vec4(color.x, color.y, color.z, 1.0f);
 }
