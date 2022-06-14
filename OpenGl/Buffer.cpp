@@ -38,7 +38,6 @@ void ArrayBuffer::bind() {
 	}
 	int prefix_sum = 0;
 	for (int i = 0; i < this->vertex_attribute_structure.size(); i++) {
-		std::cout << prefix_sum << '\n';
 		GLCall(glEnableVertexAttribArray(i));
 		GLCall(glVertexAttribPointer(i, vertex_attribute_structure[i], GL_FLOAT, GL_FALSE, sum*sizeof(float), (void*)(prefix_sum*sizeof(float))));
 		prefix_sum += vertex_attribute_structure[i];

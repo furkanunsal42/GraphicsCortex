@@ -88,12 +88,12 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>GLEW_STATIC;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\GLEW\include;$(SolutionDir)Dependencies\GLFW\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\dev\Opengl\OpenGl\OpenGl\Dependencies\stb_image;C:\dev\Opengl\OpenGl\OpenGl\Dependencies\GLEW\include;C:\dev\Opengl\OpenGl\OpenGl\Dependencies\glm;C:\dev\Opengl\OpenGl\OpenGl\Dependencies\GLFW\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\GLEW\lib\Release\Win32;$(SolutionDir)Dependencies\GLFW\lib-vc2022</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\dev\Opengl\OpenGl\OpenGl\Dependencies\stb_image;C:\dev\Opengl\OpenGl\OpenGl\Dependencies\glm;C:\dev\Opengl\OpenGl\OpenGl\Dependencies\GLEW\lib\Release\Win32;C:\dev\Opengl\OpenGl\OpenGl\Dependencies\GLFW\lib-vc2022;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>opengl32.lib;glew32s.lib;glfw3.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -105,14 +105,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>GLEW_STATIC;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\GLEW\include;$(SolutionDir)Dependencies\GLFW\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\dev\Opengl\OpenGl\OpenGl\Dependencies\stb_image;C:\dev\Opengl\OpenGl\OpenGl\Dependencies\GLEW\include;C:\dev\Opengl\OpenGl\OpenGl\Dependencies\glm;C:\dev\Opengl\OpenGl\OpenGl\Dependencies\GLFW\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\GLEW\lib\Release\Win32;$(SolutionDir)Dependencies\GLFW\lib-vc2022</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\dev\Opengl\OpenGl\OpenGl\Dependencies\stb_image;C:\dev\Opengl\OpenGl\OpenGl\Dependencies\glm;C:\dev\Opengl\OpenGl\OpenGl\Dependencies\GLEW\lib\Release\Win32;C:\dev\Opengl\OpenGl\OpenGl\Dependencies\GLFW\lib-vc2022;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>opengl32.lib;glew32s.lib;glfw3.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -147,7 +147,7 @@
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="Buffer.cpp" />
-    <ClCompile Include="External\stb_image\stb_image.cpp" />
+    <ClCompile Include="Dependencies\stb_image\stb_image.cpp" />
     <ClCompile Include="Frame.cpp" />
     <ClCompile Include="Graphic.cpp" />
     <ClCompile Include="OpenglRenderer.cpp" />
@@ -160,7 +160,11 @@
   <ItemGroup>
     <ClInclude Include="Buffer.h" />
     <ClInclude Include="Debuger.h" />
-    <ClInclude Include="External\stb_image\stb_image.h" />
+    <ClInclude Include="Dependencies\GLEW\include\GL\eglew.h" />
+    <ClInclude Include="Dependencies\GLEW\include\GL\glew.h" />
+    <ClInclude Include="Dependencies\GLEW\include\GL\glxew.h" />
+    <ClInclude Include="Dependencies\GLEW\include\GL\wglew.h" />
+    <ClInclude Include="Dependencies\stb_image\stb_image.h" />
     <ClInclude Include="Frame.h" />
     <ClInclude Include="Graphic.h" />
     <ClInclude Include="ShaderCompiler.h" />
