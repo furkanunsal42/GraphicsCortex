@@ -88,6 +88,8 @@ int main() {
 		glfwPollEvents();
 		
 		frame::clear_window();
+		view = glm::rotate(view, glm::radians(0.4f), glm::vec3(0.0f, 1.0f, 0.0f));
+		GLCall(glUniformMatrix4fv(program.uniforms["view"], 1, GL_FALSE, glm::value_ptr(view)));
 
 		program.bind();
 
