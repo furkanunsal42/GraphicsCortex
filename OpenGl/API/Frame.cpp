@@ -15,7 +15,7 @@ namespace frame{
 
 		GLFWwindow* window = glfwCreateWindow(width, height, name.c_str(), nullptr, nullptr);
 		glfwMakeContextCurrent(window);
-		glfwSwapInterval(1);
+		glfwSwapInterval(swapinterval);
 
 		if (!is_glew_initialized) {
 			glewInit();

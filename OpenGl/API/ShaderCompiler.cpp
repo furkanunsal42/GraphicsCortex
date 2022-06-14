@@ -118,21 +118,22 @@ void Program::unbind() {
 void Program::define_uniform(std::string name) {
 	GLCall(uniforms.insert(std::pair<std::string, unsigned int>(name, glGetUniformLocation(this->id, name.c_str()))));
 }
+
 void Program::update_uniform(std::string name, glm::mat4 a) {
 	if (uniforms.find(name) == uniforms.end())
 		define_uniform(name);
 	bind();
-	glUniformMatrix4fv(uniforms[name], 1, GL_FALSE, glm::value_ptr(a));
+	GLCall(glUniformMatrix4fv(uniforms[name], 1, GL_FALSE, glm::value_ptr(a)));
 }
 void Program::update_uniform(std::string name, glm::mat3 a) {
 	if (uniforms.find(name) == uniforms.end())
 		define_uniform(name);
 	bind();
-	glUniformMatrix3fv(uniforms[name], 1, GL_FALSE, glm::value_ptr(a));
+	GLCall(glUniformMatrix3fv(uniforms[name], 1, GL_FALSE, glm::value_ptr(a)));
 }
 void Program::update_uniform(std::string name, glm::mat2 a) {
 	if (uniforms.find(name) == uniforms.end())
 		define_uniform(name);
 	bind();
-	glUniformMatrix2fv(uniforms[name], 1, GL_FALSE, glm::value_ptr(a));
+	GLCall(glUniformMatrix2fv(uniforms[name], 1, GL_FALSE, glm::value_ptr(a)));
 }

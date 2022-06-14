@@ -1,22 +1,25 @@
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
+#include <GL\glew.h>
+#include <GLFW\glfw3.h>
 
 #include "glm.hpp"
-#include "gtc/matrix_transform.hpp"
-#include "gtc/type_ptr.hpp"
+#include "gtc\matrix_transform.hpp"
+#include "gtc\type_ptr.hpp"
 
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <sstream>
 #include <vector>
+#include <time.h>
 
-#include "API/Debuger.h"
-#include "API/Frame.h"
-#include "API/Buffer.h"
-#include "API/ShaderCompiler.h"
-#include "API/Graphic.h"
-#include "API/Texture.h"
+#include "API\Debuger.h"
+#include "API\Frame.h"
+#include "API\Buffer.h"
+#include "API\ShaderCompiler.h"
+#include "API\Graphic.h"
+#include "API\Texture.h"
+#include "API\Camera.h"
+#include "API\Scene.h"
 
 int main() {
 	
@@ -47,28 +50,45 @@ int main() {
 	
 	Graphic orange(array_buffer, index_buffer, texture);
 
-	glm::mat4 model = glm::mat4(1.0f);
-	glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0.05f, -2.5f));;
-	glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)width/height, 0.1f, 100.0f);
+	Camera cam;
+	cam.screen_width = width;
+	cam.screen_height = height;
+	cam.position.z = 1.5f;
+	cam.rotation.y = 30.0f;
 
 	Shader shader_file = read_shader("Shaders/Shader.shdr");
 	Program program(shader_file.vertex_shader, shader_file.fragment_shader);
 
+	Scene scene;
+	scene.meshes.push_back(&orange);
+	scene.camera = &cam;
+
 	program.update_uniform("texture_slot", 0);
 	program.update_uniform("u_color", -0.3f, -0.3f, -0.3f, 1.0f);
-	program.update_uniform("model", model);
-	program.update_uniform("view", view);
-	program.update_uniform("projection", projection);
+
+
+	int fps = 0;
+	long old_time = std::time(nullptr);
 
 	while (!glfwWindowShouldClose(window)){
+		fps++;
+		long now = std::time(nullptr);
+		if (now - old_time >= 1) {
+			std::cout << fps << std::endl;
+			fps = 0;
+			old_time = now;
+		}
 		glfwPollEvents();
 		
 		frame::clear_window();
-
-		model = glm::rotate(model, glm::radians(0.4f), glm::vec3(0.0f, 1.0f, 0.0f));
-		program.update_uniform("model", model);
-
-		orange.draw(program);
+		
+		orange.rotation += glm::vec3(0.0f, 0.4f, 0.0f);
+		orange.position += glm::vec3(0.0f, 0.0f, -0.003f);
+		//scene.camera->rotation += glm::vec3(0.0f, 2.0f, 0.0f);
+		//scene.camera->position += glm::vec3(0.0f, 0.0f, -0.003f);
+		
+		scene.camera->handle_movements(window);
+		scene.render(program);
 
 		glfwSwapBuffers(window);
 	}
