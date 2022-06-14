@@ -103,16 +103,7 @@ Program::Program() {
 Program::Program(std::string vertex_shader_code, std::string fragment_shader_code) {
 	compile(vertex_shader_code, fragment_shader_code);
 }
-void Program::define_uniform(std::string name) {
-	GLCall(uniforms.insert(std::pair<std::string, unsigned int>(name, glGetUniformLocation(this->id, name.c_str()))));
-}
-void Program::update_uniformf(std::string name, float a, float b, float c, float d) {
-	// if uniform haven't defined yet, define it
-	if (uniforms.find(name) == uniforms.end())
-		define_uniform(name);
-	bind();
-	GLCall(glUniform4f(uniforms[name], a, b, c, d));
-}
+
 void Program::compile(std::string vertex_shader_code, std::string fragment_shader_code) {
 	id = compile_program(vertex_shader_code, fragment_shader_code);
 }
@@ -121,4 +112,27 @@ void Program::bind() {
 }
 void Program::unbind() {
 	GLCall(glUseProgram(0));
+}
+
+// UNIFORMS
+void Program::define_uniform(std::string name) {
+	GLCall(uniforms.insert(std::pair<std::string, unsigned int>(name, glGetUniformLocation(this->id, name.c_str()))));
+}
+void Program::update_uniform(std::string name, glm::mat4 a) {
+	if (uniforms.find(name) == uniforms.end())
+		define_uniform(name);
+	bind();
+	glUniformMatrix4fv(uniforms[name], 1, GL_FALSE, glm::value_ptr(a));
+}
+void Program::update_uniform(std::string name, glm::mat3 a) {
+	if (uniforms.find(name) == uniforms.end())
+		define_uniform(name);
+	bind();
+	glUniformMatrix3fv(uniforms[name], 1, GL_FALSE, glm::value_ptr(a));
+}
+void Program::update_uniform(std::string name, glm::mat2 a) {
+	if (uniforms.find(name) == uniforms.end())
+		define_uniform(name);
+	bind();
+	glUniformMatrix2fv(uniforms[name], 1, GL_FALSE, glm::value_ptr(a));
 }

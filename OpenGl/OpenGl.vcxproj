@@ -145,29 +145,31 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="API\Texture.cpp" />
     <ClCompile Include="Application.cpp" />
-    <ClCompile Include="Buffer.cpp" />
+    <ClCompile Include="API\Buffer.cpp" />
     <ClCompile Include="Dependencies\stb_image\stb_image.cpp" />
-    <ClCompile Include="Frame.cpp" />
-    <ClCompile Include="Graphic.cpp" />
+    <ClCompile Include="API\Frame.cpp" />
+    <ClCompile Include="API\Graphic.cpp" />
     <ClCompile Include="OpenglRenderer.cpp" />
-    <ClCompile Include="Debuger.cpp" />
-    <ClCompile Include="ShaderCompiler.cpp" />
+    <ClCompile Include="API\Debuger.cpp" />
+    <ClCompile Include="API\ShaderCompiler.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\Shader.shdr" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Buffer.h" />
-    <ClInclude Include="Debuger.h" />
+    <ClInclude Include="API\Buffer.h" />
+    <ClInclude Include="API\Debuger.h" />
+    <ClInclude Include="API\Texture.h" />
     <ClInclude Include="Dependencies\GLEW\include\GL\eglew.h" />
     <ClInclude Include="Dependencies\GLEW\include\GL\glew.h" />
     <ClInclude Include="Dependencies\GLEW\include\GL\glxew.h" />
     <ClInclude Include="Dependencies\GLEW\include\GL\wglew.h" />
     <ClInclude Include="Dependencies\stb_image\stb_image.h" />
-    <ClInclude Include="Frame.h" />
-    <ClInclude Include="Graphic.h" />
-    <ClInclude Include="ShaderCompiler.h" />
+    <ClInclude Include="API\Frame.h" />
+    <ClInclude Include="API\Graphic.h" />
+    <ClInclude Include="API\ShaderCompiler.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="orange.png" />
