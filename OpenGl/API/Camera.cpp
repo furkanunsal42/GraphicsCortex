@@ -4,6 +4,8 @@
 #include "gtc/type_ptr.hpp"
 #include "gtx\rotate_vector.hpp"
 
+#include <iostream>
+
 Camera::Camera() :
 	screen_width(100.0f), screen_height(100.0f) {}
 
@@ -59,6 +61,23 @@ void Camera::handle_movements(GLFWwindow* window) {
 		forward_vector = glm::rotate(forward_vector, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
 		forward_vector = glm::normalize(forward_vector);
 		position += -up_vector * movement_speed;
+	}
+	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == 1) {
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+		glfwSetCursorPos(window, screen_width / 2, screen_height / 2);
+		mouse_focus = true;
+	}
+	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == 1) {
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+		mouse_focus = false;
+	}
+	if (mouse_focus) {
+		double mouse_x, mouse_y;
+		glfwGetCursorPos(window, &mouse_x, &mouse_y);
+		rotation.x += mouse_sensitivity * -(mouse_y - screen_height / 2) / screen_height;
+		rotation.y += mouse_sensitivity * -(mouse_x - screen_width / 2) / screen_width;
+
+		glfwSetCursorPos(window, screen_width / 2, screen_height / 2);
 	}
 }
 

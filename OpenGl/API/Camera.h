@@ -18,10 +18,11 @@ public:
 	float max_distance = 100.0f;
 	float screen_width;
 	float screen_height;
-	float movement_speed = 0.015f;
+	float movement_speed = 0.025f;
+	float mouse_sensitivity = 15.0f;
+	bool mouse_focus = false;
 	Camera();
 	Camera(float width, float height);
 	void update_matrixes();
-	void user_input_controller(GLFWwindow* window, int key, int scancode, int action, int mods);
 	void handle_movements(GLFWwindow* window);
 };
