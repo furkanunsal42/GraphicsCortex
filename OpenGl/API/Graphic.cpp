@@ -4,10 +4,12 @@
 Graphic::Graphic() {
 	vertex_buffer = ArrayBuffer();
 	index_buffer = IndexBuffer();
+	texture = Texture();
 }
-Graphic::Graphic(ArrayBuffer buffer, IndexBuffer indicies) {
+Graphic::Graphic(ArrayBuffer buffer, IndexBuffer indicies, Texture tex) {
 	vertex_buffer = buffer;
 	index_buffer = indicies;
+	texture = tex;
 }
 Graphic::Graphic(std::vector<float> verticies, int data_dim = 2) {
 	std::vector<unsigned int> triangles;
@@ -33,11 +35,13 @@ Graphic::Graphic(std::vector<float> verticies, int data_dim = 2) {
 void Graphic::draw() {
 	vertex_buffer.bind();
 	index_buffer.bind();
+	texture.bind();
 	GLCall(glDrawElements(mode, index_buffer.data_count, GL_UNSIGNED_INT, nullptr));
 }
 void Graphic::draw(Program program) {
 	program.bind();
 	vertex_buffer.bind();
 	index_buffer.bind();
+	texture.bind();
 	GLCall(glDrawElements(mode, index_buffer.data_count, GL_UNSIGNED_INT, nullptr));
 }

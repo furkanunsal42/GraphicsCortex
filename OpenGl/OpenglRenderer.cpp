@@ -41,21 +41,18 @@ int main() {
 	};
 	IndexBuffer index_buffer(triangles, 3);
 	
-	Graphic orange(array_buffer, index_buffer);
-	
 	Texture texture;
 	texture.vertical_flip = true;
 	texture.load_image("orange.png");
-	texture.bind();
+	
+	Graphic orange(array_buffer, index_buffer, texture);
 
 	glm::mat4 model = glm::mat4(1.0f);
 	glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0.05f, -2.5f));;
 	glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)width/height, 0.1f, 100.0f);
 
-
 	Shader shader_file = read_shader("Shaders/Shader.shdr");
 	Program program(shader_file.vertex_shader, shader_file.fragment_shader);
-	program.bind();
 
 	program.update_uniform("texture_slot", 0);
 	program.update_uniform("u_color", -0.3f, -0.3f, -0.3f, 1.0f);
@@ -70,10 +67,6 @@ int main() {
 
 		model = glm::rotate(model, glm::radians(0.4f), glm::vec3(0.0f, 1.0f, 0.0f));
 		program.update_uniform("model", model);
-		//view = glm::translate(view, glm::vec3(0,0,-0.002f));
-		//program.update_uniform("view", view);
-
-		program.bind();
 
 		orange.draw(program);
 

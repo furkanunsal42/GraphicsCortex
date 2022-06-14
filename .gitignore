@@ -59,3 +59,4 @@ OpenGl/Debug/stb_image.obj
 OpenGl/Debug/Buffer.obj
 OpenGl/Debug/Buffer.obj
 *.ipch
+OpenGl/OpenGl.vcxproj.user
