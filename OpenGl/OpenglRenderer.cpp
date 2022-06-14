@@ -23,9 +23,8 @@
 
 int main() {
 	
-	int width = 640, height = 480;
-	GLFWwindow* window = frame::create_window(width, height, "My Window");
-
+	GLFWwindow* window = frame::create_window(640, 480, "My Window");
+	
 	std::vector<float> custom_verticies {
 		// verticies			colors				texture
 		-0.5f, -0.5f, 0.0f,		1.0f, 0.0f, 0.0f,	0.0f, 0.0f,
@@ -50,11 +49,13 @@ int main() {
 	
 	Graphic orange(array_buffer, index_buffer, texture);
 
+	int w, h;
+	glfwGetWindowSize(window, &w, &h);
 	Camera cam;
-	cam.screen_width = width;
-	cam.screen_height = height;
+	std::cout << cam.screen_height;
+	cam.screen_width = w;
+	cam.screen_height = h;
 	cam.position.z = 1.5f;
-	cam.rotation.y = 30.0f;
 
 	Shader shader_file = read_shader("Shaders/Shader.shdr");
 	Program program(shader_file.vertex_shader, shader_file.fragment_shader);
