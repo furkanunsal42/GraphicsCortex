@@ -63,7 +63,7 @@ void Camera::handle_movements(GLFWwindow* window) {
 		position += -up_vector * movement_speed;
 	}
 	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == 1) {
-		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 		glfwSetCursorPos(window, screen_width / 2, screen_height / 2);
 		mouse_focus = true;
 	}

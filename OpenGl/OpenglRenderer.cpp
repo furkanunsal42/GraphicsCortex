@@ -57,30 +57,19 @@ int main() {
 	cam.screen_height = h;
 	cam.position.z = 1.5f;
 
-	Shader shader_file = read_shader("Shaders/Shader.shdr");
-	Program program(shader_file.vertex_shader, shader_file.fragment_shader);
-
 	Scene scene;
 	scene.meshes.push_back(&orange);
 	scene.camera = &cam;
 
+	Shader shader_file = read_shader("Shaders/Shader.shdr");
+	Program program(shader_file.vertex_shader, shader_file.fragment_shader);
+	
 	program.update_uniform("texture_slot", 0);
 	program.update_uniform("u_color", -0.3f, -0.3f, -0.3f, 1.0f);
 
-
-	int fps = 0;
-	long old_time = std::time(nullptr);
-
 	while (!glfwWindowShouldClose(window)){
-		fps++;
-		long now = std::time(nullptr);
-		if (now - old_time >= 1) {
-			std::cout << fps << std::endl;
-			fps = 0;
-			old_time = now;
-		}
 		glfwPollEvents();
-		
+		frame::display_fps();
 		frame::clear_window();
 		
 		orange.rotation += glm::vec3(0.0f, 0.4f, 0.0f);
