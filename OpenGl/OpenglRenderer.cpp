@@ -53,15 +53,15 @@ int main() {
 	glfwGetWindowSize(window, &w, &h);
 	Camera cam;
 	std::cout << cam.screen_height;
-	cam.screen_width = w;
-	cam.screen_height = h;
+	cam.screen_width = (float)w;
+	cam.screen_height = (float)h;
 	cam.position.z = 1.5f;
 
 	Scene scene;
 	scene.meshes.push_back(&orange);
 	scene.camera = &cam;
 
-	Shader shader_file = read_shader("Shaders/Shader.shdr");
+	Shader shader_file("Shaders/Vertex.glsl", "Shaders/Fragment.glsl");
 	Program program(shader_file.vertex_shader, shader_file.fragment_shader);
 	
 	program.update_uniform("texture_slot", 0);

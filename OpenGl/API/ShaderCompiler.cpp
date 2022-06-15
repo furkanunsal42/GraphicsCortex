@@ -5,9 +5,18 @@
 #include <GL\glew.h>
 #include "Debuger.h"
 
-Shader::Shader() {};
+Shader::Shader() { ; }
 
-Shader::Shader(std::string target_file) {
+Shader::Shader(const std::string& target_file)
+{
+	read_shader(target_file);
+}
+Shader::Shader(const std::string& vertex_target_file, const std::string& fragment_target_file) {
+	read_shader(vertex_target_file);
+	read_shader(fragment_target_file);
+}
+
+void Shader::read_shader(const std::string& target_file) {
 	std::string type = "";
 	std::ifstream file(target_file);
 	std::string line;
@@ -22,44 +31,18 @@ Shader::Shader(std::string target_file) {
 			continue;
 		}
 		if (type == "vertex") {
-			this->vertex_shader += line + '\n';
+			vertex_shader += line + '\n';
 		}
 		else if (type == "fragment") {
-			this->fragment_shader += line + '\n';
+			fragment_shader += line + '\n';
 		}
 	}
 }
 
-Shader read_shader(std::string target_file) {
-	Shader shader;
-	std::string type = "";
-	std::ifstream file(target_file);
-	std::string line;
-
-	while (std::getline(file, line)) {
-		if (line.find("#<vertex shader>") != std::string::npos) {
-			type = "vertex";
-			continue;
-		}
-		else if (line.find("#<fragment shader>") != std::string::npos) {
-			type = "fragment";
-			continue;
-		}
-		if (type == "vertex") {
-			shader.vertex_shader += line + '\n';
-		}
-		else if (type == "fragment") {
-			shader.fragment_shader += line + '\n';
-		}
-	}
-	return shader;
-}
-
-
-unsigned int compile_shader(unsigned int type, const std::string shader_source) {
-	unsigned int shader = glCreateShader(type);
+unsigned int Program::compile_shader(unsigned int type, const std::string& shader_source) {
+	unsigned int shader_id = glCreateShader(type);
 	const char* shader_code_pointer = &shader_source[0];
-	GLCall(glShaderSource(shader, 1, &shader_code_pointer, nullptr));
+	GLCall(glShaderSource(shader_id, 1, &shader_code_pointer, nullptr));
 
 	std::string type_string = std::to_string(type);
 	if (type == GL_VERTEX_SHADER)
@@ -69,44 +52,38 @@ unsigned int compile_shader(unsigned int type, const std::string shader_source) 
 
 	std::cout << "compiling the shader of type " << type_string << '\n';
 
-	GLCall(glCompileShader(shader));
+	GLCall(glCompileShader(shader_id));
 
 	int compile_status;
-	GLCall(glGetShaderiv(shader, GL_COMPILE_STATUS, &compile_status));
+	GLCall(glGetShaderiv(shader_id, GL_COMPILE_STATUS, &compile_status));
 	if (compile_status != GL_TRUE) {
 		char* compile_error_msg = (char*)malloc(1024 * sizeof(char));
-		GLCall(glGetShaderInfoLog(shader, 1024, nullptr, compile_error_msg));
+		GLCall(glGetShaderInfoLog(shader_id, 1024, nullptr, compile_error_msg));
 		std::cout << "shader compile error with massage: " << compile_error_msg << '\n';
 	}
-
-	return shader;
-}
-
-unsigned int compile_program(const std::string vertex_shader_source, const std::string fragment_shader_source) {
-	unsigned int program = glCreateProgram();
-	unsigned int vertex_shader = compile_shader(GL_VERTEX_SHADER, vertex_shader_source);
-	unsigned int fragment_shader = compile_shader(GL_FRAGMENT_SHADER, fragment_shader_source);
-
-	GLCall(glAttachShader(program, vertex_shader));
-	GLCall(glAttachShader(program, fragment_shader));
-	GLCall(glLinkProgram(program));
-
-	GLCall(glDeleteShader(vertex_shader));
-	GLCall(glDeleteShader(fragment_shader));
-
-	return program;
+	return shader_id;
 }
 
 Program::Program() {
 	id = 0;
 }
-Program::Program(std::string vertex_shader_code, std::string fragment_shader_code) {
+Program::Program(const std::string& vertex_shader_code, const std::string& fragment_shader_code) {
 	compile(vertex_shader_code, fragment_shader_code);
 }
 
-void Program::compile(std::string vertex_shader_code, std::string fragment_shader_code) {
-	id = compile_program(vertex_shader_code, fragment_shader_code);
+void Program::compile(const std::string& vertex_shader_code, const std::string& fragment_shader_code) {
+	id = glCreateProgram();
+	unsigned int vertex_shader = compile_shader(GL_VERTEX_SHADER, vertex_shader_code);
+	unsigned int fragment_shader = compile_shader(GL_FRAGMENT_SHADER, fragment_shader_code);
+
+	GLCall(glAttachShader(id, vertex_shader));
+	GLCall(glAttachShader(id, fragment_shader));
+	GLCall(glLinkProgram(id));
+
+	GLCall(glDeleteShader(vertex_shader));
+	GLCall(glDeleteShader(fragment_shader));
 }
+
 void Program::bind() {
 	GLCall(glUseProgram(id));
 }

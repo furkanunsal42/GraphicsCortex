@@ -8,7 +8,7 @@
 class Scene {
 public:
 	std::vector<Graphic*> meshes;
-	Camera* camera;
+	Camera* camera = nullptr;
 	std::string model_uniform_name = "model";
 	std::string view_uniform_name = "view";
 	std::string projection_uniform_name = "projection";
