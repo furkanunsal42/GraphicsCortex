@@ -31,7 +31,7 @@ namespace frame {
 		if (!is_glfw_initialized || !is_glew_initialized)
 			return;
 
-		GLCall(glClear(GL_COLOR_BUFFER_BIT));
+		GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 		GLCall(glClearColor(red, green, blue, alpha));
 	}
 
