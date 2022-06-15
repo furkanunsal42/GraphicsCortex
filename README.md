@@ -3,7 +3,7 @@ A custom opengl graphics renderer api to be used in game engine and simulation a
 
 ![zXSxGA_0f714936a467f132fb1adf6311f98bd9_00-00-00_00-00-11_1](https://user-images.githubusercontent.com/89701935/173957172-f478ea33-e372-4c25-ae23-a4cad0117b45.gif)
 
-## Features
+## Features (work in progress)
 ### graphical api: 
 - simple, consistant and powerful structure for graphics
 - fast graphics
