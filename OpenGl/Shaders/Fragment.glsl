@@ -3,11 +3,11 @@
 
 #version 330 core
 layout(location = 0) out vec4 frag_color;
-in vec3 color;
 in vec2 tex_coords;
+in vec3 frag_normal;
+in vec3 frag_light_sun;
 
-uniform vec4 u_color;
 uniform sampler2D texture_slot;
 void main(){
-	frag_color = texture(texture_slot, tex_coords) + vec4(color.x, color.y, color.z, 1.0f) + u_color;
+	frag_color = texture(texture_slot, tex_coords) * dot(frag_light_sun, frag_normal);
 }

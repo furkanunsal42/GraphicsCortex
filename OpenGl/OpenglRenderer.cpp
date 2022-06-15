@@ -26,16 +26,16 @@ int main() {
 	GLFWwindow* window = frame::create_window(640, 480, "My Window");
 	
 	std::vector<float> custom_verticies {
-		// verticies			colors				texture
-		-0.5f, -0.5f, 0.0f,		1.0f, 0.0f, 0.0f,	0.0f, 0.0f,
-		 0.5f, -0.5f, 0.0f,		0.0f, 1.0f, 0.0f,	1.0f, 0.0f,
-		 0.5f,  0.5f, 0.0f,		0.0f, 0.0f, 1.0f,	1.0f, 1.0f,
-		-0.5f,  0.5f, 0.0f,		0.2f, 1.0f, 0.5f,	0.0f, 1.0f
+		// verticies			texture			normals
+		-0.5f, -0.5f, 0.0f,		0.0f, 0.0f,		0.0f, 0.0f, 1.0f,
+		 0.5f, -0.5f, 0.0f,		1.0f, 0.0f,		0.0f, 0.0f, 1.0f,
+		 0.5f,  0.5f, 0.0f,		1.0f, 1.0f,		0.0f, 0.0f, 1.0f,
+		-0.5f,  0.5f, 0.0f,		0.0f, 1.0f,		0.0f, 0.0f, 1.0f,
 	};
 	ArrayBuffer array_buffer(custom_verticies);
 	array_buffer.push_attribute(3);
-	array_buffer.push_attribute(3);
 	array_buffer.push_attribute(2);
+	array_buffer.push_attribute(3);
 
 	std::vector<unsigned int> triangles{
 		0, 1, 2,
@@ -65,7 +65,7 @@ int main() {
 	Program program(shader_file.vertex_shader, shader_file.fragment_shader);
 	
 	program.update_uniform("texture_slot", 0);
-	program.update_uniform("u_color", -0.3f, -0.3f, -0.3f, 1.0f);
+	program.update_uniform("light_sun", glm::vec3(0.0f, 0.0f, 1.0f));
 
 	while (!glfwWindowShouldClose(window)){
 		glfwPollEvents();
@@ -73,7 +73,7 @@ int main() {
 		frame::clear_window();
 		
 		orange.rotation += glm::vec3(0.0f, 0.4f, 0.0f);
-		orange.position += glm::vec3(0.0f, 0.0f, -0.003f);
+		//orange.position += glm::vec3(0.0f, 0.0f, -0.003f);
 		//scene.camera->rotation += glm::vec3(0.0f, 2.0f, 0.0f);
 		//scene.camera->position += glm::vec3(0.0f, 0.0f, -0.003f);
 		

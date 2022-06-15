@@ -83,6 +83,9 @@ public:
 	void update_uniform(std::string name, glm::mat4 a);
 	void update_uniform(std::string name, glm::mat3 a);
 	void update_uniform(std::string name, glm::mat2 a);
+	void update_uniform(std::string name, glm::vec4 a);
+	void update_uniform(std::string name, glm::vec3 a);
+	void update_uniform(std::string name, glm::vec2 a);
 
 
 	
