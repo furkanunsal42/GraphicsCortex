@@ -65,14 +65,15 @@ int main() {
 	Program program(shader_file.vertex_shader, shader_file.fragment_shader);
 	
 	program.update_uniform("texture_slot", 0);
-	program.update_uniform("light_sun", glm::vec3(0.0f, 0.0f, 1.0f));
+	program.update_uniform("light_sun", glm::vec3(0.0f, 0.0f, -1.0f));
+	program.update_uniform("ambiant_light", glm::vec4(0.1f, 0.1f, 0.1f, 0.0f));
 
 	while (!glfwWindowShouldClose(window)){
 		glfwPollEvents();
 		frame::display_fps();
 		frame::clear_window();
 		
-		orange.rotation += glm::vec3(0.0f, 0.4f, 0.0f);
+		orange.rotation += glm::vec3(0.0f, .4f, 0.0f);
 		//orange.position += glm::vec3(0.0f, 0.0f, -0.003f);
 		//scene.camera->rotation += glm::vec3(0.0f, 2.0f, 0.0f);
 		//scene.camera->position += glm::vec3(0.0f, 0.0f, -0.003f);
