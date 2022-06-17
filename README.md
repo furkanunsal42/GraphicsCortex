@@ -1,7 +1,7 @@
 # GraphicsCore
 A custom opengl graphics renderer api to be used in game engine and simulation applications.
 
-![zXSxGA_0f714936a467f132fb1adf6311f98bd9_00-00-00_00-00-11_1](https://user-images.githubusercontent.com/89701935/173957172-f478ea33-e372-4c25-ae23-a4cad0117b45.gif)
+![2022-06-17 03-23-26 (1)](https://user-images.githubusercontent.com/89701935/174199340-15e9d44f-4cc2-4c9e-bab4-3ad225bdc8f5.gif)
 
 ## Features (work in progress)
 ### graphical api: 
