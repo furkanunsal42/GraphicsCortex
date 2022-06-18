@@ -13,7 +13,6 @@ uniform mat4 view;
 uniform mat4 projection;
 
 void main(){
-	//frag_light_sun = vec3(view * vec4(light_sun, 0.0f));
 	frag_normal = vec3(model * vec4(normal, 0.0f));
 	tex_coords = texture_coordinates;
 	frag_space_coord = position;
