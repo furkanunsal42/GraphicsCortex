@@ -13,5 +13,5 @@ public:
 	std::string view_uniform_name = "view";
 	std::string projection_uniform_name = "projection";
 
-	void render(Program program);
+	void render();
 };

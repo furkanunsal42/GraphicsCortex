@@ -13,11 +13,11 @@ public:
 	glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);
 	glm::vec3 rotation = glm::vec3(0.0f, 0.0f, 0.0f);;
 	glm::mat4 model_matrix;
+	Program renderer;
 	unsigned int mode = GL_TRIANGLES;
 	Graphic();
-	Graphic(ArrayBuffer buffer, IndexBuffer indicies, Texture texture);
-	Graphic(std::vector<float> verticies, int data_dim);
+	Graphic(const ArrayBuffer& buffer, const IndexBuffer& indicies, const Texture& texture, const Program& renderer);
+	Graphic(const std::vector<float>& verticies , int data_dim);
 	void draw();
-	void draw(Program program);
 	void update_matrix();
 };

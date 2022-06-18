@@ -4,10 +4,10 @@
 Graphic::Graphic() :
 	model_matrix(glm::mat4(1.0f)), vertex_buffer(ArrayBuffer()), index_buffer(IndexBuffer()), texture(Texture()) {}
 
-Graphic::Graphic(ArrayBuffer buffer, IndexBuffer indicies, Texture tex) : 
-	model_matrix(glm::mat4(1.0f)), vertex_buffer(buffer), index_buffer(indicies), texture(tex) {}
+Graphic::Graphic(const ArrayBuffer& buffer, const IndexBuffer& indicies, const Texture& tex, const Program& renderer) : 
+	model_matrix(glm::mat4(1.0f)), vertex_buffer(buffer), index_buffer(indicies), texture(tex), renderer(renderer) {}
 
-Graphic::Graphic(std::vector<float> verticies, int data_dim = 2) {
+Graphic::Graphic(const std::vector<float>& verticies, int data_dim = 2) {
 	std::vector<unsigned int> triangles;
 	for (unsigned int i = 1; i < verticies.size() / data_dim - 1; i++) {
 
@@ -30,14 +30,7 @@ Graphic::Graphic(std::vector<float> verticies, int data_dim = 2) {
 }
 
 void Graphic::draw() {
-	vertex_buffer.bind();
-	index_buffer.bind();
-	texture.bind();
-	GLCall(glDrawElements(mode, index_buffer.data_count, GL_UNSIGNED_INT, nullptr));
-}
-
-void Graphic::draw(Program program) {
-	program.bind();
+	renderer.bind();
 	vertex_buffer.bind();
 	index_buffer.bind();
 	texture.bind();

@@ -6,14 +6,13 @@
 
 #include "Debuger.h"
 
-void Scene::render(Program program) {
-	program.bind();
+void Scene::render() {
 	camera->update_matrixes();
 	for(Graphic* mesh : meshes){
 		mesh->update_matrix();
-		program.update_uniform(model_uniform_name, mesh->model_matrix);
-		program.update_uniform(view_uniform_name, camera->view_matrix);
-		program.update_uniform(projection_uniform_name, camera->projection_matrix);
+		mesh->renderer.update_uniform(model_uniform_name, mesh->model_matrix);
+		mesh->renderer.update_uniform(view_uniform_name, camera->view_matrix);
+		mesh->renderer.update_uniform(projection_uniform_name, camera->projection_matrix);
 		
 		(*mesh).draw();
 	}

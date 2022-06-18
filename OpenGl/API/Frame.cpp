@@ -9,12 +9,12 @@ namespace frame {
 	bool is_glew_initialized = false;
 	bool is_glfw_initialized = false;
 
-	GLFWwindow* create_window(int width, int height, std::string name, int swapinterval) {
+	GLFWwindow* create_window(int width, int height, std::string name, int swapinterval, bool depth_test, bool blend) {
 		if (!is_glfw_initialized) {
 			glfwInit();
 			is_glfw_initialized = true;
 		}
-
+		
 		GLFWwindow* window = glfwCreateWindow(width, height, name.c_str(), nullptr, nullptr);
 		glfwMakeContextCurrent(window);
 		glfwSwapInterval(swapinterval);
@@ -22,6 +22,13 @@ namespace frame {
 		if (!is_glew_initialized) {
 			glewInit();
 			is_glew_initialized = true;
+		}
+
+		if (depth_test)
+			glEnable(GL_DEPTH_TEST);
+		if (blend) {
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		}
 
 		return window;
