@@ -75,14 +75,18 @@ int main() {
 	
 
 	program.update_uniform("texture_slot", 0);
-	program.update_uniform("point_light_color", 1.0f, 1.0f, 1.0f);
-	glm::vec3 light_position(0.0f, 0.0f, 1.50f);
-	program.update_uniform("point_light_position", light_position.x, light_position.y, light_position.z);
-	
-	program.update_uniform("ambiant_light_color", 0.1f, 0.1f, 0.1f);
 
-	program.update_uniform("directional_light_direction", 1.0f, -1.0f, 1.0f);
-	program.update_uniform("directional_light_color", 1.0f, 1.0f, 1.0f);
+	program.update_uniform("p_light.color", 1.0f, 1.0f, 1.0f);
+	glm::vec3 light_position(0.0f, 0.0f, 1.50f);
+	program.update_uniform("p_light.position", light_position.x, light_position.y, light_position.z);
+	program.update_uniform("p_light.constant_term", 1.0f);
+	program.update_uniform("p_light.linear_term", 0.10f);
+	program.update_uniform("p_light.exponential_term", 0.10f);
+
+	program.update_uniform("a_light.color", 0.1f, 0.1f, 0.1f);
+
+	program.update_uniform("d_light.direction", 1.0f, -1.0f, 1.0f);
+	program.update_uniform("d_light.color", 1.0f, 1.0f, 1.0f);
 	//int i = 0;
 	
 	while (!glfwWindowShouldClose(window)){
