@@ -55,52 +55,23 @@ int main() {
 	scene.meshes.push_back(&light_source);
 	scene.camera = &cam;
 
-	/*
-	directional lighting
-	Shader shader_file("Shaders/Vertex.glsl", "Shaders/Fragment.glsl");
-	Program program(shader_file.vertex_shader, shader_file.fragment_shader);
-	
 	program.update_uniform("texture_slot", 0);
-	program.update_uniform("light_sun", glm::vec3(0.0f, -0.7f, -0.7f));
-	program.update_uniform("ambiant_light", glm::vec4(0.1f, 0.1f, 0.1f, 0.0f));
-	*/
-
-	/*
-	flat color shader
-	Shader shader_file("Shaders/FlatColorVertex.glsl", "Shaders/FlatColorFragment.glsl");
-	Program program(shader_file.vertex_shader, shader_file.fragment_shader);
-	program.update_uniform("color", 0.0f, 0.8f, 0.8f, 1.0f);
-	*/
-
 	
+	AmbiantLight ambiant(glm::vec3(0.1f, 0.1f, 0.1f), program);
+	DirectionalLight directional(glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), program);
+	PointLight point(glm::vec3(0.0f, 0.0f, 2.0f), glm::vec3(1.0f, 1.0f, 1.0f), 0.5f, 0.1f, 0.1f, program);
 
-	program.update_uniform("texture_slot", 0);
+	scene.lights.push_back(&ambiant);
+	scene.lights.push_back(&directional);
+	scene.lights.push_back(&point);
 
-	program.update_uniform("p_light.color", 1.0f, 1.0f, 1.0f);
-	glm::vec3 light_position(0.0f, 0.0f, 1.50f);
-	program.update_uniform("p_light.position", light_position.x, light_position.y, light_position.z);
-	program.update_uniform("p_light.constant_term", 1.0f);
-	program.update_uniform("p_light.linear_term", 0.10f);
-	program.update_uniform("p_light.exponential_term", 0.10f);
-
-	program.update_uniform("a_light.color", 0.1f, 0.1f, 0.1f);
-
-	program.update_uniform("d_light.direction", 1.0f, -1.0f, 1.0f);
-	program.update_uniform("d_light.color", 1.0f, 1.0f, 1.0f);
-	//int i = 0;
-	
 	while (!glfwWindowShouldClose(window)){
-		//i++;
 		glfwPollEvents();
 		frame::display_fps();
 		frame::clear_window();
 		
 		cube.rotation += glm::vec3(0.0f, 0.4f, 0.0f);
 		light_source.rotation.x += 0.4f;
-		//cube.position.z = 2*std::cos(i/100.0f);
-		//cube.update_matrix();
-
-		//light_position.z -= 0.01f;
 
 		scene.camera->handle_movements(window);
 		scene.render();
