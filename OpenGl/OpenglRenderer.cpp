@@ -43,7 +43,9 @@ int main() {
 	cam.screen_height = (float)height;
 	cam.position.z = 1.5f;
 
-	AmbiantLight ambiant(glm::vec3(0.1f, 0.1f, 0.1f), program);
+	AmbiantLight ambiant(glm::vec3(0.1f, 0.0f, 0.0f), program);
+	AmbiantLight ambiant2(glm::vec3(0.0f, 0.1f, 0.0f), program);
+	AmbiantLight ambiant3(glm::vec3(0.0f, 0.0f, 0.1f), program);
 	DirectionalLight directional(glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), program);
 	PointLight point(glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(1.0f, 1.0f, 1.0f), 0.5f, 1.0f, 0.0f, program);
 
@@ -51,6 +53,8 @@ int main() {
 	scene.meshes.push_back(&cube);
 	scene.camera = &cam;
 	scene.lights.push_back(&ambiant);
+	scene.lights.push_back(&ambiant2);
+	scene.lights.push_back(&ambiant3);
 	scene.lights.push_back(&directional);
 	scene.lights.push_back(&point);
 

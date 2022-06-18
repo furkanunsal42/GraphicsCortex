@@ -52,10 +52,21 @@ vec3 calculate_point_light_intensity(vec3 light_position, vec3 light_color, vec3
 	return light.xyz / attenuation;
 }
 
-void main(){
-	vec3 total_light =	calculate_ambiant_light(a_lights[0].color) +  
-						calculate_directional_light(d_lights[0].direction, d_lights[0].color, frag_normal) + 
-						calculate_point_light_intensity(p_lights[0].position, p_lights[0].color, frag_space_coord, frag_normal, vec3(p_lights[0].constant_term, p_lights[0].linear_term, p_lights[0].exponential_term));
+vec3 calculate_total_light(vec3 normal, vec3 space_coords){
+	vec3 total_light = vec3(0.0f);
+	for(int i = 0; i < a_lights.length(); i++){
+		total_light += calculate_ambiant_light(a_lights[i].color);
+	}
+	for(int i = 0; i < d_lights.length(); i++){
+		total_light += calculate_directional_light(d_lights[i].direction, d_lights[i].color, normal);
+	}
+	for(int i = 0; i < p_lights.length(); i++){
+		total_light += calculate_point_light_intensity(p_lights[i].position, p_lights[i].color, space_coords, normal, vec3(p_lights[i].constant_term, p_lights[i].linear_term, p_lights[i].exponential_term));
+	}
+	return total_light;
+}
 
+void main(){
+	vec3 total_light = calculate_total_light(frag_normal, frag_space_coord);
 	frag_color = vec4(total_light, 1) * texture(texture_slot, tex_coords);
 }
