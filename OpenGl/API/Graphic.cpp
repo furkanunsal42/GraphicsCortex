@@ -2,7 +2,7 @@
 #include <iostream>
 
 Graphic::Graphic() :
-	model_matrix(glm::mat4(1.0f)), vertex_buffer(ArrayBuffer()), index_buffer(IndexBuffer()), texture(Texture()) {}
+	model_matrix(glm::mat4(1.0f)), vertex_buffer(ArrayBuffer()), index_buffer(IndexBuffer()), texture(Texture())  {}
 
 Graphic::Graphic(const ArrayBuffer& buffer, const IndexBuffer& indicies, const Texture& tex, const Program& renderer) : 
 	model_matrix(glm::mat4(1.0f)), vertex_buffer(buffer), index_buffer(indicies), texture(tex), renderer(renderer) {}

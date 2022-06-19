@@ -13,6 +13,7 @@ public:
 	glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);
 	glm::vec3 rotation = glm::vec3(0.0f, 0.0f, 0.0f);
 	bool perspective = true;
+	float ortho_size = 1.0f;
 	float fov = 45.0f;
 	float min_distance = 0.1f;
 	float max_distance = 100.0f;

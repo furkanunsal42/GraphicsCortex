@@ -22,7 +22,7 @@ void Scene::render() {
 	AmbiantLight::count = 0;
 	DirectionalLight::count = 0;
 	PointLight::count = 0;
-
+	SpotLight::count = 0;
 	for (Light* light : lights) {
 		
 		light->update_uniforms();

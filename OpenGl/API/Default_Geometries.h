@@ -3,38 +3,38 @@
 #include "Graphic.h"
 
 namespace default_geometry{
-	Graphic cube(const Texture& texture, const Program& renderer,  float scale = 1) {
+	Graphic cube(const Texture& texture, const Program& renderer,  float scale_x = 1, float scale_y = 1, float scale_z = 1) {
 	std::vector<float> custom_verticies{
 		// verticies									texture			normals	
-		-0.5f * scale, -0.5f * scale,  0.5f * scale,	0.0f, 0.0f,		0.0f, 0.0f, 1.0f,	//forward
-		 0.5f * scale, -0.5f * scale,  0.5f * scale,	1.0f, 0.0f,		0.0f, 0.0f, 1.0f,
-		 0.5f * scale,  0.5f * scale,  0.5f * scale,	1.0f, 1.0f,		0.0f, 0.0f, 1.0f,
-		-0.5f * scale,  0.5f * scale,  0.5f * scale,	0.0f, 1.0f,		0.0f, 0.0f, 1.0f,
-
-		 0.5f * scale, -0.5f * scale,  0.5f * scale,	0.0f, 0.0f,		1.0f, 0.0f, 0.0f,	//right
-		 0.5f * scale, -0.5f * scale, -0.5f * scale,	1.0f, 0.0f,		1.0f, 0.0f, 0.0f,
-		 0.5f * scale,  0.5f * scale, -0.5f * scale,	1.0f, 1.0f,		1.0f, 0.0f, 0.0f,
-		 0.5f * scale,  0.5f * scale,  0.5f * scale,	0.0f, 1.0f,		1.0f, 0.0f, 0.0f,
-
-		-0.5f * scale,  0.5f * scale, -0.5f * scale,	0.0f, 0.0f,		0.0f, 1.0f, 0.0f,	//top
-		-0.5f * scale,  0.5f * scale,  0.5f * scale,	1.0f, 0.0f,		0.0f, 1.0f, 0.0f,
-		 0.5f * scale,  0.5f * scale,  0.5f * scale,	1.0f, 1.0f,		0.0f, 1.0f, 0.0f,
-		 0.5f * scale,  0.5f * scale, -0.5f * scale,	0.0f, 1.0f,		0.0f, 1.0f, 0.0f,
-
-		 0.5f * scale, -0.5f * scale, -0.5f * scale,	0.0f, 0.0f,		0.0f, 0.0f, -1.0f,	//backward
-		-0.5f * scale, -0.5f * scale, -0.5f * scale,	1.0f, 0.0f,		0.0f, 0.0f, -1.0f,
-		-0.5f * scale,  0.5f * scale, -0.5f * scale,	1.0f, 1.0f,		0.0f, 0.0f, -1.0f,
-		 0.5f * scale,  0.5f * scale, -0.5f * scale,	0.0f, 1.0f,		0.0f, 0.0f, -1.0f,
-
-		 -0.5f * scale, -0.5f * scale, -0.5f * scale,	0.0f, 0.0f,		-1.0f, 0.0f, 0.0f,	//left
-		 -0.5f * scale, -0.5f * scale,  0.5f * scale,	1.0f, 0.0f,		-1.0f, 0.0f, 0.0f,
-		 -0.5f * scale,  0.5f * scale,  0.5f * scale,	1.0f, 1.0f,		-1.0f, 0.0f, 0.0f,
-		 -0.5f * scale,  0.5f * scale, -0.5f * scale,	0.0f, 1.0f,		-1.0f, 0.0f, 0.0f,
-
-		 0.5f * scale,  -0.5f * scale,  0.5f * scale,	0.0f, 0.0f,		0.0f, -1.0f, 0.0f,	//bottom
-		 0.5f * scale,  -0.5f * scale, -0.5f * scale,	1.0f, 0.0f,		0.0f, -1.0f, 0.0f,
-		-0.5f * scale,  -0.5f * scale, -0.5f * scale,	1.0f, 1.0f,		0.0f, -1.0f, 0.0f,
-		-0.5f * scale,  -0.5f * scale,  0.5f * scale,	0.0f, 1.0f,		0.0f, -1.0f, 0.0f,
+		-0.5f * scale_x, -0.5f * scale_y,  0.5f * scale_z,	0.0f, 0.0f,		0.0f, 0.0f, 1.0f,	//forward
+		 0.5f * scale_x, -0.5f * scale_y,  0.5f * scale_z,	1.0f, 0.0f,		0.0f, 0.0f, 1.0f,
+		 0.5f * scale_x,  0.5f * scale_y,  0.5f * scale_z,	1.0f, 1.0f,		0.0f, 0.0f, 1.0f,
+		-0.5f * scale_x,  0.5f * scale_y,  0.5f * scale_z,	0.0f, 1.0f,		0.0f, 0.0f, 1.0f,
+								 				  
+		 0.5f * scale_x, -0.5f * scale_y,  0.5f * scale_z,	0.0f, 0.0f,		1.0f, 0.0f, 0.0f,	//right
+		 0.5f * scale_x, -0.5f * scale_y, -0.5f * scale_z,	1.0f, 0.0f,		1.0f, 0.0f, 0.0f,
+		 0.5f * scale_x,  0.5f * scale_y, -0.5f * scale_z,	1.0f, 1.0f,		1.0f, 0.0f, 0.0f,
+		 0.5f * scale_x,  0.5f * scale_y,  0.5f * scale_z,	0.0f, 1.0f,		1.0f, 0.0f, 0.0f,
+								 				  
+		-0.5f * scale_x,  0.5f * scale_y, -0.5f * scale_z,	0.0f, 0.0f,		0.0f, 1.0f, 0.0f,	//top
+		-0.5f * scale_x,  0.5f * scale_y,  0.5f * scale_z,	1.0f, 0.0f,		0.0f, 1.0f, 0.0f,
+		 0.5f * scale_x,  0.5f * scale_y,  0.5f * scale_z,	1.0f, 1.0f,		0.0f, 1.0f, 0.0f,
+		 0.5f * scale_x,  0.5f * scale_y, -0.5f * scale_z,	0.0f, 1.0f,		0.0f, 1.0f, 0.0f,
+								 				  
+		 0.5f * scale_x, -0.5f * scale_y, -0.5f * scale_z,	0.0f, 0.0f,		0.0f, 0.0f, -1.0f,	//backward
+		-0.5f * scale_x, -0.5f * scale_y, -0.5f * scale_z,	1.0f, 0.0f,		0.0f, 0.0f, -1.0f,
+		-0.5f * scale_x,  0.5f * scale_y, -0.5f * scale_z,	1.0f, 1.0f,		0.0f, 0.0f, -1.0f,
+		 0.5f * scale_x,  0.5f * scale_y, -0.5f * scale_z,	0.0f, 1.0f,		0.0f, 0.0f, -1.0f,
+								 				  
+		 -0.5f *scale_x, -0.5f * scale_y, -0.5f * scale_z,	0.0f, 0.0f,		-1.0f, 0.0f, 0.0f,	//left
+		 -0.5f *scale_x, -0.5f * scale_y,  0.5f * scale_z,	1.0f, 0.0f,		-1.0f, 0.0f, 0.0f,
+		 -0.5f *scale_x,  0.5f * scale_y,  0.5f * scale_z,	1.0f, 1.0f,		-1.0f, 0.0f, 0.0f,
+		 -0.5f *scale_x,  0.5f * scale_y, -0.5f * scale_z,	0.0f, 1.0f,		-1.0f, 0.0f, 0.0f,
+								 				  
+		 0.5f * scale_x,  -0.5f *scale_y,  0.5f * scale_z,	0.0f, 0.0f,		0.0f, -1.0f, 0.0f,	//bottom
+		 0.5f * scale_x,  -0.5f *scale_y, -0.5f * scale_z,	1.0f, 0.0f,		0.0f, -1.0f, 0.0f,
+		-0.5f * scale_x,  -0.5f *scale_y, -0.5f * scale_z,	1.0f, 1.0f,		0.0f, -1.0f, 0.0f,
+		-0.5f * scale_x,  -0.5f *scale_y,  0.5f * scale_z,	0.0f, 1.0f,		0.0f, -1.0f, 0.0f,
 	};
 
 	ArrayBuffer array_buffer(custom_verticies);

@@ -23,7 +23,7 @@ void Camera::update_matrixes() {
 		projection_matrix = glm::perspective(glm::radians(fov), screen_width / screen_height, min_distance, max_distance);
 	}
 	else {
-		projection_matrix = glm::ortho(-screen_width / screen_height, screen_width / screen_height, -1.0f, 1.0f, min_distance, max_distance);
+		projection_matrix = glm::ortho(-screen_width / screen_height * ortho_size, screen_width / screen_height * ortho_size, -1.0f * ortho_size, 1.0f * ortho_size, min_distance, max_distance);
 	}
 
 }
