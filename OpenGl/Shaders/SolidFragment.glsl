@@ -34,20 +34,39 @@ struct spot_light{
 	float exponential_term;
 };
 
-uniform sampler2D texture_slot;
 
+uniform sampler2D texture_slot;
+uniform vec3 camera_coords;
 // lights
 uniform ambiant_light a_lights[10];
 uniform directional_light d_lights[10];
 uniform point_light p_lights[10];
 uniform spot_light s_lights[10];
 
+uniform int a_lights_count;
+uniform int d_lights_count;
+uniform int p_lights_count;
+uniform int s_lights_count;
+
 vec3 calculate_ambiant_light(vec3 ambiant){
 	return ambiant;
 }
 
+vec3 calculate_specular_light(vec3 light_direction, vec3 current_position, vec3 camera_position, vec3 light_color, vec3 normal){
+	float cos_angle = 0.999f;
+	vec3 camera_looking_direction = normalize(camera_position - current_position);
+	vec3 reflected_light = reflect(light_direction, normal);
+	float current_cos_angle = dot(reflected_light, camera_looking_direction);
+	if(current_cos_angle < cos_angle)
+		return vec3(0.0f);
+	//vec3 color = light_color * (max(dot(-light_direction, normal), 0));
+	vec3 light = vec3(3.0f);
+	return light;
+}
+
 vec3 calculate_directional_light(vec3 light_direction, vec3 light_color, vec3 normal){
 	vec3 color = light_color * (max(dot(-light_direction, normal), 0));
+	color += calculate_specular_light(light_direction, frag_space_coord, camera_coords, light_color, normal);
 	return color;
 }
 
@@ -83,16 +102,16 @@ vec3 calculate_spot_light_intensity(vec3 light_position, vec3 direction, vec3 li
 vec3 calculate_total_light(vec3 normal, vec3 space_coords){
 	vec3 total_light = vec3(0.0f);
 	
-	for(int i = 0; i < a_lights.length(); i++)
+	for(int i = 0; i < a_lights_count; i++)
 		total_light += calculate_ambiant_light(a_lights[i].color);
 	
-	for(int i = 0; i < d_lights.length(); i++)
+	for(int i = 0; i < d_lights_count; i++)
 		total_light += calculate_directional_light(d_lights[i].direction, d_lights[i].color, normal);
 	
-	for(int i = 0; i < p_lights.length(); i++)
+	for(int i = 0; i < p_lights_count; i++)
 		total_light += calculate_point_light_intensity(p_lights[i].position, p_lights[i].color, space_coords, normal, vec3(p_lights[i].constant_term, p_lights[i].linear_term, p_lights[i].exponential_term));
 	
-	for(int i = 0; i < s_lights.length(); i++)
+	for(int i = 0; i < s_lights_count; i++)
 		total_light += calculate_spot_light_intensity(s_lights[i].position, s_lights[i].direction, s_lights[i].color, space_coords, normal, vec3(s_lights[i].constant_term, s_lights[i].linear_term, s_lights[i].exponential_term), s_lights[i].cos_angle);
 
 	return total_light;
