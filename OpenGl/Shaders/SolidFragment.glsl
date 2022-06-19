@@ -53,14 +53,18 @@ vec3 calculate_ambiant_light(vec3 ambiant){
 }
 
 vec3 calculate_specular_light(vec3 light_direction, vec3 current_position, vec3 camera_position, vec3 light_color, vec3 normal){
-	float cos_angle = 0.999f;
+	float strenght = 0.4f;
+	float cos_angle = 0.9f;
 	vec3 camera_looking_direction = normalize(camera_position - current_position);
-	vec3 reflected_light = reflect(light_direction, normal);
+	vec3 reflected_light = normalize(reflect(light_direction, normal));
 	float current_cos_angle = dot(reflected_light, camera_looking_direction);
 	if(current_cos_angle < cos_angle)
 		return vec3(0.0f);
+	if (dot(normal, light_direction) > 0)
+		return vec3(0.0f);
+
 	//vec3 color = light_color * (max(dot(-light_direction, normal), 0));
-	vec3 light = vec3(3.0f);
+	vec3 light = vec3(pow(current_cos_angle, 100) * strenght);
 	return light;
 }
 
@@ -114,6 +118,7 @@ vec3 calculate_total_light(vec3 normal, vec3 space_coords){
 	for(int i = 0; i < s_lights_count; i++)
 		total_light += calculate_spot_light_intensity(s_lights[i].position, s_lights[i].direction, s_lights[i].color, space_coords, normal, vec3(s_lights[i].constant_term, s_lights[i].linear_term, s_lights[i].exponential_term), s_lights[i].cos_angle);
 
+	//return clamp(total_light, 0 , 1);
 	return total_light;
 }
 
