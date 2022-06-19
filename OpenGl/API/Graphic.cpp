@@ -28,7 +28,7 @@ Graphic::Graphic(const std::vector<float>& verticies, int data_dim = 2) {
 	this->vertex_buffer = array_buffer;
 	this->index_buffer = index_buffer;
 }
-
+ 
 void Graphic::draw() {
 	renderer.bind();
 	vertex_buffer.bind();

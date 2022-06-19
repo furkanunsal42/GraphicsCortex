@@ -25,8 +25,8 @@
 int main() {
 	
 	int width = 640, height = 480;
-	GLFWwindow* window = frame::create_window(width, height, "My Window", 1, true, false);
-	
+	GLFWwindow* window = frame::create_window(width, height, "My Window", 4, 1, true, false);
+
 	Texture texture;
 	texture.internal_format = GL_RGB;
 	texture.format = GL_RGB;
