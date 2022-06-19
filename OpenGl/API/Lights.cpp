@@ -13,7 +13,10 @@ AmbiantLight::AmbiantLight(const glm::vec3& color, const Program& program) :
 void AmbiantLight::update_uniforms() {
 	std::string uniform_name = shader_name + "[" + std::to_string(count) + "]";
 	program.update_uniform(uniform_name + ".color", color.x, color.y, color.z);
+
+	// temp
 	count++;
+	program.update_uniform(shader_name+"_count", count);
 }
 
 int AmbiantLight::count = 0;
@@ -25,7 +28,10 @@ void DirectionalLight::update_uniforms() {
 	std::string uniform_name = shader_name + "[" + std::to_string(count) + "]";
 	program.update_uniform(uniform_name + ".direction", direction.x, direction.y, direction.z);
 	program.update_uniform(uniform_name + ".color", color.x, color.y, color.z);
+
+	// temp
 	count++;
+	program.update_uniform(shader_name + "_count", count);
 }
 
 int	DirectionalLight::count = 0;
@@ -40,7 +46,10 @@ void PointLight::update_uniforms() {
 	program.update_uniform(uniform_name + ".constant_term", constant_term);
 	program.update_uniform(uniform_name + ".linear_term", linear_term);
 	program.update_uniform(uniform_name + ".exponential_term", exponential_term);
+	
+	// temp
 	count++;
+	program.update_uniform(shader_name + "_count", count);
 }
 
 int PointLight::count = 0;
@@ -58,7 +67,10 @@ void SpotLight::update_uniforms() {
 	program.update_uniform(uniform_name + ".linear_term", linear_term);
 	program.update_uniform(uniform_name + ".exponential_term", exponential_term);
 	program.update_uniform(uniform_name + ".cos_angle", glm::cos(glm::radians(angle)));
+
+	// temp
 	count++;
+	program.update_uniform(shader_name + "_count", count);
 }
 
 int SpotLight::count = 0;
