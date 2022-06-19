@@ -28,15 +28,21 @@ int main() {
 	GLFWwindow* window = frame::create_window(width, height, "My Window", 4, 1, true, false);
 
 	Texture texture;
-	texture.internal_format = GL_RGB;
-	texture.format = GL_RGB;
+	texture.internal_format = GL_RGBA;
+	texture.format = GL_RGBA;
 	texture.vertical_flip = true;
-	texture.load_image("GoldBlock.png");
+	texture.load_image("Images/grass.png");
 	
 	Shader shader_file("Shaders/SolidVertex.glsl", "Shaders/SolidFragment.glsl");
 	Program program(shader_file.vertex_shader, shader_file.fragment_shader);
 
-	Graphic cube = default_geometry::cube(texture, program, 1.0f, 1.0f, 1.0f);
+	//Graphic cube = default_geometry::cube(texture, program, glm::vec3(1.0f));
+	Graphic cube = default_geometry::cube(
+		texture,
+		glm::vec2(2, 2),
+		std::vector<unsigned int> {2, 2, 3, 2, 2, 0},
+		program
+		);
 
 	Camera cam;
 	cam.screen_width = (float)width;
@@ -68,7 +74,7 @@ int main() {
 		//cube.position.x += 0.01f;
 		program.update_uniform("camera_coords", scene.camera->position.x, scene.camera->position.y, scene.camera->position.z);
 	
-		cube.rotation.y += 0.4f;
+		//cube.rotation.y += 0.4f;
 		//glm::vec4 point = cube.model_matrix * glm::vec4(0.0f, 0.0f, 1.0f, 0.0f);
 		//std::cout << "x: " << point.x << " y: " << point.y << " z: " << point.z << " w: " << point.w << std::endl;
 		//spot.position.y = 5*glm::cos(t) + 5;
