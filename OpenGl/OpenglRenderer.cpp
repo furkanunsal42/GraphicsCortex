@@ -28,9 +28,6 @@ int main() {
 	GLFWwindow* window = frame::create_window(width, height, "My Window", 4, 1, true, false);
 
 	Texture texture;
-	texture.internal_format = GL_RGBA;
-	texture.format = GL_RGBA;
-	texture.vertical_flip = true;
 	texture.load_image("Images/grass.png");
 	
 	Shader shader_file("Shaders/SolidVertex.glsl", "Shaders/SolidFragment.glsl");

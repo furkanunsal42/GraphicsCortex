@@ -10,7 +10,7 @@ public:
 	unsigned char* image_data;
 
 	// default paremeters
-	bool vertical_flip = false;
+	bool vertical_flip = true;
 	unsigned int min_filter = GL_NEAREST;
 	unsigned int mag_filter = GL_NEAREST;
 	unsigned int wrap_s = GL_REPEAT;
@@ -20,7 +20,7 @@ public:
 	unsigned int format = GL_RGBA;
 
 	Texture();
-	void load_image(std::string file_path);
+	void load_image(std::string file_path, int desired_channels = 4);
 	void bind();
 	void unbind();
 };

@@ -9,9 +9,22 @@
 Texture::Texture():
 	id(0), width(0), height(0), channels(0), image_data(nullptr) { }
 
-void Texture::load_image(std::string file_path) {
+void Texture::load_image(std::string file_path, int desired_channels) {
 	stbi_set_flip_vertically_on_load(vertical_flip);
-	image_data = stbi_load(file_path.c_str(), &width, &height, &channels, 0);
+
+	image_data = stbi_load(file_path.c_str(), &width, &height, &channels, desired_channels);
+	if (desired_channels == 3) {
+		if (format == NULL)
+			format = GL_RGB;
+		if (internal_format == NULL)
+			internal_format = GL_RGB8;
+	}
+	else if (desired_channels == 4) {
+		if (format == NULL)
+			format = GL_RGBA;
+		if (internal_format == NULL)
+			internal_format = GL_RGBA8;
+	}
 	GLCall(glGenTextures(1, &id));
 }
 
