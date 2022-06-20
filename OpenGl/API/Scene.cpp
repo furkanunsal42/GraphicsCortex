@@ -10,7 +10,6 @@
 
 void Scene::render() {
 	camera->update_matrixes();
-
 	AmbiantLight::count = 0;
 	DirectionalLight::count = 0;
 	PointLight::count = 0;
@@ -21,6 +20,9 @@ void Scene::render() {
 	}
 
 	for(Graphic* mesh : meshes){
+		// temp
+		camera->update_uniforms(mesh->renderer);
+
 		mesh->update_matrix();
 		mesh->renderer.update_uniform(model_uniform_name, mesh->model_matrix);
 		mesh->renderer.update_uniform(view_uniform_name, camera->view_matrix);

@@ -35,7 +35,10 @@ struct spot_light{
 };
 
 
-uniform sampler2D texture_slot;
+uniform sampler2D color_map_slot;
+uniform sampler2D specular_map_slot;
+uniform sampler2D normal_map_slot;
+
 uniform vec3 camera_coords;
 // lights
 uniform ambiant_light a_lights[10];
@@ -55,17 +58,26 @@ vec3 calculate_ambiant_light(vec3 ambiant){
 vec3 calculate_specular_light(vec3 light_direction, vec3 current_position, vec3 camera_position, vec3 light_color, vec3 normal){
 	float strenght = 0.4f;
 	float cos_angle = 0.9f;
+
+	vec4 specular_map_color = texture(specular_map_slot, tex_coords);
+	float specular_map_total = (specular_map_color.x + specular_map_color.y + specular_map_color.z)/3 * specular_map_color.w; // may change
+	if (specular_map_total == 0)
+		return vec3(0.0);
 	vec3 camera_looking_direction = normalize(camera_position - current_position);
 	vec3 reflected_light = normalize(reflect(light_direction, normal));
 	float current_cos_angle = dot(reflected_light, camera_looking_direction);
+	
+	// if camera isn't in a suitable angle
 	if(current_cos_angle < cos_angle)
 		return vec3(0.0f);
+
+	// if texture isn't lit direcly from the front
 	if (dot(normal, light_direction) > 0)
 		return vec3(0.0f);
 
 	//vec3 color = light_color * (max(dot(-light_direction, normal), 0));
 	vec3 light = vec3(pow(current_cos_angle, 100) * strenght);
-	return light;
+	return light * specular_map_total;
 }
 
 vec3 calculate_directional_light(vec3 light_direction, vec3 light_color, vec3 normal){
@@ -125,5 +137,5 @@ vec3 calculate_total_light(vec3 normal, vec3 space_coords){
 void main(){
 	vec3 total_light = calculate_total_light(frag_normal, frag_space_coord);
 	//vec3 total_light = calculate_spot_light_intensity(s_lights[0].position, s_lights[0].direction, s_lights[0].color, frag_space_coord, frag_normal, vec3(s_lights[0].constant_term, s_lights[0].linear_term, s_lights[0].exponential_term), s_lights[0].cos_angle);
-	frag_color = vec4(total_light, 1) * texture(texture_slot, tex_coords);
+	frag_color = vec4(total_light, 1) * texture(color_map_slot, tex_coords);
 }

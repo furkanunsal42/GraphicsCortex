@@ -28,6 +28,10 @@ void Camera::update_matrixes() {
 
 }
 
+void Camera::update_uniforms(Program& program) {
+	program.update_uniform(std::string("camera_coords"), position.x, position.y, position.z);
+}
+
 void Camera::handle_movements(GLFWwindow* window) {
 	if (glfwGetKey(window, GLFW_KEY_W) == 1) {
 		glm::vec3 forward_vector = glm::vec3(0.0f, 0.0f, -1.0f);

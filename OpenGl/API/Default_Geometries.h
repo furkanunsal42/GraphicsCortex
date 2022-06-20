@@ -6,7 +6,7 @@
 
 
 namespace default_geometry{
-	Graphic cube(const Texture& texture, const Program& renderer, glm::vec3 scale = glm::vec3(1.0f)) {
+	Graphic cube(const Material& material, const Program& renderer, glm::vec3 scale = glm::vec3(1.0f)) {
 		std::vector<float> custom_verticies{
 			// verticies										texture			normals	
 			-0.5f * scale.x, -0.5f * scale.y,  0.5f * scale.z,	0.0f, 0.0f,		0.0f, 0.0f, 1.0f,	//forward
@@ -56,10 +56,10 @@ namespace default_geometry{
 		};
 		IndexBuffer index_buffer(triangles, 3);
 
-		return Graphic(array_buffer, index_buffer, texture, renderer);
+		return Graphic(array_buffer, index_buffer, material, renderer);
 	}
 
-	Graphic cube(const Texture& texture_atlas, glm::ivec2 texture_atlas_dim, const std::vector<unsigned int>& face_texture_locations, const Program& renderer, glm::vec3 scale = glm::vec3(1.0f)) {
+	Graphic cube(const Material& material, glm::ivec2 texture_atlas_dim, const std::vector<unsigned int>& face_texture_locations, const Program& renderer, glm::vec3 scale = glm::vec3(1.0f)) {
 		float unit_width = 1.0f / texture_atlas_dim.x;
 		float unit_height = 1.0f / texture_atlas_dim.y;
 		std::vector<glm::vec2> texture_locations;
@@ -142,6 +142,6 @@ namespace default_geometry{
 		};
 		IndexBuffer index_buffer(triangles, 3);
 
-		return Graphic(array_buffer, index_buffer, texture_atlas, renderer);
+		return Graphic(array_buffer, index_buffer, material, renderer);
 	}
 }

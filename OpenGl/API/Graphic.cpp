@@ -2,10 +2,10 @@
 #include <iostream>
 
 Graphic::Graphic() :
-	model_matrix(glm::mat4(1.0f)), vertex_buffer(ArrayBuffer()), index_buffer(IndexBuffer()), texture(Texture())  {}
+	model_matrix(glm::mat4(1.0f)), vertex_buffer(ArrayBuffer()), index_buffer(IndexBuffer()), material(Material())  {}
 
-Graphic::Graphic(const ArrayBuffer& buffer, const IndexBuffer& indicies, const Texture& tex, const Program& renderer) : 
-	model_matrix(glm::mat4(1.0f)), vertex_buffer(buffer), index_buffer(indicies), texture(tex), renderer(renderer) {}
+Graphic::Graphic(const ArrayBuffer& buffer, const IndexBuffer& indicies, const Material& mat, const Program& renderer) : 
+	model_matrix(glm::mat4(1.0f)), vertex_buffer(buffer), index_buffer(indicies), material(mat), renderer(renderer) {}
 
 Graphic::Graphic(const std::vector<float>& verticies, int data_dim = 2) {
 	std::vector<unsigned int> triangles;
@@ -33,7 +33,7 @@ void Graphic::draw() {
 	renderer.bind();
 	vertex_buffer.bind();
 	index_buffer.bind();
-	texture.bind();
+	material.bind();
 	GLCall(glDrawElements(mode, index_buffer.data_count, GL_UNSIGNED_INT, nullptr));
 }
 

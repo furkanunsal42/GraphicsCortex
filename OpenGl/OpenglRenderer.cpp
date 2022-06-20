@@ -27,15 +27,20 @@ int main() {
 	int width = 640, height = 480;
 	GLFWwindow* window = frame::create_window(width, height, "My Window", 4, 1, true, false);
 
-	Texture texture;
-	texture.load_image("Images/grass.png");
+	Texture color_texture;
+	color_texture.load_image("Images/grass.png");
 	
+	Texture specular_map;
+	specular_map.load_image("Images/full_black.png");
+
+	Material material(color_texture, specular_map, specular_map);
+
 	Shader shader_file("Shaders/SolidVertex.glsl", "Shaders/SolidFragment.glsl");
 	Program program(shader_file.vertex_shader, shader_file.fragment_shader);
 
-	//Graphic cube = default_geometry::cube(texture, program, glm::vec3(1.0f));
+	//Graphic cube = default_geometry::cube(material, program, glm::vec3(1.0f));
 	Graphic cube = default_geometry::cube(
-		texture,
+		material,
 		glm::vec2(2, 2),
 		std::vector<unsigned int> {2, 2, 3, 2, 2, 0},
 		program
@@ -60,7 +65,8 @@ int main() {
 	//scene.lights.push_back(&point);
 	scene.lights.push_back(&spot);
 
-	program.update_uniform("texture_slot", 0);
+	program.update_uniform("color_map_slot", 0);
+	program.update_uniform("specular_map_slot", 1);
 
 	float t = 0;
 	while (!glfwWindowShouldClose(window)){
@@ -69,7 +75,6 @@ int main() {
 		frame::clear_window();
 		t += 0.01f;
 		//cube.position.x += 0.01f;
-		program.update_uniform("camera_coords", scene.camera->position.x, scene.camera->position.y, scene.camera->position.z);
 	
 		//cube.rotation.y += 0.4f;
 		//glm::vec4 point = cube.model_matrix * glm::vec4(0.0f, 0.0f, 1.0f, 0.0f);
