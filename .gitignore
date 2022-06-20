@@ -19,7 +19,6 @@ OpenGl/Debug/OpenGl.tlog/OpenGl.lastbuildstate
 OpenGl/Debug/openglrenderer.new.obj.enc
 OpenGl/Debug/OpenglRenderer.obj
 OpenGl/Debug/OpenGl.exe.recipe
-OpenGl.sln
 Debug/OpenGl.exe
 Debug/OpenGl.ilk
 Debug/OpenGl.pdb
@@ -32,17 +31,10 @@ Debug/OpenGl.pdb
 .vs/OpenGl/v16/ipch/AutoPCH/d5ad3b9614f8fd9b/SHADERCOMPILER.ipch
 OpenGl/Debug/Renderer.obj
 OpenGl/Debug/ShaderCompiler.obj
-OpenGl/OpenGl.vcxproj
-OpenGl/OpenGl.vcxproj.filters
-*.vcxproj
-OpenGl/OpenGl.vcxproj
-OpenGl/OpenGl.vcxproj.filters
 .vs/OpenGl/v16/ipch/AutoPCH/69ef14cfb254e902/DEBUGER.ipch
 .vs/OpenGl/v16/ipch/AutoPCH/ec399e0ece06ee5f/DEBUGER.ipch
 OpenGl/Debug/Debuger.obj
 OpenGl/Debug/openglrenderer.obj.enc
-OpenGl/OpenGl.vcxproj.filters
-OpenGl/OpenGl.vcxproj
 .vs/OpenGl/v16/ipch/AutoPCH/942142822b65e154/BUFFER.ipch
 .vs/OpenGl/v16/ipch/AutoPCH/cbb54b1ff357145d/BUFFER.ipch
 .vs/OpenGl/v16/ipch/AutoPCH/2cafade1c891fd63/DRAWER.ipch
@@ -59,5 +51,4 @@ OpenGl/Debug/stb_image.obj
 OpenGl/Debug/Buffer.obj
 OpenGl/Debug/Buffer.obj
 *.ipch
-OpenGl/OpenGl.vcxproj.user
 OpenGl/Debug/frame.obj.enc
