@@ -28,24 +28,24 @@ int main() {
 	GLFWwindow* window = frame::create_window(width, height, "My Window", 4, 1, true, false);
 
 	Texture color_texture;
-	color_texture.load_image("Images/grass.png");
+	color_texture.load_image("Images/GoldBlock.png");
 	
 	Texture specular_map;
-	specular_map.load_image("Images/full_black.png");
+	specular_map.load_image("Images/full_white.png");
 
 	Material material(color_texture, specular_map, specular_map);
 
 	Shader shader_file("Shaders/SolidVertex.glsl", "Shaders/SolidFragment.glsl");
 	Program program(shader_file.vertex_shader, shader_file.fragment_shader);
 
-	//Graphic cube = default_geometry::cube(material, program, glm::vec3(1.0f));
-	Graphic cube = default_geometry::cube(
+	Graphic cube = default_geometry::cube(material, program, glm::vec3(1.0f));
+	/*Graphic cube = default_geometry::cube(
 		material,
 		glm::vec2(2, 2),
 		std::vector<unsigned int> {2, 2, 3, 2, 2, 0},
 		program
 		);
-
+	*/
 	Camera cam;
 	cam.screen_width = (float)width;
 	cam.screen_height = (float)height;

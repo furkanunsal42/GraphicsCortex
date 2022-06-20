@@ -56,7 +56,7 @@ vec3 calculate_ambiant_light(vec3 ambiant){
 }
 
 vec3 calculate_specular_light(vec3 light_direction, vec3 current_position, vec3 camera_position, vec3 light_color, vec3 normal){
-	float strenght = 0.4f;
+	float strenght = 0.8f;
 	float cos_angle = 0.9f;
 
 	vec4 specular_map_color = texture(specular_map_slot, tex_coords);
