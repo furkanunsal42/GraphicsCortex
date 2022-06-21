@@ -3,11 +3,12 @@
 
 #include <string>
 
+
 class Texture {
 public:
-	unsigned int id;
-	int width, height, channels;
-	unsigned char* image_data;
+	unsigned int id = 0;
+	int width = NULL, height = NULL, channels = NULL;
+	unsigned char* image_data = NULL;
 
 	// default paremeters
 	bool vertical_flip = true;
@@ -17,10 +18,12 @@ public:
 	unsigned int wrap_t = GL_REPEAT;
 	unsigned int internal_format = NULL;
 	unsigned int format = NULL;
+	unsigned int data_type = GL_UNSIGNED_BYTE;
 
 	Texture();
 	void load_image(std::string file_path, int desired_channels = 4);
 	void free_image();
+	void initialize_blank_image();
 	void bind(unsigned short texture_slot);
 	void unbind();
 };
@@ -40,4 +43,28 @@ public:
 
 	void bind();
 	void unbind();
+};
+
+class RenderBuffer {
+public:
+	unsigned int id = 0;
+	int width = 0, height = 0;
+	unsigned int internal_format = GL_DEPTH24_STENCIL8;
+	RenderBuffer();
+	void bind();
+	void unbind();
+};
+
+class FrameBuffer {
+public:
+	unsigned int id = 0;
+	int width = 0, height = 0;
+	Texture color_texture;
+	RenderBuffer depth_stencil_buffer;
+
+	FrameBuffer(int width, int height);
+
+	void bind();
+	void unbind();
+	void render();
 };

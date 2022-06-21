@@ -51,12 +51,17 @@
     <ClCompile Include="API\Lights.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
+    <ClCompile Include="API\Default_Geometries.cpp">
+      <Filter>Kaynak Dosyalar</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\SolidVertex.glsl" />
     <None Include="Shaders\SolidFragment.glsl" />
     <None Include="Shaders\FlatColorVertex.glsl" />
     <None Include="Shaders\FlatColorFragment.glsl" />
+    <None Include="Shaders\FrameBufferVertex.glsl" />
+    <None Include="Shaders\FrameBufferFragment.glsl" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="API\Debuger.h">

@@ -38,18 +38,19 @@ int main() {
 	Material material;
 	material.color_map = &color_texture;
 	material.specular_map = &specular_map;
-	//material.normal_map = &normal_map;
+	material.normal_map = &normal_map;
 	material.bind();
 	Shader shader_file("Shaders/SolidVertex.glsl", "Shaders/SolidFragment.glsl");
 	Program program(shader_file.vertex_shader, shader_file.fragment_shader);
 
-	//Graphic cube = default_geometry::cube(material, program, glm::vec3(1.0f));
-	Graphic cube = default_geometry::cube(
+	//Graphic cube = default_geometry::rectangle(material, program, glm::vec3(1.0f));
+	Graphic cube = default_geometry::rectangle(
 		material,
 		glm::vec2(4, 4),
 		//std::vector<unsigned int> {2, 2, 3, 2, 2, 0},
 		std::vector<unsigned int> {0, 0, 0, 0, 0, 0},
-		program
+		program,
+		glm::vec2((float)width / height, 1)
 		);
 	
 	Camera cam;
@@ -91,31 +92,31 @@ int main() {
 	GLCall(glBindRenderbuffer(GL_RENDERBUFFER, render_buffer_id));
 	GLCall(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height));
 	GLCall(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, render_buffer_id));
-	
-	
-	/*
-	Graphic screen_rect(std::vector<float>{
-			0, 0, 0,
-			1, 0, 0,
-			1, 1, 0,
-			0, 1, 0}, 3);
 	*/
+
+	FrameBuffer frame_buffer(width, height);
 
 	float t = 0;
 	while (!glfwWindowShouldClose(window)){
-		//GLCall(glBindFramebuffer(GL_FRAMEBUFFER, frame_buffer_id));
+		frame_buffer.bind();
 		glfwPollEvents();
+		
 		frame::display_fps();
 		frame::clear_window();
+
 		t += 0.01f;
 		//cube.position.x += 0.01f;
-		
 		//cube.rotation.y += 0.4f;
 		//glm::vec4 point = cube.model_matrix * glm::vec4(0.0f, 0.0f, 1.0f, 0.0f);
 		//std::cout << "x: " << point.x << " y: " << point.y << " z: " << point.z << " w: " << point.w << std::endl;
 		point.position.y = 5*glm::cos(t);
+		
 		scene.camera->handle_movements(window);
 		scene.render();
+		
+		frame_buffer.unbind();
+
+		frame_buffer.render();
 
 		glfwSwapBuffers(window);
 	}

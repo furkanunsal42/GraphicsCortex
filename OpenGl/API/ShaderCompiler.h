@@ -37,10 +37,10 @@ public:
 		if (uniforms.find(name) == uniforms.end())
 			define_uniform(name);
 		bind();
-		if (typeid(T) == typeid(float)){
+		if (std::is_same<T, float>::value) {
 			GLCall(glUniform4f(uniforms[name], (float)a, (float)b, (float)c, (float)d));
 		}
-		else if (typeid(T) == typeid(int)){
+		else if (std::is_same<T, int>::value) {
 			GLCall(glUniform4i(uniforms[name], (int)a, (int)b, (int)c, (int)d));
 		}
 	}
@@ -49,10 +49,10 @@ public:
 		if (uniforms.find(name) == uniforms.end())
 			define_uniform(name);
 		bind();
-		if (typeid(T) == typeid(float)){
+		if (std::is_same<T, float>::value) {
 			GLCall(glUniform3f(uniforms[name], (float)a, (float)b, (float)c));
 		}
-		else if (typeid(T) == typeid(int)){
+		else if (std::is_same<T, int>::value) {
 			GLCall(glUniform3i(uniforms[name], (int)a, (int)b, (int)c));
 		}
 	}
@@ -61,10 +61,10 @@ public:
 		if (uniforms.find(name) == uniforms.end())
 			define_uniform(name);
 		bind();
-		if (typeid(T) == typeid(float)){
+		if (std::is_same<T, float>::value){
 			GLCall(glUniform2f(uniforms[name], (float)a, (float)b));
 		}
-		else if (typeid(T) == typeid(int)){
+		else if (std::is_same<T, int>::value) {
 			GLCall(glUniform2i(uniforms[name], (int)a, (int)b));
 		}
 	}
@@ -73,10 +73,10 @@ public:
 		if (uniforms.find(name) == uniforms.end())
 			define_uniform(name);
 		bind();
-		if (typeid(T) == typeid(float)){
+		if (std::is_same<T, float>::value){
 			GLCall(glUniform1f(uniforms[name], (float)a));
 		}
-		else if (typeid(T) == typeid(int)){
+		else if (std::is_same<T, int>::value){
 			GLCall(glUniform1i(uniforms[name], (int)a));
 		}
 	}
