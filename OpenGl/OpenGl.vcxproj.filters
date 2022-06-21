@@ -124,6 +124,21 @@
     <Image Include="Images\full_black.png">
       <Filter>Kaynak Dosyaları</Filter>
     </Image>
+    <Image Include="Images\Stones\brickcolor.jpg">
+      <Filter>Kaynak Dosyaları</Filter>
+    </Image>
+    <Image Include="Images\Stones\bricknormal.png">
+      <Filter>Kaynak Dosyaları</Filter>
+    </Image>
+    <Image Include="Images\Stones\brickreflection.jpg">
+      <Filter>Kaynak Dosyaları</Filter>
+    </Image>
+    <Image Include="Images\Stones\BricksFlemishRed001_cube.jpg">
+      <Filter>Kaynak Dosyaları</Filter>
+    </Image>
+    <Image Include="Images\Stones\BricksFlemishRed001_sphere.jpg">
+      <Filter>Kaynak Dosyaları</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Text Include="what does a good graphics api  should have.txt" />

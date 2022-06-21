@@ -187,6 +187,11 @@
     <Image Include="Images\GoldBlock.png" />
     <Image Include="Images\grass.png" />
     <Image Include="Images\orange.png" />
+    <Image Include="Images\Stones\brickcolor.jpg" />
+    <Image Include="Images\Stones\bricknormal.png" />
+    <Image Include="Images\Stones\brickreflection.jpg" />
+    <Image Include="Images\Stones\BricksFlemishRed001_cube.jpg" />
+    <Image Include="Images\Stones\BricksFlemishRed001_sphere.jpg" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="what does a good graphics api  should have.txt" />

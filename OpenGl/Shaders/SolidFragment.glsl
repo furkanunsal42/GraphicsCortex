@@ -39,6 +39,10 @@ uniform sampler2D color_map_slot;
 uniform sampler2D specular_map_slot;
 uniform sampler2D normal_map_slot;
 
+uniform int use_color_map;
+uniform int use_specular_map;
+uniform int use_normal_map;
+
 uniform vec3 camera_coords;
 // lights
 uniform ambiant_light a_lights[10];
@@ -56,11 +60,17 @@ vec3 calculate_ambiant_light(vec3 ambiant){
 }
 
 vec3 calculate_specular_light(vec3 light_direction, vec3 current_position, vec3 camera_position, vec3 light_color, vec3 normal){
+	
 	float strenght = 0.8f;
 	float cos_angle = 0.9f;
-
-	vec4 specular_map_color = texture(specular_map_slot, tex_coords);
-	float specular_map_total = (specular_map_color.x + specular_map_color.y + specular_map_color.z)/3 * specular_map_color.w; // may change
+	
+	vec3 specular_map_color;
+	if (use_specular_map)
+		specular_map_color = texture(specular_map_slot, tex_coords).rgb;
+	else
+		specular_map_color = vec3(0.0);
+	
+	float specular_map_total = (specular_map_color.x + specular_map_color.y + specular_map_color.z)/3; // may change
 	if (specular_map_total == 0)
 		return vec3(0.0);
 	vec3 camera_looking_direction = normalize(camera_position - current_position);
@@ -135,7 +145,18 @@ vec3 calculate_total_light(vec3 normal, vec3 space_coords){
 }
 
 void main(){
-	vec3 total_light = calculate_total_light(frag_normal, frag_space_coord);
-	//vec3 total_light = calculate_spot_light_intensity(s_lights[0].position, s_lights[0].direction, s_lights[0].color, frag_space_coord, frag_normal, vec3(s_lights[0].constant_term, s_lights[0].linear_term, s_lights[0].exponential_term), s_lights[0].cos_angle);
-	frag_color = vec4(total_light, 1) * texture(color_map_slot, tex_coords);
+
+	vec3 normal;
+	if(use_normal_map)
+	normal = normalize((texture(normal_map_slot, tex_coords) * 2) - 1).xyz;
+	else
+	normal = frag_normal;
+
+	vec3 total_light = calculate_total_light(normal, frag_space_coord);
+	vec4 color;
+	if (use_color_map)
+		color = texture(color_map_slot, tex_coords);
+	else
+		color = vec4(1.0);
+	frag_color = vec4(total_light, 1) * color;
 }

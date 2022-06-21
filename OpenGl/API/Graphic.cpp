@@ -4,8 +4,8 @@
 Graphic::Graphic() :
 	model_matrix(glm::mat4(1.0f)), vertex_buffer(ArrayBuffer()), index_buffer(IndexBuffer()), material(Material())  {}
 
-Graphic::Graphic(const ArrayBuffer& buffer, const IndexBuffer& indicies, const Material& mat, const Program& renderer) : 
-	model_matrix(glm::mat4(1.0f)), vertex_buffer(buffer), index_buffer(indicies), material(mat), renderer(renderer) {}
+Graphic::Graphic(const ArrayBuffer& buffer, const IndexBuffer& indicies, const Material& mat, Program& renderer) : 
+	model_matrix(glm::mat4(1.0f)), vertex_buffer(buffer), index_buffer(indicies), material(mat), renderer(&renderer) {}
 
 Graphic::Graphic(const std::vector<float>& verticies, int data_dim = 2) {
 	std::vector<unsigned int> triangles;
@@ -30,10 +30,14 @@ Graphic::Graphic(const std::vector<float>& verticies, int data_dim = 2) {
 }
  
 void Graphic::draw() {
-	renderer.bind();
+	renderer->bind();
 	vertex_buffer.bind();
 	index_buffer.bind();
-	material.bind();
+	//material.bind();
+	// temp
+	renderer->update_uniform("color_map_slot", material.color_map_slot);
+	renderer->update_uniform("specular_map_slot", material.specular_map_slot);
+	renderer->update_uniform("normal_map_slot", material.normal_map_slot);
 	GLCall(glDrawElements(mode, index_buffer.data_count, GL_UNSIGNED_INT, nullptr));
 }
 

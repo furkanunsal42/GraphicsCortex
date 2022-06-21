@@ -28,6 +28,10 @@ void Texture::load_image(std::string file_path, int desired_channels) {
 	GLCall(glGenTextures(1, &id));
 }
 
+void Texture::free_image() {
+	stbi_image_free(image_data);
+}
+
 void Texture::bind(unsigned short texture_slot) {
 	GLCall(glActiveTexture(GL_TEXTURE0 + texture_slot));
 	GLCall(glBindTexture(GL_TEXTURE_2D, id));
@@ -45,20 +49,35 @@ void Texture::unbind() {
 	GLCall(glBindTexture(GL_TEXTURE_2D, 0));
 }
 
-Material::Material() :
-	color_map(Texture()), specular_map(Texture()), normal_map(Texture()) {}
+Material::Material()
+{
+	/*
+	Texture a;
+	Texture b;
+	Texture c;
+	color_map = &a;
+	specular_map = &b; 
+	normal_map = &c;
+	*/
+}
 
-Material::Material(Texture color, Texture specular, Texture normal) :
-	color_map(color), specular_map(specular), normal_map(normal) {}
+Material::Material(Texture& color, Texture& specular, Texture& normal) :
+	color_map(&color), specular_map(&specular), normal_map(&normal) {}
 
 void Material::bind() {
-	color_map.bind(color_map_slot);
-	specular_map.bind(specular_map_slot);
-	normal_map.bind(normal_map_slot);
+	if (color_map != nullptr)
+		color_map->bind(color_map_slot);
+	if (specular_map != nullptr)
+		specular_map->bind(specular_map_slot);
+	if (normal_map != nullptr)
+		normal_map->bind(normal_map_slot);
 }
 
 void Material::unbind() {
-	color_map.unbind();
-	specular_map.unbind();
-	normal_map.unbind();
+	if (color_map != nullptr)
+		color_map->unbind();
+	if (specular_map != nullptr)
+		specular_map->unbind();
+	if (normal_map != nullptr)
+	normal_map->unbind();
 }
