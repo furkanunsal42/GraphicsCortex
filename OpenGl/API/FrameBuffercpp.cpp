@@ -26,10 +26,9 @@ void RenderBuffer::unbind() {
 
 FrameBuffer::FrameBuffer(int width, int height) :
 	width(width), height(height)
-{
+{	
 	// create color_texture
 	GLCall(glGenFramebuffers(1, &id));
-	//GLCall(glBindFramebuffer(GL_FRAMEBUFFER, id));
 	color_texture.internal_format = GL_RGB;
 	color_texture.format = GL_RGB;
 	color_texture.data_type = GL_UNSIGNED_BYTE;
@@ -46,11 +45,9 @@ FrameBuffer::FrameBuffer(int width, int height) :
 	depth_stencil_buffer.width = width;
 	depth_stencil_buffer.height = height;
 	depth_stencil_buffer.internal_format = GL_DEPTH24_STENCIL8;
-}
 
-void FrameBuffer::bind() {
 	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, id));
-	color_texture.initialize_blank_image();
+	color_texture.bind(texture_slot);
 	GLCall(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, color_texture.id, 0));
 
 	depth_stencil_buffer.bind();
@@ -61,22 +58,33 @@ void FrameBuffer::bind() {
 		std::cout << "[OPENGL ERROR] Framebuffer Error: " << error_status;
 		ASSERT(false);
 	}
+	unbind();
+}
+
+void FrameBuffer::bind() {
+	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, id));
 }
 
 void FrameBuffer::unbind() {
 	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 	//color_texture.unbind();
 	//depth_stencil_buffer.unbind();
+	//glClearColor(0, 0, 0, 1);
+	//glClear(GL_COLOR_BUFFER_BIT);
 }
 
 void FrameBuffer::render() {
-	GLCall(glActiveTexture(GL_TEXTURE0 + 4));
+	glDisable(GL_DEPTH_TEST);
+	if (!screen_initialized) {
+		Material material;
+		material.color_map = &color_texture;
+		screen = default_geometry::rectangle(material, *program, glm::vec2(2.0f));
+		screen_initialized = true;
+	}
+
+	GLCall(glActiveTexture(GL_TEXTURE0 + texture_slot));
 	GLCall(glBindTexture(GL_TEXTURE_2D, color_texture.id));
-	program->update_uniform("texture_slot", 4);
-	GLCall(glDisable(GL_DEPTH_TEST));
-
-	glBindVertexArray(screen_vao_id);
-	glDrawArrays(GL_TRIANGLES, 0, 6);
-
-	GLCall(glEnable(GL_DEPTH_TEST));
+	program->update_uniform("texture_slot", texture_slot);
+	screen.draw();
+	glEnable(GL_DEPTH_TEST);
 }

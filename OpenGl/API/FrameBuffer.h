@@ -4,7 +4,7 @@
 #include <string>
 #include "Texture.h"
 #include "ShaderCompiler.h"
-
+#include "Graphic.h"
 
 class RenderBuffer {
 public:
@@ -18,11 +18,12 @@ public:
 
 class FrameBuffer {
 public:
-	unsigned int screen_vao_id = 0;
 	unsigned int id = 0;
 	int width = 0, height = 0;
+	int texture_slot = 9;
 	Texture color_texture;
 	RenderBuffer depth_stencil_buffer;
+	Graphic screen;
 	Program* program = nullptr;
 
 	FrameBuffer(int width, int height);
@@ -30,4 +31,6 @@ public:
 	void bind();
 	void unbind();
 	void render();
+private:
+	bool screen_initialized = false;
 };
