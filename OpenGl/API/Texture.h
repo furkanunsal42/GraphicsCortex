@@ -3,7 +3,6 @@
 
 #include <string>
 
-
 class Texture {
 public:
 	unsigned int id = 0;
@@ -43,28 +42,4 @@ public:
 
 	void bind();
 	void unbind();
-};
-
-class RenderBuffer {
-public:
-	unsigned int id = 0;
-	int width = 0, height = 0;
-	unsigned int internal_format = GL_DEPTH24_STENCIL8;
-	RenderBuffer();
-	void bind();
-	void unbind();
-};
-
-class FrameBuffer {
-public:
-	unsigned int id = 0;
-	int width = 0, height = 0;
-	Texture color_texture;
-	RenderBuffer depth_stencil_buffer;
-
-	FrameBuffer(int width, int height);
-
-	void bind();
-	void unbind();
-	void render();
 };

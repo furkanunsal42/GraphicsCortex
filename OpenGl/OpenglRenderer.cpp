@@ -21,6 +21,7 @@
 #include "API\Camera.h"
 #include "API\Scene.h"
 #include "API\Default_Geometries.h"
+#include "API\FrameBuffer.h"
 
 int main() {
 	
@@ -93,12 +94,14 @@ int main() {
 	GLCall(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height));
 	GLCall(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, render_buffer_id));
 	*/
-
+	Shader fb_shader("Shaders/FrameBufferVertex.glsl", "Shaders/FrameBufferFragment.glsl");
+	Program fb_program(fb_shader.vertex_shader, fb_shader.fragment_shader);
 	FrameBuffer frame_buffer(width, height);
+	frame_buffer.program = &fb_program;
 
 	float t = 0;
 	while (!glfwWindowShouldClose(window)){
-		frame_buffer.bind();
+		//frame_buffer.bind();
 		glfwPollEvents();
 		
 		frame::display_fps();
@@ -114,9 +117,9 @@ int main() {
 		scene.camera->handle_movements(window);
 		scene.render();
 		
-		frame_buffer.unbind();
+		//frame_buffer.unbind();
 
-		frame_buffer.render();
+		//frame_buffer.render();
 
 		glfwSwapBuffers(window);
 	}
