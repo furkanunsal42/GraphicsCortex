@@ -30,27 +30,31 @@ Graphic::Graphic(const std::vector<float>& verticies, int data_dim = 2) {
 }
  
 void Graphic::draw() {
-	bool success = true;
+	bool material_exist = true;
+	bool renderer_exist = true;
 	if (material == nullptr) {
-		std::cout << "[Opengl Error] material is not specified for Graphic.draw" << std::endl;
-		success = false;
+		std::cout << "[Opengl Warning] material is not specified for Graphic.draw" << std::endl;
+		material_exist = false;
 	}
 	if (renderer == nullptr) {
-		std::cout << "[Opengl Error] renderer is not specified for Graphic.draw" << std::endl;
-		success = false;
+		std::cout << "[Opengl Warning] renderer is not specified for Graphic.draw" << std::endl;
+		renderer_exist = false;
 	}
-	if (!success)
-		return;
 
-
-	renderer->bind();
+	if (renderer_exist)
+		renderer->bind();
 	vertex_buffer.bind();
 	index_buffer.bind();
-	//material.bind();
+	//if (material_exist)
+	//	material->bind();
 	// temp
-	renderer->update_uniform("color_map_slot", material->color_map_slot);
-	renderer->update_uniform("specular_map_slot", material->specular_map_slot);
-	renderer->update_uniform("normal_map_slot", material->normal_map_slot);
+	
+	if (renderer_exist){
+		renderer->update_uniform("color_map_slot", material->color_map_slot);
+		renderer->update_uniform("specular_map_slot", material->specular_map_slot);
+		renderer->update_uniform("normal_map_slot", material->normal_map_slot);
+	}
+
 	GLCall(glDrawElements(mode, index_buffer.data_count, GL_UNSIGNED_INT, nullptr));
 }
 
