@@ -77,30 +77,27 @@ int main() {
 	Program fb_program(fb_shader.vertex_shader, fb_shader.fragment_shader);
 	FrameBuffer frame_buffer(width, height);
 	frame_buffer.program = &fb_program;
+	scene.frame_buffer = &frame_buffer;
 
 	float t = 0;
 	while (!glfwWindowShouldClose(window)){
-		frame_buffer.bind();
-		glfwPollEvents();
-		frame::display_performance();
-		frame::clear_window();
 		t += 0.01f;
-		//cube.position.x += 0.01f;
-		cube.rotation.y += 0.1f;
-		point.position.y = 5*glm::cos(t);
 		
+		frame::display_performance();
+
 		scene.camera->handle_movements(window);
-		scene.render();
 		if (glfwGetKey(window, GLFW_KEY_E) == 1) {
 			fb_program.update_uniform("edge_detect", 1);
 		}
 		else {
 			fb_program.update_uniform("edge_detect", 0);
 		}
-		frame_buffer.unbind();
-		frame_buffer.render();
+		
+		//cube.position.x += 0.01f;
+		cube.rotation.y += 0.1f;
+		point.position.y = 5*glm::cos(t);
 
-		glfwSwapBuffers(window);
+		scene.render_frame_buffer(window);
 	}
 
 	glfwDestroyWindow(window);
