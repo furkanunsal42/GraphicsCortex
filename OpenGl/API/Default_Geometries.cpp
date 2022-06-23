@@ -2,7 +2,8 @@
 
 
 namespace default_geometry {
-	Graphic rectangle(Material& material, Program& renderer, glm::vec2 scale) {
+
+	Graphic rectangle(glm::vec2 scale) {
 		std::vector<float> custom_verticies{
 			// verticies							texture			normals	
 			-0.5f * scale.x, -0.5f * scale.y,  0,	0.0f, 0.0f,		0.0f, 0.0f, 1.0f,	//forward
@@ -22,10 +23,20 @@ namespace default_geometry {
 		};
 		IndexBuffer index_buffer(triangles, 3);
 
-		return Graphic(array_buffer, index_buffer, material, renderer);
+		Graphic g;
+		g.vertex_buffer = array_buffer;
+		g.index_buffer = index_buffer;
+		return g;
 	}
 
-	Graphic rectangle(const Material& material, glm::ivec2 texture_atlas_dim, const std::vector<unsigned int>& face_texture_locations, Program& renderer, glm::vec2 scale) {
+	Graphic rectangle(Material& material, Program& renderer, glm::vec2 scale) {
+		Graphic g = rectangle(scale);
+		g.material = &material;
+		g.renderer = &renderer;
+		return g;
+	}
+
+	Graphic rectangle(Material& material, glm::ivec2 texture_atlas_dim, const std::vector<unsigned int>& face_texture_locations, Program& renderer, glm::vec2 scale) {
 		float unit_width = 1.0f / texture_atlas_dim.x;
 		float unit_height = 1.0f / texture_atlas_dim.y;
 		std::vector<glm::vec2> texture_locations;
@@ -80,7 +91,7 @@ namespace default_geometry {
 		return Graphic(array_buffer, index_buffer, material, renderer);
 	}
 
-	Graphic cube(const Material& material, Program& renderer, glm::vec3 scale){
+	Graphic cube(glm::vec3 scale) {
 		std::vector<float> custom_verticies{
 			// verticies										texture			normals	
 			-0.5f * scale.x, -0.5f * scale.y,  0.5f * scale.z,	0.0f, 0.0f,		0.0f, 0.0f, 1.0f,	//forward
@@ -130,10 +141,20 @@ namespace default_geometry {
 		};
 		IndexBuffer index_buffer(triangles, 3);
 
-		return Graphic(array_buffer, index_buffer, material, renderer);
+		Graphic g;
+		g.vertex_buffer = array_buffer;
+		g.index_buffer = index_buffer;
+		return g;
 	}
 
-	Graphic cube(const Material& material, glm::ivec2 texture_atlas_dim, const std::vector<unsigned int>& face_texture_locations, Program& renderer, glm::vec3 scale) {
+	Graphic cube(Material& material, Program& renderer, glm::vec3 scale){
+		Graphic g = cube(scale);
+		g.material = &material;
+		g.renderer = &renderer;
+		return g;
+	}
+
+	Graphic cube(Material& material, glm::ivec2 texture_atlas_dim, const std::vector<unsigned int>& face_texture_locations, Program& renderer, glm::vec3 scale) {
 		float unit_width = 1.0f / texture_atlas_dim.x;
 		float unit_height = 1.0f / texture_atlas_dim.y;
 		std::vector<glm::vec2> texture_locations;

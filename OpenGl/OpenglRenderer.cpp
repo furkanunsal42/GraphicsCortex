@@ -72,18 +72,19 @@ int main() {
 	scene.lights.push_back(&directional);
 	//scene.lights.push_back(&point);
 	//scene.lights.push_back(&spot);
-
+	GL_TEXTURE_CUBE_MAP_POSITIVE_X;
 	Shader fb_shader("Shaders/FrameBufferVertex.glsl", "Shaders/FrameBufferFragment.glsl");
 	Program fb_program(fb_shader.vertex_shader, fb_shader.fragment_shader);
 	FrameBuffer frame_buffer(width, height);
 	frame_buffer.program = &fb_program;
+
 	scene.frame_buffer = &frame_buffer;
 
 	float t = 0;
 	while (!glfwWindowShouldClose(window)){
 		t += 0.01f;
 		
-		frame::display_performance();
+		frame::display_performance(180);
 
 		scene.camera->handle_movements(window);
 		if (glfwGetKey(window, GLFW_KEY_E) == 1) {
@@ -97,7 +98,7 @@ int main() {
 		cube.rotation.y += 0.1f;
 		point.position.y = 5*glm::cos(t);
 
-		scene.render_frame_buffer(window);
+		scene.render_to_framebuffer(window);
 	}
 
 	glfwDestroyWindow(window);
