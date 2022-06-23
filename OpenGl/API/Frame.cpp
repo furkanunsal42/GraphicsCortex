@@ -4,10 +4,12 @@
 #include <iostream>
 
 namespace frame {
-	long old_time = time(nullptr);
-	int fps = 0;
 	bool is_glew_initialized = false;
 	bool is_glfw_initialized = false;
+	double old_time = glfwGetTime();
+	int fps_counter_index = 0;
+	int fps_counter_batch = 180;
+	double seconds_total_batch = 0;
 
 	GLFWwindow* create_window(int width, int height, std::string name, int msaa, int swapinterval, bool depth_test, bool blend) {
 		if (!is_glfw_initialized) {
@@ -47,13 +49,22 @@ namespace frame {
 		GLCall(glClearColor(red, green, blue, alpha));
 	}
 
-	void display_fps() {
-		fps++;
-		long now = std::time(nullptr);
-		if (now - old_time >= 1) {
-			std::cout << fps << std::endl;
-			fps = 0;
-			old_time = now;
+	void display_performance(int batch_size) {
+		if (batch_size != NULL && fps_counter_batch != batch_size)
+			fps_counter_batch = batch_size;
+
+		double now = glfwGetTime();
+		double seconds_current = (now - old_time);
+		if (fps_counter_index == fps_counter_batch) {
+			std::string ms = std::to_string(seconds_total_batch / fps_counter_index * 1000);
+			std::string fps = std::to_string(1 / ((seconds_total_batch / fps_counter_batch)));
+			std::cout << "[Opengl Info] ms:" + ms.substr(0, ms.find(".") + 3) + " fps: " + fps.substr(0, fps.find(".") + 3) << std::endl;
+			fps_counter_index = 0;
+			seconds_total_batch = 0;
 		}
+		seconds_total_batch += seconds_current;
+		fps_counter_index++;
+		old_time = now;
 	}
+
 }

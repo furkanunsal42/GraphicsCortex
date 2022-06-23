@@ -82,8 +82,7 @@ int main() {
 	while (!glfwWindowShouldClose(window)){
 		frame_buffer.bind();
 		glfwPollEvents();
-		
-		frame::display_fps();
+		frame::display_performance();
 		frame::clear_window();
 		t += 0.01f;
 		//cube.position.x += 0.01f;
