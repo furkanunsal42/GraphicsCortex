@@ -2,7 +2,9 @@
 
 #include "Texture.h"
 #include "Graphic.h"
-#include "Default_Geometries.h"
+#include "Default_Assets.h"
+#include "Camera.h"
+#include "ShaderCompiler.h"
 
 #include <string>
 #include <unordered_map>
@@ -14,6 +16,8 @@ enum cube_map {
 class CubeMapTexture{
 public:
 	Graphic cube = default_geometry::cube(glm::vec3(2, 2, 2));
+	Camera* camera = nullptr;
+	Program* program = nullptr;
 
 	unsigned int id = 0;
 	// right left top bottom front back for every array

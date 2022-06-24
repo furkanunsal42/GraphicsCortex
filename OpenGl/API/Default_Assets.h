@@ -18,3 +18,9 @@ namespace default_geometry{
 
 	Graphic cube(Material& material, glm::ivec2 texture_atlas_dim, const std::vector<unsigned int>& face_texture_locations, Program& renderer, glm::vec3 scale = glm::vec3(1.0f));
 }
+
+namespace default_program {
+	Program solid_program();
+	Program framebuffer_program();
+	Program cubemap_program();
+}

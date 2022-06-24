@@ -1,4 +1,4 @@
-#include "Default_Geometries.h"
+#include "Default_Assets.h"
 
 
 namespace default_geometry {
@@ -238,5 +238,20 @@ namespace default_geometry {
 		IndexBuffer index_buffer(triangles, 3);
 
 		return Graphic(array_buffer, index_buffer, material, renderer);
+	}
+}
+
+namespace default_program {
+	Program solid_program() {
+		Shader default_shader("Shaders/SolidVertex.glsl", "Shaders/SolidFragment.glsl");
+		return Program(default_shader.vertex_shader, default_shader.fragment_shader);
+	}
+	Program framebuffer_program() {
+		Shader default_shader("Shaders/FrameBufferVertex.glsl", "Shaders/FrameBufferFragment.glsl");
+		return Program(default_shader.vertex_shader, default_shader.fragment_shader);
+	}
+	Program cubemap_program() {
+		Shader default_shader("Shaders/CubeMapVertex.glsl", "Shaders/CubeMapFragment.glsl");
+		return Program(default_shader.vertex_shader, default_shader.fragment_shader);
 	}
 }

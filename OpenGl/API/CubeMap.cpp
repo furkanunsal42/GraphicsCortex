@@ -78,7 +78,12 @@ void CubeMapTexture::bind() {
 
 void CubeMapTexture::draw() {
 	bind();
-	cube.draw();
+	cube.renderer = program;
+	program->bind();
+	program->update_uniform("cubemap", 11);
+	program->update_uniform("view", glm::mat4(glm::mat3(camera->view_matrix)));
+	program->update_uniform("projection", camera->projection_matrix);
+	cube.draw(false);
 }
 
 void CubeMapTexture::unbind() {

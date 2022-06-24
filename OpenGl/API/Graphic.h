@@ -18,6 +18,6 @@ public:
 	Graphic();
 	Graphic(const ArrayBuffer& buffer, const IndexBuffer& indicies, Material& material, Program& renderer);
 	Graphic(const std::vector<float>& verticies , int data_dim);
-	void draw();
+	void draw(bool show_warnings = true);
 	void update_matrix();
 };

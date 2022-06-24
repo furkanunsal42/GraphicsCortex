@@ -2,10 +2,10 @@
 #include <iostream>
 
 Graphic::Graphic() :
-	model_matrix(glm::mat4(1.0f)), vertex_buffer(ArrayBuffer()), index_buffer(IndexBuffer())  {}
+	model_matrix(glm::mat4(1.0f)), vertex_buffer(ArrayBuffer()), index_buffer(IndexBuffer()) {}
 
-Graphic::Graphic(const ArrayBuffer& buffer, const IndexBuffer& indicies, Material& mat, Program& renderer) : 
-	model_matrix(glm::mat4(1.0f)), vertex_buffer(buffer), index_buffer(indicies), material(&mat), renderer(&renderer) {}
+Graphic::Graphic(const ArrayBuffer& buffer, const IndexBuffer& indicies, Material& mat, Program& program) : 
+	model_matrix(glm::mat4(1.0f)), vertex_buffer(buffer), index_buffer(indicies), material(&mat), renderer(&program) {}
 
 Graphic::Graphic(const std::vector<float>& verticies, int data_dim = 2) {
 	std::vector<unsigned int> triangles;
@@ -29,15 +29,17 @@ Graphic::Graphic(const std::vector<float>& verticies, int data_dim = 2) {
 	this->index_buffer = index_buffer;
 }
  
-void Graphic::draw() {
+void Graphic::draw(bool show_warnings) {
 	bool material_exist = true;
 	bool renderer_exist = true;
 	if (material == nullptr) {
-		std::cout << "[Opengl Warning] material is not specified for Graphic.draw" << std::endl;
+		if (show_warnings)
+			std::cout << "[Opengl Warning] material is not specified for Graphic.draw" << std::endl;
 		material_exist = false;
 	}
 	if (renderer == nullptr) {
-		std::cout << "[Opengl Warning] renderer is not specified for Graphic.draw" << std::endl;
+		if (show_warnings)
+			std::cout << "[Opengl Warning] renderer is not specified for Graphic.draw" << std::endl;
 		renderer_exist = false;
 	}
 

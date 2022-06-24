@@ -51,7 +51,7 @@
     <ClCompile Include="API\Lights.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
-    <ClCompile Include="API\Default_Geometries.cpp">
+    <ClCompile Include="API\Default_Assets.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
     <ClCompile Include="API\FrameBuffercpp.cpp">
@@ -111,7 +111,7 @@
     <ClInclude Include="API\Scene.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
-    <ClInclude Include="API\Default_Geometries.h">
+    <ClInclude Include="API\Default_Assets.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
     <ClInclude Include="API\Lights.h">

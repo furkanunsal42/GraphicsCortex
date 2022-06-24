@@ -147,7 +147,7 @@
   <ItemGroup>
     <ClCompile Include="API\Camera.cpp" />
     <ClCompile Include="API\CubeMap.cpp" />
-    <ClCompile Include="API\Default_Geometries.cpp" />
+    <ClCompile Include="API\Default_Assets.cpp" />
     <ClCompile Include="API\FrameBuffercpp.cpp" />
     <ClCompile Include="API\Lights.cpp" />
     <ClCompile Include="API\Scene.cpp" />
@@ -175,7 +175,7 @@
     <ClInclude Include="API\Camera.h" />
     <ClInclude Include="API\CubeMap.h" />
     <ClInclude Include="API\Debuger.h" />
-    <ClInclude Include="API\Default_Geometries.h" />
+    <ClInclude Include="API\Default_Assets.h" />
     <ClInclude Include="API\FrameBuffer.h" />
     <ClInclude Include="API\Lights.h" />
     <ClInclude Include="API\Scene.h" />
