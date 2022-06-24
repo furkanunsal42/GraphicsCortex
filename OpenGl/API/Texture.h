@@ -18,12 +18,12 @@ public:
 	unsigned int internal_format = NULL;
 	unsigned int format = NULL;
 	unsigned int data_type = GL_UNSIGNED_BYTE;
-
+	unsigned int texture_slot = 0;
 	Texture();
-	void load_image(std::string file_path, int desired_channels = 4);
+	void load_image(std::string file_path, int desired_channels = 4, bool free_ram = false);
 	void free_image();
 	void initialize_blank_image();
-	void bind(unsigned short texture_slot);
+	void bind();
 	void unbind();
 };
 

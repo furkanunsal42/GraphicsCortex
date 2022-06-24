@@ -43,7 +43,8 @@ FrameBuffer::FrameBuffer(int width, int height) :
 	depth_stencil_buffer.internal_format = GL_DEPTH24_STENCIL8;
 
 	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, id));
-	color_texture.bind(texture_slot);
+	color_texture.texture_slot = texture_slot;
+	color_texture.initialize_blank_image();
 	GLCall(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, color_texture.id, 0));
 	depth_stencil_buffer.bind();
 	GLCall(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, depth_stencil_buffer.id));

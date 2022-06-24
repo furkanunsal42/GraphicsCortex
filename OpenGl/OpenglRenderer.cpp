@@ -31,11 +31,11 @@ int main() {
 	Scene scene;
 
 	Texture color_texture;
-	color_texture.load_image("Images/Stones/brickcolor.jpg");
+	color_texture.load_image("Images/Stones/brickcolor.jpg", 4, true);
 	Texture specular_map;
-	specular_map.load_image("Images/Stones/brickreflection.jpg");
+	specular_map.load_image("Images/Stones/brickreflection.jpg", 4, true);
 	Texture normal_map;
-	normal_map.load_image("Images/Stones/bricknormal.png", 3);
+	normal_map.load_image("Images/Stones/bricknormal.png", 3, true);
 	Material material;
 	material.color_map = &color_texture;
 	material.specular_map = &specular_map;
@@ -93,10 +93,12 @@ int main() {
 	cube_map.face_texture_filepaths[BOTTOM] = "Images/CubeMap/Sky/ny.jpg";
 	cube_map.face_texture_filepaths[FRONT] = "Images/CubeMap/Sky/pz.jpg";
 	cube_map.face_texture_filepaths[BACK] = "Images/CubeMap/Sky/nz.jpg";
-	cube_map.load_data(3);
-
+	cube_map.load_data(3, true);
+	
 	float t = 0;
 	while (!glfwWindowShouldClose(window)){
+		frame_buffer.bind();
+
 		t += 0.01f;
 		glfwPollEvents();
 		frame::clear_window(0, 0, 0, 1);
@@ -122,6 +124,9 @@ int main() {
 		point.position.y = 5*glm::cos(t);
 
 		scene.render(window);
+
+		frame_buffer.unbind();
+		frame_buffer.render();
 
 		glfwSwapBuffers(window);
 	}

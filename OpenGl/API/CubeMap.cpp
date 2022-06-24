@@ -10,7 +10,7 @@ CubeMapTexture::CubeMapTexture() {
 	GLCall(glGenTextures(1, &id));
 }
 
-void CubeMapTexture::load_data(int desired_channels) {
+void CubeMapTexture::load_data(int desired_channels, bool free_ram) {
 	for (std::string file_path : face_texture_filepaths) {
 		if (file_path == ""){
 			std::cout << "[Opengl Error] At least one of the texture file paths is not specified for CubeMapTexture.load_data" << std::endl;
@@ -36,7 +36,7 @@ void CubeMapTexture::load_data(int desired_channels) {
 		if (format == NULL)
 			format = GL_RGB;
 		if (internal_format == NULL)
-			internal_format = GL_RGB;
+			internal_format = GL_RGB8;
 	}
 	else if (desired_channels == 4) {
 		if (format == NULL)
@@ -55,8 +55,15 @@ void CubeMapTexture::load_data(int desired_channels) {
 	for (int i = 0; i < 6; i++) {
 		GLCall(glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, internal_format, width[i], height[i], 0, format, data_type, image_data[i]));
 	}
+	if (free_ram)
+		free_image_ram();
 }
 
+void CubeMapTexture::free_image_ram() {
+	for (unsigned char* data : image_data){
+		stbi_image_free(data);
+	}
+}
 
 
 void CubeMapTexture::bind() {

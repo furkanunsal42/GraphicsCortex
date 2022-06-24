@@ -9,7 +9,7 @@ Texture::Texture() {
 	GLCall(glGenTextures(1, &id));
 }
 
-void Texture::load_image(std::string file_path, int desired_channels) {
+void Texture::load_image(std::string file_path, int desired_channels, bool free_ram) {
 	if (image_data != nullptr)
 		stbi_image_free(image_data);
 
@@ -28,15 +28,28 @@ void Texture::load_image(std::string file_path, int desired_channels) {
 		if (internal_format == NULL)
 			internal_format = GL_RGBA8;
 	}
-	//GLCall(glGenTextures(1, &id));
+
+	GLCall(glActiveTexture(GL_TEXTURE0 + texture_slot));
+	GLCall(glBindTexture(GL_TEXTURE_2D, id));
+	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, min_filter));
+	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, mag_filter));
+	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap_s));
+	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap_t));
+
+	GLCall(glTexImage2D(GL_TEXTURE_2D, 0, internal_format, width, height, 0, format, data_type, image_data));
+	GLCall(glGenerateMipmap(GL_TEXTURE_2D));
+
+	if (free_ram)
+		free_image();
 }
 
 void Texture::free_image() {
 	stbi_image_free(image_data);
 }
 
-/*
+
 void Texture::initialize_blank_image() {
+	GLCall(glActiveTexture(GL_TEXTURE0 + texture_slot));
 	GLCall(glBindTexture(GL_TEXTURE_2D, id));
 	GLCall(glTexImage2D(GL_TEXTURE_2D, 0, internal_format, width, height, 0, format, data_type, NULL));
 	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, min_filter));
@@ -44,9 +57,9 @@ void Texture::initialize_blank_image() {
 	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap_s));
 	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap_t));
 }
-*/
 
-void Texture::bind(unsigned short texture_slot) {
+
+void Texture::bind() {
 	GLCall(glActiveTexture(GL_TEXTURE0 + texture_slot));
 	GLCall(glBindTexture(GL_TEXTURE_2D, id));
 	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, min_filter));
@@ -54,8 +67,8 @@ void Texture::bind(unsigned short texture_slot) {
 	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap_s));
 	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap_t));
 	
-	GLCall(glTexImage2D(GL_TEXTURE_2D, 0, internal_format, width, height, 0, format, data_type, image_data));
-	GLCall(glGenerateMipmap(GL_TEXTURE_2D));
+	//GLCall(glTexImage2D(GL_TEXTURE_2D, 0, internal_format, width, height, 0, format, data_type, image_data));
+	//GLCall(glGenerateMipmap(GL_TEXTURE_2D));
 }
 
 void Texture::unbind() {
@@ -78,12 +91,18 @@ Material::Material(Texture& color, Texture& specular, Texture& normal) :
 	color_map(&color), specular_map(&specular), normal_map(&normal) {}
 
 void Material::bind() {
-	if (color_map != nullptr)
-		color_map->bind(color_map_slot);
-	if (specular_map != nullptr)
-		specular_map->bind(specular_map_slot);
-	if (normal_map != nullptr)
-		normal_map->bind(normal_map_slot);
+	if (color_map != nullptr){
+		color_map->texture_slot = color_map_slot;
+		color_map->bind();
+	}
+	if (specular_map != nullptr){
+		specular_map->texture_slot = specular_map_slot;
+		specular_map->bind();
+	}
+	if (normal_map != nullptr){
+		normal_map->texture_slot = normal_map_slot;
+		normal_map->bind();
+	}
 }
 
 void Material::unbind() {

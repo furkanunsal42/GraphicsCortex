@@ -35,7 +35,8 @@ public:
 	unsigned int data_type = GL_UNSIGNED_BYTE;
 	int texture_slot = 11;
 	CubeMapTexture();
-	void load_data(int desired_channels = 3);
+	void load_data(int desired_channels = 3, bool free_ram = false);
+	void free_image_ram();
 	void draw();
 	void bind();
 	void unbind();
