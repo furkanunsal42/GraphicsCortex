@@ -10,6 +10,9 @@ Texture::Texture() {
 }
 
 void Texture::load_image(std::string file_path, int desired_channels) {
+	if (image_data != nullptr)
+		stbi_image_free(image_data);
+
 	stbi_set_flip_vertically_on_load(vertical_flip);
 
 	image_data = stbi_load(file_path.c_str(), &width, &height, &channels, desired_channels);
@@ -32,6 +35,7 @@ void Texture::free_image() {
 	stbi_image_free(image_data);
 }
 
+/*
 void Texture::initialize_blank_image() {
 	GLCall(glBindTexture(GL_TEXTURE_2D, id));
 	GLCall(glTexImage2D(GL_TEXTURE_2D, 0, internal_format, width, height, 0, format, data_type, NULL));
@@ -40,7 +44,7 @@ void Texture::initialize_blank_image() {
 	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap_s));
 	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap_t));
 }
-
+*/
 
 void Texture::bind(unsigned short texture_slot) {
 	GLCall(glActiveTexture(GL_TEXTURE0 + texture_slot));

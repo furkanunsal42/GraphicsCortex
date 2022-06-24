@@ -161,6 +161,8 @@
     <ClCompile Include="API\ShaderCompiler.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Shaders\CubeMapFragment.glsl" />
+    <None Include="Shaders\CubeMapVertex.glsl" />
     <None Include="Shaders\FlatColorFragment.glsl" />
     <None Include="Shaders\FlatColorVertex.glsl" />
     <None Include="Shaders\FrameBufferFragment.glsl" />
@@ -189,6 +191,18 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="Images\cobble.png" />
+    <Image Include="Images\CubeMap\Sky\nz.jpg" />
+    <Image Include="Images\CubeMap\Sky\ny.jpg" />
+    <Image Include="Images\CubeMap\Sky\pz.jpg" />
+    <Image Include="Images\CubeMap\Sky\nx.jpg" />
+    <Image Include="Images\CubeMap\Sky\px.jpg" />
+    <Image Include="Images\CubeMap\Sky\py.jpg" />
+    <Image Include="Images\CubeMap\Street\nx.png" />
+    <Image Include="Images\CubeMap\Street\ny.png" />
+    <Image Include="Images\CubeMap\Street\nz.png" />
+    <Image Include="Images\CubeMap\Street\px.png" />
+    <Image Include="Images\CubeMap\Street\py.png" />
+    <Image Include="Images\CubeMap\Street\pz.png" />
     <Image Include="Images\full_black.png" />
     <Image Include="Images\full_white.png" />
     <Image Include="Images\GoldBlock.png" />

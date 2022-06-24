@@ -19,5 +19,5 @@ public:
 	FrameBuffer* frame_buffer = nullptr;
 
 	void render(GLFWwindow* window);
-	void render_frame_buffer(GLFWwindow* window);
+	void render_to_framebuffer(GLFWwindow* window);
 };

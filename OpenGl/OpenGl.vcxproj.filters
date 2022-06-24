@@ -68,6 +68,8 @@
     <None Include="Shaders\FlatColorFragment.glsl" />
     <None Include="Shaders\FrameBufferVertex.glsl" />
     <None Include="Shaders\FrameBufferFragment.glsl" />
+    <None Include="Shaders\CubeMapVertex.glsl" />
+    <None Include="Shaders\CubeMapFragment.glsl" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="API\Debuger.h">
@@ -154,6 +156,42 @@
       <Filter>Kaynak Dosyaları</Filter>
     </Image>
     <Image Include="Images\Stones\BricksFlemishRed001_sphere.jpg">
+      <Filter>Kaynak Dosyaları</Filter>
+    </Image>
+    <Image Include="Images\CubeMap\Street\nx.png">
+      <Filter>Kaynak Dosyaları</Filter>
+    </Image>
+    <Image Include="Images\CubeMap\Street\ny.png">
+      <Filter>Kaynak Dosyaları</Filter>
+    </Image>
+    <Image Include="Images\CubeMap\Street\nz.png">
+      <Filter>Kaynak Dosyaları</Filter>
+    </Image>
+    <Image Include="Images\CubeMap\Street\px.png">
+      <Filter>Kaynak Dosyaları</Filter>
+    </Image>
+    <Image Include="Images\CubeMap\Street\py.png">
+      <Filter>Kaynak Dosyaları</Filter>
+    </Image>
+    <Image Include="Images\CubeMap\Street\pz.png">
+      <Filter>Kaynak Dosyaları</Filter>
+    </Image>
+    <Image Include="Images\CubeMap\Sky\nz.jpg">
+      <Filter>Kaynak Dosyaları</Filter>
+    </Image>
+    <Image Include="Images\CubeMap\Sky\ny.jpg">
+      <Filter>Kaynak Dosyaları</Filter>
+    </Image>
+    <Image Include="Images\CubeMap\Sky\pz.jpg">
+      <Filter>Kaynak Dosyaları</Filter>
+    </Image>
+    <Image Include="Images\CubeMap\Sky\nx.jpg">
+      <Filter>Kaynak Dosyaları</Filter>
+    </Image>
+    <Image Include="Images\CubeMap\Sky\px.jpg">
+      <Filter>Kaynak Dosyaları</Filter>
+    </Image>
+    <Image Include="Images\CubeMap\Sky\py.jpg">
       <Filter>Kaynak Dosyaları</Filter>
     </Image>
   </ItemGroup>

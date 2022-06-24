@@ -49,7 +49,7 @@ void Graphic::draw() {
 	//	material->bind();
 	// temp
 	
-	if (renderer_exist){
+	if (renderer_exist && material_exist){
 		renderer->update_uniform("color_map_slot", material->color_map_slot);
 		renderer->update_uniform("specular_map_slot", material->specular_map_slot);
 		renderer->update_uniform("normal_map_slot", material->normal_map_slot);
