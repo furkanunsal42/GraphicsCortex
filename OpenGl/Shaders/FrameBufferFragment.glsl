@@ -8,16 +8,16 @@ uniform sampler2D texture_slot;
 uniform int edge_detect;
 
 float offset = 4/600.0f;
-int kernel[] = {
+int kernel[] = int[](
 	1, 0, 1,
 	0,-4, 0,
-	1, 0, 1,
-};
+	1, 0, 1
+);
 
 void main(){
 	vec4 color;
 	vec4 color_avarage;
-	if (edge_detect){
+	if (bool(edge_detect)){
 		float x, y;
 		for (int i = 0; i < 9; i++){
 			x = ((i % 3) - 1) * offset;

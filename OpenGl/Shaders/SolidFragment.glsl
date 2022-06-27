@@ -65,7 +65,7 @@ vec3 calculate_specular_light(vec3 light_direction, vec3 current_position, vec3 
 	float cos_angle = 0.9f;
 	
 	vec3 specular_map_color;
-	if (use_specular_map)
+	if (bool(use_specular_map))
 		specular_map_color = texture(specular_map_slot, tex_coords).rgb;
 	else
 		specular_map_color = vec3(0.0);
@@ -147,14 +147,14 @@ vec3 calculate_total_light(vec3 normal, vec3 space_coords){
 void main(){
 
 	vec3 normal;
-	if(use_normal_map)
-	normal = normalize((texture(normal_map_slot, tex_coords) * 2) - 1).xyz;
+	if(bool(use_normal_map))
+		normal = normalize((texture(normal_map_slot, tex_coords) * 2) - 1).xyz;
 	else
-	normal = frag_normal;
+		normal = frag_normal;
 
 	vec3 total_light = calculate_total_light(normal, frag_space_coord);
 	vec4 color;
-	if (use_color_map)
+	if (bool(use_color_map))
 		color = texture(color_map_slot, tex_coords);
 	else
 		color = vec4(1.0);
