@@ -168,6 +168,7 @@
     <None Include="Shaders\FrameBufferFragment.glsl" />
     <None Include="Shaders\FrameBufferVertex.glsl" />
     <None Include="Shaders\SolidFragment.glsl" />
+    <None Include="Shaders\SolidGeometry.glsl" />
     <None Include="Shaders\SolidVertex.glsl" />
   </ItemGroup>
   <ItemGroup>

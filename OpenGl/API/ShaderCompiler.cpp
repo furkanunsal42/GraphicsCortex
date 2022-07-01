@@ -15,6 +15,11 @@ Shader::Shader(const std::string& vertex_target_file, const std::string& fragmen
 	read_shader(vertex_target_file);
 	read_shader(fragment_target_file);
 }
+Shader::Shader(const std::string& vertex_target_file, const std::string& geometry_terget_file, const std::string& fragment_target_file) {
+	read_shader(vertex_target_file);
+	read_shader(geometry_terget_file);
+	read_shader(fragment_target_file);
+}
 
 void Shader::read_shader(const std::string& target_file) {
 	std::string type = "";
@@ -30,11 +35,18 @@ void Shader::read_shader(const std::string& target_file) {
 			type = "fragment";
 			continue;
 		}
+		else if (line.find("#<geometry shader>") != std::string::npos) {
+			type = "geometry";
+			continue;
+		}
 		if (type == "vertex") {
 			vertex_shader += line + '\n';
 		}
 		else if (type == "fragment") {
 			fragment_shader += line + '\n';
+		}
+		else if (type == "geometry") {
+			geometry_shader += line + '\n';
 		}
 	}
 }
@@ -70,6 +82,10 @@ Program::Program() {
 Program::Program(const std::string& vertex_shader_code, const std::string& fragment_shader_code) {
 	compile(vertex_shader_code, fragment_shader_code);
 }
+Program::Program(const std::string& vertex_shader_code, const std::string& geometry_shader_code, const std::string& fragment_shader_code) {
+	compile(vertex_shader_code, geometry_shader_code, fragment_shader_code);
+}
+
 
 void Program::compile(const std::string& vertex_shader_code, const std::string& fragment_shader_code) {
 	id = glCreateProgram();
@@ -81,6 +97,22 @@ void Program::compile(const std::string& vertex_shader_code, const std::string& 
 	GLCall(glLinkProgram(id));
 
 	GLCall(glDeleteShader(vertex_shader));
+	GLCall(glDeleteShader(fragment_shader));
+}
+
+void Program::compile(const std::string& vertex_shader_code, const std::string& geometry_shader_code, const std::string& fragment_shader_code){
+	id = glCreateProgram();
+	unsigned int vertex_shader = compile_shader(GL_VERTEX_SHADER, vertex_shader_code);
+	unsigned int geometry_shader = compile_shader(GL_GEOMETRY_SHADER, geometry_shader_code);
+	unsigned int fragment_shader = compile_shader(GL_FRAGMENT_SHADER, fragment_shader_code);
+
+	GLCall(glAttachShader(id, vertex_shader));
+	GLCall(glAttachShader(id, geometry_shader));
+	GLCall(glAttachShader(id, fragment_shader));
+	GLCall(glLinkProgram(id));
+
+	GLCall(glDeleteShader(vertex_shader));
+	GLCall(glDeleteShader(geometry_shader));
 	GLCall(glDeleteShader(fragment_shader));
 }
 

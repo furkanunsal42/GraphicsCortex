@@ -243,8 +243,8 @@ namespace default_geometry {
 
 namespace default_program {
 	Program solid_program() {
-		Shader default_shader("Shaders/SolidVertex.glsl", "Shaders/SolidFragment.glsl");
-		return Program(default_shader.vertex_shader, default_shader.fragment_shader);
+		Shader default_shader("Shaders/SolidVertex.glsl", "Shaders/SolidGeometry.glsl", "Shaders/SolidFragment.glsl");
+		return Program(default_shader.vertex_shader, default_shader.geometry_shader, default_shader.fragment_shader);
 	}
 	Program framebuffer_program() {
 		Shader default_shader("Shaders/FrameBufferVertex.glsl", "Shaders/FrameBufferFragment.glsl");

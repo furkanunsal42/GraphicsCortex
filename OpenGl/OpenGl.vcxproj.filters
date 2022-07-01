@@ -70,6 +70,7 @@
     <None Include="Shaders\FrameBufferFragment.glsl" />
     <None Include="Shaders\CubeMapVertex.glsl" />
     <None Include="Shaders\CubeMapFragment.glsl" />
+    <None Include="Shaders\SolidGeometry.glsl" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="API\Debuger.h">

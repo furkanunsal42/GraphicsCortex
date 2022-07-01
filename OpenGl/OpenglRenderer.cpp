@@ -30,18 +30,20 @@ int main() {
 	GLFWwindow* window = frame::create_window(width, height, "My Window", 4, 1, true, false);
 	Scene scene;
 
-	Texture color_texture;
-	color_texture.load_image("Images/Stones/brickcolor.jpg", 4, true);
-	Texture specular_map;
-	specular_map.load_image("Images/Stones/brickreflection.jpg", 4, true);
-	Texture normal_map;
-	normal_map.load_image("Images/Stones/bricknormal.png", 3, true);
 	Material material;
+	Texture color_texture;
+	Texture specular_map;
+	Texture normal_map;
+	color_texture.load_image("Images/Stones/brickcolor.jpg", 4, true);
+	specular_map.load_image("Images/Stones/brickreflection.jpg", 4, true);
+	normal_map.load_image("Images/Stones/bricknormal.png", 3, true);
 	material.color_map = &color_texture;
 	material.specular_map = &specular_map;
 	//material.normal_map = &normal_map;
 	material.bind();
+	
 	Program soild_program = default_program::solid_program();
+	
 	//Graphic cube = default_geometry::rectangle(material, program, glm::vec3(1.0f));
 	Graphic cube = default_geometry::cube(
 		material,
@@ -112,7 +114,7 @@ int main() {
 
 
 		//cube.position.x += 0.01f;
-		cube.rotation.y += 0.1f;
+		cube.rotation.y += 0.4f;
 		point.position.y = 5*glm::cos(t);
 
 		scene.render(window);

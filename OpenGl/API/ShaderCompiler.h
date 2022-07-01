@@ -9,17 +9,21 @@
 #include <map>
 #include "Debuger.h"
 
-struct Shader {
+class Shader {
+public:
 	std::string vertex_shader;
 	std::string fragment_shader;
+	std::string geometry_shader;
 	Shader();
 	Shader(const std::string& target_file);
 	Shader(const std::string& vertex_target_file, const std::string& fragment_target_file);
+	Shader(const std::string& vertex_target_file, const std::string& geometry_terget_file, const std::string& fragment_target_file);
 	void read_shader(const std::string& target_file);
+	
 };
 
 
-struct Program {
+class Program {
 private:
 	unsigned int compile_shader(unsigned int type, const std::string& shader_source);
 public:
@@ -27,7 +31,9 @@ public:
 	std::map<std::string, unsigned int> uniforms;
 	Program();
 	Program(const std::string& vertex_shader_code, const std::string& fragment_shader_code);
+	Program(const std::string& vertex_shader_code, const std::string& geometry_shader_code, const std::string& fragment_shader_code);
 	void compile(const std::string& vertex_shader_code, const std::string& fragment_shader_code);
+	void compile(const std::string& vertex_shader_code, const std::string& geometry_shader_code, const std::string& fragment_shader_code);
 	void bind();
 	void unbind();
 	void define_uniform(std::string name);
@@ -92,4 +98,6 @@ public:
 
 };
 
+class DefaultSolidProgram : public Program {
 
+};

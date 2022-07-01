@@ -26,7 +26,7 @@ void main(){
 			color += (kernel[i] * temp_color);
 			color_avarage += temp_color/9;
 		}
-		if (length(color.xyz) < 0.9f)
+		if (length(color.xyz) < 0.6f)
 			frag_color = texture(texture_slot, frag_tex_coords);
 		else{
 			frag_color = color_avarage;
