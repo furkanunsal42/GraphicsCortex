@@ -94,12 +94,16 @@ int main() {
 	float t = 0;
 	while (!glfwWindowShouldClose(window)){
 		frame_buffer.bind();
-
+		
 		t += 0.01f;
 		glfwPollEvents();
 		frame::clear_window(0, 0, 0, 1);
 		frame::display_performance(180);
+		
+		double frame_time = frame::get_interval_ms();
+		scene.camera->frame_time_ms = frame_time;
 		scene.camera->handle_movements(window);
+		
 		if (glfwGetKey(window, GLFW_KEY_E) == 1) {
 			frame_buffer.program->update_uniform("edge_detect", 1);
 		}
@@ -114,8 +118,8 @@ int main() {
 
 
 		//cube.position.x += 0.01f;
-		cube.rotation.y += 0.4f;
-		point.position.y = 5*glm::cos(t);
+		cube.rotation.y += 0.05f * frame_time;
+		point.position.y = 5*glm::cos(t) * frame_time;
 
 		scene.render(window);
 

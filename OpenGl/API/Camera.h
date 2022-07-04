@@ -21,7 +21,8 @@ public:
 	float max_distance = 100.0f;
 	float screen_width;
 	float screen_height;
-	float movement_speed = 0.025f;
+	float movement_speed = 0.0025f;
+	double frame_time_ms = 16.6f;
 	float mouse_sensitivity = 15.0f;
 	bool mouse_focus = false;
 	Camera();

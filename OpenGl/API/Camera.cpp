@@ -37,34 +37,34 @@ void Camera::handle_movements(GLFWwindow* window) {
 		glm::vec3 forward_vector = glm::vec3(0.0f, 0.0f, -1.0f);
 		forward_vector = glm::rotate(forward_vector, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
 		forward_vector = glm::normalize(forward_vector);
-		position += forward_vector * movement_speed;
+		position += forward_vector * (float)(movement_speed * frame_time_ms);
 	}
 	if (glfwGetKey(window, GLFW_KEY_S) == 1) {
 		glm::vec3 forward_vector = glm::vec3(0.0f, 0.0f, -1.0f);
 		forward_vector = glm::rotate(forward_vector, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
 		forward_vector = glm::normalize(forward_vector);
-		position += -forward_vector * movement_speed;
+		position += -forward_vector * (float)(movement_speed * frame_time_ms);
 	}
 	if (glfwGetKey(window, GLFW_KEY_D) == 1) {
 		glm::vec3 forward_vector = glm::vec3(0.0f, 0.0f, -1.0f);
 		forward_vector = glm::rotate(forward_vector, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
 		forward_vector = glm::normalize(forward_vector);
-		position += glm::cross(forward_vector, up_vector) * movement_speed;
+		position += glm::cross(forward_vector, up_vector) * (float)(movement_speed * frame_time_ms);
 	}
 	if (glfwGetKey(window, GLFW_KEY_A) == 1) {
 		glm::vec3 forward_vector = glm::vec3(0.0f, 0.0f, -1.0f);
 		forward_vector = glm::rotate(forward_vector, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
 		forward_vector = glm::normalize(forward_vector);
-		position += -glm::cross(forward_vector, up_vector) * movement_speed;
+		position += -glm::cross(forward_vector, up_vector) * (float)(movement_speed * frame_time_ms);
 	}
 	if (glfwGetKey(window, GLFW_KEY_SPACE) == 1) {
-		position +=  up_vector * movement_speed;
+		position +=  up_vector * (float)(movement_speed * frame_time_ms);
 	}
 	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == 1) {
 		glm::vec3 forward_vector = glm::vec3(0.0f, 0.0f, -1.0f);
 		forward_vector = glm::rotate(forward_vector, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
 		forward_vector = glm::normalize(forward_vector);
-		position += -up_vector * movement_speed;
+		position += -up_vector * (float)(movement_speed * frame_time_ms);
 	}
 	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == 1) {
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);

@@ -6,9 +6,13 @@
 namespace frame {
 	bool is_glew_initialized = false;
 	bool is_glfw_initialized = false;
-	double old_time = glfwGetTime();
-	int fps_counter_index = 0;
 	int fps_counter_batch = 180;
+	double frame_time_ms = 0;
+	double frame_rate_fps = 0;
+	// private
+	double old_time = glfwGetTime();
+	double old_time_accurate = 0;
+	int fps_counter_index = 0;
 	double seconds_total_batch = 0;
 
 	GLFWwindow* create_window(int width, int height, std::string name, int msaa, int swapinterval, bool depth_test, bool blend) {
@@ -56,8 +60,10 @@ namespace frame {
 		double now = glfwGetTime();
 		double seconds_current = (now - old_time);
 		if (fps_counter_index == fps_counter_batch) {
-			std::string ms = std::to_string(seconds_total_batch / fps_counter_index * 1000);
-			std::string fps = std::to_string(1 / ((seconds_total_batch / fps_counter_batch)));
+			frame_time_ms = seconds_total_batch / fps_counter_index * 1000;
+			frame_rate_fps = 1 / ((seconds_total_batch / fps_counter_batch));
+			std::string ms = std::to_string(frame_time_ms);
+			std::string fps = std::to_string(frame_rate_fps);
 			std::cout << "[Opengl Info] ms:" + ms.substr(0, ms.find(".") + 3) + " fps: " + fps.substr(0, fps.find(".") + 3) << std::endl;
 			fps_counter_index = 0;
 			seconds_total_batch = 0;
@@ -67,4 +73,13 @@ namespace frame {
 		old_time = now;
 	}
 
+	
+	double get_interval_ms() {
+		if (old_time_accurate == 0)
+			old_time_accurate = glfwGetTime();
+		double now = glfwGetTime();
+		double ms_current = (now - old_time_accurate) * 1000;
+		old_time_accurate = now;
+		return ms_current;
+	}
 }
