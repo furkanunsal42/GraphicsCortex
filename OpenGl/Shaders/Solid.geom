@@ -36,7 +36,8 @@ void main(){
 
     vec3 T = normalize(vec3(vec4(tangent, 0.0f)));
     vec3 B = normalize(vec3(vec4(bitangent, 0.0f)));
-    vec3 N = normalize(-vec3(vec4(cross(edge1, edge0), 0.0f)));
+    //vec3 N = normalize(-vec3(vec4(cross(edge1, edge0), 0.0f)));
+    vec3 N = normalize(data_in[0].frag_normal);
 
     mat3 TBN = mat3(T, B, N);
     // TBN is an orthogonal matrix and so its inverse is equal to its transpose

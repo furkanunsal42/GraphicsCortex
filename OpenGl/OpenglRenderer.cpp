@@ -50,12 +50,12 @@ int main() {
 	//Graphic cube = default_geometry::rectangle(material, program, glm::vec3(1.0f));
 	Graphic cube = default_geometry::cube(
 		material,
-		glm::vec2(4, 4),
-		std::vector<unsigned int> {2, 2, 3, 2, 2, 0},
-		//std::vector<unsigned int> {0, 0, 0, 0, 0, 0},
+		glm::vec2(1, 1),
+		//std::vector<unsigned int> {2, 2, 3, 2, 2, 0},
+		std::vector<unsigned int> {0, 0, 0, 0, 0, 0},
 		soild_program,
 		//glm::vec2((float)width / height, 1)
-		glm::vec3(1, 1, 1)
+		glm::vec3(3, 3, 3)
 		);
 	scene.meshes.push_back(&cube);
 	
@@ -119,7 +119,7 @@ int main() {
 		glDepthFunc(GL_LESS);
 
 		//cube.position.x += 0.01f;
-		//cube.rotation.y += 0.02f * frame_time;
+		cube.rotation.y += 0.002f * frame_time;
 		t += 0.001f * frame_time;
 		point.position.y = 5*glm::cos(t);
 
