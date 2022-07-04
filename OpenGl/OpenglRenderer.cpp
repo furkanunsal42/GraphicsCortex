@@ -41,16 +41,19 @@ int main() {
 	material.specular_map = &specular_map;
 	material.normal_map = &normal_map;
 	material.bind();
-	
+
+	Shader normal_shader("Shaders/Solid.vert", "Shaders/solid.geom", "Shaders/NormalTest.frag");
+	Program normal_program(normal_shader.vertex_shader, normal_shader.geometry_shader, normal_shader.fragment_shader);
+
 	Program soild_program = default_program::solid_program();
 	
 	//Graphic cube = default_geometry::rectangle(material, program, glm::vec3(1.0f));
 	Graphic cube = default_geometry::cube(
 		material,
-		glm::vec2(1, 1),
-		//std::vector<unsigned int> {2, 2, 3, 2, 2, 0},
-		std::vector<unsigned int> {0, 0, 0, 0, 0, 0},
-		soild_program,
+		glm::vec2(4, 4),
+		std::vector<unsigned int> {2, 2, 3, 2, 2, 0},
+		//std::vector<unsigned int> {0, 0, 0, 0, 0, 0},
+		normal_program,
 		//glm::vec2((float)width / height, 1)
 		glm::vec3(1, 1, 1)
 		);
@@ -64,10 +67,10 @@ int main() {
 
 	scene.camera = &cam;
 	
-	AmbiantLight ambiant(glm::vec3(0.1f, 0.1f, 0.1f), soild_program);
-	DirectionalLight directional(glm::vec3(0.0f, -1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f), soild_program);
-	PointLight point(glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(3.0f, 3.0f, 3.0f), 0.5f, 0.5f, 0.0f, soild_program);
-	SpotLight spot(glm::vec3(-2.0f, -1.0f, -2.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1.0f, 1.0f, 1.0f), 0.3f, 0.2f, 0.0f, 30, soild_program);
+	AmbiantLight ambiant(glm::vec3(0.1f, 0.1f, 0.1f), normal_program);
+	DirectionalLight directional(glm::vec3(0.0f, -1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f), normal_program);
+	PointLight point(glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(3.0f, 3.0f, 3.0f), 0.5f, 0.5f, 0.0f, normal_program);
+	SpotLight spot(glm::vec3(-2.0f, -1.0f, -2.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1.0f, 1.0f, 1.0f), 0.3f, 0.2f, 0.0f, 30, normal_program);
 	
 	scene.lights.push_back(&ambiant);
 	//scene.lights.push_back(&directional);

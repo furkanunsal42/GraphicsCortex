@@ -71,6 +71,7 @@
     <None Include="Shaders\CubeMap.vert" />
     <None Include="Shaders\CubeMap.frag" />
     <None Include="Shaders\Solid.geom" />
+    <None Include="Shaders\NormalTest.frag" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="API\Debuger.h">

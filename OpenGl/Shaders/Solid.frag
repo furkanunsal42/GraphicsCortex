@@ -149,7 +149,7 @@ void main(){
 
 	vec3 normal;
 	if(bool(use_normal_map))
-		normal = normalize(((texture(normal_map_slot, tex_coords) * 2).xyz - 1));
+		normal = normalize(frag_TBN * ((texture(normal_map_slot, tex_coords) * 2).xyz - 1));
 	else
 		normal = frag_normal;
 

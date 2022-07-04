@@ -167,6 +167,7 @@
     <None Include="Shaders\FlatColor.vert" />
     <None Include="Shaders\FrameBuffer.frag" />
     <None Include="Shaders\FrameBuffer.vert" />
+    <None Include="Shaders\NormalTest.frag" />
     <None Include="Shaders\Solid.frag" />
     <None Include="Shaders\Solid.geom" />
     <None Include="Shaders\Solid.vert" />
