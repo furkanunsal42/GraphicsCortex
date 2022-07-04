@@ -43,21 +43,21 @@ void main(){
     //TBN = transpose(TBN);
 	
 	frag_TBN = TBN;
-	gl_Position = data_in[0].projection * gl_in[0].gl_Position;
+	gl_Position = data_in[0].projection * data_in[0].view * gl_in[0].gl_Position;
 	tex_coords = data_in[0].tex_coords;
 	frag_normal = data_in[0].frag_normal;
 	frag_space_coord = data_in[0].frag_space_coord;
 	EmitVertex();
 
 	frag_TBN = TBN;
-	gl_Position = data_in[0].projection * gl_in[1].gl_Position;
+	gl_Position = data_in[0].projection * data_in[0].view * gl_in[1].gl_Position;
 	tex_coords = data_in[1].tex_coords;
 	frag_normal = data_in[1].frag_normal;
 	frag_space_coord = data_in[1].frag_space_coord;
 	EmitVertex();
 
 	frag_TBN = TBN;
-	gl_Position = data_in[0].projection * gl_in[2].gl_Position;
+	gl_Position = data_in[0].projection * data_in[0].view * gl_in[2].gl_Position;
 	tex_coords = data_in[2].tex_coords;
 	frag_normal = data_in[2].frag_normal;
 	frag_space_coord = data_in[2].frag_space_coord;

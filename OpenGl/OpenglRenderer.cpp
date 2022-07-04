@@ -53,7 +53,7 @@ int main() {
 		glm::vec2(4, 4),
 		std::vector<unsigned int> {2, 2, 3, 2, 2, 0},
 		//std::vector<unsigned int> {0, 0, 0, 0, 0, 0},
-		normal_program,
+		soild_program,
 		//glm::vec2((float)width / height, 1)
 		glm::vec3(1, 1, 1)
 		);
@@ -67,10 +67,10 @@ int main() {
 
 	scene.camera = &cam;
 	
-	AmbiantLight ambiant(glm::vec3(0.1f, 0.1f, 0.1f), normal_program);
-	DirectionalLight directional(glm::vec3(0.0f, -1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f), normal_program);
-	PointLight point(glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(3.0f, 3.0f, 3.0f), 0.5f, 0.5f, 0.0f, normal_program);
-	SpotLight spot(glm::vec3(-2.0f, -1.0f, -2.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1.0f, 1.0f, 1.0f), 0.3f, 0.2f, 0.0f, 30, normal_program);
+	AmbiantLight ambiant(glm::vec3(0.1f, 0.1f, 0.1f), soild_program);
+	DirectionalLight directional(glm::vec3(0.0f, -1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f), soild_program);
+	PointLight point(glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(3.0f, 3.0f, 3.0f), 0.5f, 0.5f, 0.0f, soild_program);
+	SpotLight spot(glm::vec3(-2.0f, -1.0f, -2.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1.0f, 1.0f, 1.0f), 0.3f, 0.2f, 0.0f, 30, soild_program);
 	
 	scene.lights.push_back(&ambiant);
 	//scene.lights.push_back(&directional);

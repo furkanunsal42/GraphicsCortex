@@ -28,5 +28,5 @@ void main(){
 	data_out.model = model;
 	data_out.view = view;
 
-	gl_Position = view * model * vec4(position.x, position.y, position.z, 1);
+	gl_Position = model * vec4(position.x, position.y, position.z, 1);
 }
