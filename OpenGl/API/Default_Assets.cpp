@@ -243,15 +243,15 @@ namespace default_geometry {
 
 namespace default_program {
 	Program solid_program() {
-		Shader default_shader("Shaders/SolidVertex.glsl", "Shaders/SolidGeometry.glsl", "Shaders/SolidFragment.glsl");
+		Shader default_shader("Shaders/Solid.vert", "Shaders/Solid.geom", "Shaders/Solid.frag");
 		return Program(default_shader.vertex_shader, default_shader.geometry_shader, default_shader.fragment_shader);
 	}
 	Program framebuffer_program() {
-		Shader default_shader("Shaders/FrameBufferVertex.glsl", "Shaders/FrameBufferFragment.glsl");
+		Shader default_shader("Shaders/FrameBuffer.vert", "Shaders/FrameBuffer.frag");
 		return Program(default_shader.vertex_shader, default_shader.fragment_shader);
 	}
 	Program cubemap_program() {
-		Shader default_shader("Shaders/CubeMapVertex.glsl", "Shaders/CubeMapFragment.glsl");
+		Shader default_shader("Shaders/CubeMap.vert", "Shaders/CubeMap.frag");
 		return Program(default_shader.vertex_shader, default_shader.fragment_shader);
 	}
 }

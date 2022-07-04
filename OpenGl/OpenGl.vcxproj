@@ -161,15 +161,15 @@
     <ClCompile Include="API\ShaderCompiler.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\CubeMapFragment.glsl" />
-    <None Include="Shaders\CubeMapVertex.glsl" />
-    <None Include="Shaders\FlatColorFragment.glsl" />
-    <None Include="Shaders\FlatColorVertex.glsl" />
-    <None Include="Shaders\FrameBufferFragment.glsl" />
-    <None Include="Shaders\FrameBufferVertex.glsl" />
-    <None Include="Shaders\SolidFragment.glsl" />
-    <None Include="Shaders\SolidGeometry.glsl" />
-    <None Include="Shaders\SolidVertex.glsl" />
+    <None Include="Shaders\CubeMap.frag" />
+    <None Include="Shaders\CubeMap.vert" />
+    <None Include="Shaders\FlatColor.frag" />
+    <None Include="Shaders\FlatColor.vert" />
+    <None Include="Shaders\FrameBuffer.frag" />
+    <None Include="Shaders\FrameBuffer.vert" />
+    <None Include="Shaders\Solid.frag" />
+    <None Include="Shaders\Solid.geom" />
+    <None Include="Shaders\Solid.vert" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="API\Buffer.h" />

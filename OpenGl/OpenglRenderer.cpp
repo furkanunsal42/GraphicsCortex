@@ -39,7 +39,7 @@ int main() {
 	normal_map.load_image("Images/Stones/bricknormal.png", 3, true);
 	material.color_map = &color_texture;
 	material.specular_map = &specular_map;
-	//material.normal_map = &normal_map;
+	material.normal_map = &normal_map;
 	material.bind();
 	
 	Program soild_program = default_program::solid_program();
@@ -47,9 +47,9 @@ int main() {
 	//Graphic cube = default_geometry::rectangle(material, program, glm::vec3(1.0f));
 	Graphic cube = default_geometry::cube(
 		material,
-		glm::vec2(4, 4),
-		std::vector<unsigned int> {2, 2, 3, 2, 2, 0},
-		//std::vector<unsigned int> {0, 0, 0, 0, 0, 0},
+		glm::vec2(1, 1),
+		//std::vector<unsigned int> {2, 2, 3, 2, 2, 0},
+		std::vector<unsigned int> {0, 0, 0, 0, 0, 0},
 		soild_program,
 		//glm::vec2((float)width / height, 1)
 		glm::vec3(1, 1, 1)
@@ -66,12 +66,12 @@ int main() {
 	
 	AmbiantLight ambiant(glm::vec3(0.1f, 0.1f, 0.1f), soild_program);
 	DirectionalLight directional(glm::vec3(0.0f, -1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f), soild_program);
-	PointLight point(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(1.0f, 1.0f, 1.0f), 0.5f, 0.5f, 0.0f, soild_program);
+	PointLight point(glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(3.0f, 3.0f, 3.0f), 0.5f, 0.5f, 0.0f, soild_program);
 	SpotLight spot(glm::vec3(-2.0f, -1.0f, -2.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1.0f, 1.0f, 1.0f), 0.3f, 0.2f, 0.0f, 30, soild_program);
 	
 	scene.lights.push_back(&ambiant);
-	scene.lights.push_back(&directional);
-	//scene.lights.push_back(&point);
+	//scene.lights.push_back(&directional);
+	scene.lights.push_back(&point);
 	//scene.lights.push_back(&spot);
 
 	Program framebuffer_program = default_program::framebuffer_program();
@@ -95,7 +95,6 @@ int main() {
 	while (!glfwWindowShouldClose(window)){
 		frame_buffer.bind();
 		
-		t += 0.01f;
 		glfwPollEvents();
 		frame::clear_window(0, 0, 0, 1);
 		frame::display_performance(180);
@@ -116,10 +115,10 @@ int main() {
 		cube_map.draw();
 		glDepthFunc(GL_LESS);
 
-
 		//cube.position.x += 0.01f;
-		cube.rotation.y += 0.05f * frame_time;
-		point.position.y = 5*glm::cos(t) * frame_time;
+		//cube.rotation.y += 0.02f * frame_time;
+		t += 0.001f * frame_time;
+		point.position.y = 5*glm::cos(t);
 
 		scene.render(window);
 

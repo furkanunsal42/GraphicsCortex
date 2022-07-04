@@ -6,6 +6,7 @@ layout(location = 0) out vec4 frag_color;
 in vec2 tex_coords;
 in vec3 frag_normal;
 in vec3 frag_space_coord;
+in mat3 frag_TBN;
 
 struct ambiant_light{
 	vec3 color;
@@ -148,7 +149,7 @@ void main(){
 
 	vec3 normal;
 	if(bool(use_normal_map))
-		normal = normalize((texture(normal_map_slot, tex_coords) * 2) - 1).xyz;
+		normal = normalize(((texture(normal_map_slot, tex_coords) * 2).xyz - 1));
 	else
 		normal = frag_normal;
 
