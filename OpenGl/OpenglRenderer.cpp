@@ -25,7 +25,7 @@
 #include "API\CubeMap.h"
 
 int main() {
-	int width = 640, height = 480;
+	int width = 1024, height = 768;
 	GLFWwindow* window = frame::create_window(width, height, "My Window", 4, 1, true, false);
 	Scene scene;
 	Material material;
@@ -39,7 +39,6 @@ int main() {
 	material.specular_map = &specular_map;
 	material.normal_map = &normal_map;
 	material.bind();
-
 	Shader normal_shader("Shaders/Solid.vert", "Shaders/solid.geom", "Shaders/NormalTest.frag");
 	Program normal_program(normal_shader.vertex_shader, normal_shader.geometry_shader, normal_shader.fragment_shader);
 

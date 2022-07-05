@@ -120,9 +120,9 @@ namespace default_geometry {
 			 -0.5f * scale.x,  0.5f * scale.y, -0.5f * scale.z,	0.0f, 1.0f,		-1.0f, 0.0f, 0.0f,
 
 			 0.5f * scale.x,  -0.5f * scale.y,  0.5f * scale.z,	0.0f, 0.0f,		0.0f, -1.0f, 0.0f,	//bottom
-			 0.5f * scale.x,  -0.5f * scale.y, -0.5f * scale.z,	1.0f, 0.0f,		0.0f, -1.0f, 0.0f,
-			-0.5f * scale.x,  -0.5f * scale.y, -0.5f * scale.z,	1.0f, 1.0f,		0.0f, -1.0f, 0.0f,
 			-0.5f * scale.x,  -0.5f * scale.y,  0.5f * scale.z,	0.0f, 1.0f,		0.0f, -1.0f, 0.0f,
+			-0.5f * scale.x,  -0.5f * scale.y, -0.5f * scale.z,	1.0f, 1.0f,		0.0f, -1.0f, 0.0f,
+			 0.5f * scale.x,  -0.5f * scale.y, -0.5f * scale.z,	1.0f, 0.0f,		0.0f, -1.0f, 0.0f,
 		};
 
 		ArrayBuffer array_buffer(custom_verticies);
@@ -188,35 +188,35 @@ namespace default_geometry {
 
 		std::vector<float> custom_verticies{
 			// verticies										texture																							normals	
-			-0.5f * scale.x, -0.5f * scale.y,  0.5f * scale.z,	unit_width * texture_locations[0].x,	   unit_height * (texture_locations[0].y - 1),				0.0f, 0.0f, 1.0f,	//forward
-			 0.5f * scale.x, -0.5f * scale.y,  0.5f * scale.z,	unit_width * (texture_locations[0].x + 1), unit_height * (texture_locations[0].y - 1),				0.0f, 0.0f, 1.0f,
+			-0.5f * scale.x, -0.5f * scale.y,  0.5f * scale.z,	unit_width * texture_locations[0].x,	   unit_height * (texture_locations[0].y - 1),		0.0f, 0.0f, 1.0f,	//forward
+			 0.5f * scale.x, -0.5f * scale.y,  0.5f * scale.z,	unit_width * (texture_locations[0].x + 1), unit_height * (texture_locations[0].y - 1),		0.0f, 0.0f, 1.0f,
 			 0.5f * scale.x,  0.5f * scale.y,  0.5f * scale.z,	unit_width * (texture_locations[0].x + 1), unit_height * (texture_locations[0].y),			0.0f, 0.0f, 1.0f,
 			-0.5f * scale.x,  0.5f * scale.y,  0.5f * scale.z,	unit_width * texture_locations[0].x,	   unit_height * (texture_locations[0].y),			0.0f, 0.0f, 1.0f,
 
-			 0.5f * scale.x, -0.5f * scale.y,  0.5f * scale.z,	unit_width * texture_locations[1].x,	   unit_height * (texture_locations[1].y - 1),				1.0f, 0.0f, 0.0f,	//right
-			 0.5f * scale.x, -0.5f * scale.y, -0.5f * scale.z,	unit_width * (texture_locations[1].x + 1), unit_height * (texture_locations[1].y - 1),				1.0f, 0.0f, 0.0f,
+			 0.5f * scale.x, -0.5f * scale.y,  0.5f * scale.z,	unit_width * texture_locations[1].x,	   unit_height * (texture_locations[1].y - 1),		1.0f, 0.0f, 0.0f,	//right
+			 0.5f * scale.x, -0.5f * scale.y, -0.5f * scale.z,	unit_width * (texture_locations[1].x + 1), unit_height * (texture_locations[1].y - 1),		1.0f, 0.0f, 0.0f,
 			 0.5f * scale.x,  0.5f * scale.y, -0.5f * scale.z,	unit_width * (texture_locations[1].x + 1), unit_height * (texture_locations[1].y),			1.0f, 0.0f, 0.0f,
 			 0.5f * scale.x,  0.5f * scale.y,  0.5f * scale.z,	unit_width * texture_locations[1].x,	   unit_height * (texture_locations[1].y),			1.0f, 0.0f, 0.0f,
 
-			-0.5f * scale.x,  0.5f * scale.y, -0.5f * scale.z,	unit_width * texture_locations[2].x,	   unit_height * (texture_locations[2].y - 1),				0.0f, 1.0f, 0.0f,	//top
-			-0.5f * scale.x,  0.5f * scale.y,  0.5f * scale.z,	unit_width * (texture_locations[2].x + 1), unit_height * (texture_locations[2].y - 1),				0.0f, 1.0f, 0.0f,
+			-0.5f * scale.x,  0.5f * scale.y, -0.5f * scale.z,	unit_width * texture_locations[2].x,	   unit_height * (texture_locations[2].y - 1),		0.0f, 1.0f, 0.0f,	//top
+			-0.5f * scale.x,  0.5f * scale.y,  0.5f * scale.z,	unit_width * (texture_locations[2].x + 1), unit_height * (texture_locations[2].y - 1),		0.0f, 1.0f, 0.0f,
 			 0.5f * scale.x,  0.5f * scale.y,  0.5f * scale.z,	unit_width * (texture_locations[2].x + 1), unit_height * (texture_locations[2].y),			0.0f, 1.0f, 0.0f,
 			 0.5f * scale.x,  0.5f * scale.y, -0.5f * scale.z,	unit_width * texture_locations[2].x,	   unit_height * (texture_locations[2].y),			0.0f, 1.0f, 0.0f,
 
-			 0.5f * scale.x, -0.5f * scale.y, -0.5f * scale.z,	unit_width * texture_locations[3].x,	   unit_height * (texture_locations[3].y - 1),				0.0f, 0.0f, -1.0f,	//backward
-			-0.5f * scale.x, -0.5f * scale.y, -0.5f * scale.z,	unit_width * (texture_locations[3].x + 1), unit_height * (texture_locations[3].y - 1),				0.0f, 0.0f, -1.0f,
+			 0.5f * scale.x, -0.5f * scale.y, -0.5f * scale.z,	unit_width * texture_locations[3].x,	   unit_height * (texture_locations[3].y - 1),		0.0f, 0.0f, -1.0f,	//backward
+			-0.5f * scale.x, -0.5f * scale.y, -0.5f * scale.z,	unit_width * (texture_locations[3].x + 1), unit_height * (texture_locations[3].y - 1),		0.0f, 0.0f, -1.0f,
 			-0.5f * scale.x,  0.5f * scale.y, -0.5f * scale.z,	unit_width * (texture_locations[3].x + 1), unit_height * (texture_locations[3].y),			0.0f, 0.0f, -1.0f,
 			 0.5f * scale.x,  0.5f * scale.y, -0.5f * scale.z,	unit_width * texture_locations[3].x,	   unit_height * (texture_locations[3].y),			0.0f, 0.0f, -1.0f,
 
-			 -0.5f * scale.x, -0.5f * scale.y, -0.5f * scale.z,	unit_width * texture_locations[4].x,	   unit_height * (texture_locations[4].y - 1),				-1.0f, 0.0f, 0.0f,	//left
-			 -0.5f * scale.x, -0.5f * scale.y,  0.5f * scale.z,	unit_width * (texture_locations[4].x + 1), unit_height * (texture_locations[4].y - 1),				-1.0f, 0.0f, 0.0f,
+			 -0.5f * scale.x, -0.5f * scale.y, -0.5f * scale.z,	unit_width * texture_locations[4].x,	   unit_height * (texture_locations[4].y - 1),		-1.0f, 0.0f, 0.0f,	//left
+			 -0.5f * scale.x, -0.5f * scale.y,  0.5f * scale.z,	unit_width * (texture_locations[4].x + 1), unit_height * (texture_locations[4].y - 1),		-1.0f, 0.0f, 0.0f,
 			 -0.5f * scale.x,  0.5f * scale.y,  0.5f * scale.z,	unit_width * (texture_locations[4].x + 1), unit_height * (texture_locations[4].y),			-1.0f, 0.0f, 0.0f,
 			 -0.5f * scale.x,  0.5f * scale.y, -0.5f * scale.z,	unit_width * texture_locations[4].x,	   unit_height * (texture_locations[4].y),			-1.0f, 0.0f, 0.0f,
 
-			 0.5f * scale.x,  -0.5f * scale.y,  0.5f * scale.z,	unit_width * texture_locations[5].x,	   unit_height * (texture_locations[5].y - 1),				0.0f, -1.0f, 0.0f,	//bottom
-			 0.5f * scale.x,  -0.5f * scale.y, -0.5f * scale.z,	unit_width * (texture_locations[5].x + 1), unit_height * (texture_locations[5].y - 1),				0.0f, -1.0f, 0.0f,
-			-0.5f * scale.x,  -0.5f * scale.y, -0.5f * scale.z,	unit_width * (texture_locations[5].x + 1), unit_height * (texture_locations[5].y),			0.0f, -1.0f, 0.0f,
+			 0.5f * scale.x,  -0.5f * scale.y,  0.5f * scale.z,	unit_width * texture_locations[5].x,	   unit_height * (texture_locations[5].y - 1),		0.0f, -1.0f, 0.0f,	//bottom
 			-0.5f * scale.x,  -0.5f * scale.y,  0.5f * scale.z,	unit_width * texture_locations[5].x,	   unit_height * (texture_locations[5].y),			0.0f, -1.0f, 0.0f,
+			-0.5f * scale.x,  -0.5f * scale.y, -0.5f * scale.z,	unit_width * (texture_locations[5].x + 1), unit_height * (texture_locations[5].y),			0.0f, -1.0f, 0.0f,
+			 0.5f * scale.x,  -0.5f * scale.y, -0.5f * scale.z,	unit_width * (texture_locations[5].x + 1), unit_height * (texture_locations[5].y - 1),		0.0f, -1.0f, 0.0f,
 		};
 
 

@@ -15,7 +15,7 @@ namespace frame {
 	int fps_counter_index = 0;
 	double seconds_total_batch = 0;
 
-	GLFWwindow* create_window(int width, int height, std::string name, int msaa, int swapinterval, bool depth_test, bool blend) {
+	GLFWwindow* create_window(int width, int height, std::string name, int msaa, int swapinterval, bool depth_test, bool blend, bool face_culling) {
 		if (!is_glfw_initialized) {
 			glfwInit();
 			is_glfw_initialized = true;
@@ -33,6 +33,9 @@ namespace frame {
 			is_glew_initialized = true;
 		}
 		
+
+		if (face_culling)
+			glEnable(GL_CULL_FACE);
 		if (depth_test)
 			glEnable(GL_DEPTH_TEST);
 		if (blend) {

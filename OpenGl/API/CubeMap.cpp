@@ -83,9 +83,19 @@ void CubeMapTexture::draw() {
 	program->update_uniform("cubemap", 11);
 	program->update_uniform("view", glm::mat4(glm::mat3(camera->view_matrix)));
 	program->update_uniform("projection", camera->projection_matrix);
-	glDepthFunc(GL_LEQUAL);
+	
+	bool face_culling = glIsEnabled(GL_CULL_FACE);
+	GLCall(glDisable(GL_CULL_FACE));
+	int depth_function;
+	glGetIntegerv(GL_DEPTH_FUNC, &depth_function);
+	GLCall(glDepthFunc(GL_LEQUAL));
+	
 	cube.draw(false);
-	glDepthFunc(GL_LESS);
+	
+	if (face_culling)
+		GLCall(glEnable(GL_CULL_FACE));
+	GLCall(glDepthFunc(depth_function));
+
 }
 
 void CubeMapTexture::unbind() {
