@@ -5,8 +5,11 @@
 
 #include "Debuger.h"
 
-#include <future>
+#include <vector>
+#include <thread>
 #include <iostream>
+#include <Windows.h>
+#include <mutex>
 
 Texture::Texture() {
 	GLCall(glGenTextures(1, &id));
@@ -33,9 +36,15 @@ void Texture::read_image(std::string file_path, int desired_channels) {
 	}
 }
 
+// set file_path to "" to use already loaded image
 void Texture::load_image(std::string file_path, int desired_channels, bool free_ram) {
-	if (image_data == nullptr)
+	if (file_path != "")
 		read_image(file_path, desired_channels);
+	
+	if (image_data == nullptr) {
+		std::cout << "[Opengl Error] load image is called with blank file_path but no already loaded image is found\n";
+		return;
+	}
 
 	GLCall(glActiveTexture(GL_TEXTURE0 + texture_slot));
 	GLCall(glBindTexture(GL_TEXTURE_2D, id));
@@ -43,7 +52,7 @@ void Texture::load_image(std::string file_path, int desired_channels, bool free_
 	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, mag_filter));
 	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap_s));
 	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap_t));
-
+	
 	GLCall(glTexImage2D(GL_TEXTURE_2D, 0, internal_format, width, height, 0, format, data_type, image_data));
 	GLCall(glGenerateMipmap(GL_TEXTURE_2D));
 
@@ -57,34 +66,12 @@ void Texture::queue_image(std::string file_path, int desired_channels, bool free
 	queued_free_ram = free_ram;
 }
 
-void Texture::read_queue() {
-	if (queued_image_path != ""){
-		read_image(queued_image_path, queued_desired_channels);
-	}
-}
-
-void Texture::finalize_queue_and_bind() {
-	//read_image(queued_image_path, queued_desired_channels);
-	
-	// if queue was empty, just bind
-	if (queued_image_path == "") {
-		bind();
+void Texture::load_queue() {
+	if (queued_image_path == "" || queued_desired_channels == NULL || queued_free_ram == NULL) {
+		std::cout << "[Opengl Warning] Texture::load_queue() run but queue was emptry \n";
 		return;
 	}
-
-	GLCall(glActiveTexture(GL_TEXTURE0 + texture_slot));
-	GLCall(glBindTexture(GL_TEXTURE_2D, id));
-	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, min_filter));
-	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, mag_filter));
-	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap_s));
-	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap_t));
-
-	GLCall(glTexImage2D(GL_TEXTURE_2D, 0, internal_format, width, height, 0, format, data_type, image_data));
-	GLCall(glGenerateMipmap(GL_TEXTURE_2D));
-
-	if (queued_free_ram)
-		free_image();
-
+	load_image(queued_image_path, queued_desired_channels, queued_free_ram);
 	queued_image_path = "";
 	queued_desired_channels = NULL;
 	queued_free_ram = NULL;
@@ -109,8 +96,7 @@ void Texture::initialize_blank_image() {
 void Texture::bind() {
 	// load queue if any image is queued
 	if (queued_image_path != ""){
-		read_image(queued_image_path, queued_desired_channels);
-		finalize_queue_and_bind();
+		load_queue();
 		return;
 	}
 
@@ -149,32 +135,32 @@ void temp() {
 }
 
 void Material::bind() {
-	std::vector<std::future<void>> task;
+	std::vector<std::thread> task;
 	if (color_map != nullptr){
 		color_map->texture_slot = color_map_slot;
-		task.push_back(std::async(std::launch::async, &Texture::read_queue, color_map));
+		task.push_back(std::thread(&Texture::read_image, color_map, color_map->queued_image_path, color_map->queued_desired_channels));
 	}
 	if (specular_map != nullptr){
 		specular_map->texture_slot = specular_map_slot;
-		task.push_back(std::async(std::launch::async, &Texture::read_queue, specular_map));
+		task.push_back(std::thread(&Texture::read_image, specular_map, specular_map->queued_image_path, specular_map->queued_desired_channels));
 	}
 	if (normal_map != nullptr){
 		normal_map->texture_slot = normal_map_slot;
-		task.push_back(std::async(std::launch::async, &Texture::read_queue, normal_map));
+		task.push_back(std::thread(&Texture::read_image, normal_map, normal_map->queued_image_path, normal_map->queued_desired_channels));
 	}
 
 	for (int i = 0; i < task.size(); i++) {
-		task[i].get();
+		task[i].join();
 	}
 
 	if (color_map != nullptr) {
-		color_map->finalize_queue_and_bind();
+		color_map->load_queue();
 	}
 	if (specular_map != nullptr) {
-		specular_map->finalize_queue_and_bind();
+		specular_map->load_queue();
 	}
 	if (normal_map != nullptr) {
-		normal_map->finalize_queue_and_bind();
+		normal_map->load_queue();
 	}
 }
 

@@ -61,17 +61,16 @@ int main() {
 	cam.screen_height = (float)height;
 	cam.position.z = 1.5f;
 	cam.perspective = true;
-
 	scene.camera = &cam;
 	
 	AmbiantLight ambiant(glm::vec3(0.1f, 0.1f, 0.1f), soild_program);
-	DirectionalLight directional(glm::vec3(0.0f, -1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f), soild_program);
-	PointLight point(glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(3.0f, 3.0f, 3.0f), 0.5f, 0.5f, 0.0f, soild_program);
+	DirectionalLight directional(glm::vec3(0.0f, -1.0f, -1.0f), glm::vec3(0.3f, 0.3f, 0.3f), soild_program);
+	PointLight point(glm::vec3(3.0f, 0.0f, 3.0f), glm::vec3(3.0f, 3.0f, 3.0f), 0.5f, 0.5f, 0.0f, soild_program);
 	SpotLight spot(glm::vec3(-2.0f, -1.0f, -2.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1.0f, 1.0f, 1.0f), 0.3f, 0.2f, 0.0f, 30, soild_program);
 	
 	scene.lights.push_back(&ambiant);
 	scene.lights.push_back(&directional);
-	//scene.lights.push_back(&point);
+	scene.lights.push_back(&point);
 	//scene.lights.push_back(&spot);
 
 	Program framebuffer_program = default_program::framebuffer_program();
@@ -113,7 +112,7 @@ int main() {
 		cube_map.draw();
 
 		//cube.position.x += 0.01f;
-		cube.rotation.y += 0.002f * frame_time;
+		cube.rotation.y += 0.04f * frame_time;
 		t += 0.001f * frame_time;
 		point.position.y = 5*glm::cos(t);
 
