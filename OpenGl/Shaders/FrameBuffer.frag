@@ -15,6 +15,8 @@ int kernel[] = int[](
 );
 
 void main(){
+	
+	/*
 	vec4 color;
 	vec4 color_avarage;
 	if (bool(edge_detect)){
@@ -36,4 +38,6 @@ void main(){
 	else{
 		frag_color = texture(texture_slot, frag_tex_coords);
 	}
+	*/
+	frag_color = texture(texture_slot, frag_tex_coords);
 }

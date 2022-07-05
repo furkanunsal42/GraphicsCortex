@@ -26,15 +26,16 @@
 
 int main() {
 	int width = 1024, height = 768;
-	GLFWwindow* window = frame::create_window(width, height, "My Window", 4, 1, true, false);
+	GLFWwindow* window = frame::create_window(width, height, "My Window", 32, 1, true, false, true);
 	Scene scene;
 	Material material;
 	Texture color_texture;
 	Texture specular_map;
 	Texture normal_map;
-	color_texture.queue_image("Images/Stones/brickcolor.jpg", 4, false);
-	specular_map.queue_image("Images/Stones/brickreflection.jpg", 4, false);
-	normal_map.queue_image("Images/Stones/bricknormal.png", 3, false);
+	//color_texture.queue_image("Images/GoldBlock.png", 4, true);
+	color_texture.queue_image("Images/Stones/brickcolor.jpg", 4, true);
+	specular_map.queue_image("Images/Stones/brickreflection.jpg", 4, true);
+	normal_map.queue_image("Images/Stones/bricknormal.png", 3, true);
 	material.color_map = &color_texture;
 	material.specular_map = &specular_map;
 	material.normal_map = &normal_map;
@@ -46,16 +47,17 @@ int main() {
 
 	Program soild_program = default_program::solid_program();
 	
-	//Graphic cube = default_geometry::rectangle(material, program, glm::vec3(1.0f));
+	//Graphic cube = default_geometry::cube(material, soild_program, glm::vec3(1.0f));
+	
 	Graphic cube = default_geometry::cube(
 		material,
 		glm::vec2(4, 4),
 		std::vector<unsigned int> {2, 2, 3, 2, 2, 0},
-		//std::vector<unsigned int> {0, 0, 0, 0, 0, 0},
 		soild_program,
 		//glm::vec2((float)width / height, 1)
 		glm::vec3(1, 1, 1)
 		);
+	
 	scene.meshes.push_back(&cube);
 	
 	Camera cam;
@@ -76,10 +78,10 @@ int main() {
 	//scene.lights.push_back(&spot);
 
 	Program framebuffer_program = default_program::framebuffer_program();
-	FrameBuffer frame_buffer(width, height);
+	FrameBuffer frame_buffer(width, height, frame::multisample);
 	frame_buffer.program = &framebuffer_program;
 	scene.frame_buffer = &frame_buffer;
-
+	
 	Program cubemap_program = default_program::cubemap_program();
 	CubeMapTexture cube_map;
 	cube_map.program = &cubemap_program;
@@ -104,13 +106,15 @@ int main() {
 		scene.camera->frame_time_ms = frame_time;
 		scene.camera->handle_movements(window);
 		
+		/*
 		if (glfwGetKey(window, GLFW_KEY_E) == 1) {
 			frame_buffer.program->update_uniform("edge_detect", 1);
 		}
 		else {
 			frame_buffer.program->update_uniform("edge_detect", 0);
 		}
-
+		*/
+		
 		cube_map.draw();
 
 		//cube.position.x += 0.01f;

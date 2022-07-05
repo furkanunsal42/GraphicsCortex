@@ -8,6 +8,7 @@
 
 class RenderBuffer {
 public:
+	int multisample = 0;
 	unsigned int id = 0;
 	int width = 0, height = 0;
 	unsigned int internal_format = GL_DEPTH24_STENCIL8;
@@ -26,11 +27,12 @@ public:
 	Graphic screen;
 	Program* program = nullptr;
 
-	FrameBuffer(int width, int height);
+	FrameBuffer(int width, int height, int anti_alliasing = 0);
 
 	void bind();
 	void unbind();
 	void render();
 private:
+	int multisample = 0;
 	bool screen_initialized = false;
 };

@@ -17,15 +17,20 @@ RenderBuffer::RenderBuffer()
 
 void RenderBuffer::bind() {
 	GLCall(glBindRenderbuffer(GL_RENDERBUFFER, id));
-	GLCall(glRenderbufferStorage(GL_RENDERBUFFER, internal_format, width, height));
+	if (multisample == 0){
+		GLCall(glRenderbufferStorage(GL_RENDERBUFFER, internal_format, width, height));
+	}
+	else {
+		GLCall(glRenderbufferStorageMultisample(GL_RENDERBUFFER, multisample, internal_format, width, height));
+	}
 }
 
 void RenderBuffer::unbind() {
 	GLCall(glBindRenderbuffer(GL_RENDERBUFFER, 0));
 }
 
-FrameBuffer::FrameBuffer(int width, int height) :
-	width(width), height(height)
+FrameBuffer::FrameBuffer(int width, int height, int anti_alliasing) :
+	width(width), height(height), multisample(anti_alliasing)
 {	
 	GLCall(glGenFramebuffers(1, &id));
 	color_texture.internal_format = GL_RGB;
@@ -37,6 +42,14 @@ FrameBuffer::FrameBuffer(int width, int height) :
 	color_texture.mag_filter = GL_NEAREST;
 	color_texture.wrap_s = GL_CLAMP_TO_EDGE;
 	color_texture.wrap_t = GL_CLAMP_TO_EDGE;
+	if (multisample == 0){
+		color_texture.target = GL_TEXTURE_2D;
+		color_texture.multisample_amount = 0;
+	}
+	else{
+		color_texture.target = GL_TEXTURE_2D_MULTISAMPLE;
+		color_texture.multisample_amount = multisample;
+	}
 
 	depth_stencil_buffer.width = width;
 	depth_stencil_buffer.height = height;
@@ -44,8 +57,9 @@ FrameBuffer::FrameBuffer(int width, int height) :
 
 	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, id));
 	color_texture.texture_slot = texture_slot;
+	
 	color_texture.initialize_blank_image();
-	GLCall(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, color_texture.id, 0));
+	GLCall(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, color_texture.target, color_texture.id, 0));
 	depth_stencil_buffer.bind();
 	GLCall(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, depth_stencil_buffer.id));
 

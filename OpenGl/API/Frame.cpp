@@ -9,6 +9,7 @@ namespace frame {
 	int fps_counter_batch = 180;
 	double frame_time_ms = 0;
 	double frame_rate_fps = 0;
+	int multisample = 0;
 	// private
 	double old_time = glfwGetTime();
 	double old_time_accurate = 0;
@@ -16,13 +17,15 @@ namespace frame {
 	double seconds_total_batch = 0;
 
 	GLFWwindow* create_window(int width, int height, std::string name, int msaa, int swapinterval, bool depth_test, bool blend, bool face_culling) {
+		
+		multisample = msaa;
+
 		if (!is_glfw_initialized) {
 			glfwInit();
 			is_glfw_initialized = true;
 		}
-
-		if (msaa)
-			glfwWindowHint(GLFW_SAMPLES, msaa);
+		//if(multisample)
+			//glfwWindowHint(GLFW_SAMPLES, multisample);
 
 		GLFWwindow* window = glfwCreateWindow(width, height, name.c_str(), nullptr, nullptr);
 		glfwMakeContextCurrent(window);
@@ -42,8 +45,9 @@ namespace frame {
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		}
-		if (msaa)
+		if (multisample) {
 			glEnable(GL_MULTISAMPLE);
+		}
 		
 		return window;
 	}

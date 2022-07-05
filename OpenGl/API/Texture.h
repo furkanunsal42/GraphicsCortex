@@ -19,6 +19,8 @@ public:
 	unsigned int format = NULL;
 	unsigned int data_type = GL_UNSIGNED_BYTE;
 	unsigned int texture_slot = 0;
+	unsigned int target = GL_TEXTURE_2D;
+	int multisample_amount = 0;
 	Texture();
 	void read_image(std::string file_path, int desired_channels = 4);
 	void load_image(std::string file_path, int desired_channels = 4, bool free_ram = false);
