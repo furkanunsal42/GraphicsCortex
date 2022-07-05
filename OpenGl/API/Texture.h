@@ -29,11 +29,12 @@ public:
 	void initialize_blank_image();
 	void bind();
 	void unbind();
-
-	std::string queued_image_path = "";
-	int queued_desired_channels = NULL;
-	bool queued_free_ram = NULL;
+	
 private:
+	std::string current_loaded_file_name = "";
+	std::string queued_image_path = "";
+	int queued_desired_channels = 4;
+	bool queued_free_ram = false;
 };
 
 class Material {

@@ -8,7 +8,6 @@
 #include <vector>
 #include <thread>
 #include <iostream>
-#include <Windows.h>
 #include <mutex>
 
 Texture::Texture() {
@@ -16,6 +15,11 @@ Texture::Texture() {
 }
 
 void Texture::read_image(std::string file_path, int desired_channels) {
+	if (file_path == current_loaded_file_name) {
+		std::cout << "[Opengl Warning] Texture::read_image() is called but file_path was same with previously loaded file. Loading is cancelled. \n";
+		return;
+	}
+	
 	if (image_data != nullptr)
 		stbi_image_free(image_data);
 
@@ -34,6 +38,8 @@ void Texture::read_image(std::string file_path, int desired_channels) {
 		if (internal_format == NULL)
 			internal_format = GL_RGBA8;
 	}
+	current_loaded_file_name = file_path;
+	//std::cout << "Texture::read_image() is called \n";
 }
 
 // set file_path to "" to use already loaded image
@@ -68,28 +74,24 @@ void Texture::queue_image(std::string file_path, int desired_channels, bool free
 
 void Texture::read_queue() {
 	if (queued_image_path == "") {
-		std::cout << "[Opengl Error] Texture::read_queue() is ran but queue was empty. \n";
+		std::cout << "[Opengl Error] Texture::read_queue() is ran but queue was empty, Read is cancelled. \n";
 		return;
 	}
 	read_image(queued_image_path, queued_desired_channels);
-	queued_image_path = "";
-	queued_desired_channels = NULL;
-	queued_free_ram = NULL;
 }
 
 void Texture::load_queue() {
-	if (queued_image_path != "" || queued_desired_channels != NULL || queued_free_ram != NULL) {
-		read_queue();
-		std::cout << "[Opengl Warning] Texture::load_queue() ran but queue was empty, Texture::read_queue() is being called internally. \n";
+	if (queued_image_path == "") {
+		std::cout << "[Opengl Error] Texture::load_queue() ran but queue was empty, Load is cancelled. \n";
+		return;
 	}
 	load_image("", queued_desired_channels, queued_free_ram);
-	queued_image_path = "";
-	queued_desired_channels = NULL;
-	queued_free_ram = NULL;
 }
 
 void Texture::free_image() {
 	stbi_image_free(image_data);
+	image_data = nullptr;
+	current_loaded_file_name = "";
 }
 
 
