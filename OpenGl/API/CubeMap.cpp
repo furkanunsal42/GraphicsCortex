@@ -83,7 +83,9 @@ void CubeMapTexture::draw() {
 	program->update_uniform("cubemap", 11);
 	program->update_uniform("view", glm::mat4(glm::mat3(camera->view_matrix)));
 	program->update_uniform("projection", camera->projection_matrix);
+	glDepthFunc(GL_LEQUAL);
 	cube.draw(false);
+	glDepthFunc(GL_LESS);
 }
 
 void CubeMapTexture::unbind() {

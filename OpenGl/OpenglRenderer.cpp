@@ -25,18 +25,16 @@
 #include "API\CubeMap.h"
 
 int main() {
-	
 	int width = 640, height = 480;
 	GLFWwindow* window = frame::create_window(width, height, "My Window", 4, 1, true, false);
 	Scene scene;
-
 	Material material;
 	Texture color_texture;
 	Texture specular_map;
 	Texture normal_map;
-	color_texture.load_image("Images/Stones/brickcolor.jpg", 4, true);
-	specular_map.load_image("Images/Stones/brickreflection.jpg", 4, true);
-	normal_map.load_image("Images/Stones/bricknormal.png", 3, true);
+	color_texture.queue_image("Images/Stones/brickcolor.jpg", 4, true);
+	specular_map.queue_image("Images/Stones/brickreflection.jpg", 4, true);
+	normal_map.queue_image("Images/Stones/bricknormal.png", 3, true);
 	material.color_map = &color_texture;
 	material.specular_map = &specular_map;
 	material.normal_map = &normal_map;
@@ -50,12 +48,12 @@ int main() {
 	//Graphic cube = default_geometry::rectangle(material, program, glm::vec3(1.0f));
 	Graphic cube = default_geometry::cube(
 		material,
-		glm::vec2(1, 1),
-		//std::vector<unsigned int> {2, 2, 3, 2, 2, 0},
-		std::vector<unsigned int> {0, 0, 0, 0, 0, 0},
+		glm::vec2(4, 4),
+		std::vector<unsigned int> {2, 2, 3, 2, 2, 0},
+		//std::vector<unsigned int> {0, 0, 0, 0, 0, 0},
 		soild_program,
 		//glm::vec2((float)width / height, 1)
-		glm::vec3(3, 3, 3)
+		glm::vec3(1, 1, 1)
 		);
 	scene.meshes.push_back(&cube);
 	
@@ -73,8 +71,8 @@ int main() {
 	SpotLight spot(glm::vec3(-2.0f, -1.0f, -2.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1.0f, 1.0f, 1.0f), 0.3f, 0.2f, 0.0f, 30, soild_program);
 	
 	scene.lights.push_back(&ambiant);
-	//scene.lights.push_back(&directional);
-	scene.lights.push_back(&point);
+	scene.lights.push_back(&directional);
+	//scene.lights.push_back(&point);
 	//scene.lights.push_back(&spot);
 
 	Program framebuffer_program = default_program::framebuffer_program();
@@ -113,10 +111,7 @@ int main() {
 			frame_buffer.program->update_uniform("edge_detect", 0);
 		}
 
-		glDepthFunc(GL_LEQUAL);
-		
 		cube_map.draw();
-		glDepthFunc(GL_LESS);
 
 		//cube.position.x += 0.01f;
 		cube.rotation.y += 0.002f * frame_time;
