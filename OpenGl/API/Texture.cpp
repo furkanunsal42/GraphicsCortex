@@ -66,12 +66,23 @@ void Texture::queue_image(std::string file_path, int desired_channels, bool free
 	queued_free_ram = free_ram;
 }
 
-void Texture::load_queue() {
-	if (queued_image_path == "" || queued_desired_channels == NULL || queued_free_ram == NULL) {
-		std::cout << "[Opengl Warning] Texture::load_queue() run but queue was emptry \n";
+void Texture::read_queue() {
+	if (queued_image_path == "") {
+		std::cout << "[Opengl Error] Texture::read_queue() is ran but queue was empty. \n";
 		return;
 	}
-	load_image(queued_image_path, queued_desired_channels, queued_free_ram);
+	read_image(queued_image_path, queued_desired_channels);
+	queued_image_path = "";
+	queued_desired_channels = NULL;
+	queued_free_ram = NULL;
+}
+
+void Texture::load_queue() {
+	if (queued_image_path != "" || queued_desired_channels != NULL || queued_free_ram != NULL) {
+		read_queue();
+		std::cout << "[Opengl Warning] Texture::load_queue() ran but queue was empty, Texture::read_queue() is being called internally. \n";
+	}
+	load_image("", queued_desired_channels, queued_free_ram);
 	queued_image_path = "";
 	queued_desired_channels = NULL;
 	queued_free_ram = NULL;
@@ -138,15 +149,15 @@ void Material::bind() {
 	std::vector<std::thread> task;
 	if (color_map != nullptr){
 		color_map->texture_slot = color_map_slot;
-		task.push_back(std::thread(&Texture::read_image, color_map, color_map->queued_image_path, color_map->queued_desired_channels));
+		task.push_back(std::thread(&Texture::read_queue, color_map));
 	}
 	if (specular_map != nullptr){
 		specular_map->texture_slot = specular_map_slot;
-		task.push_back(std::thread(&Texture::read_image, specular_map, specular_map->queued_image_path, specular_map->queued_desired_channels));
+		task.push_back(std::thread(&Texture::read_queue, specular_map));
 	}
 	if (normal_map != nullptr){
 		normal_map->texture_slot = normal_map_slot;
-		task.push_back(std::thread(&Texture::read_image, normal_map, normal_map->queued_image_path, normal_map->queued_desired_channels));
+		task.push_back(std::thread(&Texture::read_queue, normal_map));
 	}
 
 	for (int i = 0; i < task.size(); i++) {

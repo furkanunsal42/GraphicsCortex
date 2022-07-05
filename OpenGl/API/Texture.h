@@ -23,6 +23,7 @@ public:
 	void read_image(std::string file_path, int desired_channels = 4);
 	void load_image(std::string file_path, int desired_channels = 4, bool free_ram = false);
 	void queue_image(std::string file_path, int desired_channels = 4, bool free_ram = false);
+	void read_queue();
 	void load_queue();
 	void free_image();
 	void initialize_blank_image();
