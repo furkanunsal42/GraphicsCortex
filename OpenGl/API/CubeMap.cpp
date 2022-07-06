@@ -4,27 +4,40 @@
 #include "stb_image.h"
 
 #include "Debuger.h"
+
 #include <iostream>
+#include <thread>
+#include <vector>
 
 CubeMapTexture::CubeMapTexture() {
 	GLCall(glGenTextures(1, &id));
 }
 
-void CubeMapTexture::load_data(int desired_channels, bool free_ram) {
+void CubeMapTexture::_read_data_stbi(int n, int desired_channels) {
+	image_data[n] = stbi_load(face_texture_filepaths[n].c_str(), &(width[n]), &(height[n]), &(channels[n]), desired_channels);
+}
+
+void CubeMapTexture::read_queue(int desired_channels) {
 	for (std::string file_path : face_texture_filepaths) {
-		if (file_path == ""){
+		if (file_path == "") {
 			std::cout << "[Opengl Error] At least one of the texture file paths is not specified for CubeMapTexture.load_data" << std::endl;
 			return;
 		}
 	}
+	
+	std::vector<std::thread> tasks;
 	for (int i = 0; i < 6; i++) {
 		if (image_data[i] != nullptr)
 			stbi_image_free(image_data[i]);
-		
+
 		stbi_set_flip_vertically_on_load(vertical_flip[i]);
-
-		image_data[i] = stbi_load(face_texture_filepaths[i].c_str(), &(width[i]), &(height[i]), &(channels[i]), desired_channels);
-
+		
+		tasks.push_back(std::thread(&CubeMapTexture::_read_data_stbi, this, i, desired_channels));
+	}
+	for (int i = 0; i < 6; i++) {
+		tasks[i].join();
+	}
+	for (int i = 0; i < 6; i++) {
 		if (!image_data[i]) {
 			const char* sides[6] = { "RIGHT", "LEFT", "TOP", "BOTTOM", "FRONT", "BACK" };
 			std::cout << "[Opengl Error] Error on loading iamge " << sides[i] << " while executing CubeMapTexture.load_data" << std::endl;
@@ -44,6 +57,16 @@ void CubeMapTexture::load_data(int desired_channels, bool free_ram) {
 		if (internal_format == NULL)
 			internal_format = GL_RGBA8;
 	}
+}
+
+void CubeMapTexture::load_queue(bool free_ram) {
+	for (int i = 0; i < 6; i++) {
+		if (image_data[i] == nullptr) {
+			std::cout << "[Opengl Error] CubeMapTexture::load_queue() is ran but at data wasn't read previously. Cancelling Operation. \n";
+			return;
+		}
+	}
+
 	GLCall(glActiveTexture(GL_TEXTURE0 + texture_slot));
 	GLCall(glBindTexture(GL_TEXTURE_CUBE_MAP, id));
 	GLCall(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, min_filter));
@@ -64,6 +87,12 @@ void CubeMapTexture::free_image_ram() {
 		stbi_image_free(data);
 	}
 }
+
+void CubeMapTexture::read_and_load_queue(int desired_channels, bool free_ram) {
+	read_queue(desired_channels);
+	load_queue(free_ram);
+}
+
 
 
 void CubeMapTexture::bind() {

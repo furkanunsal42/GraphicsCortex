@@ -62,5 +62,5 @@ void main(){
 		normal = normalize(frag_TBN * ((texture(normal_map_slot, tex_coords) * 2).xyz - 1));
 	else
 		normal = frag_normal;
-	frag_color = vec4(normal/2 + 0.5 ,1);
+	frag_color = vec4(normal, 1);
 }

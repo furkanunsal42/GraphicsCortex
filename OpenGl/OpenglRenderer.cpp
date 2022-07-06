@@ -42,8 +42,8 @@ int main() {
 	
 	material.bind();
 	
-	Shader normal_shader("Shaders/Solid.vert", "Shaders/solid.geom", "Shaders/NormalTest.frag");
-	Program normal_program(normal_shader.vertex_shader, normal_shader.geometry_shader, normal_shader.fragment_shader);
+	//Shader normal_shader("Shaders/Solid.vert", "Shaders/solid.geom", "Shaders/NormalTest.frag");
+	//Program soild_program(normal_shader.vertex_shader, normal_shader.geometry_shader, normal_shader.fragment_shader);
 
 	Program soild_program = default_program::solid_program();
 	
@@ -92,7 +92,8 @@ int main() {
 	cube_map.face_texture_filepaths[BOTTOM] = "Images/CubeMap/Sky/ny.jpg";
 	cube_map.face_texture_filepaths[FRONT] = "Images/CubeMap/Sky/pz.jpg";
 	cube_map.face_texture_filepaths[BACK] = "Images/CubeMap/Sky/nz.jpg";
-	cube_map.load_data(3, true);
+	cube_map.read_queue(3);
+	cube_map.load_queue(true);
 	
 	float t = 0;
 	while (!glfwWindowShouldClose(window)){
@@ -118,7 +119,7 @@ int main() {
 		cube_map.draw();
 
 		//cube.position.x += 0.01f;
-		cube.rotation.y += 0.04f * frame_time;
+		//cube.rotation.y += 0.04f * frame_time;
 		t += 0.001f * frame_time;
 		point.position.y = 5*glm::cos(t);
 
