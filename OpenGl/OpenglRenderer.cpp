@@ -33,9 +33,12 @@ int main() {
 	Texture specular_map;
 	Texture normal_map;
 	//color_texture.queue_image("Images/GoldBlock.png", 4, true);
-	color_texture.queue_image("Images/Stones/brickcolor.jpg", 4, true);
-	specular_map.queue_image("Images/Stones/brickreflection.jpg", 4, true);
-	normal_map.queue_image("Images/Stones/bricknormal.png", 3, true);
+	//color_texture.queue_image("Images/Bricks/brickcolor.jpg", 4, true);
+	//specular_map.queue_image("Images/Bricks/brickreflection.jpg", 4, true);
+	//normal_map.queue_image("Images/Bricks/bricknormal.png", 3, true);
+	color_texture.queue_image("Images/StoneTiles/tiles_color.jpg", 4, true);
+	specular_map.queue_image("Images/StoneTiles/tiles_specular.jpg", 4, true);
+	normal_map.queue_image("Images/StoneTiles/tiles_normal.jpg", 3, true);
 	material.color_map = &color_texture;
 	material.specular_map = &specular_map;
 	material.normal_map = &normal_map;
@@ -47,8 +50,8 @@ int main() {
 
 	Program soild_program = default_program::solid_program();
 	
-	//Graphic cube = default_geometry::cube(material, soild_program, glm::vec3(1.0f));
-	
+	Graphic cube = default_geometry::cube(material, soild_program, glm::vec3(1.0f));
+	/*
 	Graphic cube = default_geometry::cube(
 		material,
 		glm::vec2(4, 4),
@@ -57,7 +60,7 @@ int main() {
 		//glm::vec2((float)width / height, 1)
 		glm::vec3(1, 1, 1)
 		);
-	
+	*/
 	scene.meshes.push_back(&cube);
 	
 	Camera cam;

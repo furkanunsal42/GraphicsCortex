@@ -192,6 +192,11 @@
     <ClInclude Include="API\ShaderCompiler.h" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="Images\Bricks\brickcolor.jpg" />
+    <Image Include="Images\Bricks\bricknormal.png" />
+    <Image Include="Images\Bricks\brickreflection.jpg" />
+    <Image Include="Images\Bricks\BricksFlemishRed001_cube.jpg" />
+    <Image Include="Images\Bricks\BricksFlemishRed001_sphere.jpg" />
     <Image Include="Images\cobble.png" />
     <Image Include="Images\CubeMap\Sky\nz.jpg" />
     <Image Include="Images\CubeMap\Sky\ny.jpg" />
@@ -215,6 +220,9 @@
     <Image Include="Images\Stones\brickreflection.jpg" />
     <Image Include="Images\Stones\BricksFlemishRed001_cube.jpg" />
     <Image Include="Images\Stones\BricksFlemishRed001_sphere.jpg" />
+    <Image Include="Images\StoneTiles\tiles_color.jpg" />
+    <Image Include="Images\StoneTiles\tiles_normal.jpg" />
+    <Image Include="Images\StoneTiles\tiles_specular.jpg" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="what does a good graphics api  should have.txt" />

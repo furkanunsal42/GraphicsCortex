@@ -196,6 +196,30 @@
     <Image Include="Images\CubeMap\Sky\py.jpg">
       <Filter>Kaynak Dosyaları</Filter>
     </Image>
+    <Image Include="Images\Bricks\brickcolor.jpg">
+      <Filter>Kaynak Dosyaları</Filter>
+    </Image>
+    <Image Include="Images\Bricks\bricknormal.png">
+      <Filter>Kaynak Dosyaları</Filter>
+    </Image>
+    <Image Include="Images\Bricks\brickreflection.jpg">
+      <Filter>Kaynak Dosyaları</Filter>
+    </Image>
+    <Image Include="Images\Bricks\BricksFlemishRed001_cube.jpg">
+      <Filter>Kaynak Dosyaları</Filter>
+    </Image>
+    <Image Include="Images\Bricks\BricksFlemishRed001_sphere.jpg">
+      <Filter>Kaynak Dosyaları</Filter>
+    </Image>
+    <Image Include="Images\StoneTiles\tiles_color.jpg">
+      <Filter>Kaynak Dosyaları</Filter>
+    </Image>
+    <Image Include="Images\StoneTiles\tiles_normal.jpg">
+      <Filter>Kaynak Dosyaları</Filter>
+    </Image>
+    <Image Include="Images\StoneTiles\tiles_specular.jpg">
+      <Filter>Kaynak Dosyaları</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Text Include="what does a good graphics api  should have.txt" />
