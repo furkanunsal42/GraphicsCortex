@@ -8,6 +8,7 @@
 
 class RenderBuffer {
 public:
+	unsigned int target = GL_RENDERBUFFER;
 	int multisample = 0;
 	unsigned int id = 0;
 	int width = 0, height = 0;

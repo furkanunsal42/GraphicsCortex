@@ -26,7 +26,7 @@
 
 int main() {
 	int width = 1024, height = 768;
-	GLFWwindow* window = frame::create_window(width, height, "My Window", 32, 1, true, false, true);
+	GLFWwindow* window = frame::create_window(width, height, "My Window", 16, 1, true, false, true);
 	Scene scene;
 	Material material;
 	Texture color_texture;

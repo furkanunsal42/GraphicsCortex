@@ -16,17 +16,17 @@ RenderBuffer::RenderBuffer()
 }
 
 void RenderBuffer::bind() {
-	GLCall(glBindRenderbuffer(GL_RENDERBUFFER, id));
+	GLCall(glBindRenderbuffer(target, id));
 	if (multisample == 0){
-		GLCall(glRenderbufferStorage(GL_RENDERBUFFER, internal_format, width, height));
+		GLCall(glRenderbufferStorage(target, internal_format, width, height));
 	}
 	else {
-		GLCall(glRenderbufferStorageMultisample(GL_RENDERBUFFER, multisample, internal_format, width, height));
+		GLCall(glRenderbufferStorageMultisample(target, multisample, internal_format, width, height));
 	}
 }
 
 void RenderBuffer::unbind() {
-	GLCall(glBindRenderbuffer(GL_RENDERBUFFER, 0));
+	GLCall(glBindRenderbuffer(target, 0));
 }
 
 FrameBuffer::FrameBuffer(int width, int height, int anti_alliasing) :
@@ -45,10 +45,15 @@ FrameBuffer::FrameBuffer(int width, int height, int anti_alliasing) :
 	if (multisample == 0){
 		color_texture.target = GL_TEXTURE_2D;
 		color_texture.multisample_amount = 0;
+
+		//depth_stencil_buffer.target = GL_RENDERBUFFER;
+		depth_stencil_buffer.multisample = multisample;
 	}
 	else{
 		color_texture.target = GL_TEXTURE_2D_MULTISAMPLE;
 		color_texture.multisample_amount = multisample;
+		
+		depth_stencil_buffer.multisample = multisample;
 	}
 
 	depth_stencil_buffer.width = width;
@@ -61,7 +66,7 @@ FrameBuffer::FrameBuffer(int width, int height, int anti_alliasing) :
 	color_texture.initialize_blank_image();
 	GLCall(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, color_texture.target, color_texture.id, 0));
 	depth_stencil_buffer.bind();
-	GLCall(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, depth_stencil_buffer.id));
+	GLCall(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, depth_stencil_buffer.target, depth_stencil_buffer.id));
 
 	unsigned int error_status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 	if (error_status != GL_FRAMEBUFFER_COMPLETE) {
@@ -82,16 +87,24 @@ void FrameBuffer::unbind() {
 }
 
 void FrameBuffer::render() {
-	glDisable(GL_DEPTH_TEST);
-	if (!screen_initialized) {
-		Material material;
-		material.color_map = &color_texture;
-		screen = default_geometry::rectangle(material, *program, glm::vec2(2.0f));
-		screen_initialized = true;
-	}
+	if (multisample == 0){
+		glDisable(GL_DEPTH_TEST);
+		if (!screen_initialized) {
+			Material material;
+			material.color_map = &color_texture;
+			screen = default_geometry::rectangle(material, *program, glm::vec2(2.0f));
+			screen_initialized = true;
+		}
 
-	GLCall(glBindTexture(GL_TEXTURE_2D, color_texture.id));
-	program->update_uniform("texture_slot", 9);
-	screen.draw();
-	glEnable(GL_DEPTH_TEST);
+		GLCall(glBindTexture(color_texture.target, color_texture.id));
+		program->update_uniform("texture_slot", 9);
+		screen.draw();
+		glEnable(GL_DEPTH_TEST);
+	}
+	else {
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+		glBindFramebuffer(GL_READ_FRAMEBUFFER, id);
+		glDrawBuffer(GL_BACK);
+		glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+	}
 }

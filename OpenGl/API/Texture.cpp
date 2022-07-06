@@ -100,15 +100,15 @@ void Texture::initialize_blank_image() {
 	GLCall(glBindTexture(target, id));
 	if (target == GL_TEXTURE_2D){
 		GLCall(glTexImage2D(target, 0, internal_format, width, height, 0, format, data_type, NULL));
+		GLCall(glTexParameteri(target, GL_TEXTURE_MIN_FILTER, min_filter));
+		GLCall(glTexParameteri(target, GL_TEXTURE_MAG_FILTER, mag_filter));
+		GLCall(glTexParameteri(target, GL_TEXTURE_WRAP_S, wrap_s));
+		GLCall(glTexParameteri(target, GL_TEXTURE_WRAP_T, wrap_t));
+		GLCall(glGenerateMipmap(target));
 	}
 	else{
 		GLCall(glTexImage2DMultisample(target, multisample_amount, internal_format, width, height, GL_TRUE));
 	}
-	GLCall(glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MIN_FILTER, min_filter));
-	GLCall(glTexParameteri(target, GL_TEXTURE_MAG_FILTER, mag_filter));
-	GLCall(glTexParameteri(target, GL_TEXTURE_WRAP_S, wrap_s));
-	GLCall(glTexParameteri(target, GL_TEXTURE_WRAP_T, wrap_t));
-	//GLCall(glGenerateMipmap(target));
 }
 
 
