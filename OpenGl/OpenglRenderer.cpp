@@ -26,7 +26,7 @@
 
 int main() {
 	int width = 1024, height = 768;
-	GLFWwindow* window = frame::create_window(width, height, "My Window", 16, 1, true, false, true);
+	GLFWwindow* window = frame::create_window(width, height, "My Window", 4, 0, true, false, true);
 	Scene scene;
 	Material material;
 	Texture color_texture;
@@ -39,6 +39,7 @@ int main() {
 	color_texture.queue_image("Images/StoneTiles/tiles_color.jpg", 4, true);
 	specular_map.queue_image("Images/StoneTiles/tiles_specular.jpg", 4, true);
 	normal_map.queue_image("Images/StoneTiles/tiles_normal.jpg", 3, true);
+
 	material.color_map = &color_texture;
 	material.specular_map = &specular_map;
 	material.normal_map = &normal_map;
@@ -50,17 +51,18 @@ int main() {
 
 	Program soild_program = default_program::solid_program();
 	
-	Graphic cube = default_geometry::cube(material, soild_program, glm::vec3(1.0f));
-	/*
+	//Graphic cube = default_geometry::cube(material, soild_program, glm::vec3(1.0f));
+	
 	Graphic cube = default_geometry::cube(
 		material,
-		glm::vec2(4, 4),
-		std::vector<unsigned int> {2, 2, 3, 2, 2, 0},
+		glm::vec2(1, 1),
+		//std::vector<unsigned int> {2, 2, 3, 2, 2, 0},
+		std::vector<unsigned int> {0, 0, 0, 0, 0, 0},
 		soild_program,
 		//glm::vec2((float)width / height, 1)
 		glm::vec3(1, 1, 1)
-		);
-	*/
+	);
+	
 	scene.meshes.push_back(&cube);
 	
 	Camera cam;

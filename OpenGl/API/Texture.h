@@ -11,7 +11,7 @@ public:
 
 	// default paremeters
 	bool vertical_flip = true;
-	unsigned int min_filter = GL_NEAREST;
+	unsigned int min_filter = GL_LINEAR_MIPMAP_NEAREST;
 	unsigned int mag_filter = GL_NEAREST;
 	unsigned int wrap_s = GL_REPEAT;
 	unsigned int wrap_t = GL_REPEAT;
