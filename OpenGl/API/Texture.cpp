@@ -15,7 +15,7 @@ Texture::Texture() {
 }
 
 void Texture::read_image(std::string file_path, int desired_channels) {
-	if (file_path == current_loaded_file_name) {
+	if (file_path == currently_stored_file_name) {
 		std::cout << "[Opengl Warning] Texture::read_image() is called but file_path was same with previously loaded file. Loading is cancelled. \n";
 		return;
 	}
@@ -30,15 +30,25 @@ void Texture::read_image(std::string file_path, int desired_channels) {
 		if (format == NULL)
 			format = GL_RGB;
 		if (internal_format == NULL)
-			internal_format = GL_RGB8;
+		{
+			if (compress_image)
+				internal_format = GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
+			else
+				internal_format = GL_RGB8;
+		}
 	}
 	else if (desired_channels == 4) {
 		if (format == NULL)
 			format = GL_RGBA;
 		if (internal_format == NULL)
-			internal_format = GL_RGBA8;
+		{
+			if (compress_image)
+				internal_format = GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
+			else
+				internal_format = GL_RGB8;
+		}
 	}
-	current_loaded_file_name = file_path;
+	currently_stored_file_name = file_path;
 	//std::cout << "Texture::read_image() is called \n";
 }
 
@@ -59,6 +69,10 @@ void Texture::load_image(std::string file_path, int desired_channels, bool free_
 	GLCall(glTexParameteri(target, GL_TEXTURE_WRAP_S, wrap_s));
 	GLCall(glTexParameteri(target, GL_TEXTURE_WRAP_T, wrap_t));
 	
+
+	//if (compress_image)
+		//glCompressedTexImage2D(target, 0, internal_format, width, height, 0, );
+	//else 
 	GLCall(glTexImage2D(target, 0, internal_format, width, height, 0, format, data_type, image_data));
 	GLCall(glGenerateMipmap(target));
 
@@ -91,7 +105,7 @@ void Texture::load_queue() {
 void Texture::free_image() {
 	stbi_image_free(image_data);
 	image_data = nullptr;
-	current_loaded_file_name = "";
+	currently_stored_file_name = "";
 }
 
 

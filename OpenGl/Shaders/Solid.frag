@@ -35,29 +35,47 @@ struct spot_light{
 	float exponential_term;
 };
 
-
+//maps 
 uniform sampler2D color_map_slot;
 uniform sampler2D specular_map_slot;
 uniform sampler2D normal_map_slot;
+uniform samplerCube cube_map;
 
-uniform int use_color_map;
-uniform int use_specular_map;
-uniform int use_normal_map;
+// flags
+uniform int use_color_map = 0;
+uniform int use_specular_map = 0;
+uniform int use_normal_map = 0;
+uniform int use_cube_map_reflection = 0;
 
-uniform vec3 camera_coords;
+// light flags
+uniform int a_lights_count;
+uniform int d_lights_count;
+uniform int p_lights_count;
+uniform int s_lights_count;
+
 // lights
 uniform ambiant_light a_lights[10];
 uniform directional_light d_lights[10];
 uniform point_light p_lights[10];
 uniform spot_light s_lights[10];
 
-uniform int a_lights_count;
-uniform int d_lights_count;
-uniform int p_lights_count;
-uniform int s_lights_count;
+//other
+uniform vec3 camera_coords;
+
 
 vec3 calculate_ambiant_light(vec3 ambiant){
 	return ambiant;
+}
+
+vec3 calculate_cube_map_reflection(vec3 current_position, vec3 camera_position,  vec3 normal){
+	float reflection_strength = 0.4;
+
+	vec3 camera_looking_direction = normalize(camera_position - current_position);
+	vec3 reflected_light = normalize(reflect(camera_looking_direction, normal));
+	vec4 reflection_color = texture(cube_map, reflected_light);
+	
+	reflection_color *= reflection_strength;
+	return reflection_color.xyz;
 }
 
 vec3 calculate_specular_light(vec3 light_direction, vec3 current_position, vec3 camera_position, vec3 light_color, vec3 normal){
@@ -140,7 +158,10 @@ vec3 calculate_total_light(vec3 normal, vec3 space_coords){
 	
 	for(int i = 0; i < s_lights_count; i++)
 		total_light += calculate_spot_light_intensity(s_lights[i].position, s_lights[i].direction, s_lights[i].color, space_coords, normal, vec3(s_lights[i].constant_term, s_lights[i].linear_term, s_lights[i].exponential_term), s_lights[i].cos_angle);
-
+	
+	if(!bool(use_cube_map_reflection))
+		total_light += vec3(0.0f); //calculate_cube_map_reflection(space_coords, camera_coords, normal);
+		//total_light += vec3(1.0f);
 	//return clamp(total_light, 0 , 1);
 	return total_light;
 }

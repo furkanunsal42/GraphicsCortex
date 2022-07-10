@@ -21,6 +21,7 @@ public:
 	unsigned int texture_slot = 0;
 	unsigned int target = GL_TEXTURE_2D;
 	int multisample_amount = 0;
+	bool compress_image = false;
 	Texture();
 	void read_image(std::string file_path, int desired_channels = 4);
 	void load_image(std::string file_path, int desired_channels = 4, bool free_ram = false);
@@ -33,7 +34,7 @@ public:
 	void unbind();
 	
 private:
-	std::string current_loaded_file_name = "";
+	std::string currently_stored_file_name = "";
 	std::string queued_image_path = "";
 	int queued_desired_channels = 4;
 	bool queued_free_ram = false;

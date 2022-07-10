@@ -47,6 +47,7 @@ void Graphic::draw(bool show_warnings) {
 		renderer->bind();
 	vertex_buffer.bind();
 	index_buffer.bind();
+	
 	//if (material_exist)
 	//	material->bind();
 	// temp
