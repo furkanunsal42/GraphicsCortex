@@ -68,11 +68,12 @@ vec3 calculate_ambiant_light(vec3 ambiant){
 }
 
 vec3 calculate_cube_map_reflection(vec3 current_position, vec3 camera_position,  vec3 normal){
-	float reflection_strength = .4;
-	normal = frag_TBN * normal;
+	float reflection_strength = .5;
+	normal = normal;
 	vec3 camera_looking_direction = normalize(camera_position - current_position);
 	camera_looking_direction.y *= -1;
-	vec3 reflected_light = -normalize(reflect(-camera_looking_direction, normal));
+	camera_looking_direction.z *= -1;
+	vec3 reflected_light = normalize(reflect(camera_looking_direction, normal));
 	vec4 reflection_color = texture(cube_map, reflected_light);
 	reflection_color *= reflection_strength;
 	return reflection_color.xyz;
@@ -181,6 +182,6 @@ void main(){
 	frag_color = vec4(total_light, 1) * color;
 
 	if(bool(use_cube_map_reflection))
-		frag_color += vec4(calculate_cube_map_reflection(frag_space_coord, camera_coords, normalize(normal)),0);
+		frag_color = mix(frag_color, vec4(calculate_cube_map_reflection(frag_space_coord, camera_coords, normalize(normal)),1), 0.7);
 
 }
