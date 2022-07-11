@@ -32,10 +32,10 @@ int main() {
 	Texture color_texture;
 	Texture specular_map;
 	Texture normal_map;
-	//color_texture.queue_image("Images/GoldBlock.png", 4, false);
-	color_texture.queue_image("Images/Bricks/brickcolor.jpg", 4, false);
-	specular_map.queue_image("Images/Bricks/brickreflection.jpg", 4, false);
-	normal_map.queue_image("Images/Bricks/bricknormal.png", 3, false);
+	color_texture.queue_image("Images/GoldBlock.png", 4, false);
+	//color_texture.queue_image("Images/Bricks/brickcolor.jpg", 4, false);
+	//specular_map.queue_image("Images/Bricks/brickreflection.jpg", 4, false);
+	//normal_map.queue_image("Images/Bricks/bricknormal.png", 3, false);
 	//color_texture.queue_image("Images/StoneTiles/tiles_color.jpg", 4, true);
 	//specular_map.queue_image("Images/StoneTiles/tiles_specular.jpg", 4, true);
 	//normal_map.queue_image("Images/StoneTiles/tiles_normal.jpg", 3, true);
@@ -46,8 +46,8 @@ int main() {
 	normal_map.compress_image = compression;
 	
 	material.color_map = &color_texture;
-	material.specular_map = &specular_map;
-	material.normal_map = &normal_map;
+	//material.specular_map = &specular_map;
+	//material.normal_map = &normal_map;
 	
 	material.bind();
 
@@ -56,17 +56,17 @@ int main() {
 
 	Program soild_program = default_program::solid_program();
 	
-	//Graphic cube = default_geometry::cube(material, soild_program, glm::vec3(1.0f));
-	
+	Graphic cube = default_geometry::cube(material, soild_program, glm::vec3(1.0f));
+	/*
 	Graphic cube = default_geometry::cube(
 		material,
-		glm::vec2(1, 1),
-		//std::vector<unsigned int> {2, 2, 3, 2, 2, 0},
-		std::vector<unsigned int> {0, 0, 0, 0, 0, 0},
+		glm::vec2(4, 4),
+		std::vector<unsigned int> {2, 2, 3, 2, 2, 0},
 		soild_program,
 		//glm::vec2((float)width / height, 1)
 		glm::vec3(1, 1, 1)
 	);
+	*/
 	
 	scene.meshes.push_back(&cube);
 	
@@ -132,9 +132,12 @@ int main() {
 		//cube.rotation.y += 0.04f * frame_time;
 		t += 0.001f * frame_time;
 		point.position.y = 5*glm::cos(t);
-
+		
+		cube_map.texture_slot = 13;
+		cube_map.bind();
 		scene.render(window);
-
+		cube_map.texture_slot = 11;
+		
 		frame_buffer.unbind();
 		frame_buffer.render();
 

@@ -52,6 +52,10 @@ void Graphic::draw(bool show_warnings) {
 	//	material->bind();
 	// temp
 	
+	// reflection temp code
+	renderer->update_uniform("cube_map", 13);
+	renderer->update_uniform("use_cube_map_reflection", 1);
+
 	if (renderer_exist && material_exist){
 		renderer->update_uniform("color_map_slot", material->color_map_slot);
 		renderer->update_uniform("specular_map_slot", material->specular_map_slot);

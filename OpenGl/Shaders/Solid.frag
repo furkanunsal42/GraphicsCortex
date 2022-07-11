@@ -68,12 +68,12 @@ vec3 calculate_ambiant_light(vec3 ambiant){
 }
 
 vec3 calculate_cube_map_reflection(vec3 current_position, vec3 camera_position,  vec3 normal){
-	float reflection_strength = 0.4;
-
+	float reflection_strength = .4;
+	normal = frag_TBN * normal;
 	vec3 camera_looking_direction = normalize(camera_position - current_position);
-	vec3 reflected_light = normalize(reflect(camera_looking_direction, normal));
+	camera_looking_direction.y *= -1;
+	vec3 reflected_light = -normalize(reflect(-camera_looking_direction, normal));
 	vec4 reflection_color = texture(cube_map, reflected_light);
-	
 	reflection_color *= reflection_strength;
 	return reflection_color.xyz;
 }
@@ -87,7 +87,7 @@ vec3 calculate_specular_light(vec3 light_direction, vec3 current_position, vec3 
 	if (bool(use_specular_map))
 		specular_map_color = texture(specular_map_slot, tex_coords).rgb;
 	else
-		specular_map_color = vec3(0.0);
+		specular_map_color = vec3(1.0);
 	
 	float specular_map_total = (specular_map_color.x + specular_map_color.y + specular_map_color.z)/3; // may change
 	if (specular_map_total == 0)
@@ -159,9 +159,6 @@ vec3 calculate_total_light(vec3 normal, vec3 space_coords){
 	for(int i = 0; i < s_lights_count; i++)
 		total_light += calculate_spot_light_intensity(s_lights[i].position, s_lights[i].direction, s_lights[i].color, space_coords, normal, vec3(s_lights[i].constant_term, s_lights[i].linear_term, s_lights[i].exponential_term), s_lights[i].cos_angle);
 	
-	if(!bool(use_cube_map_reflection))
-		total_light += vec3(0.0f); //calculate_cube_map_reflection(space_coords, camera_coords, normal);
-		//total_light += vec3(1.0f);
 	//return clamp(total_light, 0 , 1);
 	return total_light;
 }
@@ -180,5 +177,10 @@ void main(){
 		color = texture(color_map_slot, tex_coords);
 	else
 		color = vec4(1.0);
+
 	frag_color = vec4(total_light, 1) * color;
+
+	if(bool(use_cube_map_reflection))
+		frag_color += vec4(calculate_cube_map_reflection(frag_space_coord, camera_coords, normalize(normal)),0);
+
 }
