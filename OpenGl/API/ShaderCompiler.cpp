@@ -61,6 +61,8 @@ unsigned int Program::compile_shader(unsigned int type, const std::string& shade
 		type_string = "vertex shader";
 	else if (type == GL_FRAGMENT_SHADER)
 		type_string = "fragment shader";
+	else if (type == GL_GEOMETRY_SHADER)
+		type_string = "geometry shader";
 
 	std::cout << "compiling the shader of type " << type_string << '\n';
 

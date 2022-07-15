@@ -11,6 +11,7 @@ public:
 
 	// default paremeters
 	bool vertical_flip = true;
+	bool generate_mipmap = true;
 	unsigned int min_filter = GL_LINEAR_MIPMAP_NEAREST;
 	unsigned int mag_filter = GL_NEAREST;
 	unsigned int wrap_s = GL_REPEAT;
@@ -23,7 +24,6 @@ public:
 	int multisample_amount = 0;
 	bool compress_image = false;
 	Texture();
-	void read_image(std::string file_path, int desired_channels = 4);
 	void load_image(std::string file_path, int desired_channels = 4, bool free_ram = false);
 	void queue_image(std::string file_path, int desired_channels = 4, bool free_ram = false);
 	void read_queue();
@@ -32,12 +32,33 @@ public:
 	void initialize_blank_image();
 	void bind();
 	void unbind();
+
+	void save();
+
+	static enum info {
+		WIDTH = GL_TEXTURE_WIDTH,
+		HEIGHT = GL_TEXTURE_HEIGHT, 
+		DEPTH = GL_TEXTURE_DEPTH, 
+		INTERNAL_FORMAT = GL_TEXTURE_INTERNAL_FORMAT, 
+		RED_SIZE = GL_TEXTURE_RED_SIZE, 
+		GREEN_SIZE = GL_TEXTURE_GREEN_SIZE, 
+		BLUE_SIZE = GL_TEXTURE_BLUE_SIZE, 
+		ALPHA_SIZE = GL_TEXTURE_ALPHA_SIZE, 
+		DEPTH_SIZE = GL_TEXTURE_DEPTH_SIZE, 
+		IS_COMPRESSED = GL_TEXTURE_COMPRESSED,
+		COMPESSED_SIZE = GL_TEXTURE_COMPRESSED_IMAGE_SIZE,
+		BUFFER_OFFEST = GL_TEXTURE_BUFFER_OFFSET,
+	};
+	void print_info(unsigned int opengl_code);
 	
-private:
-	std::string currently_stored_file_name = "";
 	std::string queued_image_path = "";
 	int queued_desired_channels = 4;
 	bool queued_free_ram = false;
+	
+private:
+	void _read_image(std::string file_path, int desired_channels = 4);
+	void _load_image(bool free_ram = false);
+	std::string currently_stored_file_name = "";
 };
 
 class Material {

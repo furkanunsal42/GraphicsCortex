@@ -32,24 +32,29 @@ int main() {
 	Texture color_texture;
 	Texture specular_map;
 	Texture normal_map;
-	color_texture.queue_image("Images/GoldBlock.png", 4, false);
-	//color_texture.queue_image("Images/Bricks/brickcolor.jpg", 4, false);
-	//specular_map.queue_image("Images/Bricks/brickreflection.jpg", 4, false);
-	//normal_map.queue_image("Images/Bricks/bricknormal.png", 3, false);
+	//color_texture.queue_image("Images/GoldBlock.png", 4, false);
+	color_texture.load_image("Images/Bricks/brickcolor.jpg", 4, true);
+	specular_map.load_image("Images/Bricks/brickreflection.jpg", 4, true);
+	normal_map.load_image("Images/Bricks/bricknormal.png", 3, true);
 	//color_texture.queue_image("Images/StoneTiles/tiles_color.jpg", 4, true);
 	//specular_map.queue_image("Images/StoneTiles/tiles_specular.jpg", 4, true);
 	//normal_map.queue_image("Images/StoneTiles/tiles_normal.jpg", 3, true);
 	
 	bool compression = false;
-	color_texture.compress_image = compression;
-	specular_map.compress_image = compression;
-	normal_map.compress_image = compression;
-	
+	//color_texture.compress_image = compression;
+	//specular_map.compress_image = compression;
+	//normal_map.compress_image = compression;
+
 	material.color_map = &color_texture;
-	//material.specular_map = &specular_map;
-	//material.normal_map = &normal_map;
+	material.specular_map = &specular_map;
+	material.normal_map = &normal_map;
 	
 	material.bind();
+	
+	color_texture.print_info(Texture::info::ALPHA_SIZE);
+	
+	//color_texture.save();
+	//color_texture.bind();
 
 	//Shader normal_shader("Shaders/Solid.vert", "Shaders/solid.geom", "Shaders/NormalTest.frag");
 	//Program soild_program(normal_shader.vertex_shader, normal_shader.geometry_shader, normal_shader.fragment_shader);
@@ -57,6 +62,7 @@ int main() {
 	Program soild_program = default_program::solid_program();
 	
 	Graphic cube = default_geometry::cube(material, soild_program, glm::vec3(1.0f));
+
 	/*
 	Graphic cube = default_geometry::cube(
 		material,
@@ -78,7 +84,7 @@ int main() {
 	scene.camera = &cam;
 	
 	AmbiantLight ambiant(glm::vec3(0.1f, 0.1f, 0.1f), soild_program);
-	DirectionalLight directional(glm::vec3(0.0f, -1.0f, -1.0f), glm::vec3(0.3f, 0.3f, 0.3f), soild_program);
+	DirectionalLight directional(glm::vec3(0.0f, -1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f), soild_program);
 	PointLight point(glm::vec3(3.0f, 0.0f, 3.0f), glm::vec3(3.0f, 3.0f, 3.0f), 0.5f, 0.5f, 0.0f, soild_program);
 	SpotLight spot(glm::vec3(-2.0f, -1.0f, -2.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1.0f, 1.0f, 1.0f), 0.3f, 0.2f, 0.0f, 30, soild_program);
 	
