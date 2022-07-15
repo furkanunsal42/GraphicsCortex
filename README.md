@@ -10,7 +10,7 @@ A custom opengl graphics renderer api to be used in game engine and simulation a
 ![2022-07-05 16-04-29](https://user-images.githubusercontent.com/89701935/177335628-fe006ca0-ab11-4886-b1b2-5b64be168c82.gif)
 
 ### Reflections
-![image](https://user-images.githubusercontent.com/89701935/179227345-8718162a-2886-48a2-9ee8-03ded6f2b49f.png)
+<image src="https://user-images.githubusercontent.com/89701935/179228243-30309a4f-569a-4a00-9861-ab79d5b5cc62.png" height=250 width=300>
 
 ## Features (work in progress)
 ### graphical api: 
