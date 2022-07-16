@@ -48,8 +48,8 @@ void Graphic::draw(bool show_warnings) {
 	vertex_buffer.bind();
 	index_buffer.bind();
 	
-	//if (material_exist)
-	//	material->bind();
+	if (material_exist)
+		material->bind();
 	// temp
 	
 	// reflection temp code

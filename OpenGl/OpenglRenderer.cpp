@@ -33,15 +33,15 @@ int main() {
 	Texture specular_map;
 	Texture normal_map;
 	//color_texture.queue_image("Images/GoldBlock.png", 4, false);
-	color_texture.load_image("Images/Bricks/brickcolor.jpg", 4, true);
-	specular_map.load_image("Images/Bricks/brickreflection.jpg", 4, true);
-	normal_map.load_image("Images/Bricks/bricknormal.png", 3, true);
+	color_texture.queue_image("Images/Bricks/brickcolor.jpg", 4, true);
+	specular_map.queue_image("Images/Bricks/brickreflection.jpg", 4, true);
+	normal_map.queue_image("Images/Bricks/bricknormal.png", 3, true);
 	//color_texture.queue_image("Images/StoneTiles/tiles_color.jpg", 4, true);
 	//specular_map.queue_image("Images/StoneTiles/tiles_specular.jpg", 4, true);
 	//normal_map.queue_image("Images/StoneTiles/tiles_normal.jpg", 3, true);
 	
-	bool compression = false;
-	//color_texture.compress_image = compression;
+	bool compression = true;
+	color_texture.compress_image = compression;
 	//specular_map.compress_image = compression;
 	//normal_map.compress_image = compression;
 
@@ -50,11 +50,10 @@ int main() {
 	material.normal_map = &normal_map;
 	
 	material.bind();
-	
-	color_texture.print_info(Texture::info::ALPHA_SIZE);
+
+	//color_texture.print_info(Texture::info::IS_COMPRESSED);
 	
 	//color_texture.save();
-	//color_texture.bind();
 
 	//Shader normal_shader("Shaders/Solid.vert", "Shaders/solid.geom", "Shaders/NormalTest.frag");
 	//Program soild_program(normal_shader.vertex_shader, normal_shader.geometry_shader, normal_shader.fragment_shader);
@@ -122,6 +121,8 @@ int main() {
 	
 	float t = 0;
 	while (!glfwWindowShouldClose(window)){
+		//material.bind();
+
 		frame_buffer.bind();
 		
 		glfwPollEvents();

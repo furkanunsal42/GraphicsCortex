@@ -3,6 +3,9 @@
 
 #include <string>
 
+#define MAX_TEXTURE_SLOTS 16
+extern unsigned int CurrentBindedTexture[MAX_TEXTURE_SLOTS];
+
 class Texture {
 public:
 	unsigned int id = 0;
@@ -55,6 +58,8 @@ public:
 	int queued_desired_channels = 4;
 	bool queued_free_ram = false;
 	
+	bool _read_image_check(std::string file_path, int desired_channels = 4, bool print_errors = true);
+	bool _load_image_check(bool free_ram = false, bool print_errors = true);
 private:
 	void _read_image(std::string file_path, int desired_channels = 4);
 	void _load_image(bool free_ram = false);

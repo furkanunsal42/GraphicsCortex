@@ -10,15 +10,32 @@
 #include <iostream>
 #include <mutex>
 
+unsigned int CurrentBindedTexture[MAX_TEXTURE_SLOTS];
+
+
 Texture::Texture() {
 	GLCall(glGenTextures(1, &id));
 }
 
-void Texture::_read_image(std::string file_path, int desired_channels) {
+bool Texture::_read_image_check(std::string file_path, int desired_channels, bool print_errors) {
 	if (file_path == currently_stored_file_name) {
-		std::cout << "[Opengl Warning] Texture::read_image() is called but file_path was same with previously loaded file. Loading is cancelled. \n";
-		return;
+		if (print_errors)
+			std::cout << "[Opengl Warning] Texture::_read_image() is called but file_path was same with previously loaded file. Loading is cancelled. \n";
+		return false;
 	}
+
+	if (CurrentBindedTexture[texture_slot] == id) {
+		if (print_errors)
+			std::cout << "[Opengl Warning] Texture::_read_image() is called but last binded texture is identity. Loading is cancelled. \n";
+		return false;
+	}
+
+	return true;
+}
+
+void Texture::_read_image(std::string file_path, int desired_channels) {
+	if (!_read_image_check(file_path, desired_channels))
+		return;
 	
 	if (image_data != nullptr)
 		stbi_image_free(image_data);
@@ -53,11 +70,24 @@ void Texture::_read_image(std::string file_path, int desired_channels) {
 	//std::cout << "Texture::read_image() is called \n";
 }
 
-void Texture::_load_image(bool free_ram) {
-	if (image_data == nullptr) {
-		std::cout << "[Opengl Error] load image is called with blank file_path but no already loaded image is found\n";
-		return;
+bool Texture::_load_image_check(bool free_ram, bool print_errors) {
+	if (image_data == nullptr && CurrentBindedTexture[texture_slot] != id) {
+		if (print_errors)
+			std::cout << "[Opengl Error] Texture::_load_image() is called but no already loaded image is found\n";
+		return false;
 	}
+
+	if (CurrentBindedTexture[texture_slot] == id) {
+		if (print_errors)
+			std::cout << "[Opengl Warning] Texture::_load_iamge() is called but last binded texture is identity. Loading is cancelled. \n";
+		return false;
+	}
+	return true;
+}
+
+void Texture::_load_image(bool free_ram) {
+	if (!_load_image_check(free_ram))
+		return;
 
 	GLCall(glActiveTexture(GL_TEXTURE0 + texture_slot));
 	GLCall(glBindTexture(target, id));
@@ -65,7 +95,6 @@ void Texture::_load_image(bool free_ram) {
 	GLCall(glTexParameteri(target, GL_TEXTURE_MAG_FILTER, mag_filter));
 	GLCall(glTexParameteri(target, GL_TEXTURE_WRAP_S, wrap_s));
 	GLCall(glTexParameteri(target, GL_TEXTURE_WRAP_T, wrap_t));
-	
 
 	//if (compress_image)
 		//glCompressedTexImage2D(target, 0, internal_format, width, height, 0, );
@@ -77,6 +106,9 @@ void Texture::_load_image(bool free_ram) {
 
 	if (free_ram)
 		free_image();
+
+	// save it's id on current binded texture list, for optimization
+	CurrentBindedTexture[texture_slot] = id;
 }
 
 void Texture::load_image(std::string file_path, int desired_channels, bool free_ram) {
@@ -129,6 +161,8 @@ void Texture::initialize_blank_image() {
 	else{
 		GLCall(glTexImage2DMultisample(target, multisample_amount, internal_format, width, height, GL_TRUE));
 	}
+	// save it's id on current binded texture list, for optimization
+	CurrentBindedTexture[texture_slot] = id;
 }
 
 
@@ -139,6 +173,9 @@ void Texture::bind() {
 	GLCall(glTexParameteri(target, GL_TEXTURE_MAG_FILTER, mag_filter));
 	GLCall(glTexParameteri(target, GL_TEXTURE_WRAP_S, wrap_s));
 	GLCall(glTexParameteri(target, GL_TEXTURE_WRAP_T, wrap_t));
+
+	// save it's id on current binded texture list, for optimization
+	CurrentBindedTexture[texture_slot] = id;
 }
 
 void Texture::unbind() {
@@ -174,8 +211,8 @@ void Texture::save() {
 	glDeleteTextures(1, &id);
 	
 	glGenTextures(1, &id);
-	GLCall(glBindTexture(target, id));
 	GLCall(glActiveTexture(GL_TEXTURE0 + texture_slot));
+	GLCall(glBindTexture(target, id));
 	GLCall(glTexParameteri(target, GL_TEXTURE_MIN_FILTER, min_filter));
 	GLCall(glTexParameteri(target, GL_TEXTURE_MAG_FILTER, mag_filter));
 	GLCall(glTexParameteri(target, GL_TEXTURE_WRAP_S, wrap_s));
@@ -185,10 +222,12 @@ void Texture::save() {
 		GLCall(glCompressedTexImage2D(target, 0, image_internal_format, width, height, 0, image_size, i_pixels));
 	}
 	else {
-		load_queue();
 		GLCall(glTexImage2D(target, 0, internal_format, width, height, 0, format, data_type, image_data));
 	}
 	delete[] i_pixels;
+
+	// save it's id on current binded texture list, for optimization
+	CurrentBindedTexture[texture_slot] = id;
 }
 
 void Texture::print_info(unsigned int opengl_code) {
@@ -211,17 +250,17 @@ void Material::bind() {
 	std::vector<std::thread> task;
 	if (color_map != nullptr){
 		color_map->texture_slot = color_map_slot;
-		if (color_map->queued_image_path != "")
+		if (color_map->queued_image_path != "" && color_map->_read_image_check(color_map->queued_image_path, color_map->queued_desired_channels, false))
 			task.push_back(std::thread(&Texture::read_queue, color_map));
 	}
 	if (specular_map != nullptr){
 		specular_map->texture_slot = specular_map_slot;
-		if (specular_map->queued_image_path != "")
+		if (specular_map->queued_image_path != "" && specular_map->_read_image_check(specular_map->queued_image_path, specular_map->queued_desired_channels, false))
 			task.push_back(std::thread(&Texture::read_queue, specular_map));
 	}
 	if (normal_map != nullptr){
 		normal_map->texture_slot = normal_map_slot;
-		if (normal_map->queued_image_path != "")
+		if (normal_map->queued_image_path != "" && normal_map->_read_image_check(normal_map->queued_image_path, normal_map->queued_desired_channels, false))
 			task.push_back(std::thread(&Texture::read_queue, normal_map));
 	}
 
@@ -230,19 +269,19 @@ void Material::bind() {
 	}
 
 	if (color_map != nullptr) {
-		if (color_map->queued_image_path != "")
+		if (color_map->queued_image_path != "" && color_map->_load_image_check(color_map->queued_free_ram, false))
 			color_map->load_queue();
 		else
 			color_map->bind();
 	}
 	if (specular_map != nullptr) {
-		if (specular_map->queued_image_path != "")
+		if (specular_map->queued_image_path != "" && specular_map->_load_image_check(specular_map->queued_free_ram, false))
 			specular_map->load_queue();
 		else
 			specular_map->bind();
 	}
 	if (normal_map != nullptr) {
-		if (normal_map->queued_image_path != "")
+		if (normal_map->queued_image_path != "" && normal_map->_load_image_check(normal_map->queued_free_ram, false))
 			normal_map->load_queue();
 		else
 			normal_map->bind();
