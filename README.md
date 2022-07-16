@@ -18,6 +18,9 @@ A custom opengl graphics renderer api to be used in game engine and simulation a
 - fast graphics
 - collusions
 - lighting
+- shadows
+- reflections
+- refractions
 - user controls
 - user interface elements
 - anti-alliasing
