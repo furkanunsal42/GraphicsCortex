@@ -7,6 +7,7 @@
 
 #include <string>
 #include <map>
+#include <unordered_map>
 #include "Debuger.h"
 
 class Shader {
@@ -28,7 +29,7 @@ private:
 	unsigned int compile_shader(unsigned int type, const std::string& shader_source);
 public:
 	unsigned int id = 0;
-	std::map<std::string, unsigned int> uniforms;
+	std::unordered_map<std::string, unsigned int> uniforms;
 	Program();
 	Program(const std::string& vertex_shader_code, const std::string& fragment_shader_code);
 	Program(const std::string& vertex_shader_code, const std::string& geometry_shader_code, const std::string& fragment_shader_code);
