@@ -32,7 +32,7 @@ int main() {
 	Texture color_texture;
 	Texture specular_map;
 	Texture normal_map;
-	//color_texture.queue_image("Images/GoldBlock.png", 4, false);
+	//color_texture.queue_image("Images/GoldBlock.png", 4, true);
 	color_texture.queue_image("Images/Bricks/brickcolor.jpg", 4, true);
 	specular_map.queue_image("Images/Bricks/brickreflection.jpg", 4, true);
 	normal_map.queue_image("Images/Bricks/bricknormal.png", 3, true);
@@ -40,17 +40,15 @@ int main() {
 	//specular_map.queue_image("Images/StoneTiles/tiles_specular.jpg", 4, true);
 	//normal_map.queue_image("Images/StoneTiles/tiles_normal.jpg", 3, true);
 	
-	bool compression = true;
+	bool compression = false;
 	color_texture.compress_image = compression;
-	//specular_map.compress_image = compression;
-	//normal_map.compress_image = compression;
+	specular_map.compress_image = compression;
+	normal_map.compress_image = compression;
 
 	material.color_map = &color_texture;
 	material.specular_map = &specular_map;
 	material.normal_map = &normal_map;
 	
-	material.bind();
-
 	//color_texture.print_info(Texture::info::IS_COMPRESSED);
 	
 	//color_texture.save();
@@ -58,9 +56,16 @@ int main() {
 	//Shader normal_shader("Shaders/Solid.vert", "Shaders/solid.geom", "Shaders/NormalTest.frag");
 	//Program soild_program(normal_shader.vertex_shader, normal_shader.geometry_shader, normal_shader.fragment_shader);
 
-	Program soild_program = default_program::solid_program();
+	Program solid_program = default_program::solid_program();
 	
-	Graphic cube = default_geometry::cube(material, soild_program, glm::vec3(1.0f));
+	
+	std::vector<Graphic> objects;
+	for (int i = 0; i < 500; i++){
+		objects.push_back(default_geometry::cube(material, solid_program, glm::vec3(1.0f)));
+		objects[i].position.x = i * 1.1f;
+	}
+
+	//Graphic cube = default_geometry::cube(material, soild_program, glm::vec3(1.0f));
 
 	/*
 	Graphic cube = default_geometry::cube(
@@ -73,8 +78,11 @@ int main() {
 	);
 	*/
 	
-	scene.meshes.push_back(&cube);
+	//scene.meshes.push_back(&cube);
 	
+	for (int i = 0; i < objects.size(); i++)
+		scene.meshes.push_back(&objects[i]);
+
 	Camera cam;
 	cam.screen_width = (float)width;
 	cam.screen_height = (float)height;
@@ -82,10 +90,10 @@ int main() {
 	cam.perspective = true;
 	scene.camera = &cam;
 	
-	AmbiantLight ambiant(glm::vec3(0.1f, 0.1f, 0.1f), soild_program);
-	DirectionalLight directional(glm::vec3(0.0f, -1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f), soild_program);
-	PointLight point(glm::vec3(3.0f, 0.0f, 3.0f), glm::vec3(3.0f, 3.0f, 3.0f), 0.5f, 0.5f, 0.0f, soild_program);
-	SpotLight spot(glm::vec3(-2.0f, -1.0f, -2.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1.0f, 1.0f, 1.0f), 0.3f, 0.2f, 0.0f, 30, soild_program);
+	AmbiantLight ambiant(glm::vec3(0.1f, 0.1f, 0.1f), solid_program);
+	DirectionalLight directional(glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f), solid_program);
+	//PointLight point(glm::vec3(3.0f, 0.0f, 3.0f), glm::vec3(3.0f, 3.0f, 3.0f), 0.5f, 0.5f, 0.0f, soild_program);
+	//SpotLight spot(glm::vec3(-2.0f, -1.0f, -2.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1.0f, 1.0f, 1.0f), 0.3f, 0.2f, 0.0f, 30, soild_program);
 	
 	scene.lights.push_back(&ambiant);
 	scene.lights.push_back(&directional);
@@ -147,7 +155,7 @@ int main() {
 		//cube.position.x += 0.01f;
 		//cube.rotation.y += 0.04f * frame_time;
 		t += 0.001f * frame_time;
-		point.position.y = 5*glm::cos(t);
+		//point.position.y = 5*glm::cos(t);
 		
 		cube_map.texture_slot = 13;
 		cube_map.bind();

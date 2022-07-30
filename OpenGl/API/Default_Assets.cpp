@@ -40,10 +40,10 @@ namespace default_geometry {
 		float unit_width = 1.0f / texture_atlas_dim.x;
 		float unit_height = 1.0f / texture_atlas_dim.y;
 		std::vector<glm::vec2> texture_locations;
-		for (int i = 0; i < face_texture_locations.size(); i++) {
+		for (unsigned int i = 0; i < face_texture_locations.size(); i++) {
 			glm::vec2 texture_location;
 			texture_location.x = face_texture_locations[i] % texture_atlas_dim.x;
-			texture_location.y = texture_atlas_dim.y - (face_texture_locations[i] / texture_atlas_dim.x);
+			texture_location.y = texture_atlas_dim.y - ((int)face_texture_locations[i] / texture_atlas_dim.x);
 			texture_locations.push_back(texture_location);
 		}
 		/*
@@ -158,7 +158,7 @@ namespace default_geometry {
 		float unit_width = 1.0f / texture_atlas_dim.x;
 		float unit_height = 1.0f / texture_atlas_dim.y;
 		std::vector<glm::vec2> texture_locations;
-		for (int i = 0; i < face_texture_locations.size(); i++) {
+		for (unsigned int i = 0; i < face_texture_locations.size(); i++) {
 			glm::vec2 texture_location;
 			texture_location.x = face_texture_locations[i] % texture_atlas_dim.x;
 			texture_location.y = texture_atlas_dim.y - (face_texture_locations[i] / texture_atlas_dim.x);
@@ -246,6 +246,11 @@ namespace default_program {
 		Shader default_shader("Shaders/Solid.vert", "Shaders/Solid.geom", "Shaders/Solid.frag");
 		return Program(default_shader.vertex_shader, default_shader.geometry_shader, default_shader.fragment_shader);
 	}
+	Program flatcolor_program() {
+		Shader default_shader("Shaders/FlatColor.vert", "Shaders/FlatColor.frag");
+		return Program(default_shader.vertex_shader, default_shader.fragment_shader);
+	}
+
 	Program framebuffer_program() {
 		Shader default_shader("Shaders/FrameBuffer.vert", "Shaders/FrameBuffer.frag");
 		return Program(default_shader.vertex_shader, default_shader.fragment_shader);
@@ -254,4 +259,5 @@ namespace default_program {
 		Shader default_shader("Shaders/CubeMap.vert", "Shaders/CubeMap.frag");
 		return Program(default_shader.vertex_shader, default_shader.fragment_shader);
 	}
+
 }

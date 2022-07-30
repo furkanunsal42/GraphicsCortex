@@ -93,11 +93,4 @@ public:
 	void update_uniform(std::string name, glm::vec3 a);
 	void update_uniform(std::string name, glm::vec2 a);
 
-
-	
-
-};
-
-class DefaultSolidProgram : public Program {
-
 };

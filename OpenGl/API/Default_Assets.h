@@ -21,6 +21,7 @@ namespace default_geometry{
 
 namespace default_program {
 	Program solid_program();
+	Program flatcolor_program();
 	Program framebuffer_program();
 	Program cubemap_program();
 }

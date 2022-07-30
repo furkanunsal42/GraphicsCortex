@@ -82,8 +82,13 @@ vec3 calculate_cube_map_reflection(vec3 current_position, vec3 camera_position, 
 vec3 calculate_specular_light(vec3 light_direction, vec3 current_position, vec3 camera_position, vec3 light_color, vec3 normal){
 	
 	float strenght = 0.8f;
-	float cos_angle = 0.9f;
+	if (bool(use_cube_map_reflection))
+		strenght = 2.0f;
 	
+	float cos_angle = 0.9f;
+	if (bool(use_cube_map_reflection))
+		cos_angle = 0.6;
+
 	vec3 specular_map_color;
 	if (bool(use_specular_map))
 		specular_map_color = texture(specular_map_slot, tex_coords).rgb;
@@ -106,7 +111,10 @@ vec3 calculate_specular_light(vec3 light_direction, vec3 current_position, vec3 
 		return vec3(0.0f);
 
 	//vec3 color = light_color * (max(dot(-light_direction, normal), 0));
-	vec3 light = vec3(pow(current_cos_angle, 100) * strenght);
+	float power = 100f;
+	if (bool(use_cube_map_reflection))
+		power = 30f;
+	vec3 light = vec3(pow(current_cos_angle, power) * strenght);
 	return light * specular_map_total;
 }
 
@@ -182,6 +190,6 @@ void main(){
 	frag_color = vec4(total_light, 1) * color;
 
 	if(bool(use_cube_map_reflection))
-		frag_color = mix(frag_color, vec4(calculate_cube_map_reflection(frag_space_coord, camera_coords, normalize(normal)),1), 0.7);
+		frag_color = mix(frag_color, vec4(calculate_cube_map_reflection(frag_space_coord, camera_coords, normalize(normal)),1), 0.7f);
 
 }
