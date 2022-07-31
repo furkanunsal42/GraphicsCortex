@@ -194,27 +194,39 @@ void Program::define_uniform(std::string name) {
 }
 
 void Program::update_uniform(std::string name, glm::mat4 a) {
+	if (name.find('.') != std::string::npos)
+		define_uniform(name);
 	bind();
 	GLCall(glUniformMatrix4fv(uniforms[name], 1, GL_FALSE, glm::value_ptr(a)));
 }
 void Program::update_uniform(std::string name, glm::mat3 a) {
+	if (name.find('.') != std::string::npos)
+		define_uniform(name);
 	bind();
 	GLCall(glUniformMatrix3fv(uniforms[name], 1, GL_FALSE, glm::value_ptr(a)));
 }
 void Program::update_uniform(std::string name, glm::mat2 a) {
+	if (name.find('.') != std::string::npos)
+		define_uniform(name);
 	bind();
 	GLCall(glUniformMatrix2fv(uniforms[name], 1, GL_FALSE, glm::value_ptr(a)));
 }
 
 void Program::update_uniform(std::string name, glm::vec4 a) {
+	if (name.find('.') != std::string::npos)
+		define_uniform(name);
 	bind();
 	GLCall(glUniform4fv(uniforms[name], 1, glm::value_ptr(a)));
 }
 void Program::update_uniform(std::string name, glm::vec3 a) {
+	if (name.find('.') != std::string::npos)
+		define_uniform(name);
 	bind();
 	GLCall(glUniform3fv(uniforms[name], 1, glm::value_ptr(a)));
 }
 void Program::update_uniform(std::string name, glm::vec2 a) {
+	if (name.find('.') != std::string::npos)
+		define_uniform(name);
 	bind();
 	GLCall(glUniform2fv(uniforms[name], 1, glm::value_ptr(a)));
 }

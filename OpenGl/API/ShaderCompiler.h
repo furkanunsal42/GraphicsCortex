@@ -43,7 +43,7 @@ public:
 	// template definitions
 	template<typename T>
 	void update_uniform(std::string name, T a, T b, T c, T d) {
-		if (uniforms.find(name) == uniforms.end())
+		if (name.find('.') != std::string::npos)
 			define_uniform(name);
 		bind();
 		if (std::is_same<T, float>::value) {
@@ -55,6 +55,8 @@ public:
 	}
 	template<typename T>
 	void update_uniform(std::string name, T a, T b, T c) {
+		if (name.find('.') != std::string::npos)
+			define_uniform(name);
 		bind();
 		if (std::is_same<T, float>::value) {
 			GLCall(glUniform3f(uniforms[name], (float)a, (float)b, (float)c));
@@ -65,6 +67,8 @@ public:
 	}
 	template<typename T>
 	void update_uniform(std::string name, T a, T b) {
+		if (name.find('.') != std::string::npos)
+			define_uniform(name);
 		bind();
 		if (std::is_same<T, float>::value){
 			GLCall(glUniform2f(uniforms[name], (float)a, (float)b));
@@ -75,6 +79,8 @@ public:
 	}
 	template<typename T>
 	void update_uniform(std::string name, T a) {
+		if (name.find('.') != std::string::npos)
+			define_uniform(name);
 		bind();
 		if (std::is_same<T, float>::value){
 			GLCall(glUniform1f(uniforms[name], (float)a));
