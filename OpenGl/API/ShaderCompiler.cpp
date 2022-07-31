@@ -122,7 +122,19 @@ void Program::_detect_and_define_all_uniforms(const std::string& shader_code) {
 				}
 			}
 			std::string uniform_name = line.substr(begin + 1, end - begin - 1);
-			define_uniform(uniform_name);
+			// uniforms can also be arrays
+			// uniform type name[number];
+			int array_bracet_begin = uniform_name.find('[');
+			int array_bracet_end = uniform_name.find(']');
+			if(array_bracet_begin == std::string::npos)
+				define_uniform(uniform_name);
+			else {
+				int array_size = std::stoi(uniform_name.substr(array_bracet_begin + 1, array_bracet_end - array_bracet_begin - 1));
+				for (int i = 0; i < array_size; i++) {
+					std::string new_uniform_name = uniform_name.substr(0, array_bracet_begin + 1) + std::to_string(i) + uniform_name.substr(array_bracet_end);
+					define_uniform(new_uniform_name);
+				}
+			}
 		}
 	}
 }
