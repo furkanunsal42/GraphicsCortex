@@ -29,7 +29,7 @@ Graphic::Graphic(const std::vector<float>& verticies, int data_dim = 2) {
 	this->index_buffer = index_buffer;
 }
  
-void Graphic::draw(bool show_warnings) {
+void Graphic::draw(bool show_warnings, bool _ignore_default_uniforms) {
 	bool material_exist = true;
 	bool renderer_exist = true;
 	if (material == nullptr) {
@@ -50,19 +50,23 @@ void Graphic::draw(bool show_warnings) {
 	
 	if (material_exist)
 		material->bind();
-	// temp
 	
-	// reflection temp code
-	renderer->update_uniform("cube_map", 13);
-	renderer->update_uniform("use_cube_map_reflection", 0);
+	if (!_ignore_default_uniforms){
+		// reflection temp code
+		renderer->update_uniform("cube_map", 13);
+		renderer->update_uniform("use_cube_map_reflection", 0);
+		// temp
 
-	if (renderer_exist && material_exist){
-		renderer->update_uniform("color_map_slot", material->color_map_slot);
-		renderer->update_uniform("specular_map_slot", material->specular_map_slot);
-		renderer->update_uniform("normal_map_slot", material->normal_map_slot);
+		if (renderer_exist && material_exist){
+			renderer->update_uniform("color_map_slot", material->color_map_slot);
+			renderer->update_uniform("specular_map_slot", material->specular_map_slot);
+			renderer->update_uniform("normal_map_slot", material->normal_map_slot);
+		}
 	}
-		GLCall(glDrawElements(mode, index_buffer.data_count, GL_UNSIGNED_INT, nullptr));
+	GLCall(glDrawElements(mode, index_buffer.data_count, GL_UNSIGNED_INT, nullptr));
 }
+
+
 
 void Graphic::update_matrix() {
 	model_matrix = glm::rotate(glm::mat4(1.0f), glm::radians(rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));

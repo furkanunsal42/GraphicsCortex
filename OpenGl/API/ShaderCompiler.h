@@ -27,9 +27,11 @@ public:
 class Program {
 private:
 	unsigned int compile_shader(unsigned int type, const std::string& shader_source);
+	void _detect_and_define_all_uniforms(const std::string& shader_code);
 public:
 	unsigned int id = 0;
 	std::unordered_map<std::string, unsigned int> uniforms;
+	std::vector<unsigned int> uniform_id_shortcuts;
 	Program();
 	Program(const std::string& vertex_shader_code, const std::string& fragment_shader_code);
 	Program(const std::string& vertex_shader_code, const std::string& geometry_shader_code, const std::string& fragment_shader_code);
@@ -53,8 +55,6 @@ public:
 	}
 	template<typename T>
 	void update_uniform(std::string name, T a, T b, T c) {
-		if (uniforms.find(name) == uniforms.end())
-			define_uniform(name);
 		bind();
 		if (std::is_same<T, float>::value) {
 			GLCall(glUniform3f(uniforms[name], (float)a, (float)b, (float)c));
@@ -65,8 +65,6 @@ public:
 	}
 	template<typename T>
 	void update_uniform(std::string name, T a, T b) {
-		if (uniforms.find(name) == uniforms.end())
-			define_uniform(name);
 		bind();
 		if (std::is_same<T, float>::value){
 			GLCall(glUniform2f(uniforms[name], (float)a, (float)b));
@@ -77,8 +75,6 @@ public:
 	}
 	template<typename T>
 	void update_uniform(std::string name, T a) {
-		if (uniforms.find(name) == uniforms.end())
-			define_uniform(name);
 		bind();
 		if (std::is_same<T, float>::value){
 			GLCall(glUniform1f(uniforms[name], (float)a));
@@ -87,11 +83,11 @@ public:
 			GLCall(glUniform1i(uniforms[name], (int)a));
 		}
 	}
+
 	void update_uniform(std::string name, glm::mat4 a);
 	void update_uniform(std::string name, glm::mat3 a);
 	void update_uniform(std::string name, glm::mat2 a);
 	void update_uniform(std::string name, glm::vec4 a);
 	void update_uniform(std::string name, glm::vec3 a);
 	void update_uniform(std::string name, glm::vec2 a);
-
 };

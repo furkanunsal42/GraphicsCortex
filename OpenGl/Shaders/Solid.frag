@@ -111,9 +111,9 @@ vec3 calculate_specular_light(vec3 light_direction, vec3 current_position, vec3 
 		return vec3(0.0f);
 
 	//vec3 color = light_color * (max(dot(-light_direction, normal), 0));
-	float power = 100f;
+	float power = 100.0f;
 	if (bool(use_cube_map_reflection))
-		power = 30f;
+		power = 30.0f;
 	vec3 light = vec3(pow(current_cos_angle, power) * strenght);
 	return light * specular_map_total;
 }
