@@ -51,7 +51,6 @@ void Graphic::draw(bool show_warnings) {
 	if (material_exist)
 		material->bind();
 	// temp
-	for (int i = 0; i < 500; i++){
 	
 	// reflection temp code
 	renderer->update_uniform("cube_map", 13);
@@ -63,7 +62,6 @@ void Graphic::draw(bool show_warnings) {
 		renderer->update_uniform("normal_map_slot", material->normal_map_slot);
 	}
 		GLCall(glDrawElements(mode, index_buffer.data_count, GL_UNSIGNED_INT, nullptr));
-	}
 }
 
 void Graphic::update_matrix() {

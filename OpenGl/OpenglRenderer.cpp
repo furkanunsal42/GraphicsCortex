@@ -60,9 +60,9 @@ int main() {
 	
 	
 	std::vector<Graphic> objects;
-	for (int i = 0; i < 1; i++){
+	for (int i = 0; i < 500; i++){
 		objects.push_back(default_geometry::cube(material, solid_program, glm::vec3(1.0f)));
-		//objects[i].position.x = i * 1.1f;
+		objects[i].position.x = i * 1.1f;
 	}
 
 	//Graphic cube = default_geometry::cube(material, soild_program, glm::vec3(1.0f));
