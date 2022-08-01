@@ -96,4 +96,52 @@ public:
 	void update_uniform(std::string name, glm::vec4 a);
 	void update_uniform(std::string name, glm::vec3 a);
 	void update_uniform(std::string name, glm::vec2 a);
+
+	template<typename T>
+	void update_uniform(int shortcut_index, T a, T b, T c, T d) {
+		bind();
+		if (std::is_same<T, float>::value) {
+			GLCall(glUniform4f(uniform_id_shortcuts[shortcut_index], (float)a, (float)b, (float)c, (float)d));
+		}
+		else if (std::is_same<T, int>::value) {
+			GLCall(glUniform4i(uniform_id_shortcuts[shortcut_index], (int)a, (int)b, (int)c, (int)d));
+		}
+	}
+	template<typename T>
+	void update_uniform(int shortcut_index, T a, T b, T c) {
+		bind();
+		if (std::is_same<T, float>::value) {
+			GLCall(glUniform3f(uniform_id_shortcuts[shortcut_index], (float)a, (float)b, (float)c));
+		}
+		else if (std::is_same<T, int>::value) {
+			GLCall(glUniform3i(uniform_id_shortcuts[shortcut_index], (int)a, (int)b, (int)c));
+		}
+	}
+	template<typename T>
+	void update_uniform(int shortcut_index, T a, T b) {
+		bind();
+		if (std::is_same<T, float>::value) {
+			GLCall(glUniform2f(uniform_id_shortcuts[shortcut_index], (float)a, (float)b));
+		}
+		else if (std::is_same<T, int>::value) {
+			GLCall(glUniform2i(uniform_id_shortcuts[shortcut_index], (int)a, (int)b));
+		}
+	}
+	template<typename T>
+	void update_uniform(int shortcut_index, T a) {
+		bind();
+		if (std::is_same<T, float>::value) {
+			GLCall(glUniform1f(uniform_id_shortcuts[shortcut_index], (float)a));
+		}
+		else if (std::is_same<T, int>::value) {
+			GLCall(glUniform1i(uniform_id_shortcuts[shortcut_index], (int)a));
+		}
+	}
+
+	void update_uniform(int shortcut_index, glm::mat4 a);
+	void update_uniform(int shortcut_index, glm::mat3 a);
+	void update_uniform(int shortcut_index, glm::mat2 a);
+	void update_uniform(int shortcut_index, glm::vec4 a);
+	void update_uniform(int shortcut_index, glm::vec3 a);
+	void update_uniform(int shortcut_index, glm::vec2 a);
 };

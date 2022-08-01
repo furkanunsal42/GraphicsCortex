@@ -6,6 +6,7 @@
 
 #include <iostream>
 
+#include "Default_Assets.h"
 #include "Debuger.h"
 #include "Frame.h"
 
@@ -27,13 +28,14 @@ void Scene::render(GLFWwindow* window) {
 		camera->update_uniforms(*(mesh->renderer));
 
 		mesh->update_matrix();
-		mesh->renderer->update_uniform(model_uniform_name, mesh->model_matrix);
-		mesh->renderer->update_uniform(view_uniform_name, camera->view_matrix);
-		mesh->renderer->update_uniform(projection_uniform_name, camera->projection_matrix);
+		// original was using model/view/projection_uniform_name parameters of the class
+		mesh->renderer->update_uniform(default_program::SOLID_UNIFORM_SHORTCUTS::MODEL, mesh->model_matrix);
+		mesh->renderer->update_uniform(default_program::SOLID_UNIFORM_SHORTCUTS::VIEW, camera->view_matrix);
+		mesh->renderer->update_uniform(default_program::SOLID_UNIFORM_SHORTCUTS::PROJECTION, camera->projection_matrix);
 		
-		mesh->renderer->update_uniform("use_color_map", (int)(mesh->material->color_map != nullptr));
-		mesh->renderer->update_uniform("use_specular_map", (int)(mesh->material->specular_map != nullptr));
-		mesh->renderer->update_uniform("use_normal_map", (int)(mesh->material->normal_map != nullptr));
+		mesh->renderer->update_uniform(default_program::SOLID_UNIFORM_SHORTCUTS::USE_COLOR_MAP, (int)(mesh->material->color_map != nullptr));
+		mesh->renderer->update_uniform(default_program::SOLID_UNIFORM_SHORTCUTS::USE_SPECULAR_MAP, (int)(mesh->material->specular_map != nullptr));
+		mesh->renderer->update_uniform(default_program::SOLID_UNIFORM_SHORTCUTS::USE_NORMAL_MAP, (int)(mesh->material->normal_map != nullptr));
 
 		mesh->draw();
 	}

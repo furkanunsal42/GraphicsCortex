@@ -190,7 +190,8 @@ void Program::unbind() {
 
 // UNIFORMS
 void Program::define_uniform(std::string name) {
-	GLCall(uniforms.insert(std::pair<std::string, unsigned int>(name, glGetUniformLocation(this->id, name.c_str()))));
+	if (uniforms.find(name) == uniforms.end())
+		GLCall(uniforms.insert(std::pair<std::string, unsigned int>(name, glGetUniformLocation(this->id, name.c_str()))));
 }
 
 void Program::update_uniform(std::string name, glm::mat4 a) {
@@ -229,4 +230,31 @@ void Program::update_uniform(std::string name, glm::vec2 a) {
 		define_uniform(name);
 	bind();
 	GLCall(glUniform2fv(uniforms[name], 1, glm::value_ptr(a)));
+}
+
+// shortcuts
+void Program::update_uniform(int shortcut_index, glm::mat4 a) {
+	bind();
+	GLCall(glUniformMatrix4fv(uniform_id_shortcuts[shortcut_index], 1, GL_FALSE, glm::value_ptr(a)));
+}
+void Program::update_uniform(int shortcut_index, glm::mat3 a) {
+	bind();
+	GLCall(glUniformMatrix3fv(uniform_id_shortcuts[shortcut_index], 1, GL_FALSE, glm::value_ptr(a)));
+}
+void Program::update_uniform(int shortcut_index, glm::mat2 a) {
+	bind();
+	GLCall(glUniformMatrix2fv(uniform_id_shortcuts[shortcut_index], 1, GL_FALSE, glm::value_ptr(a)));
+}
+
+void Program::update_uniform(int shortcut_index, glm::vec4 a) {
+	bind();
+	GLCall(glUniform4fv(uniform_id_shortcuts[shortcut_index], 1, glm::value_ptr(a)));
+}
+void Program::update_uniform(int shortcut_index, glm::vec3 a) {
+	bind();
+	GLCall(glUniform3fv(uniform_id_shortcuts[shortcut_index], 1, glm::value_ptr(a)));
+}
+void Program::update_uniform(int shortcut_index, glm::vec2 a) {
+	bind();
+	GLCall(glUniform2fv(uniform_id_shortcuts[shortcut_index], 1, glm::value_ptr(a)));
 }

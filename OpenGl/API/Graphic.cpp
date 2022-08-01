@@ -1,4 +1,5 @@
 #include "Graphic.h"
+#include "Default_Assets.h"
 #include <iostream>
 
 Graphic::Graphic() :
@@ -53,14 +54,14 @@ void Graphic::draw(bool show_warnings, bool _ignore_default_uniforms) {
 	
 	if (!_ignore_default_uniforms){
 		// reflection temp code
-		renderer->update_uniform("cube_map", 13);
-		renderer->update_uniform("use_cube_map_reflection", 0);
+		renderer->update_uniform(default_program::SOLID_UNIFORM_SHORTCUTS::CUBE_MAP, 13);
+		renderer->update_uniform(default_program::SOLID_UNIFORM_SHORTCUTS::USE_CUBE_MAP_REFLECTION, 0);
 		// temp
 
 		if (renderer_exist && material_exist){
-			renderer->update_uniform("color_map_slot", material->color_map_slot);
-			renderer->update_uniform("specular_map_slot", material->specular_map_slot);
-			renderer->update_uniform("normal_map_slot", material->normal_map_slot);
+			renderer->update_uniform(default_program::SOLID_UNIFORM_SHORTCUTS::COLOR_MAP_SLOT, material->color_map_slot);
+			renderer->update_uniform(default_program::SOLID_UNIFORM_SHORTCUTS::SPECULAR_MAP_SLOT, material->specular_map_slot);
+			renderer->update_uniform(default_program::SOLID_UNIFORM_SHORTCUTS::NORMAL_MAP_SLOT, material->normal_map_slot);
 		}
 	}
 	GLCall(glDrawElements(mode, index_buffer.data_count, GL_UNSIGNED_INT, nullptr));

@@ -244,7 +244,20 @@ namespace default_geometry {
 namespace default_program {
 	Program solid_program() {
 		Shader default_shader("Shaders/Solid.vert", "Shaders/Solid.geom", "Shaders/Solid.frag");
-		return Program(default_shader.vertex_shader, default_shader.geometry_shader, default_shader.fragment_shader);
+		Program solid_program(default_shader.vertex_shader, default_shader.geometry_shader, default_shader.fragment_shader);
+		solid_program.uniform_id_shortcuts.push_back(solid_program.uniforms["model"]);
+		solid_program.uniform_id_shortcuts.push_back(solid_program.uniforms["projection"]);
+		solid_program.uniform_id_shortcuts.push_back(solid_program.uniforms["view"]);
+		solid_program.uniform_id_shortcuts.push_back(solid_program.uniforms["camera_coords"]);
+		solid_program.uniform_id_shortcuts.push_back(solid_program.uniforms["use_color_map"]);
+		solid_program.uniform_id_shortcuts.push_back(solid_program.uniforms["color_map_slot"]);
+		solid_program.uniform_id_shortcuts.push_back(solid_program.uniforms["use_normal_map"]);
+		solid_program.uniform_id_shortcuts.push_back(solid_program.uniforms["normal_map_slot"]);
+		solid_program.uniform_id_shortcuts.push_back(solid_program.uniforms["use_specular_map"]);
+		solid_program.uniform_id_shortcuts.push_back(solid_program.uniforms["specular_map_slot"]);
+		solid_program.uniform_id_shortcuts.push_back(solid_program.uniforms["use_cube_map_reflection"]);
+		solid_program.uniform_id_shortcuts.push_back(solid_program.uniforms["cube_map"]);
+		return solid_program;
 	}
 	Program flatcolor_program() {
 		Shader default_shader("Shaders/FlatColor.vert", "Shaders/FlatColor.frag");
