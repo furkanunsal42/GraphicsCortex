@@ -26,6 +26,7 @@ public:
 
 class Program {
 private:
+	static unsigned int current_binded_program;
 	unsigned int compile_shader(unsigned int type, const std::string& shader_source);
 	void _detect_and_define_all_uniforms(const std::string& shader_code);
 public:

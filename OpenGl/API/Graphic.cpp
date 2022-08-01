@@ -50,8 +50,8 @@ void Graphic::draw(bool show_warnings, bool _ignore_default_uniforms) {
 	index_buffer.bind();
 	
 	if (material_exist)
-		material->bind();
-	
+ 		material->bind();
+
 	if (!_ignore_default_uniforms){
 		// reflection temp code
 		renderer->update_uniform(default_program::SOLID_UNIFORM_SHORTCUTS::CUBE_MAP, 13);

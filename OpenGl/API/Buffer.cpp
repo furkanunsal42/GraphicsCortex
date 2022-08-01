@@ -5,7 +5,7 @@
 
 #include "Buffer.h";
 
-unsigned int current_binded_buffer = 0;
+unsigned int ArrayBuffer::current_binded_buffer = 0;
 
 ArrayBuffer::ArrayBuffer()
 	: id(0), data_count(0) {};

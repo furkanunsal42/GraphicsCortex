@@ -6,6 +6,8 @@
 #include "Debuger.h"
 
 class ArrayBuffer {
+private:
+	static unsigned int current_binded_buffer;
 public:
 	unsigned int id;
 	int data_count;

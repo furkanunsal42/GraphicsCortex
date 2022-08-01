@@ -23,6 +23,12 @@ void Scene::render(GLFWwindow* window) {
 		light->update_uniforms();
 	}
 
+	meshes[0]->renderer->bind();
+	meshes[0]->vertex_buffer.bind();
+	meshes[0]->index_buffer.bind();
+	meshes[0]->material->bind();
+	// TEMP
+
 	for(Graphic* mesh : meshes){
 		// temp
 		camera->update_uniforms(*(mesh->renderer));

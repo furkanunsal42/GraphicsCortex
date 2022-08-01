@@ -4,10 +4,10 @@
 #include <string>
 
 #define MAX_TEXTURE_SLOTS 16
-extern unsigned int CurrentBindedTexture[MAX_TEXTURE_SLOTS];
 
 class Texture {
 public:
+	static unsigned int CurrentBindedTexture[];
 	unsigned int id = 0;
 	int width = NULL, height = NULL, channels = NULL;
 	unsigned char* image_data = NULL;

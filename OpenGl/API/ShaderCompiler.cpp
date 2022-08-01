@@ -8,7 +8,7 @@
 #include <GL\glew.h>
 #include "Debuger.h"
 
-unsigned int current_binded_program = 0;
+unsigned int Program::current_binded_program = 0;
 
 Shader::Shader() { ; }
 

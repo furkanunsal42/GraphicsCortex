@@ -10,8 +10,7 @@
 #include <iostream>
 #include <mutex>
 
-unsigned int CurrentBindedTexture[MAX_TEXTURE_SLOTS];
-
+unsigned int Texture::CurrentBindedTexture[MAX_TEXTURE_SLOTS];
 
 Texture::Texture() {
 	GLCall(glGenTextures(1, &id));
@@ -167,6 +166,8 @@ void Texture::initialize_blank_image() {
 
 
 void Texture::bind() {
+	if (CurrentBindedTexture[texture_slot] == id)
+		return;
 	GLCall(glActiveTexture(GL_TEXTURE0 + texture_slot));
 	GLCall(glBindTexture(target, id));
 	GLCall(glTexParameteri(target, GL_TEXTURE_MIN_FILTER, min_filter));
