@@ -70,8 +70,12 @@ void Graphic::draw(bool show_warnings, bool _ignore_default_uniforms) {
 
 
 void Graphic::update_matrix() {
+	if (_last_updated_position == position && _last_updated_rotation == rotation)
+		return;
 	model_matrix = glm::rotate(glm::mat4(1.0f), glm::radians(rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
 	model_matrix = glm::rotate(model_matrix, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
 	model_matrix = glm::rotate(model_matrix, glm::radians(rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
 	model_matrix = glm::translate(model_matrix, (glm::vec3)(glm::vec4(position.x, position.y, position.z, 0) * model_matrix));
+	_last_updated_position = position;
+	_last_updated_rotation = rotation;
 }

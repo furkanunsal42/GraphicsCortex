@@ -6,6 +6,9 @@
 #include "Texture.h"
 
 class Graphic {
+private:
+	glm::vec3 _last_updated_position = glm::vec3(0.0f, 0.0f, 0.0f);
+	glm::vec3 _last_updated_rotation = glm::vec3(0.0f, 0.0f, 0.0f);;
 public:
 	ArrayBuffer vertex_buffer;
 	IndexBuffer index_buffer;
