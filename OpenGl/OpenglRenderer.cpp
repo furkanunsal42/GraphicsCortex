@@ -40,7 +40,7 @@ int main() {
 	//specular_map.queue_image("Images/StoneTiles/tiles_specular.jpg", 4, true);
 	//normal_map.queue_image("Images/StoneTiles/tiles_normal.jpg", 3, true);
 	
-	bool compression = false;
+	bool compression = true;
 	color_texture.compress_image = compression;
 	specular_map.compress_image = compression;
 	normal_map.compress_image = compression;
@@ -60,7 +60,7 @@ int main() {
 	
 	
 	std::vector<Graphic> objects;
-	for (int i = 0; i < 500; i++){
+	for (int i = 0; i < 1000; i++){
 		objects.push_back(default_geometry::cube(material, solid_program, glm::vec3(1.0f)));
 		objects[i].position.x = i * 1.1f;
 	}
@@ -109,20 +109,20 @@ int main() {
 	CubeMapTexture cube_map;
 	cube_map.program = &cubemap_program;
 	cube_map.camera = scene.camera;
-	/*
 	cube_map.face_texture_filepaths[RIGHT] = "Images/CubeMap/Sky/px.jpg";
 	cube_map.face_texture_filepaths[LEFT] = "Images/CubeMap/Sky/nx.jpg";
 	cube_map.face_texture_filepaths[TOP] = "Images/CubeMap/Sky/py.jpg";
 	cube_map.face_texture_filepaths[BOTTOM] = "Images/CubeMap/Sky/ny.jpg";
 	cube_map.face_texture_filepaths[FRONT] = "Images/CubeMap/Sky/pz.jpg";
 	cube_map.face_texture_filepaths[BACK] = "Images/CubeMap/Sky/nz.jpg";
-	*/
+	/*
 	cube_map.face_texture_filepaths[RIGHT] = "Images/CubeMap/Street/px.png";
 	cube_map.face_texture_filepaths[LEFT] = "Images/CubeMap/Street/nx.png";
 	cube_map.face_texture_filepaths[TOP] = "Images/CubeMap/Street/py.png";
 	cube_map.face_texture_filepaths[BOTTOM] = "Images/CubeMap/Street/ny.png";
 	cube_map.face_texture_filepaths[FRONT] = "Images/CubeMap/Street/pz.png";
 	cube_map.face_texture_filepaths[BACK] = "Images/CubeMap/Street/nz.png";
+	*/
 
 	cube_map.read_queue(3);
 	cube_map.load_queue(true);

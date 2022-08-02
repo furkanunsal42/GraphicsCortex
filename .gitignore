@@ -54,3 +54,11 @@ OpenGl/Debug/frame.obj.enc
 OpenGl/Debug/OpenGl.ilk
 .vs/OpenGl/v16/TestStore/0/000.testlog
 OpenGl/Debug/graphic.obj.enc
+*.recipe
+*.pdb
+*.lastbuildstate
+*.tlog
+*.log
+*.ipdb
+*.iobj
+*.exe

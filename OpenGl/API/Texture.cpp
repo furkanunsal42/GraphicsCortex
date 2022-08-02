@@ -16,7 +16,7 @@ Texture::Texture() {
 	GLCall(glGenTextures(1, &id));
 }
 
-bool Texture::_read_image_check(std::string file_path, int desired_channels, bool print_errors) {
+bool Texture::_read_image_check(std::string& file_path, int desired_channels, bool print_errors) {
 	if (file_path == currently_stored_file_name) {
 		if (print_errors)
 			std::cout << "[Opengl Warning] Texture::_read_image() is called but file_path was same with previously loaded file. Loading is cancelled. \n";
@@ -32,7 +32,7 @@ bool Texture::_read_image_check(std::string file_path, int desired_channels, boo
 	return true;
 }
 
-void Texture::_read_image(std::string file_path, int desired_channels) {
+void Texture::_read_image(std::string& file_path, int desired_channels) {
 	if (!_read_image_check(file_path, desired_channels))
 		return;
 	
@@ -249,17 +249,17 @@ void temp() {
 
 void Material::bind() {
 	std::vector<std::thread> task;
-	if (color_map != nullptr){
+	if (color_map != nullptr) {
 		color_map->texture_slot = color_map_slot;
 		if (color_map->queued_image_path != "" && color_map->_read_image_check(color_map->queued_image_path, color_map->queued_desired_channels, false))
 			task.push_back(std::thread(&Texture::read_queue, color_map));
 	}
-	if (specular_map != nullptr){
+	if (specular_map != nullptr) {
 		specular_map->texture_slot = specular_map_slot;
 		if (specular_map->queued_image_path != "" && specular_map->_read_image_check(specular_map->queued_image_path, specular_map->queued_desired_channels, false))
 			task.push_back(std::thread(&Texture::read_queue, specular_map));
 	}
-	if (normal_map != nullptr){
+	if (normal_map != nullptr) {
 		normal_map->texture_slot = normal_map_slot;
 		if (normal_map->queued_image_path != "" && normal_map->_read_image_check(normal_map->queued_image_path, normal_map->queued_desired_channels, false))
 			task.push_back(std::thread(&Texture::read_queue, normal_map));

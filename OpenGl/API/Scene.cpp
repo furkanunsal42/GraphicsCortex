@@ -66,6 +66,11 @@ void Scene::render_to_framebuffer(GLFWwindow* window) {
 		light->update_uniforms();
 	}
 
+	//meshes[0]->renderer->bind();
+	//meshes[0]->vertex_buffer.bind();
+	//meshes[0]->index_buffer.bind();
+	meshes[0]->material->bind();
+
 	for (Graphic* mesh : meshes) {
 		// temp
 		camera->update_uniforms(*(mesh->renderer));

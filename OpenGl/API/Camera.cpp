@@ -5,6 +5,7 @@
 #include "gtx\rotate_vector.hpp"
 
 #include <iostream>
+#include "Default_Assets.h"
 
 Camera::Camera() :
 	screen_width(100.0f), screen_height(100.0f) {}
@@ -29,7 +30,7 @@ void Camera::update_matrixes() {
 }
 
 void Camera::update_uniforms(Program& program) {
-	program.update_uniform(std::string("camera_coords"), position.x, position.y, position.z);
+	program.update_uniform(default_program::SOLID_UNIFORM_SHORTCUTS::CAMERA_COORDS, position.x, position.y, position.z);
 }
 
 void Camera::handle_movements(GLFWwindow* window) {

@@ -58,15 +58,16 @@ public:
 	int queued_desired_channels = 4;
 	bool queued_free_ram = false;
 	
-	bool _read_image_check(std::string file_path, int desired_channels = 4, bool print_errors = true);
+	bool _read_image_check(std::string& file_path, int desired_channels = 4, bool print_errors = true);
 	bool _load_image_check(bool free_ram = false, bool print_errors = true);
 private:
-	void _read_image(std::string file_path, int desired_channels = 4);
+	void _read_image(std::string& file_path, int desired_channels = 4);
 	void _load_image(bool free_ram = false);
 	std::string currently_stored_file_name = "";
 };
 
 class Material {
+private:
 public:
 	int color_map_slot = 0;
 	int specular_map_slot = 1;
