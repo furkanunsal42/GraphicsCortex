@@ -40,10 +40,10 @@ public:
 	void compile(const std::string& vertex_shader_code, const std::string& geometry_shader_code, const std::string& fragment_shader_code);
 	void bind();
 	void unbind();
-	void define_uniform(std::string name);
+	void define_uniform(const std::string& name);
 	// template definitions
 	template<typename T>
-	void update_uniform(std::string name, T a, T b, T c, T d) {
+	void update_uniform(const std::string& name, const T& a, const T& b, const T& c, const T& d) {
 		if (name.find('.') != std::string::npos)
 			define_uniform(name);
 		bind();
@@ -55,7 +55,7 @@ public:
 		}
 	}
 	template<typename T>
-	void update_uniform(std::string name, T a, T b, T c) {
+	void update_uniform(const std::string& name, const T& a, const T& b, const T& c) {
 		if (name.find('.') != std::string::npos)
 			define_uniform(name);
 		bind();
@@ -67,7 +67,7 @@ public:
 		}
 	}
 	template<typename T>
-	void update_uniform(std::string name, T a, T b) {
+	void update_uniform(const std::string& name, const T& a, const T& b) {
 		if (name.find('.') != std::string::npos)
 			define_uniform(name);
 		bind();
@@ -79,7 +79,7 @@ public:
 		}
 	}
 	template<typename T>
-	void update_uniform(std::string name, T a) {
+	void update_uniform(const std::string& name, const T& a) {
 		if (name.find('.') != std::string::npos)
 			define_uniform(name);
 		bind();
@@ -91,15 +91,15 @@ public:
 		}
 	}
 
-	void update_uniform(std::string name, glm::mat4 a);
-	void update_uniform(std::string name, glm::mat3 a);
-	void update_uniform(std::string name, glm::mat2 a);
-	void update_uniform(std::string name, glm::vec4 a);
-	void update_uniform(std::string name, glm::vec3 a);
-	void update_uniform(std::string name, glm::vec2 a);
+	void update_uniform(const std::string& name, const glm::mat4& a);
+	void update_uniform(const std::string& name, const glm::mat3& a);
+	void update_uniform(const std::string& name, const glm::mat2& a);
+	void update_uniform(const std::string& name, const glm::vec4& a);
+	void update_uniform(const std::string& name, const glm::vec3& a);
+	void update_uniform(const std::string& name, const glm::vec2& a);
 
 	template<typename T>
-	void update_uniform(int shortcut_index, T a, T b, T c, T d) {
+	void update_uniform(const int& shortcut_index, const T& a, const T& b, const T& c, const T& d) {
 		bind();
 		if (std::is_same<T, float>::value) {
 			GLCall(glUniform4f(uniform_id_shortcuts[shortcut_index], (float)a, (float)b, (float)c, (float)d));
@@ -109,7 +109,7 @@ public:
 		}
 	}
 	template<typename T>
-	void update_uniform(int shortcut_index, T a, T b, T c) {
+	void update_uniform(const int& shortcut_index, const T& a, const T& b, const T& c) {
 		bind();
 		if (std::is_same<T, float>::value) {
 			GLCall(glUniform3f(uniform_id_shortcuts[shortcut_index], (float)a, (float)b, (float)c));
@@ -119,7 +119,7 @@ public:
 		}
 	}
 	template<typename T>
-	void update_uniform(int shortcut_index, T a, T b) {
+	void update_uniform(const int& shortcut_index, const T& a, const T& b) {
 		bind();
 		if (std::is_same<T, float>::value) {
 			GLCall(glUniform2f(uniform_id_shortcuts[shortcut_index], (float)a, (float)b));
@@ -129,7 +129,7 @@ public:
 		}
 	}
 	template<typename T>
-	void update_uniform(int shortcut_index, T a) {
+	void update_uniform(const int& shortcut_index, const T& a) {
 		bind();
 		if (std::is_same<T, float>::value) {
 			GLCall(glUniform1f(uniform_id_shortcuts[shortcut_index], (float)a));
@@ -139,10 +139,10 @@ public:
 		}
 	}
 
-	void update_uniform(int shortcut_index, glm::mat4 a);
-	void update_uniform(int shortcut_index, glm::mat3 a);
-	void update_uniform(int shortcut_index, glm::mat2 a);
-	void update_uniform(int shortcut_index, glm::vec4 a);
-	void update_uniform(int shortcut_index, glm::vec3 a);
-	void update_uniform(int shortcut_index, glm::vec2 a);
+	void update_uniform(const int& shortcut_index, const glm::mat4& a);
+	void update_uniform(const int& shortcut_index, const glm::mat3& a);
+	void update_uniform(const int& shortcut_index, const glm::mat2& a);
+	void update_uniform(const int& shortcut_index, const glm::vec4& a);
+	void update_uniform(const int& shortcut_index, const glm::vec3& a);
+	void update_uniform(const int& shortcut_index, const glm::vec2& a);
 };

@@ -3,6 +3,8 @@
 
 namespace default_geometry {
 
+
+
 	Graphic rectangle(glm::vec2 scale) {
 		std::vector<float> custom_verticies{
 			// verticies							texture			normals	
@@ -69,7 +71,7 @@ namespace default_geometry {
 		*/
 
 		std::vector<float> custom_verticies{
-			// verticies										texture																					normals	
+			// verticies							texture																					normals	
 			-0.5f * scale.x, -0.5f * scale.y,  0,	unit_width * texture_locations[0].x,	   unit_height * (texture_locations[0].y - 1),	0.0f, 0.0f, 1.0f,	//forward
 			 0.5f * scale.x, -0.5f * scale.y,  0,	unit_width * (texture_locations[0].x + 1), unit_height * (texture_locations[0].y - 1),	0.0f, 0.0f, 1.0f,
 			 0.5f * scale.x,  0.5f * scale.y,  0,	unit_width * (texture_locations[0].x + 1), unit_height * (texture_locations[0].y),		0.0f, 0.0f, 1.0f,
@@ -187,7 +189,7 @@ namespace default_geometry {
 		*/
 
 		std::vector<float> custom_verticies{
-			// verticies										texture																							normals	
+			// verticies										texture																						normals	
 			-0.5f * scale.x, -0.5f * scale.y,  0.5f * scale.z,	unit_width * texture_locations[0].x,	   unit_height * (texture_locations[0].y - 1),		0.0f, 0.0f, 1.0f,	//forward
 			 0.5f * scale.x, -0.5f * scale.y,  0.5f * scale.z,	unit_width * (texture_locations[0].x + 1), unit_height * (texture_locations[0].y - 1),		0.0f, 0.0f, 1.0f,
 			 0.5f * scale.x,  0.5f * scale.y,  0.5f * scale.z,	unit_width * (texture_locations[0].x + 1), unit_height * (texture_locations[0].y),			0.0f, 0.0f, 1.0f,
@@ -218,8 +220,6 @@ namespace default_geometry {
 			-0.5f * scale.x,  -0.5f * scale.y, -0.5f * scale.z,	unit_width * (texture_locations[5].x + 1), unit_height * (texture_locations[5].y),			0.0f, -1.0f, 0.0f,
 			 0.5f * scale.x,  -0.5f * scale.y, -0.5f * scale.z,	unit_width * (texture_locations[5].x + 1), unit_height * (texture_locations[5].y - 1),		0.0f, -1.0f, 0.0f,
 		};
-
-
 
 		ArrayBuffer array_buffer(custom_verticies);
 		array_buffer.push_attribute(3);

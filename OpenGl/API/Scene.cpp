@@ -10,6 +10,8 @@
 #include "Debuger.h"
 #include "Frame.h"
 
+bool once = false;
+
 void Scene::render(GLFWwindow* window) {
 
 
@@ -23,16 +25,9 @@ void Scene::render(GLFWwindow* window) {
 		light->update_uniforms();
 	}
 
-	meshes[0]->renderer->bind();
-	meshes[0]->vertex_buffer.bind();
-	meshes[0]->index_buffer.bind();
-	meshes[0]->material->bind();
-	// TEMP
-
 	for(Graphic* mesh : meshes){
 		// temp
 		camera->update_uniforms(*(mesh->renderer));
-
 		mesh->update_matrix();
 		// original was using model/view/projection_uniform_name parameters of the class
 		mesh->renderer->update_uniform(default_program::SOLID_UNIFORM_SHORTCUTS::MODEL, mesh->model_matrix);
@@ -42,11 +37,8 @@ void Scene::render(GLFWwindow* window) {
 		mesh->renderer->update_uniform(default_program::SOLID_UNIFORM_SHORTCUTS::USE_COLOR_MAP, (int)(mesh->material->color_map != nullptr));
 		mesh->renderer->update_uniform(default_program::SOLID_UNIFORM_SHORTCUTS::USE_SPECULAR_MAP, (int)(mesh->material->specular_map != nullptr));
 		mesh->renderer->update_uniform(default_program::SOLID_UNIFORM_SHORTCUTS::USE_NORMAL_MAP, (int)(mesh->material->normal_map != nullptr));
-
 		mesh->draw();
 	}
-
-	
 }
 
 void Scene::render_to_framebuffer(GLFWwindow* window) {

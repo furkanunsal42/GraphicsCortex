@@ -5,13 +5,6 @@
 #include "gtc\matrix_transform.hpp"
 #include "gtc\type_ptr.hpp"
 
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <sstream>
-#include <vector>
-#include <time.h>
-
 #include "API\Debuger.h"
 #include "API\Frame.h"
 #include "API\Buffer.h"
@@ -23,6 +16,14 @@
 #include "API\Default_Assets.h"
 #include "API\FrameBuffer.h"
 #include "API\CubeMap.h"
+
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <sstream>
+#include <vector>
+#include <time.h>
+
 
 int main() {
 	int width = 1024, height = 768;
@@ -60,7 +61,7 @@ int main() {
 	
 	
 	std::vector<Graphic> objects;
-	for (int i = 0; i < 1000; i++){
+	for (int i = 0; i < 500; i++){
 		objects.push_back(default_geometry::cube(material, solid_program, glm::vec3(1.0f)));
 		objects[i].position.x = i * 1.1f;
 	}

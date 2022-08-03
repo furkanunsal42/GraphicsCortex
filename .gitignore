@@ -62,3 +62,12 @@ OpenGl/Debug/graphic.obj.enc
 *.ipdb
 *.iobj
 *.exe
+*.lock
+*.vsidx
+*.db
+*.db-shm
+*.db-wal
+*.opendb
+*.idb
+OpenGl/OpenGl.vcxproj
+*.vcxproj
