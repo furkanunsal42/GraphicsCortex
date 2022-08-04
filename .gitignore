@@ -61,7 +61,6 @@ OpenGl/Debug/graphic.obj.enc
 *.log
 *.ipdb
 *.iobj
-*.exe
 *.lock
 *.vsidx
 *.db
