@@ -166,8 +166,10 @@ void Texture::initialize_blank_image() {
 
 
 void Texture::bind() {
+	#ifdef TEXTURE_REPEATED_BIND_OPTIMIZATION
 	if (CurrentBindedTexture[texture_slot] == id)
 		return;
+	#endif
 	GLCall(glActiveTexture(GL_TEXTURE0 + texture_slot));
 	GLCall(glBindTexture(target, id));
 	GLCall(glTexParameteri(target, GL_TEXTURE_MIN_FILTER, min_filter));
@@ -180,7 +182,9 @@ void Texture::bind() {
 }
 
 void Texture::unbind() {
+	GLCall(glActiveTexture(GL_TEXTURE0 + texture_slot));
 	GLCall(glBindTexture(target, 0));
+	CurrentBindedTexture[texture_slot] = 0;
 }
 
 void Texture::save() {

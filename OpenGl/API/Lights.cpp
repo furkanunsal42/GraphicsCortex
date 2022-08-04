@@ -4,7 +4,11 @@
 
 
 void Light::update_uniforms() {
-	std::cout << "[WARNING] light.update_uniforms(index) executed" << std::endl;
+	std::cout << "[WARNING] light.update_uniforms() executed" << std::endl;
+}
+
+void Light::define_uniforms(int max_count) {
+	std::cout << "[WARNING] light._define_uniforms(max_count) executed" << std::endl;
 }
 
 AmbiantLight::AmbiantLight(const glm::vec3& color, Program& program) :
@@ -17,6 +21,18 @@ void AmbiantLight::update_uniforms() {
 	// temp
 	count++;
 	program->update_uniform(shader_name+"_count", count);
+}
+
+void AmbiantLight::define_uniforms(int max_count) {
+	if (_uniforms_defined)
+		return;
+	for (int count = 0; count < max_count; count++){
+		std::string uniform_name = shader_name + "[" + std::to_string(count) + "]";
+		program->define_uniform(uniform_name + ".color");
+	}
+	program->define_uniform(shader_name + "_count");
+	
+	_uniforms_defined = true;
 }
 
 int AmbiantLight::count = 0;
@@ -34,6 +50,19 @@ void DirectionalLight::update_uniforms() {
 	program->update_uniform(shader_name + "_count", count);
 }
 
+void DirectionalLight::define_uniforms(int max_count) {
+	if (_uniforms_defined)
+		return;
+	for (int count = 0; count < max_count; count++) {
+		std::string uniform_name = shader_name + "[" + std::to_string(count) + "]";
+		program->define_uniform(uniform_name + ".direction");
+		program->define_uniform(uniform_name + ".color");
+	}
+	program->define_uniform(shader_name + "_count");
+
+	_uniforms_defined = true;
+}
+
 int	DirectionalLight::count = 0;
 
 PointLight::PointLight(const glm::vec3& position, const glm::vec3& color, float constant_term, float linear_term, float exponential_term, Program& program) :
@@ -46,10 +75,26 @@ void PointLight::update_uniforms() {
 	program->update_uniform(uniform_name + ".constant_term", constant_term);
 	program->update_uniform(uniform_name + ".linear_term", linear_term);
 	program->update_uniform(uniform_name + ".exponential_term", exponential_term);
-	
+
 	// temp
 	count++;
 	program->update_uniform(shader_name + "_count", count);
+}
+
+void PointLight::define_uniforms(int max_count) {
+	if (_uniforms_defined)
+		return;
+	for (int count = 0; count < max_count; count++) {
+		std::string uniform_name = shader_name + "[" + std::to_string(count) + "]";
+		program->define_uniform(uniform_name + ".position");
+		program->define_uniform(uniform_name + ".color");
+		program->define_uniform(uniform_name + ".constant_term");
+		program->define_uniform(uniform_name + ".linear_term");
+		program->define_uniform(uniform_name + ".exponential_term");
+	}
+	program->define_uniform(shader_name + "_count");
+
+	_uniforms_defined = true;
 }
 
 int PointLight::count = 0;
@@ -71,6 +116,24 @@ void SpotLight::update_uniforms() {
 	// temp
 	count++;
 	program->update_uniform(shader_name + "_count", count);
+}
+
+void SpotLight::define_uniforms(int max_count) {
+	if (_uniforms_defined)
+		return;
+	for (int count = 0; count < max_count; count++) {
+		std::string uniform_name = shader_name + "[" + std::to_string(count) + "]";
+		program->define_uniform(uniform_name + ".position");
+		program->define_uniform(uniform_name + ".direction");
+		program->define_uniform(uniform_name + ".color");
+		program->define_uniform(uniform_name + ".constant_term");
+		program->define_uniform(uniform_name + ".linear_term");
+		program->define_uniform(uniform_name + ".exponential_term");
+		program->define_uniform(uniform_name + ".cos_angle");
+	}
+	program->define_uniform(shader_name + "_count");
+
+	_uniforms_defined = true;
 }
 
 int SpotLight::count = 0;

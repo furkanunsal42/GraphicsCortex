@@ -21,23 +21,36 @@ namespace default_geometry{
 }
 
 namespace default_program {
-	enum SOLID_UNIFORM_SHORTCUTS {
-		MODEL = 0,
-		PROJECTION,
-		VIEW,
-		CAMERA_COORDS,
-		USE_COLOR_MAP,
-		COLOR_MAP_SLOT,
-		USE_NORMAL_MAP,
-		NORMAL_MAP_SLOT,
-		USE_SPECULAR_MAP,
-		SPECULAR_MAP_SLOT,
-		USE_CUBE_MAP_REFLECTION,
-		CUBE_MAP,
-	};
-	enum FRAMEBUFFER_UNIFORM_SHORTCUTS {
-		TEXTURE_SLOT = 0,
-	};
+#ifdef DEFAULT_SHADER_UNIFORM_SHORTCUTS
+	namespace SOLID_UNIFORM_SHORTCUTS {
+		enum {
+			MODEL = 0,
+			PROJECTION,
+			VIEW,
+			CAMERA_COORDS,
+			USE_COLOR_MAP,
+			COLOR_MAP_SLOT,
+			USE_NORMAL_MAP,
+			NORMAL_MAP_SLOT,
+			USE_SPECULAR_MAP,
+			SPECULAR_MAP_SLOT,
+			USE_CUBE_MAP_REFLECTION,
+			CUBE_MAP,
+		};
+	}
+	namespace FRAMEBUFFER_UNIFORM_SHORTCUTS {
+		enum {
+			TEXTURE_SLOT = 0,
+		};
+	}
+	namespace CUBEMAP_UNIFORM_SHORTCUTS {
+		enum {
+			VIEW = 0,
+			PROJECTION,
+			CUBEMAP,
+		};
+	}
+#endif
 	Program solid_program();
 	Program flatcolor_program();
 	Program framebuffer_program();

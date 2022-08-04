@@ -35,7 +35,10 @@ void ArrayBuffer::push_attribute(unsigned int count) {
 }
 
 void ArrayBuffer::bind() {
-	if (id != current_binded_buffer){
+	#ifdef ARRAY_BUFFER_REPEATED_BIND_OPTIMIZATION
+	if (id != current_binded_buffer)
+	#endif
+	{
 		GLCall(glBindBuffer(GL_ARRAY_BUFFER, id));
 		int sum = 0;
 		for (int attrib : vertex_attribute_structure) {
@@ -53,11 +56,16 @@ void ArrayBuffer::bind() {
 }
 
 void ArrayBuffer::unbind() {
+	#ifdef ARRAY_BUFFER_REPEATED_BIND_OPTIMIZATION
 	if (0 != current_binded_buffer)
-	GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
+	#endif
+	{ 
+		GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
+	}
 	current_binded_buffer = 0;
 }
 
+unsigned int IndexBuffer::current_binded_buffer = 0;
 
 IndexBuffer::IndexBuffer() : id(0), vertex_dim(2), data_count(0) {}
 
@@ -80,9 +88,17 @@ void IndexBuffer::initialize_buffer(unsigned int verticies[], int vertex_dim, in
 }
 
 void IndexBuffer::bind() {
-	GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id));
+	#ifdef INDEX_BUFFER_REPEATED_BIND_OPTIMIZATION
+	if (id != current_binded_buffer)
+	#endif
+		GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id));
+	current_binded_buffer = id;
 }
 
 void IndexBuffer::unbind() {
-	GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
+	#ifdef INDEX_BUFFER_REPEATED_BIND_OPTIMIZATION
+	if (0 != current_binded_buffer)
+	#endif
+		GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
+	current_binded_buffer = 0;
 }

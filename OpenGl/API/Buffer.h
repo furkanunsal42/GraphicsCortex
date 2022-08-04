@@ -23,6 +23,8 @@ public:
 };
 
 class IndexBuffer {
+private:
+	static unsigned int current_binded_buffer;
 public:
 	unsigned int id;
 	int vertex_dim;

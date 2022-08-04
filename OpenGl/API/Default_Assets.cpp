@@ -245,6 +245,7 @@ namespace default_program {
 	Program solid_program() {
 		Shader default_shader("Shaders/Solid.vert", "Shaders/Solid.geom", "Shaders/Solid.frag");
 		Program solid_program(default_shader.vertex_shader, default_shader.geometry_shader, default_shader.fragment_shader);
+		#ifdef DEFAULT_SHADER_UNIFORM_SHORTCUTS
 		solid_program.uniform_id_shortcuts.push_back(solid_program.uniforms["model"]);
 		solid_program.uniform_id_shortcuts.push_back(solid_program.uniforms["projection"]);
 		solid_program.uniform_id_shortcuts.push_back(solid_program.uniforms["view"]);
@@ -257,6 +258,7 @@ namespace default_program {
 		solid_program.uniform_id_shortcuts.push_back(solid_program.uniforms["specular_map_slot"]);
 		solid_program.uniform_id_shortcuts.push_back(solid_program.uniforms["use_cube_map_reflection"]);
 		solid_program.uniform_id_shortcuts.push_back(solid_program.uniforms["cube_map"]);
+		#endif
 		return solid_program;
 	}
 	Program flatcolor_program() {
@@ -267,12 +269,20 @@ namespace default_program {
 	Program framebuffer_program() {
 		Shader default_shader("Shaders/FrameBuffer.vert", "Shaders/FrameBuffer.frag");
 		Program framebuffer (default_shader.vertex_shader, default_shader.fragment_shader);
+		#ifdef DEFAULT_SHADER_UNIFORM_SHORTCUTS
 		framebuffer.uniform_id_shortcuts.push_back(framebuffer.uniforms["texture_slots"]);
+		#endif
 		return framebuffer;
 	}
 	Program cubemap_program() {
 		Shader default_shader("Shaders/CubeMap.vert", "Shaders/CubeMap.frag");
-		return Program(default_shader.vertex_shader, default_shader.fragment_shader);
+		Program cubemap(default_shader.vertex_shader, default_shader.fragment_shader);
+		#ifdef DEFAULT_SHADER_UNIFORM_SHORTCUTS
+		cubemap.uniform_id_shortcuts.push_back(cubemap.uniforms["view"]);
+		cubemap.uniform_id_shortcuts.push_back(cubemap.uniforms["projection"]);
+		cubemap.uniform_id_shortcuts.push_back(cubemap.uniforms["cubemap"]);
+		#endif
+		return cubemap;
 	}
 
 }

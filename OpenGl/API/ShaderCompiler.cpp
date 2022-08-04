@@ -151,8 +151,10 @@ void Program::compile(const std::string& vertex_shader_code, const std::string& 
 	GLCall(glDeleteShader(vertex_shader));
 	GLCall(glDeleteShader(fragment_shader));
 
+	#ifdef DEFINE_SHADER_UNIFORMS_UPON_COMPILE
 	_detect_and_define_all_uniforms(vertex_shader_code);
 	_detect_and_define_all_uniforms(fragment_shader_code);
+	#endif
 }
 
 void Program::compile(const std::string& vertex_shader_code, const std::string& geometry_shader_code, const std::string& fragment_shader_code){
@@ -170,19 +172,27 @@ void Program::compile(const std::string& vertex_shader_code, const std::string& 
 	GLCall(glDeleteShader(geometry_shader));
 	GLCall(glDeleteShader(fragment_shader));
 
+	#ifdef DEFINE_SHADER_UNIFORMS_UPON_COMPILE
 	_detect_and_define_all_uniforms(vertex_shader_code);
 	_detect_and_define_all_uniforms(geometry_shader_code);
 	_detect_and_define_all_uniforms(fragment_shader_code);
+	#endif
 }
 
 void Program::bind() {
-	if ((int)id != (int)current_binded_program){
+	#ifdef PROGRAM_REPEATED_BIND_OPTIMIZATION
+	if ((int)id != (int)current_binded_program)
+	#endif
+	{
 		GLCall(glUseProgram(id));
 	}
 	current_binded_program = id;
 }
 void Program::unbind() {
-	if (0 != current_binded_program){
+	#ifdef PROGRAM_REPEATED_BIND_OPTIMIZATION
+	if (0 != current_binded_program)
+	#endif
+	{
 		GLCall(glUseProgram(0));
 	}
 	current_binded_program = 0;
