@@ -72,6 +72,30 @@
     <None Include="Shaders\CubeMap.frag" />
     <None Include="Shaders\Solid.geom" />
     <None Include="Shaders\NormalTest.frag" />
+    <None Include="Dependencies\assimp\include\assimp\color4.inl">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </None>
+    <None Include="Dependencies\assimp\include\assimp\material.inl">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </None>
+    <None Include="Dependencies\assimp\include\assimp\matrix3x3.inl">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </None>
+    <None Include="Dependencies\assimp\include\assimp\matrix4x4.inl">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </None>
+    <None Include="Dependencies\assimp\include\assimp\quaternion.inl">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </None>
+    <None Include="Dependencies\assimp\include\assimp\SmoothingGroups.inl">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </None>
+    <None Include="Dependencies\assimp\include\assimp\vector2.inl">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </None>
+    <None Include="Dependencies\assimp\include\assimp\vector3.inl">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="API\Debuger.h">
@@ -123,6 +147,237 @@
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
     <ClInclude Include="API\CubeMap.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\Compiler\poppack1.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\Compiler\pstdint.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\Compiler\pushpack1.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\port\AndroidJNI\AndroidJNIIOSystem.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\aabb.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\ai_assert.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\anim.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\BaseImporter.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\Bitmap.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\BlobIOSystem.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\ByteSwapper.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\camera.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\cexport.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\cfileio.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\cimport.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\color4.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\config.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\CreateAnimMesh.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\DefaultIOStream.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\DefaultIOSystem.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\DefaultLogger.hpp">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\Defines.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\defs.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\Exceptional.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\Exporter.hpp">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\fast_atof.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\GenericProperty.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\Hash.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\Importer.hpp">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\importerdesc.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\IOStream.hpp">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\IOStreamBuffer.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\IOSystem.hpp">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\irrXMLWrapper.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\light.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\LineSplitter.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\LogAux.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\Logger.hpp">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\LogStream.hpp">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\Macros.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\material.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\MathFunctions.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\matrix3x3.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\matrix4x4.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\MemoryIOWrapper.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\mesh.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\metadata.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\NullLogger.hpp">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\ParsingUtils.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\pbrmaterial.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\postprocess.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\Profiler.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\ProgressHandler.hpp">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\qnan.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\quaternion.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\RemoveComments.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\scene.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\SceneCombiner.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\SGSpatialSort.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\SkeletonMeshBuilder.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\SmoothingGroups.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\SpatialSort.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\StandardShapes.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\StreamReader.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\StreamWriter.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\StringComparison.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\StringUtils.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\Subdivision.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\texture.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\TinyFormatter.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\types.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\vector2.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\vector3.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\version.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\Vertex.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\XMLTools.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\assimp\include\assimp\ZipArchiveIOSystem.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
   </ItemGroup>
