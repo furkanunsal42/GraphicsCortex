@@ -1,4 +1,6 @@
 #pragma once
+#include "Config.h"
+
 #include <string>
 #include <GLFW\glfw3.h>
 namespace frame {

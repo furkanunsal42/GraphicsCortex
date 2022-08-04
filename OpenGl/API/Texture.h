@@ -1,9 +1,9 @@
 #pragma once
+#include "Config.h"
+
 #include "GL\glew.h"
 
 #include <string>
-
-#define MAX_TEXTURE_SLOTS 16
 
 class Texture {
 public:

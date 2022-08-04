@@ -1,12 +1,10 @@
 #include <GL\glew.h>
-#include <string>
+
+#include "Debuger.h"
+
 #include <iostream>
 #include <fstream>
-
-#define ASSERT(x) if (!(x)) __debugbreak();
-#define GLCall(x) clear_errors();\
-	x;\
-	ASSERT(log_errors(#x, __LINE__, __FILE__));
+#include <iostream>
 
 bool log_errors(const char* function, int line, const char* file) {
 	bool error_safe = true;

@@ -1,4 +1,6 @@
 #pragma once
+#include "Config.h"
+
 #include <glm.hpp>
 #include <vector>
 #include "Buffer.h"

@@ -1,21 +1,5 @@
-#include <GL\glew.h>
-#include <GLFW\glfw3.h>
 
-#include "glm.hpp"
-#include "gtc\matrix_transform.hpp"
-#include "gtc\type_ptr.hpp"
-
-#include "API\Debuger.h"
-#include "API\Frame.h"
-#include "API\Buffer.h"
-#include "API\ShaderCompiler.h"
-#include "API\Graphic.h"
-#include "API\Texture.h"
-#include "API\Camera.h"
-#include "API\Scene.h"
-#include "API\Default_Assets.h"
-#include "API\FrameBuffer.h"
-#include "API\CubeMap.h"
+#include "API/GraphicsCortex.h"
 
 #include <iostream>
 #include <fstream>
