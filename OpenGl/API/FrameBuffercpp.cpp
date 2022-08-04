@@ -97,7 +97,7 @@ void FrameBuffer::render() {
 		}
 
 		GLCall(glBindTexture(color_texture.target, color_texture.id));
-		program->update_uniform("texture_slot", 9);
+		program->update_uniform(default_program::FRAMEBUFFER_UNIFORM_SHORTCUTS::TEXTURE_SLOT, 9);
 		screen.draw();
 		glEnable(GL_DEPTH_TEST);
 	}

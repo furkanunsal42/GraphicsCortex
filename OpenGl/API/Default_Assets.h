@@ -34,6 +34,9 @@ namespace default_program {
 		USE_CUBE_MAP_REFLECTION,
 		CUBE_MAP,
 	};
+	enum FRAMEBUFFER_UNIFORM_SHORTCUTS {
+		TEXTURE_SLOT = 0,
+	};
 	Program solid_program();
 	Program flatcolor_program();
 	Program framebuffer_program();

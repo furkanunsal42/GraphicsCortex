@@ -266,7 +266,9 @@ namespace default_program {
 
 	Program framebuffer_program() {
 		Shader default_shader("Shaders/FrameBuffer.vert", "Shaders/FrameBuffer.frag");
-		return Program(default_shader.vertex_shader, default_shader.fragment_shader);
+		Program framebuffer (default_shader.vertex_shader, default_shader.fragment_shader);
+		framebuffer.uniform_id_shortcuts.push_back(framebuffer.uniforms["texture_slots"]);
+		return framebuffer;
 	}
 	Program cubemap_program() {
 		Shader default_shader("Shaders/CubeMap.vert", "Shaders/CubeMap.frag");

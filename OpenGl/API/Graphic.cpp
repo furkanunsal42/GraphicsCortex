@@ -29,7 +29,7 @@ Graphic::Graphic(const std::vector<float>& verticies, int data_dim = 2) {
 	this->vertex_buffer = array_buffer;
 	this->index_buffer = index_buffer;
 }
- 
+
 void Graphic::draw(bool show_warnings, bool _ignore_default_uniforms) {
 	bool material_exist = true;
 	bool renderer_exist = true;
@@ -57,7 +57,7 @@ void Graphic::draw(bool show_warnings, bool _ignore_default_uniforms) {
 		renderer->update_uniform(default_program::SOLID_UNIFORM_SHORTCUTS::CUBE_MAP, 13);
 		renderer->update_uniform(default_program::SOLID_UNIFORM_SHORTCUTS::USE_CUBE_MAP_REFLECTION, 0);
 		// temp
-
+	
 		if (renderer_exist && material_exist){
 			renderer->update_uniform(default_program::SOLID_UNIFORM_SHORTCUTS::COLOR_MAP_SLOT, material->color_map_slot);
 			renderer->update_uniform(default_program::SOLID_UNIFORM_SHORTCUTS::SPECULAR_MAP_SLOT, material->specular_map_slot);

@@ -10,8 +10,7 @@
 #include "Debuger.h"
 #include "Frame.h"
 
-bool once = false;
-
+bool once = true;
 void Scene::render(GLFWwindow* window) {
 
 
@@ -24,20 +23,26 @@ void Scene::render(GLFWwindow* window) {
 
 		light->update_uniforms();
 	}
-
+	once = true;
 	for(Graphic* mesh : meshes){
 		// temp
-		camera->update_uniforms(*(mesh->renderer));
 		mesh->update_matrix();
-		// original was using model/view/projection_uniform_name parameters of the class
+
 		mesh->renderer->update_uniform(default_program::SOLID_UNIFORM_SHORTCUTS::MODEL, mesh->model_matrix);
-		mesh->renderer->update_uniform(default_program::SOLID_UNIFORM_SHORTCUTS::VIEW, camera->view_matrix);
-		mesh->renderer->update_uniform(default_program::SOLID_UNIFORM_SHORTCUTS::PROJECTION, camera->projection_matrix);
 		
-		mesh->renderer->update_uniform(default_program::SOLID_UNIFORM_SHORTCUTS::USE_COLOR_MAP, (int)(mesh->material->color_map != nullptr));
-		mesh->renderer->update_uniform(default_program::SOLID_UNIFORM_SHORTCUTS::USE_SPECULAR_MAP, (int)(mesh->material->specular_map != nullptr));
-		mesh->renderer->update_uniform(default_program::SOLID_UNIFORM_SHORTCUTS::USE_NORMAL_MAP, (int)(mesh->material->normal_map != nullptr));
-		mesh->draw();
+		if (once){
+			mesh->renderer->update_uniform(default_program::SOLID_UNIFORM_SHORTCUTS::VIEW, camera->view_matrix);
+			mesh->renderer->update_uniform(default_program::SOLID_UNIFORM_SHORTCUTS::PROJECTION, camera->projection_matrix);
+			
+			camera->update_uniforms(*(mesh->renderer));
+			
+			mesh->renderer->update_uniform(default_program::SOLID_UNIFORM_SHORTCUTS::USE_COLOR_MAP, (int)(mesh->material->color_map != nullptr));
+			mesh->renderer->update_uniform(default_program::SOLID_UNIFORM_SHORTCUTS::USE_SPECULAR_MAP, (int)(mesh->material->specular_map != nullptr));
+			mesh->renderer->update_uniform(default_program::SOLID_UNIFORM_SHORTCUTS::USE_NORMAL_MAP, (int)(mesh->material->normal_map != nullptr));
+		}
+		
+		mesh->draw(false, !once);
+		once = false;
 	}
 }
 
