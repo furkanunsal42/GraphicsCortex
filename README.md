@@ -1,4 +1,4 @@
-# GraphicsCore
+# GraphicsCortex
 A custom opengl graphics renderer api to be used in game engine and simulation applications.
 
 ## Some Example Renders of Current Progress
