@@ -96,6 +96,7 @@
     <None Include="Dependencies\assimp\include\assimp\vector3.inl">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </None>
+    <None Include="Dependencies\assimp\bin\assimp-vc143-mtd.dll" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="API\Debuger.h">

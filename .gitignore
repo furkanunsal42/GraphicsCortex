@@ -71,3 +71,7 @@ OpenGl/Debug/graphic.obj.enc
 OpenGl/OpenGl.vcxproj
 *.vcxproj
 .vs/OpenGl/v17/fileList.bin
+Debug/OpenGl.exp
+Debug/OpenGl.lib
+OpenGl/OpenGl64.exp
+OpenGl/OpenGl64.lib

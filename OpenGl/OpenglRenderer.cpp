@@ -1,13 +1,11 @@
 
 #include "API/GraphicsCortex.h"
 
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <sstream>
-#include <vector>
-#include <time.h>
+#include <assimp/Importer.hpp> 
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 
+#include <iostream>
 
 int main() {
 	int width = 1024, height = 768;
@@ -43,6 +41,16 @@ int main() {
 
 	Program solid_program = default_program::solid_program();
 	
+	{
+	Assimp::Importer importer;
+	const aiScene* imported_scene = importer.ReadFile("Models/model.obj",
+		aiProcess_CalcTangentSpace |
+		aiProcess_Triangulate |
+		aiProcess_JoinIdenticalVertices |
+		aiProcess_SortByPType);
+	
+		std::cout << importer.GetErrorString();
+	}
 	
 	std::vector<Graphic> objects;
 	for (int i = 0; i < 500; i++){
