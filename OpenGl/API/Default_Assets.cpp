@@ -263,7 +263,14 @@ namespace default_program {
 	}
 	Program flatcolor_program() {
 		Shader default_shader("Shaders/FlatColor.vert", "Shaders/FlatColor.frag");
-		return Program(default_shader.vertex_shader, default_shader.fragment_shader);
+		Program flatcolor(default_shader.vertex_shader, default_shader.fragment_shader);
+		#ifdef DEFAULT_SHADER_UNIFORM_SHORTCUTS
+		flatcolor.uniform_id_shortcuts.push_back(flatcolor.uniforms["model"]);
+		flatcolor.uniform_id_shortcuts.push_back(flatcolor.uniforms["view"]);
+		flatcolor.uniform_id_shortcuts.push_back(flatcolor.uniforms["projection"]);
+		flatcolor.uniform_id_shortcuts.push_back(flatcolor.uniforms["color"]);
+		#endif
+		return flatcolor;
 	}
 
 	Program framebuffer_program() {

@@ -50,6 +50,14 @@ namespace default_program {
 			CUBEMAP,
 		};
 	}
+	namespace FLATCOLOR_UNIFORM_SHORTCUTS {
+		enum {
+			MODEL = 0,
+			VIEW,
+			PROJECTION,
+			COLOR,
+		};
+	}
 #endif
 	Program solid_program();
 	Program flatcolor_program();

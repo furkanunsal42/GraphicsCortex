@@ -17,6 +17,7 @@ public:
 	ArrayBuffer(float verticies[], int data_count);
 	ArrayBuffer(std::vector<float> verticies);
 	void push_attribute(unsigned int count);
+	void initialize_buffer(const std::vector<float>& verticies);
 	void initialize_buffer(float verticies[], int data_count);
 	void bind();
 	void unbind();
@@ -30,8 +31,10 @@ public:
 	int vertex_dim;
 	int data_count;
 	IndexBuffer();
+
 	IndexBuffer(unsigned int verticies[], int vertex_dim, int data_count);
 	IndexBuffer(std::vector<unsigned int> verticies, int vertex_dim);
+	void initialize_buffer(std::vector<unsigned int>& verticies, int vertex_dim);
 	void initialize_buffer(unsigned int verticies[], int vertex_dim, int data_count);
 	void bind();
 	void unbind();

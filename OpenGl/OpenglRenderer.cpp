@@ -9,7 +9,7 @@
 
 int main() {
 	int width = 1024, height = 768;
-	GLFWwindow* window = frame::create_window(width, height, "My Window", 4, 0, true, false, true);
+	GLFWwindow* window = frame::create_window(width, height, "My Window", 4, 0, true, false, false);
 	Scene scene;
 	Material material;
 	Texture color_texture;
@@ -40,25 +40,19 @@ int main() {
 	//Program soild_program(normal_shader.vertex_shader, normal_shader.geometry_shader, normal_shader.fragment_shader);
 
 	Program solid_program = default_program::solid_program();
-	
-	{
-	Assimp::Importer importer;
-	const aiScene* imported_scene = importer.ReadFile("Models/model.obj",
-		aiProcess_CalcTangentSpace |
-		aiProcess_Triangulate |
-		aiProcess_JoinIdenticalVertices |
-		aiProcess_SortByPType);
-	
-		std::cout << importer.GetErrorString();
-	}
-	
+	Program flat_program = default_program::flatcolor_program();
+
 	std::vector<Graphic> objects;
-	for (int i = 0; i < 500; i++){
-		objects.push_back(default_geometry::cube(material, solid_program, glm::vec3(1.0f)));
+	for (int i = 0; i < 1; i++){
+		Graphic cube = default_geometry::cube(material, solid_program, glm::vec3(1.0f));
+		cube.load_model("Models/test2.obj");
+		objects.push_back(cube);
 		objects[i].position.x = i * 1.1f;
 	}
+	objects.push_back(default_geometry::cube(material, solid_program, glm::vec3(1.0f)));
+	objects[1].position.y = 20;
 
-	//Graphic cube = default_geometry::cube(material, soild_program, glm::vec3(1.0f));
+	//Graphic cube = default_geometry::cube(material, solid_program, glm::vec3(1.0f));
 
 	/*
 	Graphic cube = default_geometry::cube(
@@ -73,8 +67,10 @@ int main() {
 	
 	//scene.meshes.push_back(&cube);
 	
+	
 	for (int i = 0; i < objects.size(); i++)
 		scene.meshes.push_back(&objects[i]);
+	
 
 	Camera cam;
 	cam.screen_width = (float)width;

@@ -44,6 +44,7 @@ void Scene::render(GLFWwindow* window) {
 			mesh->renderer->update_uniform(default_program::SOLID_UNIFORM_SHORTCUTS::USE_NORMAL_MAP, (int)(mesh->material->normal_map != nullptr));
 		}
 		
+		//mesh->renderer->update_uniform(default_program::FLATCOLOR_UNIFORM_SHORTCUTS::COLOR, 0.5f, 0.5f, 0.5f, 1.0f);
 		mesh->draw(false, !once);
 		once = false;
 	}

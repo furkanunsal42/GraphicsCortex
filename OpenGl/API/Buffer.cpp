@@ -19,6 +19,10 @@ ArrayBuffer::ArrayBuffer(float verticies[], int data_count)
 ArrayBuffer::ArrayBuffer(std::vector<float> verticies)
 	: data_count(verticies.size())
 {
+	initialize_buffer(verticies);
+}
+
+void ArrayBuffer::initialize_buffer(const std::vector<float>& verticies) {
 	initialize_buffer((float*)&verticies[0], data_count);
 }
 
@@ -78,6 +82,10 @@ IndexBuffer::IndexBuffer(unsigned int verticies[], int vertex_dim, int data_coun
 IndexBuffer::IndexBuffer(std::vector<unsigned int> verticies, int vertex_dim)
 	: vertex_dim(vertex_dim), data_count(verticies.size())
 {
+	initialize_buffer(verticies, vertex_dim);
+}
+
+void IndexBuffer::initialize_buffer(std::vector<unsigned int>& verticies, int vertex_dim) {
 	initialize_buffer((unsigned int*)&verticies[0], vertex_dim, data_count);
 }
 

@@ -1,5 +1,7 @@
 #include "Graphic.h"
+
 #include "Default_Assets.h"
+
 #include <iostream>
 
 Graphic::Graphic() :
@@ -35,12 +37,12 @@ void Graphic::draw(bool show_warnings, bool _ignore_default_uniforms) {
 	bool renderer_exist = true;
 	if (material == nullptr) {
 		if (show_warnings)
-			std::cout << "[Opengl Warning] material is not specified for Graphic.draw" << std::endl;
+			std::cout << "[Opengl Warning] material is not specified for Graphic.draw()" << std::endl;
 		material_exist = false;
 	}
 	if (renderer == nullptr) {
 		if (show_warnings)
-			std::cout << "[Opengl Warning] renderer is not specified for Graphic.draw" << std::endl;
+			std::cout << "[Opengl Warning] renderer is not specified for Graphic.draw()" << std::endl;
 		renderer_exist = false;
 	}
 
@@ -64,6 +66,7 @@ void Graphic::draw(bool show_warnings, bool _ignore_default_uniforms) {
 			renderer->update_uniform(default_program::SOLID_UNIFORM_SHORTCUTS::NORMAL_MAP_SLOT, material->normal_map_slot);
 		}
 	}
+	
 	GLCall(glDrawElements(mode, index_buffer.data_count, GL_UNSIGNED_INT, nullptr));
 }
 
@@ -79,3 +82,62 @@ void Graphic::update_matrix() {
 	_last_updated_position = position;
 	_last_updated_rotation = rotation;
 }
+
+Assimp::Importer Graphic::asset_loader;
+
+void Graphic::load_model(const std::string& file_path) {
+	const aiScene* imported_scene = asset_loader.ReadFile(file_path,
+		aiProcess_CalcTangentSpace |
+		aiProcess_Triangulate |
+		aiProcess_JoinIdenticalVertices |
+		aiProcess_SortByPType);
+
+	std::cout << asset_loader.GetErrorString();
+
+	std::vector<float> vertex_data;
+	std::vector<unsigned int> indicies;
+	for (int i = 0; i < imported_scene->mNumMeshes; i++) {
+		for (int j = 0; j < imported_scene->mMeshes[i]->mNumVertices; j++) {
+
+			aiVector3D vertex = imported_scene->mMeshes[i]->mVertices[j];
+			vertex_data.push_back(vertex.x);
+			vertex_data.push_back(vertex.y);
+			vertex_data.push_back(vertex.z);
+
+			/*
+			aiVector3D vertex = imported_scene->mMeshes[i]->mTextureCoords[j];
+			vertex_data.push_back(vertex.x);
+			vertex_data.push_back(vertex.y);
+			vertex_data.push_back(vertex.z);
+			*/
+
+			// temp texture coordinates
+			vertex_data.push_back(0.05f * i);
+			vertex_data.push_back(0.05f * i);
+
+			aiVector3D normal = imported_scene->mMeshes[i]->mNormals[j];
+			vertex_data.push_back(normal.x);
+			vertex_data.push_back(normal.y);
+			vertex_data.push_back(normal.z);
+
+
+		}
+		for (int j = 0; j < imported_scene->mMeshes[i]->mNumFaces; j++) {
+			const aiFace& Face = imported_scene->mMeshes[i]->mFaces[j];
+			if (Face.mNumIndices == 3) {
+				indicies.push_back(Face.mIndices[0]);
+				indicies.push_back(Face.mIndices[1]);
+				indicies.push_back(Face.mIndices[2]);
+			}
+		}
+	}
+	vertex_buffer.vertex_attribute_structure.clear();
+	vertex_buffer.initialize_buffer(vertex_data);
+	vertex_buffer.push_attribute(3);	// position
+	vertex_buffer.push_attribute(2);	// texture
+	vertex_buffer.push_attribute(3);	// normals
+
+	index_buffer.initialize_buffer(indicies, 3);
+
+}
+	

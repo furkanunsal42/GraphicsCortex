@@ -54,7 +54,7 @@
     <ClCompile Include="API\Default_Assets.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
-    <ClCompile Include="API\FrameBuffercpp.cpp">
+    <ClCompile Include="API\FrameBuffer.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
     <ClCompile Include="API\CubeMap.cpp">

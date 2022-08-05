@@ -172,7 +172,7 @@
     <ClCompile Include="API\Camera.cpp" />
     <ClCompile Include="API\CubeMap.cpp" />
     <ClCompile Include="API\Default_Assets.cpp" />
-    <ClCompile Include="API\FrameBuffercpp.cpp" />
+    <ClCompile Include="API\FrameBuffer.cpp" />
     <ClCompile Include="API\Lights.cpp" />
     <ClCompile Include="API\Scene.cpp" />
     <ClCompile Include="API\Texture.cpp" />
