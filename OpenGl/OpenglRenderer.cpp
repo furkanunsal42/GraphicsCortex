@@ -45,7 +45,7 @@ int main() {
 	std::vector<Graphic> objects;
 	for (int i = 0; i < 1; i++){
 		Graphic cube = default_geometry::cube(material, solid_program, glm::vec3(1.0f));
-		cube.load_model("Models/test2.obj");
+		cube.load_model("Models/test.obj");
 		objects.push_back(cube);
 		objects[i].position.x = i * 1.1f;
 	}

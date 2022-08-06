@@ -23,6 +23,7 @@ ArrayBuffer::ArrayBuffer(std::vector<float> verticies)
 }
 
 void ArrayBuffer::initialize_buffer(const std::vector<float>& verticies) {
+	data_count = verticies.size();
 	initialize_buffer((float*)&verticies[0], data_count);
 }
 
@@ -86,6 +87,7 @@ IndexBuffer::IndexBuffer(std::vector<unsigned int> verticies, int vertex_dim)
 }
 
 void IndexBuffer::initialize_buffer(std::vector<unsigned int>& verticies, int vertex_dim) {
+	data_count = verticies.size();
 	initialize_buffer((unsigned int*)&verticies[0], vertex_dim, data_count);
 }
 

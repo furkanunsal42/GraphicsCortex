@@ -100,9 +100,9 @@ void Graphic::load_model(const std::string& file_path) {
 		for (int j = 0; j < imported_scene->mMeshes[i]->mNumVertices; j++) {
 
 			aiVector3D vertex = imported_scene->mMeshes[i]->mVertices[j];
-			vertex_data.push_back(vertex.x);
-			vertex_data.push_back(vertex.y);
-			vertex_data.push_back(vertex.z);
+			vertex_data.push_back((float)vertex.x);
+			vertex_data.push_back((float)vertex.y);
+			vertex_data.push_back((float)vertex.z);
 
 			/*
 			aiVector3D vertex = imported_scene->mMeshes[i]->mTextureCoords[j];
@@ -112,23 +112,23 @@ void Graphic::load_model(const std::string& file_path) {
 			*/
 
 			// temp texture coordinates
-			vertex_data.push_back(0.05f * i);
-			vertex_data.push_back(0.05f * i);
+			vertex_data.push_back(0.00f * i);
+			vertex_data.push_back(0.00f * i);
 
 			aiVector3D normal = imported_scene->mMeshes[i]->mNormals[j];
-			vertex_data.push_back(normal.x);
-			vertex_data.push_back(normal.y);
-			vertex_data.push_back(normal.z);
+			normal.Normalize();
+			vertex_data.push_back((float)normal.x);
+			vertex_data.push_back((float)normal.y);
+			vertex_data.push_back((float)normal.z);
 
 
 		}
 		for (int j = 0; j < imported_scene->mMeshes[i]->mNumFaces; j++) {
 			const aiFace& Face = imported_scene->mMeshes[i]->mFaces[j];
-			if (Face.mNumIndices == 3) {
-				indicies.push_back(Face.mIndices[0]);
-				indicies.push_back(Face.mIndices[1]);
-				indicies.push_back(Face.mIndices[2]);
-			}
+			std::cout << Face.mIndices[0] << ' ' << Face.mIndices[1] << ' ' << Face.mIndices[2] << ' ' << std::endl;
+			indicies.push_back((unsigned int)Face.mIndices[0]);
+			indicies.push_back((unsigned int)Face.mIndices[1]);
+			indicies.push_back((unsigned int)Face.mIndices[2]);
 		}
 	}
 	vertex_buffer.vertex_attribute_structure.clear();
@@ -139,5 +139,11 @@ void Graphic::load_model(const std::string& file_path) {
 
 	index_buffer.initialize_buffer(indicies, 3);
 
+	for (auto vertex : vertex_data)
+		std::cout << vertex << ' ';
+	std::cout << '\n';
+	for (auto index : indicies)
+		std::cout << index << ' ';
+	std::cout << '\n';
 }
 	

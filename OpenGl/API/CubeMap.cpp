@@ -121,8 +121,9 @@ void CubeMapTexture::draw() {
 	
 	cube.draw(false, true);
 	
-	if (face_culling)
+	if (face_culling){
 		GLCall(glEnable(GL_CULL_FACE));
+	}
 	GLCall(glDepthFunc(depth_function));
 
 }

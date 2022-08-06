@@ -39,15 +39,25 @@ namespace frame {
 
 		if (face_culling)
 			glEnable(GL_CULL_FACE);
+		else
+			glDisable(GL_CULL_FACE);
+
 		if (depth_test)
 			glEnable(GL_DEPTH_TEST);
+		else
+			glDisable(GL_DEPTH_TEST);
+		
 		if (blend) {
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		}
-		if (multisample) {
+		else 
+			glEnable(GL_BLEND);
+
+		if (multisample)
 			glEnable(GL_MULTISAMPLE);
-		}
+		else
+			glDisable(GL_MULTISAMPLE);
 		
 		return window;
 	}
