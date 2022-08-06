@@ -57,7 +57,7 @@ void Graphic::draw(bool show_warnings, bool _ignore_default_uniforms) {
 	if (!_ignore_default_uniforms){
 		// reflection temp code
 		renderer->update_uniform(default_program::SOLID_UNIFORM_SHORTCUTS::CUBE_MAP, 13);
-		renderer->update_uniform(default_program::SOLID_UNIFORM_SHORTCUTS::USE_CUBE_MAP_REFLECTION, 0);
+		renderer->update_uniform(default_program::SOLID_UNIFORM_SHORTCUTS::USE_CUBE_MAP_REFLECTION, 1);
 		// temp
 	
 		if (renderer_exist && material_exist){
@@ -94,8 +94,17 @@ void Graphic::load_model(const std::string& file_path) {
 
 	std::cout << asset_loader.GetErrorString();
 
+	int vertex_count = 0;
+	int index_count = 0;
+	for (int i = 0; i < imported_scene->mNumMeshes; i++) {
+		vertex_count += imported_scene->mMeshes[i]->mNumVertices;
+		index_count += imported_scene->mMeshes[i]->mNumFaces;
+	}
+	index_count *= 3; // if all faces are triangles!
+
 	std::vector<float> vertex_data;
 	std::vector<unsigned int> indicies;
+
 	for (int i = 0; i < imported_scene->mNumMeshes; i++) {
 		for (int j = 0; j < imported_scene->mMeshes[i]->mNumVertices; j++) {
 
@@ -104,31 +113,24 @@ void Graphic::load_model(const std::string& file_path) {
 			vertex_data.push_back((float)vertex.y);
 			vertex_data.push_back((float)vertex.z);
 
-			/*
-			aiVector3D vertex = imported_scene->mMeshes[i]->mTextureCoords[j];
-			vertex_data.push_back(vertex.x);
-			vertex_data.push_back(vertex.y);
-			vertex_data.push_back(vertex.z);
-			*/
-
 			// temp texture coordinates
-			vertex_data.push_back(0.00f * i);
-			vertex_data.push_back(0.00f * i);
+			aiVector3D texcoords = imported_scene->mMeshes[i]->mTextureCoords[0][j];
+			vertex_data.push_back(texcoords.x);
+			vertex_data.push_back(texcoords.y);
 
 			aiVector3D normal = imported_scene->mMeshes[i]->mNormals[j];
 			normal.Normalize();
 			vertex_data.push_back((float)normal.x);
 			vertex_data.push_back((float)normal.y);
 			vertex_data.push_back((float)normal.z);
-
-
 		}
 		for (int j = 0; j < imported_scene->mMeshes[i]->mNumFaces; j++) {
+
 			const aiFace& Face = imported_scene->mMeshes[i]->mFaces[j];
-			std::cout << Face.mIndices[0] << ' ' << Face.mIndices[1] << ' ' << Face.mIndices[2] << ' ' << std::endl;
+
 			indicies.push_back((unsigned int)Face.mIndices[0]);
 			indicies.push_back((unsigned int)Face.mIndices[1]);
-			indicies.push_back((unsigned int)Face.mIndices[2]);
+			indicies.push_back(Face.mIndices[2]);
 		}
 	}
 	vertex_buffer.vertex_attribute_structure.clear();
@@ -138,12 +140,5 @@ void Graphic::load_model(const std::string& file_path) {
 	vertex_buffer.push_attribute(3);	// normals
 
 	index_buffer.initialize_buffer(indicies, 3);
-
-	for (auto vertex : vertex_data)
-		std::cout << vertex << ' ';
-	std::cout << '\n';
-	for (auto index : indicies)
-		std::cout << index << ' ';
-	std::cout << '\n';
 }
 	

@@ -9,16 +9,16 @@
 
 int main() {
 	int width = 1024, height = 768;
-	GLFWwindow* window = frame::create_window(width, height, "My Window", 4, 0, true, false, false);
+	GLFWwindow* window = frame::create_window(width, height, "My Window", 4, 0, true, false, true);
 	Scene scene;
 	Material material;
 	Texture color_texture;
 	Texture specular_map;
 	Texture normal_map;
-	//color_texture.queue_image("Images/GoldBlock.png", 4, true);
-	color_texture.queue_image("Images/Bricks/brickcolor.jpg", 4, true);
-	specular_map.queue_image("Images/Bricks/brickreflection.jpg", 4, true);
-	normal_map.queue_image("Images/Bricks/bricknormal.png", 3, true);
+	color_texture.queue_image("Images/GoldBlock.png", 4, true);
+	//color_texture.queue_image("Images/Bricks/brickcolor.jpg", 4, true);
+	//specular_map.queue_image("Images/Bricks/brickreflection.jpg", 4, true);
+	//normal_map.queue_image("Images/Bricks/bricknormal.png", 3, true);
 	//color_texture.queue_image("Images/StoneTiles/tiles_color.jpg", 4, true);
 	//specular_map.queue_image("Images/StoneTiles/tiles_specular.jpg", 4, true);
 	//normal_map.queue_image("Images/StoneTiles/tiles_normal.jpg", 3, true);
@@ -29,48 +29,18 @@ int main() {
 	normal_map.compress_image = compression;
 
 	material.color_map = &color_texture;
-	material.specular_map = &specular_map;
-	material.normal_map = &normal_map;
+	//material.specular_map = &specular_map;
+	//material.normal_map = &normal_map;
 	
-	//color_texture.print_info(Texture::info::IS_COMPRESSED);
-	
-	//color_texture.save();
-
 	//Shader normal_shader("Shaders/Solid.vert", "Shaders/solid.geom", "Shaders/NormalTest.frag");
 	//Program soild_program(normal_shader.vertex_shader, normal_shader.geometry_shader, normal_shader.fragment_shader);
 
 	Program solid_program = default_program::solid_program();
 	Program flat_program = default_program::flatcolor_program();
 
-	std::vector<Graphic> objects;
-	for (int i = 0; i < 1; i++){
-		Graphic cube = default_geometry::cube(material, solid_program, glm::vec3(1.0f));
-		cube.load_model("Models/test.obj");
-		objects.push_back(cube);
-		objects[i].position.x = i * 1.1f;
-	}
-	objects.push_back(default_geometry::cube(material, solid_program, glm::vec3(1.0f)));
-	objects[1].position.y = 20;
-
-	//Graphic cube = default_geometry::cube(material, solid_program, glm::vec3(1.0f));
-
-	/*
-	Graphic cube = default_geometry::cube(
-		material,
-		glm::vec2(4, 4),
-		std::vector<unsigned int> {2, 2, 3, 2, 2, 0},
-		soild_program,
-		//glm::vec2((float)width / height, 1)
-		glm::vec3(1, 1, 1)
-	);
-	*/
-	
-	//scene.meshes.push_back(&cube);
-	
-	
-	for (int i = 0; i < objects.size(); i++)
-		scene.meshes.push_back(&objects[i]);
-	
+	Graphic cube = default_geometry::cube(material, solid_program, glm::vec3(1.0f));
+	cube.load_model("Models/dragon.obj");
+	scene.meshes.push_back(&cube);
 
 	Camera cam;
 	cam.screen_width = (float)width;
@@ -98,20 +68,20 @@ int main() {
 	CubeMapTexture cube_map;
 	cube_map.program = &cubemap_program;
 	cube_map.camera = scene.camera;
-	/*
 	cube_map.face_texture_filepaths[RIGHT] = "Images/CubeMap/Sky/px.jpg";
 	cube_map.face_texture_filepaths[LEFT] = "Images/CubeMap/Sky/nx.jpg";
 	cube_map.face_texture_filepaths[TOP] = "Images/CubeMap/Sky/py.jpg";
 	cube_map.face_texture_filepaths[BOTTOM] = "Images/CubeMap/Sky/ny.jpg";
 	cube_map.face_texture_filepaths[FRONT] = "Images/CubeMap/Sky/pz.jpg";
 	cube_map.face_texture_filepaths[BACK] = "Images/CubeMap/Sky/nz.jpg";
-	*/
+	/*
 	cube_map.face_texture_filepaths[RIGHT] = "Images/CubeMap/Street/px.png";
 	cube_map.face_texture_filepaths[LEFT] = "Images/CubeMap/Street/nx.png";
 	cube_map.face_texture_filepaths[TOP] = "Images/CubeMap/Street/py.png";
 	cube_map.face_texture_filepaths[BOTTOM] = "Images/CubeMap/Street/ny.png";
 	cube_map.face_texture_filepaths[FRONT] = "Images/CubeMap/Street/pz.png";
 	cube_map.face_texture_filepaths[BACK] = "Images/CubeMap/Street/nz.png";
+	*/
 
 	cube_map.read_queue(3);
 	cube_map.load_queue(true);
@@ -134,19 +104,10 @@ int main() {
 		scene.camera->frame_time_ms = frame_time;
 		scene.camera->handle_movements(window);
 		
-		/*
-		if (glfwGetKey(window, GLFW_KEY_E) == 1) {
-			frame_buffer.program->update_uniform("edge_detect", 1);
-		}
-		else {
-			frame_buffer.program->update_uniform("edge_detect", 0);
-		}
-		*/
-		
 		cube_map.draw();
 
 		//cube.position.x += 0.01f;
-		//cube.rotation.y += 0.04f * frame_time;
+		cube.rotation.y += 0.04f * frame_time;
 		t += 0.001f * frame_time;
 		//point.position.y = 5*glm::cos(t);
 		
