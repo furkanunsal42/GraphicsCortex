@@ -37,6 +37,7 @@ int main() {
 	cube.load_model("Models/dragon.obj");
 	scene.meshes.push_back(&cube);
 
+
 	Camera cam;
 	cam.screen_width = (float)width;
 	cam.screen_height = (float)height;

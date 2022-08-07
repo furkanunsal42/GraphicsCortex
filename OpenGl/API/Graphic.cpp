@@ -54,21 +54,6 @@ void Graphic::draw(bool show_warnings, bool _ignore_default_uniforms) {
 	if (material_exist)
  		material->bind();
 
-	/*
-	if (!_ignore_default_uniforms){
-		// reflection temp code
-		renderer->update_uniform(default_program::SOLID_UNIFORM_SHORTCUTS::CUBE_MAP, 13);
-		renderer->update_uniform(default_program::SOLID_UNIFORM_SHORTCUTS::USE_CUBE_MAP_REFLECTION, 1);
-		// temp
-	
-		if (renderer_exist && material_exist){
-			renderer->update_uniform(default_program::SOLID_UNIFORM_SHORTCUTS::COLOR_MAP_SLOT, material->color_map_slot);
-			renderer->update_uniform(default_program::SOLID_UNIFORM_SHORTCUTS::SPECULAR_MAP_SLOT, material->specular_map_slot);
-			renderer->update_uniform(default_program::SOLID_UNIFORM_SHORTCUTS::NORMAL_MAP_SLOT, material->normal_map_slot);
-		}
-	}
-	*/
-	
 	GLCall(glDrawElements(mode, index_buffer.data_count, GL_UNSIGNED_INT, nullptr));
 }
 
