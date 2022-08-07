@@ -68,7 +68,7 @@ vec3 calculate_ambiant_light(vec3 ambiant){
 }
 
 vec3 calculate_cube_map_reflection(vec3 current_position, vec3 camera_position,  vec3 normal){
-	float reflection_strength = .5;
+	float reflection_strength = .8;
 	normal = normal;
 	vec3 camera_looking_direction = normalize(camera_position - current_position);
 	camera_looking_direction.y *= -1;
@@ -190,6 +190,6 @@ void main(){
 	frag_color = vec4(total_light, 1) * color;
 
 	if(bool(use_cube_map_reflection))
-		frag_color = mix(frag_color, vec4(calculate_cube_map_reflection(frag_space_coord, camera_coords, normalize(normal)),1), 0.7f);
+		frag_color = mix(frag_color, vec4(calculate_cube_map_reflection(frag_space_coord, camera_coords, normalize(normal)),1), 0.85f);
 
 }

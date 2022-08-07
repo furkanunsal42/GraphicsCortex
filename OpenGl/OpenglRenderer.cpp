@@ -1,9 +1,4 @@
-
 #include "API/GraphicsCortex.h"
-
-#include <assimp/Importer.hpp> 
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
 
 #include <iostream>
 
@@ -25,8 +20,8 @@ int main() {
 	
 	bool compression = false;
 	color_texture.compress_image = compression;
-	specular_map.compress_image = compression;
-	normal_map.compress_image = compression;
+	//specular_map.compress_image = compression;
+	//normal_map.compress_image = compression;
 
 	material.color_map = &color_texture;
 	//material.specular_map = &specular_map;

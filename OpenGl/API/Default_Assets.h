@@ -2,6 +2,8 @@
 #include "Config.h"
 
 #include "Graphic.h"
+#include "ProgramManager.h"
+
 #include <glm.hpp>
 #include <vector>
 
@@ -59,6 +61,13 @@ namespace default_program {
 		};
 	}
 #endif
+
+	class solid_program_manager : public ProgramManager {
+	public:
+		void update_uniforms(bool init);
+		static solid_program_manager& get();
+	};
+
 	Program solid_program();
 	Program flatcolor_program();
 	Program framebuffer_program();

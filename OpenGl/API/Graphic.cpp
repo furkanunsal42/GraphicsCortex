@@ -54,6 +54,7 @@ void Graphic::draw(bool show_warnings, bool _ignore_default_uniforms) {
 	if (material_exist)
  		material->bind();
 
+	/*
 	if (!_ignore_default_uniforms){
 		// reflection temp code
 		renderer->update_uniform(default_program::SOLID_UNIFORM_SHORTCUTS::CUBE_MAP, 13);
@@ -66,11 +67,10 @@ void Graphic::draw(bool show_warnings, bool _ignore_default_uniforms) {
 			renderer->update_uniform(default_program::SOLID_UNIFORM_SHORTCUTS::NORMAL_MAP_SLOT, material->normal_map_slot);
 		}
 	}
+	*/
 	
 	GLCall(glDrawElements(mode, index_buffer.data_count, GL_UNSIGNED_INT, nullptr));
 }
-
-
 
 void Graphic::update_matrix() {
 	if (_last_updated_position == position && _last_updated_rotation == rotation)
@@ -90,7 +90,8 @@ void Graphic::load_model(const std::string& file_path) {
 		aiProcess_CalcTangentSpace |
 		aiProcess_Triangulate |
 		aiProcess_JoinIdenticalVertices |
-		aiProcess_SortByPType);
+		aiProcess_SortByPType |
+		aiProcess_GenSmoothNormals);
 
 	std::cout << asset_loader.GetErrorString();
 
@@ -113,7 +114,6 @@ void Graphic::load_model(const std::string& file_path) {
 			vertex_data.push_back((float)vertex.y);
 			vertex_data.push_back((float)vertex.z);
 
-			// temp texture coordinates
 			aiVector3D texcoords = imported_scene->mMeshes[i]->mTextureCoords[0][j];
 			vertex_data.push_back(texcoords.x);
 			vertex_data.push_back(texcoords.y);
