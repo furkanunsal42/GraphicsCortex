@@ -35,6 +35,7 @@ int main() {
 
 	Graphic cube = default_geometry::cube(material, solid_program, glm::vec3(1.0f));
 	cube.load_model("Models/dragon.obj");
+	cube.add_uniform_update_queue(new uniform_queue<int>(std::string("use_cube_map_reflection"), 1));
 	scene.meshes.push_back(&cube);
 
 

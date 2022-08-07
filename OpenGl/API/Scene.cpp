@@ -36,6 +36,8 @@ void Scene::render(GLFWwindow* window) {
 		default_program::solid_program_manager::get().cam = camera;
 
 		default_program::solid_program_manager::get().update_uniforms(once);
+
+		mesh->update_uniform_queue(once);
 		mesh->draw(false, false);
 		once = false;
 	}
