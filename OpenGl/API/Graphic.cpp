@@ -4,7 +4,6 @@
 
 #include <iostream>
 
-
 Graphic::Graphic() :
 	model_matrix(glm::mat4(1.0f)), vertex_buffer(ArrayBuffer()), index_buffer(IndexBuffer()) {}
 
@@ -130,7 +129,5 @@ void Graphic::load_model(const std::string& file_path) {
 
 
 void Graphic::update_uniform_queue(bool init) {
-	for (uniform_queue<int> uniform_update : _uniform_update_queue_int) {
-		renderer->update_uniform(uniform_update.uniform_name, uniform_update.data1);
-	}
+	_uniform_update_queue.update_uniforms(*renderer);
 }

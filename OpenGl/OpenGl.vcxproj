@@ -155,7 +155,7 @@
       <ConformanceMode>true</ConformanceMode>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <AdditionalIncludeDirectories>$(SolutionDir)OpenGl\Dependencies\assimp\include;$(SolutionDir)OpenGl\Dependencies\stb_image;$(SolutionDir)OpenGl\Dependencies\GLEW\include;$(SolutionDir)OpenGl\Dependencies\glm;$(SolutionDir)OpenGl\Dependencies\GLFWx64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpp14</LanguageStandard>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -179,6 +179,7 @@
     <ClCompile Include="API\Scene.cpp" />
     <ClCompile Include="API\Texture.cpp" />
     <ClCompile Include="API\Buffer.cpp" />
+    <ClCompile Include="API\UniformQueue.cpp" />
     <ClCompile Include="Dependencies\stb_image\stb_image.cpp" />
     <ClCompile Include="API\Frame.cpp" />
     <ClCompile Include="API\Graphic.cpp" />
@@ -220,6 +221,7 @@
     <ClInclude Include="API\ProgramManager.h" />
     <ClInclude Include="API\Scene.h" />
     <ClInclude Include="API\Texture.h" />
+    <ClInclude Include="API\UnifromQueue.h" />
     <ClInclude Include="Dependencies\assimp\include\assimp\aabb.h" />
     <ClInclude Include="Dependencies\assimp\include\assimp\ai_assert.h" />
     <ClInclude Include="Dependencies\assimp\include\assimp\anim.h" />
