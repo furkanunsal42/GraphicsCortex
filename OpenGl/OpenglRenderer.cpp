@@ -33,10 +33,6 @@ int main() {
 	Program solid_program = default_program::solid_program();
 	Program flat_program = default_program::flatcolor_program();
 
-	Graphic cube = default_geometry::cube(material, solid_program, glm::vec3(1.0f));
-	cube.load_model("Models/dragon.obj");
-	scene.meshes.push_back(&cube);
-
 	Camera cam;
 	cam.screen_width = (float)width;
 	cam.screen_height = (float)height;
@@ -44,23 +40,16 @@ int main() {
 	cam.perspective = true;
 	scene.camera = &cam;
 	
-	cube.uniform_update_queue = default_program::solid_default_uniform_queue(scene, cube);
-	
-	/*
-	cube.add_uniform_update_queue(new uniform_update<int>("use_cube_map_reflection", 1));
-	cube.add_uniform_update_queue(new dynamic_uniform_update<glm::mat4>("model", &cube.model_matrix));
-	cube.add_uniform_update_queue(new uniform_update<int>("cube_map", 13));
-	cube.add_uniform_update_queue(new uniform_update<int>("use_cube_map_reflection", 1));
-	cube.add_uniform_update_queue(new dynamic_uniform_update<glm::mat4>("view", &cam.view_matrix));
-	cube.add_uniform_update_queue(new dynamic_uniform_update<glm::mat4>("projection", &cam.projection_matrix));
-	cube.add_uniform_update_queue(new dynamic_uniform_update<float>("camera_coords", &cam.position.x, &cam.position.y, &cam.position.z));
-	cube.add_uniform_update_queue(new uniform_update<int>("use_color_map", (int)(cube.material->color_map != nullptr)));
-	cube.add_uniform_update_queue(new uniform_update<int>("use_specular_map", (int)(cube.material->specular_map != nullptr)));
-	cube.add_uniform_update_queue(new uniform_update<int>("use_normal_map", (int)(cube.material->normal_map != nullptr)));
-	cube.add_uniform_update_queue(new dynamic_uniform_update<int>("color_map_slot", &cube.material->color_map_slot));
-	cube.add_uniform_update_queue(new dynamic_uniform_update<int>("specular_map_slot", &cube.material->specular_map_slot));
-	cube.add_uniform_update_queue(new dynamic_uniform_update<int>("normal_map_slot", &cube.material->normal_map_slot));
-	*/
+	std::vector<Graphic> objects;
+	int n = 1;
+	objects.reserve(n);
+	for (int i = 0; i < n; i++){
+		objects.push_back(default_geometry::cube(material, solid_program, glm::vec3(1.0f)));
+		scene.meshes.push_back(&objects[i]);
+		scene.meshes[i]->load_model("Models/dragon.obj");
+		scene.meshes[i]->set_uniform_upadte_queue(default_program::solid_default_uniform_queue(scene, *scene.meshes[i]));
+		scene.meshes[i]->position.x = i * 10;
+	}
 
 	AmbiantLight ambiant(glm::vec3(0.1f, 0.1f, 0.1f), solid_program);
 	DirectionalLight directional(glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f), solid_program);
@@ -120,7 +109,7 @@ int main() {
 		cube_map.draw();
 
 		//cube.position.x += 0.01f;
-		cube.rotation.y += 0.04f * frame_time;
+		scene.meshes[0]->rotation.y += 0.04f * frame_time;
 		t += 0.001f * frame_time;
 		//point.position.y = 5*glm::cos(t);
 		

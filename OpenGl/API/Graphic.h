@@ -17,9 +17,8 @@ private:
 	glm::vec3 _last_updated_position = glm::vec3(0.0f, 0.0f, 0.0f);
 	glm::vec3 _last_updated_rotation = glm::vec3(0.0f, 0.0f, 0.0f);
 
-
+	uniform_update_queue _uniform_update_queue;
 public:
-	uniform_update_queue uniform_update_queue;
 
 	static Assimp::Importer asset_loader;
 	ArrayBuffer vertex_buffer;
@@ -40,12 +39,27 @@ public:
 	
 	template<typename T>
 	void add_uniform_update_queue(uniform_update<T>* uniform_queue) {
-		uniform_update_queue.add_uniform_update(*uniform_queue);
+		uniform_queue->program = renderer;
+		renderer->define_uniform(uniform_queue->uniform_name);
+		uniform_queue->uniform_id = renderer->uniforms[uniform_queue->uniform_name];
+		_uniform_update_queue.add_uniform_update(*uniform_queue);
+
 	}
 	
 	template<typename T>
 	void add_uniform_update_queue(dynamic_uniform_update<T>* dynamic_uniform_queue) {
-		uniform_update_queue.add_uniform_update(*dynamic_uniform_queue);
+		dynamic_uniform_queue->program = renderer;
+		renderer->define_uniform(dynamic_uniform_queue->uniform_name);
+		dynamic_uniform_queue->uniform_id = renderer->uniforms[dynamic_uniform_queue->uniform_name];
+		_uniform_update_queue.add_uniform_update(*dynamic_uniform_queue);
+	}
+
+	void set_uniform_upadte_queue(uniform_update_queue& original) {
+		_uniform_update_queue.copy(original);
+	}
+
+	void set_uniform_upadte_queue(uniform_update_queue original) {
+		_uniform_update_queue.copy(original);
 	}
 
 	void update_uniform_queue(bool init);

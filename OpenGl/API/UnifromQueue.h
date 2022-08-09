@@ -22,6 +22,9 @@ public:
 	std::string uniform_name;
 	int data_amount;
 
+	Program* program;
+	unsigned int uniform_id;
+
 	uniform_update(const std::string& name, T data) :
 		uniform_name(name), data1(data), data_amount(1) {}
 
@@ -34,7 +37,7 @@ public:
 	uniform_update(const std::string& name, T data1, T data2, T data3, T data4) :
 		uniform_name(name), data1(data1), data2(data2), data3(data3), data4(data4), data_amount(4) {}
 
-	void update_uniform(Program& program);
+	void update_uniform();
 };
 
 template <typename T>
@@ -48,6 +51,9 @@ public:
 	std::string uniform_name;
 	int data_amount;
 
+	Program* program;
+	unsigned int uniform_id;
+
 	dynamic_uniform_update(const std::string& name, T* data) :
 		uniform_name(name), data1(data), data_amount(1) {}
 
@@ -60,7 +66,7 @@ public:
 	dynamic_uniform_update(const std::string& name, T* data1, T* data2, T* data3, T* data4) :
 		uniform_name(name), data1(data1), data2(data2), data3(data3), data4(data4), data_amount(4) {}
 
-	void update_uniform(Program& program);
+	void update_uniform();
 	// add destructer too, that free's the data queue holds.
 };
 
@@ -123,5 +129,5 @@ public:
 	void add_uniform_update(dynamic_uniform_update<glm::vec3> dynamcic_uniform_update);
 	void add_uniform_update(dynamic_uniform_update<glm::vec2> dynamcic_uniform_update);
 	*/
-	void update_uniforms(Program& program);
+	void update_uniforms();
 };

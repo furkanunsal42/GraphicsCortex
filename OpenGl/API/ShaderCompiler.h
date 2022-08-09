@@ -85,50 +85,50 @@ public:
 	void update_uniform(const std::string& name, const glm::vec2& a);
 
 	template<typename T>
-	void update_uniform(const int& shortcut_index, const T& a, const T& b, const T& c, const T& d) {
+	void update_uniform(const int& uniform_id, const T& a, const T& b, const T& c, const T& d) {
 		bind();
 		if (std::is_same<T, float>::value) {
-			GLCall(glUniform4f(uniform_id_shortcuts[shortcut_index], (float)a, (float)b, (float)c, (float)d));
+			GLCall(glUniform4f(uniform_id, (float)a, (float)b, (float)c, (float)d));
 		}
 		else if (std::is_same<T, int>::value) {
-			GLCall(glUniform4i(uniform_id_shortcuts[shortcut_index], (int)a, (int)b, (int)c, (int)d));
+			GLCall(glUniform4i(uniform_id, (int)a, (int)b, (int)c, (int)d));
 		}
 	}
 	template<typename T>
-	void update_uniform(const int& shortcut_index, const T& a, const T& b, const T& c) {
+	void update_uniform(const int& uniform_id, const T& a, const T& b, const T& c) {
 		bind();
 		if (std::is_same<T, float>::value) {
-			GLCall(glUniform3f(uniform_id_shortcuts[shortcut_index], (float)a, (float)b, (float)c));
+			GLCall(glUniform3f(uniform_id, (float)a, (float)b, (float)c));
 		}
 		else if (std::is_same<T, int>::value) {
-			GLCall(glUniform3i(uniform_id_shortcuts[shortcut_index], (int)a, (int)b, (int)c));
+			GLCall(glUniform3i(uniform_id, (int)a, (int)b, (int)c));
 		}
 	}
 	template<typename T>
-	void update_uniform(const int& shortcut_index, const T& a, const T& b) {
+	void update_uniform(const int& uniform_id, const T& a, const T& b) {
 		bind();
 		if (std::is_same<T, float>::value) {
-			GLCall(glUniform2f(uniform_id_shortcuts[shortcut_index], (float)a, (float)b));
+			GLCall(glUniform2f(uniform_id, (float)a, (float)b));
 		}
 		else if (std::is_same<T, int>::value) {
-			GLCall(glUniform2i(uniform_id_shortcuts[shortcut_index], (int)a, (int)b));
+			GLCall(glUniform2i(uniform_id, (int)a, (int)b));
 		}
 	}
 	template<typename T>
-	void update_uniform(const int& shortcut_index, const T& a) {
+	void update_uniform(const int& uniform_id, const T& a) {
 		bind();
 		if (std::is_same<T, float>::value) {
-			GLCall(glUniform1f(uniform_id_shortcuts[shortcut_index], (float)a));
+			GLCall(glUniform1f(uniform_id, (float)a));
 		}
 		else if (std::is_same<T, int>::value) {
-			GLCall(glUniform1i(uniform_id_shortcuts[shortcut_index], (int)a));
+			GLCall(glUniform1i(uniform_id, (int)a));
 		}
 	}
 
-	void update_uniform(const int& shortcut_index, const glm::mat4& a);
-	void update_uniform(const int& shortcut_index, const glm::mat3& a);
-	void update_uniform(const int& shortcut_index, const glm::mat2& a);
-	void update_uniform(const int& shortcut_index, const glm::vec4& a);
-	void update_uniform(const int& shortcut_index, const glm::vec3& a);
-	void update_uniform(const int& shortcut_index, const glm::vec2& a);
+	void update_uniform(const int& uniform_id, const glm::mat4& a);
+	void update_uniform(const int& uniform_id, const glm::mat3& a);
+	void update_uniform(const int& uniform_id, const glm::mat2& a);
+	void update_uniform(const int& uniform_id, const glm::vec4& a);
+	void update_uniform(const int& uniform_id, const glm::vec3& a);
+	void update_uniform(const int& uniform_id, const glm::vec2& a);
 };

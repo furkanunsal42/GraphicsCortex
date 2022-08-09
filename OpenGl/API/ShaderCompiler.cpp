@@ -299,28 +299,27 @@ void Program::update_uniform(const std::string& name, const glm::vec2& a) {
 }
 
 // shortcuts
-void Program::update_uniform(const int& shortcut_index, const glm::mat4& a) {
+void Program::update_uniform(const int& uniform_id, const glm::mat4& a) {
 	bind();
-	GLCall(glUniformMatrix4fv(uniform_id_shortcuts[shortcut_index], 1, GL_FALSE, glm::value_ptr(a)));
+	GLCall(glUniformMatrix4fv(uniform_id, 1, GL_FALSE, glm::value_ptr(a)));
 }
-void Program::update_uniform(const int& shortcut_index, const glm::mat3& a) {
+void Program::update_uniform(const int& uniform_id, const glm::mat3& a) {
 	bind();
-	GLCall(glUniformMatrix3fv(uniform_id_shortcuts[shortcut_index], 1, GL_FALSE, glm::value_ptr(a)));
+	GLCall(glUniformMatrix3fv(uniform_id, 1, GL_FALSE, glm::value_ptr(a)));
 }
-void Program::update_uniform(const int& shortcut_index, const glm::mat2& a) {
+void Program::update_uniform(const int& uniform_id, const glm::mat2& a) {
 	bind();
-	GLCall(glUniformMatrix2fv(uniform_id_shortcuts[shortcut_index], 1, GL_FALSE, glm::value_ptr(a)));
+	GLCall(glUniformMatrix2fv(uniform_id, 1, GL_FALSE, glm::value_ptr(a)));
 }
-
-void Program::update_uniform(const int& shortcut_index, const glm::vec4& a) {
+void Program::update_uniform(const int& uniform_id, const glm::vec4& a) {
 	bind();
-	GLCall(glUniform4fv(uniform_id_shortcuts[shortcut_index], 1, glm::value_ptr(a)));
+	GLCall(glUniform4fv(uniform_id, 1, glm::value_ptr(a)));
 }
-void Program::update_uniform(const int& shortcut_index, const glm::vec3& a) {
+void Program::update_uniform(const int& uniform_id, const glm::vec3& a) {
 	bind();
-	GLCall(glUniform3fv(uniform_id_shortcuts[shortcut_index], 1, glm::value_ptr(a)));
+	GLCall(glUniform3fv(uniform_id, 1, glm::value_ptr(a)));
 }
-void Program::update_uniform(const int& shortcut_index, const glm::vec2& a) {
+void Program::update_uniform(const int& uniform_id, const glm::vec2& a) {
 	bind();
-	GLCall(glUniform2fv(uniform_id_shortcuts[shortcut_index], 1, glm::value_ptr(a)));
+	GLCall(glUniform2fv(uniform_id, 1, glm::value_ptr(a)));
 }
