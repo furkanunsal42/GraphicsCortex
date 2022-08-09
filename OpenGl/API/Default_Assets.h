@@ -2,6 +2,8 @@
 #include "Config.h"
 
 #include "Graphic.h"
+#include "Scene.h"
+#include "UnifromQueue.h"
 
 #include <glm.hpp>
 #include <vector>
@@ -22,44 +24,7 @@ namespace default_geometry{
 }
 
 namespace default_program {
-#ifdef DEFAULT_SHADER_UNIFORM_SHORTCUTS
-	namespace SOLID_UNIFORM_SHORTCUTS {
-		enum {
-			MODEL = 0,
-			PROJECTION,
-			VIEW,
-			CAMERA_COORDS,
-			USE_COLOR_MAP,
-			COLOR_MAP_SLOT,
-			USE_NORMAL_MAP,
-			NORMAL_MAP_SLOT,
-			USE_SPECULAR_MAP,
-			SPECULAR_MAP_SLOT,
-			USE_CUBE_MAP_REFLECTION,
-			CUBE_MAP,
-		};
-	}
-	namespace FRAMEBUFFER_UNIFORM_SHORTCUTS {
-		enum {
-			TEXTURE_SLOT = 0,
-		};
-	}
-	namespace CUBEMAP_UNIFORM_SHORTCUTS {
-		enum {
-			VIEW = 0,
-			PROJECTION,
-			CUBEMAP,
-		};
-	}
-	namespace FLATCOLOR_UNIFORM_SHORTCUTS {
-		enum {
-			MODEL = 0,
-			VIEW,
-			PROJECTION,
-			COLOR,
-		};
-	}
-#endif
+	uniform_update_queue solid_default_uniform_queue(Scene& scene, Graphic& mesh);
 
 	Program solid_program();
 	Program flatcolor_program();

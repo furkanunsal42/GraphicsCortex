@@ -109,9 +109,9 @@ void CubeMapTexture::draw() {
 	bind();
 	cube.renderer = program;
 	program->bind();
-	program->update_uniform(default_program::CUBEMAP_UNIFORM_SHORTCUTS::VIEW, glm::mat4(glm::mat3(camera->view_matrix)));
-	program->update_uniform(default_program::CUBEMAP_UNIFORM_SHORTCUTS::PROJECTION, camera->projection_matrix);
-	program->update_uniform(default_program::CUBEMAP_UNIFORM_SHORTCUTS::CUBEMAP, 11);
+	program->update_uniform("view", glm::mat4(glm::mat3(camera->view_matrix)));
+	program->update_uniform("projection", camera->projection_matrix);
+	program->update_uniform("cubemap", 11);
 	
 	bool face_culling = glIsEnabled(GL_CULL_FACE);
 	GLCall(glDisable(GL_CULL_FACE));

@@ -30,7 +30,7 @@ void Camera::update_matrixes() {
 }
 
 void Camera::update_uniforms(Program& program) {
-	program.update_uniform(default_program::SOLID_UNIFORM_SHORTCUTS::CAMERA_COORDS, position.x, position.y, position.z);
+	program.update_uniform("camera_coords", position.x, position.y, position.z);
 }
 
 void Camera::handle_movements(GLFWwindow* window) {
@@ -79,8 +79,8 @@ void Camera::handle_movements(GLFWwindow* window) {
 	if (mouse_focus) {
 		double mouse_x, mouse_y;
 		glfwGetCursorPos(window, &mouse_x, &mouse_y);
-		rotation.x += mouse_sensitivity * -(mouse_y - screen_height / 2) / screen_height;
-		rotation.y += mouse_sensitivity * -(mouse_x - screen_width / 2) / screen_width;
+		rotation.x += (float)(mouse_sensitivity * -(mouse_y - screen_height / 2) / screen_height);
+		rotation.y += (float)(mouse_sensitivity * -(mouse_x - screen_width / 2) / screen_width);
 
 		glfwSetCursorPos(window, screen_width / 2, screen_height / 2);
 	}

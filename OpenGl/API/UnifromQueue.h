@@ -15,10 +15,10 @@ template <typename T>
 class uniform_update{
 private:
 public:
-	T data1;
-	T data2;
-	T data3;
-	T data4;
+	T data1{};// {} are for default initialization of type T
+	T data2{};
+	T data3{};	
+	T data4{};	
 	std::string uniform_name;
 	int data_amount;
 
@@ -41,10 +41,10 @@ template <typename T>
 class dynamic_uniform_update{
 private:
 public:
-	T* data1;
-	T* data2;
-	T* data3;
-	T* data4;
+	T* data1{};// {} are for default initialization of type T
+	T* data2{};
+	T* data3{};
+	T* data4{};
 	std::string uniform_name;
 	int data_amount;
 
@@ -95,6 +95,9 @@ private:
 	*/
 
 public:
+
+	void copy(const uniform_update_queue& original);
+
 	void add_uniform_update(uniform_update<int> uniform_update);
 	void add_uniform_update(uniform_update<char> uniform_update);
 	void add_uniform_update(uniform_update<bool> uniform_update);

@@ -45,7 +45,7 @@ namespace default_geometry {
 		for (unsigned int i = 0; i < face_texture_locations.size(); i++) {
 			glm::vec2 texture_location;
 			texture_location.x = face_texture_locations[i] % texture_atlas_dim.x;
-			texture_location.y = texture_atlas_dim.y - ((int)face_texture_locations[i] / texture_atlas_dim.x);
+			texture_location.y = texture_atlas_dim.y - (face_texture_locations[i] / texture_atlas_dim.x);
 			texture_locations.push_back(texture_location);
 		}
 		/*
@@ -245,21 +245,25 @@ namespace default_program {
 	Program solid_program() {
 		Shader default_shader("Shaders/Solid.vert", "Shaders/Solid.geom", "Shaders/Solid.frag");
 		Program solid_program(default_shader.vertex_shader, default_shader.geometry_shader, default_shader.fragment_shader);
-		#ifdef DEFAULT_SHADER_UNIFORM_SHORTCUTS
-		solid_program.uniform_id_shortcuts.push_back(solid_program.uniforms["model"]);
-		solid_program.uniform_id_shortcuts.push_back(solid_program.uniforms["projection"]);
-		solid_program.uniform_id_shortcuts.push_back(solid_program.uniforms["view"]);
-		solid_program.uniform_id_shortcuts.push_back(solid_program.uniforms["camera_coords"]);
-		solid_program.uniform_id_shortcuts.push_back(solid_program.uniforms["use_color_map"]);
-		solid_program.uniform_id_shortcuts.push_back(solid_program.uniforms["color_map_slot"]);
-		solid_program.uniform_id_shortcuts.push_back(solid_program.uniforms["use_normal_map"]);
-		solid_program.uniform_id_shortcuts.push_back(solid_program.uniforms["normal_map_slot"]);
-		solid_program.uniform_id_shortcuts.push_back(solid_program.uniforms["use_specular_map"]);
-		solid_program.uniform_id_shortcuts.push_back(solid_program.uniforms["specular_map_slot"]);
-		solid_program.uniform_id_shortcuts.push_back(solid_program.uniforms["use_cube_map_reflection"]);
-		solid_program.uniform_id_shortcuts.push_back(solid_program.uniforms["cube_map"]);
-		#endif
 		return solid_program;
+	}
+
+	uniform_update_queue solid_default_uniform_queue(Scene& scene, Graphic& mesh) {
+		uniform_update_queue queue;
+		queue.add_uniform_update(uniform_update<int>("use_cube_map_reflection", 1));
+		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("model", &mesh.model_matrix));
+		queue.add_uniform_update(uniform_update<int>("cube_map", 13));
+		queue.add_uniform_update(uniform_update<int>("use_cube_map_reflection", 1));
+		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("view", &scene.camera->view_matrix));
+		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("projection", &scene.camera->projection_matrix));
+		queue.add_uniform_update(dynamic_uniform_update<float>("camera_coords", &scene.camera->position.x, &scene.camera->position.y, &scene.camera->position.z));
+		queue.add_uniform_update(uniform_update<int>("use_color_map", (int)(mesh.material->color_map != nullptr)));
+		queue.add_uniform_update(uniform_update<int>("use_specular_map", (int)(mesh.material->specular_map != nullptr)));
+		queue.add_uniform_update(uniform_update<int>("use_normal_map", (int)(mesh.material->normal_map != nullptr)));
+		queue.add_uniform_update(dynamic_uniform_update<int>("color_map_slot", &mesh.material->color_map_slot));
+		queue.add_uniform_update(dynamic_uniform_update<int>("specular_map_slot", &mesh.material->specular_map_slot));
+		queue.add_uniform_update(dynamic_uniform_update<int>("normal_map_slot", &mesh.material->normal_map_slot));
+		return queue;
 	}
 
 	/*
@@ -291,31 +295,17 @@ namespace default_program {
 	Program flatcolor_program() {
 		Shader default_shader("Shaders/FlatColor.vert", "Shaders/FlatColor.frag");
 		Program flatcolor(default_shader.vertex_shader, default_shader.fragment_shader);
-		#ifdef DEFAULT_SHADER_UNIFORM_SHORTCUTS
-		flatcolor.uniform_id_shortcuts.push_back(flatcolor.uniforms["model"]);
-		flatcolor.uniform_id_shortcuts.push_back(flatcolor.uniforms["view"]);
-		flatcolor.uniform_id_shortcuts.push_back(flatcolor.uniforms["projection"]);
-		flatcolor.uniform_id_shortcuts.push_back(flatcolor.uniforms["color"]);
-		#endif
 		return flatcolor;
 	}
 
 	Program framebuffer_program() {
 		Shader default_shader("Shaders/FrameBuffer.vert", "Shaders/FrameBuffer.frag");
 		Program framebuffer (default_shader.vertex_shader, default_shader.fragment_shader);
-		#ifdef DEFAULT_SHADER_UNIFORM_SHORTCUTS
-		framebuffer.uniform_id_shortcuts.push_back(framebuffer.uniforms["texture_slots"]);
-		#endif
 		return framebuffer;
 	}
 	Program cubemap_program() {
 		Shader default_shader("Shaders/CubeMap.vert", "Shaders/CubeMap.frag");
 		Program cubemap(default_shader.vertex_shader, default_shader.fragment_shader);
-		#ifdef DEFAULT_SHADER_UNIFORM_SHORTCUTS
-		cubemap.uniform_id_shortcuts.push_back(cubemap.uniforms["view"]);
-		cubemap.uniform_id_shortcuts.push_back(cubemap.uniforms["projection"]);
-		cubemap.uniform_id_shortcuts.push_back(cubemap.uniforms["cubemap"]);
-		#endif
 		return cubemap;
 	}
 

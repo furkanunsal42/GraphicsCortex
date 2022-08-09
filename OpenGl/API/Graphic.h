@@ -17,9 +17,10 @@ private:
 	glm::vec3 _last_updated_position = glm::vec3(0.0f, 0.0f, 0.0f);
 	glm::vec3 _last_updated_rotation = glm::vec3(0.0f, 0.0f, 0.0f);
 
-	uniform_update_queue _uniform_update_queue;
 
 public:
+	uniform_update_queue uniform_update_queue;
+
 	static Assimp::Importer asset_loader;
 	ArrayBuffer vertex_buffer;
 	IndexBuffer index_buffer;
@@ -39,12 +40,12 @@ public:
 	
 	template<typename T>
 	void add_uniform_update_queue(uniform_update<T>* uniform_queue) {
-		_uniform_update_queue.add_uniform_update(*uniform_queue);
+		uniform_update_queue.add_uniform_update(*uniform_queue);
 	}
 	
 	template<typename T>
 	void add_uniform_update_queue(dynamic_uniform_update<T>* dynamic_uniform_queue) {
-		_uniform_update_queue.add_uniform_update(*dynamic_uniform_queue);
+		uniform_update_queue.add_uniform_update(*dynamic_uniform_queue);
 	}
 
 	void update_uniform_queue(bool init);

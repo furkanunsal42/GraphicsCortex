@@ -36,6 +36,38 @@ void dynamic_uniform_update<T>::update_uniform(Program& program) {
 	}
 }
 
+void uniform_update_queue::copy(const uniform_update_queue& original) {
+	for (uniform_update<int> update : original.uniform_queue_int)
+		add_uniform_update(update);
+	for (uniform_update<char> update : original.uniform_queue_char)
+		add_uniform_update(update);
+	for (uniform_update<bool> update : original.uniform_queue_bool)
+		add_uniform_update(update);
+	for (uniform_update<float> update : original.uniform_queue_float)
+		add_uniform_update(update);
+	for (uniform_update<glm::mat4> update : original.uniform_queue_mat4)
+		add_uniform_update(update);
+	for (uniform_update<glm::mat3> update : original.uniform_queue_mat3)
+		add_uniform_update(update);
+	for (uniform_update<glm::mat2> update : original.uniform_queue_mat2)
+		add_uniform_update(update);
+
+	for (dynamic_uniform_update<int> update : original.dynamic_uniform_queue_int)
+		add_uniform_update(update);
+	for (dynamic_uniform_update<char> update : original.dynamic_uniform_queue_char)
+		add_uniform_update(update);
+	for (dynamic_uniform_update<bool> update : original.dynamic_uniform_queue_bool)
+		add_uniform_update(update);
+	for (dynamic_uniform_update<float> update : original.dynamic_uniform_queue_float)
+		add_uniform_update(update);
+	for (dynamic_uniform_update<glm::mat4> update : original.dynamic_uniform_queue_mat4)
+		add_uniform_update(update);
+	for (dynamic_uniform_update<glm::mat3> update : original.dynamic_uniform_queue_mat3)
+		add_uniform_update(update);
+	for (dynamic_uniform_update<glm::mat2> update : original.dynamic_uniform_queue_mat2)
+		add_uniform_update(update);
+}
+
 void uniform_update_queue::add_uniform_update(uniform_update<int> uniform_update) {
 	uniform_queue_int.push_back(uniform_update);
 }

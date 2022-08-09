@@ -38,7 +38,7 @@ public:
 
 	void save();
 
-	static enum info {
+	enum info {
 		WIDTH = GL_TEXTURE_WIDTH,
 		HEIGHT = GL_TEXTURE_HEIGHT, 
 		DEPTH = GL_TEXTURE_DEPTH, 

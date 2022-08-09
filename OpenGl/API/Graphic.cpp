@@ -128,5 +128,5 @@ void Graphic::load_model(const std::string& file_path) {
 }
 
 void Graphic::update_uniform_queue(bool init) {
-	_uniform_update_queue.update_uniforms(*renderer);
+	uniform_update_queue.update_uniforms(*renderer);
 }
