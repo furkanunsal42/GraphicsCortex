@@ -45,12 +45,12 @@ int main() {
 	scene.camera = &cam;
 	
 	cube.add_uniform_update_queue(new uniform_update<int>("use_cube_map_reflection", 1));
-	cube.add_uniform_update_queue(new uniform_update<glm::mat4>("model", cube.model_matrix));
+	cube.add_uniform_update_queue(new dynamic_uniform_update<glm::mat4>("model", &(cube.model_matrix)));
 	cube.add_uniform_update_queue(new uniform_update<int>("cube_map", 13));
 	cube.add_uniform_update_queue(new uniform_update<int>("use_cube_map_reflection", 1));
-	cube.add_uniform_update_queue(new uniform_update<glm::mat4>("view", cam.view_matrix));
-	cube.add_uniform_update_queue(new uniform_update<glm::mat4>("projection", cam.projection_matrix));
-	cube.add_uniform_update_queue(new uniform_update<float>("camera_coords", cam.position.x, cam.position.y, cam.position.z)); // glm vec3
+	cube.add_uniform_update_queue(new dynamic_uniform_update<glm::mat4>("view", &(cam.view_matrix)));
+	cube.add_uniform_update_queue(new dynamic_uniform_update<glm::mat4>("projection", &(cam.projection_matrix)));
+	cube.add_uniform_update_queue(new dynamic_uniform_update<float>("camera_coords", &(cam.position.x), &(cam.position.y), &(cam.position.z))); // glm vec3
 	cube.add_uniform_update_queue(new uniform_update<int>("use_color_map", (int)(cube.material->color_map != nullptr)));
 	cube.add_uniform_update_queue(new uniform_update<int>("use_specular_map", (int)(cube.material->specular_map != nullptr)));
 	cube.add_uniform_update_queue(new uniform_update<int>("use_normal_map", (int)(cube.material->normal_map != nullptr)));

@@ -45,6 +45,9 @@ void uniform_update_queue::add_uniform_update(uniform_update<char> uniform_updat
 void uniform_update_queue::add_uniform_update(uniform_update<bool> uniform_update) {
 	uniform_queue_bool.push_back(uniform_update);
 }
+void uniform_update_queue::add_uniform_update(uniform_update<float> uniform_update) {
+	uniform_queue_float.push_back(uniform_update);
+}
 void uniform_update_queue::add_uniform_update(uniform_update<glm::mat4> uniform_update) {
 	uniform_queue_mat4.push_back(uniform_update);
 }
@@ -54,6 +57,7 @@ void uniform_update_queue::add_uniform_update(uniform_update<glm::mat3> uniform_
 void uniform_update_queue::add_uniform_update(uniform_update<glm::mat2> uniform_update) {
 	uniform_queue_mat2.push_back(uniform_update);
 }
+/*
 void uniform_update_queue::add_uniform_update(uniform_update<glm::vec4> uniform_update) {
 	uniform_queue_vec4.push_back(uniform_update);
 }
@@ -63,6 +67,7 @@ void uniform_update_queue::add_uniform_update(uniform_update<glm::vec3> uniform_
 void uniform_update_queue::add_uniform_update(uniform_update<glm::vec2> uniform_update) {
 	uniform_queue_vec2.push_back(uniform_update);
 }
+*/
 
 // ------------------------------------------------------------------------------------------
 
@@ -75,6 +80,9 @@ void uniform_update_queue::add_uniform_update(dynamic_uniform_update<char> dynam
 void uniform_update_queue::add_uniform_update(dynamic_uniform_update<bool> dynamic_uniform_update) {
 	dynamic_uniform_queue_bool.push_back(dynamic_uniform_update);
 }
+void uniform_update_queue::add_uniform_update(dynamic_uniform_update<float> dynamic_uniform_update) {
+	dynamic_uniform_queue_float.push_back(dynamic_uniform_update);
+}
 void uniform_update_queue::add_uniform_update(dynamic_uniform_update<glm::mat4> dynamic_uniform_update) {
 	dynamic_uniform_queue_mat4.push_back(dynamic_uniform_update);
 }
@@ -84,6 +92,7 @@ void uniform_update_queue::add_uniform_update(dynamic_uniform_update<glm::mat3> 
 void uniform_update_queue::add_uniform_update(dynamic_uniform_update<glm::mat2> dynamic_uniform_update) {
 	dynamic_uniform_queue_mat2.push_back(dynamic_uniform_update);
 }
+/*
 void uniform_update_queue::add_uniform_update(dynamic_uniform_update<glm::vec4> dynamic_uniform_update) {
 	dynamic_uniform_queue_vec4.push_back(dynamic_uniform_update);
 }
@@ -93,6 +102,7 @@ void uniform_update_queue::add_uniform_update(dynamic_uniform_update<glm::vec3> 
 void uniform_update_queue::add_uniform_update(dynamic_uniform_update<glm::vec2> dynamic_uniform_update) {
 	dynamic_uniform_queue_vec2.push_back(dynamic_uniform_update);
 }
+*/
 
 void uniform_update_queue::update_uniforms(Program& program) {
 	for (uniform_update<int> update : uniform_queue_int)
@@ -101,18 +111,24 @@ void uniform_update_queue::update_uniforms(Program& program) {
 		update.update_uniform(program);
 	for (uniform_update<bool> update : uniform_queue_bool)
 		update.update_uniform(program);
+	for (uniform_update<float> update : uniform_queue_float)
+		update.update_uniform(program);
 	for (uniform_update<glm::mat4> update : uniform_queue_mat4)
 		update.update_uniform(program);
 	for (uniform_update<glm::mat3> update : uniform_queue_mat3)
 		update.update_uniform(program);
 	for (uniform_update<glm::mat2> update : uniform_queue_mat2)
 		update.update_uniform(program);
+
+	/*
 	for (uniform_update<glm::vec4> update : uniform_queue_vec4)
 		update.update_uniform(program);
 	for (uniform_update<glm::vec3> update : uniform_queue_vec3)
 		update.update_uniform(program);
 	for (uniform_update<glm::vec2> update : uniform_queue_vec2)
 		update.update_uniform(program);
+	*/
+
 
 	for (dynamic_uniform_update<int> update : dynamic_uniform_queue_int)
 		update.update_uniform(program);
@@ -120,16 +136,20 @@ void uniform_update_queue::update_uniforms(Program& program) {
 		update.update_uniform(program);
 	for (dynamic_uniform_update<bool> update : dynamic_uniform_queue_bool)
 		update.update_uniform(program);
+	for (dynamic_uniform_update<float> update : dynamic_uniform_queue_float)
+		update.update_uniform(program);
 	for (dynamic_uniform_update<glm::mat4> update : dynamic_uniform_queue_mat4)
 		update.update_uniform(program);
 	for (dynamic_uniform_update<glm::mat3> update : dynamic_uniform_queue_mat3)
 		update.update_uniform(program);
 	for (dynamic_uniform_update<glm::mat2> update : dynamic_uniform_queue_mat2)
 		update.update_uniform(program);
+	/*
 	for (dynamic_uniform_update<glm::vec4> update : dynamic_uniform_queue_vec4)
 		update.update_uniform(program);
 	for (dynamic_uniform_update<glm::vec3> update : dynamic_uniform_queue_vec3)
 		update.update_uniform(program);
 	for (dynamic_uniform_update<glm::vec2> update : dynamic_uniform_queue_vec2)
 		update.update_uniform(program);
+	*/
 }
