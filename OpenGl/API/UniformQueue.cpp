@@ -19,6 +19,7 @@ void uniform_update<T>::update_uniform(Program& program) {
 	}
 }
 
+
 template<typename T>
 void dynamic_uniform_update<T>::update_uniform(Program& program) {
 	if (data_amount == 1)
@@ -94,41 +95,41 @@ void uniform_update_queue::add_uniform_update(dynamic_uniform_update<glm::vec2> 
 }
 
 void uniform_update_queue::update_uniforms(Program& program) {
-	for (uniform_update update : uniform_queue_int)
+	for (uniform_update<int> update : uniform_queue_int)
 		update.update_uniform(program);
-	for (uniform_update update : uniform_queue_char)
+	for (uniform_update<char> update : uniform_queue_char)
 		update.update_uniform(program);
-	for (uniform_update update : uniform_queue_bool)
+	for (uniform_update<bool> update : uniform_queue_bool)
 		update.update_uniform(program);
-	for (uniform_update update : uniform_queue_mat4)
+	for (uniform_update<glm::mat4> update : uniform_queue_mat4)
 		update.update_uniform(program);
-	for (uniform_update update : uniform_queue_mat3)
+	for (uniform_update<glm::mat3> update : uniform_queue_mat3)
 		update.update_uniform(program);
-	for (uniform_update update : uniform_queue_mat2)
+	for (uniform_update<glm::mat2> update : uniform_queue_mat2)
 		update.update_uniform(program);
-	for (uniform_update update : uniform_queue_vec4)
+	for (uniform_update<glm::vec4> update : uniform_queue_vec4)
 		update.update_uniform(program);
-	for (uniform_update update : uniform_queue_vec3)
+	for (uniform_update<glm::vec3> update : uniform_queue_vec3)
 		update.update_uniform(program);
-	for (uniform_update update : uniform_queue_vec2)
+	for (uniform_update<glm::vec2> update : uniform_queue_vec2)
 		update.update_uniform(program);
 
-	for (dynamic_uniform_update update : dynamic_uniform_queue_int)
+	for (dynamic_uniform_update<int> update : dynamic_uniform_queue_int)
 		update.update_uniform(program);
-	for (dynamic_uniform_update update : dynamic_uniform_queue_char)
+	for (dynamic_uniform_update<char> update : dynamic_uniform_queue_char)
 		update.update_uniform(program);
-	for (dynamic_uniform_update update : dynamic_uniform_queue_bool)
+	for (dynamic_uniform_update<bool> update : dynamic_uniform_queue_bool)
 		update.update_uniform(program);
-	for (dynamic_uniform_update update : dynamic_uniform_queue_mat4)
+	for (dynamic_uniform_update<glm::mat4> update : dynamic_uniform_queue_mat4)
 		update.update_uniform(program);
-	for (dynamic_uniform_update update : dynamic_uniform_queue_mat3)
+	for (dynamic_uniform_update<glm::mat3> update : dynamic_uniform_queue_mat3)
 		update.update_uniform(program);
-	for (dynamic_uniform_update update : dynamic_uniform_queue_mat2)
+	for (dynamic_uniform_update<glm::mat2> update : dynamic_uniform_queue_mat2)
 		update.update_uniform(program);
-	for (dynamic_uniform_update update : dynamic_uniform_queue_vec4)
+	for (dynamic_uniform_update<glm::vec4> update : dynamic_uniform_queue_vec4)
 		update.update_uniform(program);
-	for (dynamic_uniform_update update : dynamic_uniform_queue_vec3)
+	for (dynamic_uniform_update<glm::vec3> update : dynamic_uniform_queue_vec3)
 		update.update_uniform(program);
-	for (dynamic_uniform_update update : dynamic_uniform_queue_vec2)
+	for (dynamic_uniform_update<glm::vec2> update : dynamic_uniform_queue_vec2)
 		update.update_uniform(program);
 }

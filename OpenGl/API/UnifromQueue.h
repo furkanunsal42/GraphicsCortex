@@ -22,7 +22,7 @@ public:
 	std::string uniform_name;
 	int data_amount;
 
-	uniform_update(const std::string& name, int data) :
+	uniform_update(const std::string& name, T data) :
 		uniform_name(name), data1(data), data_amount(1) {}
 
 	uniform_update(const std::string& name, T data1, T data2) :
@@ -36,8 +36,6 @@ public:
 
 	void update_uniform(Program& program);
 };
-
-
 
 template <typename T>
 class dynamic_uniform_update{

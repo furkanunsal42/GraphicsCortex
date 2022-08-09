@@ -127,7 +127,6 @@ void Graphic::load_model(const std::string& file_path) {
 	index_buffer.initialize_buffer(indicies, 3);
 }
 
-
 void Graphic::update_uniform_queue(bool init) {
 	_uniform_update_queue.update_uniforms(*renderer);
 }

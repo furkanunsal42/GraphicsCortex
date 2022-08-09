@@ -261,14 +261,13 @@ namespace default_program {
 		#endif
 		return solid_program;
 	}
-	
-	void solid_program_manager::update_uniforms(bool init) {
-		if (mesh == nullptr)
-			return;
+
+	/*
+	DEFAULT UNIFORM UPDATE QUEUE
 
 		program->update_uniform(default_program::SOLID_UNIFORM_SHORTCUTS::MODEL, mesh->model_matrix);
 		program->update_uniform(default_program::SOLID_UNIFORM_SHORTCUTS::CUBE_MAP, 13);
-		//program->update_uniform(default_program::SOLID_UNIFORM_SHORTCUTS::USE_CUBE_MAP_REFLECTION, 1);
+		program->update_uniform(default_program::SOLID_UNIFORM_SHORTCUTS::USE_CUBE_MAP_REFLECTION, 1);
 
 		if (init) {
 			if (cam != nullptr) {
@@ -287,15 +286,7 @@ namespace default_program {
 			program->update_uniform(default_program::SOLID_UNIFORM_SHORTCUTS::COLOR_MAP_SLOT, mesh->material->color_map_slot);
 			program->update_uniform(default_program::SOLID_UNIFORM_SHORTCUTS::SPECULAR_MAP_SLOT, mesh->material->specular_map_slot);
 			program->update_uniform(default_program::SOLID_UNIFORM_SHORTCUTS::NORMAL_MAP_SLOT, mesh->material->normal_map_slot);
-		}
-	}
-
-	solid_program_manager& solid_program_manager::get() {
-		static solid_program_manager instance;
-		return instance;
-	}
-	
-	
+	*/
 
 	Program flatcolor_program() {
 		Shader default_shader("Shaders/FlatColor.vert", "Shaders/FlatColor.frag");

@@ -204,6 +204,62 @@ void Program::define_uniform(const std::string& name) {
 		GLCall(uniforms.insert(std::pair<std::string, unsigned int>(name, glGetUniformLocation(this->id, name.c_str()))));
 }
 
+void Program::update_uniform(const std::string& name, const int& a, const int& b, const int& c, const int& d) {
+	if (name.find('.') != std::string::npos)
+		define_uniform(name);
+	bind();
+	GLCall(glUniform4i(uniforms[name], a, b, c, d));
+}
+
+void Program::update_uniform(const std::string& name, const float& a, const float& b, const float& c, const float& d) {
+	if (name.find('.') != std::string::npos)
+		define_uniform(name);
+	bind();
+	GLCall(glUniform4f(uniforms[name], a, b, c, d));
+}
+
+void Program::update_uniform(const std::string& name, const int& a, const int& b, const int& c) {
+	if (name.find('.') != std::string::npos)
+		define_uniform(name);
+	bind();
+	GLCall(glUniform3i(uniforms[name], a, b, c));
+}
+
+void Program::update_uniform(const std::string& name, const float& a, const float& b, const float& c) {
+	if (name.find('.') != std::string::npos)
+		define_uniform(name);
+	bind();
+	GLCall(glUniform3f(uniforms[name], a, b, c));
+}
+
+void Program::update_uniform(const std::string& name, const int& a, const int& b) {
+	if (name.find('.') != std::string::npos)
+		define_uniform(name);
+	bind();
+	GLCall(glUniform2i(uniforms[name], a, b));
+}
+
+void Program::update_uniform(const std::string& name, const float& a, const float& b) {
+	if (name.find('.') != std::string::npos)
+		define_uniform(name);
+	bind();
+	GLCall(glUniform2f(uniforms[name], a, b));
+}
+
+void Program::update_uniform(const std::string& name, const int& a) {
+	if (name.find('.') != std::string::npos)
+		define_uniform(name);
+	bind();
+	GLCall(glUniform1i(uniforms[name], a));
+}
+
+void Program::update_uniform(const std::string& name, const float& a) {
+	if (name.find('.') != std::string::npos)
+		define_uniform(name);
+	bind();
+	GLCall(glUniform1f(uniforms[name], a));
+}
+
 void Program::update_uniform(const std::string& name, const glm::mat4& a) {
 	if (name.find('.') != std::string::npos)
 		define_uniform(name);

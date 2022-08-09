@@ -60,9 +60,6 @@
     <ClCompile Include="API\CubeMap.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
-    <ClCompile Include="API\ProgramManager.cpp">
-      <Filter>Kaynak Dosyalar</Filter>
-    </ClCompile>
     <ClCompile Include="API\UniformQueue.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
@@ -391,9 +388,6 @@
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
     <ClInclude Include="API\GraphicsCortex.h">
-      <Filter>Üst Bilgi Dosyaları</Filter>
-    </ClInclude>
-    <ClInclude Include="API\ProgramManager.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
     <ClInclude Include="API\UnifromQueue.h">

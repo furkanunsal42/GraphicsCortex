@@ -12,6 +12,8 @@
 #include <unordered_map>
 #include "Debuger.h"
 
+#include <iostream>
+
 class Shader {
 public:
 	std::string vertex_shader;
@@ -44,55 +46,37 @@ public:
 	void unbind();
 	void define_uniform(const std::string& name);
 	// template definitions
+	
+	// for non-supported types
 	template<typename T>
-	void update_uniform(const std::string& name, const T& a, const T& b, const T& c, const T& d) {
-		if (name.find('.') != std::string::npos)
-			define_uniform(name);
-		bind();
-		if (std::is_same<T, float>::value) {
-			GLCall(glUniform4f(uniforms[name], (float)a, (float)b, (float)c, (float)d));
-		}
-		else if (std::is_same<T, int>::value) {
-			GLCall(glUniform4i(uniforms[name], (int)a, (int)b, (int)c, (int)d));
-		}
-	}
-	template<typename T>
-	void update_uniform(const std::string& name, const T& a, const T& b, const T& c) {
-		if (name.find('.') != std::string::npos)
-			define_uniform(name);
-		bind();
-		if (std::is_same<T, float>::value) {
-			GLCall(glUniform3f(uniforms[name], (float)a, (float)b, (float)c));
-		}
-		else if (std::is_same<T, int>::value) {
-			GLCall(glUniform3i(uniforms[name], (int)a, (int)b, (int)c));
-		}
+	void update_uniform(const std::string& name, const T& a) {
+		std::cout << "[Opengl Error] Program.update_uniform(const std::string& name, const T& a) has called but " << typeid(T).name() << " isn't supported. \n";
+		return;
 	}
 	template<typename T>
 	void update_uniform(const std::string& name, const T& a, const T& b) {
-		if (name.find('.') != std::string::npos)
-			define_uniform(name);
-		bind();
-		if (std::is_same<T, float>::value){
-			GLCall(glUniform2f(uniforms[name], (float)a, (float)b));
-		}
-		else if (std::is_same<T, int>::value) {
-			GLCall(glUniform2i(uniforms[name], (int)a, (int)b));
-		}
+		std::cout << "[Opengl Error] Program.update_uniform(const std::string& name, const T& a, const T& b) has called but " << typeid(T).name() << " isn't supported. \n";
+		return;
 	}
 	template<typename T>
-	void update_uniform(const std::string& name, const T& a) {
-		if (name.find('.') != std::string::npos)
-			define_uniform(name);
-		bind();
-		if (std::is_same<T, float>::value){
-			GLCall(glUniform1f(uniforms[name], (float)a));
-		}
-		else if (std::is_same<T, int>::value){
-			GLCall(glUniform1i(uniforms[name], (int)a));
-		}
+	void update_uniform(const std::string& name, const T& a, const T& b, const T& c) {
+		std::cout << "[Opengl Error] Program.update_uniform(const std::string& name, const T& a, const T& b, const T& c) has called but " << typeid(T).name() << " isn't supported. \n";
+		return;
+	}
+	template<typename T>
+	void update_uniform(const std::string& name, const T& a, const T& b, const T& c, const T& d) {
+		std::cout << "[Opengl Error] Program.update_uniform(const std::string& name, const T& a, const T& b, const T& c, const T& d) has called but " << typeid(T).name() << " isn't supported. \n";
+		return;
 	}
 
+	void update_uniform(const std::string& name, const int& a, const int& b, const int& c, const int& d);
+	void update_uniform(const std::string& name, const float& a, const float& b, const float& c, const float& d);
+	void update_uniform(const std::string& name, const int& a, const int& b, const int& c);
+	void update_uniform(const std::string& name, const float& a, const float& b, const float& c);
+	void update_uniform(const std::string& name, const int& a, const int& b);
+	void update_uniform(const std::string& name, const float& a, const float& b);
+	void update_uniform(const std::string& name, const int& a);
+	void update_uniform(const std::string& name, const float& a);
 	void update_uniform(const std::string& name, const glm::mat4& a);
 	void update_uniform(const std::string& name, const glm::mat3& a);
 	void update_uniform(const std::string& name, const glm::mat2& a);

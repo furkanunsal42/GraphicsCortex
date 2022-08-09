@@ -29,14 +29,6 @@ void Scene::render(GLFWwindow* window) {
 	for(Graphic* mesh : meshes){
 
 		mesh->update_matrix();
-		
-		default_program::solid_program_manager::get().lights = &lights;
-		default_program::solid_program_manager::get().mesh = mesh;
-		default_program::solid_program_manager::get().program = mesh->renderer;
-		default_program::solid_program_manager::get().cam = camera;
-
-		default_program::solid_program_manager::get().update_uniforms(once);
-
 		mesh->update_uniform_queue(once);
 		mesh->draw(false, false);
 		once = false;
