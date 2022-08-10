@@ -31,12 +31,15 @@ public:
 	unsigned int mode = GL_TRIANGLES;
 	Graphic();
 	Graphic(const ArrayBuffer& buffer, const IndexBuffer& indicies, Material& material, Program& renderer);
-	Graphic(const std::vector<float>& verticies , int data_dim);
+	Graphic(const std::vector<float>& verticies, int data_dim); // legacy
+	Graphic(Material& material, Program& renderer);
+
 	void draw(bool show_warnings = true, bool _ignore_default_uniforms = false);
 	void update_matrix();
 
 	void load_model(const std::string& file_path);
-	
+	void clear_mesh();
+
 	template<typename T>
 	void add_uniform_update_queue(uniform_update<T>* uniform_queue) {
 		uniform_queue->program = renderer;

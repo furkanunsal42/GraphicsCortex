@@ -252,7 +252,7 @@ namespace default_program {
 		uniform_update_queue queue;
 		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("model", &mesh.model_matrix));
 		queue.add_uniform_update(uniform_update<int>("cube_map", 13));
-		queue.add_uniform_update(uniform_update<int>("use_cube_map_reflection", 0));
+		queue.add_uniform_update(uniform_update<int>("use_cube_map_reflection", 1));
 		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("view", &scene.camera->view_matrix));
 		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("projection", &scene.camera->projection_matrix));
 		queue.add_uniform_update(dynamic_uniform_update<float>("camera_coords", &scene.camera->position.x, &scene.camera->position.y, &scene.camera->position.z));

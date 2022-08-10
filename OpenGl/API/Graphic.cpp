@@ -10,7 +10,7 @@ Graphic::Graphic() :
 Graphic::Graphic(const ArrayBuffer& buffer, const IndexBuffer& indicies, Material& mat, Program& program) : 
 	model_matrix(glm::mat4(1.0f)), vertex_buffer(buffer), index_buffer(indicies), material(&mat), renderer(&program) {}
 
-Graphic::Graphic(const std::vector<float>& verticies, int data_dim = 2) {
+Graphic::Graphic(const std::vector<float>& verticies, int data_dim = 2) {	// legacy
 	std::vector<unsigned int> triangles;
 	for (unsigned int i = 1; i < verticies.size() / data_dim - 1; i++) {
 
@@ -31,6 +31,9 @@ Graphic::Graphic(const std::vector<float>& verticies, int data_dim = 2) {
 	this->vertex_buffer = array_buffer;
 	this->index_buffer = index_buffer;
 }
+
+Graphic::Graphic(Material& material, Program& renderer):
+	renderer(&renderer), material(&material), model_matrix(glm::mat4(1.0f)) {}
 
 void Graphic::draw(bool show_warnings, bool _ignore_default_uniforms) {
 	bool material_exist = true;
@@ -56,6 +59,7 @@ void Graphic::draw(bool show_warnings, bool _ignore_default_uniforms) {
 
 	GLCall(glDrawElements(mode, index_buffer.data_count, GL_UNSIGNED_INT, nullptr));
 }
+
 
 void Graphic::update_matrix() {
 	if (_last_updated_position == position && _last_updated_rotation == rotation)
@@ -126,6 +130,13 @@ void Graphic::load_model(const std::string& file_path) {
 
 	index_buffer.initialize_buffer(indicies, 3);
 }
+
+void Graphic::clear_mesh() {
+	vertex_buffer = ArrayBuffer();
+	index_buffer = IndexBuffer();
+}
+
+
 
 void Graphic::update_uniform_queue(bool init) {
 	_uniform_update_queue.update_uniforms();

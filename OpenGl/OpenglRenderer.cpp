@@ -26,9 +26,6 @@ int main() {
 	material.color_map = &color_texture;
 	//material.specular_map = &specular_map;
 	//material.normal_map = &normal_map;
-	
-	//Shader normal_shader("Shaders/Solid.vert", "Shaders/solid.geom", "Shaders/NormalTest.frag");
-	//Program soild_program(normal_shader.vertex_shader, normal_shader.geometry_shader, normal_shader.fragment_shader);
 
 	Program solid_program = default_program::solid_program();
 
@@ -42,13 +39,17 @@ int main() {
 	std::vector<Graphic> objects;
 	int n = 10;
 	objects.reserve(n);
+	Graphic g;
+	g.load_model("Models/dragon.obj");
 	for (int i = 0; i < n; i++){
-		objects.push_back(default_geometry::cube(material, solid_program, glm::vec3(1.0f)));
+		objects.push_back(Graphic(material, solid_program));
 		scene.meshes.push_back(&objects[i]);
-		scene.meshes[i]->load_model("Models/dragon.obj");
+		scene.meshes[i]->vertex_buffer = g.vertex_buffer;
+		scene.meshes[i]->index_buffer = g.index_buffer;
 		scene.meshes[i]->set_uniform_upadte_queue(default_program::solid_default_uniform_queue(scene, *scene.meshes[i]));
 		scene.meshes[i]->position.x = i * 10;
 	}
+	g.clear_mesh();
 
 	AmbiantLight ambiant(glm::vec3(0.1f, 0.1f, 0.1f), solid_program);
 	DirectionalLight directional(glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f), solid_program);
@@ -108,7 +109,7 @@ int main() {
 		cube_map.draw();
 
 		//cube.position.x += 0.01f;
-		scene.meshes[0]->rotation.y += 0.04f * frame_time;
+		//scene.meshes[0]->rotation.y += 0.04f * frame_time;
 		t += 0.001f * frame_time;
 		//point.position.y = 5*glm::cos(t);
 		

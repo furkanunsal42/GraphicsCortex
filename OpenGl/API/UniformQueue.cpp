@@ -69,106 +69,92 @@ void uniform_update_queue::copy(const uniform_update_queue& original) {
 }
 
 void uniform_update_queue::link_program(Program* program) {
-	for (int i = 0; i < uniform_queue_int.size(); i++) 
-		uniform_queue_int[i].program = program;
-	for (int i = 0; i < uniform_queue_char.size(); i++)
-		uniform_queue_char[i].program = program;
-	for (int i = 0; i < uniform_queue_bool.size(); i++)
-		uniform_queue_bool[i].program = program;
-	for (int i = 0; i < uniform_queue_float.size(); i++)
-		uniform_queue_float[i].program = program;
-	for (int i = 0; i < uniform_queue_mat4.size(); i++)
-		uniform_queue_mat4[i].program = program;
-	for (int i = 0; i < uniform_queue_mat3.size(); i++)
-		uniform_queue_mat3[i].program = program;
-	for (int i = 0; i < uniform_queue_mat2.size(); i++)
-		uniform_queue_mat2[i].program = program;
+	for (uniform_update<int>& update : uniform_queue_int)
+		update.program = program;
+	for (uniform_update<char>& update : uniform_queue_char)
+		update.program = program;
+	for (uniform_update<bool>& update : uniform_queue_bool)
+		update.program = program;
+	for (uniform_update<float>& update : uniform_queue_float)
+		update.program = program;
+	for (uniform_update<glm::mat4>& update : uniform_queue_mat4)
+		update.program = program;
+	for (uniform_update<glm::mat3>& update : uniform_queue_mat3)
+		update.program = program;
+	for (uniform_update<glm::mat2>& update : uniform_queue_mat2)
+		update.program = program;
 
-	for (int i = 0; i < dynamic_uniform_queue_int.size(); i++)
-		dynamic_uniform_queue_int[i].program = program;
-	for (int i = 0; i < dynamic_uniform_queue_char.size(); i++)
-		dynamic_uniform_queue_char[i].program = program;
-	for (int i = 0; i < dynamic_uniform_queue_bool.size(); i++)
-		dynamic_uniform_queue_bool[i].program = program;
-	for (int i = 0; i < dynamic_uniform_queue_float.size(); i++)
-		dynamic_uniform_queue_float[i].program = program;
-	for (int i = 0; i < dynamic_uniform_queue_mat4.size(); i++)
-		dynamic_uniform_queue_mat4[i].program = program;
-	for (int i = 0; i < dynamic_uniform_queue_mat3.size(); i++)
-		dynamic_uniform_queue_mat3[i].program = program;
-	for (int i = 0; i < dynamic_uniform_queue_mat2.size(); i++)
-		dynamic_uniform_queue_mat2[i].program = program;
+	for (dynamic_uniform_update<int>& update : dynamic_uniform_queue_int)
+		update.program = program;
+	for (dynamic_uniform_update<char>& update : dynamic_uniform_queue_char)
+		update.program = program;
+	for (dynamic_uniform_update<bool>& update : dynamic_uniform_queue_bool)
+		update.program = program;
+	for (dynamic_uniform_update<float>& update : dynamic_uniform_queue_float)
+		update.program = program;
+	for (dynamic_uniform_update<glm::mat4>& update : dynamic_uniform_queue_mat4)
+		update.program = program;
+	for (dynamic_uniform_update<glm::mat3>& update : dynamic_uniform_queue_mat3)
+		update.program = program;
+	for (dynamic_uniform_update<glm::mat2>& update : dynamic_uniform_queue_mat2)
+		update.program = program;
 }
 
 void uniform_update_queue::update_uniform_ids() {
-	for (int i = 0; i < uniform_queue_int.size(); i++) {
-		auto& update = uniform_queue_int[i];
+	for (uniform_update<int>& update : uniform_queue_int) {
 		update.program->define_uniform(update.uniform_name);
 		update.uniform_id = update.program->uniforms[update.uniform_name];
 	}
-	for (int i = 0; i < uniform_queue_char.size(); i++) {
-		auto& update = uniform_queue_char[i];
+	for (uniform_update<char>& update : uniform_queue_char) {
 		update.program->define_uniform(update.uniform_name);
 		update.uniform_id = update.program->uniforms[update.uniform_name];
 	}
-	for (int i = 0; i < uniform_queue_bool.size(); i++) {
-		auto& update = uniform_queue_bool[i];
+	for (uniform_update<bool>& update : uniform_queue_bool) {
 		update.program->define_uniform(update.uniform_name);
 		update.uniform_id = update.program->uniforms[update.uniform_name];
 	}
-	for (int i = 0; i < uniform_queue_float.size(); i++) {
-		auto& update = uniform_queue_float[i];
+	for(uniform_update<float>&update : uniform_queue_float) {
 		update.program->define_uniform(update.uniform_name);
 		update.uniform_id = update.program->uniforms[update.uniform_name];
 	}
-	for (int i = 0; i < uniform_queue_mat4.size(); i++) {
-		auto& update = uniform_queue_mat4[i];
+	for (uniform_update<glm::mat4>& update : uniform_queue_mat4) {
 		update.program->define_uniform(update.uniform_name);
 		update.uniform_id = update.program->uniforms[update.uniform_name];
 	}
-	for (int i = 0; i < uniform_queue_mat3.size(); i++) {
-		auto& update = uniform_queue_mat3[i];
+	for (uniform_update<glm::mat3>& update : uniform_queue_mat3) {
 		update.program->define_uniform(update.uniform_name);
 		update.uniform_id = update.program->uniforms[update.uniform_name];
 	}
-	for (int i = 0; i < uniform_queue_mat2.size(); i++) {
-		auto& update = uniform_queue_mat2[i];
+	for (uniform_update<glm::mat2>& update : uniform_queue_mat2) {
 		update.program->define_uniform(update.uniform_name);
 		update.uniform_id = update.program->uniforms[update.uniform_name];
 	}
 
-	for (int i = 0; i < dynamic_uniform_queue_int.size(); i++) {
-		auto& update = dynamic_uniform_queue_int[i];
+	for (dynamic_uniform_update<int>& update : dynamic_uniform_queue_int) {
 		update.program->define_uniform(update.uniform_name);
 		update.uniform_id = update.program->uniforms[update.uniform_name];
 	}
-	for (int i = 0; i < dynamic_uniform_queue_char.size(); i++) {
-		auto& update = dynamic_uniform_queue_char[i];
+	for (dynamic_uniform_update<char>& update : dynamic_uniform_queue_char) {
 		update.program->define_uniform(update.uniform_name);
 		update.uniform_id = update.program->uniforms[update.uniform_name];
 	}
-	for (int i = 0; i < dynamic_uniform_queue_bool.size(); i++) {
-		auto& update = dynamic_uniform_queue_bool[i];
+	for (dynamic_uniform_update<bool>& update : dynamic_uniform_queue_bool) {
 		update.program->define_uniform(update.uniform_name);
 		update.uniform_id = update.program->uniforms[update.uniform_name];
 	}
-	for (int i = 0; i < dynamic_uniform_queue_float.size(); i++) {
-		auto& update = dynamic_uniform_queue_float[i];
+	for (dynamic_uniform_update<float>& update : dynamic_uniform_queue_float) {
 		update.program->define_uniform(update.uniform_name);
 		update.uniform_id = update.program->uniforms[update.uniform_name];
 	}
-	for (int i = 0; i < dynamic_uniform_queue_mat4.size(); i++) {
-		auto& update = dynamic_uniform_queue_mat4[i];
+	for (dynamic_uniform_update<glm::mat4>& update : dynamic_uniform_queue_mat4) {
 		update.program->define_uniform(update.uniform_name);
 		update.uniform_id = update.program->uniforms[update.uniform_name];
 	}
-	for (int i = 0; i < dynamic_uniform_queue_mat3.size(); i++) {
-		auto& update = dynamic_uniform_queue_mat3[i];
+	for (dynamic_uniform_update<glm::mat3>& update : dynamic_uniform_queue_mat3) {
 		update.program->define_uniform(update.uniform_name);
 		update.uniform_id = update.program->uniforms[update.uniform_name];
 	}
-	for (int i = 0; i < dynamic_uniform_queue_mat2.size(); i++) {
-		auto& update = dynamic_uniform_queue_mat2[i];
+	for (dynamic_uniform_update<glm::mat2>& update : dynamic_uniform_queue_mat2) {
 		update.program->define_uniform(update.uniform_name);
 		update.uniform_id = update.program->uniforms[update.uniform_name];
 	}
