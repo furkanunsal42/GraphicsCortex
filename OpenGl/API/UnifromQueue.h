@@ -22,7 +22,7 @@ public:
 	std::string uniform_name;
 	int data_amount;
 
-	Program* program;
+	Program* program = nullptr;
 	unsigned int uniform_id;
 
 	uniform_update(const std::string& name, T data) :
@@ -51,7 +51,7 @@ public:
 	std::string uniform_name;
 	int data_amount;
 
-	Program* program;
+	Program* program = nullptr;
 	unsigned int uniform_id;
 
 	dynamic_uniform_update(const std::string& name, T* data) :
@@ -103,6 +103,8 @@ private:
 public:
 
 	void copy(const uniform_update_queue& original);
+	void link_program(Program* program);
+	void update_uniform_ids();
 
 	void add_uniform_update(uniform_update<int> uniform_update);
 	void add_uniform_update(uniform_update<char> uniform_update);

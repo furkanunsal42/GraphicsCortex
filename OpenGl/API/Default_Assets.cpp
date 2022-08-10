@@ -250,7 +250,6 @@ namespace default_program {
 
 	uniform_update_queue solid_default_uniform_queue(Scene& scene, Graphic& mesh) {
 		uniform_update_queue queue;
-		queue.add_uniform_update(uniform_update<int>("use_cube_map_reflection", 1));
 		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("model", &mesh.model_matrix));
 		queue.add_uniform_update(uniform_update<int>("cube_map", 13));
 		queue.add_uniform_update(uniform_update<int>("use_cube_map_reflection", 1));

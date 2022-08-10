@@ -68,6 +68,26 @@ public:
 		std::cout << "[Opengl Error] Program.update_uniform(const std::string& name, const T& a, const T& b, const T& c, const T& d) has called but " << typeid(T).name() << " isn't supported. \n";
 		return;
 	}
+	template<typename T>
+	void update_uniform(unsigned int uniform_id, const T& a) {
+		std::cout << "[Opengl Error] Program.update_uniform(const unsigned int& uniform_id, const T& a) has called but " << typeid(T).name() << " isn't supported. \n";
+		return;
+	}
+	template<typename T>
+	void update_uniform(unsigned int uniform_id, const T& a, const T& b) {
+		std::cout << "[Opengl Error] Program.update_uniform(const unsigned int& uniform_id, const T& a, const T& b) has called but " << typeid(T).name() << " isn't supported. \n";
+		return;
+	}
+	template<typename T>
+	void update_uniform(unsigned int uniform_id, const T& a, const T& b, const T& c) {
+		std::cout << "[Opengl Error] Program.update_uniform(const unsigned int& uniform_id, const T& a, const T& b, const T& c) has called but " << typeid(T).name() << " isn't supported. \n";
+		return;
+	}
+	template<typename T>
+	void update_uniform(unsigned int uniform_id, const T& a, const T& b, const T& c, const T& d) {
+		std::cout << "[Opengl Error] Program.update_uniform(const unsigned int& uniform_id, const T& a, const T& b, const T& c, const T& d) has called but " << typeid(T).name() << " isn't supported. \n";
+		return;
+	}
 
 	void update_uniform(const std::string& name, const int& a, const int& b, const int& c, const int& d);
 	void update_uniform(const std::string& name, const float& a, const float& b, const float& c, const float& d);
@@ -84,51 +104,18 @@ public:
 	void update_uniform(const std::string& name, const glm::vec3& a);
 	void update_uniform(const std::string& name, const glm::vec2& a);
 
-	template<typename T>
-	void update_uniform(const int& uniform_id, const T& a, const T& b, const T& c, const T& d) {
-		bind();
-		if (std::is_same<T, float>::value) {
-			GLCall(glUniform4f(uniform_id, (float)a, (float)b, (float)c, (float)d));
-		}
-		else if (std::is_same<T, int>::value) {
-			GLCall(glUniform4i(uniform_id, (int)a, (int)b, (int)c, (int)d));
-		}
-	}
-	template<typename T>
-	void update_uniform(const int& uniform_id, const T& a, const T& b, const T& c) {
-		bind();
-		if (std::is_same<T, float>::value) {
-			GLCall(glUniform3f(uniform_id, (float)a, (float)b, (float)c));
-		}
-		else if (std::is_same<T, int>::value) {
-			GLCall(glUniform3i(uniform_id, (int)a, (int)b, (int)c));
-		}
-	}
-	template<typename T>
-	void update_uniform(const int& uniform_id, const T& a, const T& b) {
-		bind();
-		if (std::is_same<T, float>::value) {
-			GLCall(glUniform2f(uniform_id, (float)a, (float)b));
-		}
-		else if (std::is_same<T, int>::value) {
-			GLCall(glUniform2i(uniform_id, (int)a, (int)b));
-		}
-	}
-	template<typename T>
-	void update_uniform(const int& uniform_id, const T& a) {
-		bind();
-		if (std::is_same<T, float>::value) {
-			GLCall(glUniform1f(uniform_id, (float)a));
-		}
-		else if (std::is_same<T, int>::value) {
-			GLCall(glUniform1i(uniform_id, (int)a));
-		}
-	}
-
-	void update_uniform(const int& uniform_id, const glm::mat4& a);
-	void update_uniform(const int& uniform_id, const glm::mat3& a);
-	void update_uniform(const int& uniform_id, const glm::mat2& a);
-	void update_uniform(const int& uniform_id, const glm::vec4& a);
-	void update_uniform(const int& uniform_id, const glm::vec3& a);
-	void update_uniform(const int& uniform_id, const glm::vec2& a);
+	void update_uniform(unsigned int uniform_id, const int& a, const int& b, const int& c, const int& d);
+	void update_uniform(unsigned int uniform_id, const float& a, const float& b, const float& c, const float& d);
+	void update_uniform(unsigned int uniform_id, const int& a, const int& b, const int& c);
+	void update_uniform(unsigned int uniform_id, const float& a, const float& b, const float& c);
+	void update_uniform(unsigned int uniform_id, const int& a, const int& b);
+	void update_uniform(unsigned int uniform_id, const float& a, const float& b);
+	void update_uniform(unsigned int uniform_id, const int& a);
+	void update_uniform(unsigned int uniform_id, const float& a);
+	void update_uniform(unsigned int uniform_id, glm::mat4& a);
+	void update_uniform(unsigned int uniform_id, glm::mat3& a);
+	void update_uniform(unsigned int uniform_id, glm::mat2& a);
+	void update_uniform(unsigned int uniform_id, glm::vec4& a);
+	void update_uniform(unsigned int uniform_id, glm::vec3& a);
+	void update_uniform(unsigned int uniform_id, glm::vec2& a);
 };

@@ -60,6 +60,8 @@ public:
 
 	void set_uniform_upadte_queue(uniform_update_queue original) {
 		_uniform_update_queue.copy(original);
+		_uniform_update_queue.link_program(renderer);
+		_uniform_update_queue.update_uniform_ids();
 	}
 
 	void update_uniform_queue(bool init);

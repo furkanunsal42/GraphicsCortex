@@ -6,13 +6,13 @@
 template <typename T>
 void uniform_update<T>::update_uniform() {
 	if (data_amount == 1)
-		program->update_uniform(uniform_id, data1);
+		program->update_uniform((unsigned int)uniform_id, data1);
 	else if (data_amount == 2)
-		program->update_uniform(uniform_id, data1, data2);
+		program->update_uniform((unsigned int)uniform_id, data1, data2);
 	else if (data_amount == 3)
-		program->update_uniform(uniform_id, data1, data2, data3);
+		program->update_uniform((unsigned int)uniform_id, data1, data2, data3);
 	else if (data_amount == 4)
-		program->update_uniform(uniform_id, data1, data2, data3, data4);
+		program->update_uniform((unsigned int)uniform_id, data1, data2, data3, data4);
 	else {
 		std::cout << "[Opengl Error] uniform_update.update_uniform(Program program) is called but uniform_update.data_amount is not between 1 and 4. \n";
 		return;
@@ -23,13 +23,13 @@ void uniform_update<T>::update_uniform() {
 template<typename T>
 void dynamic_uniform_update<T>::update_uniform() {
 	if (data_amount == 1)
-		program->update_uniform(uniform_id, *data1);
+		program->update_uniform((unsigned int)uniform_id, *data1);
 	else if (data_amount == 2)
-		program->update_uniform(uniform_id, *data1, *data2);
+		program->update_uniform((unsigned int)uniform_id, *data1, *data2);
 	else if (data_amount == 3)
-		program->update_uniform(uniform_id, *data1, *data2, *data3);
+		program->update_uniform((unsigned int)uniform_id, *data1, *data2, *data3);
 	else if (data_amount == 4)
-		program->update_uniform(uniform_id, *data1, *data2, *data3, *data4);
+		program->update_uniform((unsigned int)uniform_id, *data1, *data2, *data3, *data4);
 	else {
 		std::cout << "[Opengl Error] dynamic_uniform_update.update_uniform(Program program) is called but dynamic_uniform_update.data_amount is not between 1 and 4. \n";
 		return;
@@ -66,6 +66,113 @@ void uniform_update_queue::copy(const uniform_update_queue& original) {
 		add_uniform_update(update);
 	for (dynamic_uniform_update<glm::mat2> update : original.dynamic_uniform_queue_mat2)
 		add_uniform_update(update);
+}
+
+void uniform_update_queue::link_program(Program* program) {
+	for (int i = 0; i < uniform_queue_int.size(); i++) 
+		uniform_queue_int[i].program = program;
+	for (int i = 0; i < uniform_queue_char.size(); i++)
+		uniform_queue_char[i].program = program;
+	for (int i = 0; i < uniform_queue_bool.size(); i++)
+		uniform_queue_bool[i].program = program;
+	for (int i = 0; i < uniform_queue_float.size(); i++)
+		uniform_queue_float[i].program = program;
+	for (int i = 0; i < uniform_queue_mat4.size(); i++)
+		uniform_queue_mat4[i].program = program;
+	for (int i = 0; i < uniform_queue_mat3.size(); i++)
+		uniform_queue_mat3[i].program = program;
+	for (int i = 0; i < uniform_queue_mat2.size(); i++)
+		uniform_queue_mat2[i].program = program;
+
+	for (int i = 0; i < dynamic_uniform_queue_int.size(); i++)
+		dynamic_uniform_queue_int[i].program = program;
+	for (int i = 0; i < dynamic_uniform_queue_char.size(); i++)
+		dynamic_uniform_queue_char[i].program = program;
+	for (int i = 0; i < dynamic_uniform_queue_bool.size(); i++)
+		dynamic_uniform_queue_bool[i].program = program;
+	for (int i = 0; i < dynamic_uniform_queue_float.size(); i++)
+		dynamic_uniform_queue_float[i].program = program;
+	for (int i = 0; i < dynamic_uniform_queue_mat4.size(); i++)
+		dynamic_uniform_queue_mat4[i].program = program;
+	for (int i = 0; i < dynamic_uniform_queue_mat3.size(); i++)
+		dynamic_uniform_queue_mat3[i].program = program;
+	for (int i = 0; i < dynamic_uniform_queue_mat2.size(); i++)
+		dynamic_uniform_queue_mat2[i].program = program;
+}
+
+void uniform_update_queue::update_uniform_ids() {
+	for (int i = 0; i < uniform_queue_int.size(); i++) {
+		auto& update = uniform_queue_int[i];
+		update.program->define_uniform(update.uniform_name);
+		update.uniform_id = update.program->uniforms[update.uniform_name];
+	}
+	for (int i = 0; i < uniform_queue_char.size(); i++) {
+		auto& update = uniform_queue_char[i];
+		update.program->define_uniform(update.uniform_name);
+		update.uniform_id = update.program->uniforms[update.uniform_name];
+	}
+	for (int i = 0; i < uniform_queue_bool.size(); i++) {
+		auto& update = uniform_queue_bool[i];
+		update.program->define_uniform(update.uniform_name);
+		update.uniform_id = update.program->uniforms[update.uniform_name];
+	}
+	for (int i = 0; i < uniform_queue_float.size(); i++) {
+		auto& update = uniform_queue_float[i];
+		update.program->define_uniform(update.uniform_name);
+		update.uniform_id = update.program->uniforms[update.uniform_name];
+	}
+	for (int i = 0; i < uniform_queue_mat4.size(); i++) {
+		auto& update = uniform_queue_mat4[i];
+		update.program->define_uniform(update.uniform_name);
+		update.uniform_id = update.program->uniforms[update.uniform_name];
+	}
+	for (int i = 0; i < uniform_queue_mat3.size(); i++) {
+		auto& update = uniform_queue_mat3[i];
+		update.program->define_uniform(update.uniform_name);
+		update.uniform_id = update.program->uniforms[update.uniform_name];
+	}
+	for (int i = 0; i < uniform_queue_mat2.size(); i++) {
+		auto& update = uniform_queue_mat2[i];
+		update.program->define_uniform(update.uniform_name);
+		update.uniform_id = update.program->uniforms[update.uniform_name];
+	}
+
+	for (int i = 0; i < dynamic_uniform_queue_int.size(); i++) {
+		auto& update = dynamic_uniform_queue_int[i];
+		update.program->define_uniform(update.uniform_name);
+		update.uniform_id = update.program->uniforms[update.uniform_name];
+	}
+	for (int i = 0; i < dynamic_uniform_queue_char.size(); i++) {
+		auto& update = dynamic_uniform_queue_char[i];
+		update.program->define_uniform(update.uniform_name);
+		update.uniform_id = update.program->uniforms[update.uniform_name];
+	}
+	for (int i = 0; i < dynamic_uniform_queue_bool.size(); i++) {
+		auto& update = dynamic_uniform_queue_bool[i];
+		update.program->define_uniform(update.uniform_name);
+		update.uniform_id = update.program->uniforms[update.uniform_name];
+	}
+	for (int i = 0; i < dynamic_uniform_queue_float.size(); i++) {
+		auto& update = dynamic_uniform_queue_float[i];
+		update.program->define_uniform(update.uniform_name);
+		update.uniform_id = update.program->uniforms[update.uniform_name];
+	}
+	for (int i = 0; i < dynamic_uniform_queue_mat4.size(); i++) {
+		auto& update = dynamic_uniform_queue_mat4[i];
+		update.program->define_uniform(update.uniform_name);
+		update.uniform_id = update.program->uniforms[update.uniform_name];
+	}
+	for (int i = 0; i < dynamic_uniform_queue_mat3.size(); i++) {
+		auto& update = dynamic_uniform_queue_mat3[i];
+		update.program->define_uniform(update.uniform_name);
+		update.uniform_id = update.program->uniforms[update.uniform_name];
+	}
+	for (int i = 0; i < dynamic_uniform_queue_mat2.size(); i++) {
+		auto& update = dynamic_uniform_queue_mat2[i];
+		update.program->define_uniform(update.uniform_name);
+		update.uniform_id = update.program->uniforms[update.uniform_name];
+	}
+
 }
 
 void uniform_update_queue::add_uniform_update(uniform_update<int> uniform_update) {
