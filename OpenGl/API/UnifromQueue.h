@@ -79,11 +79,6 @@ private:
 	std::vector<uniform_update<glm::mat4>> uniform_queue_mat4;
 	std::vector<uniform_update<glm::mat3>> uniform_queue_mat3;
 	std::vector<uniform_update<glm::mat2>> uniform_queue_mat2;
-	/*
-	std::vector<uniform_update<glm::vec4>> uniform_queue_vec4;
-	std::vector<uniform_update<glm::vec3>> uniform_queue_vec3;
-	std::vector<uniform_update<glm::vec2>> uniform_queue_vec2;
-	*/
 
 	// -------------------------------------------------------------
 
@@ -94,11 +89,6 @@ private:
 	std::vector<dynamic_uniform_update<glm::mat4>> dynamic_uniform_queue_mat4;
 	std::vector<dynamic_uniform_update<glm::mat3>> dynamic_uniform_queue_mat3;
 	std::vector<dynamic_uniform_update<glm::mat2>> dynamic_uniform_queue_mat2;
-	/*
-	std::vector<dynamic_uniform_update<glm::vec4>> dynamic_uniform_queue_vec4;
-	std::vector<dynamic_uniform_update<glm::vec3>> dynamic_uniform_queue_vec3;
-	std::vector<dynamic_uniform_update<glm::vec2>> dynamic_uniform_queue_vec2;
-	*/
 
 public:
 
@@ -113,11 +103,6 @@ public:
 	void add_uniform_update(uniform_update<glm::mat4> uniform_update);
 	void add_uniform_update(uniform_update<glm::mat3> uniform_update);
 	void add_uniform_update(uniform_update<glm::mat2> uniform_update);
-	/*
-	void add_uniform_update(uniform_update<glm::vec4> uniform_update);
-	void add_uniform_update(uniform_update<glm::vec3> uniform_update);
-	void add_uniform_update(uniform_update<glm::vec2> uniform_update);
-	*/
 
 	void add_uniform_update(dynamic_uniform_update<int> dynamcic_uniform_update);
 	void add_uniform_update(dynamic_uniform_update<char> dynamcic_uniform_update);
@@ -126,10 +111,6 @@ public:
 	void add_uniform_update(dynamic_uniform_update<glm::mat4> dynamcic_uniform_update);
 	void add_uniform_update(dynamic_uniform_update<glm::mat3> dynamcic_uniform_update);
 	void add_uniform_update(dynamic_uniform_update<glm::mat2> dynamcic_uniform_update);
-	/*
-	void add_uniform_update(dynamic_uniform_update<glm::vec4> dynamcic_uniform_update);
-	void add_uniform_update(dynamic_uniform_update<glm::vec3> dynamcic_uniform_update);
-	void add_uniform_update(dynamic_uniform_update<glm::vec2> dynamcic_uniform_update);
-	*/
+
 	void update_uniforms();
 };

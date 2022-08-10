@@ -252,7 +252,7 @@ namespace default_program {
 		uniform_update_queue queue;
 		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("model", &mesh.model_matrix));
 		queue.add_uniform_update(uniform_update<int>("cube_map", 13));
-		queue.add_uniform_update(uniform_update<int>("use_cube_map_reflection", 1));
+		queue.add_uniform_update(uniform_update<int>("use_cube_map_reflection", 0));
 		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("view", &scene.camera->view_matrix));
 		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("projection", &scene.camera->projection_matrix));
 		queue.add_uniform_update(dynamic_uniform_update<float>("camera_coords", &scene.camera->position.x, &scene.camera->position.y, &scene.camera->position.z));
@@ -262,6 +262,16 @@ namespace default_program {
 		queue.add_uniform_update(dynamic_uniform_update<int>("color_map_slot", &mesh.material->color_map_slot));
 		queue.add_uniform_update(dynamic_uniform_update<int>("specular_map_slot", &mesh.material->specular_map_slot));
 		queue.add_uniform_update(dynamic_uniform_update<int>("normal_map_slot", &mesh.material->normal_map_slot));
+		return queue;
+	}
+
+	uniform_update_queue flat_default_uniform_queue(Scene& scene, Graphic& mesh) {
+		uniform_update_queue queue;
+		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("model", &mesh.model_matrix));
+		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("view", &scene.camera->view_matrix));
+		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("projection", &scene.camera->projection_matrix));
+
+		queue.add_uniform_update(uniform_update<float>("color", 0.8f, 0.7f, 0.6f, 1.0f));
 		return queue;
 	}
 

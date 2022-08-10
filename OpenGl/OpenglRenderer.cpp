@@ -31,7 +31,6 @@ int main() {
 	//Program soild_program(normal_shader.vertex_shader, normal_shader.geometry_shader, normal_shader.fragment_shader);
 
 	Program solid_program = default_program::solid_program();
-	//Program flat_program = default_program::flatcolor_program();
 
 	Camera cam;
 	cam.screen_width = (float)width;
@@ -41,7 +40,7 @@ int main() {
 	scene.camera = &cam;
 	
 	std::vector<Graphic> objects;
-	int n = 1;
+	int n = 10;
 	objects.reserve(n);
 	for (int i = 0; i < n; i++){
 		objects.push_back(default_geometry::cube(material, solid_program, glm::vec3(1.0f)));

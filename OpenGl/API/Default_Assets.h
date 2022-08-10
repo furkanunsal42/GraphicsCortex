@@ -25,7 +25,7 @@ namespace default_geometry{
 
 namespace default_program {
 	uniform_update_queue solid_default_uniform_queue(Scene& scene, Graphic& mesh);
-
+	uniform_update_queue flat_default_uniform_queue(Scene& scene, Graphic& mesh);
 	Program solid_program();
 	Program flatcolor_program();
 	Program framebuffer_program();

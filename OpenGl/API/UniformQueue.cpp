@@ -196,17 +196,6 @@ void uniform_update_queue::add_uniform_update(uniform_update<glm::mat3> uniform_
 void uniform_update_queue::add_uniform_update(uniform_update<glm::mat2> uniform_update) {
 	uniform_queue_mat2.push_back(uniform_update);
 }
-/*
-void uniform_update_queue::add_uniform_update(uniform_update<glm::vec4> uniform_update) {
-	uniform_queue_vec4.push_back(uniform_update);
-}
-void uniform_update_queue::add_uniform_update(uniform_update<glm::vec3> uniform_update) {
-	uniform_queue_vec3.push_back(uniform_update);
-}
-void uniform_update_queue::add_uniform_update(uniform_update<glm::vec2> uniform_update) {
-	uniform_queue_vec2.push_back(uniform_update);
-}
-*/
 
 // ------------------------------------------------------------------------------------------
 
@@ -231,17 +220,6 @@ void uniform_update_queue::add_uniform_update(dynamic_uniform_update<glm::mat3> 
 void uniform_update_queue::add_uniform_update(dynamic_uniform_update<glm::mat2> dynamic_uniform_update) {
 	dynamic_uniform_queue_mat2.push_back(dynamic_uniform_update);
 }
-/*
-void uniform_update_queue::add_uniform_update(dynamic_uniform_update<glm::vec4> dynamic_uniform_update) {
-	dynamic_uniform_queue_vec4.push_back(dynamic_uniform_update);
-}
-void uniform_update_queue::add_uniform_update(dynamic_uniform_update<glm::vec3> dynamic_uniform_update) {
-	dynamic_uniform_queue_vec3.push_back(dynamic_uniform_update);
-}
-void uniform_update_queue::add_uniform_update(dynamic_uniform_update<glm::vec2> dynamic_uniform_update) {
-	dynamic_uniform_queue_vec2.push_back(dynamic_uniform_update);
-}
-*/
 
 void uniform_update_queue::update_uniforms() {
 	for (uniform_update<int> update : uniform_queue_int)
