@@ -26,6 +26,12 @@ namespace default_geometry{
 namespace default_program {
 	uniform_update_queue solid_default_uniform_queue(Scene& scene, Graphic& mesh);
 	uniform_update_queue flat_default_uniform_queue(Scene& scene, Graphic& mesh);
+
+	uniform_update_queue ambiant_light_default_uniform_queue(Scene& scene, AmbiantLight& ambiant_light);
+	uniform_update_queue directional_light_default_uniform_queue(Scene& scene, DirectionalLight& directional_light);
+	uniform_update_queue point_light_default_uniform_queue(Scene& scene, PointLight& point_light);
+	uniform_update_queue spot_light_default_uniform_queue(Scene& scene, SpotLight& spot_light);
+
 	Program solid_program();
 	Program flatcolor_program();
 	Program framebuffer_program();

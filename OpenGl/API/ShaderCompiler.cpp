@@ -200,7 +200,9 @@ void Program::unbind() {
 
 // UNIFORMS
 void Program::define_uniform(const std::string& name) {
-	if (uniforms.find(name) == uniforms.end())
+	auto a = uniforms.find(name);
+	auto b = uniforms.end();
+	if (a == b)
 		GLCall(uniforms.insert(std::pair<std::string, unsigned int>(name, glGetUniformLocation(this->id, name.c_str()))));
 }
 

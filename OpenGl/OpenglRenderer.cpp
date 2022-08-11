@@ -56,6 +56,11 @@ int main() {
 	PointLight point(glm::vec3(3.0f, 0.0f, 3.0f), glm::vec3(3.0f, 3.0f, 3.0f), 0.5f, 0.5f, 0.0f, solid_program);
 	SpotLight spot(glm::vec3(-2.0f, -1.0f, -2.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1.0f, 1.0f, 1.0f), 0.3f, 0.2f, 0.0f, 30, solid_program);
 	
+	ambiant.set_uniform_upadte_queue(default_program::ambiant_light_default_uniform_queue(scene, ambiant));
+	directional.set_uniform_upadte_queue(default_program::directional_light_default_uniform_queue(scene, directional));
+	point.set_uniform_upadte_queue(default_program::point_light_default_uniform_queue(scene, point));
+	spot.set_uniform_upadte_queue(default_program::spot_light_default_uniform_queue(scene, spot));
+
 	scene.lights.push_back(&ambiant);
 	scene.lights.push_back(&directional);
 	//scene.lights.push_back(&point);

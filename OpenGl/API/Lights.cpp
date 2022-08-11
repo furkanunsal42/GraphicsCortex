@@ -15,8 +15,11 @@ void Light::update_uniform_queue(bool init) {
 	_uniform_update_queue.update_uniforms();
 }
 
-AmbiantLight::AmbiantLight(const glm::vec3& color, Program& program) :
-	color(color), program(&program) {}
+AmbiantLight::AmbiantLight(const glm::vec3& color, Program& renderer) :
+	color(color)
+{
+	program = &renderer;
+}
 
 void AmbiantLight::update_uniforms() {
 	std::string uniform_name = shader_name + "[" + std::to_string(count) + "]";
@@ -41,8 +44,8 @@ void AmbiantLight::define_uniforms(int max_count) {
 
 int AmbiantLight::count = 0;
 
-DirectionalLight::DirectionalLight(const glm::vec3& direction, const glm::vec3& color, Program& program) :
-	direction(direction), color(color), program(&program) {}
+DirectionalLight::DirectionalLight(const glm::vec3& direction, const glm::vec3& color, Program& renderer) :
+	direction(direction), color(color) {program = &renderer;}
 
 void DirectionalLight::update_uniforms() {
 	std::string uniform_name = shader_name + "[" + std::to_string(count) + "]";
@@ -69,8 +72,8 @@ void DirectionalLight::define_uniforms(int max_count) {
 
 int	DirectionalLight::count = 0;
 
-PointLight::PointLight(const glm::vec3& position, const glm::vec3& color, float constant_term, float linear_term, float exponential_term, Program& program) :
-	position(position), color(color), constant_term(constant_term), linear_term(linear_term), exponential_term(exponential_term), program(&program) {}
+PointLight::PointLight(const glm::vec3& position, const glm::vec3& color, float constant_term, float linear_term, float exponential_term, Program& renderer) :
+	position(position), color(color), constant_term(constant_term), linear_term(linear_term), exponential_term(exponential_term) {program = &renderer;}
 
 void PointLight::update_uniforms() {
 	std::string uniform_name = shader_name + "[" + std::to_string(count) + "]";
@@ -104,8 +107,8 @@ void PointLight::define_uniforms(int max_count) {
 int PointLight::count = 0;
 
 
-SpotLight::SpotLight(const glm::vec3& position, const glm::vec3& direction,  const glm::vec3& color, float constant_term, float linear_term, float exponential_term, float angle, Program& program) :
-	position(position), direction(direction), color(color), constant_term(constant_term), linear_term(linear_term), exponential_term(exponential_term), angle(angle), program(&program) {}
+SpotLight::SpotLight(const glm::vec3& position, const glm::vec3& direction,  const glm::vec3& color, float constant_term, float linear_term, float exponential_term, float angle, Program& renderer) :
+	position(position), direction(direction), color(color), constant_term(constant_term), linear_term(linear_term), exponential_term(exponential_term), cos_angle(glm::cos(glm::radians(angle))) {program = &renderer;}
 
 void SpotLight::update_uniforms() {
 	std::string uniform_name = shader_name + "[" + std::to_string(count) + "]";
@@ -115,7 +118,7 @@ void SpotLight::update_uniforms() {
 	program->update_uniform(uniform_name + ".constant_term", constant_term);
 	program->update_uniform(uniform_name + ".linear_term", linear_term);
 	program->update_uniform(uniform_name + ".exponential_term", exponential_term);
-	program->update_uniform(uniform_name + ".cos_angle", glm::cos(glm::radians(angle)));
+	program->update_uniform(uniform_name + ".cos_angle", cos_angle);
 
 	// temp
 	count++;

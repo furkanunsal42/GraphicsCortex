@@ -275,6 +275,51 @@ namespace default_program {
 		return queue;
 	}
 
+	uniform_update_queue ambiant_light_default_uniform_queue(Scene& scene, AmbiantLight& ambiant_light) {
+		uniform_update_queue queue;
+
+		queue.add_uniform_update(dynamic_uniform_update<float>("a_lights[0].color", &ambiant_light.color.x, &ambiant_light.color.y, &ambiant_light.color.z));
+		queue.add_uniform_update(dynamic_uniform_update<int>("a_lights_count", &AmbiantLight::count));
+
+		return queue;
+
+	}
+	uniform_update_queue directional_light_default_uniform_queue(Scene& scene, DirectionalLight& directional_light) {
+		uniform_update_queue queue;
+		
+		queue.add_uniform_update(dynamic_uniform_update<float>("d_lights[0].color", &directional_light.color.x, &directional_light.color.y, &directional_light.color.z));
+		queue.add_uniform_update(dynamic_uniform_update<float>("d_lights[0].direction", &directional_light.direction.x, &directional_light.direction.y, &directional_light.direction.z));
+		queue.add_uniform_update(dynamic_uniform_update<int>("d_lights_count", &DirectionalLight::count));
+		
+		return queue;
+	}
+	uniform_update_queue point_light_default_uniform_queue(Scene& scene, PointLight& point_light) {
+		uniform_update_queue queue;
+		
+		queue.add_uniform_update(dynamic_uniform_update<float>("p_lights[0].position", &point_light.position.x, &point_light.position.y, &point_light.position.z));
+		queue.add_uniform_update(dynamic_uniform_update<float>("p_lights[0].color", &point_light.color.x, &point_light.color.y, &point_light.color.z));
+		queue.add_uniform_update(dynamic_uniform_update<float>("p_lights[0].constant_term", &point_light.constant_term));
+		queue.add_uniform_update(dynamic_uniform_update<float>("p_lights[0].linear_term", &point_light.linear_term));
+		queue.add_uniform_update(dynamic_uniform_update<float>("p_lights[0].exponential_term", &point_light.exponential_term));
+		queue.add_uniform_update(dynamic_uniform_update<int>("p_lights_count", &PointLight::count));
+
+		return queue;
+	}
+	uniform_update_queue spot_light_default_uniform_queue(Scene& scene, SpotLight& spot_light) {
+		uniform_update_queue queue;
+
+		queue.add_uniform_update(dynamic_uniform_update<float>("s_lights[0].position", &spot_light.position.x, &spot_light.position.y, &spot_light.position.z));
+		queue.add_uniform_update(dynamic_uniform_update<float>("s_lights[0].direction", &spot_light.direction.x, &spot_light.direction.y, &spot_light.direction.z));
+		queue.add_uniform_update(dynamic_uniform_update<float>("s_lights[0].color", &spot_light.color.x, &spot_light.color.y, &spot_light.color.z));
+		queue.add_uniform_update(dynamic_uniform_update<float>("s_lights[0].constant_term", &spot_light.constant_term));
+		queue.add_uniform_update(dynamic_uniform_update<float>("s_lights[0].linear_term", &spot_light.linear_term));
+		queue.add_uniform_update(dynamic_uniform_update<float>("s_lights[0].exponential_term", &spot_light.exponential_term));
+		queue.add_uniform_update(dynamic_uniform_update<float>("s_lights[0].cos_angle", &spot_light.cos_angle));
+		queue.add_uniform_update(dynamic_uniform_update<int>("s_lights_count", &SpotLight::count));
+
+		return queue;
+	}
+
 	/*
 	DEFAULT UNIFORM UPDATE QUEUE
 
