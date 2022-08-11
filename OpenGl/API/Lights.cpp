@@ -11,6 +11,10 @@ void Light::define_uniforms(int max_count) {
 	std::cout << "[WARNING] light._define_uniforms(max_count) executed" << std::endl;
 }
 
+void Light::update_uniform_queue(bool init) {
+	_uniform_update_queue.update_uniforms();
+}
+
 AmbiantLight::AmbiantLight(const glm::vec3& color, Program& program) :
 	color(color), program(&program) {}
 

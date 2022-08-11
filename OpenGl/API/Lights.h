@@ -5,13 +5,49 @@
 #include <string>
 
 #include "ShaderCompiler.h"
+#include "UnifromQueue.h"
 
 class Light {
+private:
+	uniform_update_queue _uniform_update_queue;
 public:
 	bool _uniforms_defined = false; // needed to manualy reset if light is moved from a shader to another, not the expected use of this class but to make is possible, we have to make this parameter public.
 	static int count;
 	virtual void update_uniforms();
 	virtual void define_uniforms(int max_count);
+
+	Program* program;
+
+	template<typename T>
+	void add_uniform_update_queue(uniform_update<T>* uniform_queue) {
+		uniform_queue->program = program;
+		program->define_uniform(uniform_queue->uniform_name);
+		uniform_queue->uniform_id = program->uniforms[uniform_queue->uniform_name];
+		_uniform_update_queue.add_uniform_update(*uniform_queue);
+
+	}
+
+	template<typename T>
+	void add_uniform_update_queue(dynamic_uniform_update<T>* dynamic_uniform_queue) {
+		dynamic_uniform_queue->program = renderer;
+		renderer->define_uniform(dynamic_uniform_queue->uniform_name);
+		dynamic_uniform_queue->uniform_id = renderer->uniforms[dynamic_uniform_queue->uniform_name];
+		_uniform_update_queue.add_uniform_update(*dynamic_uniform_queue);
+	}
+
+	void set_uniform_upadte_queue(uniform_update_queue& original) {
+		_uniform_update_queue.copy(original);
+		_uniform_update_queue.link_program(program);
+		_uniform_update_queue.update_uniform_ids();
+	}
+
+	void set_uniform_upadte_queue(uniform_update_queue original) {
+		_uniform_update_queue.copy(original);
+		_uniform_update_queue.link_program(program);
+		_uniform_update_queue.update_uniform_ids();
+	}
+
+	void update_uniform_queue(bool init);
 };
 
 class AmbiantLight : public Light{
@@ -29,7 +65,6 @@ public:
 class DirectionalLight : public Light {
 public:
 	std::string shader_name = "d_lights";
-
 	Program* program;
 	glm::vec3 color;
 	glm::vec3 direction;
@@ -43,7 +78,6 @@ public:
 class PointLight : public Light {
 public:
 	std::string shader_name = "p_lights";
-
 	Program* program;
 	glm::vec3 color;
 	glm::vec3 position;
@@ -60,7 +94,6 @@ public:
 class SpotLight : public Light {
 public:
 	std::string shader_name = "s_lights";
-
 	Program* program;
 	glm::vec3 color;
 	glm::vec3 position;
