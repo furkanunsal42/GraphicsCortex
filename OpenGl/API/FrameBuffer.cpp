@@ -88,23 +88,26 @@ void FrameBuffer::unbind() {
 
 void FrameBuffer::render() {
 	if (multisample == 0){
-		glDisable(GL_DEPTH_TEST);
+		GLCall(glDisable(GL_DEPTH_TEST));
 		if (!screen_initialized) {
-			Material material;
-			material.color_map = &color_texture;
-			screen = default_geometry::rectangle(material, *program, glm::vec2(2.0f));
+			Material* material = new Material();
+			material->color_map = &color_texture;
+			material->color_map_slot = 5;
+			screen = default_geometry::rectangle(*material, *program, glm::vec2(2.0f));
 			screen_initialized = true;
 		}
 
+		Texture::CurrentBindedTexture[9] = color_texture.id;
+		GLCall(glActiveTexture(GL_TEXTURE0 + 9));
 		GLCall(glBindTexture(color_texture.target, color_texture.id));
 		program->update_uniform("texture_slot", 9);
 		screen.draw();
-		glEnable(GL_DEPTH_TEST);
+		GLCall(glEnable(GL_DEPTH_TEST));
 	}
 	else {
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-		glBindFramebuffer(GL_READ_FRAMEBUFFER, id);
-		glDrawBuffer(GL_BACK);
-		glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+		GLCall(glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0));
+		GLCall(glBindFramebuffer(GL_READ_FRAMEBUFFER, id));
+		GLCall(glDrawBuffer(GL_BACK));
+		GLCall(glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_LINEAR));
 	}
 }

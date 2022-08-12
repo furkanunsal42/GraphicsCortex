@@ -57,6 +57,7 @@ void Graphic::draw(bool show_warnings, bool _ignore_default_uniforms) {
 	if (material_exist)
  		material->bind();
 
+	
 	GLCall(glDrawElements(mode, index_buffer.data_count, GL_UNSIGNED_INT, nullptr));
 }
 

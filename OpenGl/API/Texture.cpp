@@ -73,7 +73,7 @@ bool Texture::_load_image_check(bool free_ram, bool print_errors) {
 	if (image_data == nullptr && CurrentBindedTexture[texture_slot] != id) {
 		if (print_errors)
 			std::cout << "[Opengl Error] Texture::_load_image() is called but no already loaded image is found\n";
-		return false;
+		return true; // was false
 	}
 
 	if (CurrentBindedTexture[texture_slot] == id) {

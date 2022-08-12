@@ -16,11 +16,6 @@ void Scene::render(GLFWwindow* window) {
 	if (camera != nullptr)
 		camera->update_matrixes();
 
-	AmbiantLight::count = 1;
-	DirectionalLight::count = 1;
-	PointLight::count = 0;
-	SpotLight::count = 0;
-	
 	for (Light* light : lights) {
 		light->update_uniform_queue(once);
 	}

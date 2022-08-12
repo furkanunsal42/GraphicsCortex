@@ -10,7 +10,7 @@ int main() {
 	Texture color_texture;
 	Texture specular_map;
 	Texture normal_map;
-	color_texture.queue_image("Images/GoldBlock.png", 4, true);
+	color_texture.queue_image("Images/GoldBlock.png", 4, false);
 	//color_texture.queue_image("Images/Bricks/brickcolor.jpg", 4, true);
 	//specular_map.queue_image("Images/Bricks/brickreflection.jpg", 4, true);
 	//normal_map.queue_image("Images/Bricks/bricknormal.png", 3, true);
@@ -18,7 +18,7 @@ int main() {
 	//specular_map.queue_image("Images/StoneTiles/tiles_specular.jpg", 4, true);
 	//normal_map.queue_image("Images/StoneTiles/tiles_normal.jpg", 3, true);
 	
-	bool compression = false;
+	bool compression = true;
 	color_texture.compress_image = compression;
 	//specular_map.compress_image = compression;
 	//normal_map.compress_image = compression;
@@ -37,7 +37,7 @@ int main() {
 	scene.camera = &cam;
 	
 	std::vector<Graphic> objects;
-	int n = 300;
+	int n = 1;
 	objects.reserve(n);
 	Graphic g = default_geometry::cube(material, solid_program);
 	//g.load_model("Models/dragon.obj");
@@ -56,18 +56,23 @@ int main() {
 	PointLight point(glm::vec3(3.0f, 0.0f, 3.0f), glm::vec3(3.0f, 3.0f, 3.0f), 0.5f, 0.5f, 0.0f, solid_program);
 	SpotLight spot(glm::vec3(-2.0f, -1.0f, -2.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1.0f, 1.0f, 1.0f), 0.3f, 0.2f, 0.0f, 30, solid_program);
 	
-	ambiant.set_uniform_upadte_queue(default_program::ambiant_light_default_uniform_queue(scene, ambiant));
-	directional.set_uniform_upadte_queue(default_program::directional_light_default_uniform_queue(scene, directional));
-	point.set_uniform_upadte_queue(default_program::point_light_default_uniform_queue(scene, point));
-	spot.set_uniform_upadte_queue(default_program::spot_light_default_uniform_queue(scene, spot));
+	ambiant.set_uniform_upadte_queue(default_program::ambiant_light_default_uniform_queue(ambiant, 0));
+	directional.set_uniform_upadte_queue(default_program::directional_light_default_uniform_queue(directional, 0));
+	point.set_uniform_upadte_queue(default_program::point_light_default_uniform_queue(point, 0));
+	spot.set_uniform_upadte_queue(default_program::spot_light_default_uniform_queue(spot, 0));
 
 	scene.lights.push_back(&ambiant);
 	scene.lights.push_back(&directional);
 	//scene.lights.push_back(&point);
 	//scene.lights.push_back(&spot);
 
+	AmbiantLight::count = 1;
+	DirectionalLight::count = 1;
+	PointLight::count = 0;
+	SpotLight::count = 0;
+
 	Program framebuffer_program = default_program::framebuffer_program();
-	FrameBuffer frame_buffer(width, height, frame::multisample);
+	FrameBuffer frame_buffer(width, height, 0);
 	frame_buffer.program = &framebuffer_program;
 	scene.frame_buffer = &frame_buffer;
 	
@@ -94,13 +99,7 @@ int main() {
 	cube_map.load_queue(true);
 	
 	float t = 0;
-	int i = 0;
 	while (!glfwWindowShouldClose(window)){
-		
-		//i++; 
-		if (i == 2000)
-			return 0;
-
 		frame_buffer.bind();
 		
 		glfwPollEvents();
