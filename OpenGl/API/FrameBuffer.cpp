@@ -101,7 +101,7 @@ void FrameBuffer::unbind() {
 	//depth_stencil_buffer.unbind();
 }
 
-void FrameBuffer::render() {
+void FrameBuffer::render(unsigned int source_texture) {
 	if (multisample == 0){
 		GLCall(glDisable(GL_DEPTH_TEST));
 		if (!screen_initialized) {
@@ -114,7 +114,18 @@ void FrameBuffer::render() {
 
 		Texture::CurrentBindedTexture[9] = color_texture.id;
 		GLCall(glActiveTexture(GL_TEXTURE0 + 9));
-		GLCall(glBindTexture(color_texture.target, color_texture.id));
+		if (source_texture == COLOR_TEXTURE) {
+			GLCall(glBindTexture(color_texture.target, color_texture.id));
+		}
+		if (source_texture == DEPTH_TEXTURE) {
+			glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_STENCIL_TEXTURE_MODE, GL_DEPTH_COMPONENT);
+			GLCall(glBindTexture(depth_stencil_buffer.target, depth_stencil_buffer.id));
+		}
+		if (source_texture == STENCIL_TEXTURE) {
+			glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_STENCIL_TEXTURE_MODE, GL_STENCIL_INDEX);
+			GLCall(glBindTexture(depth_stencil_buffer.target, depth_stencil_buffer.id));
+		}
+
 		program->update_uniform("texture_slot", 9);
 		screen.draw();
 		GLCall(glEnable(GL_DEPTH_TEST));

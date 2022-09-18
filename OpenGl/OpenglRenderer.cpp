@@ -3,7 +3,7 @@
 #include <iostream>
 
 int main() {
-	int width = 1024, height = 768;
+	int width = 1920, height = 1080;
 	GLFWwindow* window = frame::create_window(width, height, "My Window", 4, 0, true, false, true);
 	Scene scene;
 	Material material;
@@ -27,7 +27,7 @@ int main() {
 	//material.specular_map = &specular_map;
 	//material.normal_map = &normal_map;
 
-	Program solid_program = default_program::solid_program();
+	Program solid_program = default_program::flatcolor_program();
 
 	Camera cam;
 	cam.screen_width = (float)width;
@@ -37,9 +37,11 @@ int main() {
 	scene.camera = &cam;
 	
 	std::vector<Graphic> objects;
-	int n = 1;
+	int n = 70;
 	objects.reserve(n);
-	Graphic g = default_geometry::cube(material, solid_program);
+	Graphic g;
+	g.material = &material;
+	g.renderer = &solid_program;
 	g.load_model("Models/dragon.obj");
 	for (int i = 0; i < n; i++){
 		objects.push_back(Graphic(material, solid_program));
@@ -101,6 +103,7 @@ int main() {
 	
 	float t = 0;
 	while (!glfwWindowShouldClose(window)){
+		
 		frame_buffer.bind();
 		
 		glfwPollEvents();
@@ -110,7 +113,7 @@ int main() {
 		double frame_time = frame::get_interval_ms();
 		scene.camera->frame_time_ms = frame_time;
 		scene.camera->handle_movements(window);
-		
+
 		cube_map.draw();
 
 		//cube.position.x += 0.01f;
@@ -124,7 +127,8 @@ int main() {
 		cube_map.texture_slot = 11;
 		
 		frame_buffer.unbind();
-		frame_buffer.render();
+
+		frame_buffer.render(FrameBuffer::DEPTH_TEXTURE);
 
 		glfwSwapBuffers(window);
 	}

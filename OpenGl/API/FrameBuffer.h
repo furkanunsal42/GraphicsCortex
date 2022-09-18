@@ -22,6 +22,13 @@ public:
 
 class FrameBuffer {
 public:
+	enum
+	{
+		COLOR_TEXTURE = 0,
+		DEPTH_TEXTURE,
+		STENCIL_TEXTURE,
+	};
+
 	unsigned int id = 0;
 	int width = 0, height = 0;
 	int texture_slot = 9;
@@ -35,7 +42,7 @@ public:
 
 	void bind();
 	void unbind();
-	void render();
+	void render(unsigned int source_texture = FrameBuffer::COLOR_TEXTURE);
 private:
 	int multisample = 0;
 	bool screen_initialized = false;

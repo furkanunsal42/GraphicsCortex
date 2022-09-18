@@ -14,6 +14,12 @@ int kernel[] = int[](
 	1, 0, 1
 );
 
+float linearize_depth(float d,float zNear,float zFar)
+{
+    float z_n = 2.0 * d - 1.0;
+    return 2.0 * zNear * zFar / (zFar + zNear - z_n * (zFar - zNear));
+}
+
 void main(){
 	
 	/*
@@ -39,5 +45,9 @@ void main(){
 		frag_color = texture(texture_slot, frag_tex_coords);
 	}
 	*/
-	frag_color = texture(texture_slot, frag_tex_coords);
+	
+	float near= 0.1f, far = 100.0f;
+	float depth = texture(texture_slot, frag_tex_coords).x;
+	
+	frag_color = vec4(vec3(linearize_depth(depth, 0.1f, 100.0f)) / far, 1.0f);
 }
