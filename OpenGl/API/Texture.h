@@ -26,7 +26,10 @@ public:
 	unsigned int target = GL_TEXTURE_2D;
 	int multisample_amount = 0;
 	bool compress_image = false;
-	Texture();
+
+	bool use_renderbuffer = false;
+	
+	Texture(bool renderbuffer = false, int renderbuffer_multisample = 0);
 	void load_image(std::string file_path, int desired_channels = 4, bool free_ram = false);
 	void queue_image(std::string file_path, int desired_channels = 4, bool free_ram = false);
 	void read_queue();

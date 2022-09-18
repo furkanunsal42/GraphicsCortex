@@ -40,6 +40,4 @@ void main(){
 	}
 	*/
 	frag_color = texture(texture_slot, frag_tex_coords);
-	//frag_color = vec4(vec3((2.0 * 0.1f * 100.0f) / (100.0f + 0.1f - (gl_FragCoord.z * 2.0 - 1.0) * (100.0f - 0.1f)) / 30.0f), 1.0f);
-	//frag_color = vec4(1.0f);
 }

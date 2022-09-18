@@ -26,11 +26,12 @@ public:
 	int width = 0, height = 0;
 	int texture_slot = 9;
 	Texture color_texture;
-	RenderBuffer depth_stencil_buffer;
+	Texture depth_stencil_buffer;
+
 	Graphic screen;
 	Program* program = nullptr;
 
-	FrameBuffer(int width, int height, int anti_alliasing = 0);
+	FrameBuffer(int width, int height, int anti_alliasing = 0, bool readable_depth_stencil_buffer = false);
 
 	void bind();
 	void unbind();

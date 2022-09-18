@@ -40,7 +40,7 @@ int main() {
 	int n = 1;
 	objects.reserve(n);
 	Graphic g = default_geometry::cube(material, solid_program);
-	//g.load_model("Models/dragon.obj");
+	g.load_model("Models/dragon.obj");
 	for (int i = 0; i < n; i++){
 		objects.push_back(Graphic(material, solid_program));
 		scene.meshes.push_back(&objects[i]);
@@ -72,7 +72,7 @@ int main() {
 	SpotLight::count = 0;
 
 	Program framebuffer_program = default_program::framebuffer_program();
-	FrameBuffer frame_buffer(width, height, 0);
+	FrameBuffer frame_buffer(width, height, 0, true);
 	frame_buffer.program = &framebuffer_program;
 	scene.frame_buffer = &frame_buffer;
 	
@@ -86,6 +86,7 @@ int main() {
 	cube_map.face_texture_filepaths[BOTTOM] = "Images/CubeMap/Sky/ny.jpg";
 	cube_map.face_texture_filepaths[FRONT] = "Images/CubeMap/Sky/pz.jpg";
 	cube_map.face_texture_filepaths[BACK] = "Images/CubeMap/Sky/nz.jpg";
+	
 	/*
 	cube_map.face_texture_filepaths[RIGHT] = "Images/CubeMap/Street/px.png";
 	cube_map.face_texture_filepaths[LEFT] = "Images/CubeMap/Street/nx.png";

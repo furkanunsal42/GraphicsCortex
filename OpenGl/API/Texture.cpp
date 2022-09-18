@@ -12,11 +12,23 @@
 
 unsigned int Texture::CurrentBindedTexture[MAX_TEXTURE_SLOTS];
 
-Texture::Texture() {
-	GLCall(glGenTextures(1, &id));
+Texture::Texture(bool renderbuffer, int renderbuffer_multisample) : 
+	use_renderbuffer(renderbuffer), multisample_amount(renderbuffer_multisample)
+{
+	if (renderbuffer){
+		GLCall(glGenRenderbuffers(1, &id));
+	}
+	else {
+		GLCall(glGenTextures(1, &id));
+	}
 }
 
 bool Texture::_read_image_check(std::string& file_path, int desired_channels, bool print_errors) {
+	if (use_renderbuffer) {
+		std::cout << "Texture::_read_image_check() is called while use_renderbuffer == true, operation cancelled.\n";
+		return false;
+	}
+
 	if (file_path == currently_stored_file_name) {
 		if (print_errors)
 			std::cout << "[Opengl Warning] Texture::_read_image() is called but file_path was same with previously loaded file. Loading is cancelled. \n";
@@ -33,6 +45,11 @@ bool Texture::_read_image_check(std::string& file_path, int desired_channels, bo
 }
 
 void Texture::_read_image(std::string& file_path, int desired_channels) {
+	if (use_renderbuffer) {
+		std::cout << "Texture::_read_image() is called while use_renderbuffer == true, operation cancelled.\n";
+		return;
+	}
+
 	if (!_read_image_check(file_path, desired_channels))
 		return;
 	
@@ -70,6 +87,11 @@ void Texture::_read_image(std::string& file_path, int desired_channels) {
 }
 
 bool Texture::_load_image_check(bool free_ram, bool print_errors) {
+	if (use_renderbuffer) {
+		std::cout << "Texture::_load_image_check() is called while use_renderbuffer == true, operation cancelled.\n";
+		return false;
+	}
+
 	if (image_data == nullptr && CurrentBindedTexture[texture_slot] != id) {
 		if (print_errors)
 			std::cout << "[Opengl Error] Texture::_load_image() is called but no already loaded image is found\n";
@@ -85,6 +107,11 @@ bool Texture::_load_image_check(bool free_ram, bool print_errors) {
 }
 
 void Texture::_load_image(bool free_ram) {
+	if (use_renderbuffer) {
+		std::cout << "Texture::_load_image() is called while use_renderbuffer == true, operation cancelled.\n";
+		return;
+	}
+
 	if (!_load_image_check(free_ram))
 		return;
 
@@ -111,17 +138,32 @@ void Texture::_load_image(bool free_ram) {
 }
 
 void Texture::load_image(std::string file_path, int desired_channels, bool free_ram) {
+	if (use_renderbuffer) {
+		std::cout << "Texture::load_image() is called while use_renderbuffer == true, operation cancelled.\n";
+		return;
+	}
+
 	_read_image(file_path, desired_channels);
 	_load_image(free_ram);
 }
 
 void Texture::queue_image(std::string file_path, int desired_channels, bool free_ram) {
+	if (use_renderbuffer) {
+		std::cout << "Texture::queue_image() is called while use_renderbuffer == true, operation cancelled.\n";
+		return;
+	}
+
 	queued_image_path = file_path;
 	queued_desired_channels = desired_channels;
 	queued_free_ram = free_ram;
 }
 
 void Texture::read_queue() {
+	if (use_renderbuffer) {
+		std::cout << "Texture::read_queue() is called while use_renderbuffer == true, operation cancelled.\n";
+		return;
+	}
+
 	if (queued_image_path == "") {
 		std::cout << "[Opengl Error] Texture::read_queue() is ran but queue was empty, Read is cancelled. \n";
 		return;
@@ -130,6 +172,11 @@ void Texture::read_queue() {
 }
 
 void Texture::load_queue() {
+	if (use_renderbuffer) {
+		std::cout << "Texture::load_queue() is called while use_renderbuffer == true, operation cancelled.\n";
+		return;
+	}
+
 	if (queued_image_path == "") {
 		if (image_data != nullptr)
 			bind();
@@ -140,6 +187,11 @@ void Texture::load_queue() {
 }
 
 void Texture::free_image() {
+	if (use_renderbuffer) {
+		std::cout << "Texture::free_image() is called while use_renderbuffer == true, operation cancelled.\n";
+		return;
+	}
+
 	stbi_image_free(image_data);
 	image_data = nullptr;
 	currently_stored_file_name = "";
@@ -147,6 +199,11 @@ void Texture::free_image() {
 
 
 void Texture::initialize_blank_image() {
+	if (use_renderbuffer) {
+		std::cout << "Texture::initialize_blank_image() is called while use_renderbuffer == true, operation cancelled.\n";
+		return;
+	}
+
 	GLCall(glActiveTexture(GL_TEXTURE0 + texture_slot));
 	GLCall(glBindTexture(target, id));
 	if (target == GL_TEXTURE_2D){
@@ -166,6 +223,17 @@ void Texture::initialize_blank_image() {
 
 
 void Texture::bind() {
+	if (use_renderbuffer) {
+		GLCall(glBindRenderbuffer(target, id));
+		if (multisample_amount == 0) {
+			GLCall(glRenderbufferStorage(target, internal_format, width, height));
+		}
+		else {
+			GLCall(glRenderbufferStorageMultisample(target, multisample_amount, internal_format, width, height));
+		}
+		return;
+	}
+
 	#ifdef TEXTURE_REPEATED_BIND_OPTIMIZATION
 	if (CurrentBindedTexture[texture_slot] == id)
 		return;
@@ -182,6 +250,11 @@ void Texture::bind() {
 }
 
 void Texture::unbind() {
+	if (use_renderbuffer) {
+		GLCall(glBindRenderbuffer(target, 0));
+		return;
+	}
+
 	GLCall(glActiveTexture(GL_TEXTURE0 + texture_slot));
 	GLCall(glBindTexture(target, 0));
 	CurrentBindedTexture[texture_slot] = 0;
