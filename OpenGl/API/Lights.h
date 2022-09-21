@@ -7,6 +7,7 @@
 #include "ShaderCompiler.h"
 #include "UnifromQueue.h"
 
+
 class Light {
 private:
 	uniform_update_queue _uniform_update_queue;

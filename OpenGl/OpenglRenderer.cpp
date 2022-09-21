@@ -2,15 +2,17 @@
 
 #include <iostream>
 
+#include <PxPhysicsAPI.h>
+
 int main() {
-	int width = 1920, height = 1080;
+	int width = 800, height = 600;
 	GLFWwindow* window = frame::create_window(width, height, "My Window", 4, 0, true, false, true);
 	Scene scene;
 	Material material;
 	Texture color_texture;
 	Texture specular_map;
 	Texture normal_map;
-	color_texture.queue_image("Images/GoldBlock.png", 4, false);
+	color_texture.queue_image("Images/GoldBlock.png", 4, true);
 	//color_texture.queue_image("Images/Bricks/brickcolor.jpg", 4, true);
 	//specular_map.queue_image("Images/Bricks/brickreflection.jpg", 4, true);
 	//normal_map.queue_image("Images/Bricks/bricknormal.png", 3, true);
@@ -37,18 +39,16 @@ int main() {
 	scene.camera = &cam;
 	
 	std::vector<Graphic> objects;
-	int n = 70;
+	int n = 1;
 	objects.reserve(n);
-	Graphic g;
-	g.material = &material;
-	g.renderer = &solid_program;
+	Graphic g = default_geometry::cube(material, solid_program);
 	g.load_model("Models/dragon.obj");
 	for (int i = 0; i < n; i++){
 		objects.push_back(Graphic(material, solid_program));
 		scene.meshes.push_back(&objects[i]);
 		scene.meshes[i]->vertex_buffer = g.vertex_buffer;
 		scene.meshes[i]->index_buffer = g.index_buffer;
-		scene.meshes[i]->set_uniform_upadte_queue(default_program::solid_default_uniform_queue(scene, *scene.meshes[i]));
+		scene.meshes[i]->set_uniform_upadte_queue(default_program::flat_default_uniform_queue(scene, *scene.meshes[i]));
 		scene.meshes[i]->position.x = i * 10;
 	}
 	g.clear_mesh();
@@ -128,7 +128,7 @@ int main() {
 		
 		frame_buffer.unbind();
 
-		frame_buffer.render(FrameBuffer::DEPTH_TEXTURE);
+		frame_buffer.render(FrameBuffer::COLOR_TEXTURE);
 
 		glfwSwapBuffers(window);
 	}
