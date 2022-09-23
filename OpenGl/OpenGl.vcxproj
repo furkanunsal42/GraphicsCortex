@@ -186,7 +186,7 @@
     <ClCompile Include="API\Graphic.cpp" />
     <ClCompile Include="API\Debuger.cpp" />
     <ClCompile Include="API\ShaderCompiler.cpp" />
-    <ClCompile Include="physx_test.cpp" />
+    <ClCompile Include="physx_main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Dependencies\assimp\bin\assimp-vc143-mtd.dll" />
