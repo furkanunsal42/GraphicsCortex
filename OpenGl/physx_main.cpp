@@ -120,36 +120,48 @@ public:
 	physx::PxMaterial* material;
 	physx::PxShape* shape;
 	physx::PxTransform transform;
-	physx::PxRigidDynamic* dynamic_actor;
+	physx::PxRigidActor* actor;
 	bool exclusive_shape = false;
+	
+	unsigned int type;
 
 	enum type {
 		DYNAMIC = 0,
 		KINEMATIC,
-		//STATIC,
+		STATIC,
 	};
 
-	PhysicsObject(const physx::PxGeometry& geometry, bool exclusive_shape = false) :
-		position(glm::vec3(0, 0, 0)), rotation(glm::vec3(0, 0, 0)), exclusive_shape(exclusive_shape)
+	PhysicsObject(const physx::PxGeometry& geometry, unsigned int type = type::DYNAMIC, bool exclusive_shape = false) :
+		position(glm::vec3(0, 0, 0)), rotation(glm::vec3(0, 0, 0)), exclusive_shape(exclusive_shape), type(type)
 	{
+
 		auto context = PhysxContext::get();
 		material = context.physics->createMaterial(0.5f, 0.5f, 0.5f);
 		update_transform();
-		dynamic_actor = context.physics->createRigidDynamic(transform);
+		if (type == type::DYNAMIC || type == type::KINEMATIC)
+			actor = context.physics->createRigidDynamic(transform);
+		if (type == type::STATIC)
+			actor = context.physics->createRigidStatic(transform);
+
 		create_shape(geometry, *material, exclusive_shape);
 	}
 
-	void set_type(unsigned int type) {
-		if (type == type::DYNAMIC)
-			dynamic_actor->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, false);
-		if (type == type::KINEMATIC)
-			dynamic_actor->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, true);
+	void set_type(unsigned int new_type) {
+		if (type == type::STATIC) {
+			if (type != new_type)
+				std::cout << "PhysicsObject.set_type(unsigned int new_type) is called but staic type cannot be changed.\n";
+			return;
+		}
+		if (new_type == type::DYNAMIC)
+			((physx::PxRigidBody*)actor)->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, false);
+		if (new_type == type::KINEMATIC)
+			((physx::PxRigidBody*)actor)->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, true);
 	}
 
 	void create_shape(const physx::PxGeometry& geometry, const physx::PxMaterial& material, bool exclusive_shape = false) {
 		auto context = PhysxContext::get();
 		shape = context.physics->createShape(geometry, material, exclusive_shape);
-		dynamic_actor->attachShape(*shape);
+		actor->attachShape(*shape);
 	}
 
 	void set_position(float x, float y, float z) {
@@ -186,8 +198,8 @@ public:
 		physx::PxQuat rotation_quat(rotatoion_quat_glm.x, rotatoion_quat_glm.y, rotatoion_quat_glm.z, rotatoion_quat_glm.w);
 		transform = physx::PxTransform(physx::PxVec3(position.x, position.y, position.z), rotation_quat);
 
-		if (dynamic_actor != nullptr)
-			dynamic_actor->setGlobalPose(transform);
+		if (actor != nullptr)
+			actor->setGlobalPose(transform);
 	}
 
 private:
@@ -202,7 +214,7 @@ public:
 	
 	void add_actor(PhysicsObject& actor) {
 		auto context = PhysxContext::get();
-		context.physics_scene->addActor(*actor.dynamic_actor);
+		context.physics_scene->addActor(*actor.actor);
 		actors.push_back(actor);
 	}
 	
@@ -225,21 +237,21 @@ public:
 int main() {
 	PhysicsScene scene;
 
-	PhysicsObject box(create_geometry::box(1.0f, 1.0f, 1.0f), true);
+	PhysicsObject box(create_geometry::box(1.0f, 1.0f, 1.0f), PhysicsObject::DYNAMIC, true);
 	scene.add_actor(box);
 	box.set_position(0.5f, 10.0f, 0.0f);
 
-	PhysicsObject sphere(create_geometry::sphere(1.0f), true);
+	PhysicsObject sphere(create_geometry::sphere(1.0f), PhysicsObject::DYNAMIC, true);
 	scene.add_actor(sphere);
 	sphere.set_position(0.0f, 10.0f, 10.0f);
 
-	PhysicsObject capsule(create_geometry::capsule(1.0f, 1.0f), true);
+	PhysicsObject capsule(create_geometry::capsule(1.0f, 1.0f), PhysicsObject::DYNAMIC, true);
 	scene.add_actor(capsule);
 	sphere.set_position(0.0f, 10.0f, 0.0f);
 	sphere.set_rotation(physx::PxHalfPi, 10.0f, 0.0f);
 
 	std::vector<physx::PxVec3> pyramid_index = { physx::PxVec3(0,1,0), physx::PxVec3(1,0,0), physx::PxVec3(-1,0,0), physx::PxVec3(0,0,1), physx::PxVec3(0,0,-1) };
-	PhysicsObject pyramid(create_geometry::convex_hull(pyramid_index), true);
+	PhysicsObject pyramid(create_geometry::convex_hull(pyramid_index), PhysicsObject::STATIC, true);
 	scene.add_actor(pyramid);
 	pyramid.set_position(0.0f, 10.0f, 20.0f);
 	pyramid.set_type(PhysicsObject::DYNAMIC);
