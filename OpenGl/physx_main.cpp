@@ -7,7 +7,6 @@
 
 #include <thread>
 
-
 class PhysxContext {
 public:
 	physx::PxDefaultAllocator physics_allocator;
@@ -90,6 +89,17 @@ namespace create_geometry {
 		return convex_hull(&(verticies[0]), verticies.size());
 	}
 
+
+	physx::PxPlane plane(float nx, float ny, float nz, float distance) {
+		return physx::PxPlane(nx, ny, nz, distance);
+	}
+
+	template<typename T>
+	std::enable_if_t<std::is_same<T, physx::PxVec3>::value || std::is_same<T, glm::vec3>::value, physx::PxPlane>
+	plane(T normal, float distance) {
+		return plane(normal.x, normal.y, normal.z, distance);
+	}
+
 	/*
 	physx::PxTriangleMeshGeometry custom(const std::vector<physx::PxVec3>& verticies, const std::vector<unsigned int>& indicies) {
 		auto context = PhysxContext::get();
@@ -144,6 +154,14 @@ public:
 			actor = context.physics->createRigidStatic(transform);
 
 		create_shape(geometry, *material, exclusive_shape);
+	}
+
+	PhysicsObject(const physx::PxPlane& plane, bool exclusive_shape = false) :
+		position(glm::vec3(0, 0, 0)), rotation(glm::vec3(0, 0, 0)), exclusive_shape(exclusive_shape), type(type::STATIC), shape(nullptr)
+	{
+		auto context = PhysxContext::get();
+		material = context.physics->createMaterial(0.5f, 0.5f, 0.5f);
+		actor = physx::PxCreatePlane(*context.physics, plane, *material);
 	}
 
 	void set_type(unsigned int new_type) {
@@ -251,25 +269,13 @@ int main() {
 	sphere.set_rotation(physx::PxHalfPi, 10.0f, 0.0f);
 
 	std::vector<physx::PxVec3> pyramid_index = { physx::PxVec3(0,1,0), physx::PxVec3(1,0,0), physx::PxVec3(-1,0,0), physx::PxVec3(0,0,1), physx::PxVec3(0,0,-1) };
-	PhysicsObject pyramid(create_geometry::convex_hull(pyramid_index), PhysicsObject::STATIC, true);
+	PhysicsObject pyramid(create_geometry::convex_hull(pyramid_index), PhysicsObject::DYNAMIC, true);
 	scene.add_actor(pyramid);
 	pyramid.set_position(0.0f, 10.0f, 20.0f);
-	pyramid.set_type(PhysicsObject::DYNAMIC);
+
+	PhysicsObject plane(create_geometry::plane(0.0f, 1.0f, 0.0f, 10.0f), true);
+	scene.add_actor(plane);
 	
-	/*
-	std::vector<physx::PxVec3> custom_vertex = { physx::PxVec3(0,1,0), physx::PxVec3(-1,0,0), physx::PxVec3(1,0,0), physx::PxVec3(-1,0,1) };
-	//std::vector<physx::PxVec3> cutsom_index = { physx::PxVec3(0,1,2), physx::PxVec3(0,2,3), physx::PxVec3(0,3,1), physx::PxVec3(1,2,3) };
-	std::vector<unsigned int> cutsom_index = { 0, 1, 2, 0, 2, 3, 0, 3, 1, 1, 2, 3 };
-	PhysicsObject custom(create_geometry::custom(custom_vertex, cutsom_index), true);
-	scene.add_actor(custom);
-	custom.set_position(0.0f, 10.0f, 20.0f);
-	*/
-
-	auto context = PhysxContext::get();
-	physx::PxMaterial* plane_material = context.physics->createMaterial(physx::PxReal(0.5f), physx::PxReal(0.5f), physx::PxReal(0.5f));
-	physx::PxRigidStatic* plane_actor = physx::PxCreatePlane(*context.physics, physx::PxPlane(0.0f, 1.0f, 0.0f, 10.0f), *plane_material);
-	context.physics_scene->addActor(*plane_actor);
-
 	while (true) {
 		scene.simulation_step_start(1 / 1000.0f);
 		scene.simulation_step_finish();
