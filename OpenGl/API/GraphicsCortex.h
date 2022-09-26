@@ -21,3 +21,10 @@
 #include "FrameBuffer.h"
 #include "CubeMap.h"
 #include "UnifromQueue.h"
+
+#include <PxPhysicsAPI.h>
+
+#include "PhysicsContext.h"
+#include "PhysicsGeometry.h"
+#include "PhysicsScene.h"
+#include "PhysicsObject.h"
