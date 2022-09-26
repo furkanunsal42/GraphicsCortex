@@ -29,7 +29,7 @@ int main() {
 	//material.specular_map = &specular_map;
 	//material.normal_map = &normal_map;
 
-	Program solid_program = default_program::flatcolor_program();
+	Program solid_program = default_program::solid_program();
 
 	Camera cam;
 	cam.screen_width = (float)width;
@@ -48,7 +48,7 @@ int main() {
 		scene.meshes.push_back(&objects[i]);
 		scene.meshes[i]->vertex_buffer = g.vertex_buffer;
 		scene.meshes[i]->index_buffer = g.index_buffer;
-		scene.meshes[i]->set_uniform_upadte_queue(default_program::flat_default_uniform_queue(scene, *scene.meshes[i]));
+		scene.meshes[i]->set_uniform_upadte_queue(default_program::solid_default_uniform_queue(scene, *scene.meshes[i]));
 		scene.meshes[i]->position.x = i * 10;
 	}
 	g.clear_mesh();

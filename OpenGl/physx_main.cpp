@@ -45,6 +45,9 @@ private:
 		scene_desc->filterShader = physx::PxDefaultSimulationFilterShader;
 
 		physics_scene = physics->createScene(*scene_desc);
+		physics_scene->setVisualizationParameter(physx::PxVisualizationParameter::eJOINT_LOCAL_FRAMES, 1.0f);
+		physics_scene->setVisualizationParameter(physx::PxVisualizationParameter::eJOINT_LIMITS, 1.0f);
+
 
 		physics_cooking = PxCreateCooking(PX_PHYSICS_VERSION, *physics_foundation, physx::PxCookingParams(physics->getTolerancesScale()));
 	};
@@ -237,6 +240,8 @@ public:
 	
 	unsigned int type;
 
+	std::vector<PhysicsLink*> links;
+
 	enum type {
 		DYNAMIC = 0,
 		KINEMATIC,
@@ -312,7 +317,6 @@ public:
 		set_rotation(rotation_vector.x, rotation_vector.y, rotation_vector.z);
 	}
 
-
 	void update_transform() {
 		glm::quat rotatoion_quat_glm(glm::vec3(rotation.x, rotation.y, rotation.z));
 		physx::PxQuat rotation_quat(rotatoion_quat_glm.x, rotatoion_quat_glm.y, rotatoion_quat_glm.z, rotatoion_quat_glm.w);
@@ -322,13 +326,71 @@ public:
 			actor->setGlobalPose(transform);
 	}
 
+	void add_link(PhysicsObject& other, enum PhysicsLink::type link_type = PhysicsLink::type::FIXED) {
+		PhysicsLink* link = new PhysicsLink(*this, other, link_type);
+		other.links.push_back(link);
+		links.push_back(link);
+	}
+
+	void remove_link(PhysicsLink* link) {
+		std::vector<PhysicsLink*>::iterator index = std::find(links.begin(), links.end(), link);
+		
+		if (index == links.end()) {
+			std::cout << "[PhysX ERROR] PhysicsObject.remove_link() is called but given link was not a part of this object. \n";
+			return;
+		}
+
+		link->remove();
+		delete link;
+	}
+
 private:
 	glm::vec3 position;
 	glm::vec3 rotation;
 };
 
+class PhysicsLink {
+public:
+	PhysicsObject* actor0;
+	PhysicsObject* actor1;
+
+	physx::PxJoint* joint;
+
+	unsigned int type;
+
+	enum type {
+		FIXED = 0,
+		DISTANCE,
+		SPHERICAL,
+		REVOLUTE,
+		PRISMATIC,
+		D6,
+	};
+
+	PhysicsLink(PhysicsObject& actor0, PhysicsObject& actor1, enum PhysicsLink::type link_type) :
+		type(link_type), actor0(&actor0), actor1(&actor1)
+	{
+		physx::PxVec3 offset(0.5f, 0, 0);
+		auto context = PhysxContext::get();
+		joint = physx::PxFixedJointCreate(*context.physics, actor0.actor, physx::PxTransform(-offset), actor1.actor, physx::PxTransform(offset));
+		joint->setConstraintFlag(physx::PxConstraintFlag::eVISUALIZATION, true);
+
+	}
+
+	void remove() {
+		std::vector<PhysicsLink*>::iterator index0 = std::find(actor0->links.begin(), actor0->links.end(), this);
+		std::vector<PhysicsLink*>::iterator index1 = std::find(actor1->links.begin(), actor0->links.end(), this);
+		actor0->links.erase(index0);
+		actor1->links.erase(index1);
+
+		joint->release();
+	}
+};
+
 class PhysicsScene{
 public:
+
+	PhysicsScene() {}
 
 	std::vector<std::reference_wrapper<PhysicsObject>> actors;
 	
@@ -393,9 +455,6 @@ int main() {
 	}
 	PhysicsObject heightfield(create_geometry::heightfield(samples), PhysicsObject::STATIC, true);
 	scene.add_actor(heightfield);
-
-
-
 
 	while (true) {
 		scene.simulation_step_start(1 / 1000.0f);
