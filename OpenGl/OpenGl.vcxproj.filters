@@ -60,6 +60,18 @@
     <ClCompile Include="API\UniformQueue.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
+    <ClCompile Include="API\PhysicsContext.cpp">
+      <Filter>Kaynak Dosyalar</Filter>
+    </ClCompile>
+    <ClCompile Include="API\PhysicsGeometry.cpp">
+      <Filter>Kaynak Dosyalar</Filter>
+    </ClCompile>
+    <ClCompile Include="API\PhysicsObject.cpp">
+      <Filter>Kaynak Dosyalar</Filter>
+    </ClCompile>
+    <ClCompile Include="API\PhysicsScene.cpp">
+      <Filter>Kaynak Dosyalar</Filter>
+    </ClCompile>
     <ClCompile Include="physx_main.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
@@ -391,6 +403,18 @@
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
     <ClInclude Include="API\UnifromQueue.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="API\PhysicsContext.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="API\PhysicsGeometry.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="API\PhysicsObject.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="API\PhysicsScene.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
   </ItemGroup>

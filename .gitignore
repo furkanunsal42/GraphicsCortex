@@ -99,3 +99,4 @@ OpenGl/Release/ShaderCompiler.obj
 OpenGl/Release/stb_image.obj
 OpenGl/Release/Texture.obj
 OpenGl/Release/UniformQueue.obj
+*.obj

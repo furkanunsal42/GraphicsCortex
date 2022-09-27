@@ -21,57 +21,17 @@ namespace create_geometry {
 		return physx::PxCapsuleGeometry(physx::PxReal(radius), physx::PxReal(half_height));
 	}
 
-	template<typename T>
-	std::enable_if_t<std::is_same<T, physx::PxVec3>::value || std::is_same<T, glm::vec3>::value, physx::PxConvexMeshGeometry>
-		convex_hull(const T verticies[], unsigned int count) {
-
-		physx::PxConvexMeshDesc mesh_desc;
-		mesh_desc.points.data = verticies;
-		mesh_desc.points.stride = sizeof verticies[0];
-		mesh_desc.points.count = count;
-		mesh_desc.flags = physx::PxConvexFlag::eCOMPUTE_CONVEX;
-
-		auto context = PhysxContext::get();
-		physx::PxDefaultMemoryOutputStream buf;
-		physx::PxConvexMeshCookingResult::Enum result;
-		context.physics_cooking->cookConvexMesh(mesh_desc, buf, &result);
-		physx::PxDefaultMemoryInputData input(buf.getData(), buf.getSize());
-		physx::PxConvexMesh* convex_mesh = context.physics->createConvexMesh(input);
-
-		return physx::PxConvexMeshGeometry(convex_mesh);
-	}
-
-	template<typename T>
-	std::enable_if_t<std::is_same<T, physx::PxVec3>::value || std::is_same<T, glm::vec3>::value, physx::PxConvexMeshGeometry>
-		convex_hull(const std::vector<T>& verticies) {
-		return convex_hull(&(verticies[0]), verticies.size());
-	}
-
-
 	physx::PxPlane plane(float nx, float ny, float nz, float distance) {
 		return physx::PxPlane(nx, ny, nz, distance);
 	}
 
-	template<typename T>
-	std::enable_if_t<std::is_same<T, physx::PxVec3>::value || std::is_same<T, glm::vec3>::value, physx::PxPlane>
-		plane(T normal, float distance) {
-		return plane(normal.x, normal.y, normal.z, distance);
-	}
-
-	enum heightfield_array_type {
-		ARRAY_OF_ROWS = 0,
-		ARRAY_OF_COLUMNS,
-		ARRAY_OF_ROWS_INVERTED,
-		ARRAY_OF_COLUMNS_INVERTED,
-	};
-
-	physx::PxHeightFieldGeometry heightfield(physx::PxHeightFieldSample heightfield_data[], unsigned int column_size, unsigned int row_size, heightfield_array_type array_type = heightfield_array_type::ARRAY_OF_COLUMNS) {
+	physx::PxHeightFieldGeometry heightfield(physx::PxHeightFieldSample heightfield_data[], unsigned int column_size, unsigned int row_size, heightfield_array_type array_type) {
 		if (column_size == 0 || row_size == 0) {
 			std::cout << "[PhysX Error] create_geometry::heightfield() is called but column_size or row_size was zero.\n";
 			ASSERT(false);
 		}
 
-		physx::PxHeightFieldSample* heightfield_data_new = (physx::PxHeightFieldSample*)malloc(sizeof(physx::PxHeightFieldSample) * column_size * row_size);
+		physx::PxHeightFieldSample* heightfield_data_new = new physx::PxHeightFieldSample[column_size * row_size];
 
 		if (array_type == ARRAY_OF_ROWS) {
 			for (int i = 0; i < column_size * row_size; i++) {
@@ -127,11 +87,11 @@ namespace create_geometry {
 		return physx::PxHeightFieldGeometry(heightfield_mesh, flags, physx::PxReal(1.0f), physx::PxReal(1.0f), physx::PxReal(1.0f));
 	}
 
-	physx::PxHeightFieldGeometry heightfield(std::vector<physx::PxHeightFieldSample> heightfield_data, unsigned int column_size, unsigned int row_size, heightfield_array_type array_type = heightfield_array_type::ARRAY_OF_COLUMNS) {
+	physx::PxHeightFieldGeometry heightfield(std::vector<physx::PxHeightFieldSample> heightfield_data, unsigned int column_size, unsigned int row_size, heightfield_array_type array_type) {
 		return heightfield(&(heightfield_data[0]), column_size, row_size, array_type);
 	}
 
-	physx::PxHeightFieldGeometry heightfield(std::vector<std::vector<physx::PxHeightFieldSample>> heightfield_data, heightfield_array_type array_type = heightfield_array_type::ARRAY_OF_COLUMNS) {
+	physx::PxHeightFieldGeometry heightfield(std::vector<std::vector<physx::PxHeightFieldSample>> heightfield_data, heightfield_array_type array_type) {
 		unsigned int inner_vector_size = heightfield_data[0].size();
 		for (std::vector<physx::PxHeightFieldSample> inner_vector : heightfield_data) {
 			if (inner_vector.size() != inner_vector_size) {

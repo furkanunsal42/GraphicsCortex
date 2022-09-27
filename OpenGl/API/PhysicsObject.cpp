@@ -4,7 +4,7 @@
 
 #include <iostream>
 
-PhysicsObject::PhysicsObject(const physx::PxGeometry& geometry, enum type type = type::DYNAMIC, bool exclusive_shape = false) :
+PhysicsObject::PhysicsObject(const physx::PxGeometry& geometry, enum type type, bool exclusive_shape) :
 	position(glm::vec3(0, 0, 0)), rotation(glm::vec3(0, 0, 0)), exclusive_shape(exclusive_shape), type(type)
 {
 
@@ -19,7 +19,7 @@ PhysicsObject::PhysicsObject(const physx::PxGeometry& geometry, enum type type =
 	create_shape(geometry, *material, exclusive_shape);
 }
 
-PhysicsObject::PhysicsObject(const physx::PxPlane& plane, bool exclusive_shape = false) :
+PhysicsObject::PhysicsObject(const physx::PxPlane& plane, bool exclusive_shape) :
 	position(glm::vec3(0, 0, 0)), rotation(glm::vec3(0, 0, 0)), exclusive_shape(exclusive_shape), type(type::STATIC), shape(nullptr)
 {
 	auto context = PhysxContext::get();
@@ -39,7 +39,7 @@ void PhysicsObject::set_type(unsigned int new_type) {
 		((physx::PxRigidBody*)actor)->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, true);
 }
 
-void PhysicsObject::create_shape(const physx::PxGeometry& geometry, const physx::PxMaterial& material, bool exclusive_shape = false) {
+void PhysicsObject::create_shape(const physx::PxGeometry& geometry, const physx::PxMaterial& material, bool exclusive_shape) {
 	auto context = PhysxContext::get();
 	shape = context.physics->createShape(geometry, material, exclusive_shape);
 	actor->attachShape(*shape);
@@ -81,7 +81,7 @@ void PhysicsObject::update_transform() {
 	if (actor != nullptr)
 		actor->setGlobalPose(transform);
 }
-
+/*
 void PhysicsObject::add_link(PhysicsObject& other, enum PhysicsLink::type link_type = PhysicsLink::type::FIXED) {
 	PhysicsLink* link = new PhysicsLink(*this, other, link_type);
 	other.links.push_back(link);
@@ -99,4 +99,5 @@ void PhysicsObject::remove_link(PhysicsLink* link) {
 	link->remove();
 	delete link;
 }
+*/
 

@@ -177,6 +177,10 @@
     <ClCompile Include="API\Default_Assets.cpp" />
     <ClCompile Include="API\FrameBuffer.cpp" />
     <ClCompile Include="API\Lights.cpp" />
+    <ClCompile Include="API\PhysicsContext.cpp" />
+    <ClCompile Include="API\PhysicsGeometry.cpp" />
+    <ClCompile Include="API\PhysicsObject.cpp" />
+    <ClCompile Include="API\PhysicsScene.cpp" />
     <ClCompile Include="API\Scene.cpp" />
     <ClCompile Include="API\Texture.cpp" />
     <ClCompile Include="API\Buffer.cpp" />
@@ -219,6 +223,10 @@
     <ClInclude Include="API\FrameBuffer.h" />
     <ClInclude Include="API\GraphicsCortex.h" />
     <ClInclude Include="API\Lights.h" />
+    <ClInclude Include="API\PhysicsContext.h" />
+    <ClInclude Include="API\PhysicsGeometry.h" />
+    <ClInclude Include="API\PhysicsObject.h" />
+    <ClInclude Include="API\PhysicsScene.h" />
     <ClInclude Include="API\Scene.h" />
     <ClInclude Include="API\Texture.h" />
     <ClInclude Include="API\UnifromQueue.h" />
