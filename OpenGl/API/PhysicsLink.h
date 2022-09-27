@@ -2,6 +2,8 @@
 #include "PhysicsObject.h"
 #include "PxPhysicsAPI.h"
 
+class PhysicsObject;
+
 class PhysicsLink {
 public:
 	PhysicsObject* actor0;
@@ -20,6 +22,6 @@ public:
 		D6,
 	};
 
-	PhysicsLink(PhysicsObject& actor0, PhysicsObject& actor1, enum PhysicsLink::type link_type);
+	PhysicsLink(PhysicsObject& actor0, PhysicsObject& actor1, unsigned int link_type); // PhysicsLink::type insted of unsigned int
 	void remove();
 };

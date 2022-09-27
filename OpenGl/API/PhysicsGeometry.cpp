@@ -83,6 +83,7 @@ namespace create_geometry {
 		physx::PxHeightField* heightfield_mesh = context.physics->createHeightField(input);
 		*/
 		physx::PxMeshGeometryFlags flags;
+		flags = physx::PxMeshGeometryFlag::eDOUBLE_SIDED;
 
 		return physx::PxHeightFieldGeometry(heightfield_mesh, flags, physx::PxReal(1.0f), physx::PxReal(1.0f), physx::PxReal(1.0f));
 	}

@@ -179,6 +179,7 @@
     <ClCompile Include="API\Lights.cpp" />
     <ClCompile Include="API\PhysicsContext.cpp" />
     <ClCompile Include="API\PhysicsGeometry.cpp" />
+    <ClCompile Include="API\PhysicsLink.cpp" />
     <ClCompile Include="API\PhysicsObject.cpp" />
     <ClCompile Include="API\PhysicsScene.cpp" />
     <ClCompile Include="API\Scene.cpp" />
@@ -225,6 +226,7 @@
     <ClInclude Include="API\Lights.h" />
     <ClInclude Include="API\PhysicsContext.h" />
     <ClInclude Include="API\PhysicsGeometry.h" />
+    <ClInclude Include="API\PhysicsLink.h" />
     <ClInclude Include="API\PhysicsObject.h" />
     <ClInclude Include="API\PhysicsScene.h" />
     <ClInclude Include="API\Scene.h" />

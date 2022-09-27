@@ -1,8 +1,11 @@
 #pragma once
 #include "PhysicsContext.h"
+#include "PhysicsLink.h"
 #include <glm.hpp>
 
 #include <vector>
+
+class PhysicsLink;
 
 class PhysicsObject {
 public:
@@ -14,7 +17,7 @@ public:
 
 	unsigned int type;
 
-	//std::vector<PhysicsLink*> links;
+	std::vector<PhysicsLink*> links;
 
 	enum type {
 		DYNAMIC = 0,
@@ -40,8 +43,8 @@ public:
 		set_rotatoin(T rotation_vector);
 
 	void update_transform();
-	//void add_link(PhysicsObject& other, enum PhysicsLink::type link_type = PhysicsLink::type::FIXED);
-	//void remove_link(PhysicsLink* link);
+	void add_link(PhysicsObject& other, unsigned int link_type = 0); // PhysicsLink::type insted of unsigned int
+	void remove_link(PhysicsLink* link);
 private:
 	glm::vec3 position;
 	glm::vec3 rotation;

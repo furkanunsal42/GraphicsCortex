@@ -1,14 +1,13 @@
 #include "PhysicsLink.h"
 #include "PhysicsObject.h"
 
-PhysicsLink::PhysicsLink(PhysicsObject& actor0, PhysicsObject& actor1, enum PhysicsLink::type link_type) :
+PhysicsLink::PhysicsLink(PhysicsObject& actor0, PhysicsObject& actor1, unsigned int link_type) : // PhysicsLink::type instead of unsigned int
 	type(link_type), actor0(&actor0), actor1(&actor1)
 {
-	physx::PxVec3 offset(0.5f, 0, 0);
+	physx::PxVec3 offset(1.5f, 0, 0);
 	auto context = PhysxContext::get();
 	joint = physx::PxFixedJointCreate(*context.physics, actor0.actor, physx::PxTransform(-offset), actor1.actor, physx::PxTransform(offset));
 	joint->setConstraintFlag(physx::PxConstraintFlag::eVISUALIZATION, true);
-
 }
 
 void PhysicsLink::remove() {
