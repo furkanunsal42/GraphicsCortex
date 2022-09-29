@@ -39,7 +39,7 @@ int main() {
 	scene.camera = &cam;
 	
 	std::vector<Graphic> objects;
-	int n = 1;
+	int n = 10;
 	objects.reserve(n);
 	Graphic g = default_geometry::cube(material, solid_program);
 	g.load_model("Models/dragon.obj");
@@ -128,7 +128,7 @@ int main() {
 		
 		frame_buffer.unbind();
 
-		frame_buffer.render(FrameBuffer::COLOR_TEXTURE);
+		frame_buffer.render(FrameBuffer::DEPTH_TEXTURE);
 
 		glfwSwapBuffers(window);
 	}

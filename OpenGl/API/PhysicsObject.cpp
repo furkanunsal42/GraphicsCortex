@@ -81,10 +81,11 @@ void PhysicsObject::update_transform() {
 	if (actor != nullptr)
 		actor->setGlobalPose(transform);
 }
-void PhysicsObject::add_link(PhysicsObject& other, unsigned int link_type) {
+PhysicsLink* PhysicsObject::add_link(PhysicsObject& other, unsigned int link_type) {
 	PhysicsLink* link = new PhysicsLink(*this, other, link_type);
 	other.links.push_back(link);
 	links.push_back(link);
+	return link;
 }
 
 void PhysicsObject::remove_link(PhysicsLink* link) {

@@ -72,10 +72,10 @@
     <ClCompile Include="API\PhysicsScene.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
-    <ClCompile Include="physx_main.cpp">
+    <ClCompile Include="API\PhysicsLink.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
-    <ClCompile Include="API\PhysicsLink.cpp">
+    <ClCompile Include="physx_main.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
   </ItemGroup>

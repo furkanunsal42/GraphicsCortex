@@ -12,16 +12,8 @@ int main() {
 	scene.add_actor(sphere);
 	sphere.set_position(4.0f, 10.0f, 4.0f);
 
-	/*
-	physx::PxVec3 offset(2.0f, 0, 0);
-	glm::quat rotatoion_quat_glm(glm::vec3(0, 0, 0));
-	physx::PxQuat rotation_quat(rotatoion_quat_glm.x, rotatoion_quat_glm.y, rotatoion_quat_glm.z, rotatoion_quat_glm.w);
-	auto context = PhysxContext::get();
-	physx::PxFixedJoint* joint = physx::PxFixedJointCreate(*context.physics, box.actor, physx::PxTransform(offset, rotation_quat), sphere.actor, physx::PxTransform(-offset, rotation_quat));
-	joint->setConstraintFlag(physx::PxConstraintFlag::eVISUALIZATION, true);
-	*/
-
-	box.add_link(sphere);
+	auto link = box.add_link(sphere, PhysicsLink::SPHERICAL);
+	link->set_limit(physx::PxVec3(0.4, 0.4, 1));
 
 	PhysicsObject capsule(create_geometry::capsule(1.0f, 1.0f), PhysicsObject::DYNAMIC, true);
 	scene.add_actor(capsule);
@@ -53,7 +45,7 @@ int main() {
 	scene.add_actor(heightfield);
 
 	while (true) {
-		scene.simulation_step_start(1 / 1000.0f);
+		scene.simulation_step_start(1 / 60.0f);
 		scene.simulation_step_finish();
 	}
 

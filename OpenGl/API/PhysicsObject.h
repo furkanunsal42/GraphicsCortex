@@ -43,7 +43,7 @@ public:
 		set_rotatoin(T rotation_vector);
 
 	void update_transform();
-	void add_link(PhysicsObject& other, unsigned int link_type = 0); // PhysicsLink::type insted of unsigned int
+	PhysicsLink* add_link(PhysicsObject& other, unsigned int link_type = 0); // PhysicsLink::type insted of unsigned int
 	void remove_link(PhysicsLink* link);
 private:
 	glm::vec3 position;

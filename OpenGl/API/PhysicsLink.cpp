@@ -6,7 +6,24 @@ PhysicsLink::PhysicsLink(PhysicsObject& actor0, PhysicsObject& actor1, unsigned 
 {
 	physx::PxVec3 offset(1.5f, 0, 0);
 	auto context = PhysxContext::get();
-	joint = physx::PxFixedJointCreate(*context.physics, actor0.actor, physx::PxTransform(-offset), actor1.actor, physx::PxTransform(offset));
+	if (link_type == FIXED){
+		joint = physx::PxFixedJointCreate(*context.physics, actor0.actor, physx::PxTransform(-offset), actor1.actor, physx::PxTransform(offset));
+	}
+	else if (link_type == SPHERICAL) {
+		joint = physx::PxSphericalJointCreate(*context.physics, actor0.actor, physx::PxTransform(-offset), actor1.actor, physx::PxTransform(offset));
+	}
+	else if (link_type == REVOLUTE) {
+		joint = physx::PxRevoluteJointCreate(*context.physics, actor0.actor, physx::PxTransform(-offset), actor1.actor, physx::PxTransform(offset));
+	}
+	else if (link_type == PRISMATIC) {
+		joint = physx::PxPrismaticJointCreate(*context.physics, actor0.actor, physx::PxTransform(-offset), actor1.actor, physx::PxTransform(offset));
+	}
+	else if (link_type == DISTANCE) {
+		joint = physx::PxDistanceJointCreate(*context.physics, actor0.actor, physx::PxTransform(-offset), actor1.actor, physx::PxTransform(offset));
+	}
+	else if (link_type == D6) {
+		joint = physx::PxD6JointCreate(*context.physics, actor0.actor, physx::PxTransform(-offset), actor1.actor, physx::PxTransform(offset));
+	}
 	joint->setConstraintFlag(physx::PxConstraintFlag::eVISUALIZATION, true);
 }
 
