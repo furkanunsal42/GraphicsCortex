@@ -9,6 +9,48 @@
 #include "SnippetVehicleTireFriction.h"
 #include "SnippetVehicleWheelQueryResult.h"
 
+snippetvehicle::VehicleDesc initVehicleDesc()
+{
+	//Set up the chassis mass, dimensions, moment of inertia, and center of mass offset.
+	//The moment of inertia is just the moment of inertia of a cuboid but modified for easier steering.
+	//Center of mass offset is 0.65m above the base of the chassis and 0.25m towards the front.
+	const physx::PxF32 chassisMass = 1500.0f;
+	const physx::PxVec3 chassisDims(2.5f, 2.0f, 5.0f);
+	const physx::PxVec3 chassisMOI
+	((chassisDims.y * chassisDims.y + chassisDims.z * chassisDims.z) * chassisMass / 12.0f,
+		(chassisDims.x * chassisDims.x + chassisDims.z * chassisDims.z) * 0.8f * chassisMass / 12.0f,
+		(chassisDims.x * chassisDims.x + chassisDims.y * chassisDims.y) * chassisMass / 12.0f);
+	const physx::PxVec3 chassisCMOffset(0.0f, -chassisDims.y * 0.5f + 0.65f, 0.25f);
+
+	//Set up the wheel mass, radius, width, moment of inertia, and number of wheels.
+	//Moment of inertia is just the moment of inertia of a cylinder.
+	const physx::PxF32 wheelMass = 20.0f;
+	const physx::PxF32 wheelRadius = 0.5f;
+	const physx::PxF32 wheelWidth = 0.4f;
+	const physx::PxF32 wheelMOI = 0.5f * wheelMass * wheelRadius * wheelRadius;
+	const physx::PxU32 nbWheels = 6;
+
+	snippetvehicle::VehicleDesc vehicleDesc;
+
+	vehicleDesc.chassisMass = chassisMass;
+	vehicleDesc.chassisDims = chassisDims;
+	vehicleDesc.chassisMOI = chassisMOI;
+	vehicleDesc.chassisCMOffset = chassisCMOffset;
+	physx::PxMaterial* material = PhysxContext::get().physics->createMaterial(0.5f, 0.5f, 0.5f);
+	vehicleDesc.chassisMaterial = material;
+	vehicleDesc.chassisSimFilterData = physx::PxFilterData(snippetvehicle::COLLISION_FLAG_CHASSIS, snippetvehicle::COLLISION_FLAG_CHASSIS_AGAINST, 0, 0);
+
+	vehicleDesc.wheelMass = wheelMass;
+	vehicleDesc.wheelRadius = wheelRadius;
+	vehicleDesc.wheelWidth = wheelWidth;
+	vehicleDesc.wheelMOI = wheelMOI;
+	vehicleDesc.numWheels = nbWheels;
+	vehicleDesc.wheelMaterial = material;
+	vehicleDesc.chassisSimFilterData = physx::PxFilterData(snippetvehicle::COLLISION_FLAG_WHEEL, snippetvehicle::COLLISION_FLAG_WHEEL_AGAINST, 0, 0);
+
+	return vehicleDesc;
+}
+
 int main() {
 	physx::PxVehicleSetBasisVectors(physx::PxVec3(0, 1, 0), physx::PxVec3(0, 0, 1));
 	physx::PxVehicleSetUpdateMode(physx::PxVehicleUpdateMode::eVELOCITY_CHANGE);
@@ -28,10 +70,28 @@ int main() {
 	physx::PxRigidStatic* gGroundPlane = snippetvehicle::createDrivablePlane(groundPlaneSimFilterData, material, PhysxContext::get().physics);
 	PhysxContext::get().physics_scene->addActor(*gGroundPlane);
 
+	//Create a vehicle that will drive on the plane.
+	snippetvehicle::VehicleDesc vehicleDesc = initVehicleDesc();
+	physx::PxVehicleDrive4W* gVehicle4W = createVehicle4W(vehicleDesc, PhysxContext::get().physics, PhysxContext::get().physics_cooking);
+	physx::PxTransform startTransform(physx::PxVec3(0, (vehicleDesc.chassisDims.y * 0.5f + vehicleDesc.wheelRadius + 1.0f), 0), physx::PxQuat(physx::PxIdentity));
+	gVehicle4W->getRigidDynamicActor()->setGlobalPose(startTransform);
+	PhysxContext::get().physics_scene->addActor(*gVehicle4W->getRigidDynamicActor());
+
+	//Set the vehicle to rest in first gear.
+	//Set the vehicle to use auto-gears.
+	gVehicle4W->setToRestState();
+	gVehicle4W->mDriveDynData.forceGearChange(snippetvehicle::PxVehicleGearsData::eFIRST);
+	gVehicle4W->mDriveDynData.setUseAutoGears(true);
+
+	physx::PxVehicleDrive4WRawInputData gVehicleInputData;
+
+	gVehicleInputData.setDigitalBrake(true);
 
 	PhysicsObject box(create_geometry::box(1.0f, 1.0f, 1.0f), PhysicsObject::DYNAMIC, true);
 	scene.add_actor(box);
 	box.set_position(4.0f, 10.0f, 4.0f);
+
+
 
 	while (true) {
 		scene.simulation_step_start(1 / 60.0f);
