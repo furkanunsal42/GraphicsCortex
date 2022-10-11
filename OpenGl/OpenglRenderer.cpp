@@ -5,7 +5,7 @@
 #include <PxPhysicsAPI.h>
 
 int main() {
-	int width = 800, height = 600;
+	int width = 1920, height = 1080;
 	GLFWwindow* window = frame::create_window(width, height, "My Window", 4, 0, true, false, true);
 	Scene scene;
 	Material material;
@@ -128,7 +128,7 @@ int main() {
 		
 		frame_buffer.unbind();
 
-		frame_buffer.render(FrameBuffer::DEPTH_TEXTURE);
+		frame_buffer.render(FrameBuffer::COLOR_TEXTURE);
 
 		glfwSwapBuffers(window);
 	}

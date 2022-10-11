@@ -33,4 +33,7 @@ PhysxContext::PhysxContext() {
 	physics_scene->setVisualizationParameter(physx::PxVisualizationParameter::eJOINT_LIMITS, 1.0f);
 
 	physics_cooking = PxCreateCooking(PX_PHYSICS_VERSION, *physics_foundation, physx::PxCookingParams(physics->getTolerancesScale()));
+
+	physx::PxSerializationRegistry* serialization_registary = physx::PxSerialization::createSerializationRegistry(*physics);
+	physx::PxInitVehicleSDK(*physics, serialization_registary);
 }
