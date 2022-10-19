@@ -2,6 +2,9 @@
 #include "gtc\matrix_transform.hpp"
 #include "gtc\type_ptr.hpp"
 
+#include "SnippetVehicleFilterShader.h"
+#include "SnippetVehicleSceneQuery.h"
+
 #include <iostream>
 
 PhysicsObject::PhysicsObject(const physx::PxGeometry& geometry, enum type type, bool exclusive_shape) :
@@ -100,3 +103,11 @@ void PhysicsObject::remove_link(PhysicsLink* link) {
 	delete link;
 }
 
+void PhysicsObject::make_drivable() {
+	physx::PxShape* shapes[1];
+	actor->getShapes(shapes, 1);
+	physx::PxFilterData qryFilterData(0, 0, 0, static_cast<physx::PxU32>(snippetvehicle::DRIVABLE_SURFACE));
+	physx::PxFilterData groundPlaneSimFilterData(snippetvehicle::COLLISION_FLAG_GROUND, snippetvehicle::COLLISION_FLAG_GROUND_AGAINST, 0, 0);
+	shapes[0]->setQueryFilterData(qryFilterData);
+	shapes[0]->setSimulationFilterData(qryFilterData);
+}

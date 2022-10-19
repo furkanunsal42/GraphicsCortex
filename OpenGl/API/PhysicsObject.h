@@ -45,6 +45,8 @@ public:
 	void update_transform();
 	PhysicsLink* add_link(PhysicsObject& other, unsigned int link_type = 0); // PhysicsLink::type insted of unsigned int
 	void remove_link(PhysicsLink* link);
+
+	void make_drivable();
 private:
 	glm::vec3 position;
 	glm::vec3 rotation;

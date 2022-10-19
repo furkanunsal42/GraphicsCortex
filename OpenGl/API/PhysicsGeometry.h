@@ -41,12 +41,13 @@ namespace create_geometry {
 	}
 	
 	physx::PxPlane plane(float nx, float ny, float nz, float distance);
-	
+
 	template<typename T>
 	std::enable_if_t<std::is_same<T, physx::PxVec3>::value || std::is_same<T, glm::vec3>::value, physx::PxPlane>
 		plane(T normal, float distance) {
 		return plane(normal.x, normal.y, normal.z, distance);
 	}
+
 
 	enum heightfield_array_type {
 		ARRAY_OF_ROWS = 0,

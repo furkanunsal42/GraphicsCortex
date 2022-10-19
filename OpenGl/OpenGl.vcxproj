@@ -182,6 +182,7 @@
     <ClCompile Include="API\PhysicsLink.cpp" />
     <ClCompile Include="API\PhysicsObject.cpp" />
     <ClCompile Include="API\PhysicsScene.cpp" />
+    <ClCompile Include="API\PhysicsVehicle.cpp" />
     <ClCompile Include="API\Scene.cpp" />
     <ClCompile Include="API\Texture.cpp" />
     <ClCompile Include="API\Buffer.cpp" />
@@ -236,6 +237,7 @@
     <ClInclude Include="API\PhysicsLink.h" />
     <ClInclude Include="API\PhysicsObject.h" />
     <ClInclude Include="API\PhysicsScene.h" />
+    <ClInclude Include="API\PhysicsVehicle.h" />
     <ClInclude Include="API\Scene.h" />
     <ClInclude Include="API\Texture.h" />
     <ClInclude Include="API\UnifromQueue.h" />

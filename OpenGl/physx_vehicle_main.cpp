@@ -26,7 +26,7 @@ snippetvehicle::VehicleDesc initVehicleDesc()
 	//Moment of inertia is just the moment of inertia of a cylinder.
 	const physx::PxF32 wheelMass = 20.0f;
 	const physx::PxF32 wheelRadius = 0.5f;
-	const physx::PxF32 wheelWidth = 0.1f;
+	const physx::PxF32 wheelWidth = 0.2f;
 	const physx::PxF32 wheelMOI = 0.5f * wheelMass * wheelRadius * wheelRadius;
 	const physx::PxU32 nbWheels = 4;
 
@@ -46,7 +46,7 @@ snippetvehicle::VehicleDesc initVehicleDesc()
 	vehicleDesc.wheelMOI = wheelMOI;
 	vehicleDesc.numWheels = nbWheels;
 	vehicleDesc.wheelMaterial = material;
-	vehicleDesc.chassisSimFilterData = physx::PxFilterData(snippetvehicle::COLLISION_FLAG_WHEEL, snippetvehicle::COLLISION_FLAG_WHEEL_AGAINST, 0, 0);
+	vehicleDesc.wheelSimFilterData = physx::PxFilterData(snippetvehicle::COLLISION_FLAG_WHEEL, snippetvehicle::COLLISION_FLAG_WHEEL_AGAINST, 0, 0);
 
 	return vehicleDesc;
 }
@@ -88,10 +88,14 @@ void vehicle_control(GLFWwindow* window, physx::PxVehicleDrive4WRawInputData& ve
 }
 
 int main() {
-	physx::PxVehicleSetBasisVectors(physx::PxVec3(0, 1, 0), physx::PxVec3(0, 0, 1));
-	physx::PxVehicleSetUpdateMode(physx::PxVehicleUpdateMode::eVELOCITY_CHANGE);
+	physx::PxVehicleSetUpdateMode(physx::PxVehicleUpdateMode::eACCELERATION);
 	
 	PhysicsScene scene;
+
+	PhysicsObject plane(create_geometry::plane(0, 1, 0, 0), false);
+	plane.make_drivable();
+	scene.add_actor(plane);
+
 
 	//Create the batched scene queries for the suspension raycasts.
 	snippetvehicle::VehicleSceneQueryData* gVehicleSceneQueryData = snippetvehicle::VehicleSceneQueryData::allocate(1, PX_MAX_NB_WHEELS, 1, 1, snippetvehicle::WheelSceneQueryPreFilterBlocking, NULL, PhysxContext::get().physics_allocator);
@@ -100,19 +104,15 @@ int main() {
 	//Create the friction table for each combination of tire and surface type.
 	physx::PxMaterial* material = PhysxContext::get().physics->createMaterial(0.5f, 0.5f, 0.5f);
 	snippetvehicle::PxVehicleDrivableSurfaceToTireFrictionPairs* gFrictionPairs = snippetvehicle::createFrictionPairs(material);
-
-	//Create a plane to drive on.
-	physx::PxFilterData groundPlaneSimFilterData(snippetvehicle::COLLISION_FLAG_GROUND, snippetvehicle::COLLISION_FLAG_GROUND_AGAINST, 0, 0);
-	physx::PxRigidStatic* gGroundPlane = snippetvehicle::createDrivablePlane(groundPlaneSimFilterData, material, PhysxContext::get().physics);
-	PhysxContext::get().physics_scene->addActor(*gGroundPlane);
-
+	
 	//Create a vehicle that will drive on the plane.
 	snippetvehicle::VehicleDesc vehicleDesc = initVehicleDesc();
 	physx::PxVehicleDrive4W* gVehicle4W = createVehicle4W(vehicleDesc, PhysxContext::get().physics, PhysxContext::get().physics_cooking);
 	physx::PxTransform startTransform(physx::PxVec3(0, (vehicleDesc.chassisDims.y * 0.5f + vehicleDesc.wheelRadius + 1.0f), 0), physx::PxQuat(physx::PxIdentity));
 	gVehicle4W->getRigidDynamicActor()->setGlobalPose(startTransform);
+	
 	PhysxContext::get().physics_scene->addActor(*gVehicle4W->getRigidDynamicActor());
-
+	
 	//Set the vehicle to rest in first gear.
 	//Set the vehicle to use auto-gears.
 	gVehicle4W->setToRestState();
@@ -120,11 +120,6 @@ int main() {
 	gVehicle4W->mDriveDynData.setUseAutoGears(true);
 
 	physx::PxVehicleDrive4WRawInputData gVehicleInputData;
-
-	//gVehicleInputData.setDigitalBrake(true);
-	gVehicleInputData.setDigitalBrake(false);
-	gVehicleInputData.setDigitalHandbrake(false);
-	gVehicleInputData.setDigitalAccel(true);
 
 	PhysicsObject box(create_geometry::box(1.0f, 1.0f, 1.0f), PhysicsObject::DYNAMIC, true);
 	scene.add_actor(box);
@@ -155,8 +150,8 @@ int main() {
 	{
 		0.0f,		0.75f,
 		5.0f,		0.75f,
-		30.0f,		0.125f,
-		120.0f,		0.1f,
+		30.0f,		0.325f,
+		120.0f,		0.125f,
 		PX_MAX_F32, PX_MAX_F32,
 		PX_MAX_F32, PX_MAX_F32,
 		PX_MAX_F32, PX_MAX_F32,
