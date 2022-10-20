@@ -96,7 +96,6 @@ int main() {
 	plane.make_drivable();
 	scene.add_actor(plane);
 
-
 	//Create the batched scene queries for the suspension raycasts.
 	snippetvehicle::VehicleSceneQueryData* gVehicleSceneQueryData = snippetvehicle::VehicleSceneQueryData::allocate(1, PX_MAX_NB_WHEELS, 1, 1, snippetvehicle::WheelSceneQueryPreFilterBlocking, NULL, PhysxContext::get().physics_allocator);
 	physx::PxBatchQuery* gBatchQuery = snippetvehicle::VehicleSceneQueryData::setUpBatchedSceneQuery(0, *gVehicleSceneQueryData, PhysxContext::get().physics_scene);
@@ -106,18 +105,24 @@ int main() {
 	snippetvehicle::PxVehicleDrivableSurfaceToTireFrictionPairs* gFrictionPairs = snippetvehicle::createFrictionPairs(material);
 	
 	//Create a vehicle that will drive on the plane.
-	snippetvehicle::VehicleDesc vehicleDesc = initVehicleDesc();
-	physx::PxVehicleDrive4W* gVehicle4W = createVehicle4W(vehicleDesc, PhysxContext::get().physics, PhysxContext::get().physics_cooking);
-	physx::PxTransform startTransform(physx::PxVec3(0, (vehicleDesc.chassisDims.y * 0.5f + vehicleDesc.wheelRadius + 1.0f), 0), physx::PxQuat(physx::PxIdentity));
-	gVehicle4W->getRigidDynamicActor()->setGlobalPose(startTransform);
+	//snippetvehicle::VehicleDesc vehicleDesc = initVehicleDesc();
+	//physx::PxVehicleDrive4W* gVehicle4W = createVehicle4W(vehicleDesc, PhysxContext::get().physics, PhysxContext::get().physics_cooking);
 	
-	PhysxContext::get().physics_scene->addActor(*gVehicle4W->getRigidDynamicActor());
+	PhysicsVehicle vehicle;
+	vehicle.create_actor();
+	vehicle.create_drive();
+	
+	PhysxContext::get().physics_scene->addActor(*vehicle.vehicle_actor);
 	
 	//Set the vehicle to rest in first gear.
 	//Set the vehicle to use auto-gears.
-	gVehicle4W->setToRestState();
-	gVehicle4W->mDriveDynData.forceGearChange(snippetvehicle::PxVehicleGearsData::eFIRST);
-	gVehicle4W->mDriveDynData.setUseAutoGears(true);
+	vehicle.vehicle_drive->setToRestState();
+	vehicle.vehicle_drive->mDriveDynData.forceGearChange(snippetvehicle::PxVehicleGearsData::eFIRST);
+	vehicle.vehicle_drive->mDriveDynData.setUseAutoGears(true);
+	physx::PxTransform startTransform(physx::PxVec3(0, (vehicle.chassisDims.y * 0.5f + vehicle.wheelRadius + 1.0f), 0), physx::PxQuat(physx::PxIdentity));
+	vehicle.vehicle_actor->setGlobalPose(startTransform);
+
+
 
 	physx::PxVehicleDrive4WRawInputData gVehicleInputData;
 
@@ -167,24 +172,24 @@ int main() {
 		glfwPollEvents();
 		frame::clear_window();
 
-		vehicle_control(window, gVehicleInputData, gVehicle4W);
+		vehicle_control(window, gVehicleInputData, vehicle.vehicle_drive);
 
 		//Raycasts.
-		physx::PxVehicleWheels* vehicles[1] = { gVehicle4W };
+		physx::PxVehicleWheels* vehicles[1] = { vehicle.vehicle_drive };
 		physx::PxRaycastQueryResult* raycastResults = gVehicleSceneQueryData->getRaycastQueryResultBuffer(0);
 		const physx::PxU32 raycastResultsSize = gVehicleSceneQueryData->getQueryResultBufferSize();
 		PxVehicleSuspensionRaycasts(gBatchQuery, 1, vehicles, raycastResultsSize, raycastResults);
 
-		PxVehicleDrive4WSmoothDigitalRawInputsAndSetAnalogInputs(gKeySmoothingData, gSteerVsForwardSpeedTable, gVehicleInputData, timestep, is_vehicle_in_air, *gVehicle4W);
+		PxVehicleDrive4WSmoothDigitalRawInputsAndSetAnalogInputs(gKeySmoothingData, gSteerVsForwardSpeedTable, gVehicleInputData, timestep, is_vehicle_in_air, *vehicle.vehicle_drive);
 
 		//Vehicle update.
 		const physx::PxVec3 grav = PhysxContext::get().physics_scene->getGravity();
 		physx::PxWheelQueryResult wheelQueryResults[PX_MAX_NB_WHEELS];
-		physx::PxVehicleWheelQueryResult vehicleQueryResults[1] = { {wheelQueryResults, gVehicle4W->mWheelsSimData.getNbWheels()} };
+		physx::PxVehicleWheelQueryResult vehicleQueryResults[1] = { {wheelQueryResults, vehicle.vehicle_drive->mWheelsSimData.getNbWheels()} };
 		PxVehicleUpdates(timestep, grav, *gFrictionPairs, 1, vehicles, vehicleQueryResults);
 
 		//Work out if the vehicle is in the air.
-		is_vehicle_in_air = gVehicle4W->getRigidDynamicActor()->isSleeping() ? false : PxVehicleIsInAir(vehicleQueryResults[0]);
+		is_vehicle_in_air = vehicle.vehicle_drive->getRigidDynamicActor()->isSleeping() ? false : PxVehicleIsInAir(vehicleQueryResults[0]);
 
 		scene.simulation_step_start(timestep);
 		scene.simulation_step_finish();

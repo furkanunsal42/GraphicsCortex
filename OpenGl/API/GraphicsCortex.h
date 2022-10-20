@@ -29,3 +29,4 @@
 #include "PhysicsScene.h"
 #include "PhysicsObject.h"
 #include "PhysicsLink.h"
+#include "PhysicsVehicle.h"

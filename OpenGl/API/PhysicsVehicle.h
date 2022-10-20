@@ -19,11 +19,17 @@ public:
 	physx::PxU32 numWheels;
 	physx::PxFilterData wheelSimFilterData;	//word0 = collide type, word1 = collide against types, word2 = PxPairFlags
 	
+	physx::PxRigidDynamic* vehicle_actor;
+	physx::PxVehicleDrive4W* vehicle_drive;
+
 	enum InitValues {
 		null_values,
 		default_values,
 	};
 
 	PhysicsVehicle(InitValues init_type = default_values, int num_wheels = 4);
+
+	void create_actor();
+	void create_drive();
 
 };
