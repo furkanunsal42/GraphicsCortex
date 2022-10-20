@@ -35,6 +35,8 @@ public:
 
 	bool is_vehicle_in_air;
 
+	physx::PxConvexMesh* chassis_mesh;
+
 	enum InitValues {
 		null_values,
 		default_values,
@@ -59,7 +61,11 @@ public:
 
 	void simulation_step(long double timestep);
 	
+	void set_chasis_mesh(physx::PxConvexMesh* convex_mesh);
+	void set_chasis_mesh(physx::PxConvexMeshGeometry convex_mesh_geometry);
+
 private:
+	void _initialize_box_chassis_mesh();
 	void _create_actor();
 	void _create_drive();
 	void _create_control();

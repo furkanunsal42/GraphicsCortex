@@ -1,14 +1,5 @@
 #include "API/GraphicsCortex.h"
 
-#include "vehicle/PxVehicleUtil.h"
-
-#include "SnippetVehicleConcurrency.h"
-#include "SnippetVehicleCreate.h"
-#include "SnippetVehicleFilterShader.h"
-#include "SnippetVehicleSceneQuery.h"
-#include "SnippetVehicleTireFriction.h"
-#include "SnippetVehicleWheelQueryResult.h"
-
 void vehicle_control(GLFWwindow* window, physx::PxVehicleDrive4WRawInputData& vehicle_controller, physx::PxVehicleDrive4W* vehicle) {
 	vehicle_controller.setDigitalAccel(false);
 	vehicle_controller.setDigitalBrake(false);
@@ -53,6 +44,11 @@ int main() {
 	scene.add_actor(plane);
 
 	PhysicsVehicle vehicle;
+	
+	std::vector<physx::PxVec3> points = {	physx::PxVec3(1,0.2,-2.8), physx::PxVec3(1,1,-1.6), physx::PxVec3(1,1,0.6), physx::PxVec3(1,0.3,2.9), physx::PxVec3(1,-1,2.8), physx::PxVec3(1,-1,-2.8), 
+											physx::PxVec3(-1,0.2,-2.8), physx::PxVec3(-1,1,-1.6), physx::PxVec3(-1,1,0.6), physx::PxVec3(-1,0.3,2.9), physx::PxVec3(-1,-1,2.8), physx::PxVec3(-1,-1,-2.8)};
+	vehicle.set_chasis_mesh(create_geometry::convex_hull(points).convexMesh);
+	vehicle.chassisDims = physx::PxVec3(2, 2, 6);
 	vehicle.initialize();
 	scene.add_actor(vehicle);
 
@@ -70,7 +66,6 @@ int main() {
 
 		vehicle_control(window, vehicle.InputData, vehicle.vehicle_drive);
 
-		
 		scene.simulation_step_start(timestep);
 		scene.simulation_step_finish();
 

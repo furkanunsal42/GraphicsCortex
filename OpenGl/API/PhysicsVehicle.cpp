@@ -166,7 +166,7 @@ namespace fourwheel
 } //namespace fourwheel
 
 PhysicsVehicle::PhysicsVehicle(InitValues init_type, int num_wheels) :
-	numWheels(num_wheels), vehicle_actor(nullptr), is_vehicle_in_air(true)
+	numWheels(num_wheels), vehicle_actor(nullptr), is_vehicle_in_air(true), chassis_mesh(nullptr)
 {
 	physx::PxVehicleSetBasisVectors(physx::PxVec3(0, 1, 0), physx::PxVec3(0, 0, 1));
 
@@ -208,6 +208,13 @@ PhysicsVehicle::PhysicsVehicle(InitValues init_type, int num_wheels) :
 	BatchQuery = snippetvehicle::VehicleSceneQueryData::setUpBatchedSceneQuery(0, *SceneQueryData, PhysxContext::get().physics_scene);
 }
 
+void PhysicsVehicle::_initialize_box_chassis_mesh() {
+	if (chassis_mesh != nullptr)
+		chassis_mesh->release();
+
+	chassis_mesh = snippetvehicle::createChassisMesh(chassisDims, *PhysxContext::get().physics, *PhysxContext::get().physics_cooking);
+}
+
 void PhysicsVehicle::_create_actor() {
 
 	//Construct a convex mesh for a cylindrical wheel.
@@ -223,9 +230,10 @@ void PhysicsVehicle::_create_actor() {
 		wheelMaterials[i] = wheelMaterial;
 	}
 
-	//Chassis just has a single convex shape for simplicity.
-	physx::PxConvexMesh* chassisConvexMesh = snippetvehicle::createChassisMesh(chassisDims, *PhysxContext::get().physics, *PhysxContext::get().physics_cooking);
-	physx::PxConvexMesh* chassisConvexMeshes[1] = { chassisConvexMesh };
+	if (chassis_mesh == nullptr) {
+		_initialize_box_chassis_mesh();
+	}
+	physx::PxConvexMesh* chassisConvexMeshes[1] = { chassis_mesh };
 	physx::PxMaterial* chassisMaterials[1] = { chassisMaterial };
 
 	//Rigid body data.
@@ -243,8 +251,9 @@ void PhysicsVehicle::_create_actor() {
 	physx::PxTransform startTransform(physx::PxVec3(0, (chassisDims.y * 0.5f + wheelRadius + 1.0f), 0), physx::PxQuat(physx::PxIdentity));
 	vehicle_actor->setGlobalPose(startTransform);
 
-	// delete[] wheelConvexMeshes ?
-	// delete[] wheelMaterials ?
+	// ?
+	delete[] wheelConvexMeshes;
+	delete[] wheelMaterials;
 }
 
 void PhysicsVehicle::_create_drive() {
@@ -387,3 +396,14 @@ void PhysicsVehicle::set_gear_autouse(bool autouse) {
 	vehicle_drive->mDriveDynData.setUseAutoGears(autouse);
 }
 
+void PhysicsVehicle::set_chasis_mesh(physx::PxConvexMesh* convex_mesh) {
+	if (chassis_mesh != nullptr)
+		chassis_mesh->release();
+	chassis_mesh = convex_mesh;
+}
+
+void PhysicsVehicle::set_chasis_mesh(physx::PxConvexMeshGeometry convex_mesh_geometry) {
+	if (chassis_mesh != nullptr)
+		chassis_mesh->release();
+	chassis_mesh = convex_mesh_geometry.convexMesh;
+}
