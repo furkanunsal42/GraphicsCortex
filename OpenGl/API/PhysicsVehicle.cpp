@@ -4,7 +4,7 @@
 #include "SnippetVehicleFilterShader.h"
 #include "SnippetVehicleCreate.h"
 #include "SnippetVehicleTireFriction.h"
-#include "SnippetVehicleSceneQuery.h"
+
 
 namespace fourwheel
 {
@@ -166,7 +166,7 @@ namespace fourwheel
 } //namespace fourwheel
 
 PhysicsVehicle::PhysicsVehicle(InitValues init_type, int num_wheels) :
-	numWheels(num_wheels), vehicle_actor(nullptr)
+	numWheels(num_wheels), vehicle_actor(nullptr), is_vehicle_in_air(true)
 {
 	physx::PxVehicleSetBasisVectors(physx::PxVec3(0, 1, 0), physx::PxVec3(0, 0, 1));
 
@@ -203,9 +203,12 @@ PhysicsVehicle::PhysicsVehicle(InitValues init_type, int num_wheels) :
 		wheelMOI = 0.0f;
 		wheelMaterial = NULL;
 	}
+
+	SceneQueryData = snippetvehicle::VehicleSceneQueryData::allocate(1, num_wheels, 1, 1, snippetvehicle::WheelSceneQueryPreFilterBlocking, NULL, PhysxContext::get().physics_allocator);
+	BatchQuery = snippetvehicle::VehicleSceneQueryData::setUpBatchedSceneQuery(0, *SceneQueryData, PhysxContext::get().physics_scene);
 }
 
-void PhysicsVehicle::create_actor() {
+void PhysicsVehicle::_create_actor() {
 
 	//Construct a convex mesh for a cylindrical wheel.
 	physx::PxConvexMesh* wheelMesh = snippetvehicle::createWheelMesh(wheelWidth, wheelRadius, *PhysxContext::get().physics, *PhysxContext::get().physics_cooking);
@@ -237,11 +240,14 @@ void PhysicsVehicle::create_actor() {
 		chassisMaterials, chassisConvexMeshes, 1, chassisSimFilterData,
 		*PhysxContext::get().physics);
 
+	physx::PxTransform startTransform(physx::PxVec3(0, (chassisDims.y * 0.5f + wheelRadius + 1.0f), 0), physx::PxQuat(physx::PxIdentity));
+	vehicle_actor->setGlobalPose(startTransform);
+
 	// delete[] wheelConvexMeshes ?
 	// delete[] wheelMaterials ?
 }
 
-void PhysicsVehicle::create_drive() {
+void PhysicsVehicle::_create_drive() {
 	//Set up the sim data for the wheels.
 	physx::PxVehicleWheelsSimData* wheelsSimData = physx::PxVehicleWheelsSimData::allocate(numWheels);
 	{
@@ -302,6 +308,82 @@ void PhysicsVehicle::create_drive() {
 	vehicle_drive = snippetvehicle::PxVehicleDrive4W::allocate(numWheels);
 	vehicle_drive->setup(PhysxContext::get().physics, vehicle_actor, *wheelsSimData, driveSimData, numWheels - 4);
 
+	vehicle_drive->setToRestState();
+	set_gear(PhysicsVehicle::FIRST);
+	set_gear_autouse(true);
+
+	FrictionPairs = snippetvehicle::createFrictionPairs(wheelMaterial);
+
 	//Free the sim data because we don't need that any more.
 	wheelsSimData->free();
 }
+
+void PhysicsVehicle::_create_control() {
+	KeySmoothingData =
+	{
+		{
+			6.0f,	//rise rate eANALOG_INPUT_ACCEL
+			6.0f,	//rise rate eANALOG_INPUT_BRAKE		
+			6.0f,	//rise rate eANALOG_INPUT_HANDBRAKE	
+			2.5f,	//rise rate eANALOG_INPUT_STEER_LEFT
+			2.5f,	//rise rate eANALOG_INPUT_STEER_RIGHT
+		},
+		{
+			10.0f,	//fall rate eANALOG_INPUT_ACCEL
+			10.0f,	//fall rate eANALOG_INPUT_BRAKE		
+			10.0f,	//fall rate eANALOG_INPUT_HANDBRAKE	
+			5.0f,	//fall rate eANALOG_INPUT_STEER_LEFT
+			5.0f	//fall rate eANALOG_INPUT_STEER_RIGHT
+		}
+	};
+
+	physx::PxF32 SteerVsForwardSpeedData[2 * 8] =
+	{
+		0.0f,		0.75f,
+		5.0f,		0.75f,
+		30.0f,		0.325f,
+		120.0f,		0.125f,
+		PX_MAX_F32, PX_MAX_F32,
+		PX_MAX_F32, PX_MAX_F32,
+		PX_MAX_F32, PX_MAX_F32,
+		PX_MAX_F32, PX_MAX_F32
+	};
+
+	SteerVsForwardSpeedTable = physx::PxFixedSizeLookupTable<8>(SteerVsForwardSpeedData, 4);
+}
+
+void PhysicsVehicle::simulation_step(long double timestep) {
+	//Raycasts.
+	physx::PxVehicleWheels* vehicles[1] = { vehicle_drive };
+	physx::PxRaycastQueryResult* raycastResults = SceneQueryData->getRaycastQueryResultBuffer(0);
+	const physx::PxU32 raycastResultsSize = SceneQueryData->getQueryResultBufferSize();
+	PxVehicleSuspensionRaycasts(BatchQuery, 1, vehicles, raycastResultsSize, raycastResults);
+
+	PxVehicleDrive4WSmoothDigitalRawInputsAndSetAnalogInputs(KeySmoothingData, SteerVsForwardSpeedTable, InputData, timestep, is_vehicle_in_air, *vehicle_drive);
+
+	//Vehicle update.
+	const physx::PxVec3 grav = PhysxContext::get().physics_scene->getGravity();
+	physx::PxWheelQueryResult* wheelQueryResults = new physx::PxWheelQueryResult[numWheels];
+	physx::PxVehicleWheelQueryResult vehicleQueryResults[1] = { {wheelQueryResults, vehicle_drive->mWheelsSimData.getNbWheels()} };
+	PxVehicleUpdates(timestep, grav, *FrictionPairs, 1, vehicles, vehicleQueryResults);
+
+	//Work out if the vehicle is in the air.
+	is_vehicle_in_air = vehicle_drive->getRigidDynamicActor()->isSleeping() ? false : PxVehicleIsInAir(vehicleQueryResults[0]);
+
+	delete[] wheelQueryResults;
+}
+
+void PhysicsVehicle::initialize() {
+	_create_actor();
+	_create_drive();
+	_create_control();
+}
+
+void PhysicsVehicle::set_gear(gear input_gear) {
+	vehicle_drive->mDriveDynData.forceGearChange((snippetvehicle::PxVehicleGearsData::Enum)input_gear);
+}
+
+void PhysicsVehicle::set_gear_autouse(bool autouse) {
+	vehicle_drive->mDriveDynData.setUseAutoGears(autouse);
+}
+

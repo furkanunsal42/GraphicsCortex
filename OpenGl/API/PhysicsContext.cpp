@@ -36,4 +36,7 @@ PhysxContext::PhysxContext() {
 
 	physx::PxSerializationRegistry* serialization_registary = physx::PxSerialization::createSerializationRegistry(*physics);
 	physx::PxInitVehicleSDK(*physics, serialization_registary);
+
+	physx::PxVehicleSetUpdateMode(physx::PxVehicleUpdateMode::eACCELERATION);
+
 }

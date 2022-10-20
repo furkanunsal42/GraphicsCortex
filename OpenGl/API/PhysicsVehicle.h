@@ -1,6 +1,7 @@
 #pragma once
 #include <PxPhysicsAPI.h>
 
+#include "SnippetVehicleSceneQuery.h"
 
 class PhysicsVehicle {
 public:
@@ -22,14 +23,45 @@ public:
 	physx::PxRigidDynamic* vehicle_actor;
 	physx::PxVehicleDrive4W* vehicle_drive;
 
+	snippetvehicle::VehicleSceneQueryData* SceneQueryData;
+	physx::PxBatchQuery* BatchQuery;
+
+	snippetvehicle::PxVehicleDrivableSurfaceToTireFrictionPairs* FrictionPairs;
+
+	physx::PxVehicleDrive4WRawInputData InputData;
+	physx::PxVehicleKeySmoothingData KeySmoothingData;
+	physx::PxF32 SteerVsForwardSpeedData[2 * 8];
+	physx::PxFixedSizeLookupTable<8> SteerVsForwardSpeedTable;
+
+	bool is_vehicle_in_air;
+
 	enum InitValues {
 		null_values,
 		default_values,
 	};
 
-	PhysicsVehicle(InitValues init_type = default_values, int num_wheels = 4);
+	enum gear {
+		REVERSE = 0,
+		NATURAL,
+		FIRST,
+		SECOND,
+		THIRD,
+		FORTH,
+		FIFTH,
+	};
 
-	void create_actor();
-	void create_drive();
+	PhysicsVehicle(InitValues init_type = InitValues::default_values, int num_wheels = 4);
+
+	void initialize();
+	
+	void set_gear(gear gear);
+	void set_gear_autouse(bool autouse);
+
+	void simulation_step(long double timestep);
+	
+private:
+	void _create_actor();
+	void _create_drive();
+	void _create_control();
 
 };
