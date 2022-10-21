@@ -75,9 +75,6 @@
     <ClCompile Include="API\PhysicsLink.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
-    <ClCompile Include="physx_vehicle_main.cpp">
-      <Filter>Kaynak Dosyalar</Filter>
-    </ClCompile>
     <ClCompile Include="snippetcommon\SnippetVehicle4WCreate.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
@@ -100,6 +97,9 @@
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
     <ClCompile Include="API\PhysicsVehicle.cpp">
+      <Filter>Kaynak Dosyalar</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenglRenderer.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
   </ItemGroup>

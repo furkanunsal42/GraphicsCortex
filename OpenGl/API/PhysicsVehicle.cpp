@@ -7,7 +7,8 @@
 
 PhysicsVehicle::PhysicsVehicle(InitValues init_type, int num_wheels) :
 	numWheels(num_wheels), vehicle_actor(nullptr), is_vehicle_in_air(true), chassis_mesh(nullptr), differential_type(physx::PxVehicleDifferential4WData::eDIFF_TYPE_LS_4WD),
-	engine_peak_torque(500.0f), engine_peak_revolution_speed(600.0f), gear_switch_time(0.5f), clutch_strength(10.0f), ackermann_accuracy(1.0f)
+	engine_peak_torque(500.0f), engine_peak_revolution_speed(600.0f), gear_switch_time(0.5f), clutch_strength(10.0f), ackermann_accuracy(1.0f), max_handbreak_torque(4000.0f),
+	max_steer(physx::PxPi * 0.3333f)
 {
 	wheelsSimData = physx::PxVehicleWheelsSimData::allocate(num_wheels);
 	vehicle_drive = snippetvehicle::PxVehicleDrive4W::allocate(numWheels);
@@ -112,7 +113,7 @@ void PhysicsVehicle::_calculate_wheel_offsets() {
 void PhysicsVehicle::_create_wheel_sim() {
 
 	//Set up the wheels.
-	physx::PxVehicleWheelData wheels[PX_MAX_NB_WHEELS];
+	physx::PxVehicleWheelData* wheels = new physx::PxVehicleWheelData[numWheels];
 	{
 		//Set up the wheel data structures with mass, moi, radius, width.
 		for (physx::PxU32 i = 0; i < numWheels; i++)
@@ -124,20 +125,20 @@ void PhysicsVehicle::_create_wheel_sim() {
 		}
 
 		//Enable the handbrake for the rear wheels only.
-		wheels[snippetvehicle::PxVehicleDrive4WWheelOrder::eREAR_LEFT].mMaxHandBrakeTorque = 4000.0f;
-		wheels[snippetvehicle::PxVehicleDrive4WWheelOrder::eREAR_RIGHT].mMaxHandBrakeTorque = 4000.0f;
+		wheels[snippetvehicle::PxVehicleDrive4WWheelOrder::eREAR_LEFT].mMaxHandBrakeTorque = max_handbreak_torque;
+		wheels[snippetvehicle::PxVehicleDrive4WWheelOrder::eREAR_RIGHT].mMaxHandBrakeTorque = max_handbreak_torque;
 		//Enable steering for the front wheels only.
-		wheels[snippetvehicle::PxVehicleDrive4WWheelOrder::eFRONT_LEFT].mMaxSteer = physx::PxPi * 0.3333f;
-		wheels[snippetvehicle::PxVehicleDrive4WWheelOrder::eFRONT_RIGHT].mMaxSteer = physx::PxPi * 0.3333f;
+		wheels[snippetvehicle::PxVehicleDrive4WWheelOrder::eFRONT_LEFT].mMaxSteer = max_steer;
+		wheels[snippetvehicle::PxVehicleDrive4WWheelOrder::eFRONT_RIGHT].mMaxSteer = max_steer;
 	}
 
 	//Set up the tires.
-	physx::PxVehicleTireData tires[PX_MAX_NB_WHEELS];
+	physx::PxVehicleTireData* tires = new physx::PxVehicleTireData[numWheels];
 	{
 		//Set up the tires.
 		for (physx::PxU32 i = 0; i < numWheels; i++)
 		{
-			tires[i].mType = snippetvehicle::TIRE_TYPE_NORMAL;
+			tires[i].mType = wheel_type;
 		}
 	}
 
@@ -235,6 +236,8 @@ void PhysicsVehicle::_create_wheel_sim() {
 	barRear.mStiffness = 10000.0f;
 	wheelsSimData->addAntiRollBarData(barRear);
 
+	delete[] wheels;
+	delete[] tires;
 }
 
 void PhysicsVehicle::_create_drive_sim() {

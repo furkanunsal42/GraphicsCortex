@@ -192,7 +192,7 @@
     <ClCompile Include="API\Graphic.cpp" />
     <ClCompile Include="API\Debuger.cpp" />
     <ClCompile Include="API\ShaderCompiler.cpp" />
-    <ClCompile Include="physx_vehicle_main.cpp" />
+    <ClCompile Include="OpenglRenderer.cpp" />
     <ClCompile Include="snippetcommon\SnippetVehicle4WCreate.cpp" />
     <ClCompile Include="snippetcommon\SnippetVehicleCreate.cpp" />
     <ClCompile Include="snippetcommon\SnippetVehicleFilterShader.cpp" />

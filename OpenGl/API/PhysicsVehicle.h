@@ -48,6 +48,16 @@ public:
 	physx::PxVehicleWheelsSimData* wheelsSimData;
 	physx::PxVehicleDriveSimData4W driveSimData;
 
+	float max_steer;
+	float max_handbreak_torque;
+
+	enum wheel_type {
+		NORMAL = 0,
+		WORN,
+	};
+
+	wheel_type wheel_type;
+	
 	enum InitValues {
 		null_values,
 		default_values,
