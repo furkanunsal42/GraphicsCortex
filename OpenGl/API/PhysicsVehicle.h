@@ -37,6 +37,17 @@ public:
 
 	physx::PxConvexMesh* chassis_mesh;
 
+	physx::PxVehicleDifferential4WData::Enum differential_type;
+	float engine_peak_torque;
+	float engine_peak_revolution_speed;
+	float gear_switch_time;
+	float clutch_strength;
+	float ackermann_accuracy;
+
+	physx::PxVec3* wheelOffsets; // array of PxVec3, a vector for each wheel
+	physx::PxVehicleWheelsSimData* wheelsSimData;
+	physx::PxVehicleDriveSimData4W driveSimData;
+
 	enum InitValues {
 		null_values,
 		default_values,
@@ -66,8 +77,10 @@ public:
 
 private:
 	void _initialize_box_chassis_mesh();
+	void _calculate_wheel_offsets();
 	void _create_actor();
+	void _create_wheel_sim();
+	void _create_drive_sim();
 	void _create_drive();
 	void _create_control();
-
 };
