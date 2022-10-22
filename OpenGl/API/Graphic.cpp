@@ -95,6 +95,8 @@ void Graphic::load_model(const std::string& file_path) {
 
 	std::vector<float> vertex_data;
 	std::vector<unsigned int> indicies;
+	
+	unsigned int prefix_indicies_sum = 0;
 
 	for (int i = 0; i < imported_scene->mNumMeshes; i++) {
 		for (int j = 0; j < imported_scene->mMeshes[i]->mNumVertices; j++) {
@@ -115,13 +117,18 @@ void Graphic::load_model(const std::string& file_path) {
 			vertex_data.push_back((float)normal.z);
 		}
 		for (int j = 0; j < imported_scene->mMeshes[i]->mNumFaces; j++) {
-
 			const aiFace& Face = imported_scene->mMeshes[i]->mFaces[j];
+			
+			//std::cout << prefix_indicies_sum + (unsigned int)Face.mIndices[0] << std::endl;
+			//std::cout << prefix_indicies_sum + (unsigned int)Face.mIndices[1] << std::endl;
+			//std::cout << prefix_indicies_sum + (unsigned int)Face.mIndices[2] << std::endl;
 
-			indicies.push_back((unsigned int)Face.mIndices[0]);
-			indicies.push_back((unsigned int)Face.mIndices[1]);
-			indicies.push_back(Face.mIndices[2]);
+			indicies.push_back(prefix_indicies_sum + (unsigned int)Face.mIndices[0]);
+			indicies.push_back(prefix_indicies_sum + (unsigned int)Face.mIndices[1]);
+			indicies.push_back(prefix_indicies_sum + (unsigned int)Face.mIndices[2]);
+
 		}
+		prefix_indicies_sum += imported_scene->mMeshes[i]->mNumVertices;
 	}
 	vertex_buffer.vertex_attribute_structure.clear();
 	vertex_buffer.initialize_buffer(vertex_data);

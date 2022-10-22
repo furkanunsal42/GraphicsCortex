@@ -39,10 +39,10 @@ int main() {
 	scene.camera = &cam;
 	
 	std::vector<Graphic> objects;
-	int n = 10;
+	int n = 1;
 	objects.reserve(n);
 	Graphic g = default_geometry::cube(material, solid_program);
-	g.load_model("Models/dragon.obj");
+	g.load_model("Models/porsche.obj");
 	for (int i = 0; i < n; i++){
 		objects.push_back(Graphic(material, solid_program));
 		scene.meshes.push_back(&objects[i]);

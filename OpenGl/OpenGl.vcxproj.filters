@@ -99,7 +99,7 @@
     <ClCompile Include="API\PhysicsVehicle.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
-    <ClCompile Include="physx_vehicle_main.cpp">
+    <ClCompile Include="OpenglRenderer.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
   </ItemGroup>

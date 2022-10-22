@@ -33,7 +33,6 @@ void vehicle_control(GLFWwindow* window, physx::PxVehicleDrive4WRawInputData& ve
 		vehicle_controller.setDigitalSteerLeft(false);
 		vehicle_controller.setDigitalSteerRight(false);
 	}
-
 }
 
 int main() {
