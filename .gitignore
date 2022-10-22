@@ -134,3 +134,9 @@ OpenGl/Debug/FrameBuffer.obj
 OpenGl/Debug/UniformQueue.obj
 OpenGl/Debug/FrameBuffer.obj
 OpenGl/Debug/UniformQueue.obj
+OpenGl/Dependencies/assimp/lib_debug/assimp-vc143-mtd.lib
+OpenGl/Dependencies/assimp/lib_debug/IrrXMLd.lib
+OpenGl/Dependencies/assimp/lib_debug/zlibd.dll
+OpenGl/Dependencies/assimp/lib_debug/zlibd.exp
+OpenGl/Dependencies/assimp/lib_debug/zlibd.lib
+OpenGl/Dependencies/assimp/lib_debug/zlibstaticd.lib
