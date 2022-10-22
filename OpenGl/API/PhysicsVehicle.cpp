@@ -6,9 +6,7 @@
 #include "SnippetVehicleTireFriction.h"
 
 PhysicsVehicle::PhysicsVehicle(InitValues init_type, int num_wheels) :
-	numWheels(num_wheels), vehicle_actor(nullptr), is_vehicle_in_air(true), chassis_mesh(nullptr), differential_type(physx::PxVehicleDifferential4WData::eDIFF_TYPE_LS_4WD),
-	engine_peak_torque(500.0f), engine_peak_revolution_speed(600.0f), gear_switch_time(0.5f), clutch_strength(10.0f), ackermann_accuracy(1.0f), max_handbreak_torque(4000.0f),
-	max_steer(physx::PxPi * 0.3333f)
+	numWheels(num_wheels), vehicle_actor(nullptr), is_vehicle_in_air(true), chassis_mesh(nullptr), differential_type(physx::PxVehicleDifferential4WData::eDIFF_TYPE_LS_4WD)
 {
 	wheelsSimData = physx::PxVehicleWheelsSimData::allocate(num_wheels);
 	vehicle_drive = snippetvehicle::PxVehicleDrive4W::allocate(numWheels);
@@ -40,6 +38,28 @@ PhysicsVehicle::PhysicsVehicle(InitValues init_type, int num_wheels) :
 		wheelMOI = 0.5f * wheelMass * wheelRadius * wheelRadius;
 		physx::PxMaterial* wheel_material = PhysxContext::get().physics->createMaterial(0.3f, 0.2f, 0.7f);
 		wheelMaterial = wheel_material;
+
+		max_steer = physx::PxPi * 0.3333f;
+		max_handbreak_torque = 4000.0f;
+		ackermann_accuracy = 1.0f;
+		clutch_strength = 10.0f;
+		gear_switch_time = 0.5f;
+		engine_peak_revolution_speed = 600.0f;
+		engine_peak_torque = 500.0f;
+
+		max_suspension_compression = 0.3f;
+		max_suspension_droop = 0.1f;
+		suspension_string_strength = 35000.0f;
+		suspension_spring_damper_rate = 4500.0f;
+		suspension_travel_direction = physx::PxVec3(0.0f, -1.0f, 0.0f);
+		suspension_force_application_offset = -0.3f;	//Suspension force application point 0.3 metres below 
+		tire_force_application_offset = -0.3f;			//tire force application point 0.3 metres below 
+		
+		camber_angle_at_rest = 0.0f;
+		camber_angle_at_max_droop = 0.01f;
+		camber_angle_at_max_compression = -0.1f;
+		antiroll_bar_stiffness_front = 10000.0f;
+		antiroll_bar_stiffness_rear = 10000.0f;
 	}
 	else if (init_type == PhysicsVehicle::null_values) {
 		chassisMass = 0.0f;
@@ -52,6 +72,25 @@ PhysicsVehicle::PhysicsVehicle(InitValues init_type, int num_wheels) :
 		wheelRadius = 0.0f;
 		wheelMOI = 0.0f;
 		wheelMaterial = NULL;
+		max_steer = 0.0f;
+		max_handbreak_torque = 0.0f;
+		ackermann_accuracy = 0.0f;
+		clutch_strength = 0.0f;
+		gear_switch_time = 0.0f;
+		engine_peak_revolution_speed = 0.0f;
+		engine_peak_torque = 0.0f;
+		max_suspension_compression = 0.0f;
+		max_suspension_droop = 0.0f;
+		suspension_string_strength = 0.0f;
+		suspension_spring_damper_rate = 0.0f;
+		suspension_travel_direction = physx::PxVec3(0);
+		suspension_force_application_offset = 0.0f;	
+		tire_force_application_offset = 0.0f;		
+		camber_angle_at_rest = 0.0f;
+		camber_angle_at_max_droop = 0.0f;
+		camber_angle_at_max_compression = 0.0f;
+		antiroll_bar_stiffness_front = 0.0f;
+		antiroll_bar_stiffness_rear = 0.0f;
 	}
 
 	SceneQueryData = snippetvehicle::VehicleSceneQueryData::allocate(1, num_wheels, 1, 1, snippetvehicle::WheelSceneQueryPreFilterBlocking, NULL, PhysxContext::get().physics_allocator);
@@ -102,13 +141,12 @@ void PhysicsVehicle::_create_actor() {
 	delete[] wheelMaterials;
 }
 
-void PhysicsVehicle::_calculate_wheel_offsets() {
+void PhysicsVehicle::_calculate_default_wheel_offsets() {
 	wheelOffsets[snippetvehicle::PxVehicleDrive4WWheelOrder::eREAR_LEFT] = physx::PxVec3((-chassisDims.x + wheelWidth) * 0.5f, -(chassisDims.y / 2 + wheelRadius), -chassisDims.z / 2 + wheelRadius);
 	wheelOffsets[snippetvehicle::PxVehicleDrive4WWheelOrder::eREAR_RIGHT] = physx::PxVec3((+chassisDims.x - wheelWidth) * 0.5f, -(chassisDims.y / 2 + wheelRadius), -chassisDims.z / 2 + wheelRadius);
 	wheelOffsets[snippetvehicle::PxVehicleDrive4WWheelOrder::eFRONT_LEFT] = physx::PxVec3((-chassisDims.x + wheelWidth) * 0.5f, -(chassisDims.y / 2 + wheelRadius), chassisDims.z / 2 - wheelRadius);
 	wheelOffsets[snippetvehicle::PxVehicleDrive4WWheelOrder::eFRONT_RIGHT] = physx::PxVec3((+chassisDims.x - wheelWidth) * 0.5f, -(chassisDims.y / 2 + wheelRadius), chassisDims.z / 2 - wheelRadius);
 }
-
 
 void PhysicsVehicle::_create_wheel_sim() {
 
@@ -143,10 +181,10 @@ void PhysicsVehicle::_create_wheel_sim() {
 	}
 
 	//Set up the suspensions
-	physx::PxVehicleSuspensionData suspensions[PX_MAX_NB_WHEELS];
+	physx::PxVehicleSuspensionData* suspensions = new physx::PxVehicleSuspensionData[numWheels];
 	{
 		//Compute the mass supported by each suspension spring.
-		physx::PxF32 suspSprungMasses[PX_MAX_NB_WHEELS];
+		physx::PxF32* suspSprungMasses = new physx::PxF32[numWheels];
 		PxVehicleComputeSprungMasses
 		(numWheels, wheelOffsets,
 			chassisCMOffset, chassisMass, 1, suspSprungMasses);
@@ -154,39 +192,37 @@ void PhysicsVehicle::_create_wheel_sim() {
 		//Set the suspension data.
 		for (physx::PxU32 i = 0; i < numWheels; i++)
 		{
-			suspensions[i].mMaxCompression = 0.3f;
-			suspensions[i].mMaxDroop = 0.1f;
-			suspensions[i].mSpringStrength = 35000.0f;
-			suspensions[i].mSpringDamperRate = 4500.0f;
+			suspensions[i].mMaxCompression = max_suspension_compression;
+			suspensions[i].mMaxDroop = max_suspension_droop;
+			suspensions[i].mSpringStrength = suspension_string_strength;
+			suspensions[i].mSpringDamperRate = suspension_spring_damper_rate;
 			suspensions[i].mSprungMass = suspSprungMasses[i];
 		}
 
 		//Set the camber angles.
-		const physx::PxF32 camberAngleAtRest = 0.0;
-		const physx::PxF32 camberAngleAtMaxDroop = 0.01f;
-		const physx::PxF32 camberAngleAtMaxCompression = -0.01f;
 		for (physx::PxU32 i = 0; i < numWheels; i += 2)
 		{
-			suspensions[i + 0].mCamberAtRest = camberAngleAtRest;
-			suspensions[i + 1].mCamberAtRest = -camberAngleAtRest;
-			suspensions[i + 0].mCamberAtMaxDroop = camberAngleAtMaxDroop;
-			suspensions[i + 1].mCamberAtMaxDroop = -camberAngleAtMaxDroop;
-			suspensions[i + 0].mCamberAtMaxCompression = camberAngleAtMaxCompression;
-			suspensions[i + 1].mCamberAtMaxCompression = -camberAngleAtMaxCompression;
+			suspensions[i + 0].mCamberAtRest = camber_angle_at_rest;
+			suspensions[i + 1].mCamberAtRest = -camber_angle_at_rest;
+			suspensions[i + 0].mCamberAtMaxDroop = camber_angle_at_max_droop;
+			suspensions[i + 1].mCamberAtMaxDroop = -camber_angle_at_max_droop;
+			suspensions[i + 0].mCamberAtMaxCompression = camber_angle_at_max_compression;
+			suspensions[i + 1].mCamberAtMaxCompression = -camber_angle_at_max_compression;
 		}
+		delete[] suspSprungMasses;
 	}
 
 	//Set up the wheel geometry.
-	physx::PxVec3 suspTravelDirections[PX_MAX_NB_WHEELS];
-	physx::PxVec3 wheelCentreCMOffsets[PX_MAX_NB_WHEELS];
-	physx::PxVec3 suspForceAppCMOffsets[PX_MAX_NB_WHEELS];
-	physx::PxVec3 tireForceAppCMOffsets[PX_MAX_NB_WHEELS];
+	physx::PxVec3* suspTravelDirections = new physx::PxVec3[numWheels];
+	physx::PxVec3* wheelCentreCMOffsets = new physx::PxVec3[numWheels];
+	physx::PxVec3* suspForceAppCMOffsets = new physx::PxVec3[numWheels];
+	physx::PxVec3* tireForceAppCMOffsets = new physx::PxVec3[numWheels];
 	{
 		//Set the geometry data.
 		for (physx::PxU32 i = 0; i < numWheels; i++)
 		{
 			//Vertical suspension travel.
-			suspTravelDirections[i] = physx::PxVec3(0, -1, 0);
+			suspTravelDirections[i] = suspension_travel_direction;
 
 			//Wheel center offset is offset from rigid body center of mass.
 			wheelCentreCMOffsets[i] =
@@ -195,12 +231,12 @@ void PhysicsVehicle::_create_wheel_sim() {
 			//Suspension force application point 0.3 metres below 
 			//rigid body center of mass.
 			suspForceAppCMOffsets[i] =
-				physx::PxVec3(wheelCentreCMOffsets[i].x, -0.3f, wheelCentreCMOffsets[i].z);
+				physx::PxVec3(wheelCentreCMOffsets[i].x, -suspension_force_application_offset, wheelCentreCMOffsets[i].z);
 
 			//Tire force application point 0.3 metres below 
 			//rigid body center of mass.
 			tireForceAppCMOffsets[i] =
-				physx::PxVec3(wheelCentreCMOffsets[i].x, -0.3f, wheelCentreCMOffsets[i].z);
+				physx::PxVec3(wheelCentreCMOffsets[i].x, -tire_force_application_offset, wheelCentreCMOffsets[i].z);
 		}
 	}
 
@@ -228,16 +264,21 @@ void PhysicsVehicle::_create_wheel_sim() {
 	physx::PxVehicleAntiRollBarData barFront;
 	barFront.mWheel0 = physx::PxVehicleDrive4WWheelOrder::eFRONT_LEFT;
 	barFront.mWheel1 = physx::PxVehicleDrive4WWheelOrder::eFRONT_RIGHT;
-	barFront.mStiffness = 10000.0f;
+	barFront.mStiffness = antiroll_bar_stiffness_front;
 	wheelsSimData->addAntiRollBarData(barFront);
 	physx::PxVehicleAntiRollBarData barRear;
 	barRear.mWheel0 = physx::PxVehicleDrive4WWheelOrder::eREAR_LEFT;
 	barRear.mWheel1 = physx::PxVehicleDrive4WWheelOrder::eREAR_RIGHT;
-	barRear.mStiffness = 10000.0f;
+	barRear.mStiffness = antiroll_bar_stiffness_rear;
 	wheelsSimData->addAntiRollBarData(barRear);
 
 	delete[] wheels;
 	delete[] tires;
+	delete[] suspensions;
+	delete[] suspTravelDirections;
+	delete[] wheelCentreCMOffsets;
+	delete[] suspForceAppCMOffsets;
+	delete[] tireForceAppCMOffsets;
 }
 
 void PhysicsVehicle::_create_drive_sim() {
@@ -342,7 +383,7 @@ void PhysicsVehicle::simulation_step(long double timestep) {
 	delete[] wheelQueryResults;
 }
 
-void PhysicsVehicle::initialize() {
+void PhysicsVehicle::compile() {
 	_create_actor();
 
 	physx::PxTransform startTransform(physx::PxVec3(0, (chassisDims.y * 0.5f + wheelRadius + 1.0f), 0), physx::PxQuat(physx::PxIdentity));
@@ -356,7 +397,7 @@ void PhysicsVehicle::initialize() {
 		}
 	}
 	if (initialize_offsets) {
-		_calculate_wheel_offsets();
+		_calculate_default_wheel_offsets();
 	}
 
 	_create_wheel_sim();
@@ -384,4 +425,11 @@ void PhysicsVehicle::set_chasis_mesh(physx::PxConvexMeshGeometry convex_mesh_geo
 	if (chassis_mesh != nullptr)
 		chassis_mesh->release();
 	chassis_mesh = convex_mesh_geometry.convexMesh;
+}
+
+void PhysicsVehicle::set_wheel_layout(float x_seperation, float y_displacement, float z_seperation, float z_displacement) {
+	wheelOffsets[snippetvehicle::PxVehicleDrive4WWheelOrder::eREAR_LEFT] = physx::PxVec3((-x_seperation + wheelWidth) * 0.5f, -((chassisDims.y + y_displacement)/ 2 + wheelRadius), -z_seperation / 2 + wheelRadius + z_displacement);
+	wheelOffsets[snippetvehicle::PxVehicleDrive4WWheelOrder::eREAR_RIGHT] = physx::PxVec3((+x_seperation - wheelWidth) * 0.5f, -((chassisDims.y + y_displacement)/ 2 + wheelRadius), -z_seperation / 2 + wheelRadius + z_displacement);
+	wheelOffsets[snippetvehicle::PxVehicleDrive4WWheelOrder::eFRONT_LEFT] = physx::PxVec3((-x_seperation + wheelWidth) * 0.5f, -((chassisDims.y + y_displacement)/ 2 + wheelRadius), z_seperation / 2 - wheelRadius + z_displacement);
+	wheelOffsets[snippetvehicle::PxVehicleDrive4WWheelOrder::eFRONT_RIGHT] = physx::PxVec3((+x_seperation - wheelWidth) * 0.5f, -((chassisDims.y + y_displacement)/ 2 + wheelRadius), z_seperation / 2 - wheelRadius + z_displacement);
 }

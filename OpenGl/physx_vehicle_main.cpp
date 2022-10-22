@@ -49,7 +49,10 @@ int main() {
 											physx::PxVec3(-1,0.2,-2.8), physx::PxVec3(-1,1,-1.6), physx::PxVec3(-1,1,0.6), physx::PxVec3(-1,0.3,2.9), physx::PxVec3(-1,-1,2.8), physx::PxVec3(-1,-1,-2.8)};
 	vehicle.set_chasis_mesh(create_geometry::convex_hull(points).convexMesh);
 	vehicle.chassisDims = physx::PxVec3(2, 2, 6);
-	vehicle.initialize();
+
+	vehicle.set_wheel_layout(1.9f, -0.2f, 5.0f, 0.0f);
+
+	vehicle.compile();
 	scene.add_actor(vehicle);
 
 	PhysicsObject box(create_geometry::box(1.0f, 1.0f, 1.0f), PhysicsObject::DYNAMIC, true);
