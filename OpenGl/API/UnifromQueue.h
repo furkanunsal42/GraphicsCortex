@@ -112,5 +112,8 @@ public:
 	void add_uniform_update(dynamic_uniform_update<glm::mat3> dynamcic_uniform_update);
 	void add_uniform_update(dynamic_uniform_update<glm::mat2> dynamcic_uniform_update);
 
+	void remove_uniform_update(const std::string& uniform_name);
+	void remove_uniform_update(unsigned int uniform_id);
+
 	void update_uniforms();
 };

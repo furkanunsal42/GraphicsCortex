@@ -42,13 +42,15 @@ int main() {
 	int n = 1;
 	objects.reserve(n);
 	Graphic g = default_geometry::cube(material, solid_program);
-	g.load_model("Models/porsche.obj");
+	g.load_model("Models/porsche_chassis.obj");
 	for (int i = 0; i < n; i++){
 		objects.push_back(Graphic(material, solid_program));
 		scene.meshes.push_back(&objects[i]);
 		scene.meshes[i]->vertex_buffer = g.vertex_buffer;
 		scene.meshes[i]->index_buffer = g.index_buffer;
 		scene.meshes[i]->set_uniform_upadte_queue(default_program::solid_default_uniform_queue(scene, *scene.meshes[i]));
+		scene.meshes[i]->remove_uniform_update_queue("use_cube_map_reflection");
+		scene.meshes[i]->add_uniform_update_queue(uniform_update<int>("use_cube_map_reflection", 0));
 		scene.meshes[i]->position.x = i * 10;
 	}
 	g.clear_mesh();

@@ -207,6 +207,156 @@ void uniform_update_queue::add_uniform_update(dynamic_uniform_update<glm::mat2> 
 	dynamic_uniform_queue_mat2.push_back(dynamic_uniform_update);
 }
 
+// ------------------------------------------------------------------------------------------
+
+void uniform_update_queue::remove_uniform_update(const std::string& uniform_name) {
+	for (int i = 0; i < uniform_queue_int.size(); i++) {
+		uniform_update<int>& update = uniform_queue_int[i];
+		if (update.uniform_name == uniform_name)
+			uniform_queue_int.erase(uniform_queue_int.begin() + i);
+	}
+	for (int i = 0; i < uniform_queue_char.size(); i++) {
+		uniform_update<char>& update = uniform_queue_char[i];
+		if (update.uniform_name == uniform_name)
+			uniform_queue_char.erase(uniform_queue_char.begin() + i);
+	}
+	for (int i = 0; i < uniform_queue_bool.size(); i++) {
+		uniform_update<bool>& update = uniform_queue_bool[i];
+		if (update.uniform_name == uniform_name)
+			uniform_queue_bool.erase(uniform_queue_bool.begin() + i);
+	}
+	for (int i = 0; i < uniform_queue_float.size(); i++) {
+		uniform_update<float>& update = uniform_queue_float[i];
+		if (update.uniform_name == uniform_name)
+			uniform_queue_float.erase(uniform_queue_float.begin() + i);
+	}
+	for (int i = 0; i < uniform_queue_mat4.size(); i++) {
+		uniform_update<glm::mat4>& update = uniform_queue_mat4[i];
+		if (update.uniform_name == uniform_name)
+			uniform_queue_mat4.erase(uniform_queue_mat4.begin() + i);
+	}
+	for (int i = 0; i < uniform_queue_mat3.size(); i++) {
+		uniform_update<glm::mat3>& update = uniform_queue_mat3[i];
+		if (update.uniform_name == uniform_name)
+			uniform_queue_mat3.erase(uniform_queue_mat3.begin() + i);
+	}
+	for (int i = 0; i < uniform_queue_mat2.size(); i++) {
+		uniform_update<glm::mat2>& update = uniform_queue_mat2[i];
+		if (update.uniform_name == uniform_name)
+			uniform_queue_mat2.erase(uniform_queue_mat2.begin() + i);
+	}
+
+	for (int i = 0; i < dynamic_uniform_queue_int.size(); i++) {
+		dynamic_uniform_update<int>& update = dynamic_uniform_queue_int[i];
+		if (update.uniform_name == uniform_name)
+			dynamic_uniform_queue_int.erase(dynamic_uniform_queue_int.begin() + i);
+	}
+	for (int i = 0; i < dynamic_uniform_queue_char.size(); i++) {
+		dynamic_uniform_update<char>& update = dynamic_uniform_queue_char[i];
+		if (update.uniform_name == uniform_name)
+			dynamic_uniform_queue_char.erase(dynamic_uniform_queue_char.begin() + i);
+	}
+	for (int i = 0; i < dynamic_uniform_queue_bool.size(); i++) {
+		dynamic_uniform_update<bool>& update = dynamic_uniform_queue_bool[i];
+		if (update.uniform_name == uniform_name)
+			dynamic_uniform_queue_bool.erase(dynamic_uniform_queue_bool.begin() + i);
+	}
+	for (int i = 0; i < dynamic_uniform_queue_float.size(); i++) {
+		dynamic_uniform_update<float>& update = dynamic_uniform_queue_float[i];
+		if (update.uniform_name == uniform_name)
+			dynamic_uniform_queue_float.erase(dynamic_uniform_queue_float.begin() + i);
+	}
+	for (int i = 0; i < dynamic_uniform_queue_mat4.size(); i++) {
+		dynamic_uniform_update<glm::mat4>& update = dynamic_uniform_queue_mat4[i];
+		if (update.uniform_name == uniform_name)
+			dynamic_uniform_queue_mat4.erase(dynamic_uniform_queue_mat4.begin() + i);
+	}
+	for (int i = 0; i < dynamic_uniform_queue_mat3.size(); i++) {
+		dynamic_uniform_update<glm::mat3>& update = dynamic_uniform_queue_mat3[i];
+		if (update.uniform_name == uniform_name)
+			dynamic_uniform_queue_mat3.erase(dynamic_uniform_queue_mat3.begin() + i);
+	}
+	for (int i = 0; i < dynamic_uniform_queue_mat2.size(); i++) {
+		dynamic_uniform_update<glm::mat2>& update = dynamic_uniform_queue_mat2[i];
+		if (update.uniform_name == uniform_name)
+			dynamic_uniform_queue_mat2.erase(dynamic_uniform_queue_mat2.begin() + i);
+	}
+}
+
+void uniform_update_queue::remove_uniform_update(unsigned int uniform_id) {
+	for (int i = 0; i < uniform_queue_int.size(); i++) {
+		uniform_update<int>& update = uniform_queue_int[i];
+		if (update.uniform_id == uniform_id)
+			uniform_queue_int.erase(uniform_queue_int.begin() + i);
+	}
+	for (int i = 0; i < uniform_queue_char.size(); i++) {
+		uniform_update<char>& update = uniform_queue_char[i];
+		if (update.uniform_id == uniform_id)
+			uniform_queue_char.erase(uniform_queue_char.begin() + i);
+	}
+	for (int i = 0; i < uniform_queue_bool.size(); i++) {
+		uniform_update<bool>& update = uniform_queue_bool[i];
+		if (update.uniform_id == uniform_id)
+			uniform_queue_bool.erase(uniform_queue_bool.begin() + i);
+	}
+	for (int i = 0; i < uniform_queue_float.size(); i++) {
+		uniform_update<float>& update = uniform_queue_float[i];
+		if (update.uniform_id == uniform_id)
+			uniform_queue_float.erase(uniform_queue_float.begin() + i);
+	}
+	for (int i = 0; i < uniform_queue_mat4.size(); i++) {
+		uniform_update<glm::mat4>& update = uniform_queue_mat4[i];
+		if (update.uniform_id == uniform_id)
+			uniform_queue_mat4.erase(uniform_queue_mat4.begin() + i);
+	}
+	for (int i = 0; i < uniform_queue_mat3.size(); i++) {
+		uniform_update<glm::mat3>& update = uniform_queue_mat3[i];
+		if (update.uniform_id == uniform_id)
+			uniform_queue_mat3.erase(uniform_queue_mat3.begin() + i);
+	}
+	for (int i = 0; i < uniform_queue_mat2.size(); i++) {
+		uniform_update<glm::mat2>& update = uniform_queue_mat2[i];
+		if (update.uniform_id == uniform_id)
+			uniform_queue_mat2.erase(uniform_queue_mat2.begin() + i);
+	}
+
+	for (int i = 0; i < dynamic_uniform_queue_int.size(); i++) {
+		dynamic_uniform_update<int>& update = dynamic_uniform_queue_int[i];
+		if (update.uniform_id == uniform_id)
+			dynamic_uniform_queue_int.erase(dynamic_uniform_queue_int.begin() + i);
+	}
+	for (int i = 0; i < dynamic_uniform_queue_char.size(); i++) {
+		dynamic_uniform_update<char>& update = dynamic_uniform_queue_char[i];
+		if (update.uniform_id == uniform_id)
+			dynamic_uniform_queue_char.erase(dynamic_uniform_queue_char.begin() + i);
+	}
+	for (int i = 0; i < dynamic_uniform_queue_bool.size(); i++) {
+		dynamic_uniform_update<bool>& update = dynamic_uniform_queue_bool[i];
+		if (update.uniform_id == uniform_id)
+			dynamic_uniform_queue_bool.erase(dynamic_uniform_queue_bool.begin() + i);
+	}
+	for (int i = 0; i < dynamic_uniform_queue_float.size(); i++) {
+		dynamic_uniform_update<float>& update = dynamic_uniform_queue_float[i];
+		if (update.uniform_id == uniform_id)
+			dynamic_uniform_queue_float.erase(dynamic_uniform_queue_float.begin() + i);
+	}
+	for (int i = 0; i < dynamic_uniform_queue_mat4.size(); i++) {
+		dynamic_uniform_update<glm::mat4>& update = dynamic_uniform_queue_mat4[i];
+		if (update.uniform_id == uniform_id)
+			dynamic_uniform_queue_mat4.erase(dynamic_uniform_queue_mat4.begin() + i);
+	}
+	for (int i = 0; i < dynamic_uniform_queue_mat3.size(); i++) {
+		dynamic_uniform_update<glm::mat3>& update = dynamic_uniform_queue_mat3[i];
+		if (update.uniform_id == uniform_id)
+			dynamic_uniform_queue_mat3.erase(dynamic_uniform_queue_mat3.begin() + i);
+	}
+	for (int i = 0; i < dynamic_uniform_queue_mat2.size(); i++) {
+		dynamic_uniform_update<glm::mat2>& update = dynamic_uniform_queue_mat2[i];
+		if (update.uniform_id == uniform_id)
+			dynamic_uniform_queue_mat2.erase(dynamic_uniform_queue_mat2.begin() + i);
+	}
+}
+
 void uniform_update_queue::update_uniforms() {
 	for (uniform_update<int> update : uniform_queue_int)
 		update.update_uniform();

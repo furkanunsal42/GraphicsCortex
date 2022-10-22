@@ -41,20 +41,41 @@ public:
 	void clear_mesh();
 
 	template<typename T>
-	void add_uniform_update_queue(uniform_update<T>* uniform_queue) {
-		uniform_queue->program = renderer;
-		renderer->define_uniform(uniform_queue->uniform_name);
-		uniform_queue->uniform_id = renderer->uniforms[uniform_queue->uniform_name];
-		_uniform_update_queue.add_uniform_update(*uniform_queue);
-
+	void add_uniform_update_queue(uniform_update<T>& uniform_queue) {
+		uniform_queue.program = renderer;
+		renderer->define_uniform(uniform_queue.uniform_name);
+		uniform_queue.uniform_id = renderer->uniforms[uniform_queue.uniform_name];
+		_uniform_update_queue.add_uniform_update(uniform_queue);
+	}
+	template<typename T>
+	void add_uniform_update_queue(uniform_update<T>&& uniform_queue) {
+		uniform_queue.program = renderer;
+		renderer->define_uniform(uniform_queue.uniform_name);
+		uniform_queue.uniform_id = renderer->uniforms[uniform_queue.uniform_name];
+		_uniform_update_queue.add_uniform_update(uniform_queue);
 	}
 	
 	template<typename T>
-	void add_uniform_update_queue(dynamic_uniform_update<T>* dynamic_uniform_queue) {
-		dynamic_uniform_queue->program = renderer;
-		renderer->define_uniform(dynamic_uniform_queue->uniform_name);
-		dynamic_uniform_queue->uniform_id = renderer->uniforms[dynamic_uniform_queue->uniform_name];
-		_uniform_update_queue.add_uniform_update(*dynamic_uniform_queue);
+	void add_uniform_update_queue(dynamic_uniform_update<T>& dynamic_uniform_queue) {
+		dynamic_uniform_queue.program = renderer;
+		renderer->define_uniform(dynamic_uniform_queue.uniform_name);
+		dynamic_uniform_queue.uniform_id = renderer->uniforms[dynamic_uniform_queue.uniform_name];
+		_uniform_update_queue.add_uniform_update(dynamic_uniform_queue);
+	}
+	template<typename T>
+	void add_uniform_update_queue(dynamic_uniform_update<T>&& dynamic_uniform_queue) {
+		dynamic_uniform_queue.program = renderer;
+		renderer->define_uniform(dynamic_uniform_queue.uniform_name);
+		dynamic_uniform_queue.uniform_id = renderer->uniforms[dynamic_uniform_queue.uniform_name];
+		_uniform_update_queue.add_uniform_update(dynamic_uniform_queue);
+	}
+
+	void remove_uniform_update_queue(const std::string& uniform_name) {
+		_uniform_update_queue.remove_uniform_update(uniform_name);
+	}
+
+	void remove_uniform_update_queue(unsigned int uniform_id) {
+		_uniform_update_queue.remove_uniform_update(uniform_id);
 	}
 
 	void set_uniform_upadte_queue(uniform_update_queue& original) {

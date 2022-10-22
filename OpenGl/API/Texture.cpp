@@ -83,7 +83,6 @@ void Texture::_read_image(std::string& file_path, int desired_channels) {
 	}
 
 	currently_stored_file_name = file_path;
-	//std::cout << "Texture::read_image() is called \n";
 }
 
 bool Texture::_load_image_check(bool free_ram, bool print_errors) {
