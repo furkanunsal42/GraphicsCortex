@@ -16,13 +16,14 @@ namespace create_geometry {
 	
 	template<typename T>
 	std::enable_if_t<std::is_same<T, physx::PxVec3>::value || std::is_same<T, glm::vec3>::value, physx::PxConvexMeshGeometry>
-		convex_hull(const T verticies[], unsigned int count) {
+		convex_hull(const T verticies[], unsigned int count, unsigned int max_verticies = 20) {
 
 		physx::PxConvexMeshDesc mesh_desc;
 		mesh_desc.points.data = verticies;
 		mesh_desc.points.stride = sizeof verticies[0];
 		mesh_desc.points.count = count;
 		mesh_desc.flags = physx::PxConvexFlag::eCOMPUTE_CONVEX;
+		mesh_desc.vertexLimit = max_verticies;
 
 		auto context = PhysxContext::get();
 		physx::PxDefaultMemoryOutputStream buf;
@@ -36,8 +37,8 @@ namespace create_geometry {
 	
 	template<typename T>
 	std::enable_if_t<std::is_same<T, physx::PxVec3>::value || std::is_same<T, glm::vec3>::value, physx::PxConvexMeshGeometry>
-		convex_hull(const std::vector<T>& verticies) {
-		return convex_hull(&(verticies[0]), verticies.size());
+		convex_hull(const std::vector<T>& verticies, unsigned int max_verticies = 20) {
+		return convex_hull(&(verticies[0]), verticies.size(), max_verticies);
 	}
 	
 	physx::PxPlane plane(float nx, float ny, float nz, float distance);

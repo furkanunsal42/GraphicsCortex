@@ -6,7 +6,7 @@
 
 int main() {
 	int width = 1920, height = 1080;
-	GLFWwindow* window = frame::create_window(width, height, "My Window", 4, 0, true, false, true);
+	GLFWwindow* window = frame::create_window(width, height, "My Window", 4, 3, true, false, true);
 	Scene scene;
 	Material material;
 	Texture color_texture;
@@ -41,11 +41,12 @@ int main() {
 	std::vector<Graphic> objects;
 	int n = 1;
 	objects.reserve(n);
-	Graphic g = default_geometry::cube(material, solid_program);
+	Graphic g;
 	g.load_model("Models/porsche_chassis.obj");
 	for (int i = 0; i < n; i++){
 		objects.push_back(Graphic(material, solid_program));
 		scene.meshes.push_back(&objects[i]);
+		scene.meshes[i]->physics_representation = g.physics_representation;
 		scene.meshes[i]->vertex_buffer = g.vertex_buffer;
 		scene.meshes[i]->index_buffer = g.index_buffer;
 		scene.meshes[i]->set_uniform_upadte_queue(default_program::solid_default_uniform_queue(scene, *scene.meshes[i]));
@@ -103,8 +104,19 @@ int main() {
 	cube_map.read_queue(3);
 	cube_map.load_queue(true);
 	
+	PhysicsScene physics_scene;
+	//scene.meshes[0]->physics_representation.set_rotation(0.0f, 0.0f, 2.4f);
+	scene.meshes[0]->set_rotation(glm::vec3(0.0f, 0.0f, 2.4f));
+	scene.meshes[0]->physics_representation.set_gravity(true);
+	physics_scene.add_actor(scene.meshes[0]->physics_representation);
+	physics_scene.add_actor(PhysicsObject(create_geometry::plane(0, 1, 0, 4)));
+	
+
 	float t = 0;
 	while (!glfwWindowShouldClose(window)){
+
+		physics_scene.simulate_step(1 / 60.0f);
+		scene.meshes[0]->sync_with_physics();
 		
 		frame_buffer.bind();
 		

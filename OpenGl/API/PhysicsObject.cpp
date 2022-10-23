@@ -8,7 +8,7 @@
 #include <iostream>
 
 PhysicsObject::PhysicsObject(const physx::PxGeometry& geometry, enum type type, bool exclusive_shape) :
-	position(glm::vec3(0, 0, 0)), rotation(glm::vec3(0, 0, 0)), exclusive_shape(exclusive_shape), type(type)
+	position(glm::vec3(0, 0, 0)), rotation(glm::vec3(0, 0, 0)), exclusive_shape(exclusive_shape), type(type), actor(nullptr)
 {
 
 	auto context = PhysxContext::get();
@@ -56,24 +56,12 @@ void PhysicsObject::set_position(float x, float y, float z) {
 	update_transform();
 }
 
-template<typename T>
-std::enable_if_t<std::is_same<T, glm::vec3>::value || std::is_same<T, physx::PxVec3>::value, void>
-	PhysicsObject::set_position(T rotation_vector) {
-	set_position(rotation_vector.x, rotation_vector.y, rotation_vector.z);
-}
-
 void PhysicsObject::set_rotation(float x, float y, float z) {
 	rotation.x = x;
 	rotation.y = y;
 	rotation.z = z;
 
 	update_transform();
-}
-
-template<typename T>
-std::enable_if_t<std::is_same<T, glm::vec3>::value || std::is_same<T, physx::PxVec3>::value, void>
-	PhysicsObject::set_rotatoin(T rotation_vector) {
-	set_rotation(rotation_vector.x, rotation_vector.y, rotation_vector.z);
 }
 
 void PhysicsObject::update_transform() {
@@ -101,6 +89,36 @@ void PhysicsObject::remove_link(PhysicsLink* link) {
 
 	link->remove();
 	delete link;
+}
+
+physx::PxVec3 PhysicsObject::get_position() {
+	return actor->getGlobalPose().p;
+}
+
+physx::PxVec3 PhysicsObject::get_rotation() {
+	const physx::PxQuat& quat = actor->getGlobalPose().q;
+	physx::PxVec3 euler;
+
+	double sinr_cosp = 2 * (quat.w * quat.x + quat.y * quat.z);
+	double cosr_cosp = 1 - 2 * (quat.x * quat.x + quat.y * quat.y);
+	euler.x = std::atan2(sinr_cosp, cosr_cosp);
+
+	double sinp = 2 * (quat.w * quat.y - quat.z * quat.x);
+	if (std::abs(sinp) >= 1)
+		euler.y = std::copysign(physx::PxPi / 2, sinp); // use 90 degrees if out of range
+	else
+		euler.y = std::asin(sinp);
+
+	double siny_cosp = 2 * (quat.w * quat.z + quat.x * quat.y);
+	double cosy_cosp = 1 - 2 * (quat.y * quat.y + quat.z * quat.z);
+	euler.z = std::atan2(siny_cosp, cosy_cosp);
+
+	return euler;
+
+}
+
+void PhysicsObject::set_gravity(bool enable_gravity) {
+	actor->setActorFlag(physx::PxActorFlag::eDISABLE_GRAVITY, !enable_gravity);
 }
 
 void PhysicsObject::make_drivable() {

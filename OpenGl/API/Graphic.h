@@ -12,6 +12,8 @@
 #include "Texture.h"
 #include "UnifromQueue.h"
 
+#include "PhysicsObject.h"
+
 class Graphic {
 private:
 	glm::vec3 _last_updated_position = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -24,11 +26,14 @@ public:
 	ArrayBuffer vertex_buffer;
 	IndexBuffer index_buffer;
 	glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);
-	glm::vec3 rotation = glm::vec3(0.0f, 0.0f, 0.0f);;
+	glm::vec3 rotation = glm::vec3(0.0f, 0.0f, 0.0f);	// radians
 	glm::mat4 model_matrix;
 	Program* renderer = nullptr;
 	Material* material = nullptr;
 	unsigned int mode = GL_TRIANGLES;
+
+	PhysicsObject physics_representation;
+
 	Graphic();
 	Graphic(const ArrayBuffer& buffer, const IndexBuffer& indicies, Material& material, Program& renderer);
 	Graphic(const std::vector<float>& verticies, int data_dim); // legacy
@@ -37,8 +42,16 @@ public:
 	void draw(bool show_warnings = true, bool _ignore_default_uniforms = false);
 	void update_matrix();
 
-	void load_model(const std::string& file_path);
+	void load_model(const std::string& file_path, bool use_for_physics = true);
 	void clear_mesh();
+
+	void sync_with_physics();
+
+	glm::vec3 get_position();
+	glm::vec3 get_rotation();
+
+	void set_position(glm::vec3 position);
+	void set_rotation(glm::vec3 rotation);
 
 	template<typename T>
 	void add_uniform_update_queue(uniform_update<T>& uniform_queue) {

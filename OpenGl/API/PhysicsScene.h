@@ -14,7 +14,9 @@ public:
 	std::vector<std::reference_wrapper<physx::PxRigidActor*>> actors;
 
 	void add_actor(PhysicsObject& object);
+	void add_actor(PhysicsObject&& object);
 	void add_actor(PhysicsVehicle& vehicle);
+	void add_actor(PhysicsVehicle&& vehicle);
 	void add_actor(physx::PxRigidActor*& actor);
 	void simulate_step(long double delta_time);
 	void simulation_step_start(long double delta_time);

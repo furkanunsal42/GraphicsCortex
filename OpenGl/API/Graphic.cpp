@@ -1,16 +1,19 @@
 #include "Graphic.h"
 
 #include "Default_Assets.h"
+#include "PhysicsGeometry.h"
 
 #include <iostream>
 
 Graphic::Graphic() :
-	model_matrix(glm::mat4(1.0f)), vertex_buffer(ArrayBuffer()), index_buffer(IndexBuffer()) {}
+	model_matrix(glm::mat4(1.0f)), vertex_buffer(ArrayBuffer()), index_buffer(IndexBuffer()), physics_representation(PhysicsObject(create_geometry::box(0.5f, 0.5f, 0.5f))) {}
 
 Graphic::Graphic(const ArrayBuffer& buffer, const IndexBuffer& indicies, Material& mat, Program& program) : 
-	model_matrix(glm::mat4(1.0f)), vertex_buffer(buffer), index_buffer(indicies), material(&mat), renderer(&program) {}
+	model_matrix(glm::mat4(1.0f)), vertex_buffer(buffer), index_buffer(indicies), material(&mat), renderer(&program), physics_representation(PhysicsObject(create_geometry::box(0.5f, 0.5f, 0.5f))) {}
 
-Graphic::Graphic(const std::vector<float>& verticies, int data_dim = 2) {	// legacy
+Graphic::Graphic(const std::vector<float>& verticies, int data_dim = 2) :
+	physics_representation(PhysicsObject(create_geometry::box(0.5f, 0.5f, 0.5f)))
+{	// legacy
 	std::vector<unsigned int> triangles;
 	for (unsigned int i = 1; i < verticies.size() / data_dim - 1; i++) {
 
@@ -33,7 +36,7 @@ Graphic::Graphic(const std::vector<float>& verticies, int data_dim = 2) {	// leg
 }
 
 Graphic::Graphic(Material& material, Program& renderer):
-	renderer(&renderer), material(&material), model_matrix(glm::mat4(1.0f)) {}
+	renderer(&renderer), material(&material), model_matrix(glm::mat4(1.0f)), physics_representation(PhysicsObject(create_geometry::box(0.5f, 0.5f, 0.5f))) {}
 
 void Graphic::draw(bool show_warnings, bool _ignore_default_uniforms) {
 	bool material_exist = true;
@@ -65,9 +68,9 @@ void Graphic::draw(bool show_warnings, bool _ignore_default_uniforms) {
 void Graphic::update_matrix() {
 	if (_last_updated_position == position && _last_updated_rotation == rotation)
 		return;
-	model_matrix = glm::rotate(glm::mat4(1.0f), glm::radians(rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
-	model_matrix = glm::rotate(model_matrix, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
-	model_matrix = glm::rotate(model_matrix, glm::radians(rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+	model_matrix = glm::rotate(glm::mat4(1.0f), glm::radians(rotation.x * 180 / physx::PxPi), glm::vec3(1.0f, 0.0f, 0.0f));
+	model_matrix = glm::rotate(model_matrix, glm::radians(rotation.y * 180 / physx::PxPi), glm::vec3(0.0f, 1.0f, 0.0f));
+	model_matrix = glm::rotate(model_matrix, glm::radians(rotation.z * 180 / physx::PxPi), glm::vec3(0.0f, 0.0f, 1.0f));
 	model_matrix = glm::translate(model_matrix, (glm::vec3)(glm::vec4(position.x, position.y, position.z, 0) * model_matrix));
 	_last_updated_position = position;
 	_last_updated_rotation = rotation;
@@ -75,7 +78,7 @@ void Graphic::update_matrix() {
 
 Assimp::Importer Graphic::asset_loader;
 
-void Graphic::load_model(const std::string& file_path) {
+void Graphic::load_model(const std::string& file_path, bool use_for_physics) {
 	const aiScene* imported_scene = asset_loader.ReadFile(file_path,
 		aiProcess_CalcTangentSpace |
 		aiProcess_Triangulate |
@@ -96,6 +99,8 @@ void Graphic::load_model(const std::string& file_path) {
 	std::vector<float> vertex_data;
 	std::vector<unsigned int> indicies;
 	
+	std::vector<physx::PxVec3> verticies_physics;
+
 	unsigned int prefix_indicies_sum = 0;
 
 	for (int i = 0; i < imported_scene->mNumMeshes; i++) {
@@ -115,14 +120,13 @@ void Graphic::load_model(const std::string& file_path) {
 			vertex_data.push_back((float)normal.x);
 			vertex_data.push_back((float)normal.y);
 			vertex_data.push_back((float)normal.z);
+		
+			if (use_for_physics)
+				verticies_physics.push_back(physx::PxVec3((float)vertex.x, (float)vertex.y, (float)vertex.z));
 		}
 		for (int j = 0; j < imported_scene->mMeshes[i]->mNumFaces; j++) {
 			const aiFace& Face = imported_scene->mMeshes[i]->mFaces[j];
 			
-			//std::cout << prefix_indicies_sum + (unsigned int)Face.mIndices[0] << std::endl;
-			//std::cout << prefix_indicies_sum + (unsigned int)Face.mIndices[1] << std::endl;
-			//std::cout << prefix_indicies_sum + (unsigned int)Face.mIndices[2] << std::endl;
-
 			indicies.push_back(prefix_indicies_sum + (unsigned int)Face.mIndices[0]);
 			indicies.push_back(prefix_indicies_sum + (unsigned int)Face.mIndices[1]);
 			indicies.push_back(prefix_indicies_sum + (unsigned int)Face.mIndices[2]);
@@ -137,6 +141,10 @@ void Graphic::load_model(const std::string& file_path) {
 	vertex_buffer.push_attribute(3);	// normals
 
 	index_buffer.initialize_buffer(indicies, 3);
+
+	if (use_for_physics) {
+		physics_representation = PhysicsObject(create_geometry::convex_hull(verticies_physics, 30));
+	}
 }
 
 void Graphic::clear_mesh() {
@@ -144,7 +152,31 @@ void Graphic::clear_mesh() {
 	index_buffer = IndexBuffer();
 }
 
+void Graphic::sync_with_physics() {
+	rotation.x = physics_representation.get_rotation().x;
+	rotation.y = physics_representation.get_rotation().y;
+	rotation.z = physics_representation.get_rotation().z;
+	position.x = physics_representation.get_position().x;
+	position.y = physics_representation.get_position().y;
+	position.z = physics_representation.get_position().z;
+}
 
+glm::vec3 Graphic::get_position() {
+	return position;
+}
+glm::vec3 Graphic::get_rotation() {
+	return rotation;
+}
+
+void Graphic::set_position(glm::vec3 position) {
+	this->position = position;
+	physics_representation.set_position(position);
+}
+
+void Graphic::set_rotation(glm::vec3 rotation) {
+	this->rotation = rotation;
+	physics_representation.set_rotation(rotation);
+}
 
 void Graphic::update_uniform_queue(bool init) {
 	_uniform_update_queue.update_uniforms();

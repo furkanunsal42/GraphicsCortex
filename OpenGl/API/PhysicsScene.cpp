@@ -7,8 +7,19 @@ void PhysicsScene::add_actor(PhysicsObject& object) {
 	context.physics_scene->addActor(*object.actor);
 	objects.push_back(object);
 }
+void PhysicsScene::add_actor(PhysicsObject&& object) {
+	auto context = PhysxContext::get();
+	context.physics_scene->addActor(*object.actor);
+	objects.push_back(object);
+}
+
 
 void PhysicsScene::add_actor(PhysicsVehicle& vehicle) {
+	auto context = PhysxContext::get();
+	context.physics_scene->addActor(*vehicle.vehicle_actor);
+	vehicles.push_back(vehicle);
+}
+void PhysicsScene::add_actor(PhysicsVehicle&& vehicle) {
 	auto context = PhysxContext::get();
 	context.physics_scene->addActor(*vehicle.vehicle_actor);
 	vehicles.push_back(vehicle);
@@ -21,11 +32,6 @@ void PhysicsScene::add_actor(physx::PxRigidActor*& actor) {
 }
 
 void PhysicsScene::simulate_step(long double delta_time) {
-	
-	for (PhysicsVehicle& vehicle : vehicles) {
-		vehicle.simulation_step(delta_time);
-	}
-
 	simulation_step_start(delta_time);
 	simulation_step_finish();
 }
