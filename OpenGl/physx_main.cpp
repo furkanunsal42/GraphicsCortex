@@ -12,7 +12,7 @@ int main() {
 	scene.add_actor(sphere);
 	sphere.set_position(4.0f, 10.0f, 4.0f);
 
-	auto link = box.add_link(sphere, PhysicsLink::SPHERICAL);
+	auto link = box.add_link(sphere, PhysicsLink::PRISMATIC);
 	link->set_limit(physx::PxVec3(0.4, 0.4, 1));
 
 	PhysicsObject capsule(create_geometry::capsule(1.0f, 1.0f), PhysicsObject::DYNAMIC, true);

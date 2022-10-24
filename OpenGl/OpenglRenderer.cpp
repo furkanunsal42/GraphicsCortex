@@ -4,15 +4,50 @@
 
 #include <PxPhysicsAPI.h>
 
+void vehicle_control(GLFWwindow* window, physx::PxVehicleDrive4WRawInputData& vehicle_controller, physx::PxVehicleDrive4W* vehicle) {
+	vehicle_controller.setDigitalAccel(false);
+	vehicle_controller.setDigitalBrake(false);
+	vehicle_controller.setDigitalHandbrake(false);
+	vehicle_controller.setDigitalSteerLeft(false);
+	vehicle_controller.setDigitalSteerRight(false);
+
+	vehicle->mDriveDynData.setUseAutoGears(true);
+
+	if (glfwGetKey(window, GLFW_KEY_W) == 1) {
+		vehicle->mDriveDynData.forceGearChange(snippetvehicle::PxVehicleGearsData::eFIRST);
+		vehicle_controller.setDigitalAccel(true);
+	}
+	if (glfwGetKey(window, GLFW_KEY_S) == 1) {
+		vehicle->mDriveDynData.forceGearChange(snippetvehicle::PxVehicleGearsData::eREVERSE);
+		vehicle_controller.setDigitalAccel(true);
+	}
+	if (glfwGetKey(window, GLFW_KEY_A) == 1) {
+		vehicle_controller.setDigitalSteerLeft(true);
+	}
+	if (glfwGetKey(window, GLFW_KEY_D) == 1) {
+		vehicle_controller.setDigitalSteerRight(true);
+	}
+
+
+	if (glfwGetKey(window, GLFW_KEY_W) == 1 && glfwGetKey(window, GLFW_KEY_S) == 1) {
+		vehicle->mDriveDynData.forceGearChange(snippetvehicle::PxVehicleGearsData::eFIRST);
+		vehicle_controller.setDigitalAccel(false);
+	}
+	if (glfwGetKey(window, GLFW_KEY_A) == 1 && glfwGetKey(window, GLFW_KEY_D) == 1) {
+		vehicle_controller.setDigitalSteerLeft(false);
+		vehicle_controller.setDigitalSteerRight(false);
+	}
+}
+
 int main() {
 	int width = 1920, height = 1080;
-	GLFWwindow* window = frame::create_window(width, height, "My Window", 4, 3, true, false, true);
+	GLFWwindow* window = frame::create_window(width, height, "My Window", 4, 3, true, false, false);
 	Scene scene;
 	Material material;
 	Texture color_texture;
 	Texture specular_map;
 	Texture normal_map;
-	color_texture.queue_image("Images/GoldBlock.png", 4, true);
+	color_texture.queue_image("Images/full_black.png", 4, true);
 	//color_texture.queue_image("Images/Bricks/brickcolor.jpg", 4, true);
 	//specular_map.queue_image("Images/Bricks/brickreflection.jpg", 4, true);
 	//normal_map.queue_image("Images/Bricks/bricknormal.png", 3, true);
@@ -42,16 +77,20 @@ int main() {
 	int n = 1;
 	objects.reserve(n);
 	Graphic g;
-	g.load_model("Models/porsche_chassis.obj");
+	g.load_model("Models/porsche_chassis.obj", false);
+	PhysicsVehicle vehicle;
+	vehicle.compile();
+	PhysicsObject physicsobject(create_geometry::box(1, 1, 1));
+	physicsobject.actor = vehicle.vehicle_actor;
 	for (int i = 0; i < n; i++){
 		objects.push_back(Graphic(material, solid_program));
 		scene.meshes.push_back(&objects[i]);
-		scene.meshes[i]->physics_representation = g.physics_representation;
+		scene.meshes[i]->physics_representation = physicsobject;
 		scene.meshes[i]->vertex_buffer = g.vertex_buffer;
 		scene.meshes[i]->index_buffer = g.index_buffer;
 		scene.meshes[i]->set_uniform_upadte_queue(default_program::solid_default_uniform_queue(scene, *scene.meshes[i]));
 		scene.meshes[i]->remove_uniform_update_queue("use_cube_map_reflection");
-		scene.meshes[i]->add_uniform_update_queue(uniform_update<int>("use_cube_map_reflection", 0));
+		scene.meshes[i]->add_uniform_update_queue(uniform_update<int>("use_cube_map_reflection", 1));
 		scene.meshes[i]->position.x = i * 10;
 	}
 	g.clear_mesh();
@@ -92,32 +131,31 @@ int main() {
 	cube_map.face_texture_filepaths[FRONT] = "Images/CubeMap/Sky/pz.jpg";
 	cube_map.face_texture_filepaths[BACK] = "Images/CubeMap/Sky/nz.jpg";
 	
-	/*
-	cube_map.face_texture_filepaths[RIGHT] = "Images/CubeMap/Street/px.png";
-	cube_map.face_texture_filepaths[LEFT] = "Images/CubeMap/Street/nx.png";
-	cube_map.face_texture_filepaths[TOP] = "Images/CubeMap/Street/py.png";
-	cube_map.face_texture_filepaths[BOTTOM] = "Images/CubeMap/Street/ny.png";
-	cube_map.face_texture_filepaths[FRONT] = "Images/CubeMap/Street/pz.png";
-	cube_map.face_texture_filepaths[BACK] = "Images/CubeMap/Street/nz.png";
-	*/
+	//cube_map.face_texture_filepaths[RIGHT] = "Images/CubeMap/Street/px.png";
+	//cube_map.face_texture_filepaths[LEFT] = "Images/CubeMap/Street/nx.png";
+	//cube_map.face_texture_filepaths[TOP] = "Images/CubeMap/Street/py.png";
+	//cube_map.face_texture_filepaths[BOTTOM] = "Images/CubeMap/Street/ny.png";
+	//cube_map.face_texture_filepaths[FRONT] = "Images/CubeMap/Street/pz.png";
+	//cube_map.face_texture_filepaths[BACK] = "Images/CubeMap/Street/nz.png";
 
 	cube_map.read_queue(3);
 	cube_map.load_queue(true);
 	
 	PhysicsScene physics_scene;
-	//scene.meshes[0]->physics_representation.set_rotation(0.0f, 0.0f, 2.4f);
-	scene.meshes[0]->set_rotation(glm::vec3(0.0f, 0.0f, 2.4f));
+	scene.meshes[0]->set_position(glm::vec3(0.0f, 0.0f, -5.0f));
 	scene.meshes[0]->physics_representation.set_gravity(true);
-	physics_scene.add_actor(scene.meshes[0]->physics_representation);
-	physics_scene.add_actor(PhysicsObject(create_geometry::plane(0, 1, 0, 4)));
-	
+	physics_scene.add_actor(vehicle);
+	PhysicsObject plane(create_geometry::plane(0, 1, 0, 4));
+	plane.make_drivable();
+	physics_scene.add_actor(plane);
 
 	float t = 0;
 	while (!glfwWindowShouldClose(window)){
-
-		physics_scene.simulate_step(1 / 60.0f);
-		scene.meshes[0]->sync_with_physics();
 		
+		scene.meshes[0]->sync_with_physics();
+		vehicle_control(window, vehicle.InputData, vehicle.vehicle_drive);
+		physics_scene.simulate_step(1 / 60.0f);
+
 		frame_buffer.bind();
 		
 		glfwPollEvents();
@@ -126,7 +164,7 @@ int main() {
 		
 		double frame_time = frame::get_interval_ms();
 		scene.camera->frame_time_ms = frame_time;
-		scene.camera->handle_movements(window);
+		//scene.camera->handle_movements(window);
 
 		cube_map.draw();
 
