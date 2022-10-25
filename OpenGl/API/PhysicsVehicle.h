@@ -1,5 +1,6 @@
 #pragma once
 #include <PxPhysicsAPI.h>
+#include <GLFW/glfw3.h>
 
 #include "SnippetVehicleSceneQuery.h"
 
@@ -107,7 +108,10 @@ public:
 	void set_chasis_mesh(physx::PxConvexMeshGeometry convex_mesh_geometry);
 
 	void set_wheel_layout(float x_seperation, float y_displacement, float z_seperation, float z_displacement);
-private:
+
+	void vehicle_control(GLFWwindow* window);
+	
+	private:
 	void _initialize_box_chassis_mesh();
 	void _calculate_default_wheel_offsets();
 	void _create_actor();

@@ -433,3 +433,45 @@ void PhysicsVehicle::set_wheel_layout(float x_seperation, float y_displacement, 
 	wheelOffsets[snippetvehicle::PxVehicleDrive4WWheelOrder::eFRONT_LEFT] = physx::PxVec3((-x_seperation + wheelWidth) * 0.5f, -((chassisDims.y + y_displacement)/ 2 + wheelRadius), z_seperation / 2 - wheelRadius + z_displacement);
 	wheelOffsets[snippetvehicle::PxVehicleDrive4WWheelOrder::eFRONT_RIGHT] = physx::PxVec3((+x_seperation - wheelWidth) * 0.5f, -((chassisDims.y + y_displacement)/ 2 + wheelRadius), z_seperation / 2 - wheelRadius + z_displacement);
 }
+
+void PhysicsVehicle::vehicle_control(GLFWwindow* window) {
+	InputData.setDigitalAccel(false);
+	InputData.setDigitalBrake(false);
+	InputData.setDigitalHandbrake(false);
+	InputData.setDigitalSteerLeft(false);
+	InputData.setDigitalSteerRight(false);
+
+	vehicle_drive->mDriveDynData.setUseAutoGears(true);
+
+	if (glfwGetKey(window, GLFW_KEY_W) == 1) {
+		vehicle_drive->mDriveDynData.forceGearChange(snippetvehicle::PxVehicleGearsData::eFIRST);
+		if (vehicle_drive->computeForwardSpeed() < -0.2)
+			InputData.setDigitalBrake(true);
+		InputData.setDigitalAccel(true);
+	}
+	if (glfwGetKey(window, GLFW_KEY_S) == 1) {
+		if (vehicle_drive->computeForwardSpeed() > 0.2)
+			InputData.setDigitalBrake(true);
+		vehicle_drive->mDriveDynData.forceGearChange(snippetvehicle::PxVehicleGearsData::eREVERSE);
+		InputData.setDigitalAccel(true);
+	}
+	if (glfwGetKey(window, GLFW_KEY_A) == 1) {
+		InputData.setDigitalSteerLeft(true);
+	}
+	if (glfwGetKey(window, GLFW_KEY_D) == 1) {
+		InputData.setDigitalSteerRight(true);
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_SPACE) == 1) {
+		InputData.setDigitalHandbrake(true);
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_W) == 1 && glfwGetKey(window, GLFW_KEY_S) == 1) {
+		vehicle_drive->mDriveDynData.forceGearChange(snippetvehicle::PxVehicleGearsData::eFIRST);
+		InputData.setDigitalAccel(false);
+	}
+	if (glfwGetKey(window, GLFW_KEY_A) == 1 && glfwGetKey(window, GLFW_KEY_D) == 1) {
+		InputData.setDigitalSteerLeft(false);
+		InputData.setDigitalSteerRight(false);
+	}
+}

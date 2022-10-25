@@ -4,41 +4,6 @@
 
 #include <PxPhysicsAPI.h>
 
-void vehicle_control(GLFWwindow* window, physx::PxVehicleDrive4WRawInputData& vehicle_controller, physx::PxVehicleDrive4W* vehicle) {
-	vehicle_controller.setDigitalAccel(false);
-	vehicle_controller.setDigitalBrake(false);
-	vehicle_controller.setDigitalHandbrake(false);
-	vehicle_controller.setDigitalSteerLeft(false);
-	vehicle_controller.setDigitalSteerRight(false);
-
-	vehicle->mDriveDynData.setUseAutoGears(true);
-
-	if (glfwGetKey(window, GLFW_KEY_W) == 1) {
-		vehicle->mDriveDynData.forceGearChange(snippetvehicle::PxVehicleGearsData::eFIRST);
-		vehicle_controller.setDigitalAccel(true);
-	}
-	if (glfwGetKey(window, GLFW_KEY_S) == 1) {
-		vehicle->mDriveDynData.forceGearChange(snippetvehicle::PxVehicleGearsData::eREVERSE);
-		vehicle_controller.setDigitalAccel(true);
-	}
-	if (glfwGetKey(window, GLFW_KEY_A) == 1) {
-		vehicle_controller.setDigitalSteerLeft(true);
-	}
-	if (glfwGetKey(window, GLFW_KEY_D) == 1) {
-		vehicle_controller.setDigitalSteerRight(true);
-	}
-
-
-	if (glfwGetKey(window, GLFW_KEY_W) == 1 && glfwGetKey(window, GLFW_KEY_S) == 1) {
-		vehicle->mDriveDynData.forceGearChange(snippetvehicle::PxVehicleGearsData::eFIRST);
-		vehicle_controller.setDigitalAccel(false);
-	}
-	if (glfwGetKey(window, GLFW_KEY_A) == 1 && glfwGetKey(window, GLFW_KEY_D) == 1) {
-		vehicle_controller.setDigitalSteerLeft(false);
-		vehicle_controller.setDigitalSteerRight(false);
-	}
-}
-
 int main() {
 	int width = 1920, height = 1080;
 	GLFWwindow* window = frame::create_window(width, height, "My Window", 4, 0, true, false, false);
@@ -82,6 +47,10 @@ int main() {
 	vehicle.compile();
 	PhysicsObject physicsobject(create_geometry::box(1, 1, 1));
 	physicsobject.actor = vehicle.vehicle_actor;
+	
+	float a = vehicle.vehicle_drive->mWheelsDynData.getWheelRotationAngle(0);
+	physx::PxVec3 b = vehicle.vehicle_drive->mWheelsSimData.getWheelCentreOffset(0);
+
 	for (int i = 0; i < n; i++){
 		objects.push_back(Graphic(material, solid_program));
 		scene.meshes.push_back(&objects[i]);
@@ -158,7 +127,7 @@ int main() {
 		physics_scene.simulation_step_start(frame_time / 1000.0f);
 
 		scene.meshes[0]->sync_with_physics();
-		vehicle_control(window, vehicle.InputData, vehicle.vehicle_drive);
+		vehicle.vehicle_control(window);
 
 		frame_buffer.bind();
 		
