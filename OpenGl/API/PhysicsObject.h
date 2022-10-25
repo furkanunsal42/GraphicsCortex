@@ -51,7 +51,7 @@ public:
 	void remove_link(PhysicsLink* link);
 
 	physx::PxVec3 get_position();
-	physx::PxVec3 get_rotation();
+	physx::PxQuat get_rotation();
 
 	void set_gravity(bool enable_gravity);
 

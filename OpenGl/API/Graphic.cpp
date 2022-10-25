@@ -68,9 +68,7 @@ void Graphic::draw(bool show_warnings, bool _ignore_default_uniforms) {
 void Graphic::update_matrix() {
 	if (_last_updated_position == position && _last_updated_rotation == rotation)
 		return;
-	model_matrix = glm::rotate(glm::mat4(1.0f), glm::radians(rotation.x * 180 / physx::PxPi), glm::vec3(1.0f, 0.0f, 0.0f));
-	model_matrix = glm::rotate(model_matrix, glm::radians(rotation.y * 180 / physx::PxPi), glm::vec3(0.0f, 1.0f, 0.0f));
-	model_matrix = glm::rotate(model_matrix, glm::radians(rotation.z * 180 / physx::PxPi), glm::vec3(0.0f, 0.0f, 1.0f));
+	model_matrix = glm::mat4_cast(rotation_quat);
 	model_matrix = glm::translate(model_matrix, (glm::vec3)(glm::vec4(position.x, position.y, position.z, 0) * model_matrix));
 	_last_updated_position = position;
 	_last_updated_rotation = rotation;
@@ -153,9 +151,8 @@ void Graphic::clear_mesh() {
 }
 
 void Graphic::sync_with_physics() {
-	rotation.x = physics_representation.get_rotation().x;
-	rotation.y = physics_representation.get_rotation().y;
-	rotation.z = physics_representation.get_rotation().z;
+	physx::PxQuat physx_quat = physics_representation.get_rotation();
+	rotation_quat = glm::quat(physx_quat.w, physx_quat.x, physx_quat.y, physx_quat.z);
 	position.x = physics_representation.get_position().x;
 	position.y = physics_representation.get_position().y;
 	position.z = physics_representation.get_position().z;

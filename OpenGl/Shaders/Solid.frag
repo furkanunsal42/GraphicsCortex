@@ -47,6 +47,8 @@ uniform int use_specular_map = 0;
 uniform int use_normal_map = 0;
 uniform int use_cube_map_reflection = 0;
 
+uniform float cube_map_reflection_strength = 0.85;
+
 // light flags
 uniform int a_lights_count;
 uniform int d_lights_count;
@@ -190,7 +192,7 @@ void main(){
 	frag_color = vec4(total_light, 1) * color;
 
 	if(bool(use_cube_map_reflection))
-		frag_color = mix(frag_color, vec4(calculate_cube_map_reflection(frag_space_coord, camera_coords, normalize(normal)),1), 0.85f);
+		frag_color = mix(frag_color, vec4(calculate_cube_map_reflection(frag_space_coord, camera_coords, normalize(normal)),1), cube_map_reflection_strength);
 
 
 	// linearized depth visualization

@@ -41,15 +41,15 @@ void vehicle_control(GLFWwindow* window, physx::PxVehicleDrive4WRawInputData& ve
 
 int main() {
 	int width = 1920, height = 1080;
-	GLFWwindow* window = frame::create_window(width, height, "My Window", 4, 3, true, false, false);
+	GLFWwindow* window = frame::create_window(width, height, "My Window", 4, 2, true, false, false);
 	Scene scene;
 	Material material;
 	Texture color_texture;
 	Texture specular_map;
 	Texture normal_map;
-	color_texture.queue_image("Images/full_black.png", 4, true);
+	color_texture.queue_image("Images/orange.png", 4, true);
 	//color_texture.queue_image("Images/Bricks/brickcolor.jpg", 4, true);
-	//specular_map.queue_image("Images/Bricks/brickreflection.jpg", 4, true);
+	//specular_map.queue_image("Images/full_white.png", 4, true);
 	//normal_map.queue_image("Images/Bricks/bricknormal.png", 3, true);
 	//color_texture.queue_image("Images/StoneTiles/tiles_color.jpg", 4, true);
 	//specular_map.queue_image("Images/StoneTiles/tiles_specular.jpg", 4, true);
@@ -91,6 +91,9 @@ int main() {
 		scene.meshes[i]->set_uniform_upadte_queue(default_program::solid_default_uniform_queue(scene, *scene.meshes[i]));
 		scene.meshes[i]->remove_uniform_update_queue("use_cube_map_reflection");
 		scene.meshes[i]->add_uniform_update_queue(uniform_update<int>("use_cube_map_reflection", 1));
+		scene.meshes[i]->remove_uniform_update_queue("cube_map_reflection_strength");
+		scene.meshes[i]->add_uniform_update_queue(uniform_update<float>("cube_map_reflection_strength", 0.65));
+
 		scene.meshes[i]->position.x = i * 10;
 	}
 	g.clear_mesh();
@@ -116,7 +119,7 @@ int main() {
 	SpotLight::count = 0;
 
 	Program framebuffer_program = default_program::framebuffer_program();
-	FrameBuffer frame_buffer(width, height, 0, true);
+	FrameBuffer frame_buffer(width, height, frame::multisample, false);
 	frame_buffer.program = &framebuffer_program;
 	scene.frame_buffer = &frame_buffer;
 	
@@ -148,13 +151,14 @@ int main() {
 	PhysicsObject plane(create_geometry::plane(0, 1, 0, 4));
 	plane.make_drivable();
 	physics_scene.add_actor(plane);
-
+	
 	float t = 0;
 	while (!glfwWindowShouldClose(window)){
-		
+		double frame_time = frame::get_interval_ms();
+		physics_scene.simulation_step_start(frame_time / 1000.0f);
+
 		scene.meshes[0]->sync_with_physics();
 		vehicle_control(window, vehicle.InputData, vehicle.vehicle_drive);
-		physics_scene.simulate_step(1 / 60.0f);
 
 		frame_buffer.bind();
 		
@@ -162,7 +166,6 @@ int main() {
 		frame::clear_window(0, 0, 0, 1);
 		frame::display_performance(180);
 		
-		double frame_time = frame::get_interval_ms();
 		scene.camera->frame_time_ms = frame_time;
 		//scene.camera->handle_movements(window);
 
@@ -183,6 +186,7 @@ int main() {
 		frame_buffer.render(FrameBuffer::COLOR_TEXTURE);
 
 		glfwSwapBuffers(window);
+		physics_scene.simulation_step_finish();
 	}
 
 	glfwDestroyWindow(window);

@@ -95,27 +95,30 @@ physx::PxVec3 PhysicsObject::get_position() {
 	return actor->getGlobalPose().p;
 }
 
-physx::PxVec3 PhysicsObject::get_rotation() {
-	const physx::PxQuat& quat = actor->getGlobalPose().q;
-	physx::PxVec3 euler;
-	
-	double sinr_cosp = 2 * (quat.w * quat.x + quat.y * quat.z);
-	double cosr_cosp = 1 - 2 * (quat.x * quat.x + quat.y * quat.y);
-	euler.x = std::atan2(sinr_cosp, cosr_cosp);
-	
-	double sinp = 2 * (quat.w * quat.y - quat.z * quat.x);
-	if (std::abs(sinp) >= 1)
-		euler.y = std::copysign(physx::PxPi / 2, sinp); // use 90 degrees if out of range
-	else
-		euler.y = std::asin(sinp);
-	
-	std::cout << std::abs(sinp) << std::endl;
-	
-	double siny_cosp = 2 * (quat.w * quat.z + quat.x * quat.y);
-	double cosy_cosp = 1 - 2 * (quat.y * quat.y + quat.z * quat.z);
-	euler.z = std::atan2(siny_cosp, cosy_cosp);
-	
-	return euler;
+physx::PxQuat PhysicsObject::get_rotation() {
+	const physx::PxQuat quat = actor->getGlobalPose().q;
+	return quat;
+
+	// legacy euler angle rotations
+	// physx::PxVec3 euler;
+	// 
+	// double sinr_cosp = 2 * (quat.w * quat.x + quat.y * quat.z);
+	// double cosr_cosp = 1 - 2 * (quat.x * quat.x + quat.y * quat.y);
+	// euler.x = std::atan2(sinr_cosp, cosr_cosp);
+	// 
+	// double sinp = 2 * (quat.w * quat.y - quat.z * quat.x);
+	// if (std::abs(sinp) >= 1)
+	// 	euler.y = std::copysign(physx::PxPi / 2, sinp); // use 90 degrees if out of range
+	// else
+	// 	euler.y = std::asin(sinp);
+	// 
+	// //std::cout << std::abs(sinp) << std::endl;
+	// 
+	// double siny_cosp = 2 * (quat.w * quat.z + quat.x * quat.y);
+	// double cosy_cosp = 1 - 2 * (quat.y * quat.y + quat.z * quat.z);
+	// euler.z = std::atan2(siny_cosp, cosy_cosp);
+	// 
+	// return euler;
 }
 
 void PhysicsObject::set_gravity(bool enable_gravity) {
