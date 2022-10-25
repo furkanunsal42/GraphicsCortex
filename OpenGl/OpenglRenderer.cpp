@@ -41,7 +41,7 @@ void vehicle_control(GLFWwindow* window, physx::PxVehicleDrive4WRawInputData& ve
 
 int main() {
 	int width = 1920, height = 1080;
-	GLFWwindow* window = frame::create_window(width, height, "My Window", 4, 2, true, false, false);
+	GLFWwindow* window = frame::create_window(width, height, "My Window", 4, 0, true, false, false);
 	Scene scene;
 	Material material;
 	Texture color_texture;
