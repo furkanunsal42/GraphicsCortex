@@ -104,6 +104,29 @@ public:
 		_uniform_update_queue.update_uniform_ids();
 	}
 
+	template<typename T>
+	void change_uniform_update_queue(uniform_update<T>& uniform_queue) {
+		remove_uniform_update_queue(uniform_queue.uniform_name);
+		add_uniform_update_queue(uniform_queue);
+	}
+	template<typename T>
+	void change_uniform_update_queue(uniform_update<T>&& uniform_queue) {
+		remove_uniform_update_queue(uniform_queue.uniform_name);
+		add_uniform_update_queue(uniform_queue);
+	}
+
+	template<typename T>
+	void change_uniform_update_queue(dynamic_uniform_update<T>& dynamic_uniform_queue) {
+		remove_uniform_update_queue(dynamic_uniform_queue.uniform_name);
+		add_uniform_update_queue(dynamic_uniform_queue);
+	}
+	template<typename T>
+	void change_uniform_update_queue(dynamic_uniform_update<T>&& dynamic_uniform_queue) {
+		remove_uniform_update_queue(dynamic_uniform_queue.uniform_name);
+		add_uniform_update_queue(dynamic_uniform_queue);
+	}
+
+
 	void update_uniform_queue(bool init);
 };
 

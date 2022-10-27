@@ -46,6 +46,8 @@ int main() {
 	g.material = &material;
 	g.renderer = &solid_program;
 	g.set_uniform_update_queue(default_program::solid_default_uniform_queue(scene, g));
+	g.change_uniform_update_queue(uniform_update<int>("use_cube_map_reflection", 0));
+	g.change_uniform_update_queue(uniform_update<float>("cube_map_reflection_strength", 0.65));
 	PhysicsObject p(create_geometry::box(1, 1, 1));
 	Object object(g, p);
 	scene.meshes.push_back(&object.graphics);
