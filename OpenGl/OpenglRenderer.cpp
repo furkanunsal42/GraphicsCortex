@@ -12,7 +12,7 @@ int main() {
 	Texture color_texture;
 	Texture specular_map;
 	Texture normal_map;
-	color_texture.queue_image("Images/orange.png", 4, true);
+	color_texture.queue_image("Images/GoldBlock.png", 4, true);
 	//color_texture.queue_image("Images/cartextures/911_22_paint_BaseColor.png", 4, true);
 	//specular_map.queue_image("Images/cartextures/911_22_paint_Roughness.png", 4, true);
 	//normal_map.queue_image("Images/cartextures/911_22_paint_Normal.png", 3, true);
@@ -38,14 +38,29 @@ int main() {
 	cam.perspective = true;
 	scene.camera = &cam;
 	
+	//Model m;
+	//m.load_model("Models/porsche_chassis.obj");
+	//for (int i = 0; i < 10; i++) {
+	//	Graphic* g = new Graphic();
+	//	g->model = std::move(m);
+	//	g->material = &material;
+	//	g->renderer = &solid_program;
+	//	g->set_uniform_update_queue(default_program::solid_default_uniform_queue(scene, *g));
+	//	g->change_uniform_update_queue(uniform_update<int>("use_cube_map_reflection", 1));
+	//	g->change_uniform_update_queue(uniform_update<float>("cube_map_reflection_strength", 1));
+	//	g->set_position(glm::vec3(i * 3, 0, 0));
+	//	scene.add_graphic(*g);
+	//}
+	
 	Graphic g;
-	g.load_model("Models/porsche_chassis.obj");
+	g.load_model("Models/test.obj");
 	g.material = &material;
 	g.renderer = &solid_program;
 	g.set_uniform_update_queue(default_program::solid_default_uniform_queue(scene, g));
-	g.change_uniform_update_queue(uniform_update<int>("use_cube_map_reflection", 0));
-	g.change_uniform_update_queue(uniform_update<float>("cube_map_reflection_strength", 0.65));
-	
+	g.change_uniform_update_queue(uniform_update<int>("use_cube_map_reflection", 1));
+	g.change_uniform_update_queue(uniform_update<float>("cube_map_reflection_strength", 0.75));
+	scene.add_graphic(g);
+
 	std::vector<physx::PxVec3> partial_data = g.model.get_partial_data<physx::PxVec3>("11100000");
 	PhysicsObject p(create_geometry::convex_hull(partial_data));
 	p.set_gravity(true);
@@ -53,13 +68,17 @@ int main() {
 	Object object(g, p);
 	object.set_position(glm::vec3(0.0f, 0.0f, -5.0f));
 
-	scene.add_object(object);
+	//scene.add_object(object);
 
-	//PhysicsVehicle vehicle;
-	//vehicle.compile();
-	//PhysicsObject physicsobject(create_geometry::box(1, 1, 1));
-	//physicsobject.actor = vehicle.vehicle_actor;
+	PhysicsVehicle vehicle;
+	vehicle.compile();
+	PhysicsObject physicsobject(create_geometry::box(1, 1, 1));
+	physicsobject.actor = vehicle.vehicle_actor;
 	
+	
+
+	scene.add_physics(physicsobject);
+
 	//float a = vehicle.vehicle_drive->mWheelsDynData.getWheelRotationAngle(0);
 	//physx::PxVec3 b = vehicle.vehicle_drive->mWheelsSimData.getWheelCentreOffset(0);
 
@@ -113,7 +132,7 @@ int main() {
 		double frame_time = frame::get_interval_ms();
 		PhysicsScene::get().simulation_step_start(frame_time / 1000.0f);
 
-		object.sync_with_physics();
+		//object.sync_with_physics();
 		//vehicle.vehicle_control(window);
 
 		frame_buffer.bind();
@@ -123,7 +142,7 @@ int main() {
 		frame::display_performance(180);
 		
 		scene.camera->frame_time_ms = frame_time;
-		//scene.camera->handle_movements(window);
+		scene.camera->handle_movements(window);
 
 		cube_map.draw();
 
