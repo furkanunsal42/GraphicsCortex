@@ -46,7 +46,8 @@ int main() {
 	g.change_uniform_update_queue(uniform_update<int>("use_cube_map_reflection", 0));
 	g.change_uniform_update_queue(uniform_update<float>("cube_map_reflection_strength", 0.65));
 	
-	PhysicsObject p(create_geometry::box(1, 1, 1));
+	std::vector<physx::PxVec3> partial_data = g.model.get_partial_data<physx::PxVec3>("11100000");
+	PhysicsObject p(create_geometry::convex_hull(partial_data));
 	p.set_gravity(true);
 	
 	Object object(g, p);

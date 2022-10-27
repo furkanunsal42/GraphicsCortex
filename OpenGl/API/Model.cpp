@@ -78,3 +78,46 @@ void Model::load_model(const std::string& filepath) {
 
 	index_buffer.initialize_buffer(index_data, 3);
 }
+
+/*
+std::vector<float> Model::get_partial_data(const std::string& mask) {
+	unsigned int total_entry_per_vertex = 0;
+	for (unsigned int structure_size : vertex_buffer.vertex_attribute_structure) {
+		total_entry_per_vertex += structure_size;
+	}
+	
+	if (total_entry_per_vertex < 1) {
+		std::cout << "[Error] Model::get_partial_data(const std::string& mask) was called but vertex structure was empty" << std::endl;
+		ASSERT(false);
+	}
+
+	if (mask.size() > total_entry_per_vertex ) {
+		std::cout << "[Error] Model::get_partial_data(const std::string& mask) was called but mask is bigger than structure" << std::endl;
+		ASSERT(false);
+	}
+
+	std::vector<unsigned int> selected_structure;
+	
+	for (unsigned int i = 0; i < mask.size(); i++) {
+		if (mask[i] == '1') {
+			selected_structure.push_back(i);
+		}
+		else if (mask[i] != '0') {
+			std::cout << "[Error] Model::get_partial_data(const std::string& mask) was called but mask contain non-binary characters. They are assumed to be 0" << std::endl;
+		}
+	}
+
+	unsigned int partial_data_size = vertex_data.size() / total_entry_per_vertex * selected_structure.size();
+
+	std::vector<float> partial_data;
+	partial_data.reserve(partial_data_size);
+
+	for (unsigned int i = 0; i < vertex_data.size(); i += total_entry_per_vertex) {
+		for (const unsigned int& selected_index : selected_structure) {
+			partial_data.push_back(vertex_data[i + selected_index]);
+		}
+	}
+
+	return partial_data;
+}
+*/
