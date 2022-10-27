@@ -26,8 +26,8 @@ namespace default_geometry {
 		IndexBuffer index_buffer(triangles, 3);
 
 		Graphic g;
-		g.vertex_buffer = array_buffer;
-		g.index_buffer = index_buffer;
+		g.model.vertex_buffer = array_buffer;
+		g.model.index_buffer = index_buffer;
 		return g;
 	}
 
@@ -90,7 +90,7 @@ namespace default_geometry {
 		};
 		IndexBuffer index_buffer(triangles, 3);
 
-		return Graphic(array_buffer, index_buffer, material, renderer);
+		return Graphic(Model(array_buffer, index_buffer), material, renderer);
 	}
 
 	Graphic cube(glm::vec3 scale) {
@@ -144,8 +144,8 @@ namespace default_geometry {
 		IndexBuffer index_buffer(triangles, 3);
 
 		Graphic g;
-		g.vertex_buffer = array_buffer;
-		g.index_buffer = index_buffer;
+		g.model.vertex_buffer = array_buffer;
+		g.model.index_buffer = index_buffer;
 		return g;
 	}
 
@@ -236,8 +236,8 @@ namespace default_geometry {
 
 		};
 		IndexBuffer index_buffer(triangles, 3);
-
-		return Graphic(array_buffer, index_buffer, material, renderer);
+		
+		return Graphic(Model(array_buffer, index_buffer), material, renderer);
 	}
 }
 

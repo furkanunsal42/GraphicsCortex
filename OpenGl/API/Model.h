@@ -6,14 +6,18 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-
 class Model {
-
+public:
 	static Assimp::Importer asset_loader;
-	std::vector<float> data;
+	std::vector<float> vertex_data;
+	std::vector<unsigned int> index_data;
+	
+	ArrayBuffer vertex_buffer;
+	IndexBuffer index_buffer;
 
-	ArrayBuffer verticies;
-	IndexBuffer indicies;
+	Model();
+	Model(ArrayBuffer& verticies, IndexBuffer& indirices);
+	Model(ArrayBuffer&& verticies, IndexBuffer&& indicies);
 
 	void load_model(const std::string& file_path);
 	

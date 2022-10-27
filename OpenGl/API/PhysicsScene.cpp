@@ -1,5 +1,10 @@
 #include "PhysicsScene.h"
 
+PhysicsScene& PhysicsScene::get() {
+	static PhysicsScene instance;
+	return instance;
+}
+
 PhysicsScene::PhysicsScene() {}
 
 void PhysicsScene::add_actor(PhysicsObject& object) {
@@ -12,7 +17,6 @@ void PhysicsScene::add_actor(PhysicsObject&& object) {
 	context.physics_scene->addActor(*object.actor);
 	objects.push_back(object);
 }
-
 
 void PhysicsScene::add_actor(PhysicsVehicle& vehicle) {
 	auto context = PhysxContext::get();

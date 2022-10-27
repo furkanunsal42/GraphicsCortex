@@ -10,6 +10,17 @@
 #include "Debuger.h"
 #include "Frame.h"
 
+#include "PhysicsScene.h"
+
+void Scene::add_graphic(Graphic& graphic) {
+	meshes.push_back(&graphic);
+}
+
+void Scene::add_object(Object& object) {
+	add_graphic(object.graphics);
+	PhysicsScene::get().add_actor(object.physics);
+}
+
 bool once = true;
 void Scene::render(GLFWwindow* window) {
 

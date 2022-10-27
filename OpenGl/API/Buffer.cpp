@@ -10,6 +10,12 @@ unsigned int ArrayBuffer::current_binded_buffer = 0;
 ArrayBuffer::ArrayBuffer()
 	: id(0), data_count(0) {};
 
+ArrayBuffer::ArrayBuffer(const ArrayBuffer& a){
+	id = a.id;
+	data_count = a.data_count;
+	vertex_attribute_structure = a.vertex_attribute_structure;
+};
+
 ArrayBuffer::ArrayBuffer(float verticies[], int data_count)
 	: data_count(data_count)
 {
@@ -73,6 +79,12 @@ void ArrayBuffer::unbind() {
 unsigned int IndexBuffer::current_binded_buffer = 0;
 
 IndexBuffer::IndexBuffer() : id(0), vertex_dim(2), data_count(0) {}
+
+IndexBuffer::IndexBuffer(const IndexBuffer& i) {
+	id = i.id;
+	data_count = i.data_count;
+	vertex_dim = i.vertex_dim;
+}
 
 IndexBuffer::IndexBuffer(unsigned int verticies[], int vertex_dim, int data_count)
 	: vertex_dim(vertex_dim), data_count(data_count)

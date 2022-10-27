@@ -6,8 +6,8 @@
 
 class PhysicsScene {
 public:
-
-	PhysicsScene();
+	
+	static PhysicsScene& get();
 
 	std::vector<std::reference_wrapper<PhysicsObject>> objects;
 	std::vector<std::reference_wrapper<PhysicsVehicle>> vehicles;
@@ -24,6 +24,9 @@ public:
 	void simulation_step_finish();
 
 private:
+	
+	PhysicsScene();
+
 	long double _leftover_time = 0;
 	bool _simulation_active = false;
 

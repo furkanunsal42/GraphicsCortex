@@ -14,6 +14,7 @@ public:
 	int data_count;
 	std::vector<unsigned int> vertex_attribute_structure;
 	ArrayBuffer();
+	ArrayBuffer(const ArrayBuffer& a);
 	ArrayBuffer(float verticies[], int data_count);
 	ArrayBuffer(std::vector<float> verticies);
 	void push_attribute(unsigned int count);
@@ -31,7 +32,7 @@ public:
 	int vertex_dim;
 	int data_count;
 	IndexBuffer();
-
+	IndexBuffer(const IndexBuffer& i);
 	IndexBuffer(unsigned int verticies[], int vertex_dim, int data_count);
 	IndexBuffer(std::vector<unsigned int> verticies, int vertex_dim);
 	void initialize_buffer(std::vector<unsigned int>& verticies, int vertex_dim);
