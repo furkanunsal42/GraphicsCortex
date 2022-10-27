@@ -6,14 +6,15 @@
 #include <iostream>
 
 Graphic::Graphic() :
-	model_matrix(glm::mat4(1.0f)), vertex_buffer(ArrayBuffer()), index_buffer(IndexBuffer()), physics_representation(PhysicsObject(create_geometry::box(0.5f, 0.5f, 0.5f))) {}
+	model_matrix(glm::mat4(1.0f)), vertex_buffer(ArrayBuffer()), index_buffer(IndexBuffer())/*, physics_representation(PhysicsObject(create_geometry::box(0.5f, 0.5f, 0.5f))) */ {}
 
 Graphic::Graphic(const ArrayBuffer& buffer, const IndexBuffer& indicies, Material& mat, Program& program) : 
-	model_matrix(glm::mat4(1.0f)), vertex_buffer(buffer), index_buffer(indicies), material(&mat), renderer(&program), physics_representation(PhysicsObject(create_geometry::box(0.5f, 0.5f, 0.5f))) {}
+	model_matrix(glm::mat4(1.0f)), vertex_buffer(buffer), index_buffer(indicies), material(&mat), renderer(&program)/*, physics_representation(PhysicsObject(create_geometry::box(0.5f, 0.5f, 0.5f))) */ {}
 
-Graphic::Graphic(const std::vector<float>& verticies, int data_dim = 2) :
-	physics_representation(PhysicsObject(create_geometry::box(0.5f, 0.5f, 0.5f)))
-{	// legacy
+Graphic::Graphic(const std::vector<float>& verticies, int data_dim = 2)/* :
+	physics_representation(PhysicsObject(create_geometry::box(0.5f, 0.5f, 0.5f))) */
+{	
+	// legacy
 	std::vector<unsigned int> triangles;
 	for (unsigned int i = 1; i < verticies.size() / data_dim - 1; i++) {
 
@@ -36,7 +37,7 @@ Graphic::Graphic(const std::vector<float>& verticies, int data_dim = 2) :
 }
 
 Graphic::Graphic(Material& material, Program& renderer):
-	renderer(&renderer), material(&material), model_matrix(glm::mat4(1.0f)), physics_representation(PhysicsObject(create_geometry::box(0.5f, 0.5f, 0.5f))) {}
+	renderer(&renderer), material(&material), model_matrix(glm::mat4(1.0f))/*, physics_representation(PhysicsObject(create_geometry::box(0.5f, 0.5f, 0.5f))) */ {}
 
 void Graphic::draw(bool show_warnings, bool _ignore_default_uniforms) {
 	bool material_exist = true;
@@ -140,22 +141,15 @@ void Graphic::load_model(const std::string& file_path, bool use_for_physics) {
 
 	index_buffer.initialize_buffer(indicies, 3);
 
-	if (use_for_physics) {
-		physics_representation = PhysicsObject(create_geometry::convex_hull(verticies_physics, 30));
-	}
+	// graphics no longer controls it's physics representation, see Object class instead
+	//if (use_for_physics) {
+	//	physics_representation = PhysicsObject(create_geometry::convex_hull(verticies_physics, 30));
+	//}
 }
 
 void Graphic::clear_mesh() {
 	vertex_buffer = ArrayBuffer();
 	index_buffer = IndexBuffer();
-}
-
-void Graphic::sync_with_physics() {
-	physx::PxQuat physx_quat = physics_representation.get_rotation();
-	rotation_quat = glm::quat(physx_quat.w, physx_quat.x, physx_quat.y, physx_quat.z);
-	position.x = physics_representation.get_position().x;
-	position.y = physics_representation.get_position().y;
-	position.z = physics_representation.get_position().z;
 }
 
 glm::vec3 Graphic::get_position() {
@@ -167,12 +161,12 @@ glm::vec3 Graphic::get_rotation() {
 
 void Graphic::set_position(glm::vec3 position) {
 	this->position = position;
-	physics_representation.set_position(position);
+	//physics_representation.set_position(position);
 }
 
 void Graphic::set_rotation(glm::vec3 rotation) {
 	this->rotation = rotation;
-	physics_representation.set_rotation(rotation);
+	//physics_representation.set_rotation(rotation);
 }
 
 void Graphic::update_uniform_queue(bool init) {

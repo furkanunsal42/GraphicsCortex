@@ -321,32 +321,6 @@ namespace default_program {
 		return queue;
 	}
 
-	/*
-	DEFAULT UNIFORM UPDATE QUEUE
-
-		program->update_uniform(default_program::SOLID_UNIFORM_SHORTCUTS::MODEL, mesh->model_matrix);
-		program->update_uniform(default_program::SOLID_UNIFORM_SHORTCUTS::CUBE_MAP, 13);
-		program->update_uniform(default_program::SOLID_UNIFORM_SHORTCUTS::USE_CUBE_MAP_REFLECTION, 1);
-
-		if (init) {
-			if (cam != nullptr) {
-				program->update_uniform(default_program::SOLID_UNIFORM_SHORTCUTS::VIEW, cam->view_matrix);
-				program->update_uniform(default_program::SOLID_UNIFORM_SHORTCUTS::PROJECTION, cam->projection_matrix);
-				cam->update_uniforms(*(program));
-			}
-		}
-
-		if ((mesh->renderer != nullptr) && (mesh->material != nullptr)) {
-
-			program->update_uniform(default_program::SOLID_UNIFORM_SHORTCUTS::USE_COLOR_MAP, (int)(mesh->material->color_map != nullptr));
-			program->update_uniform(default_program::SOLID_UNIFORM_SHORTCUTS::USE_SPECULAR_MAP, (int)(mesh->material->specular_map != nullptr));
-			program->update_uniform(default_program::SOLID_UNIFORM_SHORTCUTS::USE_NORMAL_MAP, (int)(mesh->material->normal_map != nullptr));
-			
-			program->update_uniform(default_program::SOLID_UNIFORM_SHORTCUTS::COLOR_MAP_SLOT, mesh->material->color_map_slot);
-			program->update_uniform(default_program::SOLID_UNIFORM_SHORTCUTS::SPECULAR_MAP_SLOT, mesh->material->specular_map_slot);
-			program->update_uniform(default_program::SOLID_UNIFORM_SHORTCUTS::NORMAL_MAP_SLOT, mesh->material->normal_map_slot);
-	*/
-
 	Program flatcolor_program() {
 		Shader default_shader("Shaders/FlatColor.vert", "Shaders/FlatColor.frag");
 		Program flatcolor(default_shader.vertex_shader, default_shader.fragment_shader);

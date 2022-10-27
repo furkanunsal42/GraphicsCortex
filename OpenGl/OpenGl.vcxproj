@@ -189,6 +189,7 @@
     <ClCompile Include="API\Texture.cpp" />
     <ClCompile Include="API\Buffer.cpp" />
     <ClCompile Include="API\UniformQueue.cpp" />
+    <ClCompile Include="API\Object.cpp" />
     <ClCompile Include="Dependencies\stb_image\stb_image.cpp" />
     <ClCompile Include="API\Frame.cpp" />
     <ClCompile Include="API\Graphic.cpp" />
@@ -243,6 +244,7 @@
     <ClInclude Include="API\Scene.h" />
     <ClInclude Include="API\Texture.h" />
     <ClInclude Include="API\UnifromQueue.h" />
+    <ClInclude Include="API\Object.h" />
     <ClInclude Include="Dependencies\assimp\include\assimp\aabb.h" />
     <ClInclude Include="Dependencies\assimp\include\assimp\ai_assert.h" />
     <ClInclude Include="Dependencies\assimp\include\assimp\anim.h" />

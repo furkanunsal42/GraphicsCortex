@@ -6,24 +6,24 @@
 
 int main() {
 	int width = 1920, height = 1080;
-	GLFWwindow* window = frame::create_window(width, height, "My Window", 4, 0, true, false, false);
+	GLFWwindow* window = frame::create_window(width, height, "My Window", 16, 0, true, false, false);
 	Scene scene;
 	Material material;
 	Texture color_texture;
 	Texture specular_map;
 	Texture normal_map;
-	color_texture.queue_image("Images/orange.png", 4, true);
-	//color_texture.queue_image("Images/Bricks/brickcolor.jpg", 4, true);
-	//specular_map.queue_image("Images/full_white.png", 4, true);
-	//normal_map.queue_image("Images/Bricks/bricknormal.png", 3, true);
+	color_texture.queue_image("Images/cartextures/930_lights.png", 4, true);
+	//color_texture.queue_image("Images/cartextures/911_22_paint_BaseColor.png", 4, true);
+	//specular_map.queue_image("Images/cartextures/911_22_paint_Roughness.png", 4, true);
+	//normal_map.queue_image("Images/cartextures/911_22_paint_Normal.png", 3, true);
 	//color_texture.queue_image("Images/StoneTiles/tiles_color.jpg", 4, true);
 	//specular_map.queue_image("Images/StoneTiles/tiles_specular.jpg", 4, true);
 	//normal_map.queue_image("Images/StoneTiles/tiles_normal.jpg", 3, true);
 	
 	bool compression = true;
 	color_texture.compress_image = compression;
-	//specular_map.compress_image = compression;
-	//normal_map.compress_image = compression;
+	specular_map.compress_image = compression;
+	normal_map.compress_image = compression;
 
 	material.color_map = &color_texture;
 	//material.specular_map = &specular_map;
@@ -43,29 +43,38 @@ int main() {
 	objects.reserve(n);
 	Graphic g;
 	g.load_model("Models/porsche_chassis.obj", false);
-	PhysicsVehicle vehicle;
-	vehicle.compile();
-	PhysicsObject physicsobject(create_geometry::box(1, 1, 1));
-	physicsobject.actor = vehicle.vehicle_actor;
+	g.material = &material;
+	g.renderer = &solid_program;
+	g.set_uniform_update_queue(default_program::solid_default_uniform_queue(scene, g));
+	PhysicsObject p(create_geometry::box(1, 1, 1));
+	Object object(g, p);
+	scene.meshes.push_back(&object.graphics);
+
+
+	//PhysicsVehicle vehicle;
+	//vehicle.compile();
+	//PhysicsObject physicsobject(create_geometry::box(1, 1, 1));
+	//physicsobject.actor = vehicle.vehicle_actor;
 	
-	float a = vehicle.vehicle_drive->mWheelsDynData.getWheelRotationAngle(0);
-	physx::PxVec3 b = vehicle.vehicle_drive->mWheelsSimData.getWheelCentreOffset(0);
 
-	for (int i = 0; i < n; i++){
-		objects.push_back(Graphic(material, solid_program));
-		scene.meshes.push_back(&objects[i]);
-		scene.meshes[i]->physics_representation = physicsobject;
-		scene.meshes[i]->vertex_buffer = g.vertex_buffer;
-		scene.meshes[i]->index_buffer = g.index_buffer;
-		scene.meshes[i]->set_uniform_upadte_queue(default_program::solid_default_uniform_queue(scene, *scene.meshes[i]));
-		scene.meshes[i]->remove_uniform_update_queue("use_cube_map_reflection");
-		scene.meshes[i]->add_uniform_update_queue(uniform_update<int>("use_cube_map_reflection", 1));
-		scene.meshes[i]->remove_uniform_update_queue("cube_map_reflection_strength");
-		scene.meshes[i]->add_uniform_update_queue(uniform_update<float>("cube_map_reflection_strength", 0.65));
+	//float a = vehicle.vehicle_drive->mWheelsDynData.getWheelRotationAngle(0);
+	//physx::PxVec3 b = vehicle.vehicle_drive->mWheelsSimData.getWheelCentreOffset(0);
 
-		scene.meshes[i]->position.x = i * 10;
-	}
-	g.clear_mesh();
+	//for (int i = 0; i < n; i++){
+	//	objects.push_back(Graphic(material, solid_program));
+	//	scene.meshes.push_back(&objects[i]);
+	//	scene.meshes[i]->physics_representation = physicsobject;
+	//	scene.meshes[i]->vertex_buffer = g.vertex_buffer;
+	//	scene.meshes[i]->index_buffer = g.index_buffer;
+	//	scene.meshes[i]->set_uniform_upadte_queue(default_program::solid_default_uniform_queue(scene, *scene.meshes[i]));
+	//	scene.meshes[i]->remove_uniform_update_queue("use_cube_map_reflection");
+	//	scene.meshes[i]->add_uniform_update_queue(uniform_update<int>("use_cube_map_reflection", 0));
+	//	scene.meshes[i]->remove_uniform_update_queue("cube_map_reflection_strength");
+	//	scene.meshes[i]->add_uniform_update_queue(uniform_update<float>("cube_map_reflection_strength", 0.65));
+	//
+	//	scene.meshes[i]->position.x = i * 10;
+	//}
+	//g.clear_mesh();
 
 	AmbiantLight ambiant(glm::vec3(0.1f, 0.1f, 0.1f), solid_program);
 	DirectionalLight directional(glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f), solid_program);
@@ -114,9 +123,10 @@ int main() {
 	cube_map.load_queue(true);
 	
 	PhysicsScene physics_scene;
-	scene.meshes[0]->set_position(glm::vec3(0.0f, 0.0f, -5.0f));
-	scene.meshes[0]->physics_representation.set_gravity(true);
-	physics_scene.add_actor(vehicle);
+	object.set_position(glm::vec3(0.0f, 0.0f, -5.0f));
+	object.physics.set_gravity(true);
+	physics_scene.add_actor(object.physics);
+	//physics_scene.add_actor(vehicle);
 	PhysicsObject plane(create_geometry::plane(0, 1, 0, 4));
 	plane.make_drivable();
 	physics_scene.add_actor(plane);
@@ -126,8 +136,8 @@ int main() {
 		double frame_time = frame::get_interval_ms();
 		physics_scene.simulation_step_start(frame_time / 1000.0f);
 
-		scene.meshes[0]->sync_with_physics();
-		vehicle.vehicle_control(window);
+		object.sync_with_physics();
+		//vehicle.vehicle_control(window);
 
 		frame_buffer.bind();
 		

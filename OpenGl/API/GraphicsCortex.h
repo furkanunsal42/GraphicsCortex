@@ -30,3 +30,5 @@
 #include "PhysicsObject.h"
 #include "PhysicsLink.h"
 #include "PhysicsVehicle.h"
+
+#include "Object.h"

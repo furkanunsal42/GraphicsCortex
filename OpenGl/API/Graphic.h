@@ -33,7 +33,7 @@ public:
 	Material* material = nullptr;
 	unsigned int mode = GL_TRIANGLES;
 
-	PhysicsObject physics_representation;
+	//PhysicsObject physics_representation;
 
 	Graphic();
 	Graphic(const ArrayBuffer& buffer, const IndexBuffer& indicies, Material& material, Program& renderer);
@@ -46,7 +46,7 @@ public:
 	void load_model(const std::string& file_path, bool use_for_physics = true);
 	void clear_mesh();
 
-	void sync_with_physics();
+	//void sync_with_physics();
 
 	glm::vec3 get_position();
 	glm::vec3 get_rotation();
@@ -92,13 +92,13 @@ public:
 		_uniform_update_queue.remove_uniform_update(uniform_id);
 	}
 
-	void set_uniform_upadte_queue(uniform_update_queue& original) {
+	void set_uniform_update_queue(uniform_update_queue& original) {
 		_uniform_update_queue.copy(original);
 		_uniform_update_queue.link_program(renderer);
 		_uniform_update_queue.update_uniform_ids();
 	}
 
-	void set_uniform_upadte_queue(uniform_update_queue original) {
+	void set_uniform_update_queue(uniform_update_queue original) {
 		_uniform_update_queue.copy(original);
 		_uniform_update_queue.link_program(renderer);
 		_uniform_update_queue.update_uniform_ids();
