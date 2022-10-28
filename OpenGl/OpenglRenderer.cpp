@@ -6,7 +6,7 @@
 
 int main() {
 	int width = 1920, height = 1080;
-	GLFWwindow* window = frame::create_window(width, height, "My Window", 4, 0, true, false, false);
+	GLFWwindow* window = frame::create_window(width, height, "My Window", 4, 1, true, false, false);
 	Scene scene;
 	Material material;
 	Texture color_texture;
@@ -58,11 +58,9 @@ int main() {
 
 	//scene.add_object(object);
 
-	PhysicsVehicle vehicle_physics;
-	
-	Vehicle vehicle(vehicle_physics);
-	vehicle.load_model_all(Model("Models/porsche_chassis.obj"), Model("Models/porsche_wheel_left.obj"), Model("Models/porsche_wheel_right.obj"), true, false);
-	vehicle_physics.compile();
+	Vehicle vehicle;
+	vehicle.load_model_all(Model("Models/porsche_chassis.obj"), Model("Models/porsche_wheel_left.obj"), Model("Models/porsche_wheel_right.obj"), true, true);
+	vehicle.physics_representation.compile();
 	vehicle.load_material_all(material);
 	vehicle.load_program_all(solid_program);
 	vehicle.set_default_uniform_queue_all(scene);
@@ -134,7 +132,7 @@ int main() {
 		frame::display_performance(180);
 		
 		scene.camera->frame_time_ms = frame_time;
-		scene.camera->handle_movements(window);
+		//scene.camera->handle_movements(window);
 
 		cube_map.draw();
 

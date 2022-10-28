@@ -5,6 +5,8 @@
 #include "SnippetVehicleCreate.h"
 #include "SnippetVehicleTireFriction.h"
 
+#include "iostream"
+
 PhysicsVehicle::PhysicsVehicle(InitValues init_type, int num_wheels) :
 	numWheels(num_wheels), vehicle_actor(nullptr), is_vehicle_in_air(true), chassis_mesh(nullptr), wheel_mesh(nullptr), differential_type(physx::PxVehicleDifferential4WData::eDIFF_TYPE_LS_4WD)
 {
@@ -478,10 +480,10 @@ void PhysicsVehicle::vehicle_control(GLFWwindow* window) {
 		InputData.setDigitalAccel(true);
 	}
 	if (glfwGetKey(window, GLFW_KEY_A) == 1) {
-		InputData.setDigitalSteerLeft(true);
+		InputData.setDigitalSteerRight(true);
 	}
 	if (glfwGetKey(window, GLFW_KEY_D) == 1) {
-		InputData.setDigitalSteerRight(true);
+		InputData.setDigitalSteerLeft(true);
 	}
 
 	if (glfwGetKey(window, GLFW_KEY_SPACE) == 1) {
@@ -496,6 +498,9 @@ void PhysicsVehicle::vehicle_control(GLFWwindow* window) {
 		InputData.setDigitalSteerLeft(false);
 		InputData.setDigitalSteerRight(false);
 	}
+
+	std::cout << physics_representation.vehicle_drive->mDriveDynData.getEngineRotationSpeed() << std::endl;
+
 }
 
 void PhysicsVehicle::set_position(float x, float y, float z) {

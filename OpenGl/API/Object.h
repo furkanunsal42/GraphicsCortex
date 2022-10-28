@@ -23,7 +23,7 @@ public:
 
 class Vehicle/* : Object */ {
 public:
-	PhysicsVehicle& physics_representation;
+	PhysicsVehicle physics_representation;
 
 	Graphic chassis;
 	Graphic wheels[4];
@@ -35,7 +35,7 @@ public:
 		REAR_RIGHT,
 	};
 
-	Vehicle(PhysicsVehicle& physics_representation);
+	Vehicle();
 
 	void load_model_chassis(Model& chassis, bool use_for_graphics = true, bool use_for_physics = true);
 	void load_model_left_wheel(Model& left_wheel, bool use_for_graphics = true, bool use_for_physics = true);

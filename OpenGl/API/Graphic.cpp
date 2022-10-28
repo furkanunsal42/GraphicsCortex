@@ -78,7 +78,7 @@ void Graphic::load_model(Model&& model) {
 void Graphic::update_matrix() {
 	if (_last_updated_position == position && _last_updated_rotation == rotation)
 		return;
-	model_matrix = glm::mat4_cast(rotation_quat);
+	model_matrix = glm::mat4_cast(rotation);
 	model_matrix = glm::translate(model_matrix, (glm::vec3)(glm::vec4(position.x, position.y, position.z, 0) * model_matrix));
 	_last_updated_position = position;
 	_last_updated_rotation = rotation;
@@ -99,7 +99,7 @@ void Graphic::load_program(Program& program) {
 glm::vec3 Graphic::get_position() {
 	return position;
 }
-glm::vec3 Graphic::get_rotation() {
+glm::quat Graphic::get_rotation() {
 	return rotation;
 }
 
@@ -107,7 +107,7 @@ void Graphic::set_position(glm::vec3 position) {
 	this->position = position;
 }
 
-void Graphic::set_rotation(glm::vec3 rotation) {
+void Graphic::set_rotation(glm::quat rotation) {
 	this->rotation = rotation;
 }
 

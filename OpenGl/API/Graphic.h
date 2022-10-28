@@ -19,14 +19,13 @@
 class Graphic {
 private:
 	glm::vec3 _last_updated_position = glm::vec3(0.0f, 0.0f, 0.0f);
-	glm::vec3 _last_updated_rotation = glm::vec3(0.0f, 0.0f, 0.0f);
+	glm::quat _last_updated_rotation = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
 
 	uniform_update_queue _uniform_update_queue;
 public:
 	Model model;
 	glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);
-	glm::vec3 rotation = glm::vec3(0.0f, 0.0f, 0.0f);	// radians
-	glm::quat rotation_quat = glm::quat(1, 0, 0, 0);
+	glm::quat rotation = glm::quat(1, 0, 0, 0);
 	glm::mat4 model_matrix;
 	Program* renderer = nullptr;
 	Material* material = nullptr;
@@ -51,10 +50,10 @@ public:
 	void load_program(Program& program);
 
 	glm::vec3 get_position();
-	glm::vec3 get_rotation();
+	glm::quat get_rotation();
 
 	void set_position(glm::vec3 position);
-	void set_rotation(glm::vec3 rotation);
+	void set_rotation(glm::quat rotation);
 
 	template<typename T>
 	void add_uniform_update_queue(uniform_update<T>& uniform_queue) {
