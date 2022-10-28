@@ -204,28 +204,28 @@ void Vehicle::sync_with_physics() {
 		glm::vec3 local_position = glm::vec3(transform.p.x, transform.p.y, transform.p.z);
 		glm::quat local_rotation = glm::quat(transform.q.w, transform.q.x, transform.q.y, transform.q.z);
 		wheels[FRONT_RIGHT].set_rotation(wheels[FRONT_RIGHT].get_rotation() * local_rotation);
-		wheels[FRONT_RIGHT].set_position(wheels[FRONT_RIGHT].get_position() + glm::quat(global_rotation.w, global_rotation.x, global_rotation.y, global_rotation.z) * local_position + glm::vec3(0, 1, 0));
+		wheels[FRONT_RIGHT].set_position(wheels[FRONT_RIGHT].get_position() + glm::quat(global_rotation.w, global_rotation.x, global_rotation.y, global_rotation.z) * local_position);
 	}
 	{
 		physx::PxTransform transform = shapes[1]->getLocalPose();
 		glm::vec3 local_position = glm::vec3(transform.p.x, transform.p.y, transform.p.z);
 		glm::quat local_rotation = glm::quat(transform.q.w, transform.q.x, transform.q.y, transform.q.z);
 		wheels[FRONT_LEFT].set_rotation(wheels[FRONT_LEFT].get_rotation() * local_rotation);
-		wheels[FRONT_LEFT].set_position(wheels[FRONT_LEFT].get_position() + glm::quat(global_rotation.w, global_rotation.x, global_rotation.y, global_rotation.z) * local_position + glm::vec3(0, 1, 0));
+		wheels[FRONT_LEFT].set_position(wheels[FRONT_LEFT].get_position() + glm::quat(global_rotation.w, global_rotation.x, global_rotation.y, global_rotation.z) * local_position);
 	}
 	{
 		physx::PxTransform transform = shapes[2]->getLocalPose();
 		glm::vec3 local_position = glm::vec3(transform.p.x, transform.p.y, transform.p.z);
 		glm::quat local_rotation = glm::quat(transform.q.w, transform.q.x, transform.q.y, transform.q.z);
 		wheels[REAR_RIGHT].set_rotation(wheels[REAR_RIGHT].get_rotation() * local_rotation);
-		wheels[REAR_RIGHT].set_position(wheels[REAR_RIGHT].get_position() + glm::quat(global_rotation.w, global_rotation.x, global_rotation.y, global_rotation.z) * local_position + glm::vec3(0, 1, 0));
+		wheels[REAR_RIGHT].set_position(wheels[REAR_RIGHT].get_position() + glm::quat(global_rotation.w, global_rotation.x, global_rotation.y, global_rotation.z) * local_position);
 	}
 	{
 		physx::PxTransform transform = shapes[3]->getLocalPose();
 		glm::vec3 local_position = glm::vec3(transform.p.x, transform.p.y, transform.p.z);
 		glm::quat local_rotation = glm::quat(transform.q.w, transform.q.x, transform.q.y, transform.q.z);
 		wheels[REAR_LEFT].set_rotation(wheels[REAR_LEFT].get_rotation() * local_rotation);
-		wheels[REAR_LEFT].set_position(wheels[REAR_LEFT].get_position() + glm::quat(global_rotation.w, global_rotation.x, global_rotation.y, global_rotation.z) * local_position + glm::vec3(0, 1, 0));
+		wheels[REAR_LEFT].set_position(wheels[REAR_LEFT].get_position() + glm::quat(global_rotation.w, global_rotation.x, global_rotation.y, global_rotation.z) * local_position);
 	}
 
 	delete[] shapes;

@@ -499,7 +499,7 @@ void PhysicsVehicle::vehicle_control(GLFWwindow* window) {
 		InputData.setDigitalSteerRight(false);
 	}
 
-	std::cout << physics_representation.vehicle_drive->mDriveDynData.getEngineRotationSpeed() << std::endl;
+	//std::cout << vehicle_drive->mDriveDynData.getEngineRotationSpeed() << std::endl;
 
 }
 

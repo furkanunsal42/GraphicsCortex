@@ -6,13 +6,13 @@
 
 int main() {
 	int width = 1920, height = 1080;
-	GLFWwindow* window = frame::create_window(width, height, "My Window", 4, 1, true, false, false);
+	GLFWwindow* window = frame::create_window(width, height, "GraphicsCortex", 4, 1, true, false, false);
 	Scene scene;
 	Material material;
 	Texture color_texture;
 	Texture specular_map;
 	Texture normal_map;
-	color_texture.queue_image("Images/GoldBlock.png", 4, true);
+	color_texture.queue_image("Images/orange.png", 4, false);
 	//color_texture.queue_image("Images/cartextures/911_22_paint_BaseColor.png", 4, true);
 	//specular_map.queue_image("Images/cartextures/911_22_paint_Roughness.png", 4, true);
 	//normal_map.queue_image("Images/cartextures/911_22_paint_Normal.png", 3, true);
@@ -20,6 +20,12 @@ int main() {
 	//specular_map.queue_image("Images/StoneTiles/tiles_specular.jpg", 4, true);
 	//normal_map.queue_image("Images/StoneTiles/tiles_normal.jpg", 3, true);
 	
+	Material wheel;
+	Texture wheel_color;
+	wheel_color.queue_image("Images/cartextures/911_22_930_tire_BaseColor.png", 4, false);
+	wheel_color.compress_image = true;
+	wheel.color_map = &wheel_color;
+
 	bool compression = true;
 	color_texture.compress_image = compression;
 	specular_map.compress_image = compression;
@@ -38,39 +44,6 @@ int main() {
 	cam.perspective = true;
 	scene.camera = &cam;
 	
-	//Graphic g;
-	//g.load_model(Model("Models/porsche_chassis.obj"));
-	//g.material = &material;
-	//g.renderer = &solid_program;
-	//g.set_uniform_update_queue(default_program::solid_default_uniform_queue(scene, g));
-	//g.change_uniform_update_queue(uniform_update<int>("use_cube_map_reflection", 1));
-	//g.change_uniform_update_queue(uniform_update<float>("cube_map_reflection_strength", 0.75));
-	
-	//scene.add_graphic(g);
-	//
-	//std::vector<physx::PxVec3> partial_data = g.model.get_partial_data<physx::PxVec3>("11100000");
-	
-	//PhysicsObject p(create_geometry::convex_hull(partial_data));
-	//p.set_gravity(true);
-	//
-	//Object object(g, p);
-	//object.set_position(glm::vec3(0.0f, 0.0f, -5.0f));
-
-	//scene.add_object(object);
-
-	Vehicle vehicle;
-	vehicle.load_model_all(Model("Models/porsche_chassis.obj"), Model("Models/porsche_wheel_left.obj"), Model("Models/porsche_wheel_right.obj"), true, true);
-	vehicle.physics_representation.compile();
-	vehicle.load_material_all(material);
-	vehicle.load_program_all(solid_program);
-	vehicle.set_default_uniform_queue_all(scene);
-	scene.add_object(vehicle);
-
-	vehicle.set_position(glm::vec3(0, 0, -5));
-
-	//float a = vehicle.vehicle_drive->mWheelsDynData.getWheelRotationAngle(0);
-	//physx::PxVec3 b = vehicle.vehicle_drive->mWheelsSimData.getWheelCentreOffset(0);
-
 	AmbiantLight ambiant(glm::vec3(0.1f, 0.1f, 0.1f), solid_program);
 	DirectionalLight directional(glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f), solid_program);
 	PointLight point(glm::vec3(3.0f, 0.0f, 3.0f), glm::vec3(3.0f, 3.0f, 3.0f), 0.5f, 0.5f, 0.0f, solid_program);
@@ -103,20 +76,26 @@ int main() {
 	cube_map.face_texture_filepaths[FRONT] = "Images/CubeMap/Sky/pz.jpg";
 	cube_map.face_texture_filepaths[BACK] = "Images/CubeMap/Sky/nz.jpg";
 
-	//cube_map.face_texture_filepaths[RIGHT] = "Images/CubeMap/Street/px.png";
-	//cube_map.face_texture_filepaths[LEFT] = "Images/CubeMap/Street/nx.png";
-	//cube_map.face_texture_filepaths[TOP] = "Images/CubeMap/Street/py.png";
-	//cube_map.face_texture_filepaths[BOTTOM] = "Images/CubeMap/Street/ny.png";
-	//cube_map.face_texture_filepaths[FRONT] = "Images/CubeMap/Street/pz.png";
-	//cube_map.face_texture_filepaths[BACK] = "Images/CubeMap/Street/nz.png";
-
 	cube_map.read_queue(3);
 	cube_map.load_queue(true);
-	
+
+	Vehicle vehicle;
+	vehicle.load_model_all(Model("Models/porsche_chassis.obj"), Model("Models/porsche_wheel_left.obj"), Model("Models/porsche_wheel_right.obj"), true, false);
+	vehicle.physics_representation.set_wheel_layout(2.4, -1.8, 4.2, 0.4);
+	vehicle.physics_representation.compile();
+	vehicle.load_material_all(wheel, wheel, wheel);
+	vehicle.load_program_all(solid_program);
+	vehicle.set_default_uniform_queue_all(scene);
+	vehicle.chassis.change_uniform_update_queue(uniform_update<int>("use_cube_map_reflection", 1));
+	vehicle.chassis.change_uniform_update_queue(uniform_update<float>("cube_map_reflection_strength", 0.25));
+	scene.add_object(vehicle);
+
+	vehicle.set_position(glm::vec3(0, 0, -5));
+
 	PhysicsObject plane(create_geometry::plane(0, 1, 0, 4));
 	plane.make_drivable();
 	scene.add_physics(plane);
-	
+
 	float t = 0;
 	while (!glfwWindowShouldClose(window)){
 		double frame_time = frame::get_interval_ms();
@@ -136,11 +115,6 @@ int main() {
 
 		cube_map.draw();
 
-		//cube.position.x += 0.01f;
-		//scene.meshes[0]->rotation.y += 0.04f * frame_time;
-		//t += 0.001f * frame_time;
-		//point.position.y = 5*glm::cos(t);
-		
 		cube_map.texture_slot = 13;
 		cube_map.bind();
 		scene.render(window);
