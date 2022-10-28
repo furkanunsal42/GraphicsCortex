@@ -47,7 +47,7 @@ public:
 		_uniform_update_queue.update_uniform_ids();
 	}
 
-	void update_uniform_queue(bool init);
+	void update_uniform_queue();
 };
 
 class AmbiantLight : public Light{

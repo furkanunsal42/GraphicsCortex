@@ -19,8 +19,8 @@ public:
 };
 
 
-class Vehicle : Object{
-
+class Vehicle/* : Object */ {
+public:
 	PhysicsVehicle& physics_representation;
 
 	Graphic chassis;
@@ -33,12 +33,17 @@ class Vehicle : Object{
 		REAR_RIGHT,
 	};
 
-	Vehicle();
+	Vehicle(PhysicsVehicle& physics_representation);
 
 	void load_model_chassis(Model& chassis, bool use_for_graphics = true, bool use_for_physics = true);
 	void load_model_left_wheel(Model& left_wheel, bool use_for_graphics = true, bool use_for_physics = true);
 	void load_model_right_wheel(Model& right_wheel, bool use_for_graphics = true, bool use_for_physics = true);
 	void load_model_models(Model& chassis, Model& left_wheel, Model& right_wheel, bool use_for_graphics = true, bool use_for_physics = true);
+
+	void load_model_chassis(Model&& chassis, bool use_for_graphics = true, bool use_for_physics = true);
+	void load_model_left_wheel(Model&& left_wheel, bool use_for_graphics = true, bool use_for_physics = true);
+	void load_model_right_wheel(Model&& right_wheel, bool use_for_graphics = true, bool use_for_physics = true);
+	void load_model_models(Model&& chassis, Model&& left_wheel, Model&& right_wheel, bool use_for_graphics = true, bool use_for_physics = true);
 
 	void load_material_chassis(Material& chassis);
 	void load_material_left_wheel(Material& left_wheel);
@@ -52,10 +57,9 @@ class Vehicle : Object{
 	void load_program_models(Program& chassis, Program& left_wheel, Program& right_wheel);
 	void load_program_models(Program& all);
 
-	void draw();
-
 	void sync_with_physics();
 
 	void set_position(glm::vec3 position);
-	void set_rotation(glm::vec3 rotation);
+	void set_rotation(glm::quat rotation);
+	void set_rotation(physx::PxQuat rotation);
 };

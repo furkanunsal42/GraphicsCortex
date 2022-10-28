@@ -11,6 +11,11 @@ Assimp::Importer Model::asset_loader;
 Model::Model() :
 	vertex_buffer(ArrayBuffer()), index_buffer(IndexBuffer()) {}
 
+Model::Model(const std::string& file_path) {
+	load_model(file_path);
+}
+
+
 Model::Model(ArrayBuffer& verticies, IndexBuffer& indicies) :
 	vertex_buffer(std::move(verticies)), index_buffer(std::move(indicies)) {}
 

@@ -18,7 +18,6 @@ class CubeMapTexture{
 public:
 	Graphic cube = default_geometry::cube(glm::vec3(2, 2, 2));
 	Camera* camera = nullptr;
-	Program* program = nullptr;
 
 	unsigned int id = 0;
 	// right left top bottom front back for every array
@@ -47,6 +46,11 @@ public:
 	void draw();
 	void bind();
 	void unbind();
+
+	void set_program(Program& renderer);
+	void set_update_queue(uniform_update_queue& update_queue);
+	void set_update_queue(uniform_update_queue&& update_queue);
+
 private:
 	void _read_data_stbi(int n, int desired_channels);
 };

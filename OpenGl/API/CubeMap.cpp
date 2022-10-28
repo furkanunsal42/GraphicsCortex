@@ -107,11 +107,10 @@ void CubeMapTexture::bind() {
 
 void CubeMapTexture::draw() {
 	bind();
-	cube.renderer = program;
-	program->bind();
-	program->update_uniform("view", glm::mat4(glm::mat3(camera->view_matrix)));
-	program->update_uniform("projection", camera->projection_matrix);
-	program->update_uniform("cubemap", 11);
+	camera->update_matrixes();
+	cube.renderer->bind();
+
+	cube.update_uniform_queue();
 	
 	bool face_culling = glIsEnabled(GL_CULL_FACE);
 	GLCall(glDisable(GL_CULL_FACE));
@@ -119,7 +118,7 @@ void CubeMapTexture::draw() {
 	glGetIntegerv(GL_DEPTH_FUNC, &depth_function);
 	GLCall(glDepthFunc(GL_LEQUAL));
 	
-	cube.draw(false, true);
+	cube.draw(false);
 	
 	if (face_culling){
 		GLCall(glEnable(GL_CULL_FACE));
@@ -130,4 +129,15 @@ void CubeMapTexture::draw() {
 
 void CubeMapTexture::unbind() {
 	GLCall(glBindTexture(GL_TEXTURE_CUBE_MAP, 0));
+}
+
+void CubeMapTexture::set_program(Program& renderer) {
+	cube.renderer = &renderer;
+}
+void CubeMapTexture::set_update_queue(uniform_update_queue& update_queue) {
+	cube.set_uniform_update_queue(update_queue);
+}
+
+void CubeMapTexture::set_update_queue(uniform_update_queue&& update_queue) {
+	cube.set_uniform_update_queue(update_queue);
 }

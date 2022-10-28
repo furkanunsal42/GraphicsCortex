@@ -6,10 +6,12 @@
 #include "SnippetVehicleTireFriction.h"
 
 PhysicsVehicle::PhysicsVehicle(InitValues init_type, int num_wheels) :
-	numWheels(num_wheels), vehicle_actor(nullptr), is_vehicle_in_air(true), chassis_mesh(nullptr), differential_type(physx::PxVehicleDifferential4WData::eDIFF_TYPE_LS_4WD)
+	numWheels(num_wheels), vehicle_actor(nullptr), is_vehicle_in_air(true), chassis_mesh(nullptr), wheel_mesh(nullptr), differential_type(physx::PxVehicleDifferential4WData::eDIFF_TYPE_LS_4WD)
 {
+	PhysxContext::get();
+
 	wheelsSimData = physx::PxVehicleWheelsSimData::allocate(num_wheels);
-	vehicle_drive = snippetvehicle::PxVehicleDrive4W::allocate(numWheels);
+	vehicle_drive = snippetvehicle::PxVehicleDrive4W::allocate(num_wheels);
 
 	wheelOffsets = new physx::PxVec3[num_wheels];
 	for (int i = 0; i < num_wheels; i++) {
@@ -104,10 +106,19 @@ void PhysicsVehicle::_initialize_box_chassis_mesh() {
 	chassis_mesh = snippetvehicle::createChassisMesh(chassisDims, *PhysxContext::get().physics, *PhysxContext::get().physics_cooking);
 }
 
+void PhysicsVehicle::_initialize_cylinder_wheel_mesh() {
+	if (wheel_mesh != nullptr)
+		wheel_mesh->release();
+
+	wheel_mesh = snippetvehicle::createWheelMesh(wheelWidth, wheelRadius, *PhysxContext::get().physics, *PhysxContext::get().physics_cooking);
+}
+
 void PhysicsVehicle::_create_actor() {
 
 	//Construct a convex mesh for a cylindrical wheel.
-	physx::PxConvexMesh* wheelMesh = snippetvehicle::createWheelMesh(wheelWidth, wheelRadius, *PhysxContext::get().physics, *PhysxContext::get().physics_cooking);
+	if (wheel_mesh == nullptr) {
+		_initialize_cylinder_wheel_mesh();
+	}
 	//Assume all wheels are identical for simplicity.
 	physx::PxConvexMesh** wheelConvexMeshes = new physx::PxConvexMesh*[numWheels];
 	physx::PxMaterial** wheelMaterials = new physx::PxMaterial*[numWheels];
@@ -115,7 +126,7 @@ void PhysicsVehicle::_create_actor() {
 	//Set the meshes and materials for the driven wheels.
 	for (physx::PxU32 i = 0; i < numWheels; i++)
 	{
-		wheelConvexMeshes[i] = wheelMesh;
+		wheelConvexMeshes[i] = wheel_mesh;
 		wheelMaterials[i] = wheelMaterial;
 	}
 
@@ -427,6 +438,17 @@ void PhysicsVehicle::set_chasis_mesh(physx::PxConvexMeshGeometry convex_mesh_geo
 	chassis_mesh = convex_mesh_geometry.convexMesh;
 }
 
+void PhysicsVehicle::set_wheel_mesh(physx::PxConvexMesh* convex_mesh) {
+	if (wheel_mesh != nullptr)
+		wheel_mesh->release();
+	wheel_mesh = convex_mesh;
+}
+void PhysicsVehicle::set_wheel_mesh(physx::PxConvexMeshGeometry convex_mesh_geometry) {
+	if (wheel_mesh != nullptr)
+		wheel_mesh->release();
+	wheel_mesh = convex_mesh_geometry.convexMesh;
+}
+
 void PhysicsVehicle::set_wheel_layout(float x_seperation, float y_displacement, float z_seperation, float z_displacement) {
 	wheelOffsets[snippetvehicle::PxVehicleDrive4WWheelOrder::eREAR_LEFT] = physx::PxVec3((-x_seperation + wheelWidth) * 0.5f, -((chassisDims.y + y_displacement)/ 2 + wheelRadius), -z_seperation / 2 + wheelRadius + z_displacement);
 	wheelOffsets[snippetvehicle::PxVehicleDrive4WWheelOrder::eREAR_RIGHT] = physx::PxVec3((+x_seperation - wheelWidth) * 0.5f, -((chassisDims.y + y_displacement)/ 2 + wheelRadius), -z_seperation / 2 + wheelRadius + z_displacement);
@@ -474,4 +496,25 @@ void PhysicsVehicle::vehicle_control(GLFWwindow* window) {
 		InputData.setDigitalSteerLeft(false);
 		InputData.setDigitalSteerRight(false);
 	}
+}
+
+void PhysicsVehicle::set_position(float x, float y, float z) {
+	physx::PxTransform transform = vehicle_actor->getGlobalPose();
+	transform.p = physx::PxVec3(x, y, z);
+	vehicle_actor->setGlobalPose(transform);
+}
+
+void PhysicsVehicle::set_rotation(float x, float y, float z, float w) {
+	physx::PxTransform transform = vehicle_actor->getGlobalPose();
+	transform.q = physx::PxQuat(x, y, z, w);
+	vehicle_actor->setGlobalPose(transform);
+}
+
+physx::PxVec3 PhysicsVehicle::get_position() {
+	return vehicle_actor->getGlobalPose().p;
+}
+
+physx::PxQuat PhysicsVehicle::get_rotation() {
+	const physx::PxQuat quat = vehicle_actor->getGlobalPose().q;
+	return quat;
 }

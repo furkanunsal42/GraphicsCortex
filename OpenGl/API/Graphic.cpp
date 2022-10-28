@@ -41,7 +41,7 @@ Graphic::Graphic(const std::vector<float>& verticies, int data_dim = 2)
 Graphic::Graphic(Material& material, Program& renderer):
 	renderer(&renderer), material(&material), model_matrix(glm::mat4(1.0f)) {}
 
-void Graphic::draw(bool show_warnings, bool _ignore_default_uniforms) {
+void Graphic::draw(bool show_warnings) {
 	bool material_exist = true;
 	bool renderer_exist = true;
 	if (material == nullptr) {
@@ -67,8 +67,12 @@ void Graphic::draw(bool show_warnings, bool _ignore_default_uniforms) {
 	GLCall(glDrawElements(mode, model.index_buffer.data_count, GL_UNSIGNED_INT, nullptr));
 }
 
-void Graphic::load_model(const std::string& filename) {
-	model.load_model(filename);
+void Graphic::load_model(Model& model) {
+	this->model = model;
+}
+
+void Graphic::load_model(Model&& model) {
+	this->model = model;
 }
 
 void Graphic::update_matrix() {
@@ -83,6 +87,13 @@ void Graphic::update_matrix() {
 void Graphic::clear_mesh() {
 	model.vertex_buffer = ArrayBuffer();
 	model.index_buffer = IndexBuffer();
+}
+
+void Graphic::load_material(Material& material) {
+	this->material = &material;
+}
+void Graphic::load_program(Program& program) {
+	this->renderer = &program;
 }
 
 glm::vec3 Graphic::get_position() {
@@ -100,6 +111,6 @@ void Graphic::set_rotation(glm::vec3 rotation) {
 	this->rotation = rotation;
 }
 
-void Graphic::update_uniform_queue(bool init) {
+void Graphic::update_uniform_queue() {
 	_uniform_update_queue.update_uniforms();
 }

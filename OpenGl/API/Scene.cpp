@@ -21,23 +21,28 @@ void Scene::add_object(Object& object) {
 	PhysicsScene::get().add_actor(object.physics);
 }
 
-bool once = true;
+void Scene::add_object(Vehicle& vehicle) {
+	add_graphic(vehicle.chassis);
+	for (Graphic& wheel : vehicle.wheels) {
+		add_graphic(wheel);
+	}
+	PhysicsScene::get().add_actor(vehicle.physics_representation);
+}
+
 void Scene::render(GLFWwindow* window) {
 
 	if (camera != nullptr)
 		camera->update_matrixes();
 
 	for (Light* light : lights) {
-		light->update_uniform_queue(once);
+		light->update_uniform_queue();
 	}
 
-	once = true;
 	for(Graphic* mesh : meshes){
 
 		mesh->update_matrix();
-		mesh->update_uniform_queue(once);
-		mesh->draw(false, false);
-		once = false;
+		mesh->update_uniform_queue();
+		mesh->draw(false);
 	}
 }
 

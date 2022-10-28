@@ -22,6 +22,7 @@ public:
 	IndexBuffer index_buffer;
 
 	Model();
+	Model(const std::string& file_path);
 	Model(ArrayBuffer& verticies, IndexBuffer& indirices);
 	Model(ArrayBuffer&& verticies, IndexBuffer&& indicies);
 

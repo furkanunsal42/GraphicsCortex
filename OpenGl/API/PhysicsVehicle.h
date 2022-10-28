@@ -1,8 +1,13 @@
 #pragma once
+
+#include <glm.hpp>
+
 #include <PxPhysicsAPI.h>
 #include <GLFW/glfw3.h>
 
 #include "SnippetVehicleSceneQuery.h"
+
+#include <type_traits>
 
 class PhysicsVehicle {
 public:
@@ -18,7 +23,7 @@ public:
 	float wheelRadius;
 	float wheelMOI;
 	physx::PxMaterial* wheelMaterial;
-	unsigned int numWheels;
+	int numWheels;
 	physx::PxFilterData wheelSimFilterData;	//word0 = collide type, word1 = collide against types, word2 = PxPairFlags
 	
 	physx::PxRigidDynamic* vehicle_actor;
@@ -37,6 +42,7 @@ public:
 	bool is_vehicle_in_air;
 
 	physx::PxConvexMesh* chassis_mesh;
+	physx::PxConvexMesh* wheel_mesh;
 
 	// engine
 	physx::PxVehicleDifferential4WData::Enum differential_type;
@@ -106,13 +112,36 @@ public:
 	
 	void set_chasis_mesh(physx::PxConvexMesh* convex_mesh);
 	void set_chasis_mesh(physx::PxConvexMeshGeometry convex_mesh_geometry);
+	
+	void set_wheel_mesh(physx::PxConvexMesh* convex_mesh);
+	void set_wheel_mesh(physx::PxConvexMeshGeometry convex_mesh_geometry);
 
 	void set_wheel_layout(float x_seperation, float y_displacement, float z_seperation, float z_displacement);
 
 	void vehicle_control(GLFWwindow* window);
 	
+	void set_position(float x, float y, float z);
+
+	template<typename T>
+	std::enable_if_t<std::is_same<T, glm::vec3>::value || std::is_same<T, physx::PxVec3>::value, void>
+		set_position(T rotation_vector) {
+		set_position(rotation_vector.x, rotation_vector.y, rotation_vector.z);
+	}
+
+	void set_rotation(float x, float y, float z, float w);
+
+	template<typename T>
+	std::enable_if_t<std::is_same<T, glm::quat>::value || std::is_same<T, physx::PxQuat>::value, void>
+		set_rotation(T rotation_quat) {
+		set_rotation(rotation_quat.x, rotation_quat.y, rotation_quat.z, rotation_quat.w);
+	}
+
+	physx::PxVec3 get_position();
+	physx::PxQuat get_rotation();
+
 	private:
 	void _initialize_box_chassis_mesh();
+	void _initialize_cylinder_wheel_mesh();
 	void _calculate_default_wheel_offsets();
 	void _create_actor();
 	void _create_wheel_sim();

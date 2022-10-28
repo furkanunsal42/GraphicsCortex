@@ -53,31 +53,34 @@ int main() {
 	//}
 	
 	Graphic g;
-	g.load_model("Models/test.obj");
+	g.load_model(Model("Models/porsche_chassis.obj"));
 	g.material = &material;
 	g.renderer = &solid_program;
 	g.set_uniform_update_queue(default_program::solid_default_uniform_queue(scene, g));
 	g.change_uniform_update_queue(uniform_update<int>("use_cube_map_reflection", 1));
 	g.change_uniform_update_queue(uniform_update<float>("cube_map_reflection_strength", 0.75));
-	scene.add_graphic(g);
-
-	std::vector<physx::PxVec3> partial_data = g.model.get_partial_data<physx::PxVec3>("11100000");
-	PhysicsObject p(create_geometry::convex_hull(partial_data));
-	p.set_gravity(true);
 	
-	Object object(g, p);
-	object.set_position(glm::vec3(0.0f, 0.0f, -5.0f));
+	//scene.add_graphic(g);
+	//
+	//std::vector<physx::PxVec3> partial_data = g.model.get_partial_data<physx::PxVec3>("11100000");
+	
+	//PhysicsObject p(create_geometry::convex_hull(partial_data));
+	//p.set_gravity(true);
+	//
+	//Object object(g, p);
+	//object.set_position(glm::vec3(0.0f, 0.0f, -5.0f));
 
 	//scene.add_object(object);
 
-	PhysicsVehicle vehicle;
-	vehicle.compile();
-	PhysicsObject physicsobject(create_geometry::box(1, 1, 1));
-	physicsobject.actor = vehicle.vehicle_actor;
+	//PhysicsVehicle vehicle_physics;
+	//vehicle_physics.compile();
 	
-	
-
-	scene.add_physics(physicsobject);
+	//Vehicle vehicle(vehicle_physics);
+	//vehicle.load_model_models(Model("Models/porsche_chassis.obj"), Model("Models/porsche_wheel_left.obj"), Model("Models/porsche_wheel_right.obj"), true, false);
+	//vehicle.load_material_models(material);
+	//vehicle.load_program_models(solid_program);
+	//
+	//scene.add_object(vehicle);
 
 	//float a = vehicle.vehicle_drive->mWheelsDynData.getWheelRotationAngle(0);
 	//physx::PxVec3 b = vehicle.vehicle_drive->mWheelsSimData.getWheelCentreOffset(0);
@@ -104,15 +107,16 @@ int main() {
 	
 	Program cubemap_program = default_program::cubemap_program();
 	CubeMapTexture cube_map;
-	cube_map.program = &cubemap_program;
+	cube_map.set_program(cubemap_program);
 	cube_map.camera = scene.camera;
+	cube_map.set_update_queue(default_program::cubemap_default_uniform_queue(cube_map));
 	cube_map.face_texture_filepaths[RIGHT] = "Images/CubeMap/Sky/px.jpg";
 	cube_map.face_texture_filepaths[LEFT] = "Images/CubeMap/Sky/nx.jpg";
 	cube_map.face_texture_filepaths[TOP] = "Images/CubeMap/Sky/py.jpg";
 	cube_map.face_texture_filepaths[BOTTOM] = "Images/CubeMap/Sky/ny.jpg";
 	cube_map.face_texture_filepaths[FRONT] = "Images/CubeMap/Sky/pz.jpg";
 	cube_map.face_texture_filepaths[BACK] = "Images/CubeMap/Sky/nz.jpg";
-	
+
 	//cube_map.face_texture_filepaths[RIGHT] = "Images/CubeMap/Street/px.png";
 	//cube_map.face_texture_filepaths[LEFT] = "Images/CubeMap/Street/nx.png";
 	//cube_map.face_texture_filepaths[TOP] = "Images/CubeMap/Street/py.png";
@@ -135,7 +139,7 @@ int main() {
 		//object.sync_with_physics();
 		//vehicle.vehicle_control(window);
 
-		frame_buffer.bind();
+		//frame_buffer.bind();
 		
 		glfwPollEvents();
 		frame::clear_window(0, 0, 0, 1);
@@ -146,19 +150,23 @@ int main() {
 
 		cube_map.draw();
 
+		//g.update_matrix();
+		//g.update_uniform_queue();
+		//g.draw();
+
 		//cube.position.x += 0.01f;
 		//scene.meshes[0]->rotation.y += 0.04f * frame_time;
 		t += 0.001f * frame_time;
 		//point.position.y = 5*glm::cos(t);
 		
-		cube_map.texture_slot = 13;
-		cube_map.bind();
+		//cube_map.texture_slot = 13;
+		//cube_map.bind();
 		scene.render(window);
-		cube_map.texture_slot = 11;
+		//cube_map.texture_slot = 11;
 		
-		frame_buffer.unbind();
+		//frame_buffer.unbind();
 
-		frame_buffer.render(FrameBuffer::COLOR_TEXTURE);
+		//frame_buffer.render(FrameBuffer::COLOR_TEXTURE);
 
 		glfwSwapBuffers(window);
 		PhysicsScene::get().simulation_step_finish();

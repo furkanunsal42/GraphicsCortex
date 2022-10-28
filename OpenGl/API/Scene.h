@@ -30,8 +30,10 @@ public:
 		T::count += 1;
 	}
 
+	
 	void add_graphic(Graphic& graphic);
 	void add_object(Object& object);
+	void add_object(Vehicle& vehicle);
 
 	template<typename T>
 	std::enable_if_t<std::is_same<T, PhysicsObject&>::value || std::is_same<T, PhysicsObject&&>::value || std::is_same<T, PhysicsVehicle&>::value || std::is_same<T, PhysicsVehicle&&>::value || std::is_same<T, physx::PxRigidActor*&>::value, void>

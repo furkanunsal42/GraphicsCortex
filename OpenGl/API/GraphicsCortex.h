@@ -18,6 +18,7 @@
 #include "Camera.h"
 #include "Scene.h"
 #include "Default_Assets.h"
+#include "Default_Programs.h"
 #include "FrameBuffer.h"
 #include "CubeMap.h"
 #include "UnifromQueue.h"

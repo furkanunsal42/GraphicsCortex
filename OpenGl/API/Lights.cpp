@@ -11,7 +11,7 @@ void Light::define_uniforms(int max_count) {
 	std::cout << "[WARNING] light._define_uniforms(max_count) executed" << std::endl;
 }
 
-void Light::update_uniform_queue(bool init) {
+void Light::update_uniform_queue() {
 	_uniform_update_queue.update_uniforms();
 }
 

@@ -40,11 +40,15 @@ public:
 	Graphic(const std::vector<float>& verticies, int data_dim); // legacy
 	Graphic(Material& material, Program& renderer);
 
-	void draw(bool show_warnings = true, bool _ignore_default_uniforms = false);
+	void draw(bool show_warnings = true);
 	void update_matrix();
 
-	void load_model(const std::string& file_path);
+	void load_model(Model& model);
+	void load_model(Model&& model);
 	void clear_mesh();
+
+	void load_material(Material& material);
+	void load_program(Program& program);
 
 	glm::vec3 get_position();
 	glm::vec3 get_rotation();
@@ -96,7 +100,7 @@ public:
 		_uniform_update_queue.update_uniform_ids();
 	}
 
-	void set_uniform_update_queue(uniform_update_queue original) {
+	void set_uniform_update_queue(uniform_update_queue&& original) {
 		_uniform_update_queue.copy(original);
 		_uniform_update_queue.link_program(renderer);
 		_uniform_update_queue.update_uniform_ids();
@@ -125,6 +129,6 @@ public:
 	}
 
 
-	void update_uniform_queue(bool init);
+	void update_uniform_queue();
 };
 
