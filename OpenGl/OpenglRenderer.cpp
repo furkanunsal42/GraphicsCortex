@@ -6,34 +6,14 @@
 
 int main() {
 	int width = 1920, height = 1080;
-	GLFWwindow* window = frame::create_window(width, height, "GraphicsCortex", 4, 0, true, false, false);
+	GLFWwindow* window = frame::create_window(width, height, "GraphicsCortex", 4, 1, true, false, false);
 	Scene scene;
-	Material material;
-	Texture color_texture;
-	Texture specular_map;
-	Texture normal_map;
-	color_texture.queue_image("Images/orange.png", 4, false);
-	//color_texture.queue_image("Images/cartextures/911_22_paint_BaseColor.png", 4, true);
-	//specular_map.queue_image("Images/cartextures/911_22_paint_Roughness.png", 4, true);
-	//normal_map.queue_image("Images/cartextures/911_22_paint_Normal.png", 3, true);
-	//color_texture.queue_image("Images/StoneTiles/tiles_color.jpg", 4, true);
-	//specular_map.queue_image("Images/StoneTiles/tiles_specular.jpg", 4, true);
-	//normal_map.queue_image("Images/StoneTiles/tiles_normal.jpg", 3, true);
 	
-	Material wheel;
-	Texture wheel_color;
-	wheel_color.queue_image("Images/cartextures/911_22_930_tire_BaseColor.png", 4, false);
-	wheel_color.compress_image = true;
-	wheel.color_map = &wheel_color;
+	Material chassis_material;
+	chassis_material.set_color_texture("Images/orange.png", 4);
 
-	bool compression = true;
-	color_texture.compress_image = compression;
-	specular_map.compress_image = compression;
-	normal_map.compress_image = compression;
-
-	material.color_map = &color_texture;
-	//material.specular_map = &specular_map;
-	//material.normal_map = &normal_map;
+	Material wheel_material;
+	wheel_material.set_color_texture("Images/cartextures/911_22_930_tire_BaseColor.png", 4);
 
 	Program solid_program = default_program::solid_program();
 
@@ -83,11 +63,11 @@ int main() {
 	vehicle.load_model_all(Model("Models/porsche_chassis.obj"), Model("Models/porsche_wheel_left.obj"), Model("Models/porsche_wheel_right.obj"), true, false);
 	vehicle.physics_representation.set_wheel_layout(2.4, -1.8, 4.2, 0.4);
 	vehicle.physics_representation.compile();
-	vehicle.load_material_all(material, wheel, wheel);
+	vehicle.load_material_all(chassis_material, wheel_material, wheel_material);
 	vehicle.load_program_all(solid_program);
 	vehicle.set_default_uniform_queue_all(scene);
 	vehicle.chassis.change_uniform_update_queue(uniform_update<int>("use_cube_map_reflection", 1));
-	vehicle.chassis.change_uniform_update_queue(uniform_update<float>("cube_map_reflection_strength", 0.55));
+	vehicle.chassis.change_uniform_update_queue(uniform_update<float>("cube_map_reflection_strength", 0.65));
 	scene.add_object(vehicle);
 
 	vehicle.set_position(glm::vec3(0, 0, -5));
@@ -95,6 +75,7 @@ int main() {
 	PhysicsObject plane(create_geometry::plane(0, 1, 0, 4));
 	plane.make_drivable();
 	scene.add_physics(plane);
+
 
 	float t = 0;
 	while (!glfwWindowShouldClose(window)){
@@ -127,7 +108,7 @@ int main() {
 		glfwSwapBuffers(window);
 		PhysicsScene::get().simulation_step_finish();
 	}
-
+	
 	glfwDestroyWindow(window);
 	glfwTerminate();
 	return 0;

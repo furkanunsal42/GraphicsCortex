@@ -17,9 +17,9 @@ namespace default_program {
 		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("view", &scene.camera->view_matrix));
 		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("projection", &scene.camera->projection_matrix));
 		queue.add_uniform_update(dynamic_uniform_update<float>("camera_coords", &scene.camera->position.x, &scene.camera->position.y, &scene.camera->position.z));
-		queue.add_uniform_update(uniform_update<int>("use_color_map", (int)(mesh.material->color_map != nullptr)));
-		queue.add_uniform_update(uniform_update<int>("use_specular_map", (int)(mesh.material->specular_map != nullptr)));
-		queue.add_uniform_update(uniform_update<int>("use_normal_map", (int)(mesh.material->normal_map != nullptr)));
+		queue.add_uniform_update(uniform_update<int>("use_color_map", (int)(mesh.material->_enable_color_map)));
+		queue.add_uniform_update(uniform_update<int>("use_specular_map", (int)(mesh.material->_enable_specular_map)));
+		queue.add_uniform_update(uniform_update<int>("use_normal_map", (int)(mesh.material->_enable_normal_map)));
 		queue.add_uniform_update(dynamic_uniform_update<int>("color_map_slot", &mesh.material->color_map_slot));
 		queue.add_uniform_update(dynamic_uniform_update<int>("specular_map_slot", &mesh.material->specular_map_slot));
 		queue.add_uniform_update(dynamic_uniform_update<int>("normal_map_slot", &mesh.material->normal_map_slot));

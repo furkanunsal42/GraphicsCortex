@@ -36,12 +36,13 @@ FrameBuffer::FrameBuffer(int width, int height, int anti_alliasing, bool readabl
 	color_texture.internal_format = GL_RGB;
 	color_texture.format = GL_RGB;
 	color_texture.data_type = GL_UNSIGNED_BYTE;
-	color_texture.width = width;
-	color_texture.height = height;
 	color_texture.min_filter = GL_NEAREST;
 	color_texture.mag_filter = GL_NEAREST;
 	color_texture.wrap_s = GL_CLAMP_TO_EDGE;
 	color_texture.wrap_t = GL_CLAMP_TO_EDGE;
+
+	color_texture.width = width;
+	color_texture.height = height;
 
 	color_texture.multisample_amount = multisample;
 
@@ -54,12 +55,13 @@ FrameBuffer::FrameBuffer(int width, int height, int anti_alliasing, bool readabl
 	depth_stencil_buffer.internal_format = GL_DEPTH24_STENCIL8;
 	depth_stencil_buffer.format = GL_DEPTH_STENCIL;
 	depth_stencil_buffer.data_type = GL_UNSIGNED_INT_24_8;
-	depth_stencil_buffer.width = width;
-	depth_stencil_buffer.height = height;
 	depth_stencil_buffer.min_filter = GL_NEAREST;
 	depth_stencil_buffer.mag_filter = GL_NEAREST;
 	depth_stencil_buffer.wrap_s = GL_CLAMP_TO_EDGE;
 	depth_stencil_buffer.wrap_t = GL_CLAMP_TO_EDGE;
+
+	depth_stencil_buffer.width = width;
+	depth_stencil_buffer.height = height;
 
 	depth_stencil_buffer.multisample_amount = multisample;
 
@@ -71,7 +73,7 @@ FrameBuffer::FrameBuffer(int width, int height, int anti_alliasing, bool readabl
 	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, id));
 	color_texture.texture_slot = texture_slot;
 	
-	color_texture.initialize_blank_image();
+	color_texture.initialize_blank_image(width, height);
 	GLCall(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, color_texture.target, color_texture.id, 0));
 
 	if (depth_stencil_buffer.use_renderbuffer) {
@@ -79,7 +81,7 @@ FrameBuffer::FrameBuffer(int width, int height, int anti_alliasing, bool readabl
 		GLCall(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, depth_stencil_buffer.target, depth_stencil_buffer.id));
 	}
 	else {
-		depth_stencil_buffer.initialize_blank_image();
+		depth_stencil_buffer.initialize_blank_image(width, height);
 		GLCall(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, depth_stencil_buffer.target, depth_stencil_buffer.id, 0));
 	}
 

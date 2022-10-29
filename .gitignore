@@ -174,3 +174,8 @@ OpenGl/Images/cartextures/wunderbaum.png
 OpenGl/Release/Default_Programs.obj
 OpenGl/Release/Model.obj
 OpenGl/Release/Object.obj
+OpenGl/Debug/Model.obj
+OpenGl/Debug/Object.obj
+OpenGl/Release/Image.obj
+OpenGl/Debug/Image.obj
+OpenGl/Debug/Default_Programs.obj

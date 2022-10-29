@@ -1,19 +1,20 @@
 #pragma once
 #include "Config.h"
+#include "Image.h"
 
 #include "GL\glew.h"
 
 #include <string>
 
+class Material;
+class FrameBuffer;
+
 class Texture {
 public:
 	static unsigned int CurrentBindedTexture[];
 	unsigned int id = 0;
-	int width = NULL, height = NULL, channels = NULL;
-	unsigned char* image_data = NULL;
 
 	// default paremeters
-	bool vertical_flip = true;
 	bool generate_mipmap = true;
 	unsigned int min_filter = GL_LINEAR_MIPMAP_NEAREST;
 	unsigned int mag_filter = GL_NEAREST;
@@ -30,12 +31,14 @@ public:
 	bool use_renderbuffer = false;
 	
 	Texture(bool renderbuffer = false, int renderbuffer_multisample = 0);
-	void load_image(std::string file_path, int desired_channels = 4, bool free_ram = false);
-	void queue_image(std::string file_path, int desired_channels = 4, bool free_ram = false);
-	void read_queue();
-	void load_queue();
-	void free_image();
-	void initialize_blank_image();
+	
+	~Texture();
+
+	void release();
+
+	void load_image(Image& image);
+	void initialize_blank_image(int width, int height);
+	
 	void bind();
 	void unbind();
 
@@ -57,35 +60,51 @@ public:
 	};
 	void print_info(unsigned int opengl_code);
 	
-	std::string queued_image_path = "";
-	int queued_desired_channels = 4;
-	bool queued_free_ram = false;
-	
-	bool _read_image_check(std::string& file_path, int desired_channels = 4, bool print_errors = true);
-	bool _load_image_check(bool free_ram = false, bool print_errors = true);
-private:
-	void _read_image(std::string& file_path, int desired_channels = 4);
-	void _load_image(bool free_ram = false);
-	
-	bool _loaded_on_gpu = false;
+	bool is_loaded();
 
-	std::string currently_stored_file_name = "";
+	friend Material;
+	friend FrameBuffer;
+
+private:
+	int width = NULL, height = NULL, channels = NULL;
+
+	bool _loaded_on_gpu = false;
+	bool _load_image_check(bool print_errors = true);
 };
 
 class Material {
-private:
 public:
 	int color_map_slot = 0;
 	int specular_map_slot = 1;
 	int normal_map_slot = 2;
 
-	Texture* color_map = nullptr;
-	Texture* specular_map = nullptr;
-	Texture* normal_map = nullptr;
+	Texture color_map;
+	Texture specular_map;
+	Texture normal_map;
 
 	Material();
-	Material(Texture& color, Texture& specular, Texture& normal);
+	~Material();
+
+	void set_color_texture(const std::string& filename, int desired_channels);
+	void set_specular_texture(const std::string& filename, int desired_channels);
+	void set_normal_texture(const std::string& filename, int desired_channels);
 
 	void bind();
 	void unbind();
+
+	bool _enable_color_map = false;
+	bool _enable_specular_map = false;
+	bool _enable_normal_map = false;
+
+private:
+
+	std::string _color_map_filename = "";
+	std::string _specular_map_filename = "";
+	std::string _normal_map_filename = "";
+	
+	int _color_map_desired_channels = NULL;
+	int _specular_map_desired_channels = NULL;
+	int _normal_map_desired_channels = NULL;
+
+
 };

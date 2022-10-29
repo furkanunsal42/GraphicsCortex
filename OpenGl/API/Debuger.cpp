@@ -24,9 +24,9 @@ bool log_errors(const char* function, int line, const char* file) {
 	return error_safe;
 }
 
-void clear_errors() {
+void clear_errors(const char* function, int line, const char* file) {
 	while (unsigned int error = glGetError()) {
-		std::cout << "there was a previous error: " << error << '\n';
+		std::cout << "there was a previous error on: " << function << " line: " << line << " file : " << file << "Error : " << error << '\n';
 	}
 }
 
