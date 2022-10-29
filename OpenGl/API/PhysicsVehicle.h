@@ -85,6 +85,9 @@ public:
 	float antiroll_bar_stiffness_front;
 	float antiroll_bar_stiffness_rear;
 
+	// control
+	float auto_gear_up_rotation_target = 0.7;
+	float auto_gear_down_rotation_target = 0.4;
 
 	enum InitValues {
 		null_values,

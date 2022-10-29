@@ -47,9 +47,9 @@ PhysicsVehicle::PhysicsVehicle(InitValues init_type, int num_wheels) :
 		max_handbreak_torque = 4000.0f;
 		ackermann_accuracy = 1.0f;
 		clutch_strength = 10.0f;
-		gear_switch_time = 0.5f;
+		gear_switch_time = 0.1f;
 		engine_peak_revolution_speed = 600.0f;
-		engine_peak_torque = 500.0f;
+		engine_peak_torque = 600.0f;
 
 		max_suspension_compression = 0.3f;
 		max_suspension_droop = 0.1f;
@@ -464,20 +464,28 @@ void PhysicsVehicle::vehicle_control(GLFWwindow* window) {
 	InputData.setDigitalHandbrake(false);
 	InputData.setDigitalSteerLeft(false);
 	InputData.setDigitalSteerRight(false);
+	InputData.setGearUp(false);
+	InputData.setGearDown(false);
 
 	vehicle_drive->mDriveDynData.setUseAutoGears(true);
 
 	if (glfwGetKey(window, GLFW_KEY_W) == 1) {
-		vehicle_drive->mDriveDynData.forceGearChange(snippetvehicle::PxVehicleGearsData::eFIRST);
 		if (vehicle_drive->computeForwardSpeed() < -0.2)
 			InputData.setDigitalBrake(true);
-		InputData.setDigitalAccel(true);
+		else {
+			if (vehicle_drive->mDriveDynData.getTargetGear() < snippetvehicle::PxVehicleGearsData::eFIRST)
+				vehicle_drive->mDriveDynData.forceGearChange(snippetvehicle::PxVehicleGearsData::eFIRST);
+			InputData.setDigitalAccel(true);
+		}
 	}
 	if (glfwGetKey(window, GLFW_KEY_S) == 1) {
 		if (vehicle_drive->computeForwardSpeed() > 0.2)
 			InputData.setDigitalBrake(true);
-		vehicle_drive->mDriveDynData.forceGearChange(snippetvehicle::PxVehicleGearsData::eREVERSE);
-		InputData.setDigitalAccel(true);
+		else {
+			if (vehicle_drive->mDriveDynData.getTargetGear() > snippetvehicle::PxVehicleGearsData::eREVERSE)
+				vehicle_drive->mDriveDynData.forceGearChange(snippetvehicle::PxVehicleGearsData::eREVERSE);
+			InputData.setDigitalAccel(true);
+		}
 	}
 	if (glfwGetKey(window, GLFW_KEY_A) == 1) {
 		InputData.setDigitalSteerRight(true);
@@ -491,7 +499,10 @@ void PhysicsVehicle::vehicle_control(GLFWwindow* window) {
 	}
 
 	if (glfwGetKey(window, GLFW_KEY_W) == 1 && glfwGetKey(window, GLFW_KEY_S) == 1) {
-		vehicle_drive->mDriveDynData.forceGearChange(snippetvehicle::PxVehicleGearsData::eFIRST);
+		InputData.setDigitalAccel(false);
+	}
+	if (glfwGetKey(window, GLFW_KEY_W) == 0 && glfwGetKey(window, GLFW_KEY_S) == 0) {
+		vehicle_drive->mDriveDynData.forceGearChange(snippetvehicle::PxVehicleGearsData::eNEUTRAL);
 		InputData.setDigitalAccel(false);
 	}
 	if (glfwGetKey(window, GLFW_KEY_A) == 1 && glfwGetKey(window, GLFW_KEY_D) == 1) {
@@ -499,8 +510,16 @@ void PhysicsVehicle::vehicle_control(GLFWwindow* window) {
 		InputData.setDigitalSteerRight(false);
 	}
 
-	//std::cout << vehicle_drive->mDriveDynData.getEngineRotationSpeed() << std::endl;
-
+	std::cout << "rotation: " << vehicle_drive->mDriveDynData.getEngineRotationSpeed() << std::endl;
+	std::cout << "gear: " << vehicle_drive->mDriveDynData.getCurrentGear() << std::endl;
+	
+	//float rotation_percent = vehicle_drive->mDriveDynData.getEngineRotationSpeed() / engine_peak_revolution_speed;
+	//if (rotation_percent > auto_gear_up_rotation_target) {
+	//	InputData.setGearUp(true);
+	//}
+	//else if (rotation_percent < auto_gear_down_rotation_target) {
+	//	InputData.setGearDown(true);
+	//}
 }
 
 void PhysicsVehicle::set_position(float x, float y, float z) {
