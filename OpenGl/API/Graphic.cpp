@@ -63,7 +63,6 @@ void Graphic::draw(bool show_warnings) {
 	if (material_exist)
  		material->bind();
 
-	
 	GLCall(glDrawElements(mode, model.index_buffer.data_count, GL_UNSIGNED_INT, nullptr));
 }
 

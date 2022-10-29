@@ -510,16 +510,8 @@ void PhysicsVehicle::vehicle_control(GLFWwindow* window) {
 		InputData.setDigitalSteerRight(false);
 	}
 
-	std::cout << "rotation: " << vehicle_drive->mDriveDynData.getEngineRotationSpeed() << std::endl;
-	std::cout << "gear: " << vehicle_drive->mDriveDynData.getCurrentGear() << std::endl;
-	
-	//float rotation_percent = vehicle_drive->mDriveDynData.getEngineRotationSpeed() / engine_peak_revolution_speed;
-	//if (rotation_percent > auto_gear_up_rotation_target) {
-	//	InputData.setGearUp(true);
-	//}
-	//else if (rotation_percent < auto_gear_down_rotation_target) {
-	//	InputData.setGearDown(true);
-	//}
+	//std::cout << "rotation: " << vehicle_drive->mDriveDynData.getEngineRotationSpeed() << std::endl;
+	//std::cout << "gear: " << vehicle_drive->mDriveDynData.getCurrentGear() << std::endl;
 }
 
 void PhysicsVehicle::set_position(float x, float y, float z) {

@@ -40,7 +40,7 @@ bool Texture::_read_image_check(std::string& file_path, int desired_channels, bo
 			std::cout << "[Opengl Warning] Texture::_read_image() is called but last binded texture is identity. Loading is cancelled. \n";
 		return false;
 	}
-
+	
 	return true;
 }
 
@@ -93,7 +93,7 @@ bool Texture::_load_image_check(bool free_ram, bool print_errors) {
 
 	if (image_data == nullptr && CurrentBindedTexture[texture_slot] != id) {
 		if (print_errors)
-			std::cout << "[Opengl Error] Texture::_load_image() is called but no already loaded image is found\n";
+			std::cout << "[Opengl Error] Texture::_load_image() is called but no already readed image is found\n";
 		return true; // was false
 	}
 
@@ -102,6 +102,11 @@ bool Texture::_load_image_check(bool free_ram, bool print_errors) {
 			std::cout << "[Opengl Warning] Texture::_load_iamge() is called but last binded texture is identity. Loading is cancelled. \n";
 		return false;
 	}
+
+	if (_loaded_on_gpu) {
+		return false;
+	}
+
 	return true;
 }
 
@@ -126,6 +131,8 @@ void Texture::_load_image(bool free_ram) {
 	//else 
 	GLCall(glTexImage2D(target, 0, internal_format, width, height, 0, format, data_type, image_data));
 	
+	_loaded_on_gpu = true;
+
 	if (generate_mipmap)
 		GLCall(glGenerateMipmap(target));
 
@@ -182,6 +189,7 @@ void Texture::load_queue() {
 		std::cout << "[Opengl Error] Texture::load_queue() ran but queue was empty, Load is cancelled. \n";
 		return;
 	}
+
 	_load_image(queued_free_ram);
 }
 

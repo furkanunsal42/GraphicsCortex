@@ -6,7 +6,7 @@
 
 int main() {
 	int width = 1920, height = 1080;
-	GLFWwindow* window = frame::create_window(width, height, "GraphicsCortex", 4, 1, true, false, false);
+	GLFWwindow* window = frame::create_window(width, height, "GraphicsCortex", 4, 0, true, false, false);
 	Scene scene;
 	Material material;
 	Texture color_texture;
@@ -83,11 +83,11 @@ int main() {
 	vehicle.load_model_all(Model("Models/porsche_chassis.obj"), Model("Models/porsche_wheel_left.obj"), Model("Models/porsche_wheel_right.obj"), true, false);
 	vehicle.physics_representation.set_wheel_layout(2.4, -1.8, 4.2, 0.4);
 	vehicle.physics_representation.compile();
-	vehicle.load_material_all(wheel, wheel, wheel);
+	vehicle.load_material_all(material, wheel, wheel);
 	vehicle.load_program_all(solid_program);
 	vehicle.set_default_uniform_queue_all(scene);
 	vehicle.chassis.change_uniform_update_queue(uniform_update<int>("use_cube_map_reflection", 1));
-	vehicle.chassis.change_uniform_update_queue(uniform_update<float>("cube_map_reflection_strength", 0.25));
+	vehicle.chassis.change_uniform_update_queue(uniform_update<float>("cube_map_reflection_strength", 0.55));
 	scene.add_object(vehicle);
 
 	vehicle.set_position(glm::vec3(0, 0, -5));

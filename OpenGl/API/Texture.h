@@ -66,6 +66,9 @@ public:
 private:
 	void _read_image(std::string& file_path, int desired_channels = 4);
 	void _load_image(bool free_ram = false);
+	
+	bool _loaded_on_gpu = false;
+
 	std::string currently_stored_file_name = "";
 };
 
