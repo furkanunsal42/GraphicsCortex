@@ -14,7 +14,7 @@ int main() {
 
 	Material wheel_material;
 	wheel_material.set_color_texture("Images/cartextures/911_22_930_tire_BaseColor.png", 4);
-
+	
 	Program solid_program = default_program::solid_program();
 
 	Camera cam;
@@ -40,7 +40,7 @@ int main() {
 	//scene.lights.push_back(&spot);
 
 	Program framebuffer_program = default_program::framebuffer_program();
-	FrameBuffer frame_buffer(width, height, frame::multisample, false);
+	FrameBuffer frame_buffer(width, height, 0, false);
 	frame_buffer.program = &framebuffer_program;
 	scene.frame_buffer = &frame_buffer;
 	
@@ -76,7 +76,7 @@ int main() {
 	plane.make_drivable();
 	scene.add_physics(plane);
 
-
+	bool once = true;
 	float t = 0;
 	while (!glfwWindowShouldClose(window)){
 		double frame_time = frame::get_interval_ms();
@@ -107,6 +107,13 @@ int main() {
 
 		glfwSwapBuffers(window);
 		PhysicsScene::get().simulation_step_finish();
+
+		if (once) {
+			once = false;
+			Image chassis_image = frame_buffer.save();
+			chassis_image.save_to_disc("saved_image.png");
+		}
+
 	}
 	
 	glfwDestroyWindow(window);

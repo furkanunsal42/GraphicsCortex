@@ -1,7 +1,10 @@
 #include "Image.h"
 
 #include <iostream>
+
 #include "stb_image.h"
+#include "stb_image_write.h"
+	
 #include "Debuger.h"
 
 Image::Image(const std::string& file_path, int desired_channels, bool vertical_flip) :
@@ -13,6 +16,7 @@ Image::Image(const std::string& file_path, int desired_channels, bool vertical_f
 Image::Image(const Image& copy_image) :
 	_width(copy_image._width), _height(copy_image._height), _channels(copy_image._channels)
 {
+	std::cout << "Image copy constructor" << std::endl;
 	size_t buffer_size = copy_image._width * copy_image._height * copy_image._channels;
 	_image_data = new unsigned char[buffer_size];
 	std::memcpy(copy_image._image_data, _image_data, buffer_size);
@@ -21,10 +25,14 @@ Image::Image(const Image& copy_image) :
 Image::Image(Image&& move_image) :
 	_width(move_image._width), _height(move_image._height), _channels(move_image._channels), _image_data(move_image._image_data)
 {
+	std::cout << "Image move constructor" << std::endl;
+
 	move_image._image_data = nullptr;
 }
 
 Image::~Image() {
+	std::cout << "Image deconstructor" << std::endl;
+
 	_clear_ram();
 }
 
@@ -58,4 +66,31 @@ int Image::get_height(){
 }
 int Image::get_channels() {
 	return _channels;
+}
+
+// Image will take ownership of the data
+Image::Image(unsigned char* image_data, int width, int height, int channels, bool vertical_flip) :
+	_image_data(image_data), _width(width), _height(height), _channels(channels), _vertical_flip(vertical_flip) 
+{ 
+	if (image_data == nullptr) {
+		ASSERT(false);
+	}
+	if (width == NULL) {
+		ASSERT(false);
+	}
+	if (height == NULL) {
+		ASSERT(false);
+	}
+	if (channels == NULL) {
+		ASSERT(false);
+	}
+
+	image_data = nullptr;
+}
+
+
+void Image::save_to_disc(const std::string& target_filename) {
+	stbi_flip_vertically_on_write(_vertical_flip);
+	int result_flag = stbi_write_png(target_filename.c_str(), _width, _height, _channels, _image_data, _width * _channels);
+	std::cout << "Image::save_to_disc() resulted with: " << result_flag << std::endl;
 }

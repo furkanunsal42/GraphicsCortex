@@ -171,53 +171,42 @@ void Texture::unbind() {
 	CurrentBindedTexture[texture_slot] = 0;
 }
 
-//void Texture::save() {
-//	glBindTexture(target, id);
-//	//bind();
-//
-//	int w, h;
-//	int image_size = width * height * channels * sizeof(unsigned char);
-//	int image_internal_format = internal_format;
-//	int image_compressed = false;
-//
-//	GLCall(glGetTexLevelParameteriv(target, 0, GL_TEXTURE_WIDTH, &w));
-//	GLCall(glGetTexLevelParameteriv(target, 0, GL_TEXTURE_HEIGHT, &h));
-//
-//	if (compress_image){
-//		GLCall(glGetTexLevelParameteriv(target, 0, GL_TEXTURE_COMPRESSED_IMAGE_SIZE, &image_size));
-//		GLCall(glGetTexLevelParameteriv(target, 0, GL_TEXTURE_COMPRESSED, &image_compressed));
-//		GLCall(glGetTexLevelParameteriv(target, 0, GL_TEXTURE_INTERNAL_FORMAT, &image_internal_format));
-//	}
-//	
-//	unsigned char* i_pixels = new unsigned char [image_size / sizeof(unsigned char)];
-//	
-//	if (compress_image == true){
-//		GLCall(glGetCompressedTexImage(target, 0, i_pixels));
-//	}
-//	else if (compress_image == false) {
-//		//GLCall(glGetTexImage(target, 0, format, data_type, i_pixels));
-//	}
-//	glDeleteTextures(1, &id);
-//	
-//	glGenTextures(1, &id);
-//	GLCall(glActiveTexture(GL_TEXTURE0 + texture_slot));
-//	GLCall(glBindTexture(target, id));
-//	GLCall(glTexParameteri(target, GL_TEXTURE_MIN_FILTER, min_filter));
-//	GLCall(glTexParameteri(target, GL_TEXTURE_MAG_FILTER, mag_filter));
-//	GLCall(glTexParameteri(target, GL_TEXTURE_WRAP_S, wrap_s));
-//	GLCall(glTexParameteri(target, GL_TEXTURE_WRAP_T, wrap_t));
-//
-//	if (compress_image){
-//		GLCall(glCompressedTexImage2D(target, 0, image_internal_format, width, height, 0, image_size, i_pixels));
-//	}
-//	else {
-//		GLCall(glTexImage2D(target, 0, internal_format, width, height, 0, format, data_type, image_data));
-//	}
-//	delete[] i_pixels;
-//
-//	// save it's id on current binded texture list, for optimization
-//	CurrentBindedTexture[texture_slot] = id;
-//}
+Image Texture::save(bool vertical_flip) {
+	bind();
+
+	int w, h;
+	int image_internal_format = internal_format;
+	int image_compressed = false;
+
+	GLCall(glGetTexLevelParameteriv(target, 0, GL_TEXTURE_WIDTH, &w));
+	GLCall(glGetTexLevelParameteriv(target, 0, GL_TEXTURE_HEIGHT, &h));
+	
+	int image_size = w * h * channels * sizeof(unsigned char);
+
+	if (compress_image){
+		GLCall(glGetTexLevelParameteriv(target, 0, GL_TEXTURE_COMPRESSED_IMAGE_SIZE, &image_size));
+		GLCall(glGetTexLevelParameteriv(target, 0, GL_TEXTURE_COMPRESSED, &image_compressed));
+		GLCall(glGetTexLevelParameteriv(target, 0, GL_TEXTURE_INTERNAL_FORMAT, &image_internal_format));
+	}
+	
+	unsigned char* i_pixels = new unsigned char [image_size / sizeof(unsigned char)];
+	
+	if (compress_image){
+		GLCall(glGetCompressedTexImage(target, 0, i_pixels));
+	}
+	else {
+		GLCall(glGetTexImage(target, 0, format, data_type, i_pixels));
+	}
+	
+	return Image (i_pixels, w, h, channels, vertical_flip);
+
+	//if (compress_image){
+	//	GLCall(glCompressedTexImage2D(target, 0, image_internal_format, width, height, 0, image_size, i_pixels));
+	//}
+	//else {
+	//	GLCall(glTexImage2D(target, 0, internal_format, width, height, 0, format, data_type, i_pixels));
+	//}
+}
 
 void Texture::print_info(unsigned int opengl_code) {
 	bind();
@@ -262,6 +251,7 @@ void Material::set_normal_texture(const std::string& filename, int desired_chann
 
 void read_image(std::string& filename, int desired_channels, Image*& output_image) {
 	output_image = new Image(filename, desired_channels);
+
 }
 
 void Material::bind() {

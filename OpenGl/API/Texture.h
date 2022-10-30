@@ -42,7 +42,7 @@ public:
 	void bind();
 	void unbind();
 
-	void save();
+	Image save(bool vertical_flip = true);
 
 	enum info {
 		WIDTH = GL_TEXTURE_WIDTH,

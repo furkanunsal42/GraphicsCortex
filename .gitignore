@@ -179,3 +179,4 @@ OpenGl/Debug/Object.obj
 OpenGl/Release/Image.obj
 OpenGl/Debug/Image.obj
 OpenGl/Debug/Default_Programs.obj
+OpenGl/Release/stb_image_write.obj

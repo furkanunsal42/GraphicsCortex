@@ -10,6 +10,9 @@ namespace frame {
 	double frame_time_ms = 0;
 	double frame_rate_fps = 0;
 	int multisample = 0;
+	extern int window_width = 0;
+	extern int window_height = 0;
+	
 	// private
 	double old_time = glfwGetTime();
 	double old_time_accurate = 0;
@@ -19,6 +22,9 @@ namespace frame {
 	GLFWwindow* create_window(int width, int height, std::string name, int msaa, int swapinterval, bool depth_test, bool blend, bool face_culling) {
 		
 		multisample = msaa;
+
+		window_width = width;
+		window_height = height;
 
 		if (!is_glfw_initialized) {
 			glfwInit();

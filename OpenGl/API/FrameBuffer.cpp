@@ -6,6 +6,7 @@
 #include "Debuger.h"
 #include "Graphic.h"
 #include "Default_Assets.h"
+#include "Frame.h"
 
 #include <iostream>
 
@@ -138,4 +139,28 @@ void FrameBuffer::render(unsigned int source_texture) {
 		GLCall(glDrawBuffer(GL_BACK));
 		GLCall(glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT , GL_LINEAR));
 	}
+}
+
+Image FrameBuffer::save(bool vertical_flip) {
+
+	int w = frame::window_width;
+	int h = frame::window_height;
+	int image_internal_format = color_texture.internal_format;
+	int channels;
+
+	if (image_internal_format == GL_RGB)
+		channels = 3;
+	else if (image_internal_format == GL_RGBA)
+		channels = 4;
+
+	int image_size = w * h * channels * sizeof(unsigned char);
+
+	bind();
+	unsigned char* i_pixels = new unsigned char[image_size / sizeof(unsigned char)];
+	GLCall(glBindFramebuffer(GL_READ_FRAMEBUFFER, id));
+	GLCall(glReadBuffer(GL_COLOR_ATTACHMENT0));
+	GLCall(glReadPixels(0, 0, w, h, GL_RGB, GL_UNSIGNED_BYTE, i_pixels));
+	GLCall(glReadPixels(0, 0, w, h, color_texture.format, color_texture.data_type, i_pixels));
+
+	return Image(i_pixels, w, h, channels, vertical_flip);
 }

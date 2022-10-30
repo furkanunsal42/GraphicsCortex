@@ -43,6 +43,7 @@ public:
 	void bind();
 	void unbind();
 	void render(unsigned int source_texture = FrameBuffer::COLOR_TEXTURE);
+	Image save(bool vertical_flip = true);
 private:
 	int multisample = 0;
 	bool screen_initialized = false;

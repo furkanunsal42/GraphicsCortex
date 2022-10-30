@@ -198,6 +198,7 @@
     <ClCompile Include="API\Graphic.cpp" />
     <ClCompile Include="API\Debuger.cpp" />
     <ClCompile Include="API\ShaderCompiler.cpp" />
+    <ClCompile Include="Dependencies\stb_image\stb_image_write.cpp" />
     <ClCompile Include="OpenglRenderer.cpp" />
     <ClCompile Include="snippetcommon\SnippetVehicle4WCreate.cpp" />
     <ClCompile Include="snippetcommon\SnippetVehicleCreate.cpp" />
@@ -336,6 +337,7 @@
     <ClInclude Include="API\Frame.h" />
     <ClInclude Include="API\Graphic.h" />
     <ClInclude Include="API\ShaderCompiler.h" />
+    <ClInclude Include="Dependencies\stb_image\stb_image_write.h" />
     <ClInclude Include="snippetcommon\SnippetPrint.h" />
     <ClInclude Include="snippetcommon\SnippetPVD.h" />
     <ClInclude Include="snippetcommon\SnippetVehicleConcurrency.h" />
