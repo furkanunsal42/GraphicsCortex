@@ -180,3 +180,12 @@ OpenGl/Release/Image.obj
 OpenGl/Debug/Image.obj
 OpenGl/Debug/Default_Programs.obj
 OpenGl/Release/stb_image_write.obj
+OpenGl/Release/alloc.obj
+OpenGl/Release/async.obj
+OpenGl/Release/dict.obj
+OpenGl/Release/hiredis.obj
+OpenGl/Release/net.obj
+OpenGl/Release/read.obj
+OpenGl/Release/sds.obj
+OpenGl/Release/sockcompat.obj
+OpenGl/saved_image.png

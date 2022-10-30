@@ -1,12 +1,13 @@
 #include "API/GraphicsCortex.h"
-
 #include <iostream>
 
 #include <PxPhysicsAPI.h>
 
+#include <hiredis.h>
+
 int main() {
 	int width = 1920, height = 1080;
-	GLFWwindow* window = frame::create_window(width, height, "GraphicsCortex", 4, 1, true, false, false);
+	GLFWwindow* window = frame::create_window(width, height, "GraphicsCortex", 4, 0, true, false, false);
 	Scene scene;
 	
 	Material chassis_material;
@@ -16,6 +17,9 @@ int main() {
 	wheel_material.set_color_texture("Images/cartextures/911_22_930_tire_BaseColor.png", 4);
 	
 	Program solid_program = default_program::solid_program();
+
+	redisContext* redis_context = redisConnect("127.0.0.1", 6379);
+	redisCommand(redis_context, "set name Furkan");
 
 	Camera cam;
 	cam.screen_width = (float)width;
@@ -76,7 +80,6 @@ int main() {
 	plane.make_drivable();
 	scene.add_physics(plane);
 
-	bool once = true;
 	float t = 0;
 	while (!glfwWindowShouldClose(window)){
 		double frame_time = frame::get_interval_ms();
@@ -108,12 +111,7 @@ int main() {
 		glfwSwapBuffers(window);
 		PhysicsScene::get().simulation_step_finish();
 
-		if (once) {
-			once = false;
-			Image chassis_image = frame_buffer.save();
-			chassis_image.save_to_disc("saved_image.png");
-		}
-
+		Image chassis_image = frame_buffer.save();
 	}
 	
 	glfwDestroyWindow(window);

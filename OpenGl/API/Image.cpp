@@ -16,7 +16,6 @@ Image::Image(const std::string& file_path, int desired_channels, bool vertical_f
 Image::Image(const Image& copy_image) :
 	_width(copy_image._width), _height(copy_image._height), _channels(copy_image._channels)
 {
-	std::cout << "Image copy constructor" << std::endl;
 	size_t buffer_size = copy_image._width * copy_image._height * copy_image._channels;
 	_image_data = new unsigned char[buffer_size];
 	std::memcpy(copy_image._image_data, _image_data, buffer_size);
@@ -25,14 +24,10 @@ Image::Image(const Image& copy_image) :
 Image::Image(Image&& move_image) :
 	_width(move_image._width), _height(move_image._height), _channels(move_image._channels), _image_data(move_image._image_data)
 {
-	std::cout << "Image move constructor" << std::endl;
-
 	move_image._image_data = nullptr;
 }
 
 Image::~Image() {
-	std::cout << "Image deconstructor" << std::endl;
-
 	_clear_ram();
 }
 
@@ -41,8 +36,6 @@ void Image::_read_image(const std::string& file_path, int desired_channels) {
 		std::cout << "Image::_read_image() was called but _image_data was already initialized" << std::endl;
 		ASSERT(false);
 	}
-
-	std::cout << "Image::_read_image() was called" << std::endl;
 
 	stbi_set_flip_vertically_on_load(_vertical_flip);
 
@@ -92,5 +85,4 @@ Image::Image(unsigned char* image_data, int width, int height, int channels, boo
 void Image::save_to_disc(const std::string& target_filename) {
 	stbi_flip_vertically_on_write(_vertical_flip);
 	int result_flag = stbi_write_png(target_filename.c_str(), _width, _height, _channels, _image_data, _width * _channels);
-	std::cout << "Image::save_to_disc() resulted with: " << result_flag << std::endl;
 }
