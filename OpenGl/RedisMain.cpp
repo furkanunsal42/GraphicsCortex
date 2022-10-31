@@ -16,7 +16,13 @@ int main() {
 
 	Image image("Images/orange.png");
 	
-	redisCommand(redis_context, "publish %b %b", key, strlen(key.c_str()), image.get_image_data(), image.get_size());
+	redisReply* reply;
+	reply = (redisReply*)redisCommand(redis_context, "set %b %b", key, strlen(key.c_str()), image.get_image_data(), image.get_size());
+	reply = (redisReply*)redisCommand(redis_context, "get %b", key, strlen(key.c_str()));
 
+	std::cout << reply->str << std::endl;
+	Image image_reply((unsigned char*)reply->str, image.get_width(), image.get_height(), image.get_channels(), true);
+	image_reply.save_to_disc("hiredis_reply_image.png");
 
+	std::cin.get();
 }

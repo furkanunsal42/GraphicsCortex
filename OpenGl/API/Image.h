@@ -24,9 +24,8 @@ public:
 
 	void save_to_disc(const std::string& target_filename);
 
-private:
-
 	Image(unsigned char* image_data, int width, int height, int channels, bool vertical_flip);
+private:
 
 	bool _vertical_flip = true;
 	int _width = NULL, _height = NULL, _channels = NULL;
