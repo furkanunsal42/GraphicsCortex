@@ -17,6 +17,7 @@ public:
 	int get_width();
 	int get_height();
 	int get_channels();
+	size_t get_size();
 
 	friend Texture;
 	friend FrameBuffer;

@@ -199,7 +199,7 @@
     <ClCompile Include="API\Debuger.cpp" />
     <ClCompile Include="API\ShaderCompiler.cpp" />
     <ClCompile Include="Dependencies\stb_image\stb_image_write.cpp" />
-    <ClCompile Include="OpenglRenderer.cpp" />
+    <ClCompile Include="RedisMain.cpp" />
     <ClCompile Include="snippetcommon\SnippetVehicle4WCreate.cpp" />
     <ClCompile Include="snippetcommon\SnippetVehicleCreate.cpp" />
     <ClCompile Include="snippetcommon\SnippetVehicleFilterShader.cpp" />

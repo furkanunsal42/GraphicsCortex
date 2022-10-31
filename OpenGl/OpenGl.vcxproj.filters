@@ -99,9 +99,6 @@
     <ClCompile Include="API\PhysicsVehicle.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
-    <ClCompile Include="OpenglRenderer.cpp">
-      <Filter>Kaynak Dosyalar</Filter>
-    </ClCompile>
     <ClCompile Include="API\Object.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
@@ -115,6 +112,9 @@
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
     <ClCompile Include="Dependencies\stb_image\stb_image_write.cpp">
+      <Filter>Kaynak Dosyalar</Filter>
+    </ClCompile>
+    <ClCompile Include="RedisMain.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
   </ItemGroup>
