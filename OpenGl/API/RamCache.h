@@ -9,13 +9,13 @@
 #include <string>
 #include <iostream>
 
-class RedisConnection {
+class Cache {
 public:
     redisContext* context;
     
-    RedisConnection(const std::string& connection_ip = "127.0.0.1", int port = 6379);
+    Cache(const std::string& connection_ip = "127.0.0.1", int port = 6379);
 
-    ~RedisConnection();
+    ~Cache();
     
     void set_key(const std::string& key, const unsigned char* data_begin, size_t size);
     
@@ -60,6 +60,23 @@ public:
             std::cout << "key get with reply : " /* << (unsigned char*)reply->str*/ << std::endl;
             #endif
             return (unsigned char*)reply->str;
+        }
+        else {
+            #ifdef REDIS_CONNECTION_PRINTS
+            std::cout << "set_key() is called but disconnected from server" << std::endl;
+            #endif
+            ASSERT(false);
+        }
+    }
+
+    template<>
+    std::string get_key(const std::string& key) {
+        if (context != nullptr) {
+            redisReply* reply = (redisReply*)redisCommand(context, "get %b", key, key.size());
+            #ifdef REDIS_CONNECTION_PRINTS
+            std::cout << "key get with reply : " /* << (unsigned char*)reply->str*/ << std::endl;
+            #endif
+            return std::string(reply->str);
         }
         else {
             #ifdef REDIS_CONNECTION_PRINTS

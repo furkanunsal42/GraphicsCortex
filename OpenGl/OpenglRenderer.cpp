@@ -1,7 +1,5 @@
 #include "API/GraphicsCortex.h"
 
-//#include <hiredis.h>
-
 int main() {
 	int width = 1920, height = 1080;
 	GLFWwindow* window = frame::create_window(width, height, "GraphicsCortex", 4, 0, true, false, false);

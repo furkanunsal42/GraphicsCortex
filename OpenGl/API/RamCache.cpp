@@ -1,7 +1,7 @@
 #pragma once
 #include "RamCache.h"
 
-RedisConnection::RedisConnection(const std::string& connection_ip, int port) {
+Cache::Cache(const std::string& connection_ip, int port) {
     context = redisConnect(connection_ip.c_str(), port);
     if (context == nullptr) {
         #ifdef REDIS_CONNECTION_PRINTS
@@ -25,7 +25,7 @@ RedisConnection::RedisConnection(const std::string& connection_ip, int port) {
     }
 }
 
-RedisConnection::~RedisConnection() {
+Cache::~Cache() {
     if(context != nullptr) {
         redisFree(context);
         #ifdef REDIS_CONNECTION_PRINTS
@@ -34,7 +34,7 @@ RedisConnection::~RedisConnection() {
     }
 }
     
-void RedisConnection::set_key(const std::string& key, const unsigned char* data_begin, size_t size) {
+void Cache::set_key(const std::string& key, const unsigned char* data_begin, size_t size) {
     if (context != nullptr) {
         redisReply* reply = (redisReply*)redisCommand(context, "set %b %b", key, key.size(), data_begin, size);
         #ifdef REDIS_CONNECTION_PRINTS
@@ -48,7 +48,7 @@ void RedisConnection::set_key(const std::string& key, const unsigned char* data_
     }
 }
 
-void RedisConnection::set_key(const std::string& key, const std::string& value) {
+void Cache::set_key(const std::string& key, const std::string& value) {
     if (context != nullptr) {
         set_key(key, (unsigned char*)&(value[0]), value.size());
     }
@@ -59,11 +59,11 @@ void RedisConnection::set_key(const std::string& key, const std::string& value) 
     }
 }
 
-void RedisConnection::set_key(const std::string& key, Image& image) {
+void Cache::set_key(const std::string& key, Image& image) {
     return set_key(key, std::move(image));
 }
 
-void RedisConnection::set_key(const std::string& key, Image&& image) {
+void Cache::set_key(const std::string& key, Image&& image) {
     if (context != nullptr) {
         set_key(key,               image.get_image_data(), image.get_size());
         set_key(key + ":width",    image.get_width());
