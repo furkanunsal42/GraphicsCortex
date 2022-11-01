@@ -14,3 +14,7 @@
 // PhysX  Definitions
 #define PVD_HOST "127.0.0.1"
 #define PHYSX_THREAD_SIZE 1
+
+// Redis 
+
+#define REDIS_CONNECTION_PRINTS

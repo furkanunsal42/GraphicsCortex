@@ -17,6 +17,7 @@ public:
 	int get_width();
 	int get_height();
 	int get_channels();
+	bool get_vertical_flip();
 	size_t get_size();
 
 	friend Texture;
@@ -29,7 +30,7 @@ private:
 
 	bool _vertical_flip = true;
 	int _width = NULL, _height = NULL, _channels = NULL;
-	unsigned char* _image_data;
+	unsigned char* _image_data = nullptr;
 	void _read_image(const std::string& file_path, int desired_channels = 4);
 	void _clear_ram();
 };

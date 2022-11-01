@@ -35,3 +35,7 @@
 #include "PhysicsVehicle.h"
 
 #include "Object.h"
+
+#include <hiredis.h>
+
+#include "RamCache.h"

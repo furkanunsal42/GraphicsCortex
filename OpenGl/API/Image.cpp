@@ -65,6 +65,11 @@ size_t Image::get_size() {
 	return _width * _height * _channels;
 }
 
+bool Image::get_vertical_flip() {
+	return _vertical_flip;
+}
+
+
 // Image will take ownership of the data
 Image::Image(unsigned char* image_data, int width, int height, int channels, bool vertical_flip) :
 	_image_data(image_data), _width(width), _height(height), _channels(channels), _vertical_flip(vertical_flip) 
