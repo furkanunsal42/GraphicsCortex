@@ -17,6 +17,7 @@ int main() {
 	cam.screen_width = (float)width;
 	cam.screen_height = (float)height;
 	cam.position.z = 1.5f;
+	cam.max_distance = 10000.0;
 	cam.perspective = true;
 	scene.camera = &cam;
 	
@@ -72,6 +73,8 @@ int main() {
 	plane.make_drivable();
 	scene.add_physics(plane);
 
+	Cache cache;
+
 	float t = 0;
 	while (!glfwWindowShouldClose(window)){
 		double frame_time = frame::get_interval_ms();
@@ -103,7 +106,8 @@ int main() {
 		glfwSwapBuffers(window);
 		PhysicsScene::get().simulation_step_finish();
 
-		//Image chassis_image = frame_buffer.save();
+		Image chassis_image = frame_buffer.save();
+		cache.set_key("image", chassis_image);
 	}
 	
 	glfwDestroyWindow(window);

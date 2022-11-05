@@ -72,6 +72,37 @@ private:
 	bool _load_image_check(bool print_errors = true);
 };
 
+class RenderBuffer : public Texture {
+	const unsigned int target = GL_RENDERBUFFER;
+
+};
+
+class TextureArray : public Texture {
+public:
+	const unsigned int target = GL_TEXTURE_2D_ARRAY;
+	unsigned int array_size = 1;
+
+	TextureArray(unsigned int array_size = 1);
+	~TextureArray();
+
+	void release();
+
+	void load_image(Image& image);
+	void initialize_blank_image(int width, int height);
+
+	void bind();
+	void unbind();
+
+	Image save(bool vertical_flip = true);
+
+	void print_info(unsigned int opengl_code);
+
+	bool is_loaded();
+private:
+	bool _load_image_check(bool print_errors = true);
+};
+
+
 class Material {
 public:
 	int color_map_slot = 0;

@@ -114,10 +114,10 @@
     <ClCompile Include="Dependencies\stb_image\stb_image_write.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
-    <ClCompile Include="hiredis_test_main.cpp">
+    <ClCompile Include="API\RamCache.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
-    <ClCompile Include="API\RamCache.cpp">
+    <ClCompile Include="OpenglRenderer.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
   </ItemGroup>

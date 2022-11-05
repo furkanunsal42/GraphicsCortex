@@ -24,12 +24,7 @@ Texture::Texture(bool renderbuffer, int renderbuffer_multisample) :
 }
 
 Texture::~Texture() {
-	if (use_renderbuffer) {
-		glDeleteRenderbuffers(1, &id);
-	}
-	else {
-		glDeleteTextures(1, &id);
-	}
+	release();
 }
 
 void Texture::release()
@@ -218,6 +213,54 @@ void Texture::print_info(unsigned int opengl_code) {
 bool Texture::is_loaded() {
 	return _loaded_on_gpu;
 }
+
+// ----------------------------------------------------------------------------------
+
+TextureArray::TextureArray(unsigned int array_size) {
+	GLCall(glGenTextures(1, &id));
+}
+
+TextureArray::~TextureArray() {
+	release();
+}
+
+void TextureArray::release() {
+	GLCall(glDeleteTextures(1, &id));
+}
+
+void TextureArray::load_image(Image& image) {
+
+}
+
+void TextureArray::initialize_blank_image(int width, int height) {
+
+}
+
+void TextureArray::bind() {
+
+}
+
+void TextureArray::unbind() {
+
+}
+
+Image TextureArray::save(bool vertical_flip) {
+
+}
+
+void TextureArray::print_info(unsigned int opengl_code) {
+
+}
+
+bool TextureArray::is_loaded() {
+
+}
+	
+bool TextureArray::_load_image_check(bool print_errors) {
+
+}
+
+// ------------------------------------------------------------------------------------
 
 Material::Material() { }
 
