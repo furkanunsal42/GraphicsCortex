@@ -8,17 +8,7 @@
 #include "ShaderCompiler.h"
 #include "Graphic.h"
 
-class RenderBuffer {
-public:
-	unsigned int target = GL_RENDERBUFFER;
-	int multisample = 0;
-	unsigned int id = 0;
-	int width = 0, height = 0;
-	unsigned int internal_format = GL_DEPTH24_STENCIL8;
-	RenderBuffer();
-	void bind();
-	void unbind();
-};
+#include <type_traits>
 
 class FrameBuffer {
 public:
@@ -33,7 +23,9 @@ public:
 	int width = 0, height = 0;
 	int texture_slot = 9;
 	Texture color_texture;
-	Texture depth_stencil_buffer;
+	Texture depth_stencil_texture;
+	RenderBuffer depth_stencil_renderbuffer;
+	bool readable_depth_stencil_buffer;
 
 	Graphic screen;
 	Program* program = nullptr;

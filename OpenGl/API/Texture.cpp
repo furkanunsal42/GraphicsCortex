@@ -10,17 +10,54 @@
 #include <iostream>
 #include <mutex>
 
-unsigned int Texture::CurrentBindedTexture[MAX_TEXTURE_SLOTS];
+TextureBase::TextureBase(int multisample) {
+	std::cout << "TextureBase classes cannot be constructed" << std::endl;
+	//ASSERT(false);
+}
 
-Texture::Texture(bool renderbuffer, int renderbuffer_multisample) : 
-	use_renderbuffer(renderbuffer), multisample_amount(renderbuffer_multisample)
-{
-	if (renderbuffer){
-		GLCall(glGenRenderbuffers(1, &id));
-	}
-	else {
-		GLCall(glGenTextures(1, &id));
-	}
+TextureBase::~TextureBase() {
+	std::cout << "TextureBase classes cannot be deconstructed" << std::endl;
+	//ASSERT(false);
+}
+
+void TextureBase::release() {
+	std::cout << "TextureBase classes cannot released" << std::endl;
+	ASSERT(false);
+}
+
+void TextureBase::bind() {
+	std::cout << "TextureBase classes cannot binded" << std::endl;
+	ASSERT(false);
+}
+
+void TextureBase::unbind() {
+	std::cout << "TextureBase classes cannot unbinded" << std::endl;
+	ASSERT(false);
+}
+
+void TextureBase::print_info(unsigned int opengl_code) {
+	std::cout << "TextureBase classes cannot print info" << std::endl;
+	ASSERT(false);
+}
+
+bool TextureBase::is_loaded() {
+	std::cout << "TextureBase classes cannot load" << std::endl;
+	ASSERT(false);
+	return false;
+}
+
+// ----------------------------------------------------------------------------------
+
+Texture::Texture(int multisample){
+	
+	if (multisample == 0)
+		target = GL_TEXTURE_2D;
+	else
+		target = GL_TEXTURE_2D_MULTISAMPLE;
+
+	multisample_amount = multisample;
+	
+	GLCall(glGenTextures(1, &id));
 }
 
 Texture::~Texture() {
@@ -29,20 +66,10 @@ Texture::~Texture() {
 
 void Texture::release()
 {
-	if (use_renderbuffer) {
-		GLCall(glDeleteRenderbuffers(1, &id));
-	}
-	else {
-		GLCall(glDeleteTextures(1, &id));
-	}
+	GLCall(glDeleteTextures(1, &id));
 }
 
 bool Texture::_load_image_check(bool print_errors) {
-	if (use_renderbuffer) {
-		std::cout << "Texture::_load_image_check() is called while use_renderbuffer == true, operation cancelled.\n";
-		return false;
-	}
-
 	if (_loaded_on_gpu) {
 		return false;
 	}
@@ -50,7 +77,6 @@ bool Texture::_load_image_check(bool print_errors) {
 	return true;
 }
 
-// keeps the image
 void Texture::load_image(Image& image) {
 	if (!_load_image_check(true))
 		return;
@@ -98,14 +124,9 @@ void Texture::load_image(Image& image) {
 		GLCall(glGenerateMipmap(target));
 
 	_loaded_on_gpu = true;
-	CurrentBindedTexture[texture_slot] = id;
 }
 
 void Texture::initialize_blank_image(int width, int height) {
-	if (use_renderbuffer) {
-		std::cout << "Texture::initialize_blank_image() is called while use_renderbuffer == true, operation cancelled.\n";
-		return;
-	}
 
 	this->width = width;
 	this->height = height;
@@ -122,48 +143,27 @@ void Texture::initialize_blank_image(int width, int height) {
 			GLCall(glGenerateMipmap(target));
 		}
 	}
-	else{
+	else if(target == GL_TEXTURE_2D_MULTISAMPLE) {
 		GLCall(glTexImage2DMultisample(target, multisample_amount, internal_format, this->width, this->height, GL_TRUE));
 	}
-	CurrentBindedTexture[texture_slot] = id;
+	else {
+		std::cout << "Texture::initialize_blank_image() was called but target is not supported." << std::endl;
+		ASSERT(false);
+	}
 }
 
-
 void Texture::bind() {
-	if (use_renderbuffer) {
-		GLCall(glBindRenderbuffer(target, id));
-		if (multisample_amount == 0) {
-			GLCall(glRenderbufferStorage(target, internal_format, width, height));
-		}
-		else {
-			GLCall(glRenderbufferStorageMultisample(target, multisample_amount, internal_format, width, height));
-		}
-		return;
-	}
-
-	#ifdef TEXTURE_REPEATED_BIND_OPTIMIZATION
-	if (CurrentBindedTexture[texture_slot] == id)
-		return;
-	#endif
 	GLCall(glActiveTexture(GL_TEXTURE0 + texture_slot));
 	GLCall(glBindTexture(target, id));
 	GLCall(glTexParameteri(target, GL_TEXTURE_MIN_FILTER, min_filter));
 	GLCall(glTexParameteri(target, GL_TEXTURE_MAG_FILTER, mag_filter));
 	GLCall(glTexParameteri(target, GL_TEXTURE_WRAP_S, wrap_s));
 	GLCall(glTexParameteri(target, GL_TEXTURE_WRAP_T, wrap_t));
-
-	CurrentBindedTexture[texture_slot] = id;
 }
 
 void Texture::unbind() {
-	if (use_renderbuffer) {
-		GLCall(glBindRenderbuffer(target, 0));
-		return;
-	}
-
 	GLCall(glActiveTexture(GL_TEXTURE0 + texture_slot));
 	GLCall(glBindTexture(target, 0));
-	CurrentBindedTexture[texture_slot] = 0;
 }
 
 Image Texture::save(bool vertical_flip) {
@@ -211,6 +211,93 @@ void Texture::print_info(unsigned int opengl_code) {
 }
 
 bool Texture::is_loaded() {
+	return _loaded_on_gpu;
+}
+
+// ----------------------------------------------------------------------------------
+
+RenderBuffer::RenderBuffer(int multisample) {
+	if (multisample == 0)
+		target = GL_RENDERBUFFER;
+	else
+		target = GL_RENDERBUFFER_SAMPLES;
+
+	multisample_amount = multisample;
+
+	GLCall(glGenRenderbuffers(1, &id));
+}
+
+RenderBuffer::~RenderBuffer() {
+	release();
+}
+
+void RenderBuffer::release() {
+	GLCall(glDeleteRenderbuffers(1, &id));
+}
+
+void RenderBuffer::initialize_blank_image(int width, int height) {
+	bind();
+	if (multisample_amount == 0) {
+		GLCall(glRenderbufferStorage(target, internal_format, width, height));
+	}
+	else {
+		GLCall(glRenderbufferStorageMultisample(target, multisample_amount, internal_format, width, height));
+	}
+}
+
+void RenderBuffer::bind() {
+	GLCall(glBindRenderbuffer(target, id));
+}
+
+void RenderBuffer::unbind() {
+	GLCall(glBindRenderbuffer(target, 0));
+}
+
+Image RenderBuffer::save(bool vertical_flip) {
+	bind();
+
+	int w, h;
+	int image_internal_format = internal_format;
+	int image_compressed = false;
+
+	GLCall(glGetTexLevelParameteriv(target, 0, GL_TEXTURE_WIDTH, &w));
+	GLCall(glGetTexLevelParameteriv(target, 0, GL_TEXTURE_HEIGHT, &h));
+
+	int image_size = w * h * channels * sizeof(unsigned char);
+
+	if (compress_image) {
+		GLCall(glGetTexLevelParameteriv(target, 0, GL_TEXTURE_COMPRESSED_IMAGE_SIZE, &image_size));
+		GLCall(glGetTexLevelParameteriv(target, 0, GL_TEXTURE_COMPRESSED, &image_compressed));
+		GLCall(glGetTexLevelParameteriv(target, 0, GL_TEXTURE_INTERNAL_FORMAT, &image_internal_format));
+	}
+
+	unsigned char* i_pixels = new unsigned char[image_size / sizeof(unsigned char)];
+
+	if (compress_image) {
+		GLCall(glGetCompressedTexImage(target, 0, i_pixels));
+	}
+	else {
+		GLCall(glGetTexImage(target, 0, format, data_type, i_pixels));
+	}
+
+	return Image(i_pixels, w, h, channels, vertical_flip);
+
+	//if (compress_image){
+	//	GLCall(glCompressedTexImage2D(target, 0, image_internal_format, width, height, 0, image_size, i_pixels));
+	//}
+	//else {
+	//	GLCall(glTexImage2D(target, 0, internal_format, width, height, 0, format, data_type, i_pixels));
+	//}
+}
+
+void RenderBuffer::print_info(unsigned int opengl_code) {
+	bind();
+	int data;
+	GLCall(glGetTexLevelParameteriv(target, 0, opengl_code, &data));
+	std::cout << "[INFO] Texture::print_info returns " << data << std::endl;
+}
+
+bool RenderBuffer::is_loaded() {
 	return _loaded_on_gpu;
 }
 

@@ -9,9 +9,8 @@
 class Material;
 class FrameBuffer;
 
-class Texture {
+class TextureBase {
 public:
-	static unsigned int CurrentBindedTexture[];
 	unsigned int id = 0;
 
 	// default paremeters
@@ -28,12 +27,47 @@ public:
 	int multisample_amount = 0;
 	bool compress_image = false;
 
-	bool use_renderbuffer = false;
-	
-	Texture(bool renderbuffer = false, int renderbuffer_multisample = 0);
-	
-	~Texture();
+	TextureBase(int multisample = 0);
+	~TextureBase();
 
+	virtual void release();
+
+	virtual void bind();
+	virtual void unbind();
+
+	enum info {
+		WIDTH = GL_TEXTURE_WIDTH,
+		HEIGHT = GL_TEXTURE_HEIGHT,
+		DEPTH = GL_TEXTURE_DEPTH,
+		INTERNAL_FORMAT = GL_TEXTURE_INTERNAL_FORMAT,
+		RED_SIZE = GL_TEXTURE_RED_SIZE,
+		GREEN_SIZE = GL_TEXTURE_GREEN_SIZE,
+		BLUE_SIZE = GL_TEXTURE_BLUE_SIZE,
+		ALPHA_SIZE = GL_TEXTURE_ALPHA_SIZE,
+		DEPTH_SIZE = GL_TEXTURE_DEPTH_SIZE,
+		IS_COMPRESSED = GL_TEXTURE_COMPRESSED,
+		COMPESSED_SIZE = GL_TEXTURE_COMPRESSED_IMAGE_SIZE,
+		BUFFER_OFFEST = GL_TEXTURE_BUFFER_OFFSET,
+	};
+	
+	virtual void print_info(unsigned int opengl_code);
+
+	virtual bool is_loaded();
+
+	friend Material;
+	friend FrameBuffer;
+
+protected:
+	int width = NULL, height = NULL, channels = NULL;
+	bool _loaded_on_gpu = false;
+};
+
+class Texture : public TextureBase {
+public:
+	unsigned int target = GL_TEXTURE_2D;
+
+	Texture(int multisample = 0);
+	~Texture();
 	void release();
 
 	void load_image(Image& image);
@@ -44,20 +78,6 @@ public:
 
 	Image save(bool vertical_flip = true);
 
-	enum info {
-		WIDTH = GL_TEXTURE_WIDTH,
-		HEIGHT = GL_TEXTURE_HEIGHT, 
-		DEPTH = GL_TEXTURE_DEPTH, 
-		INTERNAL_FORMAT = GL_TEXTURE_INTERNAL_FORMAT, 
-		RED_SIZE = GL_TEXTURE_RED_SIZE, 
-		GREEN_SIZE = GL_TEXTURE_GREEN_SIZE, 
-		BLUE_SIZE = GL_TEXTURE_BLUE_SIZE, 
-		ALPHA_SIZE = GL_TEXTURE_ALPHA_SIZE, 
-		DEPTH_SIZE = GL_TEXTURE_DEPTH_SIZE, 
-		IS_COMPRESSED = GL_TEXTURE_COMPRESSED,
-		COMPESSED_SIZE = GL_TEXTURE_COMPRESSED_IMAGE_SIZE,
-		BUFFER_OFFEST = GL_TEXTURE_BUFFER_OFFSET,
-	};
 	void print_info(unsigned int opengl_code);
 	
 	bool is_loaded();
@@ -66,18 +86,33 @@ public:
 	friend FrameBuffer;
 
 private:
-	int width = NULL, height = NULL, channels = NULL;
-
-	bool _loaded_on_gpu = false;
 	bool _load_image_check(bool print_errors = true);
 };
 
-class RenderBuffer : public Texture {
-	const unsigned int target = GL_RENDERBUFFER;
+class RenderBuffer : public TextureBase {
+public:
+	unsigned int target = GL_RENDERBUFFER;
+	
+	RenderBuffer(int multisample = 0);
+	~RenderBuffer();
+	void release();
 
+	void initialize_blank_image(int width, int height);
+
+	void bind();
+	void unbind();
+
+	Image save(bool vertical_flip = true);
+
+	void print_info(unsigned int opengl_code);
+
+	bool is_loaded();
+
+	friend Material;
+	friend FrameBuffer;
 };
 
-class TextureArray : public Texture {
+class TextureArray : public TextureBase {
 public:
 	const unsigned int target = GL_TEXTURE_2D_ARRAY;
 	unsigned int array_size = 1;
