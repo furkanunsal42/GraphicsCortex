@@ -2,7 +2,7 @@
 
 int main() {
 	int width = 1920, height = 1080;
-	GLFWwindow* window = frame::create_window(width, height, "GraphicsCortex", 4, 0, true, false, false);
+	Frame frame(width, height, "GraphicsCortex", 4, 0, true, false, false);
 	Scene scene;
 	
 	Material chassis_material;
@@ -76,18 +76,18 @@ int main() {
 	Cache cache;
 
 	float t = 0;
-	while (!glfwWindowShouldClose(window)){
-		double frame_time = frame::get_interval_ms();
+	while (!glfwWindowShouldClose(frame.window)){
+		double frame_time = frame.get_interval_ms();
 		PhysicsScene::get().simulation_step_start(frame_time / 1000.0f);
 
 		vehicle.sync_with_physics();
-		vehicle.physics_representation.vehicle_control(window);
+		vehicle.physics_representation.vehicle_control(frame.window);
 
 		frame_buffer.bind();
 		
 		glfwPollEvents();
-		frame::clear_window(0, 0, 0, 1);
-		frame::display_performance(180);
+		frame.clear_window(0, 0, 0, 1);
+		frame.display_performance(180);
 		
 		scene.camera->frame_time_ms = frame_time;
 		//scene.camera->handle_movements(window);
@@ -96,21 +96,19 @@ int main() {
 
 		cube_map.texture_slot = 13;
 		cube_map.bind();
-		scene.render(window);
+		scene.render(frame.window);
 		cube_map.texture_slot = 11;
 		
 		frame_buffer.unbind();
 
 		frame_buffer.render(FrameBuffer::COLOR_TEXTURE);
 
-		glfwSwapBuffers(window);
+		glfwSwapBuffers(frame.window);
 		PhysicsScene::get().simulation_step_finish();
 
-		Image chassis_image = frame_buffer.save();
-		cache.set_key("image", chassis_image);
+		//Image chassis_image = frame_buffer.save();
+		//cache.set_key("image", chassis_image);
 	}
 	
-	glfwDestroyWindow(window);
-	glfwTerminate();
 	return 0;
 }

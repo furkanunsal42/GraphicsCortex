@@ -46,17 +46,17 @@ void Scene::render(GLFWwindow* window) {
 	}
 }
 
-void Scene::render_to_framebuffer(GLFWwindow* window) {
+void Scene::render_to_framebuffer(Frame& frame) {
 	frame_buffer->bind();
 	
 	// from render()
 	glfwPollEvents();
-	frame::clear_window(background_color.x, background_color.y, background_color.z, background_color.w);
+	frame.clear_window(background_color.x, background_color.y, background_color.z, background_color.w);
 
-	render(window);
+	render(frame.window);
 
 	frame_buffer->unbind();
 	frame_buffer->render();
 
-	glfwSwapBuffers(window);
+	glfwSwapBuffers(frame.window);
 }

@@ -7,6 +7,7 @@
 #include "Lights.h";
 #include "FrameBuffer.h"
 #include "Object.h"
+#include "Frame.h"
 
 #include "PhysicsScene.h"
 
@@ -47,7 +48,7 @@ public:
 	}
 
 	void render(GLFWwindow* window);
-	void render_to_framebuffer(GLFWwindow* window);
+	void render_to_framebuffer(Frame& frame);
 
 private:
 	std::vector<Graphic*> meshes;

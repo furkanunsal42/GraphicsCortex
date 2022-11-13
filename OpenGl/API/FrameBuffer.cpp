@@ -89,7 +89,7 @@ void FrameBuffer::render(unsigned int source_texture) {
 			GLCall(glBindTexture(color_texture.target, color_texture.id));
 		}
 		if (source_texture == DEPTH_TEXTURE) {
-			glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_STENCIL_TEXTURE_MODE, GL_DEPTH_COMPONENT);
+			GLCall(glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_STENCIL_TEXTURE_MODE, GL_DEPTH_COMPONENT));
 			if (readable_depth_stencil_buffer) {
 				GLCall(glBindTexture(depth_stencil_texture.target, depth_stencil_texture.id));
 			}
@@ -98,7 +98,7 @@ void FrameBuffer::render(unsigned int source_texture) {
 			}
 		}
 		if (source_texture == STENCIL_TEXTURE) {
-			glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_STENCIL_TEXTURE_MODE, GL_STENCIL_INDEX);
+			GLCall(glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_STENCIL_TEXTURE_MODE, GL_STENCIL_INDEX));
 			if (readable_depth_stencil_buffer) {
 				GLCall(glBindTexture(depth_stencil_texture.target, depth_stencil_texture.id));
 			}
@@ -121,8 +121,8 @@ void FrameBuffer::render(unsigned int source_texture) {
 
 Image FrameBuffer::save(bool vertical_flip) {
 
-	int w = frame::window_width;
-	int h = frame::window_height;
+	int w = width;
+	int h = height;
 	int image_internal_format = color_texture.internal_format;
 	int channels;
 
@@ -141,4 +141,15 @@ Image FrameBuffer::save(bool vertical_flip) {
 	GLCall(glReadPixels(0, 0, w, h, color_texture.format, color_texture.data_type, i_pixels));
 
 	return Image(i_pixels, w, h, channels, vertical_flip);
+}
+
+FrameBuffer::~FrameBuffer() {
+	release();
+}
+
+void FrameBuffer::release() {
+	color_texture.release();
+	depth_stencil_renderbuffer.release();
+	depth_stencil_texture.release();
+	GLCall(glDeleteFramebuffers(1, &id));
 }

@@ -302,7 +302,7 @@ bool RenderBuffer::is_loaded() {
 }
 
 // ----------------------------------------------------------------------------------
-
+/*
 TextureArray::TextureArray(unsigned int array_size) {
 	GLCall(glGenTextures(1, &id));
 }
@@ -346,6 +346,7 @@ bool TextureArray::is_loaded() {
 bool TextureArray::_load_image_check(bool print_errors) {
 
 }
+*/
 
 // ------------------------------------------------------------------------------------
 

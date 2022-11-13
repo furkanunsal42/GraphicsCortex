@@ -1,4 +1,3 @@
-#pragma once
 #include "RamCache.h"
 
 Cache::Cache(const std::string& connection_ip, int port) {

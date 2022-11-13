@@ -31,6 +31,9 @@ public:
 	Program* program = nullptr;
 
 	FrameBuffer(int width, int height, int anti_alliasing = 0, bool readable_depth_stencil_buffer = false);
+	~FrameBuffer();
+
+	void release();
 
 	void bind();
 	void unbind();
