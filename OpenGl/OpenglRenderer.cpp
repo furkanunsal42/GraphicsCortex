@@ -37,7 +37,7 @@ int main() {
 	//scene.lights.push_back(&spot);
 
 	Program framebuffer_program = default_program::framebuffer_program();
-	FrameBuffer frame_buffer(width, height, 0, false);
+	FrameBuffer frame_buffer(width, height, 0, true);
 	frame_buffer.program = &framebuffer_program;
 	scene.frame_buffer = &frame_buffer;
 	
@@ -101,7 +101,7 @@ int main() {
 		
 		frame_buffer.unbind();
 
-		frame_buffer.render(FrameBuffer::COLOR_TEXTURE);
+		frame_buffer.render(FrameBuffer::DEPTH_TEXTURE);
 
 		glfwSwapBuffers(frame.window);
 		PhysicsScene::get().simulation_step_finish();

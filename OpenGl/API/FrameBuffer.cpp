@@ -24,20 +24,30 @@ FrameBuffer::FrameBuffer(int width, int height, int anti_alliasing, bool readabl
 	color_texture.width = width;
 	color_texture.height = height;
 	
-	depth_stencil_renderbuffer.internal_format = GL_DEPTH24_STENCIL8;
-	depth_stencil_renderbuffer.format = GL_DEPTH_STENCIL;
-	depth_stencil_renderbuffer.data_type = GL_UNSIGNED_INT_24_8;
-	depth_stencil_renderbuffer.min_filter = GL_NEAREST;
-	depth_stencil_renderbuffer.mag_filter = GL_NEAREST;
-	depth_stencil_renderbuffer.wrap_s = GL_CLAMP_TO_EDGE;
-	depth_stencil_renderbuffer.wrap_t = GL_CLAMP_TO_EDGE;
+
 	if (readable_depth_stencil_buffer) {
+		depth_stencil_texture.internal_format = GL_DEPTH24_STENCIL8;
+		depth_stencil_texture.format = GL_DEPTH_STENCIL;
+		depth_stencil_texture.data_type = GL_UNSIGNED_INT_24_8;
+		depth_stencil_texture.min_filter = GL_NEAREST;
+		depth_stencil_texture.mag_filter = GL_NEAREST;
+		depth_stencil_texture.wrap_s = GL_CLAMP_TO_EDGE;
+		depth_stencil_texture.wrap_t = GL_CLAMP_TO_EDGE;
 		depth_stencil_texture.width = width;
 		depth_stencil_texture.height = height;
+		depth_stencil_texture.channels = 4; // 2?
 	}
 	else {
+		depth_stencil_renderbuffer.internal_format = GL_DEPTH24_STENCIL8;
+		depth_stencil_renderbuffer.format = GL_DEPTH_STENCIL;
+		depth_stencil_renderbuffer.data_type = GL_UNSIGNED_INT_24_8;
+		depth_stencil_renderbuffer.min_filter = GL_NEAREST;
+		depth_stencil_renderbuffer.mag_filter = GL_NEAREST;
+		depth_stencil_renderbuffer.wrap_s = GL_CLAMP_TO_EDGE;
+		depth_stencil_renderbuffer.wrap_t = GL_CLAMP_TO_EDGE;
 		depth_stencil_renderbuffer.width = width;
 		depth_stencil_renderbuffer.height = height;
+		depth_stencil_renderbuffer.channels = 4; // 2?
 	}
 
 	// create FrameBuffer
@@ -77,36 +87,24 @@ void FrameBuffer::render(unsigned int source_texture) {
 	if (multisample == 0){
 		GLCall(glDisable(GL_DEPTH_TEST));
 		if (!screen_initialized) {
-			Material* material = new Material();
-			material->color_map = color_texture;
-			material->color_map_slot = 5;
-			screen = default_geometry::rectangle(*material, *program, glm::vec2(2.0f));
+			screen = default_geometry::rectangle(glm::vec2(2.0f));
+			screen.load_program(*program);
 			screen_initialized = true;
 		}
 
-		GLCall(glActiveTexture(GL_TEXTURE0 + 9));
 		if (source_texture == COLOR_TEXTURE) {
-			GLCall(glBindTexture(color_texture.target, color_texture.id));
+			color_texture.texture_slot = 9; // make it dynamic
+			color_texture.bind();
 		}
 		if (source_texture == DEPTH_TEXTURE) {
+			depth_stencil_texture.texture_slot = 9;
+			depth_stencil_texture.bind();
 			GLCall(glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_STENCIL_TEXTURE_MODE, GL_DEPTH_COMPONENT));
-			if (readable_depth_stencil_buffer) {
-				GLCall(glBindTexture(depth_stencil_texture.target, depth_stencil_texture.id));
-			}
-			else {
-				GLCall(glBindTexture(depth_stencil_renderbuffer.target, depth_stencil_renderbuffer.id));
-			}
 		}
 		if (source_texture == STENCIL_TEXTURE) {
+			GLCall(glBindTexture(depth_stencil_texture.target, depth_stencil_texture.id));
 			GLCall(glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_STENCIL_TEXTURE_MODE, GL_STENCIL_INDEX));
-			if (readable_depth_stencil_buffer) {
-				GLCall(glBindTexture(depth_stencil_texture.target, depth_stencil_texture.id));
-			}
-			else {
-				GLCall(glBindTexture(depth_stencil_renderbuffer.target, depth_stencil_renderbuffer.id));
-			}
 		}
-
 		program->update_uniform("texture_slot", 9);
 		screen.draw();
 		GLCall(glEnable(GL_DEPTH_TEST));
