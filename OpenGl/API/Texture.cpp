@@ -369,7 +369,7 @@ void TextureArray::load_single_image(Image& image, int index) {
 		//glCompressedTexImage2D(target, 0, internal_format, width, height, 0, );
 	//else 
 	
-	GLCall(glTexSubImage3D(target, 0, 0, 0, index, width, height, depth, format, data_type, image.get_image_data()));
+	GLCall(glTexSubImage3D(target, 0, 0, 0, index, width, height, 1, format, data_type, image.get_image_data()));
 
 	if (generate_mipmap)
 		GLCall(glGenerateMipmap(target));
@@ -387,7 +387,31 @@ void TextureArray::load_images(std::vector<Image>& images) {
 	}
 
 	depth = images.size();
-	
+	channels = images[0].get_channels();
+
+	if (images[0].get_channels() == 3) {
+		if (format == NULL)
+			format = GL_RGB;
+		if (internal_format == NULL)
+		{
+			if (compress_image)
+				internal_format = GL_COMPRESSED_RGB;
+			else
+				internal_format = GL_RGB8;
+		}
+	}
+	else if (images[0].get_channels() == 4) {
+		if (format == NULL)
+			format = GL_RGBA;
+		if (internal_format == NULL)
+		{
+			if (compress_image)
+				internal_format = GL_COMPRESSED_RGBA;
+			else
+				internal_format = GL_RGBA8;
+		}
+	}
+	initialize_blank_images(images[0].get_width(), images[0].get_height(), depth);
 	for (int i = 0; i < images.size(); i++) {
 		load_single_image(images[i], i);
 	}
@@ -436,12 +460,48 @@ void TextureArray::unbind() {
 	GLCall(glBindTexture(target, 0));
 }
 
-Image TextureArray::save(bool vertical_flip) {
+Image TextureArray::save(int index, bool vertical_flip) {
+	bind();
 
+	int w, h;
+	int image_internal_format = internal_format;
+	int image_compressed = false;
+
+	GLCall(glGetTexLevelParameteriv(target, 0, GL_TEXTURE_WIDTH, &w));
+	GLCall(glGetTexLevelParameteriv(target, 0, GL_TEXTURE_HEIGHT, &h));
+
+	int image_size = w * h * channels * depth * sizeof(unsigned char);
+
+	if (compress_image) {
+		GLCall(glGetTexLevelParameteriv(target, 0, GL_TEXTURE_COMPRESSED_IMAGE_SIZE, &image_size));
+		GLCall(glGetTexLevelParameteriv(target, 0, GL_TEXTURE_COMPRESSED, &image_compressed));
+		GLCall(glGetTexLevelParameteriv(target, 0, GL_TEXTURE_INTERNAL_FORMAT, &image_internal_format));
+	}
+
+	unsigned char* i_pixels = new unsigned char[image_size / sizeof(unsigned char)];
+
+	if (compress_image) {
+		GLCall(glGetCompressedTexImage(target, 0, i_pixels));
+	}
+	else {
+		GLCall(glGetTexImage(target, 0, format, data_type, i_pixels));
+	}
+
+	return Image(i_pixels, w * depth, h, channels, vertical_flip);
+
+	//if (compress_image){
+	//	GLCall(glCompressedTexImage2D(target, 0, image_internal_format, width, height, 0, image_size, i_pixels));
+	//}
+	//else {
+	//	GLCall(glTexImage2D(target, 0, internal_format, width, height, 0, format, data_type, i_pixels));
+	//}
 }
 
 void TextureArray::print_info(unsigned int opengl_code) {
-
+	bind();
+	int data;
+	GLCall(glGetTexLevelParameteriv(target, 0, opengl_code, &data));
+	std::cout << "[INFO] Texture::print_info returns " << data << std::endl;
 }
 
 bool TextureArray::is_loaded() {

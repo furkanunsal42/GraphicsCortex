@@ -130,7 +130,7 @@ public:
 	void bind();
 	void unbind();
 
-	Image save(bool vertical_flip = true);
+	Image save(int index, bool vertical_flip = true);
 
 	void print_info(unsigned int opengl_code);
 

@@ -3,8 +3,16 @@
 int main() {
 	int width = 1920, height = 1080;
 	Frame frame(width, height, "GraphicsCortex", 4, 0, true, false, false);
+
+	std::vector<Image> images;
+	images.push_back(Image("Images/orange.png", 4));
+	images.push_back(Image("Images/orange.png", 4));
+	TextureArray texture_array;
+	texture_array.load_images(images);
+	Image loaded_image = texture_array.save(0);
+	loaded_image.save_to_disc("texture_array_save.png");
+	/*
 	Scene scene;
-	
 	Material chassis_material;
 	chassis_material.set_color_texture("Images/orange.png", 4);
 
@@ -107,6 +115,6 @@ int main() {
 		PhysicsScene::get().simulation_step_finish();
 		glfwSwapBuffers(frame.window);
 	}
-	
+	*/
 	return 0;
 }
