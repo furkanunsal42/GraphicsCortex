@@ -76,7 +76,9 @@ int main() {
 	Cache cache;
 
 	float t = 0;
+
 	while (!glfwWindowShouldClose(frame.window)){
+		glfwPollEvents();
 		double frame_time = frame.get_interval_ms();
 		PhysicsScene::get().simulation_step_start(frame_time / 1000.0f);
 
@@ -85,7 +87,6 @@ int main() {
 
 		frame_buffer.bind();
 		
-		glfwPollEvents();
 		frame.clear_window(0, 0, 0, 1);
 		frame.display_performance(180);
 		
@@ -103,11 +104,8 @@ int main() {
 
 		frame_buffer.render(FrameBuffer::DEPTH_TEXTURE);
 
-		glfwSwapBuffers(frame.window);
 		PhysicsScene::get().simulation_step_finish();
-
-		//Image chassis_image = frame_buffer.save();
-		//cache.set_key("image", chassis_image);
+		glfwSwapBuffers(frame.window);
 	}
 	
 	return 0;

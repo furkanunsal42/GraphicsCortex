@@ -302,8 +302,14 @@ bool RenderBuffer::is_loaded() {
 }
 
 // ----------------------------------------------------------------------------------
-/*
-TextureArray::TextureArray(unsigned int array_size) {
+TextureArray::TextureArray(int multisample) {
+	if (multisample == 0)
+		target = GL_TEXTURE_2D_ARRAY;
+	else
+		target = GL_TEXTURE_2D_MULTISAMPLE_ARRAY;
+
+	multisample_amount = multisample;
+
 	GLCall(glGenTextures(1, &id));
 }
 
@@ -315,20 +321,119 @@ void TextureArray::release() {
 	GLCall(glDeleteTextures(1, &id));
 }
 
-void TextureArray::load_image(Image& image) {
+void TextureArray::load_single_image(Image& image, int index) {
+	if (!_load_image_check(true))
+		return;
 
+	if (width == NULL && height == NULL && channels == NULL) {
+		width = image.get_width();
+		height = image.get_height();
+		channels = image.get_channels();
+		
+		if (image.get_channels() == 3) {
+			if (format == NULL)
+				format = GL_RGB;
+			if (internal_format == NULL)
+			{
+				if (compress_image)
+					internal_format = GL_COMPRESSED_RGB;
+				else
+					internal_format = GL_RGB8;
+			}
+		}
+		else if (image.get_channels() == 4) {
+			if (format == NULL)
+				format = GL_RGBA;
+			if (internal_format == NULL)
+			{
+				if (compress_image)
+					internal_format = GL_COMPRESSED_RGBA;
+				else
+					internal_format = GL_RGBA8;
+			}
+		}
+	}
+	else if (width != image.get_width() || height != image.get_height() || channels != image.get_channels()) {
+		std::cout << "[OpenGL ERROR] TextureArray::load_single_image() was called but given image doesn't match TextureArray's dimentions." << std::endl;
+		ASSERT(false);
+	}
+
+	GLCall(glActiveTexture(GL_TEXTURE0 + texture_slot));
+	GLCall(glBindTexture(target, id));
+	GLCall(glTexParameteri(target, GL_TEXTURE_MIN_FILTER, min_filter));
+	GLCall(glTexParameteri(target, GL_TEXTURE_MAG_FILTER, mag_filter));
+	GLCall(glTexParameteri(target, GL_TEXTURE_WRAP_S, wrap_s));
+	GLCall(glTexParameteri(target, GL_TEXTURE_WRAP_T, wrap_t));
+
+	//if (compress_image)
+		//glCompressedTexImage2D(target, 0, internal_format, width, height, 0, );
+	//else 
+	
+	GLCall(glTexSubImage3D(target, 0, 0, 0, index, width, height, depth, format, data_type, image.get_image_data()));
+
+	if (generate_mipmap)
+		GLCall(glGenerateMipmap(target));
+
+	_loaded_on_gpu = true;
 }
 
-void TextureArray::initialize_blank_image(int width, int height) {
+void TextureArray::load_images(std::vector<Image>& images) {
+	if (!_load_image_check(true))
+		return;
 
+	if (images.size() == 0) {
+		std::cout << "[OpenGL Warning] TextureArray::load_images() was called with empty image array." << std::endl;
+		return;
+	}
+
+	depth = images.size();
+	
+	for (int i = 0; i < images.size(); i++) {
+		load_single_image(images[i], i);
+	}
+
+	_loaded_on_gpu = true;
+}
+
+void TextureArray::initialize_blank_images(int width, int height, int depth) {
+
+	this->width = width;
+	this->height = height;
+	this->depth = depth;
+
+	GLCall(glActiveTexture(GL_TEXTURE0 + texture_slot));
+	GLCall(glBindTexture(target, id));
+	if (target == GL_TEXTURE_2D_ARRAY) {
+		GLCall(glTexImage3D(target, 0, internal_format, this->width, this->height, this->depth, 0, format, data_type, NULL));
+		GLCall(glTexParameteri(target, GL_TEXTURE_MIN_FILTER, min_filter));
+		GLCall(glTexParameteri(target, GL_TEXTURE_MAG_FILTER, mag_filter));
+		GLCall(glTexParameteri(target, GL_TEXTURE_WRAP_S, wrap_s));
+		GLCall(glTexParameteri(target, GL_TEXTURE_WRAP_T, wrap_t));
+		if (generate_mipmap) {
+			GLCall(glGenerateMipmap(target));
+		}
+	}
+	else if (target == GL_TEXTURE_2D_MULTISAMPLE_ARRAY) {
+		GLCall(glTexImage3DMultisample(target, multisample_amount, internal_format, this->width, this->height, this->depth, GL_TRUE));
+	}
+	else {
+		std::cout << "TextureArray::initialize_blank_image() was called but target is not supported." << std::endl;
+		ASSERT(false);
+	}
 }
 
 void TextureArray::bind() {
-
+	GLCall(glActiveTexture(GL_TEXTURE0 + texture_slot));
+	GLCall(glBindTexture(target, id));
+	GLCall(glTexParameteri(target, GL_TEXTURE_MIN_FILTER, min_filter));
+	GLCall(glTexParameteri(target, GL_TEXTURE_MAG_FILTER, mag_filter));
+	GLCall(glTexParameteri(target, GL_TEXTURE_WRAP_S, wrap_s));
+	GLCall(glTexParameteri(target, GL_TEXTURE_WRAP_T, wrap_t));
 }
 
 void TextureArray::unbind() {
-
+	GLCall(glActiveTexture(GL_TEXTURE0 + texture_slot));
+	GLCall(glBindTexture(target, 0));
 }
 
 Image TextureArray::save(bool vertical_flip) {
@@ -340,14 +445,12 @@ void TextureArray::print_info(unsigned int opengl_code) {
 }
 
 bool TextureArray::is_loaded() {
-
+	return _loaded_on_gpu;
 }
 	
 bool TextureArray::_load_image_check(bool print_errors) {
-
+	return true;
 }
-*/
-
 // ------------------------------------------------------------------------------------
 
 Material::Material() { }
