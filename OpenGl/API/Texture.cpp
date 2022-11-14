@@ -358,18 +358,12 @@ void TextureArray::load_single_image(Image& image, int index) {
 		ASSERT(false);
 	}
 
-	GLCall(glActiveTexture(GL_TEXTURE0 + texture_slot));
-	GLCall(glBindTexture(target, id));
-	GLCall(glTexParameteri(target, GL_TEXTURE_MIN_FILTER, min_filter));
-	GLCall(glTexParameteri(target, GL_TEXTURE_MAG_FILTER, mag_filter));
-	GLCall(glTexParameteri(target, GL_TEXTURE_WRAP_S, wrap_s));
-	GLCall(glTexParameteri(target, GL_TEXTURE_WRAP_T, wrap_t));
+	bind();
 
 	//if (compress_image)
 		//glCompressedTexImage2D(target, 0, internal_format, width, height, 0, );
 	//else 
-	
-	GLCall(glTexSubImage3D(target, 0, 0, 0, index, width, height, 1, format, data_type, image.get_image_data()));
+	GLCall(glTextureSubImage3D(id, 0, 0, 0, index, width, height, 1, format, data_type, image.get_image_data()));
 
 	if (generate_mipmap)
 		GLCall(glGenerateMipmap(target));
@@ -415,7 +409,6 @@ void TextureArray::load_images(std::vector<Image>& images) {
 	for (int i = 0; i < images.size(); i++) {
 		load_single_image(images[i], i);
 	}
-
 	_loaded_on_gpu = true;
 }
 
@@ -470,7 +463,7 @@ Image TextureArray::save(int index, bool vertical_flip) {
 	GLCall(glGetTexLevelParameteriv(target, 0, GL_TEXTURE_WIDTH, &w));
 	GLCall(glGetTexLevelParameteriv(target, 0, GL_TEXTURE_HEIGHT, &h));
 
-	int image_size = w * h * channels * depth * sizeof(unsigned char);
+	int image_size = w * h * channels;
 
 	if (compress_image) {
 		GLCall(glGetTexLevelParameteriv(target, 0, GL_TEXTURE_COMPRESSED_IMAGE_SIZE, &image_size));
@@ -478,16 +471,16 @@ Image TextureArray::save(int index, bool vertical_flip) {
 		GLCall(glGetTexLevelParameteriv(target, 0, GL_TEXTURE_INTERNAL_FORMAT, &image_internal_format));
 	}
 
-	unsigned char* i_pixels = new unsigned char[image_size / sizeof(unsigned char)];
+	unsigned char* i_pixels = new unsigned char[image_size];
 
 	if (compress_image) {
 		GLCall(glGetCompressedTexImage(target, 0, i_pixels));
 	}
 	else {
-		GLCall(glGetTexImage(target, 0, format, data_type, i_pixels));
+		GLCall(glGetTextureSubImage(id, 0, 0, 0, index, w, h, 1, format, data_type, image_size, i_pixels));
 	}
 
-	return Image(i_pixels, w * depth, h, channels, vertical_flip);
+	return Image(i_pixels, w, h, channels, vertical_flip);
 
 	//if (compress_image){
 	//	GLCall(glCompressedTexImage2D(target, 0, image_internal_format, width, height, 0, image_size, i_pixels));
