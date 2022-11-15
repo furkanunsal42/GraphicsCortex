@@ -26,8 +26,7 @@ Frame::Frame(int width, int height, const std::string& name, int msaa, int swapi
 	if (!is_glfw_initialized) {
 		glfwInit();
 		is_glfw_initialized = true;
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	}
 	//if(multisample)
 		//glfwWindowHint(GLFW_SAMPLES, multisample);
@@ -107,4 +106,21 @@ double Frame::get_interval_ms() {
 	double ms_current = (now - old_time_accurate) * 1000;
 	old_time_accurate = now;
 	return ms_current;
+}
+
+bool Frame::is_running() {
+	return !glfwWindowShouldClose(window);
+}
+
+bool first_handle = true;
+double Frame::handle_window() {
+	if (!first_handle)
+		glfwSwapBuffers(window);
+	glfwPollEvents();
+
+	if (first_handle) {
+		first_handle = false;
+		get_interval_ms(); // reset it
+	}
+	return get_interval_ms();
 }

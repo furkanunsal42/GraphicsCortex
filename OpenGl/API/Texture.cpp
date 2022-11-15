@@ -463,7 +463,7 @@ Image TextureArray::save(int index, bool vertical_flip) {
 	GLCall(glGetTexLevelParameteriv(target, 0, GL_TEXTURE_WIDTH, &w));
 	GLCall(glGetTexLevelParameteriv(target, 0, GL_TEXTURE_HEIGHT, &h));
 
-	int image_size = w * h * channels;
+	int image_size = w * h * channels * depth;
 
 	if (compress_image) {
 		GLCall(glGetTexLevelParameteriv(target, 0, GL_TEXTURE_COMPRESSED_IMAGE_SIZE, &image_size));

@@ -190,3 +190,5 @@ OpenGl/Release/sds.obj
 OpenGl/Release/sockcompat.obj
 OpenGl/saved_image.png
 OpenGl/Release/RamCache.obj
+OpenGl/Release/TextureArrayMain.obj
+OpenGl/texture_array_save.png

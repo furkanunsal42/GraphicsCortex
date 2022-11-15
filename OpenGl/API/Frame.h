@@ -27,5 +27,7 @@ public:
 	void clear_window(float red = 0, float green = 0, float blue = 0, float alpha = 1);
 	void display_performance(int batch_size = NULL);
 	double get_interval_ms();
+	bool is_running();
+	double handle_window();
 private:
 };

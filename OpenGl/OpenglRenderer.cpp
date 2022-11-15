@@ -4,22 +4,6 @@ int main() {
 	int width = 1920, height = 1080;
 	Frame frame(width, height, "GraphicsCortex", 4, 0, true, false, false);
 
-	std::vector<Image> images;
-	
-	images.push_back(Image("Images/full_blue.png", 4));
-	images.push_back(Image("Images/full_white.png", 4));
-	images.push_back(Image("Images/full_blue.png", 4));
-	images.push_back(Image("Images/full_white.png", 4));
-	images.push_back(Image("Images/full_blue.png", 4));
-	images.push_back(Image("Images/full_white.png", 4));
-	images.push_back(Image("Images/full_blue.png", 4));
-	images.push_back(Image("Images/full_white.png", 4));
-	
-	TextureArray texture_array;
-	texture_array.load_images(images);
-	Image loaded_image = texture_array.save(5);
-	loaded_image.save_to_disc("texture_array_save.png");
-	/*
 	Scene scene;
 	Material chassis_material;
 	chassis_material.set_color_texture("Images/orange.png", 4);
@@ -93,9 +77,8 @@ int main() {
 
 	float t = 0;
 
-	while (!glfwWindowShouldClose(frame.window)){
-		glfwPollEvents();
-		double frame_time = frame.get_interval_ms();
+	while (frame.is_running()){
+		double frame_time = frame.handle_window();
 		PhysicsScene::get().simulation_step_start(frame_time / 1000.0f);
 
 		vehicle.sync_with_physics();
@@ -121,8 +104,7 @@ int main() {
 		frame_buffer.render(FrameBuffer::DEPTH_TEXTURE);
 
 		PhysicsScene::get().simulation_step_finish();
-		glfwSwapBuffers(frame.window);
 	}
-	*/
+	
 	return 0;
 }

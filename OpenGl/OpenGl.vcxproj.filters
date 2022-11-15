@@ -117,7 +117,7 @@
     <ClCompile Include="API\RamCache.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
-    <ClCompile Include="OpenglRenderer.cpp">
+    <ClCompile Include="TextureArrayMain.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
   </ItemGroup>
@@ -157,6 +157,8 @@
       <Filter>Üst Bilgi Dosyaları</Filter>
     </None>
     <None Include="Dependencies\assimp\bin\assimp-vc143-mtd.dll" />
+    <None Include="Shaders\TextureArray.frag" />
+    <None Include="Shaders\TextureArray.vert" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="API\Debuger.h">

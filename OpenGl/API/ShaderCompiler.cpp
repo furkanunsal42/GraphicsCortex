@@ -8,8 +8,6 @@
 #include <GL\glew.h>
 #include "Debuger.h"
 
-unsigned int Program::current_binded_program = 0;
-
 Shader::Shader() { ; }
 
 Shader::Shader(const std::string& target_file)
@@ -180,22 +178,10 @@ void Program::compile(const std::string& vertex_shader_code, const std::string& 
 }
 
 void Program::bind() {
-	#ifdef PROGRAM_REPEATED_BIND_OPTIMIZATION
-	if ((int)id != (int)current_binded_program)
-	#endif
-	{
-		GLCall(glUseProgram(id));
-	}
-	current_binded_program = id;
+	GLCall(glUseProgram(id));
 }
 void Program::unbind() {
-	#ifdef PROGRAM_REPEATED_BIND_OPTIMIZATION
-	if (0 != current_binded_program)
-	#endif
-	{
-		GLCall(glUseProgram(0));
-	}
-	current_binded_program = 0;
+	GLCall(glUseProgram(0));
 }
 
 // UNIFORMS
