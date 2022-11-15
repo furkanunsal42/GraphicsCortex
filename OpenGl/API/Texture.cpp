@@ -322,9 +322,6 @@ void TextureArray::release() {
 }
 
 void TextureArray::load_single_image(Image& image, int index) {
-	if (!_load_image_check(true))
-		return;
-
 	if (width == NULL && height == NULL && channels == NULL) {
 		width = image.get_width();
 		height = image.get_height();
@@ -363,7 +360,7 @@ void TextureArray::load_single_image(Image& image, int index) {
 	//if (compress_image)
 		//glCompressedTexImage2D(target, 0, internal_format, width, height, 0, );
 	//else 
-	GLCall(glTextureSubImage3D(id, 0, 0, 0, index, width, height, 1, format, data_type, image.get_image_data()));
+	GLCall(glTexSubImage3D(target, 0, 0, 0, index, width, height, 1, format, data_type, image.get_image_data()));
 
 	if (generate_mipmap)
 		GLCall(glGenerateMipmap(target));
@@ -372,9 +369,6 @@ void TextureArray::load_single_image(Image& image, int index) {
 }
 
 void TextureArray::load_images(std::vector<Image>& images) {
-	if (!_load_image_check(true))
-		return;
-
 	if (images.size() == 0) {
 		std::cout << "[OpenGL Warning] TextureArray::load_images() was called with empty image array." << std::endl;
 		return;
@@ -405,18 +399,42 @@ void TextureArray::load_images(std::vector<Image>& images) {
 				internal_format = GL_RGBA8;
 		}
 	}
-	initialize_blank_images(images[0].get_width(), images[0].get_height(), depth);
+	initialize_blank_images(images[0].get_width(), images[0].get_height(), depth, images[0].get_channels());
 	for (int i = 0; i < images.size(); i++) {
 		load_single_image(images[i], i);
 	}
 	_loaded_on_gpu = true;
 }
 
-void TextureArray::initialize_blank_images(int width, int height, int depth) {
+void TextureArray::initialize_blank_images(int width, int height, int depth, int channels) {
 
 	this->width = width;
 	this->height = height;
 	this->depth = depth;
+	this->channels = channels;
+
+	if (channels == 3) {
+		if (format == NULL)
+			format = GL_RGB;
+		if (internal_format == NULL)
+		{
+			if (compress_image)
+				internal_format = GL_COMPRESSED_RGB;
+			else
+				internal_format = GL_RGB8;
+		}
+	}
+	else if (channels == 4) {
+		if (format == NULL)
+			format = GL_RGBA;
+		if (internal_format == NULL)
+		{
+			if (compress_image)
+				internal_format = GL_COMPRESSED_RGBA;
+			else
+				internal_format = GL_RGBA8;
+		}
+	}
 
 	GLCall(glActiveTexture(GL_TEXTURE0 + texture_slot));
 	GLCall(glBindTexture(target, id));
@@ -501,9 +519,6 @@ bool TextureArray::is_loaded() {
 	return _loaded_on_gpu;
 }
 	
-bool TextureArray::_load_image_check(bool print_errors) {
-	return true;
-}
 // ------------------------------------------------------------------------------------
 
 Material::Material() { }

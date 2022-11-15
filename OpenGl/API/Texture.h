@@ -123,7 +123,7 @@ public:
 	void release();
 
 	void load_images(std::vector<Image>& images);
-	void initialize_blank_images(int width, int height, int depth);
+	void initialize_blank_images(int width, int height, int depth, int channels);
 
 	void load_single_image(Image& image, int index);
 
@@ -137,7 +137,6 @@ public:
 	bool is_loaded();
 private:
 	int depth = NULL;
-	bool _load_image_check(bool print_errors = true);
 };
 
 

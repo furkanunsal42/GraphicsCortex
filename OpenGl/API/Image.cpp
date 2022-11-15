@@ -18,7 +18,7 @@ Image::Image(const Image& copy_image) :
 {
 	size_t buffer_size = copy_image._width * copy_image._height * copy_image._channels;
 	_image_data = new unsigned char[buffer_size];
-	std::memcpy(copy_image._image_data, _image_data, buffer_size);
+	std::memcpy(_image_data, copy_image._image_data, buffer_size);
 }
 
 Image::Image(Image&& move_image) :
