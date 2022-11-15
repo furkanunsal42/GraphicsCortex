@@ -33,7 +33,7 @@ void Camera::update_uniforms(Program& program) {
 	program.update_uniform("camera_coords", position.x, position.y, position.z);
 }
 
-void Camera::handle_movements(GLFWwindow* window) {
+void Camera::handle_movements(GLFWwindow* window, double frame_time_ms) {
 	if (glfwGetKey(window, GLFW_KEY_W) == 1) {
 		glm::vec3 forward_vector = glm::vec3(0.0f, 0.0f, -1.0f);
 		forward_vector = glm::rotate(forward_vector, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));

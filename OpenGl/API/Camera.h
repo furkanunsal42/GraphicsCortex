@@ -23,12 +23,11 @@ public:
 	float screen_width;
 	float screen_height;
 	float movement_speed = 0.0025f;
-	double frame_time_ms = 16.6f;
 	float mouse_sensitivity = 15.0f;
 	bool mouse_focus = false;
 	Camera();
 	Camera(float width, float height);
 	void update_matrixes();
 	void update_uniforms(Program& program);
-	void handle_movements(GLFWwindow* window);
+	void handle_movements(GLFWwindow* window, double frame_time_ms = 16.6f);
 };
