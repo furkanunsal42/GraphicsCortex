@@ -6,7 +6,7 @@ int main() {
 	Scene scene;
 
 	Model model;
-	std::vector<Image> images = model.load_model("Models/dragon_new.fbx");
+	std::vector<Image> images = model.load_model("Models/sculpture/scene.gltf");
 
 	TextureArray texture_array;
 	texture_array.load_images(images);
@@ -35,6 +35,8 @@ int main() {
 	g.add_uniform_update_queue(uniform_update<int>("array_index", 1));
 
 	g.set_position(glm::vec3(0, 0, -6));
+	g.set_rotation(glm::quat(glm::vec3(-glm::half_pi<float>(), 0, 0)));
+
 	scene.add_graphic(g);
 	while (frame.is_running()) {
 		double frame_time = frame.handle_window();

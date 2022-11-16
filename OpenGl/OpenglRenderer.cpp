@@ -89,8 +89,7 @@ int main() {
 		frame.clear_window(0, 0, 0, 1);
 		frame.display_performance(180);
 		
-		scene.camera->frame_time_ms = frame_time;
-		//scene.camera->handle_movements(window);
+		//scene.camera->handle_movements(frame.window);
 
 		cube_map.draw();
 
@@ -101,7 +100,7 @@ int main() {
 		
 		frame_buffer.unbind();
 
-		frame_buffer.render(FrameBuffer::DEPTH_TEXTURE);
+		frame_buffer.render(FrameBuffer::COLOR_TEXTURE);
 
 		PhysicsScene::get().simulation_step_finish();
 	}

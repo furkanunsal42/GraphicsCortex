@@ -200,6 +200,7 @@
     <ClCompile Include="API\Debuger.cpp" />
     <ClCompile Include="API\ShaderCompiler.cpp" />
     <ClCompile Include="Dependencies\stb_image\stb_image_write.cpp" />
+    <ClCompile Include="Model Importing.cpp" />
     <ClCompile Include="snippetcommon\SnippetVehicle4WCreate.cpp" />
     <ClCompile Include="snippetcommon\SnippetVehicleCreate.cpp" />
     <ClCompile Include="snippetcommon\SnippetVehicleFilterShader.cpp" />
@@ -207,7 +208,6 @@
     <ClCompile Include="snippetcommon\SnippetVehicleSceneQuery.cpp" />
     <ClCompile Include="snippetcommon\SnippetVehicleTankCreate.cpp" />
     <ClCompile Include="snippetcommon\SnippetVehicleTireFriction.cpp" />
-    <ClCompile Include="TextureArrayMain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Dependencies\assimp\bin\assimp-vc143-mtd.dll" />

@@ -54,7 +54,7 @@ std::vector<Image> Model::load_model(const std::string& filepath) {
 		aiString image_name;
 		int image_index = image_paths.size();
 		if (imported_scene->mMaterials[material_index]->GetTexture(aiTextureType_DIFFUSE, 0, &image_name) == AI_SUCCESS) {
-			std::string path = "Models\\" + std::string(image_name.C_Str());
+			std::string path = "Models/sculpture/" + std::string(image_name.C_Str());
 			std::cout << path << std::endl;
 			bool image_exists = false;
 			for (int i = 0; i < image_paths.size(); i++) {

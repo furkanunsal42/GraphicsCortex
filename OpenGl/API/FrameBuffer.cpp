@@ -106,7 +106,7 @@ void FrameBuffer::render(unsigned int source_texture) {
 			GLCall(glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_STENCIL_TEXTURE_MODE, GL_STENCIL_INDEX));
 		}
 		program->update_uniform("texture_slot", 9);
-		screen.draw();
+		screen.draw(false);
 		GLCall(glEnable(GL_DEPTH_TEST));
 	}
 	else {
