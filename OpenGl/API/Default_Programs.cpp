@@ -36,6 +36,14 @@ namespace default_program {
 		return queue;
 	}
 
+	uniform_update_queue basic_uniform_queue(Scene& scene, Graphic& mesh) {
+		uniform_update_queue queue;
+		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("model", &mesh.model_matrix));
+		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("view", &scene.camera->view_matrix));
+		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("projection", &scene.camera->projection_matrix));
+		return queue;
+	}
+
 	uniform_update_queue cubemap_default_uniform_queue(CubeMapTexture& cubemap) {
 		uniform_update_queue queue;
 		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("view", &cubemap.camera->view_matrix));

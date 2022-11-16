@@ -352,7 +352,7 @@ void TextureArray::load_single_image(Image& image, int index) {
 	}
 	else if (width != image.get_width() || height != image.get_height() || channels != image.get_channels()) {
 		std::cout << "[OpenGL ERROR] TextureArray::load_single_image() was called but given image doesn't match TextureArray's dimentions." << std::endl;
-		ASSERT(false);
+		//ASSERT(false);
 	}
 
 	bind();
@@ -473,39 +473,35 @@ void TextureArray::unbind() {
 
 Image TextureArray::save(int index, bool vertical_flip) {
 	bind();
+	if (index >= 0) {
+		int w, h;
 
-	int w, h;
-	int image_internal_format = internal_format;
-	int image_compressed = false;
+		GLCall(glGetTexLevelParameteriv(target, 0, GL_TEXTURE_WIDTH, &w));
+		GLCall(glGetTexLevelParameteriv(target, 0, GL_TEXTURE_HEIGHT, &h));
 
-	GLCall(glGetTexLevelParameteriv(target, 0, GL_TEXTURE_WIDTH, &w));
-	GLCall(glGetTexLevelParameteriv(target, 0, GL_TEXTURE_HEIGHT, &h));
+		int image_size = w * h * channels;
 
-	int image_size = w * h * channels * depth;
+		unsigned char* i_pixels = new unsigned char[image_size];
 
-	if (compress_image) {
-		GLCall(glGetTexLevelParameteriv(target, 0, GL_TEXTURE_COMPRESSED_IMAGE_SIZE, &image_size));
-		GLCall(glGetTexLevelParameteriv(target, 0, GL_TEXTURE_COMPRESSED, &image_compressed));
-		GLCall(glGetTexLevelParameteriv(target, 0, GL_TEXTURE_INTERNAL_FORMAT, &image_internal_format));
-	}
-
-	unsigned char* i_pixels = new unsigned char[image_size];
-
-	if (compress_image) {
-		GLCall(glGetCompressedTexImage(target, 0, i_pixels));
-	}
-	else {
 		GLCall(glGetTextureSubImage(id, 0, 0, 0, index, w, h, 1, format, data_type, image_size, i_pixels));
+
+		return Image(i_pixels, w, h, channels, vertical_flip);
 	}
+	else if (index == -1) {
+		int w, h;
 
-	return Image(i_pixels, w, h, channels, vertical_flip);
+		GLCall(glGetTexLevelParameteriv(target, 0, GL_TEXTURE_WIDTH, &w));
+		GLCall(glGetTexLevelParameteriv(target, 0, GL_TEXTURE_HEIGHT, &h));
 
-	//if (compress_image){
-	//	GLCall(glCompressedTexImage2D(target, 0, image_internal_format, width, height, 0, image_size, i_pixels));
-	//}
-	//else {
-	//	GLCall(glTexImage2D(target, 0, internal_format, width, height, 0, format, data_type, i_pixels));
-	//}
+		int image_size = w * h * channels * depth;
+
+		unsigned char* i_pixels = new unsigned char[image_size];
+
+		GLCall(glGetTextureSubImage(id, 0, 0, 0, 0, w, h, depth, format, data_type, image_size, i_pixels));
+
+		return Image(i_pixels, w, h * depth, channels, vertical_flip);
+
+	}
 }
 
 void TextureArray::print_info(unsigned int opengl_code) {

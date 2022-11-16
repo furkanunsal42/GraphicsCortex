@@ -9,8 +9,10 @@
 #include <glm.hpp>
 
 #include <PxPhysics.h>
+#include "Image.h"
 
 #include <iostream>
+#include <vector>
 
 class Model {
 public:
@@ -26,7 +28,7 @@ public:
 	Model(ArrayBuffer& verticies, IndexBuffer& indirices);
 	Model(ArrayBuffer&& verticies, IndexBuffer&& indicies);
 
-	void load_model(const std::string& file_path);
+	std::vector<Image> load_model(const std::string& file_path);
 	
 	template<typename T>
 	std::enable_if_t<std::is_same<T, float>::value, std::vector<T>>

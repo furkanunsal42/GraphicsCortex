@@ -5,6 +5,9 @@
 #include <assimp/postprocess.h>
 
 #include <iostream>
+#include "Image.h"
+#include <vector>
+#include <map>
 
 Assimp::Importer Model::asset_loader;
 
@@ -22,7 +25,7 @@ Model::Model(ArrayBuffer& verticies, IndexBuffer& indicies) :
 Model::Model(ArrayBuffer&& verticies, IndexBuffer&& indicies) :
 	vertex_buffer(verticies), index_buffer(indicies) {}
 
-void Model::load_model(const std::string& filepath) {
+std::vector<Image> Model::load_model(const std::string& filepath) {
 	
 	clear_ram();
 
@@ -45,7 +48,27 @@ void Model::load_model(const std::string& filepath) {
 
 	unsigned int prefix_indicies_sum = 0;
 
+	std::vector<std::string> image_paths;
 	for (int i = 0; i < imported_scene->mNumMeshes; i++) {
+		int material_index = imported_scene->mMeshes[i]->mMaterialIndex;
+		aiString image_name;
+		int image_index = image_paths.size();
+		if (imported_scene->mMaterials[material_index]->GetTexture(aiTextureType_DIFFUSE, 0, &image_name) == AI_SUCCESS) {
+			std::string path = "Models\\" + std::string(image_name.C_Str());
+			std::cout << path << std::endl;
+			bool image_exists = false;
+			for (int i = 0; i < image_paths.size(); i++) {
+				if (image_paths[i] == path) {
+					image_exists = true;
+					image_index = i;
+					break;
+				}
+			}
+			if(!image_exists){
+				image_paths.push_back(path);
+			}
+		}
+
 		for (int j = 0; j < imported_scene->mMeshes[i]->mNumVertices; j++) {
 
 			aiVector3D vertex = imported_scene->mMeshes[i]->mVertices[j];
@@ -56,7 +79,8 @@ void Model::load_model(const std::string& filepath) {
 			aiVector3D texcoords = imported_scene->mMeshes[i]->mTextureCoords[0][j];
 			vertex_data.push_back(texcoords.x);
 			vertex_data.push_back(texcoords.y);
-
+			vertex_data.push_back(image_index);
+			
 			aiVector3D normal = imported_scene->mMeshes[i]->mNormals[j];
 			normal.Normalize();
 			vertex_data.push_back((float)normal.x);
@@ -74,13 +98,20 @@ void Model::load_model(const std::string& filepath) {
 		}
 		prefix_indicies_sum += imported_scene->mMeshes[i]->mNumVertices;
 	}
+
 	vertex_buffer.vertex_attribute_structure.clear();
 	vertex_buffer.initialize_buffer(vertex_data);
 	vertex_buffer.push_attribute(3);	// position
-	vertex_buffer.push_attribute(2);	// texture
+	vertex_buffer.push_attribute(3);	// texture
 	vertex_buffer.push_attribute(3);	// normals
 
 	index_buffer.initialize_buffer(index_data, 3);
+
+	std::vector<Image> images;
+	for (std::string& path : image_paths) {
+		images.push_back(Image(path));
+	}
+	return images;
 }
 
 void Model::clear_ram() {
