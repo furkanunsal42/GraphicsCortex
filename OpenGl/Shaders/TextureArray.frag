@@ -8,5 +8,5 @@ in vec3 tex_indicies;
 
 uniform sampler2DArray texture_array;
 void main(){
-	frag_color = texture(texture_array, vec3(tex_coords, tex_indicies.y));
+	frag_color = texture(texture_array, vec3(tex_coords, 1));
  }

@@ -6,12 +6,18 @@ int main() {
 	Scene scene;
 
 	Model model;
-	UnorderedMaterial material = model.load_model("Models/dragon_new/dragon_new.fbx");
+	model.load_model("Models/thinker/Rodin_Thinker.obj");
+	Material material;
+	material.set_color_texture("Models/thinker/textures/Rodin_Thinker_diffuse.jpg", 4);
+	material.set_specular_texture("Models/thinker/textures/Rodin_Thinker_gloss.jpg", 4);
+	material.set_normal_texture("Models/thinker/textures/Rodin_Thinker_normal.png", 4);
 	material.bind();
 
-	Image result = material.texture_array.save(-1);
-	result.save_to_disc("texture_array_save.png");
-	
+	{
+		Image result = material.texture_array.save(-1);
+		result.save_to_disc("texture_array_save.png");
+	}
+
 	Camera cam;
 	cam.screen_width = (float)1920;
 	cam.screen_height = (float)1080;
@@ -31,7 +37,7 @@ int main() {
 	g.add_uniform_update_queue(uniform_update<int>("array_index", 1));
 
 	g.set_position(glm::vec3(0, 0, -6));
-	g.set_rotation(glm::quat(glm::vec3(-glm::half_pi<float>(), 0, 0)));
+	//g.set_rotation(glm::quat(glm::vec3(-glm::half_pi<float>(), 0, 0)));
 
 	scene.add_graphic(g);
 	while (frame.is_running()) {

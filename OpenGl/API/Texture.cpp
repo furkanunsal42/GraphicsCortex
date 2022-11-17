@@ -360,7 +360,7 @@ void TextureArray::load_single_image(Image& image, int index) {
 	//if (compress_image)
 		//glCompressedTexImage2D(target, 0, internal_format, width, height, 0, );
 	//else 
-	GLCall(glTexSubImage3D(target, 0, 0, 0, index, width, height, 1, format, data_type, image.get_image_data()));
+	GLCall(glTexSubImage3D(target, 0, 0, 0, index, image.get_width(), image.get_height(), 1, format, data_type, image.get_image_data()));
 
 	if (generate_mipmap)
 		GLCall(glGenerateMipmap(target));
@@ -549,7 +549,7 @@ void UnorderedMaterial::bind() {
 	std::vector<std::thread> task;
 	for (int i = 0; i < array_size; i++) {
 		if (!_is_texture_loaded[i])
-			task.push_back(std::thread(&read_image, std::ref(_texture_filenames[0]), _texture_desired_channels[0], std::ref(images[i])));
+			task.push_back(std::thread(&read_image, std::ref(_texture_filenames[i]), _texture_desired_channels[i], std::ref(images[i])));
 	}
 
 	for (int i = 0; i < task.size(); i++) {
