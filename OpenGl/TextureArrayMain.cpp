@@ -9,14 +9,14 @@ int main() {
 	model.load_model("Models/thinker/Rodin_Thinker.obj");
 	Material material;
 	material.set_color_texture("Models/thinker/textures/Rodin_Thinker_diffuse.jpg", 4);
-	material.set_specular_texture("Models/thinker/textures/Rodin_Thinker_gloss.jpg", 4);
-	material.set_normal_texture("Models/thinker/textures/Rodin_Thinker_normal.png", 4);
+	//material.set_specular_texture("Models/thinker/textures/Rodin_Thinker_gloss.jpg", 4);
+	//material.set_normal_texture("Models/thinker/textures/Rodin_Thinker_normal.png", 4);
 	material.bind();
 
-	{
-		Image result = material.texture_array.save(-1);
-		result.save_to_disc("texture_array_save.png");
-	}
+	//{
+	//	Image result = material.texture_array.save(-1);
+	//	result.save_to_disc("texture_array_save.png");
+	//}
 
 	Camera cam;
 	cam.screen_width = (float)1920;
@@ -33,8 +33,8 @@ int main() {
 	g.load_program(renderer);
 	g.load_model(model);
 	g.set_uniform_update_queue(default_program::basic_uniform_queue(scene, g));
-	g.add_uniform_update_queue(uniform_update<int>("texture_array", 0));
-	g.add_uniform_update_queue(uniform_update<int>("array_index", 1));
+	//g.add_uniform_update_queue(uniform_update<int>("texture_array", 0));
+	//g.add_uniform_update_queue(uniform_update<int>("array_index", 1));
 
 	g.set_position(glm::vec3(0, 0, -6));
 	//g.set_rotation(glm::quat(glm::vec3(-glm::half_pi<float>(), 0, 0)));

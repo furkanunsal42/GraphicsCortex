@@ -36,9 +36,7 @@ struct spot_light{
 };
 
 //maps 
-uniform sampler2D color_map_slot;
-uniform sampler2D specular_map_slot;
-uniform sampler2D normal_map_slot;
+uniform sampler2DArray texture_array_slot;
 uniform samplerCube cube_map;
 
 // flags
@@ -93,7 +91,7 @@ vec3 calculate_specular_light(vec3 light_direction, vec3 current_position, vec3 
 
 	vec3 specular_map_color;
 	if (bool(use_specular_map))
-		specular_map_color = texture(specular_map_slot, tex_coords).rgb;
+		specular_map_color = texture(texture_array_slot, vec3(tex_coords.xy, 1)).rgb;
 	else
 		specular_map_color = vec3(1.0);
 	
@@ -178,14 +176,14 @@ void main(){
 
 	vec3 normal;
 	if(bool(use_normal_map))
-		normal = normalize(frag_TBN * ((texture(normal_map_slot, tex_coords) * 2).xyz - 1));
+		normal = normalize(frag_TBN * ((texture(texture_array_slot, vec3(tex_coords, 2)) * 2).xyz - 1));
 	else
 		normal = frag_normal;
 
 	vec3 total_light = calculate_total_light(normal, frag_space_coord);
 	vec4 color;
 	if (bool(use_color_map))
-		color = texture(color_map_slot, tex_coords);
+		color = texture(texture_array_slot, vec3(tex_coords, 0));
 	else
 		color = vec4(1.0);
 

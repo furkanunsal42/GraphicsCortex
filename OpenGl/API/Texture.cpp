@@ -11,12 +11,12 @@
 #include <mutex>
 
 TextureBase::TextureBase(int multisample) {
-	std::cout << "TextureBase classes cannot be constructed" << std::endl;
+	//std::cout << "TextureBase classes cannot be constructed" << std::endl;
 	//ASSERT(false);
 }
 
 TextureBase::~TextureBase() {
-	std::cout << "TextureBase classes cannot be deconstructed" << std::endl;
+	//std::cout << "TextureBase classes cannot be deconstructed" << std::endl;
 	//ASSERT(false);
 }
 
@@ -660,6 +660,7 @@ void Material::bind() {
 		texture_array.texture_slot = material_texture_slot;
 		if (color != nullptr) {
 			texture_array.load_single_image(*color, 0);
+			_is_texture_loaded[0] = true;
 			delete color;
 		}
 		else
@@ -669,6 +670,7 @@ void Material::bind() {
 		texture_array.texture_slot = material_texture_slot;
 		if (specular != nullptr) {
 			texture_array.load_single_image(*specular, 1);
+			_is_texture_loaded[1] = true;
 			delete specular;
 		}
 		else
@@ -678,6 +680,7 @@ void Material::bind() {
 		texture_array.texture_slot = material_texture_slot;
 		if (normal != nullptr) {
 			texture_array.load_single_image(*normal, 2);
+			_is_texture_loaded[2] = true;
 			delete normal;
 		}
 		else

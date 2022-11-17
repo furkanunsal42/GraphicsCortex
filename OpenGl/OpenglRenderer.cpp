@@ -2,15 +2,16 @@
 
 int main() {
 	int width = 1920, height = 1080;
-	Frame frame(width, height, "GraphicsCortex", 4, 0, true, false, false);
+	Frame frame(width, height, "GraphicsCortex", 4, 0, true, false, true);
 
 	Scene scene;
 	Material chassis_material;
 	chassis_material.set_color_texture("Images/orange.png", 4);
 
 	Material wheel_material;
-	wheel_material.set_color_texture("Images/cobble.png", 4);
-	
+	wheel_material.set_color_texture("Images/cartextures/911_22_930_tire_BaseColor.png", 4);
+	wheel_material.set_normal_texture("Images/cartextures/911_22_930_tire_Normal.png", 4);
+
 	Program solid_program = default_program::solid_program();
 
 	Camera cam;
