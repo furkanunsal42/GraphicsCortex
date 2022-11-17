@@ -14,7 +14,7 @@ GraphicsCortex is a custom OpenGL based 3D graphics API to be used in the game e
 <image src="https://user-images.githubusercontent.com/89701935/179228243-30309a4f-569a-4a00-9861-ab79d5b5cc62.png" height=320 width=420>
 
 ### Other Renders
-![Thinker](https://user-images.githubusercontent.com/89701935/202223928-0f120fa2-2d82-4cd9-a6e2-bbc791392e59.png)
+![sculpture](https://user-images.githubusercontent.com/89701935/202374528-6e2604d9-e2a3-4d29-9881-330640898932.png)
 
 ## Features (work in progress)
 
