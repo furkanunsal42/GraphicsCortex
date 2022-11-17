@@ -17,7 +17,7 @@ int main() {
 	cam.screen_height = (float)height;
 	cam.position.z = 1.5f;
 	cam.max_distance = 10000.0;
-	cam.perspective = true;
+	cam.perspective = true; 
 	scene.camera = &cam;
 
 	Graphic g;

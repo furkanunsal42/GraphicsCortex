@@ -6,14 +6,10 @@ int main() {
 	Scene scene;
 
 	Model model;
-	std::vector<Image> images = model.load_model("Models/sculpture/scene.gltf");
+	UnorderedMaterial material = model.load_model("Models/dragon_new/dragon_new.fbx");
+	material.bind();
 
-	TextureArray texture_array;
-	texture_array.load_images(images);
-	texture_array.texture_slot = 0;
-	images.clear();
-	
-	Image result = texture_array.save(-1);
+	Image result = material.texture_array.save(-1);
 	result.save_to_disc("texture_array_save.png");
 	
 	Camera cam;

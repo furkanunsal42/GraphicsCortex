@@ -25,7 +25,18 @@ Model::Model(ArrayBuffer& verticies, IndexBuffer& indicies) :
 Model::Model(ArrayBuffer&& verticies, IndexBuffer&& indicies) :
 	vertex_buffer(verticies), index_buffer(indicies) {}
 
-std::vector<Image> Model::load_model(const std::string& filepath) {
+std::string compute_directory(const std::string& file_name) {
+	std::string dir = file_name;
+	for (int i = dir.size() - 1; i >= 0; i--) {
+		if (dir[i] != '/' && dir[i] != '\\')
+			dir.pop_back();
+		else
+			break;
+	}
+	return dir;
+}
+
+UnorderedMaterial Model::load_model(const std::string& filepath) {
 	
 	clear_ram();
 
@@ -49,25 +60,37 @@ std::vector<Image> Model::load_model(const std::string& filepath) {
 	unsigned int prefix_indicies_sum = 0;
 
 	std::vector<std::string> image_paths;
+	std::string dir = compute_directory(filepath);
+
 	for (int i = 0; i < imported_scene->mNumMeshes; i++) {
-		int material_index = imported_scene->mMeshes[i]->mMaterialIndex;
-		aiString image_name;
-		int image_index = image_paths.size();
-		if (imported_scene->mMaterials[material_index]->GetTexture(aiTextureType_DIFFUSE, 0, &image_name) == AI_SUCCESS) {
-			std::string path = "Models/sculpture/" + std::string(image_name.C_Str());
-			std::cout << path << std::endl;
-			bool image_exists = false;
-			for (int i = 0; i < image_paths.size(); i++) {
-				if (image_paths[i] == path) {
-					image_exists = true;
-					image_index = i;
-					break;
+		// 0: diffuse_index, 1: specular_index, 2: normal_index
+		int map_indicies[3] = {-1, -1, -1};
+		unsigned int map_types[3] = {aiTextureType_DIFFUSE, aiTextureType_METALNESS, aiTextureType_NORMALS};
+
+		for (int j = 0; j < 3; j++) {
+			int material_index = imported_scene->mMeshes[i]->mMaterialIndex;
+			aiString image_name;
+			if (imported_scene->mMaterials[material_index]->GetTexture((aiTextureType)map_types[j], 0, &image_name) == AI_SUCCESS) {
+				map_indicies[j] = image_paths.size();
+				std::string path = dir + std::string(image_name.C_Str());
+				std::cout << path << std::endl;
+				bool image_exists = false;
+				for (int k = 0; k < image_paths.size(); k++) {
+					if (image_paths[k] == path) {
+						image_exists = true;
+						map_indicies[j] = k;
+						break;
+					}
+				}
+				if(!image_exists){
+					image_paths.push_back(path);
 				}
 			}
-			if(!image_exists){
-				image_paths.push_back(path);
+			else { // texture not found
+				map_indicies[j] = -1;
 			}
 		}
+
 
 		for (int j = 0; j < imported_scene->mMeshes[i]->mNumVertices; j++) {
 
@@ -79,8 +102,10 @@ std::vector<Image> Model::load_model(const std::string& filepath) {
 			aiVector3D texcoords = imported_scene->mMeshes[i]->mTextureCoords[0][j];
 			vertex_data.push_back(texcoords.x);
 			vertex_data.push_back(texcoords.y);
-			vertex_data.push_back(image_index);
-			
+			vertex_data.push_back(map_indicies[0]); // diffuse
+			vertex_data.push_back(map_indicies[1]); // specular
+			vertex_data.push_back(map_indicies[2]); // normals
+
 			aiVector3D normal = imported_scene->mMeshes[i]->mNormals[j];
 			normal.Normalize();
 			vertex_data.push_back((float)normal.x);
@@ -102,16 +127,17 @@ std::vector<Image> Model::load_model(const std::string& filepath) {
 	vertex_buffer.vertex_attribute_structure.clear();
 	vertex_buffer.initialize_buffer(vertex_data);
 	vertex_buffer.push_attribute(3);	// position
-	vertex_buffer.push_attribute(3);	// texture
+	vertex_buffer.push_attribute(2);	// texture uv
+	vertex_buffer.push_attribute(3);	// texture_map index
 	vertex_buffer.push_attribute(3);	// normals
 
 	index_buffer.initialize_buffer(index_data, 3);
 
-	std::vector<Image> images;
-	for (std::string& path : image_paths) {
-		images.push_back(Image(path));
+	UnorderedMaterial material(image_paths.size());
+	for (int i = 0; i < image_paths.size(); i++) {
+		material.set_texture(image_paths[i], 4, i);
 	}
-	return images;
+	return material;
 }
 
 void Model::clear_ram() {

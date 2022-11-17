@@ -20,9 +20,9 @@ namespace default_program {
 		queue.add_uniform_update(uniform_update<int>("use_color_map", (int)(mesh.material->_enable_color_map)));
 		queue.add_uniform_update(uniform_update<int>("use_specular_map", (int)(mesh.material->_enable_specular_map)));
 		queue.add_uniform_update(uniform_update<int>("use_normal_map", (int)(mesh.material->_enable_normal_map)));
-		queue.add_uniform_update(dynamic_uniform_update<int>("color_map_slot", &mesh.material->color_map_slot));
-		queue.add_uniform_update(dynamic_uniform_update<int>("specular_map_slot", &mesh.material->specular_map_slot));
-		queue.add_uniform_update(dynamic_uniform_update<int>("normal_map_slot", &mesh.material->normal_map_slot));
+		queue.add_uniform_update(dynamic_uniform_update<int>("color_map_slot", &mesh.material->color_map_index));
+		queue.add_uniform_update(dynamic_uniform_update<int>("specular_map_slot", &mesh.material->specular_map_index));
+		queue.add_uniform_update(dynamic_uniform_update<int>("normal_map_slot", &mesh.material->normal_map_index));
 		return queue;
 	}
 

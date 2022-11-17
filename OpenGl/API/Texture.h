@@ -139,16 +139,36 @@ private:
 	int depth = NULL;
 };
 
-
-class Material {
+class UnorderedMaterial {
 public:
-	int color_map_slot = 0;
-	int specular_map_slot = 1;
-	int normal_map_slot = 2;
+	int material_texture_slot = 0;
 
-	Texture color_map;
-	Texture specular_map;
-	Texture normal_map;
+	TextureArray texture_array;
+
+	UnorderedMaterial(int size);
+	~UnorderedMaterial();
+
+	void set_texture(const std::string& filename, int desired_channels, int index);
+
+	void bind();
+	void unbind();
+
+protected:
+	int array_size;
+	std::vector<bool> _is_texture_loaded = { false, false, false };
+	std::vector<int> _texture_desired_channels = { NULL, NULL, NULL };
+	std::vector<std::string> _texture_filenames = { "", "", "" };
+	bool _first_texture_set = true;
+	UnorderedMaterial();
+};
+
+class Material : public UnorderedMaterial{
+public:
+	int color_map_index = 0;
+	int specular_map_index = 1;
+	int normal_map_index = 2;
+
+	TextureArray texture_array;
 
 	Material();
 	~Material();
@@ -165,14 +185,5 @@ public:
 	bool _enable_normal_map = false;
 
 private:
-
-	std::string _color_map_filename = "";
-	std::string _specular_map_filename = "";
-	std::string _normal_map_filename = "";
-	
-	int _color_map_desired_channels = NULL;
-	int _specular_map_desired_channels = NULL;
-	int _normal_map_desired_channels = NULL;
-
-
+	int array_size = 3;
 };

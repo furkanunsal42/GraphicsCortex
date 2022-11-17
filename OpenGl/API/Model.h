@@ -13,6 +13,7 @@
 
 #include <iostream>
 #include <vector>
+#include "Texture.h"
 
 class Model {
 public:
@@ -28,7 +29,7 @@ public:
 	Model(ArrayBuffer& verticies, IndexBuffer& indirices);
 	Model(ArrayBuffer&& verticies, IndexBuffer&& indicies);
 
-	std::vector<Image> load_model(const std::string& file_path);
+	UnorderedMaterial load_model(const std::string& file_path);
 	
 	template<typename T>
 	std::enable_if_t<std::is_same<T, float>::value, std::vector<T>>

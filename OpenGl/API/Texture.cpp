@@ -371,6 +371,9 @@ void TextureArray::load_single_image(Image& image, int index) {
 void TextureArray::load_images(std::vector<Image>& images) {
 	if (images.size() == 0) {
 		std::cout << "[OpenGL Warning] TextureArray::load_images() was called with empty image array." << std::endl;
+		Image default_image = Image("Images/missing_texture.png");
+		initialize_blank_images(default_image.get_width(), default_image.get_height(), 1, default_image.get_channels());
+		load_single_image(default_image, 0);
 		return;
 	}
 
@@ -517,39 +520,99 @@ bool TextureArray::is_loaded() {
 	
 // ------------------------------------------------------------------------------------
 
-Material::Material() { }
+UnorderedMaterial::UnorderedMaterial() : 
+	array_size(0) { }
 
-Material::~Material() {
-	color_map.~Texture();
-	specular_map.~Texture();
-	normal_map.~Texture();
-}
+UnorderedMaterial::UnorderedMaterial(int size) :
+	array_size(size) { }
 
-void Material::set_color_texture(const std::string& filename, int desired_channels){
-	_enable_color_map = filename != "";
-	_color_map_filename = filename;
-	if (_enable_color_map) {
-		_color_map_desired_channels = desired_channels;
-	}
-}
-void Material::set_specular_texture(const std::string& filename, int desired_channels){
-	_enable_specular_map = filename != "";
-	_specular_map_filename = filename;
-	if (_enable_specular_map) {
-		_specular_map_desired_channels = desired_channels;
-	}
-}
-void Material::set_normal_texture(const std::string& filename, int desired_channels) {
-	_enable_normal_map = filename != "";
-	_normal_map_filename = filename;
-	if (_enable_normal_map) {
-		_normal_map_desired_channels = desired_channels;
-	}
+UnorderedMaterial::~UnorderedMaterial() {
+	texture_array.~TextureArray();
 }
 
 void read_image(std::string& filename, int desired_channels, Image*& output_image) {
 	output_image = new Image(filename, desired_channels);
+}
 
+void UnorderedMaterial::set_texture(const std::string& filename, int desired_channels, int index) {
+	_texture_filenames[index] = filename;
+	_texture_desired_channels[index] = desired_channels;
+	_is_texture_loaded[index] = false;
+}
+
+void UnorderedMaterial::bind() {
+	std::vector<Image*> images;
+	for (int i = 0; i < array_size; i++) {
+		images.push_back(nullptr);
+	}
+
+	std::vector<std::thread> task;
+	for (int i = 0; i < array_size; i++) {
+		if (!_is_texture_loaded[i])
+			task.push_back(std::thread(&read_image, std::ref(_texture_filenames[0]), _texture_desired_channels[0], std::ref(images[i])));
+	}
+
+	for (int i = 0; i < task.size(); i++) {
+		task[i].join();
+	}
+
+	if (_first_texture_set) {
+		for (Image*& image : images) {
+			if (image != nullptr) {
+				_first_texture_set = false;
+				texture_array.initialize_blank_images(image->get_width(), image->get_height(), array_size, image->get_channels());
+				break;
+			}
+		}
+	}
+
+	texture_array.texture_slot = material_texture_slot;
+	for (int i = 0; i < array_size; i++) {
+		if (images[i] != nullptr) {
+			texture_array.load_single_image(*images[i], i);
+			delete images[i];
+		}
+		else
+			texture_array.bind();
+	}
+}
+
+void UnorderedMaterial::unbind() {
+	texture_array.unbind();
+}
+
+// ------------------------------------------------------------------------------------
+
+Material::Material() { }
+
+Material::~Material() {
+	texture_array.~TextureArray();
+}
+
+void Material::set_color_texture(const std::string& filename, int desired_channels){
+	_enable_color_map = filename != "";
+	_texture_filenames[0] = filename;
+	if (_enable_color_map) {
+		_texture_desired_channels[0] = desired_channels;
+	}
+	_is_texture_loaded[0] = false;
+}
+void Material::set_specular_texture(const std::string& filename, int desired_channels){
+	_enable_specular_map = filename != "";
+	_texture_filenames[1] = filename;
+	if (_enable_specular_map) {
+		_texture_desired_channels[1] = desired_channels;
+	}
+	_is_texture_loaded[1] = false;
+
+}
+void Material::set_normal_texture(const std::string& filename, int desired_channels) {
+	_enable_normal_map = filename != "";
+	_texture_filenames[2] = filename;
+	if (_enable_normal_map) {
+		_texture_desired_channels[2] = desired_channels;
+	}
+	_is_texture_loaded[2] = false;
 }
 
 void Material::bind() {
@@ -559,56 +622,69 @@ void Material::bind() {
 
 	std::vector<std::thread> task;
 	if (_enable_color_map) {
-		color_map.texture_slot = color_map_slot;
-		if (color_map._load_image_check(true))
-			task.push_back(std::thread(&read_image, std::ref(_color_map_filename), _color_map_desired_channels, std::ref(color)));
+		texture_array.texture_slot = material_texture_slot;
+		if (!_is_texture_loaded[0])
+			task.push_back(std::thread(&read_image, std::ref(_texture_filenames[0]), _texture_desired_channels[0], std::ref(color)));
 	}
 	if (_enable_specular_map) {
-		specular_map.texture_slot = specular_map_slot;
-		if (specular_map._load_image_check(true))
-			task.push_back(std::thread(&read_image, std::ref(_specular_map_filename), _specular_map_desired_channels, std::ref(specular)));
+		texture_array.texture_slot = material_texture_slot;
+		if (!_is_texture_loaded[1])
+			task.push_back(std::thread(&read_image, std::ref(_texture_filenames[1]), _texture_desired_channels[1], std::ref(specular)));
 	}
 	if (_enable_normal_map) {
-		normal_map.texture_slot = normal_map_slot;
-		if (normal_map._load_image_check(true))
-			task.push_back(std::thread(&read_image, std::ref(_normal_map_filename), _normal_map_desired_channels, std::ref(normal)));
+		texture_array.texture_slot = material_texture_slot;
+		if (!_is_texture_loaded[2])
+			task.push_back(std::thread(&read_image, std::ref(_texture_filenames[2]), _texture_desired_channels[2], std::ref(normal)));
 	}
 
 	for (int i = 0; i < task.size(); i++) {
 		task[i].join();
 	}
 
+	if (_first_texture_set) {
+		if (color != nullptr) {
+			_first_texture_set = false;
+			texture_array.initialize_blank_images(color->get_width(), color->get_height(), array_size, color->get_channels());
+		}
+		else if (specular != nullptr) {
+			_first_texture_set = false;
+			texture_array.initialize_blank_images(specular->get_width(), specular->get_height(), array_size, specular->get_channels());
+		}
+		else if (normal != nullptr) {
+			_first_texture_set = false;
+			texture_array.initialize_blank_images(normal->get_width(), normal->get_height(), array_size, normal->get_channels());
+		}
+	}
+
 	if (_enable_color_map) {
-		if (color_map._load_image_check(true) && color != nullptr) {
-			color_map.load_image(*color);
+		texture_array.texture_slot = material_texture_slot;
+		if (color != nullptr) {
+			texture_array.load_single_image(*color, 0);
 			delete color;
 		}
 		else
-			color_map.bind();
+			texture_array.bind();
 	}
 	if (_enable_specular_map) {
-		if (specular_map._load_image_check(true) && specular != nullptr) {
-			specular_map.load_image(*specular);
+		texture_array.texture_slot = material_texture_slot;
+		if (specular != nullptr) {
+			texture_array.load_single_image(*specular, 1);
 			delete specular;
 		}
 		else
-			specular_map.bind();
+			texture_array.bind();
 	}
 	if (_enable_normal_map) {
-		if (normal_map._load_image_check(true) && normal != nullptr) {
-			normal_map.load_image(*normal);
+		texture_array.texture_slot = material_texture_slot;
+		if (normal != nullptr) {
+			texture_array.load_single_image(*normal, 2);
 			delete normal;
 		}
 		else
-			normal_map.bind();
+			texture_array.bind();
 	}
 }
 
 void Material::unbind() {
-	if (_enable_color_map)
-		color_map.unbind();
-	if (_enable_specular_map)
-		specular_map.unbind();
-	if (_enable_normal_map)
-		normal_map.unbind();
+	texture_array.unbind();
 }
