@@ -36,7 +36,7 @@ std::string compute_directory(const std::string& file_name) {
 	return dir;
 }
 
-UnorderedMaterial Model::load_model(const std::string& filepath) {
+UnorderedMaterial Model::load_model(const std::string& filepath, float scale) {
 	
 	clear_ram();
 
@@ -95,9 +95,9 @@ UnorderedMaterial Model::load_model(const std::string& filepath) {
 		for (int j = 0; j < imported_scene->mMeshes[i]->mNumVertices; j++) {
 
 			aiVector3D vertex = imported_scene->mMeshes[i]->mVertices[j];
-			vertex_data.push_back((float)vertex.x);
-			vertex_data.push_back((float)vertex.y);
-			vertex_data.push_back((float)vertex.z);
+			vertex_data.push_back((float)vertex.x * scale);
+			vertex_data.push_back((float)vertex.y * scale);
+			vertex_data.push_back((float)vertex.z * scale);
 
 			aiVector3D texcoords = imported_scene->mMeshes[i]->mTextureCoords[0][j];
 			vertex_data.push_back(texcoords.x);

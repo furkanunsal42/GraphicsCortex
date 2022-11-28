@@ -102,7 +102,8 @@ void FrameBuffer::render(unsigned int source_texture) {
 			GLCall(glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_STENCIL_TEXTURE_MODE, GL_DEPTH_COMPONENT));
 		}
 		if (source_texture == STENCIL_TEXTURE) {
-			GLCall(glBindTexture(depth_stencil_texture.target, depth_stencil_texture.id));
+			depth_stencil_texture.texture_slot = 9;
+			depth_stencil_texture.bind();
 			GLCall(glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_STENCIL_TEXTURE_MODE, GL_STENCIL_INDEX));
 		}
 		program->update_uniform("texture_slot", 9);

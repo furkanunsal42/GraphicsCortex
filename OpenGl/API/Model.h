@@ -29,7 +29,7 @@ public:
 	Model(ArrayBuffer& verticies, IndexBuffer& indirices);
 	Model(ArrayBuffer&& verticies, IndexBuffer&& indicies);
 
-	UnorderedMaterial load_model(const std::string& file_path);
+	UnorderedMaterial load_model(const std::string& file_path, float scale = 1.0f);
 	
 	template<typename T>
 	std::enable_if_t<std::is_same<T, float>::value, std::vector<T>>

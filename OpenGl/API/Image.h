@@ -23,6 +23,7 @@ public:
 	friend Texture;
 	friend FrameBuffer;
 
+	void resize(int target_width, int target_height);
 	void save_to_disc(const std::string& target_filename);
 
 	Image(unsigned char* image_data, int width, int height, int channels, bool vertical_flip);

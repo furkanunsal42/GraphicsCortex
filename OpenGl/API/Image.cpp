@@ -4,7 +4,8 @@
 
 #include "stb_image.h"
 #include "stb_image_write.h"
-	
+#include "stb_image_resize.h"
+
 #include "Debuger.h"
 
 Image::Image(const std::string& file_path, int desired_channels, bool vertical_flip) :
@@ -42,6 +43,18 @@ void Image::_read_image(const std::string& file_path, int desired_channels) {
 	_image_data = stbi_load(file_path.c_str(), &_width, &_height, &_channels, desired_channels);
 	
 	_channels = desired_channels;
+}
+
+void Image::resize(int target_width, int target_height) {
+	//if (_width == target_width && _height == target_height)
+	//	return;
+	std::cout << _width << " " << _height << " " << _channels;
+	unsigned char* resized_image = (unsigned char*)malloc(target_width * target_height * _channels);
+	stbir_resize_uint8(_image_data, _width, _height, _channels * _width, resized_image, target_width, target_height, _channels * target_width, _channels);
+	stbi_image_free(_image_data);
+	_width = target_width;
+	_height = target_height;
+	_image_data = resized_image;
 }
 
 void Image::_clear_ram() {

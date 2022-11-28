@@ -12,6 +12,7 @@ int main() {
 	wheel_material.set_color_texture("Images/cartextures/911_22_930_tire_BaseColor.png", 4);
 	wheel_material.set_normal_texture("Images/cartextures/911_22_930_tire_Normal.png", 4);
 
+
 	Program solid_program = default_program::solid_program();
 
 	Camera cam;
@@ -78,6 +79,9 @@ int main() {
 
 	float t = 0;
 
+	GLCall(glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE))
+	glEnable(GL_STENCIL_TEST);
+
 	while (frame.is_running()){
 		double frame_time = frame.handle_window();
 		PhysicsScene::get().simulation_step_start(frame_time / 1000.0f);
@@ -91,18 +95,29 @@ int main() {
 		frame.display_performance(180);
 		
 		//scene.camera->handle_movements(frame.window);
-
-		cube_map.draw();
-
+		
+		//glStencilFunc(GL_ALWAYS, 1, 0xFF);
+		//glStencilMask(0xFF);
 		cube_map.texture_slot = 13;
 		cube_map.bind();
 		scene.render(frame.window);
 		cube_map.texture_slot = 11;
 		
+		//glStencilFunc(GL_EQUAL, 1, 0xFF);
+		//glStencilMask(0x00);
+		//glDisable(GL_DEPTH_TEST);
+		cube_map.draw();
+		//glEnable(GL_DEPTH_TEST);
+		
+		//glStencilFunc(GL_ALWAYS, 1, 0xFF);
+		//glStencilMask(0xFF);
+
 		frame_buffer.unbind();
 
 		frame_buffer.render(FrameBuffer::COLOR_TEXTURE);
 
+		//Image image = frame_buffer.save();
+		//cache.set_key("image", image);
 		PhysicsScene::get().simulation_step_finish();
 	}
 	

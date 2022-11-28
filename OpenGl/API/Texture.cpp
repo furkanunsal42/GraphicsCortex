@@ -9,6 +9,7 @@
 #include <thread>
 #include <iostream>
 #include <mutex>
+#include <fstream>
 
 TextureBase::TextureBase(int multisample) {
 	//std::cout << "TextureBase classes cannot be constructed" << std::endl;
@@ -524,14 +525,29 @@ UnorderedMaterial::UnorderedMaterial() :
 	array_size(0) { }
 
 UnorderedMaterial::UnorderedMaterial(int size) :
-	array_size(size) { }
+	array_size(size) 
+{
+	for (int i = 0; i < size; i++) {
+		_is_texture_loaded.push_back(false);
+		_texture_desired_channels.push_back(NULL);
+		_texture_filenames.push_back("");
+	}
+} 
 
 UnorderedMaterial::~UnorderedMaterial() {
 	texture_array.~TextureArray();
 }
 
 void read_image(std::string& filename, int desired_channels, Image*& output_image) {
-	output_image = new Image(filename, desired_channels);
+	std::ifstream file;
+	file.open(filename);
+	if (file) {
+		output_image = new Image(filename, desired_channels);
+	}
+	else { // file doesn't exist
+		std::cout << "[ERROR] Image path not found : " << filename << std::endl;
+		output_image = nullptr;
+	}
 }
 
 void UnorderedMaterial::set_texture(const std::string& filename, int desired_channels, int index) {

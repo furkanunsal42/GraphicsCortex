@@ -155,9 +155,9 @@ public:
 
 protected:
 	int array_size;
-	std::vector<bool> _is_texture_loaded = { false, false, false };
-	std::vector<int> _texture_desired_channels = { NULL, NULL, NULL };
-	std::vector<std::string> _texture_filenames = { "", "", "" };
+	std::vector<bool> _is_texture_loaded;
+	std::vector<int> _texture_desired_channels;
+	std::vector<std::string> _texture_filenames;
 	bool _first_texture_set = true;
 	UnorderedMaterial();
 };
@@ -186,4 +186,7 @@ public:
 
 private:
 	int array_size = 3;
+	std::vector<bool> _is_texture_loaded = { false, false, false };
+	std::vector<int> _texture_desired_channels = { NULL, NULL, NULL };
+	std::vector<std::string> _texture_filenames = { "", "", "" };
 };
