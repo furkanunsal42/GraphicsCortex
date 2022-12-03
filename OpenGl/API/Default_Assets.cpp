@@ -31,7 +31,7 @@ namespace default_geometry {
 
 	Graphic rectangle(Material& material, Program& renderer, glm::vec2 scale) {
 		Graphic g = rectangle(scale);
-		g.material = &material;
+		g.load_material(material);
 		g.renderer = &renderer;
 		return g;
 	}
@@ -149,7 +149,7 @@ namespace default_geometry {
 
 	Graphic cube(Material& material, Program& renderer, glm::vec3 scale){
 		Graphic g = cube(scale);
-		g.material = &material;
+		g.load_material(material);
 		g.renderer = &renderer;
 		return g;
 	}

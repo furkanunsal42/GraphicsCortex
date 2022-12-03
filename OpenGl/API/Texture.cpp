@@ -538,7 +538,7 @@ UnorderedMaterial::~UnorderedMaterial() {
 	texture_array.~TextureArray();
 }
 
-void read_image(std::string& filename, int desired_channels, Image*& output_image) {
+void read_image(std::string& filename, int desired_channels, Image*& output_image, unsigned int texture_width, unsigned int texture_height) {
 	std::ifstream file;
 	file.open(filename);
 	if (file) {
@@ -546,8 +546,10 @@ void read_image(std::string& filename, int desired_channels, Image*& output_imag
 	}
 	else { // file doesn't exist
 		std::cout << "[ERROR] Image path not found : " << filename << std::endl;
-		output_image = nullptr;
+		output_image = new Image("Images/missing_texture.png", desired_channels);
 	}
+	output_image->resize(texture_width, texture_height);
+
 }
 
 void UnorderedMaterial::set_texture(const std::string& filename, int desired_channels, int index) {
@@ -562,10 +564,26 @@ void UnorderedMaterial::bind() {
 		images.push_back(nullptr);
 	}
 
+	/*
+	for (int i = 0; i < _texture_filenames.size(); i++) {
+		std::fstream file;
+		file.open(_texture_filenames[i]);
+		if (!file) {
+			std::cout << "Repleace the filename " << _texture_filenames[i] << " with : " << std::endl;
+			std::string input;
+			std::cin >> input;
+			_texture_filenames[i] = input;
+		}
+		else {
+			file.close();
+		}
+	}
+	*/
+
 	std::vector<std::thread> task;
 	for (int i = 0; i < array_size; i++) {
 		if (!_is_texture_loaded[i])
-			task.push_back(std::thread(&read_image, std::ref(_texture_filenames[i]), _texture_desired_channels[i], std::ref(images[i])));
+			task.push_back(std::thread(&read_image, std::ref(_texture_filenames[i]), _texture_desired_channels[i], std::ref(images[i]), texture_width, texture_height));
 	}
 
 	for (int i = 0; i < task.size(); i++) {
@@ -587,6 +605,7 @@ void UnorderedMaterial::bind() {
 		if (images[i] != nullptr) {
 			texture_array.load_single_image(*images[i], i);
 			delete images[i];
+			_is_texture_loaded[i] = true;
 		}
 		else
 			texture_array.bind();
@@ -595,6 +614,27 @@ void UnorderedMaterial::bind() {
 
 void UnorderedMaterial::unbind() {
 	texture_array.unbind();
+}
+
+void UnorderedMaterial::set_texture_width(unsigned int width) {
+	texture_width = width;
+}
+
+void UnorderedMaterial::set_texture_height(unsigned int height) {
+	texture_height = height;
+}
+
+void UnorderedMaterial::set_texture_size(unsigned int width, unsigned int height) {
+	set_texture_width(width);
+	set_texture_height(height);
+}
+
+unsigned int UnorderedMaterial::get_texture_width() {
+	return texture_width;
+}
+
+unsigned int UnorderedMaterial::get_texture_height() {
+	return texture_height;
 }
 
 // ------------------------------------------------------------------------------------
@@ -640,17 +680,17 @@ void Material::bind() {
 	if (_enable_color_map) {
 		texture_array.texture_slot = material_texture_slot;
 		if (!_is_texture_loaded[0])
-			task.push_back(std::thread(&read_image, std::ref(_texture_filenames[0]), _texture_desired_channels[0], std::ref(color)));
+			task.push_back(std::thread(&read_image, std::ref(_texture_filenames[0]), _texture_desired_channels[0], std::ref(color), texture_width, texture_height));
 	}
 	if (_enable_specular_map) {
 		texture_array.texture_slot = material_texture_slot;
 		if (!_is_texture_loaded[1])
-			task.push_back(std::thread(&read_image, std::ref(_texture_filenames[1]), _texture_desired_channels[1], std::ref(specular)));
+			task.push_back(std::thread(&read_image, std::ref(_texture_filenames[1]), _texture_desired_channels[1], std::ref(specular), texture_width, texture_height));
 	}
 	if (_enable_normal_map) {
 		texture_array.texture_slot = material_texture_slot;
 		if (!_is_texture_loaded[2])
-			task.push_back(std::thread(&read_image, std::ref(_texture_filenames[2]), _texture_desired_channels[2], std::ref(normal)));
+			task.push_back(std::thread(&read_image, std::ref(_texture_filenames[2]), _texture_desired_channels[2], std::ref(normal), texture_width, texture_height));
 	}
 
 	for (int i = 0; i < task.size(); i++) {

@@ -28,16 +28,18 @@ public:
 	glm::quat rotation = glm::quat(1, 0, 0, 0);
 	glm::mat4 model_matrix;
 	Program* renderer = nullptr;
-	Material* material = nullptr;
 	unsigned int mode = GL_TRIANGLES;
 
 	//PhysicsObject physics_representation;
 
 	Graphic();
 	Graphic(Model& model, Material& material, Program& renderer);
+	Graphic(Model& model, UnorderedMaterial& material, Program& renderer);
 	Graphic(Model&& model, Material& material, Program& renderer);
+	Graphic(Model&& model, UnorderedMaterial& material, Program& renderer);
 	Graphic(const std::vector<float>& verticies, int data_dim); // legacy
 	Graphic(Material& material, Program& renderer);
+	Graphic(UnorderedMaterial& material, Program& renderer);
 
 	void draw(bool show_warnings = true);
 	void update_matrix();
@@ -46,6 +48,7 @@ public:
 	void load_model(Model&& model);
 	void clear_mesh();
 
+	void load_material(UnorderedMaterial& material);
 	void load_material(Material& material);
 	void load_program(Program& program);
 
@@ -126,8 +129,12 @@ public:
 		remove_uniform_update_queue(dynamic_uniform_queue.uniform_name);
 		add_uniform_update_queue(dynamic_uniform_queue);
 	}
-
-
 	void update_uniform_queue();
+
+	Material* material = nullptr; // temp, for default solid shader queue
+protected:
+	bool use_unordered_material = false;
+	UnorderedMaterial* unordered_material = nullptr;
+
 };
 

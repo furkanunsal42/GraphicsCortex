@@ -36,6 +36,17 @@ std::string compute_directory(const std::string& file_name) {
 	return dir;
 }
 
+std::string compute_filename(const std::string& file_name) {
+	std::string name = "";
+	for (int i = file_name.size() - 1; i >= 0; i--) {
+		if (file_name[i] != '/' && file_name[i] != '\\')
+			name = file_name[i] + name;
+		else
+			break;
+	}
+	return name;
+}
+
 UnorderedMaterial Model::load_model(const std::string& filepath, float scale) {
 	
 	clear_ram();
@@ -72,7 +83,8 @@ UnorderedMaterial Model::load_model(const std::string& filepath, float scale) {
 			aiString image_name;
 			if (imported_scene->mMaterials[material_index]->GetTexture((aiTextureType)map_types[j], 0, &image_name) == AI_SUCCESS) {
 				map_indicies[j] = image_paths.size();
-				std::string path = dir + std::string(image_name.C_Str());
+				//std::string path = dir + std::string(image_name.C_Str());
+				std::string path = dir + "textures/" + compute_filename(std::string(image_name.C_Str()));
 				std::cout << path << std::endl;
 				bool image_exists = false;
 				for (int k = 0; k < image_paths.size(); k++) {
@@ -93,7 +105,6 @@ UnorderedMaterial Model::load_model(const std::string& filepath, float scale) {
 
 
 		for (int j = 0; j < imported_scene->mMeshes[i]->mNumVertices; j++) {
-
 			aiVector3D vertex = imported_scene->mMeshes[i]->mVertices[j];
 			vertex_data.push_back((float)vertex.x * scale);
 			vertex_data.push_back((float)vertex.y * scale);

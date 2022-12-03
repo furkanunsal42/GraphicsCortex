@@ -9,10 +9,16 @@ Graphic::Graphic() :
 	model_matrix(glm::mat4(1.0f)) {}
 
 Graphic::Graphic(Model& model, Material& mat, Program& program) : 
-	model_matrix(glm::mat4(1.0f)), material(&mat), renderer(&program), model(model) {}
+	model_matrix(glm::mat4(1.0f)), material(&mat), renderer(&program), model(model), use_unordered_material(false) {}
+
+Graphic::Graphic(Model& model, UnorderedMaterial& mat, Program& program) :
+	model_matrix(glm::mat4(1.0f)), unordered_material(&mat), renderer(&program), model(model), use_unordered_material(true) {}
 
 Graphic::Graphic(Model&& model, Material& mat, Program& program) :
-	model_matrix(glm::mat4(1.0f)), material(&mat), renderer(&program), model(model) {}
+	model_matrix(glm::mat4(1.0f)), material(&mat), renderer(&program), model(model), use_unordered_material(false) {}
+
+Graphic::Graphic(Model&& model, UnorderedMaterial& mat, Program& program) :
+	model_matrix(glm::mat4(1.0f)), unordered_material(&mat), renderer(&program), model(model), use_unordered_material(true) {}
 
 Graphic::Graphic(const std::vector<float>& verticies, int data_dim = 2)
 {	
@@ -39,12 +45,15 @@ Graphic::Graphic(const std::vector<float>& verticies, int data_dim = 2)
 }
 
 Graphic::Graphic(Material& material, Program& renderer):
-	renderer(&renderer), material(&material), model_matrix(glm::mat4(1.0f)) {}
+	renderer(&renderer), material(&material), model_matrix(glm::mat4(1.0f)), use_unordered_material(false) {}
+
+Graphic::Graphic(UnorderedMaterial& material, Program& renderer) :
+	renderer(&renderer), unordered_material(&material), model_matrix(glm::mat4(1.0f)), use_unordered_material(true) {}
 
 void Graphic::draw(bool show_warnings) {
 	bool material_exist = true;
 	bool renderer_exist = true;
-	if (material == nullptr) {
+	if (material == nullptr && unordered_material == nullptr) {
 		if (show_warnings)
 			std::cout << "[Opengl Warning] material is not specified for Graphic.draw()" << std::endl;
 		material_exist = false;
@@ -60,8 +69,12 @@ void Graphic::draw(bool show_warnings) {
 	model.vertex_buffer.bind();
 	model.index_buffer.bind();
 	
-	if (material_exist)
- 		material->bind();
+	if (material_exist) {
+		if (use_unordered_material)
+			unordered_material->bind();
+		else
+			material->bind();
+	}
 
 	GLCall(glDrawElements(mode, model.index_buffer.data_count, GL_UNSIGNED_INT, nullptr));
 }
@@ -88,9 +101,18 @@ void Graphic::clear_mesh() {
 	model.index_buffer = IndexBuffer();
 }
 
+void Graphic::load_material(UnorderedMaterial& material) {
+	this->unordered_material = &material;
+	this->material = nullptr;
+	use_unordered_material = true;
+}
+
 void Graphic::load_material(Material& material) {
 	this->material = &material;
+	this->unordered_material = nullptr;
+	use_unordered_material = false;
 }
+
 void Graphic::load_program(Program& program) {
 	this->renderer = &program;
 }

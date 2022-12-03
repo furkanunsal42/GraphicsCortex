@@ -153,7 +153,16 @@ public:
 	void bind();
 	void unbind();
 
+	void set_texture_width(unsigned int width);
+	void set_texture_height(unsigned int height);
+	void set_texture_size(unsigned int width, unsigned int height);
+
+	unsigned int get_texture_width();
+	unsigned int get_texture_height();
+
 protected:
+	unsigned int texture_width = 1024;
+	unsigned int texture_height = 1024;
 	int array_size;
 	std::vector<bool> _is_texture_loaded;
 	std::vector<int> _texture_desired_channels;
