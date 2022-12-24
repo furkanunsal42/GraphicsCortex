@@ -131,10 +131,10 @@ public:
 	}
 	void update_uniform_queue();
 
-	Material* material = nullptr; // temp, for default solid shader queue
+	Material* material = nullptr;						// temp public, for default solid shader queue
+	UnorderedMaterial* unordered_material = nullptr;	// temp public, for default solid shader queue
+	bool use_unordered_material = false;				// temp public, for default solid shader queue
 protected:
-	bool use_unordered_material = false;
-	UnorderedMaterial* unordered_material = nullptr;
 
 };
 

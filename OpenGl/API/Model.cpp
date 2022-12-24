@@ -25,7 +25,7 @@ Model::Model(ArrayBuffer& verticies, IndexBuffer& indicies) :
 Model::Model(ArrayBuffer&& verticies, IndexBuffer&& indicies) :
 	vertex_buffer(verticies), index_buffer(indicies) {}
 
-std::string compute_directory(const std::string& file_name) {
+std::string compute_directory(const std::string& file_name) { // "C:\folder\folder\file" -> "C:\folder\folder\"
 	std::string dir = file_name;
 	for (int i = dir.size() - 1; i >= 0; i--) {
 		if (dir[i] != '/' && dir[i] != '\\')
@@ -36,7 +36,7 @@ std::string compute_directory(const std::string& file_name) {
 	return dir;
 }
 
-std::string compute_filename(const std::string& file_name) {
+std::string compute_filename(const std::string& file_name) { // "C:\folder\folder\file" -> "file"
 	std::string name = "";
 	for (int i = file_name.size() - 1; i >= 0; i--) {
 		if (file_name[i] != '/' && file_name[i] != '\\')
@@ -47,9 +47,25 @@ std::string compute_filename(const std::string& file_name) {
 	return name;
 }
 
-UnorderedMaterial Model::load_model(const std::string& filepath, float scale) {
-	
-	clear_ram();
+std::vector<char> compute_enabled_bits(unsigned int binary_bits, int bit_count) {
+	ASSERT(bit_count <= 32);
+	std::vector<char> bits(32);
+	int mask = 1;
+	for (int i = 0; i < bit_count; i++) {
+		if ((binary_bits & mask) == mask)
+			bits[i] = true;
+		else
+			bits[i] = false;
+		mask *= 2;
+	}
+	return bits;
+}
+
+UnorderedMaterial Model::load_model(const std::string& filepath, float scale, unsigned int vertex_property_bits) {
+		
+	clear_ram(); 
+
+	std::vector<char> enabled_bits = compute_enabled_bits(vertex_property_bits, PROPERTY_COUNT);
 
 	const aiScene* imported_scene = asset_loader.ReadFile(filepath,
 		aiProcess_CalcTangentSpace |
@@ -58,7 +74,9 @@ UnorderedMaterial Model::load_model(const std::string& filepath, float scale) {
 		aiProcess_SortByPType |
 		aiProcess_GenSmoothNormals);
 
-	std::cout << asset_loader.GetErrorString();
+	std::string load_error = asset_loader.GetErrorString();
+	if (load_error != "")
+		std::cout << "[Model Loading Error]: " << load_error << '\n';
 
 	int vertex_count = 0;
 	int index_count = 0;
@@ -72,57 +90,74 @@ UnorderedMaterial Model::load_model(const std::string& filepath, float scale) {
 
 	std::vector<std::string> image_paths;
 	std::string dir = compute_directory(filepath);
-
+	
+	#define MAP_TYPE_COUNT 3
+	unsigned int map_types[MAP_TYPE_COUNT] = { aiTextureType_DIFFUSE, aiTextureType_METALNESS, aiTextureType_NORMALS };
 	for (int i = 0; i < imported_scene->mNumMeshes; i++) {
 		// 0: diffuse_index, 1: specular_index, 2: normal_index
-		int map_indicies[3] = {-1, -1, -1};
-		unsigned int map_types[3] = {aiTextureType_DIFFUSE, aiTextureType_METALNESS, aiTextureType_NORMALS};
+		int map_indicies[MAP_TYPE_COUNT] = {-1, -1, -1};
 
-		for (int j = 0; j < 3; j++) {
+		for (int j = 0; j < MAP_TYPE_COUNT; j++) {
 			int material_index = imported_scene->mMeshes[i]->mMaterialIndex;
 			aiString image_name;
-			if (imported_scene->mMaterials[material_index]->GetTexture((aiTextureType)map_types[j], 0, &image_name) == AI_SUCCESS) {
-				map_indicies[j] = image_paths.size();
-				//std::string path = dir + std::string(image_name.C_Str());
-				std::string path = dir + "textures/" + compute_filename(std::string(image_name.C_Str()));
-				std::cout << path << std::endl;
-				bool image_exists = false;
-				for (int k = 0; k < image_paths.size(); k++) {
-					if (image_paths[k] == path) {
-						image_exists = true;
-						map_indicies[j] = k;
-						break;
-					}
-				}
-				if(!image_exists){
-					image_paths.push_back(path);
+			if (imported_scene->mMaterials[material_index]->GetTexture((aiTextureType)map_types[j], 0, &image_name) != AI_SUCCESS) {
+				map_indicies[j] = -1; // texture not found
+				continue;
+			}
+
+			std::string path = dir + "textures/" + compute_filename(std::string(image_name.C_Str()));
+			
+			bool image_exists = false;
+			for (int k = 0; k < image_paths.size(); k++) {
+				if (image_paths[k] == path) {
+					image_exists = true;
+					map_indicies[j] = k;
+					break;
 				}
 			}
-			else { // texture not found
-				map_indicies[j] = -1;
+			if(!image_exists){
+				map_indicies[j] = image_paths.size();
+				image_paths.push_back(path);
 			}
 		}
 
 
 		for (int j = 0; j < imported_scene->mMeshes[i]->mNumVertices; j++) {
-			aiVector3D vertex = imported_scene->mMeshes[i]->mVertices[j];
-			vertex_data.push_back((float)vertex.x * scale);
-			vertex_data.push_back((float)vertex.y * scale);
-			vertex_data.push_back((float)vertex.z * scale);
 
-			aiVector3D texcoords = imported_scene->mMeshes[i]->mTextureCoords[0][j];
-			vertex_data.push_back(texcoords.x);
-			vertex_data.push_back(texcoords.y);
-			vertex_data.push_back(map_indicies[0]); // diffuse
-			vertex_data.push_back(map_indicies[1]); // specular
-			vertex_data.push_back(map_indicies[2]); // normals
+			if (enabled_bits[0] || enabled_bits[1] || enabled_bits[2]) {
+				aiVector3D vertex = imported_scene->mMeshes[i]->mVertices[j];
+				if (enabled_bits[0])
+					vertex_data.push_back((float)vertex.x * scale);
+				if (enabled_bits[1])
+					vertex_data.push_back((float)vertex.y * scale);
+				if (enabled_bits[2])
+					vertex_data.push_back((float)vertex.z * scale);
+			}
 
-			aiVector3D normal = imported_scene->mMeshes[i]->mNormals[j];
-			normal.Normalize();
-			vertex_data.push_back((float)normal.x);
-			vertex_data.push_back((float)normal.y);
-			vertex_data.push_back((float)normal.z);
-
+			if (enabled_bits[3] || enabled_bits[4] || enabled_bits[5] || enabled_bits[6] || enabled_bits[7]) {
+				aiVector3D texcoords = imported_scene->mMeshes[i]->mTextureCoords[0][j];
+				if (enabled_bits[3])
+					vertex_data.push_back(texcoords.x);
+				if (enabled_bits[4])
+					vertex_data.push_back(texcoords.y);
+				if (enabled_bits[5])
+					vertex_data.push_back(map_indicies[0]); // diffuse
+				if (enabled_bits[6])
+					vertex_data.push_back(map_indicies[1]); // specular
+				if (enabled_bits[7])
+					vertex_data.push_back(map_indicies[2]); // normals
+			}
+			
+			if (enabled_bits[8] || enabled_bits[9] || enabled_bits[10]) {
+				aiVector3D normal = imported_scene->mMeshes[i]->mNormals[j];
+				normal.Normalize();
+				if (enabled_bits[8])
+					vertex_data.push_back((float)normal.x);
+				if (enabled_bits[9])
+					vertex_data.push_back((float)normal.y);
+				if (enabled_bits[10])
+					vertex_data.push_back((float)normal.z);
+			}
 		}
 		for (int j = 0; j < imported_scene->mMeshes[i]->mNumFaces; j++) {
 			const aiFace& Face = imported_scene->mMeshes[i]->mFaces[j];
@@ -135,12 +170,34 @@ UnorderedMaterial Model::load_model(const std::string& filepath, float scale) {
 		prefix_indicies_sum += imported_scene->mMeshes[i]->mNumVertices;
 	}
 
+	int coord_dim = 0;
+	for (int i = 0; i < 3; i++){
+		if (enabled_bits[i])
+			coord_dim++;
+	}
+	int tex_coord_dim = 0;
+	for (int i = 3; i < 5; i++) {
+		if (enabled_bits[i])
+			tex_coord_dim++;
+	}
+	int tex_coord_z_dim = 0;
+	for (int i = 5; i < 8; i++) {
+		if (enabled_bits[i])
+			tex_coord_z_dim++;
+	}
+	int normals_dim = 0;
+	for (int i = 8; i < 11; i++) {
+		if (enabled_bits[i])
+			normals_dim++;
+	}
+
 	vertex_buffer.vertex_attribute_structure.clear();
 	vertex_buffer.initialize_buffer(vertex_data);
-	vertex_buffer.push_attribute(3);	// position
-	vertex_buffer.push_attribute(2);	// texture uv
-	vertex_buffer.push_attribute(3);	// texture_map index
-	vertex_buffer.push_attribute(3);	// normals
+	std::cout << coord_dim << tex_coord_dim << tex_coord_z_dim << normals_dim << std::endl;
+	vertex_buffer.push_attribute(coord_dim);		// position
+	vertex_buffer.push_attribute(tex_coord_dim);	// texture uv
+	vertex_buffer.push_attribute(tex_coord_z_dim);	// texture_map index
+	vertex_buffer.push_attribute(normals_dim);		// normals
 
 	index_buffer.initialize_buffer(index_data, 3);
 

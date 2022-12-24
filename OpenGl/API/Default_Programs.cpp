@@ -17,12 +17,18 @@ namespace default_program {
 		queue.add_uniform_update(uniform_update<int>("use_cube_map_reflection", 0));
 		queue.add_uniform_update(uniform_update<float>("cube_map_reflection_strength", 0.85));
 		queue.add_uniform_update(dynamic_uniform_update<float>("camera_coords", &scene.camera->position.x, &scene.camera->position.y, &scene.camera->position.z));
-		queue.add_uniform_update(uniform_update<int>("use_color_map", (int)(mesh.material->_enable_color_map)));
-		queue.add_uniform_update(uniform_update<int>("use_specular_map", (int)(mesh.material->_enable_specular_map)));
-		queue.add_uniform_update(uniform_update<int>("use_normal_map", (int)(mesh.material->_enable_normal_map)));
-		queue.add_uniform_update(dynamic_uniform_update<int>("color_map_slot", &mesh.material->color_map_index));
-		queue.add_uniform_update(dynamic_uniform_update<int>("specular_map_slot", &mesh.material->specular_map_index));
-		queue.add_uniform_update(dynamic_uniform_update<int>("normal_map_slot", &mesh.material->normal_map_index));
+		if(!mesh.use_unordered_material){ // temp until new system using function pointers
+			queue.add_uniform_update(uniform_update<int>("use_color_map", (int)(mesh.material->_enable_color_map)));
+			queue.add_uniform_update(uniform_update<int>("use_specular_map", (int)(mesh.material->_enable_specular_map)));
+			queue.add_uniform_update(uniform_update<int>("use_normal_map", (int)(mesh.material->_enable_normal_map)));
+			queue.add_uniform_update(dynamic_uniform_update<int>("color_map_slot", &mesh.material->color_map_index));
+			queue.add_uniform_update(dynamic_uniform_update<int>("specular_map_slot", &mesh.material->specular_map_index));
+			queue.add_uniform_update(dynamic_uniform_update<int>("normal_map_slot", &mesh.material->normal_map_index));
+		}
+		else {
+			std::cout << "[Default Shader Error] solid_default_uniform_queue doesn't support UnorderedMaterials yet." << std::endl;
+			ASSERT(false);
+		}
 		return queue;
 	}
 
@@ -52,46 +58,46 @@ namespace default_program {
 		return queue;
 	}
 
-	uniform_update_queue ambiant_light_default_uniform_queue(AmbiantLight& ambiant_light, int light_ingdex) {
+	uniform_update_queue ambiant_light_default_uniform_queue(AmbiantLight& ambiant_light, int light_index) {
 		uniform_update_queue queue;
 
-		queue.add_uniform_update(dynamic_uniform_update<float>("a_lights[" + std::to_string(light_ingdex) + "].color", &ambiant_light.color.x, &ambiant_light.color.y, &ambiant_light.color.z));
+		queue.add_uniform_update(dynamic_uniform_update<float>("a_lights[" + std::to_string(light_index) + "].color", &ambiant_light.color.x, &ambiant_light.color.y, &ambiant_light.color.z));
 		queue.add_uniform_update(dynamic_uniform_update<int>("a_lights_count", &AmbiantLight::count));
 
 		return queue;
 
 	}
-	uniform_update_queue directional_light_default_uniform_queue(DirectionalLight& directional_light, int light_ingdex) {
+	uniform_update_queue directional_light_default_uniform_queue(DirectionalLight& directional_light, int light_index) {
 		uniform_update_queue queue;
 
-		queue.add_uniform_update(dynamic_uniform_update<float>("d_lights[" + std::to_string(light_ingdex) + "].color", &directional_light.color.x, &directional_light.color.y, &directional_light.color.z));
-		queue.add_uniform_update(dynamic_uniform_update<float>("d_lights[" + std::to_string(light_ingdex) + "].direction", &directional_light.direction.x, &directional_light.direction.y, &directional_light.direction.z));
+		queue.add_uniform_update(dynamic_uniform_update<float>("d_lights[" + std::to_string(light_index) + "].color", &directional_light.color.x, &directional_light.color.y, &directional_light.color.z));
+		queue.add_uniform_update(dynamic_uniform_update<float>("d_lights[" + std::to_string(light_index) + "].direction", &directional_light.direction.x, &directional_light.direction.y, &directional_light.direction.z));
 		queue.add_uniform_update(dynamic_uniform_update<int>("d_lights_count", &DirectionalLight::count));
 
 		return queue;
 	}
-	uniform_update_queue point_light_default_uniform_queue(PointLight& point_light, int light_ingdex) {
+	uniform_update_queue point_light_default_uniform_queue(PointLight& point_light, int light_index) {
 		uniform_update_queue queue;
 
-		queue.add_uniform_update(dynamic_uniform_update<float>("p_lights[" + std::to_string(light_ingdex) + "].position", &point_light.position.x, &point_light.position.y, &point_light.position.z));
-		queue.add_uniform_update(dynamic_uniform_update<float>("p_lights[" + std::to_string(light_ingdex) + "].color", &point_light.color.x, &point_light.color.y, &point_light.color.z));
-		queue.add_uniform_update(dynamic_uniform_update<float>("p_lights[" + std::to_string(light_ingdex) + "].constant_term", &point_light.constant_term));
-		queue.add_uniform_update(dynamic_uniform_update<float>("p_lights[" + std::to_string(light_ingdex) + "].linear_term", &point_light.linear_term));
-		queue.add_uniform_update(dynamic_uniform_update<float>("p_lights[" + std::to_string(light_ingdex) + "].exponential_term", &point_light.exponential_term));
+		queue.add_uniform_update(dynamic_uniform_update<float>("p_lights[" + std::to_string(light_index) + "].position", &point_light.position.x, &point_light.position.y, &point_light.position.z));
+		queue.add_uniform_update(dynamic_uniform_update<float>("p_lights[" + std::to_string(light_index) + "].color", &point_light.color.x, &point_light.color.y, &point_light.color.z));
+		queue.add_uniform_update(dynamic_uniform_update<float>("p_lights[" + std::to_string(light_index) + "].constant_term", &point_light.constant_term));
+		queue.add_uniform_update(dynamic_uniform_update<float>("p_lights[" + std::to_string(light_index) + "].linear_term", &point_light.linear_term));
+		queue.add_uniform_update(dynamic_uniform_update<float>("p_lights[" + std::to_string(light_index) + "].exponential_term", &point_light.exponential_term));
 		queue.add_uniform_update(dynamic_uniform_update<int>("p_lights_count", &PointLight::count));
 
 		return queue;
 	}
-	uniform_update_queue spot_light_default_uniform_queue(SpotLight& spot_light, int light_ingdex) {
+	uniform_update_queue spot_light_default_uniform_queue(SpotLight& spot_light, int light_index) {
 		uniform_update_queue queue;
 
-		queue.add_uniform_update(dynamic_uniform_update<float>("s_lights[" + std::to_string(light_ingdex) + "].position", &spot_light.position.x, &spot_light.position.y, &spot_light.position.z));
-		queue.add_uniform_update(dynamic_uniform_update<float>("s_lights[" + std::to_string(light_ingdex) + "].direction", &spot_light.direction.x, &spot_light.direction.y, &spot_light.direction.z));
-		queue.add_uniform_update(dynamic_uniform_update<float>("s_lights[" + std::to_string(light_ingdex) + "].color", &spot_light.color.x, &spot_light.color.y, &spot_light.color.z));
-		queue.add_uniform_update(dynamic_uniform_update<float>("s_lights[" + std::to_string(light_ingdex) + "].constant_term", &spot_light.constant_term));
-		queue.add_uniform_update(dynamic_uniform_update<float>("s_lights[" + std::to_string(light_ingdex) + "].linear_term", &spot_light.linear_term));
-		queue.add_uniform_update(dynamic_uniform_update<float>("s_lights[" + std::to_string(light_ingdex) + "].exponential_term", &spot_light.exponential_term));
-		queue.add_uniform_update(dynamic_uniform_update<float>("s_lights[" + std::to_string(light_ingdex) + "].cos_angle", &spot_light.cos_angle));
+		queue.add_uniform_update(dynamic_uniform_update<float>("s_lights[" + std::to_string(light_index) + "].position", &spot_light.position.x, &spot_light.position.y, &spot_light.position.z));
+		queue.add_uniform_update(dynamic_uniform_update<float>("s_lights[" + std::to_string(light_index) + "].direction", &spot_light.direction.x, &spot_light.direction.y, &spot_light.direction.z));
+		queue.add_uniform_update(dynamic_uniform_update<float>("s_lights[" + std::to_string(light_index) + "].color", &spot_light.color.x, &spot_light.color.y, &spot_light.color.z));
+		queue.add_uniform_update(dynamic_uniform_update<float>("s_lights[" + std::to_string(light_index) + "].constant_term", &spot_light.constant_term));
+		queue.add_uniform_update(dynamic_uniform_update<float>("s_lights[" + std::to_string(light_index) + "].linear_term", &spot_light.linear_term));
+		queue.add_uniform_update(dynamic_uniform_update<float>("s_lights[" + std::to_string(light_index) + "].exponential_term", &spot_light.exponential_term));
+		queue.add_uniform_update(dynamic_uniform_update<float>("s_lights[" + std::to_string(light_index) + "].cos_angle", &spot_light.cos_angle));
 		queue.add_uniform_update(dynamic_uniform_update<int>("s_lights_count", &SpotLight::count));
 
 		return queue;

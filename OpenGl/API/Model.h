@@ -29,7 +29,25 @@ public:
 	Model(ArrayBuffer& verticies, IndexBuffer& indirices);
 	Model(ArrayBuffer&& verticies, IndexBuffer&& indicies);
 
-	UnorderedMaterial load_model(const std::string& file_path, float scale = 1.0f);
+	enum vertex_property {
+		COORD_X = 1,
+		COORD_Y = 2,
+		COORD_Z = 4,
+
+		TEX_COORD_X = 8,
+		TEX_COORD_Y = 16,
+		TEX_COORD_Z_DIFFUSE = 32,
+		TEX_COORD_Z_SPEUCLAR = 64,
+		TEX_COORD_Z_NORMAL = 128,
+
+		NORMAL_X = 256,
+		NORMAL_Y = 512,
+		NORMAL_Z = 1024,
+		ALL = 2047,
+		PROPERTY_COUNT = 11,
+	};
+
+	UnorderedMaterial load_model(const std::string& file_path, float scale = 1.0f, unsigned int vertex_property_bits = ALL);
 	
 	template<typename T>
 	std::enable_if_t<std::is_same<T, float>::value, std::vector<T>>

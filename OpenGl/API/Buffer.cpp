@@ -38,7 +38,8 @@ void ArrayBuffer::initialize_buffer(float verticies[], int data_count) {
 }
 
 void ArrayBuffer::push_attribute(unsigned int count) {
-	this->vertex_attribute_structure.push_back(count);
+	if( count != 0)
+		this->vertex_attribute_structure.push_back(count);
 }
 
 void ArrayBuffer::bind() {
