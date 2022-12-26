@@ -44,6 +44,8 @@ public:
 	void bind();
 	void unbind();
 	void define_uniform(const std::string& name);
+	unsigned int define_get_uniform_id(const std::string& name);
+
 	// template definitions
 	
 	// for non-supported types

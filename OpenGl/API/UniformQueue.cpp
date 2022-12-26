@@ -66,6 +66,9 @@ void uniform_update_queue::copy(const uniform_update_queue& original) {
 		add_uniform_update(update);
 	for (dynamic_uniform_update<glm::mat2> update : original.dynamic_uniform_queue_mat2)
 		add_uniform_update(update);
+
+	for (std::function<void()> update : original.functional_updates)
+		add_uniform_update(update);
 }
 
 void uniform_update_queue::link_program(Program* program) {
@@ -387,4 +390,7 @@ void uniform_update_queue::update_uniforms() {
 		update.update_uniform();
 	for (dynamic_uniform_update<glm::mat2> update : dynamic_uniform_queue_mat2)
 		update.update_uniform();
+
+	for (std::function<void()>& update : functional_updates)
+		update();
 }

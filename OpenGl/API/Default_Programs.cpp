@@ -17,18 +17,10 @@ namespace default_program {
 		queue.add_uniform_update(uniform_update<int>("use_cube_map_reflection", 0));
 		queue.add_uniform_update(uniform_update<float>("cube_map_reflection_strength", 0.85));
 		queue.add_uniform_update(dynamic_uniform_update<float>("camera_coords", &scene.camera->position.x, &scene.camera->position.y, &scene.camera->position.z));
-		if(!mesh.use_unordered_material){ // temp until new system using function pointers
-			queue.add_uniform_update(uniform_update<int>("use_color_map", (int)(mesh.material->_enable_color_map)));
-			queue.add_uniform_update(uniform_update<int>("use_specular_map", (int)(mesh.material->_enable_specular_map)));
-			queue.add_uniform_update(uniform_update<int>("use_normal_map", (int)(mesh.material->_enable_normal_map)));
-			queue.add_uniform_update(dynamic_uniform_update<int>("color_map_slot", &mesh.material->color_map_index));
-			queue.add_uniform_update(dynamic_uniform_update<int>("specular_map_slot", &mesh.material->specular_map_index));
-			queue.add_uniform_update(dynamic_uniform_update<int>("normal_map_slot", &mesh.material->normal_map_index));
-		}
-		else {
-			std::cout << "[Default Shader Error] solid_default_uniform_queue doesn't support UnorderedMaterials yet." << std::endl;
-			ASSERT(false);
-		}
+
+		queue.add_uniform_update([mesh, uniform_id = mesh.renderer->define_get_uniform_id("use_color_map")]()		{ if (!mesh.use_unordered_material) mesh.renderer->update_uniform(uniform_id, (int)mesh.material->_enable_color_map);		else mesh.renderer->update_uniform(uniform_id, 1);  });
+		queue.add_uniform_update([mesh, uniform_id = mesh.renderer->define_get_uniform_id("use_specular_map")]()	{ if (!mesh.use_unordered_material) mesh.renderer->update_uniform(uniform_id, (int)mesh.material->_enable_specular_map);	else mesh.renderer->update_uniform(uniform_id, 0);  });
+		queue.add_uniform_update([mesh, uniform_id = mesh.renderer->define_get_uniform_id("use_normal_map")]()		{ if (!mesh.use_unordered_material) mesh.renderer->update_uniform(uniform_id, (int)mesh.material->_enable_normal_map);		else mesh.renderer->update_uniform(uniform_id, 0);  });
 		return queue;
 	}
 

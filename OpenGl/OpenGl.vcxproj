@@ -182,6 +182,7 @@
     <ClCompile Include="API\Image.cpp" />
     <ClCompile Include="API\Lights.cpp" />
     <ClCompile Include="API\Model.cpp" />
+    <ClCompile Include="API\ModelTextureTable.cpp" />
     <ClCompile Include="API\PhysicsContext.cpp" />
     <ClCompile Include="API\PhysicsGeometry.cpp" />
     <ClCompile Include="API\PhysicsLink.cpp" />
@@ -246,6 +247,7 @@
     <ClInclude Include="API\Image.h" />
     <ClInclude Include="API\Lights.h" />
     <ClInclude Include="API\Model.h" />
+    <ClInclude Include="API\ModelTextureTable.h" />
     <ClInclude Include="API\PhysicsContext.h" />
     <ClInclude Include="API\PhysicsGeometry.h" />
     <ClInclude Include="API\PhysicsLink.h" />

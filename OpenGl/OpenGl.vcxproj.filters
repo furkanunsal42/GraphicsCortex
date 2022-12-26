@@ -123,6 +123,9 @@
     <ClCompile Include="Dependencies\stb_image\stb_image_resize.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
+    <ClCompile Include="API\ModelTextureTable.cpp">
+      <Filter>Kaynak Dosyalar</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\Solid.vert" />
@@ -516,6 +519,9 @@
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
     <ClInclude Include="Dependencies\stb_image\stb_image_resize.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="API\ModelTextureTable.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
   </ItemGroup>

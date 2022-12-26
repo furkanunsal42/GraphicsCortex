@@ -24,6 +24,7 @@
 #include "FrameBuffer.h"
 #include "CubeMap.h"
 #include "UnifromQueue.h"
+#include "ModelTextureTable.h"
 
 #include <PxPhysicsAPI.h>
 

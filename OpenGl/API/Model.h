@@ -14,6 +14,7 @@
 #include <iostream>
 #include <vector>
 #include "Texture.h"
+#include "ModelTextureTable.h"
 
 class Model {
 public:
@@ -37,14 +38,12 @@ public:
 		TEX_COORD_X = 8,
 		TEX_COORD_Y = 16,
 		TEX_COORD_Z_DIFFUSE = 32,
-		TEX_COORD_Z_SPEUCLAR = 64,
-		TEX_COORD_Z_NORMAL = 128,
 
-		NORMAL_X = 256,
-		NORMAL_Y = 512,
-		NORMAL_Z = 1024,
-		ALL = 2047,
-		PROPERTY_COUNT = 11,
+		NORMAL_X = 64,
+		NORMAL_Y = 128,
+		NORMAL_Z = 256,
+		ALL = 511,
+		PROPERTY_COUNT = 9,
 	};
 
 	UnorderedMaterial load_model(const std::string& file_path, float scale = 1.0f, unsigned int vertex_property_bits = ALL);
@@ -141,5 +140,9 @@ public:
 
 
 	void clear_ram();
+
+private:
+
+	ModelTextureTable _model_texture_table;
 
 };

@@ -4,6 +4,7 @@
 #version 330 core
 layout(location = 0) out vec4 frag_color;
 in vec2 tex_coords;
+in int mesh_index;
 in vec3 frag_normal;
 in vec3 frag_space_coord;
 in mat3 frag_TBN;
@@ -38,6 +39,7 @@ struct spot_light{
 //maps 
 uniform sampler2DArray texture_array_slot;
 uniform samplerCube cube_map;
+uniform int model_texture_table_array[150];
 
 // flags
 uniform int use_color_map = 0;
@@ -91,7 +93,7 @@ vec3 calculate_specular_light(vec3 light_direction, vec3 current_position, vec3 
 
 	vec3 specular_map_color;
 	if (bool(use_specular_map))
-		specular_map_color = texture(texture_array_slot, vec3(tex_coords.xy, 1)).rgb;
+		specular_map_color = texture(texture_array_slot, vec3(tex_coords, 1)).rgb;
 	else
 		specular_map_color = vec3(1.0);
 	

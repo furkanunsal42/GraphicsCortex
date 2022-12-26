@@ -62,7 +62,7 @@ std::vector<char> compute_enabled_bits(unsigned int binary_bits, int bit_count) 
 }
 
 UnorderedMaterial Model::load_model(const std::string& filepath, float scale, unsigned int vertex_property_bits) {
-		
+	
 	clear_ram(); 
 
 	std::vector<char> enabled_bits = compute_enabled_bits(vertex_property_bits, PROPERTY_COUNT);
@@ -94,6 +94,8 @@ UnorderedMaterial Model::load_model(const std::string& filepath, float scale, un
 	#define MAP_TYPE_COUNT 3
 	unsigned int map_types[MAP_TYPE_COUNT] = { aiTextureType_DIFFUSE, aiTextureType_METALNESS, aiTextureType_NORMALS };
 	for (int i = 0; i < imported_scene->mNumMeshes; i++) {
+		
+		// -- Generating Material --
 		// 0: diffuse_index, 1: specular_index, 2: normal_index
 		int map_indicies[MAP_TYPE_COUNT] = {-1, -1, -1};
 
@@ -120,8 +122,12 @@ UnorderedMaterial Model::load_model(const std::string& filepath, float scale, un
 				image_paths.push_back(path);
 			}
 		}
+		_model_texture_table.set_diffuse_index(i, map_indicies[0]);
+		_model_texture_table.set_specular_index(i, map_indicies[1]);
+		_model_texture_table.set_normal_index(i, map_indicies[2]);
 
 
+		// -- Generating  Model -- 
 		for (int j = 0; j < imported_scene->mMeshes[i]->mNumVertices; j++) {
 
 			if (enabled_bits[0] || enabled_bits[1] || enabled_bits[2]) {
@@ -134,28 +140,24 @@ UnorderedMaterial Model::load_model(const std::string& filepath, float scale, un
 					vertex_data.push_back((float)vertex.z * scale);
 			}
 
-			if (enabled_bits[3] || enabled_bits[4] || enabled_bits[5] || enabled_bits[6] || enabled_bits[7]) {
+			if (enabled_bits[3] || enabled_bits[4] || enabled_bits[5]) {
 				aiVector3D texcoords = imported_scene->mMeshes[i]->mTextureCoords[0][j];
 				if (enabled_bits[3])
 					vertex_data.push_back(texcoords.x);
 				if (enabled_bits[4])
 					vertex_data.push_back(texcoords.y);
 				if (enabled_bits[5])
-					vertex_data.push_back(map_indicies[0]); // diffuse
-				if (enabled_bits[6])
-					vertex_data.push_back(map_indicies[1]); // specular
-				if (enabled_bits[7])
-					vertex_data.push_back(map_indicies[2]); // normals
+					vertex_data.push_back(i); // mesh index
 			}
 			
-			if (enabled_bits[8] || enabled_bits[9] || enabled_bits[10]) {
+			if (enabled_bits[6] || enabled_bits[7] || enabled_bits[8]) {
 				aiVector3D normal = imported_scene->mMeshes[i]->mNormals[j];
 				normal.Normalize();
-				if (enabled_bits[8])
+				if (enabled_bits[6])
 					vertex_data.push_back((float)normal.x);
-				if (enabled_bits[9])
+				if (enabled_bits[7])
 					vertex_data.push_back((float)normal.y);
-				if (enabled_bits[10])
+				if (enabled_bits[8])
 					vertex_data.push_back((float)normal.z);
 			}
 		}
@@ -180,23 +182,23 @@ UnorderedMaterial Model::load_model(const std::string& filepath, float scale, un
 		if (enabled_bits[i])
 			tex_coord_dim++;
 	}
-	int tex_coord_z_dim = 0;
-	for (int i = 5; i < 8; i++) {
+	int mesh_index_dim = 0;
+	for (int i = 5; i < 6; i++) {
 		if (enabled_bits[i])
-			tex_coord_z_dim++;
+			mesh_index_dim++;
 	}
 	int normals_dim = 0;
-	for (int i = 8; i < 11; i++) {
+	for (int i = 6; i < 9; i++) {
 		if (enabled_bits[i])
 			normals_dim++;
 	}
 
 	vertex_buffer.vertex_attribute_structure.clear();
 	vertex_buffer.initialize_buffer(vertex_data);
-	std::cout << coord_dim << tex_coord_dim << tex_coord_z_dim << normals_dim << std::endl;
+	std::cout << coord_dim << tex_coord_dim << mesh_index_dim << normals_dim << std::endl;
 	vertex_buffer.push_attribute(coord_dim);		// position
 	vertex_buffer.push_attribute(tex_coord_dim);	// texture uv
-	vertex_buffer.push_attribute(tex_coord_z_dim);	// texture_map index
+	vertex_buffer.push_attribute(mesh_index_dim);	// mesh index
 	vertex_buffer.push_attribute(normals_dim);		// normals
 
 	index_buffer.initialize_buffer(index_data, 3);
@@ -211,4 +213,5 @@ UnorderedMaterial Model::load_model(const std::string& filepath, float scale, un
 void Model::clear_ram() {
 	vertex_data.clear();
 	index_data.clear();
+	_model_texture_table.clear();
 }

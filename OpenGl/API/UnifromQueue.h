@@ -6,6 +6,7 @@
 #include <vector>
 #include <any>
 #include <iostream>
+#include <functional>
 
 #include "glm.hpp"
 
@@ -70,6 +71,7 @@ public:
 	// add destructer too, that free's the data queue holds.
 };
 
+
 class uniform_update_queue {
 private:
 	std::vector<uniform_update<int>> uniform_queue_int;
@@ -89,6 +91,10 @@ private:
 	std::vector<dynamic_uniform_update<glm::mat4>> dynamic_uniform_queue_mat4;
 	std::vector<dynamic_uniform_update<glm::mat3>> dynamic_uniform_queue_mat3;
 	std::vector<dynamic_uniform_update<glm::mat2>> dynamic_uniform_queue_mat2;
+
+	// --------------------------------------------------------------
+
+	std::vector<std::function<void()>> functional_updates;
 
 public:
 
@@ -115,5 +121,33 @@ public:
 	void remove_uniform_update(const std::string& uniform_name);
 	void remove_uniform_update(unsigned int uniform_id);
 
+	void add_uniform_update(const std::function<void()>& update) {
+		functional_updates.push_back(update);
+	}
+	
+	void remove_uniform_update_functional(int index) {
+		if (index < functional_updates.size())
+			functional_updates.erase(functional_updates.begin() + index);
+	}
+
 	void update_uniforms();
 };
+
+// new functional design
+//class functional_update_queue {
+//public:
+//	std::vector<std::function<void()>> updates;
+//	void add_update(std::function<void()> update) {
+//		updates.push_back(update);
+//	}
+//
+//	void remove_update(int index) {
+//		if (index < updates.size())
+//			updates.erase(updates.begin() + index);
+//	}
+//
+//	void update_uniforms() {
+//		for (std::function<void()>& update : updates)
+//			update();
+//	}
+//};

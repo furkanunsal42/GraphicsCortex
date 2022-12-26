@@ -188,8 +188,20 @@ void Program::unbind() {
 void Program::define_uniform(const std::string& name) {
 	auto a = uniforms.find(name);
 	auto b = uniforms.end();
-	if (a == b)
+	if (a == b){
 		GLCall(uniforms.insert(std::pair<std::string, unsigned int>(name, glGetUniformLocation(this->id, name.c_str()))));
+	}
+}
+
+unsigned int Program::define_get_uniform_id(const std::string& name) {
+	auto a = uniforms.find(name);
+	auto b = uniforms.end();
+	if (a == b){
+		unsigned int uniform_id = glGetUniformLocation(this->id, name.c_str());
+		GLCall(uniforms.insert(std::pair<std::string, unsigned int>(name, uniform_id)));
+		return uniform_id;
+	}
+	return uniforms[name];
 }
 
 void Program::update_uniform(const std::string& name, const int& a, const int& b, const int& c, const int& d) {

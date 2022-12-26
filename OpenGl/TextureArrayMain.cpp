@@ -4,19 +4,19 @@ int main() {
 
 	Frame frame(1920, 1080, "GraphicsCortex", 0, 0, true, false, true);
 	Scene scene;
-
+	
 	Model model;
-	/*UnorderedMaterial material = */model.load_model("Models/City/edited_city.obj", 1, Model::COORD_X | Model::COORD_Y | Model::COORD_Z | Model::TEX_COORD_X | Model::TEX_COORD_Y | Model::NORMAL_X | Model::NORMAL_Y | Model::NORMAL_Z);
+	UnorderedMaterial material_u = model.load_model("Models/City/edited_city.obj", 1, Model::ALL);
 	//material.set_texture_size(1024, 1024);
-	//material.bind();
+	//material_u.bind();
 
 	Material material;
 	material.set_color_texture("Images/GoldBlock.png", 4);
 	material.bind();
 	
-	Image image = material.texture_array.save(-1);
-	image.save_to_disc("texture_array_save.png");
-
+	//Image image = material.texture_array.save(-1);
+	//image.save_to_disc("texture_array_save.png");
+	
 	Camera cam;
 	cam.screen_width = 1920;
 	cam.screen_height = 1080;
@@ -33,7 +33,7 @@ int main() {
 	Graphic g;
 	g.load_program(renderer);
 	g.load_model(model);
-	g.load_material(material);
+	g.load_material(material_u);
 	//g.set_uniform_update_queue(default_program::basic_uniform_queue(scene, g));
 	g.set_uniform_update_queue(default_program::solid_default_uniform_queue(scene, g));
 
