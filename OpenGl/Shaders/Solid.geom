@@ -6,14 +6,14 @@ layout (triangles) in;
 layout (triangle_strip, max_vertices = 3) out;
 
 out vec2 tex_coords;
-out int mesh_index;
+out vec3 map_indicies;
 out vec3 frag_normal;
 out vec3 frag_space_coord;
 out mat3 frag_TBN;
 in DATA
 {
 	vec2 tex_coords;
-	int mesh_index;
+	vec3 map_indicies;
 	vec3 frag_normal;
 	vec3 frag_space_coord;
 	mat4 projection;
@@ -48,7 +48,7 @@ void main(){
 	frag_TBN = TBN;
 	gl_Position = data_in[0].projection * data_in[0].view * gl_in[0].gl_Position;
 	tex_coords = data_in[0].tex_coords;
-	mesh_index = data_in[0].mesh_index;
+	map_indicies = data_in[0].map_indicies;
 	frag_normal = data_in[0].frag_normal;
 	frag_space_coord = data_in[0].frag_space_coord;
 	EmitVertex();
@@ -56,7 +56,7 @@ void main(){
 	frag_TBN = TBN;
 	gl_Position = data_in[0].projection * data_in[0].view * gl_in[1].gl_Position;
 	tex_coords = data_in[1].tex_coords;
-	mesh_index = data_in[1].mesh_index;
+	map_indicies = data_in[1].map_indicies;
 	frag_normal = data_in[1].frag_normal;
 	frag_space_coord = data_in[1].frag_space_coord;
 	EmitVertex();
@@ -64,7 +64,7 @@ void main(){
 	frag_TBN = TBN;
 	gl_Position = data_in[0].projection * data_in[0].view * gl_in[2].gl_Position;
 	tex_coords = data_in[2].tex_coords;
-	mesh_index = data_in[2].mesh_index;
+	map_indicies = data_in[2].map_indicies;
 	frag_normal = data_in[2].frag_normal;
 	frag_space_coord = data_in[2].frag_space_coord;
 	EmitVertex();

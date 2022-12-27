@@ -2,7 +2,7 @@
 
 int main() {
 
-	Frame frame(1920, 1080, "GraphicsCortex", 0, 0, true, false, true);
+	Frame frame(1920, 1080, "GraphicsCortex", 0, 0, true, false, false);
 	Scene scene;
 	
 	Model model;

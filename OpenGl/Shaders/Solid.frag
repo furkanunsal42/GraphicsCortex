@@ -4,7 +4,7 @@
 #version 330 core
 layout(location = 0) out vec4 frag_color;
 in vec2 tex_coords;
-in int mesh_index;
+in vec3 map_indicies;
 in vec3 frag_normal;
 in vec3 frag_space_coord;
 in mat3 frag_TBN;
@@ -39,12 +39,8 @@ struct spot_light{
 //maps 
 uniform sampler2DArray texture_array_slot;
 uniform samplerCube cube_map;
-uniform int model_texture_table_array[150];
 
 // flags
-uniform int use_color_map = 0;
-uniform int use_specular_map = 0;
-uniform int use_normal_map = 0;
 uniform int use_cube_map_reflection = 0;
 
 uniform float cube_map_reflection_strength = 0.85;
@@ -92,8 +88,8 @@ vec3 calculate_specular_light(vec3 light_direction, vec3 current_position, vec3 
 		cos_angle = 0.6;
 
 	vec3 specular_map_color;
-	if (bool(use_specular_map))
-		specular_map_color = texture(texture_array_slot, vec3(tex_coords, 1)).rgb;
+	if (map_indicies[1] > -0.5)
+		specular_map_color = texture(texture_array_slot, vec3(tex_coords, map_indicies[1])).rgb;
 	else
 		specular_map_color = vec3(1.0);
 	
@@ -177,15 +173,15 @@ vec3 calculate_total_light(vec3 normal, vec3 space_coords){
 void main(){
 
 	vec3 normal;
-	if(bool(use_normal_map))
-		normal = normalize(frag_TBN * ((texture(texture_array_slot, vec3(tex_coords, 2)) * 2).xyz - 1));
+	if(bool(map_indicies[2] > -0.5))
+		normal = normalize(frag_TBN * ((texture(texture_array_slot, vec3(tex_coords, map_indicies[2])) * 2).xyz - 1));
 	else
 		normal = frag_normal;
 
 	vec3 total_light = calculate_total_light(normal, frag_space_coord);
 	vec4 color;
-	if (bool(use_color_map))
-		color = texture(texture_array_slot, vec3(tex_coords, 0));
+	if (bool(map_indicies[0] > -0.5))
+		color = texture(texture_array_slot, vec3(tex_coords, map_indicies[0]));
 	else
 		color = vec4(1.0);
 
@@ -194,7 +190,8 @@ void main(){
 	if(bool(use_cube_map_reflection))
 		frag_color = mix(frag_color, vec4(calculate_cube_map_reflection(frag_space_coord, camera_coords, normalize(normal)),1), cube_map_reflection_strength);
 
-
+	if(frag_color.a < 0.1f)
+		discard;
 	// linearized depth visualization
 	//frag_color = vec4(vec3((2.0 * 0.1f * 100.0f) / (100.0f + 0.1f - (gl_FragCoord.z * 2.0 - 1.0) * (100.0f - 0.1f)) / 30.0f), 1.0f);
 }

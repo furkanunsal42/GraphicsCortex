@@ -130,36 +130,35 @@ UnorderedMaterial Model::load_model(const std::string& filepath, float scale, un
 		// -- Generating  Model -- 
 		for (int j = 0; j < imported_scene->mMeshes[i]->mNumVertices; j++) {
 
-			if (enabled_bits[0] || enabled_bits[1] || enabled_bits[2]) {
-				aiVector3D vertex = imported_scene->mMeshes[i]->mVertices[j];
-				if (enabled_bits[0])
-					vertex_data.push_back((float)vertex.x * scale);
-				if (enabled_bits[1])
-					vertex_data.push_back((float)vertex.y * scale);
-				if (enabled_bits[2])
-					vertex_data.push_back((float)vertex.z * scale);
-			}
+			aiVector3D vertex = imported_scene->mMeshes[i]->mVertices[j];
+			if (enabled_bits[0])
+				vertex_data.push_back((float)vertex.x * scale);
+			if (enabled_bits[1])
+				vertex_data.push_back((float)vertex.y * scale);
+			if (enabled_bits[2])
+				vertex_data.push_back((float)vertex.z * scale);
 
-			if (enabled_bits[3] || enabled_bits[4] || enabled_bits[5]) {
-				aiVector3D texcoords = imported_scene->mMeshes[i]->mTextureCoords[0][j];
-				if (enabled_bits[3])
-					vertex_data.push_back(texcoords.x);
-				if (enabled_bits[4])
-					vertex_data.push_back(texcoords.y);
-				if (enabled_bits[5])
-					vertex_data.push_back(i); // mesh index
-			}
+			aiVector3D texcoords = imported_scene->mMeshes[i]->mTextureCoords[0][j];
+			if (enabled_bits[3])
+				vertex_data.push_back(texcoords.x);
+			if (enabled_bits[4])
+				vertex_data.push_back(texcoords.y);
+
+			if (enabled_bits[5])
+				vertex_data.push_back(map_indicies[0]);
+			if (enabled_bits[6])
+				vertex_data.push_back(map_indicies[1]);
+			if (enabled_bits[7])
+				vertex_data.push_back(map_indicies[2]);
 			
-			if (enabled_bits[6] || enabled_bits[7] || enabled_bits[8]) {
-				aiVector3D normal = imported_scene->mMeshes[i]->mNormals[j];
-				normal.Normalize();
-				if (enabled_bits[6])
-					vertex_data.push_back((float)normal.x);
-				if (enabled_bits[7])
-					vertex_data.push_back((float)normal.y);
-				if (enabled_bits[8])
-					vertex_data.push_back((float)normal.z);
-			}
+			aiVector3D normal = imported_scene->mMeshes[i]->mNormals[j];
+			normal.Normalize();
+			if (enabled_bits[8])
+				vertex_data.push_back((float)normal.x);
+			if (enabled_bits[9])
+				vertex_data.push_back((float)normal.y);
+			if (enabled_bits[10])
+				vertex_data.push_back((float)normal.z);
 		}
 		for (int j = 0; j < imported_scene->mMeshes[i]->mNumFaces; j++) {
 			const aiFace& Face = imported_scene->mMeshes[i]->mFaces[j];
@@ -173,32 +172,40 @@ UnorderedMaterial Model::load_model(const std::string& filepath, float scale, un
 	}
 
 	int coord_dim = 0;
-	for (int i = 0; i < 3; i++){
-		if (enabled_bits[i])
+	int bit = 0;
+	for (int i = COORD_X; i <= COORD_Z; i*=2){
+		if (enabled_bits[bit])
 			coord_dim++;
+		bit++;
 	}
+	bit = 3;
 	int tex_coord_dim = 0;
-	for (int i = 3; i < 5; i++) {
-		if (enabled_bits[i])
+	for (int i = TEX_COORD_X; i <= TEX_COORD_Y; i *= 2) {
+		if (enabled_bits[bit])
 			tex_coord_dim++;
+		bit++;
 	}
-	int mesh_index_dim = 0;
-	for (int i = 5; i < 6; i++) {
-		if (enabled_bits[i])
-			mesh_index_dim++;
+	bit = 5;
+	int map_index_dim = 0;
+	for (int i = TEX_COORD_Z_DIFFUSE; i <= TEX_COORD_Z_NORMAL; i *= 2) {
+		if (enabled_bits[bit])
+			map_index_dim++;
+		bit++;
 	}
+	bit = 8;
 	int normals_dim = 0;
-	for (int i = 6; i < 9; i++) {
-		if (enabled_bits[i])
+	for (int i = NORMAL_X; i <= NORMAL_Z; i *= 2) {
+		if (enabled_bits[bit])
 			normals_dim++;
+		bit++;
 	}
 
 	vertex_buffer.vertex_attribute_structure.clear();
 	vertex_buffer.initialize_buffer(vertex_data);
-	std::cout << coord_dim << tex_coord_dim << mesh_index_dim << normals_dim << std::endl;
+	std::cout << coord_dim << tex_coord_dim << map_index_dim << normals_dim << std::endl;
 	vertex_buffer.push_attribute(coord_dim);		// position
 	vertex_buffer.push_attribute(tex_coord_dim);	// texture uv
-	vertex_buffer.push_attribute(mesh_index_dim);	// mesh index
+	vertex_buffer.push_attribute(map_index_dim);	// mesh index
 	vertex_buffer.push_attribute(normals_dim);		// normals
 
 	index_buffer.initialize_buffer(index_data, 3);

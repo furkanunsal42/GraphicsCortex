@@ -57,7 +57,8 @@ void ModelTextureTable::update_uniform_array() {
 }
 
 int*& ModelTextureTable::get_uniform_array(int* array_size) {
-	*array_size = _uniform_array_size;
+	if (array_size != nullptr)
+		*array_size = _uniform_array_size;
 	return _uniform_array;
 }
 

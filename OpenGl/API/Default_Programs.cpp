@@ -18,9 +18,31 @@ namespace default_program {
 		queue.add_uniform_update(uniform_update<float>("cube_map_reflection_strength", 0.85));
 		queue.add_uniform_update(dynamic_uniform_update<float>("camera_coords", &scene.camera->position.x, &scene.camera->position.y, &scene.camera->position.z));
 
-		queue.add_uniform_update([mesh, uniform_id = mesh.renderer->define_get_uniform_id("use_color_map")]()		{ if (!mesh.use_unordered_material) mesh.renderer->update_uniform(uniform_id, (int)mesh.material->_enable_color_map);		else mesh.renderer->update_uniform(uniform_id, 1);  });
-		queue.add_uniform_update([mesh, uniform_id = mesh.renderer->define_get_uniform_id("use_specular_map")]()	{ if (!mesh.use_unordered_material) mesh.renderer->update_uniform(uniform_id, (int)mesh.material->_enable_specular_map);	else mesh.renderer->update_uniform(uniform_id, 0);  });
-		queue.add_uniform_update([mesh, uniform_id = mesh.renderer->define_get_uniform_id("use_normal_map")]()		{ if (!mesh.use_unordered_material) mesh.renderer->update_uniform(uniform_id, (int)mesh.material->_enable_normal_map);		else mesh.renderer->update_uniform(uniform_id, 0);  });
+		//mesh.model._model_texture_table.update_uniform_array();
+		//int array_size;
+		//int* arr = mesh.model._model_texture_table.get_uniform_array(&array_size);
+		//std::cout << array_size << std::endl;
+		//for (int i = 0; i < array_size; i++)
+		//	std::cout << (int)*(arr + i) << std::endl;
+		
+		//unsigned int model_texture_table_uniform_array[65536];
+		//for (int i = 0; i < 65536; i++) {
+		//	model_texture_table_uniform_array[i] = mesh.renderer->define_get_uniform_id("model_texture_table_array[" + std::to_string(i) + "]");
+		//}
+		//queue.add_uniform_update([&mesh, model_texture_table_uniform_array]() {
+		//	int array_size;
+		//	int* a = mesh.model._model_texture_table.get_uniform_array(&array_size);
+		//	for (int i = 0; i < array_size; i++) {
+		//		mesh.renderer->update_uniform(model_texture_table_uniform_array[i], a[i]);
+		//	}
+		//	});
+
+
+		//queue.add_uniform_update([mesh, uniform_id = mesh.renderer->define_get_uniform_id("use_color_map")]()		{ if (!mesh.use_unordered_material) mesh.renderer->update_uniform(uniform_id, (int)mesh.material->_enable_color_map);		else mesh.renderer->update_uniform(uniform_id, 1);  });
+		//queue.add_uniform_update([mesh, uniform_id = mesh.renderer->define_get_uniform_id("use_specular_map")]()	{ if (!mesh.use_unordered_material) mesh.renderer->update_uniform(uniform_id, (int)mesh.material->_enable_specular_map);	else mesh.renderer->update_uniform(uniform_id, 0);  });
+		//queue.add_uniform_update([mesh, uniform_id = mesh.renderer->define_get_uniform_id("use_normal_map")]()		{ if (!mesh.use_unordered_material) mesh.renderer->update_uniform(uniform_id, (int)mesh.material->_enable_normal_map);		else mesh.renderer->update_uniform(uniform_id, 0);  });
+		
+		
 		return queue;
 	}
 

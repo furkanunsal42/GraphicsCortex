@@ -13,7 +13,7 @@ public:
 	int get_mesh_normal(int target_mesh_index);
 
 	void update_uniform_array();
-	int*& get_uniform_array(int* array_size);
+	int*& get_uniform_array(int* array_size = nullptr);
 
 	void clear();
 private:
