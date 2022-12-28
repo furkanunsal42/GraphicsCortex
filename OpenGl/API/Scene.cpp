@@ -39,7 +39,6 @@ void Scene::render(GLFWwindow* window) {
 	}
 
 	for(Graphic* mesh : meshes){
-
 		mesh->update_matrix();
 		mesh->update_uniform_queue();
 		mesh->draw(false);

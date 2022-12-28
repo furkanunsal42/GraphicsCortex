@@ -25,6 +25,7 @@
 #include "CubeMap.h"
 #include "UnifromQueue.h"
 #include "ModelTextureTable.h"
+#include "AssetImporter.h"
 
 #include <PxPhysicsAPI.h>
 

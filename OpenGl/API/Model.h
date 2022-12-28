@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Config.h"
+
 #include "Buffer.h"
 
 #include <assimp/Importer.hpp> 
@@ -16,19 +18,19 @@
 #include "Texture.h"
 #include "ModelTextureTable.h"
 
+class AssetImporter;
+
 class Model {
 public:
-	static Assimp::Importer asset_loader;
 	std::vector<float> vertex_data;
 	std::vector<unsigned int> index_data;
-	
-	ArrayBuffer vertex_buffer;
-	IndexBuffer index_buffer;
+	std::vector<unsigned int> vertex_attribute_structure;
 
-	Model();
-	Model(const std::string& file_path);
-	Model(ArrayBuffer& verticies, IndexBuffer& indirices);
-	Model(ArrayBuffer&& verticies, IndexBuffer&& indicies);
+	Model(const std::string& file_path, float scale = 1.0f, unsigned int vertex_property_bits = ALL);
+	Model(const aiScene* scene, float scale = 1.0f, unsigned int vertex_property_bits = ALL);
+
+	Model(Model&& other) = default;
+	Model& operator=(Model&& other) = default;
 
 	enum vertex_property {
 		COORD_X = 1,
@@ -48,13 +50,13 @@ public:
 		PROPERTY_COUNT = 11,
 	};
 
-	UnorderedMaterial load_model(const std::string& file_path, float scale = 1.0f, unsigned int vertex_property_bits = ALL);
-	
+	void load_model(const std::string& file_path, float scale = 1.0f, unsigned int vertex_property_bits = ALL);
+
 	template<typename T>
 	std::enable_if_t<std::is_same<T, float>::value, std::vector<T>>
 		get_partial_data(const std::string& mask = "11100000") {
 		unsigned int total_entry_per_vertex = 0;
-		for (unsigned int structure_size : vertex_buffer.vertex_attribute_structure) {
+		for (unsigned int structure_size : vertex_attribute_structure) {
 			total_entry_per_vertex += structure_size;
 		}
 
@@ -97,7 +99,7 @@ public:
 	std::enable_if_t<std::is_same<T, glm::vec3>::value || std::is_same<T, physx::PxVec3>::value, std::vector<T>>
 		get_partial_data(const std::string& mask = "11100000") {
 		unsigned int total_entry_per_vertex = 0;
-		for (unsigned int structure_size : vertex_buffer.vertex_attribute_structure) {
+		for (unsigned int structure_size : vertex_attribute_structure) {
 			total_entry_per_vertex += structure_size;
 		}
 
@@ -146,7 +148,10 @@ public:
 	
 	ModelTextureTable _model_texture_table; // temp 
 
+
+	friend AssetImporter;
 private:
 
+	void _load_model(const aiScene* scene, float scale, unsigned int vertex_property_bits);
 
 };

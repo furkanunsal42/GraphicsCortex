@@ -26,7 +26,7 @@ Vehicle::Vehicle() {}
  
 void Vehicle::load_model_chassis(Model& chassis, bool use_for_graphics, bool use_for_physics) {
 	if(use_for_graphics)
-		this->chassis.load_model(chassis);
+		this->chassis.load_model(*new Mesh(chassis));
 	if (use_for_physics) {
 		std::vector<physx::PxVec3> data = chassis.get_partial_data<physx::PxVec3>("111");
 		this->physics_representation.set_chasis_mesh(create_geometry::convex_hull(data));
@@ -34,8 +34,8 @@ void Vehicle::load_model_chassis(Model& chassis, bool use_for_graphics, bool use
 }
 void Vehicle::load_model_left_wheel(Model& left_wheel, bool use_for_graphics, bool use_for_physics) {
 	if(use_for_graphics){
-		this->wheels[FRONT_LEFT].load_model(left_wheel);
-		this->wheels[REAR_LEFT].load_model(left_wheel);
+		this->wheels[FRONT_LEFT].load_model(*new Mesh(left_wheel));
+		this->wheels[REAR_LEFT].load_model(*new Mesh(left_wheel));
 	}
 	if (use_for_physics) { // there is only one wheel mesh yet
 		std::vector<physx::PxVec3> data = left_wheel.get_partial_data<physx::PxVec3>("111");
@@ -44,8 +44,8 @@ void Vehicle::load_model_left_wheel(Model& left_wheel, bool use_for_graphics, bo
 }
 void Vehicle::load_model_right_wheel(Model& right_wheel, bool use_for_graphics, bool use_for_physics) {
 	if (use_for_graphics) {
-		this->wheels[FRONT_RIGHT].load_model(right_wheel);
-		this->wheels[REAR_RIGHT].load_model(right_wheel);
+		this->wheels[FRONT_RIGHT].load_model(*new Mesh(right_wheel));
+		this->wheels[REAR_RIGHT].load_model(*new Mesh(right_wheel));
 	}
 	if (use_for_physics) { // there is only one wheel mesh yet
 		std::vector<physx::PxVec3> data = right_wheel.get_partial_data<physx::PxVec3>("111");

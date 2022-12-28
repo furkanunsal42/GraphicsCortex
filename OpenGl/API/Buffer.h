@@ -31,8 +31,9 @@ public:
 	IndexBuffer(const IndexBuffer& i);
 	IndexBuffer(unsigned int verticies[], int vertex_dim, int data_count);
 	IndexBuffer(std::vector<unsigned int> verticies, int vertex_dim);
-	void initialize_buffer(std::vector<unsigned int>& verticies, int vertex_dim);
-	void initialize_buffer(unsigned int verticies[], int vertex_dim, int data_count);
+	void initialize_buffer(const std::vector<unsigned int>& verticies, int vertex_dim);
+	void initialize_buffer(const unsigned int verticies[], int vertex_dim, int data_count);
 	void bind();
 	void unbind();
 };
+

@@ -5,8 +5,11 @@ int main() {
 	Frame frame(1920, 1080, "GraphicsCortex", 0, 0, true, false, false);
 	Scene scene;
 	
-	Model model;
-	UnorderedMaterial material_u = model.load_model("Models/City/edited_city.obj", 1, Model::ALL);
+	Model model = AssetImporter::generate_model("Models/City/edited_city.obj", 1, Model::ALL);
+	UnorderedMaterial material_u = AssetImporter::generate_material("Models/City/edited_city.obj");
+
+	Mesh mesh(model);
+
 	//material.set_texture_size(1024, 1024);
 	//material_u.bind();
 
@@ -25,17 +28,17 @@ int main() {
 	cam.perspective = true;
 	scene.camera = &cam;
 
-	//Shader shader("Shaders/TextureArray.vert", "Shaders/TextureArray.frag");
-	//Program renderer(shader.vertex_shader, shader.fragment_shader);
+	Shader shader("Shaders/TextureArray.vert", "Shaders/TextureArray.frag");
+	Program renderer(shader.vertex_shader, shader.fragment_shader);
 
-	Program renderer = default_program::solid_program();
+	//Program renderer = default_program::solid_program();
 
 	Graphic g;
 	g.load_program(renderer);
-	g.load_model(model);
+	g.load_model(mesh);
 	g.load_material(material_u);
 	//g.set_uniform_update_queue(default_program::basic_uniform_queue(scene, g));
-	g.set_uniform_update_queue(default_program::solid_default_uniform_queue(scene, g));
+	g.set_uniform_update_queue(default_program::basic_uniform_queue(scene, g));
 
 	//g.set_position(glm::vec3(0, 0, -6));
 	//g.set_rotation(glm::quat(glm::vec3(-glm::half_pi<float>(), 0, 0)));
@@ -50,9 +53,9 @@ int main() {
 	d_light.set_uniform_upadte_queue(default_program::directional_light_default_uniform_queue(d_light, 0));
 	scene.add_light(d_light);
 
-	
 	while (frame.is_running()) {
 		double frame_time = frame.handle_window();
+		frame.display_performance(180);
 		frame.clear_window(0.25f, 0.25f, 0.25f, 1.0f);
 		scene.camera->handle_movements(frame.window, frame_time);
 		scene.render(frame.window);

@@ -15,6 +15,7 @@
 #include "UnifromQueue.h"
 
 #include "PhysicsObject.h"
+#include "Mesh.h"
 
 class Graphic {
 private:
@@ -23,7 +24,13 @@ private:
 
 	uniform_update_queue _uniform_update_queue;
 public:
-	Model model;
+
+	Mesh* mesh = nullptr;
+
+	Material* material = nullptr;						// temp public, for default solid shader queue
+	UnorderedMaterial* unordered_material = nullptr;	// temp public, for default solid shader queue
+	bool use_unordered_material = false;				// temp public, for default solid shader queue
+
 	glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);
 	glm::quat rotation = glm::quat(1, 0, 0, 0);
 	glm::mat4 model_matrix;
@@ -33,10 +40,10 @@ public:
 	//PhysicsObject physics_representation;
 
 	Graphic();
-	Graphic(Model& model, Material& material, Program& renderer);
-	Graphic(Model& model, UnorderedMaterial& material, Program& renderer);
-	Graphic(Model&& model, Material& material, Program& renderer);
-	Graphic(Model&& model, UnorderedMaterial& material, Program& renderer);
+	Graphic(Mesh& mesh, Material& material, Program& renderer);
+	Graphic(Mesh& mesh, UnorderedMaterial& material, Program& renderer);
+	Graphic(Mesh&& mesh, Material& material, Program& renderer);
+	Graphic(Mesh&& mesh, UnorderedMaterial& material, Program& renderer);
 	Graphic(const std::vector<float>& verticies, int data_dim); // legacy
 	Graphic(Material& material, Program& renderer);
 	Graphic(UnorderedMaterial& material, Program& renderer);
@@ -44,8 +51,8 @@ public:
 	void draw(bool show_warnings = true);
 	void update_matrix();
 
-	void load_model(Model& model);
-	void load_model(Model&& model);
+	void load_model(Mesh& mesh);
+	void load_model(Mesh&& mesh);
 	void clear_mesh();
 
 	void load_material(UnorderedMaterial& material);
@@ -131,9 +138,6 @@ public:
 	}
 	void update_uniform_queue();
 
-	Material* material = nullptr;						// temp public, for default solid shader queue
-	UnorderedMaterial* unordered_material = nullptr;	// temp public, for default solid shader queue
-	bool use_unordered_material = false;				// temp public, for default solid shader queue
 protected:
 
 };

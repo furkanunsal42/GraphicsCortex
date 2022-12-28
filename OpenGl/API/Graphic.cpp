@@ -8,17 +8,17 @@
 Graphic::Graphic() :
 	model_matrix(glm::mat4(1.0f)) {}
 
-Graphic::Graphic(Model& model, Material& mat, Program& program) : 
-	model_matrix(glm::mat4(1.0f)), material(&mat), renderer(&program), model(model), use_unordered_material(false) {}
+Graphic::Graphic(Mesh& mesh, Material& mat, Program& program) : 
+	model_matrix(glm::mat4(1.0f)), material(&mat), renderer(&program), mesh(&mesh), use_unordered_material(false) {}
 
-Graphic::Graphic(Model& model, UnorderedMaterial& mat, Program& program) :
-	model_matrix(glm::mat4(1.0f)), unordered_material(&mat), renderer(&program), model(model), use_unordered_material(true) {}
+Graphic::Graphic(Mesh& mesh, UnorderedMaterial& mat, Program& program) :
+	model_matrix(glm::mat4(1.0f)), unordered_material(&mat), renderer(&program), mesh(&mesh), use_unordered_material(true) {}
 
-Graphic::Graphic(Model&& model, Material& mat, Program& program) :
-	model_matrix(glm::mat4(1.0f)), material(&mat), renderer(&program), model(model), use_unordered_material(false) {}
+Graphic::Graphic(Mesh&& mesh, Material& mat, Program& program) :
+	model_matrix(glm::mat4(1.0f)), material(&mat), renderer(&program), mesh(&mesh), use_unordered_material(false) {}
 
-Graphic::Graphic(Model&& model, UnorderedMaterial& mat, Program& program) :
-	model_matrix(glm::mat4(1.0f)), unordered_material(&mat), renderer(&program), model(model), use_unordered_material(true) {}
+Graphic::Graphic(Mesh&& mesh, UnorderedMaterial& mat, Program& program) :
+	model_matrix(glm::mat4(1.0f)), unordered_material(&mat), renderer(&program), mesh(&mesh), use_unordered_material(true) {}
 
 Graphic::Graphic(const std::vector<float>& verticies, int data_dim = 2)
 {	
@@ -40,8 +40,8 @@ Graphic::Graphic(const std::vector<float>& verticies, int data_dim = 2)
 	ArrayBuffer array_buffer(verticies/*, data dim*/);
 	IndexBuffer index_buffer(triangles, 3);
 
-	this->model.vertex_buffer = array_buffer;
-	this->model.index_buffer = index_buffer;
+	this->mesh->array_buffer = array_buffer;
+	this->mesh->index_buffer = index_buffer;
 }
 
 Graphic::Graphic(Material& material, Program& renderer):
@@ -66,8 +66,7 @@ void Graphic::draw(bool show_warnings) {
 
 	if (renderer_exist)
 		renderer->bind();
-	model.vertex_buffer.bind();
-	model.index_buffer.bind();
+	mesh->bind();
 	
 	if (material_exist) {
 		if (use_unordered_material)
@@ -76,15 +75,15 @@ void Graphic::draw(bool show_warnings) {
 			material->bind();
 	}
 
-	GLCall(glDrawElements(mode, model.index_buffer.data_count, GL_UNSIGNED_INT, nullptr));
+	GLCall(glDrawElements(mode, mesh->index_buffer.data_count, GL_UNSIGNED_INT, nullptr));
 }
 
-void Graphic::load_model(Model& model) {
-	this->model = model;
+void Graphic::load_model(Mesh& mesh) {
+	this->mesh = &mesh;
 }
 
-void Graphic::load_model(Model&& model) {
-	this->model = model;
+void Graphic::load_model(Mesh&& mesh) {
+	this->mesh = &mesh;
 }
 
 void Graphic::update_matrix() {
@@ -97,8 +96,11 @@ void Graphic::update_matrix() {
 }
 
 void Graphic::clear_mesh() {
-	model.vertex_buffer = ArrayBuffer();
-	model.index_buffer = IndexBuffer();
+	if (mesh != nullptr)
+		delete mesh;
+	mesh = new Mesh(ArrayBuffer(), IndexBuffer());
+	//mesh->array_buffer = ArrayBuffer();
+	//mesh->index_buffer = IndexBuffer();
 }
 
 void Graphic::load_material(UnorderedMaterial& material) {
