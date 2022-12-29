@@ -114,15 +114,15 @@ void Vehicle::load_program_all(Program& all) {
 }
 
 void Vehicle::set_uniform_queue_chassis(uniform_update_queue& chassis) {
-	this->chassis.set_uniform_update_queue(chassis);
+	this->chassis.set_uniform_all(chassis);
 }
 void Vehicle::set_uniform_queue_left_wheel(uniform_update_queue& left_wheel) {
-	this->wheels[FRONT_LEFT].set_uniform_update_queue(left_wheel);
-	this->wheels[REAR_LEFT].set_uniform_update_queue(left_wheel);
+	this->wheels[FRONT_LEFT].set_uniform_all(left_wheel);
+	this->wheels[REAR_LEFT].set_uniform_all(left_wheel);
 }
 void Vehicle::set_uniform_queue_right_wheel(uniform_update_queue& right_wheel) {
-	this->wheels[FRONT_RIGHT].set_uniform_update_queue(right_wheel);
-	this->wheels[REAR_RIGHT].set_uniform_update_queue(right_wheel);
+	this->wheels[FRONT_RIGHT].set_uniform_all(right_wheel);
+	this->wheels[REAR_RIGHT].set_uniform_all(right_wheel);
 }
 void Vehicle::set_uniform_queue_all(uniform_update_queue& chassis, uniform_update_queue& left_wheel, uniform_update_queue& right_wheel) {
 	set_uniform_queue_chassis(chassis);
@@ -153,12 +153,12 @@ void Vehicle::set_default_uniform_queue_chassis(Scene& scene) {
 	set_uniform_queue_chassis(default_program::solid_default_uniform_queue(scene, chassis));
 }
 void Vehicle::set_default_uniform_queue_left_wheel(Scene& scene) {
-	this->wheels[FRONT_LEFT].set_uniform_update_queue(default_program::solid_default_uniform_queue(scene, wheels[FRONT_LEFT]));
-	this->wheels[REAR_LEFT].set_uniform_update_queue(default_program::solid_default_uniform_queue(scene, wheels[REAR_LEFT]));
+	this->wheels[FRONT_LEFT].set_uniform_all(default_program::solid_default_uniform_queue(scene, wheels[FRONT_LEFT]));
+	this->wheels[REAR_LEFT].set_uniform_all(default_program::solid_default_uniform_queue(scene, wheels[REAR_LEFT]));
 }
 void Vehicle::set_default_uniform_queue_right_wheel(Scene& scene) {
-	this->wheels[FRONT_RIGHT].set_uniform_update_queue(default_program::solid_default_uniform_queue(scene, wheels[FRONT_RIGHT]));
-	this->wheels[REAR_RIGHT].set_uniform_update_queue(default_program::solid_default_uniform_queue(scene, wheels[REAR_RIGHT]));
+	this->wheels[FRONT_RIGHT].set_uniform_all(default_program::solid_default_uniform_queue(scene, wheels[FRONT_RIGHT]));
+	this->wheels[REAR_RIGHT].set_uniform_all(default_program::solid_default_uniform_queue(scene, wheels[REAR_RIGHT]));
 }
 void Vehicle::set_default_uniform_queue_all(Scene& scene) {
 	set_default_uniform_queue_chassis(scene);

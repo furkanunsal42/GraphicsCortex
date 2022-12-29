@@ -6,6 +6,7 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 #include <vector>
+#include <functional>
 
 #include "Model.h"
 
@@ -65,6 +66,27 @@ public:
 	void set_position(glm::vec3 position);
 	void set_rotation(glm::quat rotation);
 
+	template<typename T, typename... Ts>
+	void set_uniform(const std::string& uniform_name, T uniform_value, Ts... uniform_values) {
+		change_uniform_update_queue(uniform_update<T>(uniform_name, uniform_value, uniform_values...));
+	}
+
+	template<typename T, typename... Ts>
+	void set_uniform(const std::string& uniform_name, T* uniform_value_pointer, Ts*... uniform_value_pointers) {
+		change_uniform_update_queue(dynamic_uniform_update<T>(uniform_name, uniform_value_pointer, uniform_value_pointers...));
+	}
+	void set_uniform(const std::string& uniform_name, std::function<void()> update_function);
+	
+	void remove_uniform(const std::string& uniform_name);
+	void remove_uniform(unsigned int uniform_id);
+	
+	void set_uniform_all(uniform_update_queue& new_update_queue);
+	void set_uniform_all(uniform_update_queue&& new_update_queue);
+
+	void update_uniforms();
+
+protected:
+
 	template<typename T>
 	void add_uniform_update_queue(uniform_update<T>& uniform_queue) {
 		uniform_queue.program = renderer;
@@ -79,7 +101,7 @@ public:
 		uniform_queue.uniform_id = renderer->uniforms[uniform_queue.uniform_name];
 		_uniform_update_queue.add_uniform_update(uniform_queue);
 	}
-	
+
 	template<typename T>
 	void add_uniform_update_queue(dynamic_uniform_update<T>& dynamic_uniform_queue) {
 		dynamic_uniform_queue.program = renderer;
@@ -93,6 +115,10 @@ public:
 		renderer->define_uniform(dynamic_uniform_queue.uniform_name);
 		dynamic_uniform_queue.uniform_id = renderer->uniforms[dynamic_uniform_queue.uniform_name];
 		_uniform_update_queue.add_uniform_update(dynamic_uniform_queue);
+	}
+
+	void add_uniform_update_queue(std::function<void()> functional_update_queue) {
+		_uniform_update_queue.add_uniform_update(functional_update_queue);
 	}
 
 	void remove_uniform_update_queue(const std::string& uniform_name) {
@@ -136,9 +162,8 @@ public:
 		remove_uniform_update_queue(dynamic_uniform_queue.uniform_name);
 		add_uniform_update_queue(dynamic_uniform_queue);
 	}
-	void update_uniform_queue();
 
-protected:
+	void update_uniform_queue();
 
 };
 

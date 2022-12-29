@@ -137,3 +137,27 @@ void Graphic::set_rotation(glm::quat rotation) {
 void Graphic::update_uniform_queue() {
 	_uniform_update_queue.update_uniforms();
 }
+
+void Graphic::set_uniform(const std::string& uniform_name, std::function<void()> update_function) {
+	add_uniform_update_queue(update_function);
+}
+
+void Graphic::remove_uniform(const std::string& uniform_name) {
+	remove_uniform_update_queue(uniform_name);
+}
+
+void Graphic::remove_uniform(unsigned int uniform_id) {
+	remove_uniform_update_queue(uniform_id);
+}
+
+void Graphic::set_uniform_all(uniform_update_queue& new_update_queue) {
+	set_uniform_update_queue(new_update_queue);
+}
+
+void Graphic::set_uniform_all(uniform_update_queue&& new_update_queue) {
+	set_uniform_update_queue(new_update_queue);
+}
+
+void Graphic::update_uniforms() {
+	update_uniform_queue();
+}

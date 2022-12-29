@@ -28,17 +28,20 @@ int main() {
 	cam.perspective = true;
 	scene.camera = &cam;
 
-	Shader shader("Shaders/TextureArray.vert", "Shaders/TextureArray.frag");
-	Program renderer(shader.vertex_shader, shader.fragment_shader);
+	//Shader shader("Shaders/TextureArray.vert", "Shaders/TextureArray.frag");
+	//Program renderer(shader.vertex_shader, shader.fragment_shader);
 
-	//Program renderer = default_program::solid_program();
+	Program renderer = default_program::flatcolor_program();
 
 	Graphic g;
 	g.load_program(renderer);
 	g.load_model(mesh);
 	g.load_material(material_u);
 	//g.set_uniform_update_queue(default_program::basic_uniform_queue(scene, g));
-	g.set_uniform_update_queue(default_program::basic_uniform_queue(scene, g));
+	g.set_uniform_all(default_program::basic_uniform_queue(scene, g));
+
+	float a = 0.5f;
+	g.set_uniform("color", &a, &a, &a, &a);
 
 	//g.set_position(glm::vec3(0, 0, -6));
 	//g.set_rotation(glm::quat(glm::vec3(-glm::half_pi<float>(), 0, 0)));

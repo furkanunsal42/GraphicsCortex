@@ -110,7 +110,7 @@ void CubeMapTexture::draw() {
 	camera->update_matrixes();
 	cube.renderer->bind();
 
-	cube.update_uniform_queue();
+	cube.update_uniforms();
 	
 	bool face_culling = glIsEnabled(GL_CULL_FACE);
 	GLCall(glDisable(GL_CULL_FACE));
@@ -135,9 +135,9 @@ void CubeMapTexture::set_program(Program& renderer) {
 	cube.renderer = &renderer;
 }
 void CubeMapTexture::set_update_queue(uniform_update_queue& update_queue) {
-	cube.set_uniform_update_queue(update_queue);
+	cube.set_uniform_all(update_queue);
 }
 
 void CubeMapTexture::set_update_queue(uniform_update_queue&& update_queue) {
-	cube.set_uniform_update_queue(update_queue);
+	cube.set_uniform_all(update_queue);
 }
