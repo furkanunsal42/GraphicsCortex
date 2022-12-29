@@ -146,6 +146,9 @@ public:
 	TextureArray texture_array;
 
 	UnorderedMaterial(int size);
+	UnorderedMaterial(UnorderedMaterial&& other) = default;
+	UnorderedMaterial(const std::string& filename);
+
 	~UnorderedMaterial();
 
 	void set_texture(const std::string& filename, int desired_channels, int index);

@@ -11,9 +11,8 @@
 
 #include "AssetImporter.h"
 
-Model::Model(const std::string& file_path, float scale, unsigned int vertex_property_bits) {
-	Model(std::move(AssetImporter::generate_model(file_path, scale, vertex_property_bits)));
-}
+Model::Model(const std::string& file_path, float scale, unsigned int vertex_property_bits) :
+	Model(std::move(AssetImporter::generate_model(file_path, scale, vertex_property_bits))) {}
 
 Model::Model(const aiScene* scene, float scale, unsigned int vertex_property_bits) {
 	_load_model(scene, scale, vertex_property_bits);

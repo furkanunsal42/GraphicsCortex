@@ -4,6 +4,7 @@
 #include "stb_image.h"
 
 #include "Debuger.h"
+#include "AssetImporter.h"
 
 #include <vector>
 #include <thread>
@@ -537,6 +538,10 @@ UnorderedMaterial::UnorderedMaterial(int size) :
 UnorderedMaterial::~UnorderedMaterial() {
 	texture_array.~TextureArray();
 }
+
+UnorderedMaterial::UnorderedMaterial(const std::string& filename) :
+	UnorderedMaterial(std::move(AssetImporter::generate_material(filename))) { }
+
 
 void read_image(std::string& filename, int desired_channels, Image*& output_image, unsigned int texture_width, unsigned int texture_height) {
 	std::ifstream file;
