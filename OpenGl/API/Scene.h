@@ -16,7 +16,7 @@
 
 class Scene {
 public:
-	Camera* camera = nullptr;
+	Camera camera;
 	std::string model_uniform_name = "model";
 	std::string view_uniform_name = "view";
 	std::string projection_uniform_name = "projection";

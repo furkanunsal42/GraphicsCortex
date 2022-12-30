@@ -644,7 +644,7 @@ unsigned int UnorderedMaterial::get_texture_height() {
 
 // ------------------------------------------------------------------------------------
 
-Material::Material() { }
+Material::Material() : UnorderedMaterial(3) { }
 
 Material::~Material() {
 	texture_array.~TextureArray();

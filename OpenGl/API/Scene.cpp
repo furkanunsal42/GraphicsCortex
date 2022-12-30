@@ -31,8 +31,7 @@ void Scene::add_object(Vehicle& vehicle) {
 
 void Scene::render(GLFWwindow* window) {
 
-	if (camera != nullptr)
-		camera->update_matrixes();
+	camera.update_matrixes();
 
 	for (Light* light : lights) {
 		light->update_uniform_queue();

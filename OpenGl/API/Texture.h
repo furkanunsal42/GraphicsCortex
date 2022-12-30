@@ -146,10 +146,15 @@ public:
 	TextureArray texture_array;
 
 	UnorderedMaterial(int size);
+	UnorderedMaterial(const UnorderedMaterial& other) = default;
 	UnorderedMaterial(UnorderedMaterial&& other) = default;
 	UnorderedMaterial(const std::string& filename);
 
+	UnorderedMaterial();
 	~UnorderedMaterial();
+
+	UnorderedMaterial& operator=(const UnorderedMaterial& other) = default;
+	UnorderedMaterial& operator=(UnorderedMaterial&& other) = default;
 
 	void set_texture(const std::string& filename, int desired_channels, int index);
 
@@ -171,7 +176,6 @@ protected:
 	std::vector<int> _texture_desired_channels;
 	std::vector<std::string> _texture_filenames;
 	bool _first_texture_set = true;
-	UnorderedMaterial();
 };
 
 class Material : public UnorderedMaterial{

@@ -11,12 +11,12 @@ namespace default_program {
 	uniform_update_queue solid_default_uniform_queue(Scene& scene, Graphic& mesh) {
 		uniform_update_queue queue;
 		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("model", &mesh.model_matrix));
-		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("view", &scene.camera->view_matrix));
-		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("projection", &scene.camera->projection_matrix));
+		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("view", &scene.camera.view_matrix));
+		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("projection", &scene.camera.projection_matrix));
 		queue.add_uniform_update(uniform_update<int>("cube_map", 13));
 		queue.add_uniform_update(uniform_update<int>("use_cube_map_reflection", 0));
 		queue.add_uniform_update(uniform_update<float>("cube_map_reflection_strength", 0.85));
-		queue.add_uniform_update(dynamic_uniform_update<float>("camera_coords", &scene.camera->position.x, &scene.camera->position.y, &scene.camera->position.z));
+		queue.add_uniform_update(dynamic_uniform_update<float>("camera_coords", &scene.camera.position.x, &scene.camera.position.y, &scene.camera.position.z));
 
 		//mesh.model._model_texture_table.update_uniform_array();
 		//int array_size;
@@ -49,8 +49,8 @@ namespace default_program {
 	uniform_update_queue flat_default_uniform_queue(Scene& scene, Graphic& mesh) {
 		uniform_update_queue queue;
 		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("model", &mesh.model_matrix));
-		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("view", &scene.camera->view_matrix));
-		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("projection", &scene.camera->projection_matrix));
+		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("view", &scene.camera.view_matrix));
+		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("projection", &scene.camera.projection_matrix));
 
 		queue.add_uniform_update(uniform_update<float>("color", 0.8f, 0.7f, 0.6f, 1.0f));
 		return queue;
@@ -59,8 +59,8 @@ namespace default_program {
 	uniform_update_queue basic_uniform_queue(Scene& scene, Graphic& mesh) {
 		uniform_update_queue queue;
 		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("model", &mesh.model_matrix));
-		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("view", &scene.camera->view_matrix));
-		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("projection", &scene.camera->projection_matrix));
+		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("view", &scene.camera.view_matrix));
+		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("projection", &scene.camera.projection_matrix));
 		return queue;
 	}
 

@@ -26,11 +26,11 @@ private:
 	uniform_update_queue _uniform_update_queue;
 public:
 
-	Mesh* mesh = nullptr;
+	Mesh mesh;
 
-	Material* material = nullptr;						// temp public, for default solid shader queue
-	UnorderedMaterial* unordered_material = nullptr;	// temp public, for default solid shader queue
-	bool use_unordered_material = false;				// temp public, for default solid shader queue
+	Material material;						// temp public, for default solid shader queue
+	UnorderedMaterial unordered_material;	// temp public, for default solid shader queue
+	bool use_unordered_material = false;	// temp public, for default solid shader queue
 
 	glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);
 	glm::quat rotation = glm::quat(1, 0, 0, 0);
