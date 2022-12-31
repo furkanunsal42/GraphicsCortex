@@ -28,18 +28,27 @@ public:
 	bool readable_depth_stencil_buffer;
 
 	Graphic screen;
-	Program* program = nullptr;
+	Program program;
 
 	FrameBuffer(int width, int height, int anti_alliasing = 0, bool readable_depth_stencil_buffer = false);
 	~FrameBuffer();
 
 	void release();
 
+	void generate_framebuffer_object();
+	bool is_initialized();
+
 	void bind();
 	void unbind();
 	void render(unsigned int source_texture = FrameBuffer::COLOR_TEXTURE);
 	Image save(bool vertical_flip = true);
+
+	void load_program(Program& program);
+	void load_program(Program&& program);
+
 private:
+	bool _is_initialized = false;
+	bool _is_program_loaded = false;
 	int multisample = 0;
 	bool screen_initialized = false;
 };

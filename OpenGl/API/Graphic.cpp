@@ -9,16 +9,16 @@ Graphic::Graphic() :
 	model_matrix(glm::mat4(1.0f)) {}
 
 Graphic::Graphic(Mesh& mesh, Material& mat, Program& program) : 
-	model_matrix(glm::mat4(1.0f)), material(std::move(mat)), renderer(&program), mesh(std::move(mesh)), use_unordered_material(false) {}
+	model_matrix(glm::mat4(1.0f)), material(std::move(mat)), renderer(std::move(program)), mesh(std::move(mesh)), use_unordered_material(false) {}
 
 Graphic::Graphic(Mesh& mesh, UnorderedMaterial& mat, Program& program) :
-	model_matrix(glm::mat4(1.0f)), unordered_material(std::move(mat)), renderer(&program), mesh(std::move(mesh)), use_unordered_material(true) {}
+	model_matrix(glm::mat4(1.0f)), unordered_material(std::move(mat)), renderer(std::move(program)), mesh(std::move(mesh)), use_unordered_material(true) {}
 
 Graphic::Graphic(Mesh&& mesh, Material& mat, Program& program) :
-	model_matrix(glm::mat4(1.0f)), material(std::move(mat)), renderer(&program), mesh(std::move(mesh)), use_unordered_material(false) {}
+	model_matrix(glm::mat4(1.0f)), material(std::move(mat)), renderer(std::move(program)), mesh(std::move(mesh)), use_unordered_material(false) {}
 
 Graphic::Graphic(Mesh&& mesh, UnorderedMaterial& mat, Program& program) :
-	model_matrix(glm::mat4(1.0f)), unordered_material(std::move(mat)), renderer(&program), mesh(std::move(mesh)), use_unordered_material(true) {}
+	model_matrix(glm::mat4(1.0f)), unordered_material(std::move(mat)), renderer(std::move(program)), mesh(std::move(mesh)), use_unordered_material(true) {}
 
 Graphic::Graphic(const std::vector<float>& verticies, int data_dim = 2)
 {	
@@ -45,45 +45,50 @@ Graphic::Graphic(const std::vector<float>& verticies, int data_dim = 2)
 }
 
 Graphic::Graphic(Material& material, Program& renderer):
-	renderer(&renderer), material(material), model_matrix(glm::mat4(1.0f)), use_unordered_material(false) {}
+	renderer(std::move(renderer)), material(material), model_matrix(glm::mat4(1.0f)), use_unordered_material(false) {}
 
 Graphic::Graphic(UnorderedMaterial& material, Program& renderer) :
-	renderer(&renderer), unordered_material(material), model_matrix(glm::mat4(1.0f)), use_unordered_material(true) {}
+	renderer(std::move(renderer)), unordered_material(material), model_matrix(glm::mat4(1.0f)), use_unordered_material(true) {}
 
 void Graphic::draw(bool show_warnings) {
-	bool material_exist = true;
-	bool renderer_exist = true;
-	//if (material == nullptr && unordered_material == nullptr) {
-	//	if (show_warnings)
-	//		std::cout << "[Opengl Warning] material is not specified for Graphic.draw()" << std::endl;
-	//	material_exist = false;
-	//}
-	if (renderer == nullptr) {
+	if (!_is_material_loaded) {
 		if (show_warnings)
-			std::cout << "[Opengl Warning] renderer is not specified for Graphic.draw()" << std::endl;
-		renderer_exist = false;
+			std::cout << "[Opengl Warning] material is not specified for Graphic::draw()" << std::endl;
+	}
+	if (!_is_program_loaded) {
+		if (show_warnings)
+			std::cout << "[Opengl Warning] renderer is not specified for Graphic::draw()" << std::endl;
+	}
+	if (!_is_mesh_loaded) {
+		std::cout << "[Opengl Error] Mesh is not specified for Graphic::draw()" << std::endl;
 	}
 
-	if (renderer_exist)
-		renderer->bind();
-	mesh.bind();
+	if (_is_program_loaded)
+		renderer.bind();
+
+	if (_is_mesh_loaded)
+		mesh.bind();
 	
-	if (material_exist) {
+	if (_is_material_loaded) {
 		if (use_unordered_material)
 			unordered_material.bind();
 		else
 			material.bind();
 	}
 
-	GLCall(glDrawElements(mode, mesh.index_buffer.data_count, GL_UNSIGNED_INT, nullptr));
+	if (_is_mesh_loaded) {
+		GLCall(glDrawElements(mode, mesh.index_buffer.data_count, GL_UNSIGNED_INT, nullptr));
+	}
 }
 
 void Graphic::load_model(Mesh& mesh) {
 	this->mesh = std::move(mesh);
+	_is_mesh_loaded = true;
 }
 
 void Graphic::load_model(Mesh&& mesh) {
 	this->mesh = mesh;
+	_is_mesh_loaded = true;
 }
 
 void Graphic::update_matrix() {
@@ -97,22 +102,41 @@ void Graphic::update_matrix() {
 
 void Graphic::clear_mesh() {
 	mesh = Mesh(ArrayBuffer(), IndexBuffer());
+	_is_mesh_loaded = false;
 }
 
 void Graphic::load_material(UnorderedMaterial& material) {
-	this->unordered_material = std::move(material);
+	load_material(std::move(material));
+}
+
+void Graphic::load_material(UnorderedMaterial&& material) {
+	this->unordered_material = material;
 	this->material = Material();
 	use_unordered_material = true;
+	_is_material_loaded = true;
 }
 
 void Graphic::load_material(Material& material) {
-	this->material = std::move(material);
-	this->unordered_material = UnorderedMaterial();
-	use_unordered_material = false;
+	load_material(std::move(material));
 }
 
+
+void Graphic::load_material(Material&& material) {
+	this->material = material;
+	this->unordered_material = UnorderedMaterial();
+	use_unordered_material = false;
+	_is_material_loaded = true;
+}
+
+
 void Graphic::load_program(Program& program) {
-	this->renderer = &program;
+	this->renderer = std::move(program);
+	_is_program_loaded = true;
+}
+
+void Graphic::load_program(Program&& program) {
+	this->renderer = program;
+	_is_program_loaded = true;
 }
 
 glm::vec3 Graphic::get_position() {

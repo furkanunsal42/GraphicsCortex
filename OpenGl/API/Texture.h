@@ -61,6 +61,7 @@ public:
 protected:
 	int width = NULL, height = NULL, channels = NULL;
 	bool _loaded_on_gpu = false;
+	bool _is_initialized = false;
 };
 
 class Texture : public TextureBase {
@@ -74,6 +75,9 @@ public:
 	void load_image(Image& image);
 	void initialize_blank_image(int width, int height);
 	
+	void generate_texture_object();
+	bool is_initialized();
+
 	void bind();
 	void unbind();
 
@@ -87,6 +91,7 @@ public:
 	friend FrameBuffer;
 
 private:
+	bool _is_initialized = false;
 	bool _load_image_check(bool print_errors = true);
 };
 
@@ -103,6 +108,9 @@ public:
 	void bind();
 	void unbind();
 
+	void generate_texture_object();
+	bool is_initialized();
+
 	Image save(bool vertical_flip = true);
 
 	void print_info(unsigned int opengl_code);
@@ -111,6 +119,8 @@ public:
 
 	friend Material;
 	friend FrameBuffer;
+private:
+	bool _is_initialized = false;
 };
 
 class TextureArray : public TextureBase {
@@ -130,12 +140,16 @@ public:
 	void bind();
 	void unbind();
 
+	void generate_texture_object();
+	bool is_initialized();
+
 	Image save(int index, bool vertical_flip = true);
 
 	void print_info(unsigned int opengl_code);
 
 	bool is_loaded();
 private:
+	bool _is_initialized = false;
 	int depth = NULL;
 };
 

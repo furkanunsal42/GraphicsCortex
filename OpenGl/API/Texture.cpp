@@ -51,15 +51,7 @@ bool TextureBase::is_loaded() {
 // ----------------------------------------------------------------------------------
 
 Texture::Texture(int multisample){
-	
-	if (multisample == 0)
-		target = GL_TEXTURE_2D;
-	else
-		target = GL_TEXTURE_2D_MULTISAMPLE;
-
 	multisample_amount = multisample;
-	
-	GLCall(glGenTextures(1, &id));
 }
 
 Texture::~Texture() {
@@ -70,6 +62,25 @@ void Texture::release()
 {
 	GLCall(glDeleteTextures(1, &id));
 }
+
+bool Texture::is_initialized() {
+	return _is_initialized;
+}
+
+void Texture::generate_texture_object() {
+	if (is_initialized())
+		return;
+
+	if (multisample_amount == 0)
+		target = GL_TEXTURE_2D;
+	else
+		target = GL_TEXTURE_2D_MULTISAMPLE;
+
+	GLCall(glGenTextures(1, &id));
+
+	_is_initialized = true;
+}
+
 
 bool Texture::_load_image_check(bool print_errors) {
 	if (_loaded_on_gpu) {
@@ -82,6 +93,8 @@ bool Texture::_load_image_check(bool print_errors) {
 void Texture::load_image(Image& image) {
 	if (!_load_image_check(true))
 		return;
+
+	generate_texture_object();
 
 	if (image.get_channels() == 3) {
 		if (format == NULL)
@@ -129,6 +142,8 @@ void Texture::load_image(Image& image) {
 }
 
 void Texture::initialize_blank_image(int width, int height) {
+
+	generate_texture_object();
 
 	this->width = width;
 	this->height = height;
@@ -219,18 +234,25 @@ bool Texture::is_loaded() {
 // ----------------------------------------------------------------------------------
 
 RenderBuffer::RenderBuffer(int multisample) {
-	if (multisample == 0)
-		target = GL_RENDERBUFFER;
-	else
-		target = GL_RENDERBUFFER_SAMPLES;
-
 	multisample_amount = multisample;
-
-	GLCall(glGenRenderbuffers(1, &id));
 }
 
 RenderBuffer::~RenderBuffer() {
 	release();
+}
+
+void RenderBuffer::generate_texture_object() {
+	if (is_initialized())
+		return;
+
+	if (multisample_amount == 0)
+		target = GL_RENDERBUFFER;
+	else
+		target = GL_RENDERBUFFER_SAMPLES;
+
+	GLCall(glGenRenderbuffers(1, &id));
+
+	_is_initialized = true;
 }
 
 void RenderBuffer::release() {
@@ -238,6 +260,9 @@ void RenderBuffer::release() {
 }
 
 void RenderBuffer::initialize_blank_image(int width, int height) {
+
+	generate_texture_object();
+
 	bind();
 	if (multisample_amount == 0) {
 		GLCall(glRenderbufferStorage(target, internal_format, width, height));
@@ -253,6 +278,10 @@ void RenderBuffer::bind() {
 
 void RenderBuffer::unbind() {
 	GLCall(glBindRenderbuffer(target, 0));
+}
+
+bool RenderBuffer::is_initialized() {
+	return _is_initialized;
 }
 
 Image RenderBuffer::save(bool vertical_flip) {
@@ -305,25 +334,41 @@ bool RenderBuffer::is_loaded() {
 
 // ----------------------------------------------------------------------------------
 TextureArray::TextureArray(int multisample) {
-	if (multisample == 0)
-		target = GL_TEXTURE_2D_ARRAY;
-	else
-		target = GL_TEXTURE_2D_MULTISAMPLE_ARRAY;
-
 	multisample_amount = multisample;
-
-	GLCall(glGenTextures(1, &id));
 }
 
 TextureArray::~TextureArray() {
 	release();
 }
 
+void TextureArray::generate_texture_object() {
+	if (is_initialized())
+		return;
+	
+	if (multisample_amount == 0)
+		target = GL_TEXTURE_2D_ARRAY;
+	else
+		target = GL_TEXTURE_2D_MULTISAMPLE_ARRAY;
+
+	multisample_amount = multisample_amount;
+
+	GLCall(glGenTextures(1, &id));
+
+	_is_initialized = true;
+}
+
 void TextureArray::release() {
 	GLCall(glDeleteTextures(1, &id));
 }
 
+bool TextureArray::is_initialized() {
+	return _is_initialized;
+}
+
 void TextureArray::load_single_image(Image& image, int index) {
+
+	generate_texture_object();
+
 	if (width == NULL && height == NULL && channels == NULL) {
 		width = image.get_width();
 		height = image.get_height();
@@ -371,6 +416,9 @@ void TextureArray::load_single_image(Image& image, int index) {
 }
 
 void TextureArray::load_images(std::vector<Image>& images) {
+
+	generate_texture_object();
+
 	if (images.size() == 0) {
 		std::cout << "[OpenGL Warning] TextureArray::load_images() was called with empty image array." << std::endl;
 		Image default_image = Image("Images/missing_texture.png");
@@ -412,6 +460,8 @@ void TextureArray::load_images(std::vector<Image>& images) {
 }
 
 void TextureArray::initialize_blank_images(int width, int height, int depth, int channels) {
+
+	generate_texture_object();
 
 	this->width = width;
 	this->height = height;

@@ -21,7 +21,7 @@ public:
 	std::string view_uniform_name = "view";
 	std::string projection_uniform_name = "projection";
 	glm::vec4 background_color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
-	FrameBuffer* frame_buffer = nullptr;
+	FrameBuffer frame_buffer = FrameBuffer(0, 0, 0, false);
 
 	template<typename T>
 	std::enable_if_t<std::is_same<T, AmbiantLight>::value || std::is_same<T, DirectionalLight>::value || std::is_same<T, PointLight>::value || std::is_same<T, SpotLight>::value, void> 
@@ -47,10 +47,13 @@ public:
 		PhysicsScene::get().add_actor(object);
 	}
 
-	void render(GLFWwindow* window);
-	void render_to_framebuffer(Frame& frame);
+	void set_framebuffer(FrameBuffer& framebuffer);
+
+	void render(bool show_warnings = true);
+	void render_to_framebuffer(Frame& frame, bool show_warnings = true);
 
 private:
+	bool _is_framebuffer_loaded = false;
 	std::vector<Graphic*> meshes;
 	std::vector<Light*> lights;
 

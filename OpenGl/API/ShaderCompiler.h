@@ -16,9 +16,9 @@
 
 class Shader {
 public:
-	std::string vertex_shader;
-	std::string fragment_shader;
-	std::string geometry_shader;
+	std::string vertex_shader = "";
+	std::string fragment_shader = "";
+	std::string geometry_shader = "";
 	Shader();
 	Shader(const std::string& target_file);
 	Shader(const std::string& vertex_target_file, const std::string& fragment_target_file);
@@ -39,6 +39,7 @@ public:
 	Program();
 	Program(const std::string& vertex_shader_code, const std::string& fragment_shader_code);
 	Program(const std::string& vertex_shader_code, const std::string& geometry_shader_code, const std::string& fragment_shader_code);
+	Program(const Shader& shader);
 	void compile(const std::string& vertex_shader_code, const std::string& fragment_shader_code);
 	void compile(const std::string& vertex_shader_code, const std::string& geometry_shader_code, const std::string& fragment_shader_code);
 	void bind();

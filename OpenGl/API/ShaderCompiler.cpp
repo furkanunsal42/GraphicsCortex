@@ -88,8 +88,14 @@ Program::Program(const std::string& vertex_shader_code, const std::string& fragm
 	compile(vertex_shader_code, fragment_shader_code);
 }
 Program::Program(const std::string& vertex_shader_code, const std::string& geometry_shader_code, const std::string& fragment_shader_code) {
-	compile(vertex_shader_code, geometry_shader_code, fragment_shader_code);
+	if (geometry_shader_code == "")
+		compile(vertex_shader_code, fragment_shader_code);
+	else
+		compile(vertex_shader_code, geometry_shader_code, fragment_shader_code);
 }
+
+Program::Program(const Shader& shader) : Program(shader.vertex_shader, shader.geometry_shader, shader.fragment_shader) {}
+
 
 void Program::_detect_and_define_all_uniforms(const std::string& shader_code) {
 	// detect uniform definitions

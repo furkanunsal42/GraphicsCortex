@@ -108,7 +108,7 @@ void CubeMapTexture::bind() {
 void CubeMapTexture::draw() {
 	bind();
 	camera->update_matrixes();
-	cube.renderer->bind();
+	cube.renderer.bind();
 
 	cube.update_uniforms();
 	
@@ -132,7 +132,7 @@ void CubeMapTexture::unbind() {
 }
 
 void CubeMapTexture::set_program(Program& renderer) {
-	cube.renderer = &renderer;
+	cube.load_program(renderer);
 }
 void CubeMapTexture::set_update_queue(uniform_update_queue& update_queue) {
 	cube.set_uniform_all(update_queue);

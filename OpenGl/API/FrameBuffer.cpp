@@ -49,12 +49,16 @@ FrameBuffer::FrameBuffer(int width, int height, int anti_alliasing, bool readabl
 		depth_stencil_renderbuffer.height = height;
 		depth_stencil_renderbuffer.channels = 4; // 2?
 	}
+}
 
-	// create FrameBuffer
+void FrameBuffer::generate_framebuffer_object() {
+	if (is_initialized())
+		return;
+
 	GLCall(glGenFramebuffers(1, &id));
-	bind();
+	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, id));
 	color_texture.texture_slot = texture_slot;
-	
+
 	color_texture.initialize_blank_image(width, height);
 	GLCall(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, color_texture.target, color_texture.id, 0));
 
@@ -73,9 +77,17 @@ FrameBuffer::FrameBuffer(int width, int height, int anti_alliasing, bool readabl
 		ASSERT(false);
 	}
 	unbind();
+
+	_is_initialized = true;
+}
+
+bool FrameBuffer::is_initialized() {
+	return _is_initialized;
 }
 
 void FrameBuffer::bind() {
+	generate_framebuffer_object();
+
 	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, id));
 }
 
@@ -84,11 +96,13 @@ void FrameBuffer::unbind() {
 }
 
 void FrameBuffer::render(unsigned int source_texture) {
+	generate_framebuffer_object();
+
 	if (multisample == 0){
 		GLCall(glDisable(GL_DEPTH_TEST));
 		if (!screen_initialized) {
 			screen = default_geometry::rectangle(glm::vec2(2.0f));
-			screen.load_program(*program);
+			screen.load_program(program);
 			screen_initialized = true;
 		}
 
@@ -106,7 +120,7 @@ void FrameBuffer::render(unsigned int source_texture) {
 			depth_stencil_texture.bind();
 			GLCall(glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_STENCIL_TEXTURE_MODE, GL_STENCIL_INDEX));
 		}
-		program->update_uniform("texture_slot", 9);
+		program.update_uniform("texture_slot", 9);
 		screen.draw(false);
 		GLCall(glEnable(GL_DEPTH_TEST));
 	}
@@ -119,6 +133,7 @@ void FrameBuffer::render(unsigned int source_texture) {
 }
 
 Image FrameBuffer::save(bool vertical_flip) {
+	generate_framebuffer_object();
 
 	int w = width;
 	int h = height;
@@ -142,8 +157,19 @@ Image FrameBuffer::save(bool vertical_flip) {
 	return Image(i_pixels, w, h, channels, vertical_flip);
 }
 
+
 FrameBuffer::~FrameBuffer() {
 	release();
+}
+
+void FrameBuffer::load_program(Program& program) {
+	this->program = std::move(program);
+	_is_program_loaded = true;
+}
+
+void FrameBuffer::load_program(Program&& program) {
+	this->program = program;
+	_is_program_loaded = true;
 }
 
 void FrameBuffer::release() {
@@ -151,4 +177,6 @@ void FrameBuffer::release() {
 	depth_stencil_renderbuffer.release();
 	depth_stencil_texture.release();
 	GLCall(glDeleteFramebuffers(1, &id));
+	
+	_is_initialized = false;
 }
