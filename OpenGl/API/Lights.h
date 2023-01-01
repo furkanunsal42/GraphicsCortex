@@ -3,10 +3,11 @@
 
 #include <glm.hpp>
 #include <string>
+#include <memory>
 
 #include "ShaderCompiler.h"
 #include "UnifromQueue.h"
-
+#include "SharedPtr.h"
 
 class Light {
 private:
@@ -17,7 +18,7 @@ public:
 	virtual void update_uniforms();
 	virtual void define_uniforms(int max_count);
 
-	Program* program;
+	std::shared_ptr<Program> program;
 
 	template<typename T>
 	void add_uniform_update_queue(uniform_update<T>* uniform_queue) {
@@ -56,7 +57,7 @@ public:
 	std::string shader_name = "a_lights";
 	glm::vec3 color;
 		
-	AmbiantLight(const glm::vec3& color, Program& program);
+	AmbiantLight(const glm::vec3& color, Program_s program);
 	void update_uniforms();
 	void define_uniforms(int max_count);
 };
@@ -68,7 +69,7 @@ public:
 	glm::vec3 color;
 	glm::vec3 direction;
 
-	DirectionalLight(const glm::vec3& direction, const glm::vec3& color, Program& program);
+	DirectionalLight(const glm::vec3& direction, const glm::vec3& color, Program_s program);
 	void update_uniforms();
 	void define_uniforms(int max_count);
 };
@@ -83,7 +84,7 @@ public:
 	float linear_term;
 	float exponential_term;
 
-	PointLight(const glm::vec3& position, const glm::vec3& color, float constant_term, float linear_term, float exponential_term, Program& program);
+	PointLight(const glm::vec3& position, const glm::vec3& color, float constant_term, float linear_term, float exponential_term, Program_s program);
 	void update_uniforms();
 	void define_uniforms(int max_count);
 };
@@ -100,7 +101,7 @@ public:
 	float exponential_term;
 	float cos_angle;
 
-	SpotLight(const glm::vec3& position, const glm::vec3& direction,  const glm::vec3& color, float constant_term, float linear_term, float exponential_term, float angle,  Program& program);
+	SpotLight(const glm::vec3& position, const glm::vec3& direction,  const glm::vec3& color, float constant_term, float linear_term, float exponential_term, float angle, Program_s program);
 	void update_uniforms();
 	void define_uniforms(int max_count);
 };

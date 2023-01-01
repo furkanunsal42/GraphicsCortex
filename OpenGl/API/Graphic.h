@@ -7,6 +7,7 @@
 #include <assimp/postprocess.h>
 #include <vector>
 #include <functional>
+#include <memory>
 
 #include "Model.h"
 
@@ -17,6 +18,7 @@
 
 #include "PhysicsObject.h"
 #include "Mesh.h"
+#include "SharedPtr.h"
 
 class Graphic {
 private:
@@ -26,41 +28,36 @@ private:
 	uniform_update_queue _uniform_update_queue;
 public:
 
-	Mesh mesh;
+	std::shared_ptr<Mesh> mesh;
+	std::shared_ptr<Material> material;							// temp public, for default solid shader queue
+	std::shared_ptr<UnorderedMaterial> unordered_material;		// temp public, for default solid shader queue
+	std::shared_ptr<Program> renderer;
 
-	Material material;						// temp public, for default solid shader queue
-	UnorderedMaterial unordered_material;	// temp public, for default solid shader queue
-	bool use_unordered_material = false;	// temp public, for default solid shader queue
-
+	bool use_unordered_material = false;						// temp public, for default solid shader queue
+	
 	glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);
 	glm::quat rotation = glm::quat(1, 0, 0, 0);
 	glm::mat4 model_matrix;
-	Program renderer;
+	
 	unsigned int mode = GL_TRIANGLES;
 
 	Graphic();
-	Graphic(Mesh& mesh, Material& material, Program& renderer);
-	Graphic(Mesh& mesh, UnorderedMaterial& material, Program& renderer);
-	Graphic(Mesh&& mesh, Material& material, Program& renderer);
-	Graphic(Mesh&& mesh, UnorderedMaterial& material, Program& renderer);
+	Graphic(Mesh_s mesh, Material_s material, Program_s renderer);
+	Graphic(Mesh_s mesh, UnorderedMaterial_s material, Program_s renderer);
 	Graphic(const std::vector<float>& verticies, int data_dim); // legacy
-	Graphic(Material& material, Program& renderer);
-	Graphic(UnorderedMaterial& material, Program& renderer);
+	Graphic(Material_s material, Program_s renderer);
+	Graphic(UnorderedMaterial_s material, Program_s renderer);
 
 	void draw(bool show_warnings = true);
 	void update_matrix();
 
-	void load_model(Mesh& mesh);
-	void load_model(Mesh&& mesh);
+	void load_model(Mesh_s mesh);
 	void clear_mesh();
 
-	void load_material(UnorderedMaterial& material);
-	void load_material(UnorderedMaterial&& material);
-	void load_material(Material& material);
-	void load_material(Material&& material);
+	void load_material(UnorderedMaterial_s material);
+	void load_material(Material_s material);
 
-	void load_program(Program& program);
-	void load_program(Program&& program);
+	void load_program(Program_s program);
 
 	glm::vec3 get_position();
 	glm::quat get_rotation();
@@ -95,9 +92,9 @@ protected:
 			std::cout << "[Opengl Error] Graphic::add_uniform_update_queue() is called but Graphic::program is not initialized" << std::endl;
 			return;
 		}
-		uniform_queue.program = &renderer;
-		renderer.define_uniform(uniform_queue.uniform_name);
-		uniform_queue.uniform_id = renderer.uniforms[uniform_queue.uniform_name];
+		uniform_queue.program = renderer;
+		renderer->define_uniform(uniform_queue.uniform_name);
+		uniform_queue.uniform_id = renderer->uniforms[uniform_queue.uniform_name];
 		_uniform_update_queue.add_uniform_update(uniform_queue);
 	}
 	template<typename T>
@@ -106,9 +103,9 @@ protected:
 			std::cout << "[Opengl Error] Graphic::add_uniform_update_queue() is called but Graphic::program is not initialized" << std::endl;
 			return;
 		}
-		uniform_queue.program = &renderer;
-		renderer.define_uniform(uniform_queue.uniform_name);
-		uniform_queue.uniform_id = renderer.uniforms[uniform_queue.uniform_name];
+		uniform_queue.program = renderer;
+		renderer->define_uniform(uniform_queue.uniform_name);
+		uniform_queue.uniform_id = renderer->uniforms[uniform_queue.uniform_name];
 		_uniform_update_queue.add_uniform_update(uniform_queue);
 	}
 
@@ -118,9 +115,9 @@ protected:
 			std::cout << "[Opengl Error] Graphic::add_uniform_update_queue() is called but Graphic::program is not initialized" << std::endl;
 			return;
 		}
-		dynamic_uniform_queue.program = &renderer;
-		renderer.define_uniform(dynamic_uniform_queue.uniform_name);
-		dynamic_uniform_queue.uniform_id = renderer.uniforms[dynamic_uniform_queue.uniform_name];
+		dynamic_uniform_queue.program = renderer;
+		renderer->define_uniform(dynamic_uniform_queue.uniform_name);
+		dynamic_uniform_queue.uniform_id = renderer->uniforms[dynamic_uniform_queue.uniform_name];
 		_uniform_update_queue.add_uniform_update(dynamic_uniform_queue);
 	}
 	template<typename T>
@@ -129,9 +126,9 @@ protected:
 			std::cout << "[Opengl Error] Graphic::add_uniform_update_queue() is called but Graphic::program is not initialized" << std::endl;
 			return;
 		}
-		dynamic_uniform_queue.program = &renderer;
-		renderer.define_uniform(dynamic_uniform_queue.uniform_name);
-		dynamic_uniform_queue.uniform_id = renderer.uniforms[dynamic_uniform_queue.uniform_name];
+		dynamic_uniform_queue.program = renderer;
+		renderer->define_uniform(dynamic_uniform_queue.uniform_name);
+		dynamic_uniform_queue.uniform_id = renderer->uniforms[dynamic_uniform_queue.uniform_name];
 		_uniform_update_queue.add_uniform_update(dynamic_uniform_queue);
 	}
 
@@ -153,7 +150,7 @@ protected:
 			return;
 		}
 		_uniform_update_queue.copy(original);
-		_uniform_update_queue.link_program(&renderer);
+		_uniform_update_queue.link_program(renderer);
 		_uniform_update_queue.update_uniform_ids();
 	}
 
@@ -163,7 +160,7 @@ protected:
 			return;
 		}
 		_uniform_update_queue.copy(original);
-		_uniform_update_queue.link_program(&renderer);
+		_uniform_update_queue.link_program(renderer);
 		_uniform_update_queue.update_uniform_ids();
 	}
 
@@ -195,4 +192,3 @@ protected:
 	bool _is_material_loaded = false;
 	bool _is_program_loaded = false;
 };
-

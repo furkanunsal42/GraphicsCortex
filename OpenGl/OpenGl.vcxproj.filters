@@ -536,6 +536,9 @@
     <ClInclude Include="API\Mesh.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
+    <ClInclude Include="API\SharedPtr.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Images\orange.png">

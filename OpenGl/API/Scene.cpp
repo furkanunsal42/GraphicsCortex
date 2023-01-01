@@ -12,21 +12,21 @@
 
 #include "PhysicsScene.h"
 
-void Scene::add_graphic(Graphic& graphic) {
-	meshes.push_back(&graphic);
+void Scene::add_graphic(Graphic_s graphic) {
+	meshes.push_back(graphic.obj);
 }
 
-void Scene::add_object(Object& object) {
-	add_graphic(object.graphics);
-	PhysicsScene::get().add_actor(object.physics);
+void Scene::add_object(Object_s object) {
+	add_graphic(object.obj->graphics);
+	PhysicsScene::get().add_actor(object.obj->physics);
 }
 
-void Scene::add_object(Vehicle& vehicle) {
-	add_graphic(vehicle.chassis);
-	for (Graphic& wheel : vehicle.wheels) {
+void Scene::add_object(Vehicle_s vehicle) {
+	add_graphic(vehicle.obj->chassis);
+	for (Graphic& wheel : vehicle.obj->wheels) {
 		add_graphic(wheel);
 	}
-	PhysicsScene::get().add_actor(vehicle.physics_representation);
+	PhysicsScene::get().add_actor(vehicle.obj->physics_representation);
 }
 
 void Scene::set_framebuffer(FrameBuffer& framebuffer) {
@@ -38,11 +38,11 @@ void Scene::render(bool show_warnings) {
 
 	camera.update_matrixes();
 
-	for (Light* light : lights) {
+	for (std::shared_ptr<Light>& light : lights) {
 		light->update_uniform_queue();
 	}
 
-	for(Graphic* mesh : meshes){
+	for(std::shared_ptr<Graphic>& mesh : meshes){
 		mesh->update_matrix();
 		mesh->update_uniforms();
 		mesh->draw(show_warnings);

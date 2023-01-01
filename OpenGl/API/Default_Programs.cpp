@@ -61,6 +61,7 @@ namespace default_program {
 		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("model", &mesh.model_matrix));
 		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("view", &scene.camera.view_matrix));
 		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("projection", &scene.camera.projection_matrix));
+
 		return queue;
 	}
 

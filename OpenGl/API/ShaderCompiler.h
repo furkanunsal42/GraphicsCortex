@@ -35,11 +35,12 @@ private:
 public:
 	unsigned int id = 0;
 	std::unordered_map<std::string, unsigned int> uniforms;
-	std::vector<unsigned int> uniform_id_shortcuts;
+	
 	Program();
 	Program(const std::string& vertex_shader_code, const std::string& fragment_shader_code);
 	Program(const std::string& vertex_shader_code, const std::string& geometry_shader_code, const std::string& fragment_shader_code);
-	Program(const Shader& shader);
+	explicit Program(const Shader& shader);
+	
 	void compile(const std::string& vertex_shader_code, const std::string& fragment_shader_code);
 	void compile(const std::string& vertex_shader_code, const std::string& geometry_shader_code, const std::string& fragment_shader_code);
 	void bind();

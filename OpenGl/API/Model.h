@@ -54,7 +54,7 @@ public:
 
 	template<typename T>
 	std::enable_if_t<std::is_same<T, float>::value, std::vector<T>>
-		get_partial_data(const std::string& mask = "11100000") {
+		const get_partial_data(const std::string& mask = "11100000") {
 		unsigned int total_entry_per_vertex = 0;
 		for (unsigned int structure_size : vertex_attribute_structure) {
 			total_entry_per_vertex += structure_size;

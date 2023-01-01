@@ -37,27 +37,32 @@ public:
 
 	Vehicle();
 
-	void load_model_chassis(Model& chassis, bool use_for_graphics = true, bool use_for_physics = true);
-	void load_model_left_wheel(Model& left_wheel, bool use_for_graphics = true, bool use_for_physics = true);
-	void load_model_right_wheel(Model& right_wheel, bool use_for_graphics = true, bool use_for_physics = true);
-	void load_model_all(Model& chassis, Model& left_wheel, Model& right_wheel, bool use_for_graphics = true, bool use_for_physics = true);
+	void load_mesh_chassis_graphics(Mesh_s chassis);
+	void load_mesh_left_wheel_graphics(Mesh_s left_wheel);
+	void load_mesh_right_wheel_graphics(Mesh_s right_wheel);
+	void load_mesh_all_graphics(Mesh_s chassis, Mesh_s left_wheel, Mesh_s right_wheel);
 
-	void load_model_chassis(Model&& chassis, bool use_for_graphics = true, bool use_for_physics = true);
-	void load_model_left_wheel(Model&& left_wheel, bool use_for_graphics = true, bool use_for_physics = true);
-	void load_model_right_wheel(Model&& right_wheel, bool use_for_graphics = true, bool use_for_physics = true);
-	void load_model_all(Model&& chassis, Model&& left_wheel, Model&& right_wheel, bool use_for_graphics = true, bool use_for_physics = true);
+	void load_model_chassis_physics(Model& chassis);
+	void load_model_left_wheel_physics(Model& left_wheel);
+	void load_model_right_wheel_physics(Model& right_wheel);
+	void load_model_all_physics(Model& chassis, Model& left_wheel, Model& right_wheel);
 
-	void load_material_chassis(Material& chassis);
-	void load_material_left_wheel(Material& left_wheel);
-	void load_material_right_wheel(Material& right_wheel);
-	void load_material_all(Material& chassis, Material& left_wheel, Material& right_wheel);
-	void load_material_all(Material& all);
+	void load_model_chassis_physics(Model&& chassis);
+	void load_model_left_wheel_physics(Model&& left_wheel);
+	void load_model_right_wheel_physics(Model&& right_wheel);
+	void load_model_all_physics(Model&& chassis, Model&& left_wheel, Model&& right_wheel);
 
-	void load_program_chassis(Program& chassis);
-	void load_program_left_wheel(Program& left_wheel);
-	void load_program_right_wheel(Program& right_wheel);
-	void load_program_all(Program& chassis, Program& left_wheel, Program& right_wheel);
-	void load_program_all(Program& all);
+	void load_material_chassis(Material_s& chassis);
+	void load_material_left_wheel(Material_s& left_wheel);
+	void load_material_right_wheel(Material_s& right_wheel);
+	void load_material_all(Material_s& chassis, Material_s& left_wheel, Material_s& right_wheel);
+	void load_material_all(Material_s& all);
+
+	void load_program_chassis(Program_s& chassis);
+	void load_program_left_wheel(Program_s& left_wheel);
+	void load_program_right_wheel(Program_s& right_wheel);
+	void load_program_all(Program_s& chassis, Program_s& left_wheel, Program_s& right_wheel);
+	void load_program_all(Program_s& all);
 
 	void set_uniform_queue_chassis(uniform_update_queue& chassis);
 	void set_uniform_queue_left_wheel(uniform_update_queue& left_wheel);

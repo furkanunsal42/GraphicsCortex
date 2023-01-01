@@ -24,17 +24,17 @@ public:
 	FrameBuffer frame_buffer = FrameBuffer(0, 0, 0, false);
 
 	template<typename T>
-	std::enable_if_t<std::is_same<T, AmbiantLight>::value || std::is_same<T, DirectionalLight>::value || std::is_same<T, PointLight>::value || std::is_same<T, SpotLight>::value, void> 
-		add_light(T& light)
+	std::enable_if_t<std::is_same<T, AmbiantLight_s>::value || std::is_same<T, DirectionalLight_s>::value || std::is_same<T, PointLight_s>::value || std::is_same<T, SpotLight_s>::value, void> 
+		add_light(T light)
 	{
-		lights.push_back(&light);
-		T::count += 1;
+		lights.push_back(light);
+		decltype(light)::count += 1;
 	}
 
 	
-	void add_graphic(Graphic& graphic);
-	void add_object(Object& object);
-	void add_object(Vehicle& vehicle);
+	void add_graphic(Graphic_s graphic);
+	void add_object(Object_s object);
+	void add_object(Vehicle_s vehicle);
 
 	template<typename T>
 	std::enable_if_t<std::is_same<T, PhysicsObject&>::value || std::is_same<T, PhysicsObject&&>::value || std::is_same<T, PhysicsVehicle&>::value || std::is_same<T, PhysicsVehicle&&>::value || std::is_same<T, physx::PxRigidActor*&>::value, void>
@@ -54,7 +54,7 @@ public:
 
 private:
 	bool _is_framebuffer_loaded = false;
-	std::vector<Graphic*> meshes;
-	std::vector<Light*> lights;
+	std::vector<std::shared_ptr<Graphic>> meshes;
+	std::vector<std::shared_ptr<Light>> lights;
 
 };

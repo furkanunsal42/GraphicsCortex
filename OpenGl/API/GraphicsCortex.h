@@ -26,6 +26,7 @@
 #include "UnifromQueue.h"
 #include "ModelTextureTable.h"
 #include "AssetImporter.h"
+#include "SharedPtr.h"
 
 #include <PxPhysicsAPI.h>
 

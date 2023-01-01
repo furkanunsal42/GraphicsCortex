@@ -1,6 +1,5 @@
 #include "Default_Assets.h"
 
-
 namespace default_geometry {
 
 	Graphic rectangle(glm::vec2 scale) {
@@ -30,14 +29,14 @@ namespace default_geometry {
 		return g;
 	}
 
-	Graphic rectangle(Material& material, Program& renderer, glm::vec2 scale) {
+	Graphic rectangle(Material_s material, Program_s renderer, glm::vec2 scale) {
 		Graphic g = rectangle(scale);
 		g.load_material(material);
 		g.load_program(renderer);
 		return g;
 	}
 
-	Graphic rectangle(Material& material, glm::ivec2 texture_atlas_dim, const std::vector<unsigned int>& face_texture_locations, Program& renderer, glm::vec2 scale) {
+	Graphic rectangle(Material_s material, glm::ivec2 texture_atlas_dim, const std::vector<unsigned int>& face_texture_locations, Program_s renderer, glm::vec2 scale) {
 		float unit_width = 1.0f / texture_atlas_dim.x;
 		float unit_height = 1.0f / texture_atlas_dim.y;
 		std::vector<glm::vec2> texture_locations;
@@ -147,14 +146,14 @@ namespace default_geometry {
 		return g;
 	}
 
-	Graphic cube(Material& material, Program& renderer, glm::vec3 scale){
+	Graphic cube(Material_s material, Program_s renderer, glm::vec3 scale){
 		Graphic g = cube(scale);
 		g.load_material(material);
 		g.load_program(renderer);
 		return g;
 	}
 
-	Graphic cube(Material& material, glm::ivec2 texture_atlas_dim, const std::vector<unsigned int>& face_texture_locations, Program& renderer, glm::vec3 scale) {
+	Graphic cube(Material_s material, glm::ivec2 texture_atlas_dim, const std::vector<unsigned int>& face_texture_locations, Program_s renderer, glm::vec3 scale) {
 		float unit_width = 1.0f / texture_atlas_dim.x;
 		float unit_height = 1.0f / texture_atlas_dim.y;
 		std::vector<glm::vec2> texture_locations;

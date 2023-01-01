@@ -260,6 +260,7 @@
     <ClInclude Include="API\PhysicsVehicle.h" />
     <ClInclude Include="API\RamCache.h" />
     <ClInclude Include="API\Scene.h" />
+    <ClInclude Include="API\SharedPtr.h" />
     <ClInclude Include="API\Texture.h" />
     <ClInclude Include="API\UnifromQueue.h" />
     <ClInclude Include="API\Object.h" />
