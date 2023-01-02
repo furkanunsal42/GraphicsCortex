@@ -8,7 +8,7 @@ class Scene;
 // objects are structures that sync physics and graphics
 class Object {
 public:
-	Graphic& graphics;
+	Graphic_s graphics;
 	PhysicsObject& physics;
 
 	Object(Graphic& graphics, PhysicsObject& physics);
@@ -25,8 +25,8 @@ class Vehicle/* : Object */ {
 public:
 	PhysicsVehicle physics_representation;
 
-	Graphic chassis;
-	Graphic wheels[4];
+	Graphic_s chassis;
+	Graphic_s wheels[4];
 
 	enum wheel_index {
 		FRONT_LEFT = 0,

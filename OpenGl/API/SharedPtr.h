@@ -6,11 +6,17 @@
 template<typename T>
 class SharedPtr {
 public:
-	SharedPtr(T& other) :
-		obj(std::shared_ptr<T>(&other)) {}
 
-	SharedPtr(T&& other) :
-		obj(std::shared_ptr<T>(&other)) {}
+	SharedPtr() : 
+		obj(std::make_shared<T>()) {}
+
+	explicit SharedPtr(T& other) :
+		obj(std::make_shared<T>(other)) {}
+
+	explicit SharedPtr(T&& other) :
+		obj(std::make_shared<T>(other)) {}
+
+	T* operator->() const { return obj.get();  }
 
 	std::shared_ptr<T> obj;
 };
@@ -40,3 +46,6 @@ typedef SharedPtr<SpotLight> SpotLight_s;
 typedef SharedPtr<Graphic> Graphic_s;
 typedef SharedPtr<Object> Object_s;
 typedef SharedPtr<Vehicle> Vehicle_s;
+
+class ArrayBuffer;
+class IndexBuffer;

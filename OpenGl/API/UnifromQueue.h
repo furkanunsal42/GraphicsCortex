@@ -100,7 +100,7 @@ private:
 public:
 
 	void copy(const uniform_update_queue& original);
-	void link_program(std::weak_ptr<Program> program);
+	void link_program(std::shared_ptr<Program> program);
 	void update_uniform_ids();
 
 	void add_uniform_update(uniform_update<int> uniform_update);

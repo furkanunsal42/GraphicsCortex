@@ -8,9 +8,9 @@ namespace default_program {
 		return solid_program;
 	}
 
-	uniform_update_queue solid_default_uniform_queue(Scene& scene, Graphic& mesh) {
+	uniform_update_queue solid_default_uniform_queue(Scene& scene, Graphic_s graphic) {
 		uniform_update_queue queue;
-		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("model", &mesh.model_matrix));
+		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("model", &graphic->model_matrix));
 		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("view", &scene.camera.view_matrix));
 		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("projection", &scene.camera.projection_matrix));
 		queue.add_uniform_update(uniform_update<int>("cube_map", 13));
@@ -46,9 +46,9 @@ namespace default_program {
 		return queue;
 	}
 
-	uniform_update_queue flat_default_uniform_queue(Scene& scene, Graphic& mesh) {
+	uniform_update_queue flat_default_uniform_queue(Scene& scene, Graphic_s graphic) {
 		uniform_update_queue queue;
-		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("model", &mesh.model_matrix));
+		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("model", &graphic->model_matrix));
 		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("view", &scene.camera.view_matrix));
 		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("projection", &scene.camera.projection_matrix));
 
@@ -56,9 +56,9 @@ namespace default_program {
 		return queue;
 	}
 
-	uniform_update_queue basic_uniform_queue(Scene& scene, Graphic& mesh) {
+	uniform_update_queue basic_uniform_queue(Scene& scene, Graphic_s graphic) {
 		uniform_update_queue queue;
-		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("model", &mesh.model_matrix));
+		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("model", &graphic->model_matrix));
 		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("view", &scene.camera.view_matrix));
 		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("projection", &scene.camera.projection_matrix));
 

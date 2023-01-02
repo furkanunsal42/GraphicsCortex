@@ -120,7 +120,7 @@ void FrameBuffer::render(unsigned int source_texture) {
 			depth_stencil_texture.bind();
 			GLCall(glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_STENCIL_TEXTURE_MODE, GL_STENCIL_INDEX));
 		}
-		program.update_uniform("texture_slot", 9);
+		program->update_uniform("texture_slot", 9);
 		screen.draw(false);
 		GLCall(glEnable(GL_DEPTH_TEST));
 	}
@@ -162,12 +162,7 @@ FrameBuffer::~FrameBuffer() {
 	release();
 }
 
-void FrameBuffer::load_program(Program& program) {
-	this->program = std::move(program);
-	_is_program_loaded = true;
-}
-
-void FrameBuffer::load_program(Program&& program) {
+void FrameBuffer::load_program(Program_s program) {
 	this->program = program;
 	_is_program_loaded = true;
 }

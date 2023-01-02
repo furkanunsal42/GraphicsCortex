@@ -111,13 +111,39 @@ void Graphic::load_material(Material_s material) {
 void Graphic::load_program(Program_s program) {
 	this->renderer = program.obj;
 	_is_program_loaded = true;
+	_uniform_update_queue.link_program(renderer);
+	_uniform_update_queue.update_uniform_ids();
 }
 
-glm::vec3 Graphic::get_position() {
+const glm::vec3& Graphic::get_position() {
 	return position;
 }
-glm::quat Graphic::get_rotation() {
+const glm::quat& Graphic::get_rotation() {
 	return rotation;
+}
+
+std::weak_ptr<Mesh> Graphic::get_mesh() {
+	return mesh;
+}
+
+std::weak_ptr<Program> Graphic::get_program() {
+	return renderer;
+}
+
+std::weak_ptr<UnorderedMaterial> Graphic::get_unordered_material() {
+	return unordered_material;
+}
+
+std::weak_ptr<Material> Graphic::get_material(){
+	return material;
+}
+
+bool Graphic::_is_material_ordered() {
+	return use_unordered_material;
+}
+
+const glm::mat4& Graphic::get_model_matrix() {
+	return model_matrix;
 }
 
 void Graphic::set_position(glm::vec3 position) {

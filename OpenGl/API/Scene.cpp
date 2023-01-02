@@ -23,7 +23,7 @@ void Scene::add_object(Object_s object) {
 
 void Scene::add_object(Vehicle_s vehicle) {
 	add_graphic(vehicle.obj->chassis);
-	for (Graphic& wheel : vehicle.obj->wheels) {
+	for (Graphic_s& wheel : vehicle.obj->wheels) {
 		add_graphic(wheel);
 	}
 	PhysicsScene::get().add_actor(vehicle.obj->physics_representation);

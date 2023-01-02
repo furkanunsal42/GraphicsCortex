@@ -28,12 +28,12 @@ private:
 	uniform_update_queue _uniform_update_queue;
 public:
 
-	std::shared_ptr<Mesh> mesh;
-	std::shared_ptr<Material> material;							// temp public, for default solid shader queue
-	std::shared_ptr<UnorderedMaterial> unordered_material;		// temp public, for default solid shader queue
-	std::shared_ptr<Program> renderer;
+	std::shared_ptr<Mesh> mesh = nullptr;
+	std::shared_ptr<Material> material = nullptr;							// temp public, for default solid shader queue
+	std::shared_ptr<UnorderedMaterial> unordered_material = nullptr;		// temp public, for default solid shader queue
+	std::shared_ptr<Program> renderer = nullptr;
 
-	bool use_unordered_material = false;						// temp public, for default solid shader queue
+	bool use_unordered_material = false;									// temp public, for default solid shader queue
 	
 	glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);
 	glm::quat rotation = glm::quat(1, 0, 0, 0);
@@ -59,11 +59,20 @@ public:
 
 	void load_program(Program_s program);
 
-	glm::vec3 get_position();
-	glm::quat get_rotation();
+	std::weak_ptr<Mesh> get_mesh();
+	std::weak_ptr<Program> get_program();
+	std::weak_ptr<UnorderedMaterial> get_unordered_material();		// temp, they have to be united
+	std::weak_ptr<Material> get_material();							// temp, they have to be united
+
+	bool _is_material_ordered();
+
+	const glm::vec3& get_position();
+	const glm::quat& get_rotation();
+	const glm::mat4& get_model_matrix();
 
 	void set_position(glm::vec3 position);
 	void set_rotation(glm::quat rotation);
+	void set_model_matrix(glm::mat4 model_matrix);
 
 	template<typename T, typename... Ts>
 	void set_uniform(const std::string& uniform_name, T uniform_value, Ts... uniform_values) {
@@ -145,23 +154,26 @@ protected:
 	}
 
 	void set_uniform_update_queue(uniform_update_queue& original) {
-		if (!_is_program_loaded) {
-			std::cout << "[Opengl Error] Graphic::set_uniform_update_queue() is called but Graphic::program is not initialized" << std::endl;
-			return;
+		
+		if (_is_program_loaded) {
+			_uniform_update_queue.copy(original);
+			_uniform_update_queue.link_program(renderer);
+			_uniform_update_queue.update_uniform_ids();
 		}
-		_uniform_update_queue.copy(original);
-		_uniform_update_queue.link_program(renderer);
-		_uniform_update_queue.update_uniform_ids();
+		else {
+			_uniform_update_queue.copy(original);
+		}
 	}
 
 	void set_uniform_update_queue(uniform_update_queue&& original) {
-		if (!_is_program_loaded) {
-			std::cout << "[Opengl Error] Graphic::set_uniform_update_queue() is called but Graphic::program is not initialized" << std::endl;
-			return;
+		if (_is_program_loaded) {
+			_uniform_update_queue.copy(original);
+			_uniform_update_queue.link_program(renderer);
+			_uniform_update_queue.update_uniform_ids();
 		}
-		_uniform_update_queue.copy(original);
-		_uniform_update_queue.link_program(renderer);
-		_uniform_update_queue.update_uniform_ids();
+		else {
+			_uniform_update_queue.copy(original);
+		}
 	}
 
 	template<typename T>

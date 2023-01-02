@@ -7,35 +7,35 @@ Object::Object(Graphic& graphic_representation, PhysicsObject& physics_represent
 
 void Object::sync_with_physics() {
 	physx::PxQuat physx_quat = physics.get_rotation();
-	graphics.rotation = glm::quat(physx_quat.w, physx_quat.x, physx_quat.y, physx_quat.z);
-	graphics.position.x = physics.get_position().x;
-	graphics.position.y = physics.get_position().y;
-	graphics.position.z = physics.get_position().z;
+	graphics->rotation = glm::quat(physx_quat.w, physx_quat.x, physx_quat.y, physx_quat.z);
+	graphics->position.x = physics.get_position().x;
+	graphics->position.y = physics.get_position().y;
+	graphics->position.z = physics.get_position().z;
 }
 
 void Object::set_position(glm::vec3 position){
-	graphics.set_position(position);
+	graphics->set_position(position);
 	physics.set_position(position);
 }
 void Object::set_rotation(glm::vec3 rotation){
-	graphics.set_rotation(rotation);
+	graphics->set_rotation(rotation);
 	physics.set_rotation(rotation);
 }
 
 Vehicle::Vehicle() {}
  
 void Vehicle::load_mesh_chassis_graphics(Mesh_s chassis) {
-	this->chassis.load_model(chassis);
+	this->chassis->load_model(chassis);
 }
 
 void Vehicle::load_mesh_left_wheel_graphics(Mesh_s left_wheel) {
-	this->wheels[FRONT_LEFT].load_model(left_wheel);
-	this->wheels[REAR_LEFT].load_model(left_wheel);
+	this->wheels[FRONT_LEFT]->load_model(left_wheel);
+	this->wheels[REAR_LEFT]->load_model(left_wheel);
 }
 
 void Vehicle::load_mesh_right_wheel_graphics(Mesh_s right_wheel) {
-	this->wheels[FRONT_RIGHT].load_model(right_wheel);
-	this->wheels[REAR_RIGHT].load_model(right_wheel);
+	this->wheels[FRONT_RIGHT]->load_model(right_wheel);
+	this->wheels[REAR_RIGHT]->load_model(right_wheel);
 }
 
 void Vehicle::load_mesh_all_graphics(Mesh_s chassis, Mesh_s left_wheel, Mesh_s right_wheel) {
@@ -76,15 +76,15 @@ void Vehicle::load_model_all_physics(Model&& chassis, Model&& left_wheel, Model&
 }
 
 void Vehicle::load_material_chassis(Material_s& chassis) {
-	this->chassis.load_material(chassis);
+	this->chassis->load_material(chassis);
 }
 void Vehicle::load_material_left_wheel(Material_s& left_wheel) {
-	this->wheels[FRONT_LEFT].load_material(left_wheel);
-	this->wheels[REAR_LEFT].load_material(left_wheel);
+	this->wheels[FRONT_LEFT]->load_material(left_wheel);
+	this->wheels[REAR_LEFT]->load_material(left_wheel);
 }
 void Vehicle::load_material_right_wheel(Material_s& right_wheel) {
-	this->wheels[FRONT_RIGHT].load_material(right_wheel);
-	this->wheels[REAR_RIGHT].load_material(right_wheel);
+	this->wheels[FRONT_RIGHT]->load_material(right_wheel);
+	this->wheels[REAR_RIGHT]->load_material(right_wheel);
 }
 void Vehicle::load_material_all(Material_s& chassis, Material_s& left_wheel, Material_s& right_wheel) {
 	load_material_chassis(chassis);
@@ -96,15 +96,15 @@ void Vehicle::load_material_all(Material_s& all) {
 }
 
 void Vehicle::load_program_chassis(Program_s& chassis) {
-	this->chassis.load_program(chassis);
+	this->chassis->load_program(chassis);
 }
 void Vehicle::load_program_left_wheel(Program_s& left_wheel) {
-	this->wheels[FRONT_LEFT].load_program(left_wheel);
-	this->wheels[REAR_LEFT].load_program(left_wheel);
+	this->wheels[FRONT_LEFT]->load_program(left_wheel);
+	this->wheels[REAR_LEFT]->load_program(left_wheel);
 }
 void Vehicle::load_program_right_wheel(Program_s& right_wheel) {
-	this->wheels[FRONT_RIGHT].load_program(right_wheel);
-	this->wheels[REAR_RIGHT].load_program(right_wheel);
+	this->wheels[FRONT_RIGHT]->load_program(right_wheel);
+	this->wheels[REAR_RIGHT]->load_program(right_wheel);
 }
 void Vehicle::load_program_all(Program_s& chassis, Program_s& left_wheel, Program_s& right_wheel) {
 	load_program_chassis(chassis);
@@ -118,15 +118,15 @@ void Vehicle::load_program_all(Program_s& all) {
 }
 
 void Vehicle::set_uniform_queue_chassis(uniform_update_queue& chassis) {
-	this->chassis.set_uniform_all(chassis);
+	this->chassis->set_uniform_all(chassis);
 }
 void Vehicle::set_uniform_queue_left_wheel(uniform_update_queue& left_wheel) {
-	this->wheels[FRONT_LEFT].set_uniform_all(left_wheel);
-	this->wheels[REAR_LEFT].set_uniform_all(left_wheel);
+	this->wheels[FRONT_LEFT]->set_uniform_all(left_wheel);
+	this->wheels[REAR_LEFT]->set_uniform_all(left_wheel);
 }
 void Vehicle::set_uniform_queue_right_wheel(uniform_update_queue& right_wheel) {
-	this->wheels[FRONT_RIGHT].set_uniform_all(right_wheel);
-	this->wheels[REAR_RIGHT].set_uniform_all(right_wheel);
+	this->wheels[FRONT_RIGHT]->set_uniform_all(right_wheel);
+	this->wheels[REAR_RIGHT]->set_uniform_all(right_wheel);
 }
 void Vehicle::set_uniform_queue_all(uniform_update_queue& chassis, uniform_update_queue& left_wheel, uniform_update_queue& right_wheel) {
 	set_uniform_queue_chassis(chassis);
@@ -157,12 +157,12 @@ void Vehicle::set_default_uniform_queue_chassis(Scene& scene) {
 	set_uniform_queue_chassis(default_program::solid_default_uniform_queue(scene, chassis));
 }
 void Vehicle::set_default_uniform_queue_left_wheel(Scene& scene) {
-	this->wheels[FRONT_LEFT].set_uniform_all(default_program::solid_default_uniform_queue(scene, wheels[FRONT_LEFT]));
-	this->wheels[REAR_LEFT].set_uniform_all(default_program::solid_default_uniform_queue(scene, wheels[REAR_LEFT]));
+	this->wheels[FRONT_LEFT]->set_uniform_all(default_program::solid_default_uniform_queue(scene, wheels[FRONT_LEFT]));
+	this->wheels[REAR_LEFT]->set_uniform_all(default_program::solid_default_uniform_queue(scene, wheels[REAR_LEFT]));
 }
 void Vehicle::set_default_uniform_queue_right_wheel(Scene& scene) {
-	this->wheels[FRONT_RIGHT].set_uniform_all(default_program::solid_default_uniform_queue(scene, wheels[FRONT_RIGHT]));
-	this->wheels[REAR_RIGHT].set_uniform_all(default_program::solid_default_uniform_queue(scene, wheels[REAR_RIGHT]));
+	this->wheels[FRONT_RIGHT]->set_uniform_all(default_program::solid_default_uniform_queue(scene, wheels[FRONT_RIGHT]));
+	this->wheels[REAR_RIGHT]->set_uniform_all(default_program::solid_default_uniform_queue(scene, wheels[REAR_RIGHT]));
 }
 void Vehicle::set_default_uniform_queue_all(Scene& scene) {
 	set_default_uniform_queue_chassis(scene);
@@ -184,14 +184,14 @@ void Vehicle::sync_with_physics() {
 	physx::PxQuat global_rotation = physics_representation.get_rotation();
 	physx::PxVec3 global_position = physics_representation.get_position();
 	
-	chassis.rotation = glm::quat(global_rotation.w, global_rotation.x, global_rotation.y, global_rotation.z);
-	chassis.position.x = global_position.x;
-	chassis.position.y = global_position.y;
-	chassis.position.z = global_position.z;
+	chassis->rotation = glm::quat(global_rotation.w, global_rotation.x, global_rotation.y, global_rotation.z);
+	chassis->position.x = global_position.x;
+	chassis->position.y = global_position.y;
+	chassis->position.z = global_position.z;
 	
-	for (Graphic& wheel : wheels) {
-		wheel.set_rotation(glm::quat(global_rotation.w, global_rotation.x, global_rotation.y, global_rotation.z));
-		wheel.set_position(glm::vec3(global_position.x, global_position.y, global_position.z));
+	for (Graphic_s& wheel : wheels) {
+		wheel->set_rotation(glm::quat(global_rotation.w, global_rotation.x, global_rotation.y, global_rotation.z));
+		wheel->set_position(glm::vec3(global_position.x, global_position.y, global_position.z));
 	}
 
 	{
@@ -199,37 +199,37 @@ void Vehicle::sync_with_physics() {
 		physx::PxTransform transform = shapes[4]->getLocalPose();
 		glm::vec3 local_position = glm::vec3(transform.p.x, transform.p.y, transform.p.z);
 		glm::quat local_rotation = glm::quat(transform.q.w, transform.q.x, transform.q.y, transform.q.z);
-		chassis.set_position(chassis.get_position() + local_position);
-		chassis.set_rotation(chassis.get_rotation() * local_rotation);
+		chassis->set_position(chassis->get_position() + local_position);
+		chassis->set_rotation(chassis->get_rotation() * local_rotation);
 	}
 
 	{
 		physx::PxTransform transform = shapes[0]->getLocalPose();
 		glm::vec3 local_position = glm::vec3(transform.p.x, transform.p.y, transform.p.z);
 		glm::quat local_rotation = glm::quat(transform.q.w, transform.q.x, transform.q.y, transform.q.z);
-		wheels[FRONT_RIGHT].set_rotation(wheels[FRONT_RIGHT].get_rotation() * local_rotation);
-		wheels[FRONT_RIGHT].set_position(wheels[FRONT_RIGHT].get_position() + glm::quat(global_rotation.w, global_rotation.x, global_rotation.y, global_rotation.z) * local_position);
+		wheels[FRONT_RIGHT]->set_rotation(wheels[FRONT_RIGHT]->get_rotation() * local_rotation);
+		wheels[FRONT_RIGHT]->set_position(wheels[FRONT_RIGHT]->get_position() + glm::quat(global_rotation.w, global_rotation.x, global_rotation.y, global_rotation.z) * local_position);
 	}
 	{
 		physx::PxTransform transform = shapes[1]->getLocalPose();
 		glm::vec3 local_position = glm::vec3(transform.p.x, transform.p.y, transform.p.z);
 		glm::quat local_rotation = glm::quat(transform.q.w, transform.q.x, transform.q.y, transform.q.z);
-		wheels[FRONT_LEFT].set_rotation(wheels[FRONT_LEFT].get_rotation() * local_rotation);
-		wheels[FRONT_LEFT].set_position(wheels[FRONT_LEFT].get_position() + glm::quat(global_rotation.w, global_rotation.x, global_rotation.y, global_rotation.z) * local_position);
+		wheels[FRONT_LEFT]->set_rotation(wheels[FRONT_LEFT]->get_rotation() * local_rotation);
+		wheels[FRONT_LEFT]->set_position(wheels[FRONT_LEFT]->get_position() + glm::quat(global_rotation.w, global_rotation.x, global_rotation.y, global_rotation.z) * local_position);
 	}
 	{
 		physx::PxTransform transform = shapes[2]->getLocalPose();
 		glm::vec3 local_position = glm::vec3(transform.p.x, transform.p.y, transform.p.z);
 		glm::quat local_rotation = glm::quat(transform.q.w, transform.q.x, transform.q.y, transform.q.z);
-		wheels[REAR_RIGHT].set_rotation(wheels[REAR_RIGHT].get_rotation() * local_rotation);
-		wheels[REAR_RIGHT].set_position(wheels[REAR_RIGHT].get_position() + glm::quat(global_rotation.w, global_rotation.x, global_rotation.y, global_rotation.z) * local_position);
+		wheels[REAR_RIGHT]->set_rotation(wheels[REAR_RIGHT]->get_rotation() * local_rotation);
+		wheels[REAR_RIGHT]->set_position(wheels[REAR_RIGHT]->get_position() + glm::quat(global_rotation.w, global_rotation.x, global_rotation.y, global_rotation.z) * local_position);
 	}
 	{
 		physx::PxTransform transform = shapes[3]->getLocalPose();
 		glm::vec3 local_position = glm::vec3(transform.p.x, transform.p.y, transform.p.z);
 		glm::quat local_rotation = glm::quat(transform.q.w, transform.q.x, transform.q.y, transform.q.z);
-		wheels[REAR_LEFT].set_rotation(wheels[REAR_LEFT].get_rotation() * local_rotation);
-		wheels[REAR_LEFT].set_position(wheels[REAR_LEFT].get_position() + glm::quat(global_rotation.w, global_rotation.x, global_rotation.y, global_rotation.z) * local_position);
+		wheels[REAR_LEFT]->set_rotation(wheels[REAR_LEFT]->get_rotation() * local_rotation);
+		wheels[REAR_LEFT]->set_position(wheels[REAR_LEFT]->get_position() + glm::quat(global_rotation.w, global_rotation.x, global_rotation.y, global_rotation.z) * local_position);
 	}
 
 	delete[] shapes;

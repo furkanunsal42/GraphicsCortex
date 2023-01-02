@@ -83,7 +83,7 @@ void uniform_update_queue::copy(const uniform_update_queue& original) {
 		add_uniform_update(update);
 }
 
-void uniform_update_queue::link_program(std::weak_ptr<Program> program) {
+void uniform_update_queue::link_program(std::shared_ptr<Program> program) {
 	for (uniform_update<int>& update : uniform_queue_int)
 		update.program = program;
 	for (uniform_update<char>& update : uniform_queue_char)
