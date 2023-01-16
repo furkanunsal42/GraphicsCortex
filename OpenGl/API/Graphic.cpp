@@ -2,6 +2,7 @@
 
 #include "Default_Assets.h"
 #include "PhysicsGeometry.h"
+#include "Default_Programs.h"
 
 #include <iostream>
 
@@ -114,6 +115,12 @@ void Graphic::load_program(Program_s program) {
 	_uniform_update_queue.link_program(renderer);
 	_uniform_update_queue.update_uniform_ids();
 }
+
+
+bool Graphic::is_uniform_queue_loaded() { return _is_uniforms_loaded; }
+bool Graphic::is_program_loaded() { return _is_program_loaded; }
+bool Graphic::is_material_loaded() { return _is_material_loaded; }
+bool Graphic::is_mesh_loaded() { return _is_mesh_loaded; }
 
 const glm::vec3& Graphic::get_position() {
 	return position;

@@ -22,7 +22,7 @@ void Object::set_rotation(glm::vec3 rotation){
 	physics.set_rotation(rotation);
 }
 
-Vehicle::Vehicle() {}
+Vehicle::Vehicle() { }
  
 void Vehicle::load_mesh_chassis_graphics(Mesh_s chassis) {
 	this->chassis->load_model(chassis);
@@ -75,43 +75,63 @@ void Vehicle::load_model_all_physics(Model&& chassis, Model&& left_wheel, Model&
 	load_model_all_physics(chassis, left_wheel, right_wheel);
 }
 
-void Vehicle::load_material_chassis(Material_s& chassis) {
+void Vehicle::load_material_chassis(Material_s chassis) {
 	this->chassis->load_material(chassis);
 }
-void Vehicle::load_material_left_wheel(Material_s& left_wheel) {
+void Vehicle::load_material_left_wheel(Material_s left_wheel) {
 	this->wheels[FRONT_LEFT]->load_material(left_wheel);
 	this->wheels[REAR_LEFT]->load_material(left_wheel);
 }
-void Vehicle::load_material_right_wheel(Material_s& right_wheel) {
+void Vehicle::load_material_right_wheel(Material_s right_wheel) {
 	this->wheels[FRONT_RIGHT]->load_material(right_wheel);
 	this->wheels[REAR_RIGHT]->load_material(right_wheel);
 }
-void Vehicle::load_material_all(Material_s& chassis, Material_s& left_wheel, Material_s& right_wheel) {
+void Vehicle::load_material_all(Material_s chassis, Material_s left_wheel, Material_s right_wheel) {
 	load_material_chassis(chassis);
 	load_material_left_wheel(left_wheel);
 	load_material_right_wheel(right_wheel);
 }
-void Vehicle::load_material_all(Material_s& all) {
+void Vehicle::load_material_all(Material_s all) {
 	load_material_all(all, all, all);
 }
 
-void Vehicle::load_program_chassis(Program_s& chassis) {
+void Vehicle::load_material_chassis(UnorderedMaterial_s chassis) {
+	this->chassis->load_material(chassis);
+}
+void Vehicle::load_material_left_wheel(UnorderedMaterial_s left_wheel) {
+	this->wheels[FRONT_LEFT]->load_material(left_wheel);
+	this->wheels[REAR_LEFT]->load_material(left_wheel);
+}
+void Vehicle::load_material_right_wheel(UnorderedMaterial_s right_wheel) {
+	this->wheels[FRONT_RIGHT]->load_material(right_wheel);
+	this->wheels[REAR_RIGHT]->load_material(right_wheel);
+}
+void Vehicle::load_material_all(UnorderedMaterial_s chassis, UnorderedMaterial_s left_wheel, UnorderedMaterial_s right_wheel) {
+	load_material_chassis(chassis);
+	load_material_left_wheel(left_wheel);
+	load_material_right_wheel(right_wheel);
+}
+void Vehicle::load_material_all(UnorderedMaterial_s all) {
+	load_material_all(all, all, all);
+}
+
+void Vehicle::load_program_chassis(Program_s chassis) {
 	this->chassis->load_program(chassis);
 }
-void Vehicle::load_program_left_wheel(Program_s& left_wheel) {
+void Vehicle::load_program_left_wheel(Program_s left_wheel) {
 	this->wheels[FRONT_LEFT]->load_program(left_wheel);
 	this->wheels[REAR_LEFT]->load_program(left_wheel);
 }
-void Vehicle::load_program_right_wheel(Program_s& right_wheel) {
+void Vehicle::load_program_right_wheel(Program_s right_wheel) {
 	this->wheels[FRONT_RIGHT]->load_program(right_wheel);
 	this->wheels[REAR_RIGHT]->load_program(right_wheel);
 }
-void Vehicle::load_program_all(Program_s& chassis, Program_s& left_wheel, Program_s& right_wheel) {
+void Vehicle::load_program_all(Program_s chassis, Program_s left_wheel, Program_s right_wheel) {
 	load_program_chassis(chassis);
 	load_program_left_wheel(left_wheel);
 	load_program_right_wheel(right_wheel);
 }
-void Vehicle::load_program_all(Program_s& all) {
+void Vehicle::load_program_all(Program_s all) {
 	load_program_chassis(all);
 	load_program_left_wheel(all);
 	load_program_right_wheel(all);

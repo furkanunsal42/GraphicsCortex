@@ -27,7 +27,7 @@ public:
 	std::enable_if_t<std::is_same<T, AmbiantLight_s>::value || std::is_same<T, DirectionalLight_s>::value || std::is_same<T, PointLight_s>::value || std::is_same<T, SpotLight_s>::value, void> 
 		add_light(T light)
 	{
-		lights.push_back(light);
+		_lights.push_back(light);
 		decltype(light)::count += 1;
 	}
 
@@ -36,11 +36,6 @@ public:
 	void add_object(Object_s object);
 	void add_object(Vehicle_s vehicle);
 
-	template<typename T>
-	std::enable_if_t<std::is_same<T, PhysicsObject&>::value || std::is_same<T, PhysicsObject&&>::value || std::is_same<T, PhysicsVehicle&>::value || std::is_same<T, PhysicsVehicle&&>::value || std::is_same<T, physx::PxRigidActor*&>::value, void>
-		add_physics(T object) {
-		PhysicsScene::get().add_actor(object);
-	}
 	template<typename T>
 	std::enable_if_t<std::is_same<T, PhysicsObject>::value || std::is_same<T, PhysicsVehicle>::value || std::is_same<T, physx::PxRigidActor*>::value, void>
 		add_physics(T& object) {
@@ -52,9 +47,14 @@ public:
 	void render(bool show_warnings = true);
 	void render_to_framebuffer(Frame& frame, bool show_warnings = true);
 
+	void sync_with_physics();
+
 private:
 	bool _is_framebuffer_loaded = false;
-	std::vector<std::shared_ptr<Graphic>> meshes;
-	std::vector<std::shared_ptr<Light>> lights;
+	std::vector<std::shared_ptr<Graphic>> _graphics;
+	std::vector<std::shared_ptr<Light>> _lights;
+	
+	std::vector<std::shared_ptr<Object>> _objects;
+	std::vector<std::shared_ptr<Vehicle>> _vehicles;
 
 };

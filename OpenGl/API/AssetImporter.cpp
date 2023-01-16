@@ -10,7 +10,7 @@ const aiScene* AssetImporter::readfile(const std::string& filename, unsigned int
 	std::string load_error = _assimp_asset_loader.GetErrorString();
 	if (load_error != "")
 		std::cout << "[Assimp Loading Error]: " << load_error << '\n';
-
+	
 	_imported_assets.insert(std::pair<std::string, const aiScene*>(filename, imported_scene));
 	return imported_scene;
 }

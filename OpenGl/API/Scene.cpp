@@ -7,26 +7,24 @@
 #include <iostream>
 
 #include "Default_Assets.h"
+#include "Default_Programs.h"
 #include "Debuger.h"
 #include "Frame.h"
 
 #include "PhysicsScene.h"
 
 void Scene::add_graphic(Graphic_s graphic) {
-	meshes.push_back(graphic.obj);
+	_graphics.push_back(graphic.obj);
 }
 
 void Scene::add_object(Object_s object) {
-	add_graphic(object.obj->graphics);
-	PhysicsScene::get().add_actor(object.obj->physics);
+	_objects.push_back(object.obj);
+	PhysicsScene::get().add_actor(object->physics);
 }
 
 void Scene::add_object(Vehicle_s vehicle) {
-	add_graphic(vehicle.obj->chassis);
-	for (Graphic_s& wheel : vehicle.obj->wheels) {
-		add_graphic(wheel);
-	}
-	PhysicsScene::get().add_actor(vehicle.obj->physics_representation);
+	_vehicles.push_back(vehicle.obj);
+	PhysicsScene::get().add_actor(vehicle->physics_representation);
 }
 
 void Scene::set_framebuffer(FrameBuffer& framebuffer) {
@@ -35,17 +33,50 @@ void Scene::set_framebuffer(FrameBuffer& framebuffer) {
 }
 
 void Scene::render(bool show_warnings) {
+	
+	sync_with_physics();
 
 	camera.update_matrixes();
 
-	for (std::shared_ptr<Light>& light : lights) {
+	for (std::shared_ptr<Light> light : _lights) {
 		light->update_uniform_queue();
 	}
 
-	for(std::shared_ptr<Graphic>& mesh : meshes){
-		mesh->update_matrix();
-		mesh->update_uniforms();
-		mesh->draw(show_warnings);
+	for(std::shared_ptr<Graphic> graphic : _graphics){
+		graphic->update_matrix();
+		if (!graphic->is_uniform_queue_loaded()) {
+			std::cout << "[Opengl Error] Graphic::update_uniforms() was called but no uniform_queue is specified, basic uniform queue is being loaded to graphic by the respected scene" << std::endl;
+			graphic->set_uniform_all(default_program::basic_uniform_queue(*this, Graphic_s(graphic)));
+		}
+		graphic->update_uniforms();
+		graphic->draw(show_warnings);
+	}
+	for (std::shared_ptr<Object> object : _objects) {
+		object->graphics->update_matrix();
+		if (!object->graphics->is_uniform_queue_loaded()) {
+			std::cout << "[Opengl Error] Graphic::update_uniforms() was called but no uniform_queue is specified, basic uniform queue is being loaded to graphic by the respected scene" << std::endl;
+			object->graphics->set_uniform_all(default_program::basic_uniform_queue(*this, Graphic_s(object->graphics)));
+		}
+		object->graphics->update_uniforms();
+		object->graphics->draw(show_warnings);
+	}
+	for (std::shared_ptr<Vehicle> vehicle : _vehicles) {
+		vehicle->chassis->update_matrix();
+		if (!vehicle->chassis->is_uniform_queue_loaded()) {
+			std::cout << "[Opengl Error] Graphic::update_uniforms() was called but no uniform_queue is specified, basic uniform queue is being loaded to graphic by the respected scene" << std::endl;
+			vehicle->chassis->set_uniform_all(default_program::basic_uniform_queue(*this, Graphic_s(vehicle->chassis)));
+		}
+		vehicle->chassis->update_uniforms();
+		vehicle->chassis->draw(show_warnings);
+		for (Graphic_s wheel : vehicle->wheels) {
+			wheel->update_matrix();
+			if (!wheel->is_uniform_queue_loaded()) {
+				std::cout << "[Opengl Error] Graphic::update_uniforms() was called but no uniform_queue is specified, basic uniform queue is being loaded to graphic by the respected scene" << std::endl;
+				wheel->set_uniform_all(default_program::basic_uniform_queue(*this, wheel));
+			}
+			wheel->update_uniforms();
+			wheel->draw(show_warnings);
+		}
 	}
 }
 
@@ -63,4 +94,13 @@ void Scene::render_to_framebuffer(Frame& frame, bool show_warnings) {
 
 	frame_buffer.unbind();
 	frame_buffer.render();
+}
+
+void Scene::sync_with_physics() {
+	for (std::shared_ptr<Object> object : _objects) {
+		object->sync_with_physics();
+	}
+	for (std::shared_ptr<Vehicle> vehicle : _vehicles) {
+		vehicle->sync_with_physics();
+	}
 }

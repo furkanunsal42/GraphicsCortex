@@ -58,9 +58,10 @@ namespace {
 
 void Model::_load_model(const aiScene* scene, float scale, unsigned int vertex_property_bits) {
 	
-	if (scene == nullptr)
+	if (scene == nullptr){
 		std::cout << "[Asset Loading Error] Model::_load_model is called with nullptr, probably used filepath doesn't exist." << std::endl;
-	
+		ASSERT(false);
+	}
 	clear_ram();
 
 	std::vector<char> enabled_bits = compute_enabled_bits(vertex_property_bits, PROPERTY_COUNT);

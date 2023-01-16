@@ -59,6 +59,11 @@ public:
 
 	void load_program(Program_s program);
 
+	bool is_uniform_queue_loaded();
+	bool is_program_loaded();
+	bool is_material_loaded();
+	bool is_mesh_loaded();
+
 	std::weak_ptr<Mesh> get_mesh();
 	std::weak_ptr<Program> get_program();
 	std::weak_ptr<UnorderedMaterial> get_unordered_material();		// temp, they have to be united
@@ -105,6 +110,7 @@ protected:
 		renderer->define_uniform(uniform_queue.uniform_name);
 		uniform_queue.uniform_id = renderer->uniforms[uniform_queue.uniform_name];
 		_uniform_update_queue.add_uniform_update(uniform_queue);
+		_is_uniforms_loaded = true;
 	}
 	template<typename T>
 	void add_uniform_update_queue(uniform_update<T>&& uniform_queue) {
@@ -116,6 +122,7 @@ protected:
 		renderer->define_uniform(uniform_queue.uniform_name);
 		uniform_queue.uniform_id = renderer->uniforms[uniform_queue.uniform_name];
 		_uniform_update_queue.add_uniform_update(uniform_queue);
+		_is_uniforms_loaded = true;
 	}
 
 	template<typename T>
@@ -128,6 +135,7 @@ protected:
 		renderer->define_uniform(dynamic_uniform_queue.uniform_name);
 		dynamic_uniform_queue.uniform_id = renderer->uniforms[dynamic_uniform_queue.uniform_name];
 		_uniform_update_queue.add_uniform_update(dynamic_uniform_queue);
+		_is_uniforms_loaded = true;
 	}
 	template<typename T>
 	void add_uniform_update_queue(dynamic_uniform_update<T>&& dynamic_uniform_queue) {
@@ -139,10 +147,12 @@ protected:
 		renderer->define_uniform(dynamic_uniform_queue.uniform_name);
 		dynamic_uniform_queue.uniform_id = renderer->uniforms[dynamic_uniform_queue.uniform_name];
 		_uniform_update_queue.add_uniform_update(dynamic_uniform_queue);
+		_is_uniforms_loaded = true;
 	}
 
 	void add_uniform_update_queue(std::function<void()> functional_update_queue) {
 		_uniform_update_queue.add_uniform_update(functional_update_queue);
+		_is_uniforms_loaded = true;
 	}
 
 	void remove_uniform_update_queue(const std::string& uniform_name) {
@@ -163,6 +173,7 @@ protected:
 		else {
 			_uniform_update_queue.copy(original);
 		}
+		_is_uniforms_loaded = true;
 	}
 
 	void set_uniform_update_queue(uniform_update_queue&& original) {
@@ -174,28 +185,33 @@ protected:
 		else {
 			_uniform_update_queue.copy(original);
 		}
+		_is_uniforms_loaded = true;
 	}
 
 	template<typename T>
 	void change_uniform_update_queue(uniform_update<T>& uniform_queue) {
 		remove_uniform_update_queue(uniform_queue.uniform_name);
 		add_uniform_update_queue(uniform_queue);
+		_is_uniforms_loaded = true;
 	}
 	template<typename T>
 	void change_uniform_update_queue(uniform_update<T>&& uniform_queue) {
 		remove_uniform_update_queue(uniform_queue.uniform_name);
 		add_uniform_update_queue(uniform_queue);
+		_is_uniforms_loaded = true;
 	}
 
 	template<typename T>
 	void change_uniform_update_queue(dynamic_uniform_update<T>& dynamic_uniform_queue) {
 		remove_uniform_update_queue(dynamic_uniform_queue.uniform_name);
 		add_uniform_update_queue(dynamic_uniform_queue);
+		_is_uniforms_loaded = true;
 	}
 	template<typename T>
 	void change_uniform_update_queue(dynamic_uniform_update<T>&& dynamic_uniform_queue) {
 		remove_uniform_update_queue(dynamic_uniform_queue.uniform_name);
 		add_uniform_update_queue(dynamic_uniform_queue);
+		_is_uniforms_loaded = true;
 	}
 
 	void update_uniform_queue();
@@ -203,4 +219,5 @@ protected:
 	bool _is_mesh_loaded = false;
 	bool _is_material_loaded = false;
 	bool _is_program_loaded = false;
+	bool _is_uniforms_loaded = false;
 };
