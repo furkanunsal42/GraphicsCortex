@@ -91,8 +91,13 @@ int main() {
 
 		//scene.camera.handle_movements(frame.window, frame_time);
 		vehicle->physics_representation.vehicle_control(frame.window);
-		scene.camera.set_rotation(glm::eulerAngles(vehicle->chassis->get_rotation()) + glm::vec3(0.0f, 3.14f, 0.0f));
-		scene.camera.set_position(vehicle->chassis->get_position() + glm::vec3(0.0f, 1.0f, 0.0f));
+		glm::quat camera_rotation = vehicle->chassis->get_rotation();
+		glm::vec3 camera_position = vehicle->chassis->get_position();
+		camera_rotation = camera_rotation * glm::quat(glm::vec3(0, 3.14f, 0));
+		camera_position += glm::vec3(0.0f, 1.0f, 0.0f);
+		camera_position += camera_rotation * glm::vec3(0.0f, 0.0f, 0.9f);
+		scene.camera.set_rotation(camera_rotation);
+		scene.camera.set_position(camera_position);
 
 
 		cube_map.bind();

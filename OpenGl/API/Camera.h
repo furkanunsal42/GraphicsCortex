@@ -14,10 +14,10 @@ public:
 	glm::mat4 view_matrix = glm::mat4(1.0f);
 	glm::mat4 projection_matrix = glm::mat4(1.0f);
 	glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);
-	glm::vec3 rotation = glm::vec3(0.0f, 0.0f, 0.0f);
+	glm::quat rotation_quat = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
 
 	const glm::vec3& get_position();
-	const glm::vec3& get_rotation();
+	const glm::quat& get_rotation();
 
 	void set_position(const glm::vec3& position);
 	void set_rotation(const glm::quat& rotation);

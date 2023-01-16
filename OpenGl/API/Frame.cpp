@@ -28,8 +28,8 @@ Frame::Frame(int width, int height, const std::string& name, int msaa, int swapi
 		is_glfw_initialized = true;
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	}
-	//if(multisample)
-		//glfwWindowHint(GLFW_SAMPLES, multisample);
+	if(multisample)
+		glfwWindowHint(GLFW_SAMPLES, multisample);
 
 	window = glfwCreateWindow(width, height, name.c_str(), nullptr, nullptr);
 	glfwMakeContextCurrent(window);
