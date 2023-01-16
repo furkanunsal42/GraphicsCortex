@@ -15,6 +15,14 @@ public:
 	glm::mat4 projection_matrix = glm::mat4(1.0f);
 	glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);
 	glm::vec3 rotation = glm::vec3(0.0f, 0.0f, 0.0f);
+
+	const glm::vec3& get_position();
+	const glm::vec3& get_rotation();
+
+	void set_position(const glm::vec3& position);
+	void set_rotation(const glm::quat& rotation);
+	void set_rotation(const glm::vec3& rotation);
+
 	bool perspective = true;
 	float ortho_size = 1.0f;
 	float fov = 45.0f;

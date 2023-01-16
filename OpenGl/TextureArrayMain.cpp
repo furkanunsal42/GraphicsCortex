@@ -54,7 +54,7 @@ int main() {
 		vehicle->chassis->set_uniform("use_cube_map_reflection", 1);
 		vehicle->chassis->set_uniform("cube_map_reflection_strength", 0.6f);
 
-		vehicle->physics_representation.set_wheel_layout(2.4, -1.8, 4.2, 0.4);
+		vehicle->physics_representation.set_wheel_layout(2.4, -1.5, 4.2, 0.4);
 
 		vehicle->physics_representation.compile();
 		
@@ -68,16 +68,43 @@ int main() {
 		scene.add_physics(ground_plane);
 	}
 
+	Program_s cubemap_program(default_program::cubemap_program());
+	CubeMapTexture cube_map;
+	cube_map.set_program(cubemap_program);
+	cube_map.camera = &scene.camera;
+	cube_map.set_update_queue(default_program::cubemap_default_uniform_queue(cube_map));
+	cube_map.face_texture_filepaths[RIGHT] = "Images/CubeMap/Sky/px.jpg";
+	cube_map.face_texture_filepaths[LEFT] = "Images/CubeMap/Sky/nx.jpg";
+	cube_map.face_texture_filepaths[TOP] = "Images/CubeMap/Sky/py.jpg";
+	cube_map.face_texture_filepaths[BOTTOM] = "Images/CubeMap/Sky/ny.jpg";
+	cube_map.face_texture_filepaths[FRONT] = "Images/CubeMap/Sky/pz.jpg";
+	cube_map.face_texture_filepaths[BACK] = "Images/CubeMap/Sky/nz.jpg";
+
+	cube_map.read_queue(3);
+	cube_map.load_queue(true);
+
 	while (frame.is_running()) {
 		double frame_time = frame.handle_window();
 		PhysicsScene::get().simulate_step(frame_time / 1000.0f);
 		frame.clear_window(0.25f, 0.25f, 0.25f);
 		frame.display_performance(180);
 
-		scene.camera.handle_movements(frame.window, frame_time);
+		//scene.camera.handle_movements(frame.window, frame_time);
 		vehicle->physics_representation.vehicle_control(frame.window);
+		scene.camera.set_rotation(glm::eulerAngles(vehicle->chassis->get_rotation()) + glm::vec3(0.0f, 3.14f, 0.0f));
+		scene.camera.set_position(vehicle->chassis->get_position() + glm::vec3(0.0f, 1.0f, 0.0f));
 
+
+		cube_map.bind();
+
+		cube_map.texture_slot = 13;
+		cube_map.bind();
 		scene.render();
+		cube_map.texture_slot = 11;
+
+
+		cube_map.draw();
 	}
+
 
 }

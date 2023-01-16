@@ -15,9 +15,9 @@ Camera::Camera(float width, float height):
 
 void Camera::update_matrixes() {
 	// apply position and rotation to camera
-	view_matrix = glm::rotate(glm::mat4(1.0f), glm::radians(rotation.x), glm::vec3(-1.0f, 0.0f, 0.0f));
-	view_matrix = glm::rotate(view_matrix, glm::radians(rotation.y), glm::vec3(0.0f, -1.0f, 0.0f));
-	view_matrix = glm::rotate(view_matrix, glm::radians(rotation.z), glm::vec3(0.0f, 0.0f, -1.0f));
+	view_matrix = glm::rotate(glm::mat4(1.0f), rotation.x, glm::vec3(-1.0f, 0.0f, 0.0f));
+	view_matrix = glm::rotate(view_matrix, rotation.y, glm::vec3(0.0f, -1.0f, 0.0f));
+	view_matrix = glm::rotate(view_matrix, rotation.z, glm::vec3(0.0f, 0.0f, -1.0f));
 	view_matrix = glm::translate(view_matrix, -position);
 
 	if (perspective) {
@@ -36,25 +36,25 @@ void Camera::update_uniforms(Program& program) {
 void Camera::handle_movements(GLFWwindow* window, double frame_time_ms) {
 	if (glfwGetKey(window, GLFW_KEY_W) == 1) {
 		glm::vec3 forward_vector = glm::vec3(0.0f, 0.0f, -1.0f);
-		forward_vector = glm::rotate(forward_vector, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+		forward_vector = glm::rotate(forward_vector, rotation.y, glm::vec3(0.0f, 1.0f, 0.0f));
 		forward_vector = glm::normalize(forward_vector);
 		position += forward_vector * (float)(movement_speed * frame_time_ms);
 	}
 	if (glfwGetKey(window, GLFW_KEY_S) == 1) {
 		glm::vec3 forward_vector = glm::vec3(0.0f, 0.0f, -1.0f);
-		forward_vector = glm::rotate(forward_vector, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+		forward_vector = glm::rotate(forward_vector, rotation.y, glm::vec3(0.0f, 1.0f, 0.0f));
 		forward_vector = glm::normalize(forward_vector);
 		position += -forward_vector * (float)(movement_speed * frame_time_ms);
 	}
 	if (glfwGetKey(window, GLFW_KEY_D) == 1) {
 		glm::vec3 forward_vector = glm::vec3(0.0f, 0.0f, -1.0f);
-		forward_vector = glm::rotate(forward_vector, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+		forward_vector = glm::rotate(forward_vector, rotation.y, glm::vec3(0.0f, 1.0f, 0.0f));
 		forward_vector = glm::normalize(forward_vector);
 		position += glm::cross(forward_vector, up_vector) * (float)(movement_speed * frame_time_ms);
 	}
 	if (glfwGetKey(window, GLFW_KEY_A) == 1) {
 		glm::vec3 forward_vector = glm::vec3(0.0f, 0.0f, -1.0f);
-		forward_vector = glm::rotate(forward_vector, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+		forward_vector = glm::rotate(forward_vector, rotation.y, glm::vec3(0.0f, 1.0f, 0.0f));
 		forward_vector = glm::normalize(forward_vector);
 		position += -glm::cross(forward_vector, up_vector) * (float)(movement_speed * frame_time_ms);
 	}
@@ -63,7 +63,7 @@ void Camera::handle_movements(GLFWwindow* window, double frame_time_ms) {
 	}
 	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == 1) {
 		glm::vec3 forward_vector = glm::vec3(0.0f, 0.0f, -1.0f);
-		forward_vector = glm::rotate(forward_vector, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+		forward_vector = glm::rotate(forward_vector, rotation.y, glm::vec3(0.0f, 1.0f, 0.0f));
 		forward_vector = glm::normalize(forward_vector);
 		position += -up_vector * (float)(movement_speed * frame_time_ms);
 	}
@@ -79,10 +79,27 @@ void Camera::handle_movements(GLFWwindow* window, double frame_time_ms) {
 	if (mouse_focus) {
 		double mouse_x, mouse_y;
 		glfwGetCursorPos(window, &mouse_x, &mouse_y);
-		rotation.x += (float)(mouse_sensitivity * -(mouse_y - screen_height / 2) / screen_height);
-		rotation.y += (float)(mouse_sensitivity * -(mouse_x - screen_width / 2) / screen_width);
+		rotation.x += glm::radians((float)(mouse_sensitivity * -(mouse_y - screen_height / 2) / screen_height));
+		rotation.y += glm::radians((float)(mouse_sensitivity * -(mouse_x - screen_width / 2) / screen_width));
 
 		glfwSetCursorPos(window, screen_width / 2, screen_height / 2);
 	}
 }
 
+const glm::vec3& Camera::get_position() {
+	return position;
+}
+
+const glm::vec3& Camera::get_rotation() {
+	return rotation;
+}
+
+void Camera::set_position(const glm::vec3& position){
+	this->position = position;
+}
+void Camera::set_rotation(const glm::quat& rotation){
+	this->rotation = glm::eulerAngles(rotation);
+}
+void Camera::set_rotation(const glm::vec3& rotation) {
+	this->rotation = rotation;
+}
