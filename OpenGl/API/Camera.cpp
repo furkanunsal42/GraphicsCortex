@@ -34,30 +34,22 @@ void Camera::update_uniforms(Program& program) {
 void Camera::handle_movements(GLFWwindow* window, double frame_time_ms) {
 	if (glfwGetKey(window, GLFW_KEY_W) == 1) {
 		glm::vec3 forward_vector = glm::vec3(0.0f, 0.0f, -1.0f);
-		glm::vec3 euler_angles = glm::eulerAngles(rotation_quat);
-		forward_vector = glm::rotate(forward_vector, euler_angles.y, glm::vec3(0.0f, 1.0f, 0.0f));
-		forward_vector = glm::normalize(forward_vector);
+		forward_vector = glm::normalize(rotation_quat * forward_vector);
 		position += forward_vector * (float)(movement_speed * frame_time_ms);
 	}
 	if (glfwGetKey(window, GLFW_KEY_S) == 1) {
 		glm::vec3 forward_vector = glm::vec3(0.0f, 0.0f, -1.0f);
-		glm::vec3 euler_angles = glm::eulerAngles(rotation_quat);
-		forward_vector = glm::rotate(forward_vector, euler_angles.y, glm::vec3(0.0f, 1.0f, 0.0f));
-		forward_vector = glm::normalize(forward_vector);
+		forward_vector = glm::normalize(rotation_quat * forward_vector);
 		position += -forward_vector * (float)(movement_speed * frame_time_ms);
 	}
 	if (glfwGetKey(window, GLFW_KEY_D) == 1) {
 		glm::vec3 forward_vector = glm::vec3(0.0f, 0.0f, -1.0f);
-		glm::vec3 euler_angles = glm::eulerAngles(rotation_quat);
-		forward_vector = glm::rotate(forward_vector, euler_angles.y, glm::vec3(0.0f, 1.0f, 0.0f));
-		forward_vector = glm::normalize(forward_vector);
+		forward_vector = glm::normalize(rotation_quat * forward_vector);
 		position += glm::cross(forward_vector, up_vector) * (float)(movement_speed * frame_time_ms);
 	}
 	if (glfwGetKey(window, GLFW_KEY_A) == 1) {
 		glm::vec3 forward_vector = glm::vec3(0.0f, 0.0f, -1.0f);
-		glm::vec3 euler_angles = glm::eulerAngles(rotation_quat);
-		forward_vector = glm::rotate(forward_vector, euler_angles.y, glm::vec3(0.0f, 1.0f, 0.0f));
-		forward_vector = glm::normalize(forward_vector);
+		forward_vector = glm::normalize(rotation_quat * forward_vector);
 		position += -glm::cross(forward_vector, up_vector) * (float)(movement_speed * frame_time_ms);
 	}
 	if (glfwGetKey(window, GLFW_KEY_SPACE) == 1) {
@@ -65,9 +57,7 @@ void Camera::handle_movements(GLFWwindow* window, double frame_time_ms) {
 	}
 	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == 1) {
 		glm::vec3 forward_vector = glm::vec3(0.0f, 0.0f, -1.0f);
-		glm::vec3 euler_angles = glm::eulerAngles(rotation_quat);
-		forward_vector = glm::rotate(forward_vector, euler_angles.y, glm::vec3(0.0f, 1.0f, 0.0f));
-		forward_vector = glm::normalize(forward_vector);
+		forward_vector = glm::normalize(rotation_quat * forward_vector);
 		position += -up_vector * (float)(movement_speed * frame_time_ms);
 	}
 	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == 1) {
@@ -82,9 +72,13 @@ void Camera::handle_movements(GLFWwindow* window, double frame_time_ms) {
 	if (mouse_focus) {
 		double mouse_x, mouse_y;
 		glfwGetCursorPos(window, &mouse_x, &mouse_y);
-		//rotation.x += glm::radians((float)(mouse_sensitivity * -(mouse_y - screen_height / 2) / screen_height));
-		//rotation.y += glm::radians((float)(mouse_sensitivity * -(mouse_x - screen_width / 2) / screen_width));
+		float rotation_x = glm::radians((float)(mouse_sensitivity * -(mouse_y - screen_height / 2) / screen_height));
+		float rotation_y = glm::radians((float)(mouse_sensitivity * -(mouse_x - screen_width / 2) / screen_width));
 
+		rotation_quat = glm::quat(glm::vec3(0, rotation_y, 0)) * rotation_quat;
+		glm::vec3 forward_vector = rotation_quat * glm::vec3(0, 0, -1);
+		glm::vec3 side_vector = glm::normalize(glm::cross(forward_vector, up_vector));
+		rotation_quat = glm::quat(side_vector * rotation_x) * rotation_quat;
 		glfwSetCursorPos(window, screen_width / 2, screen_height / 2);
 	}
 }

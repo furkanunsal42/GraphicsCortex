@@ -2,25 +2,26 @@
 
 int main() {
 
-	Frame frame(1920, 1080, "GraphicsCortex", 4, 0, true, false, false);
+	Frame frame(1920, 1080, "GraphicsCortex", 4, 1, true, false, false);
 	Scene scene;
 	scene.camera.screen_width = 1920;
 	scene.camera.screen_height = 1080;
-	scene.camera.max_distance = 10000;
+	scene.camera.max_distance = 1000;
 
 	Program_s program(Program(Shader("Shaders/TextureArray.vert", "Shaders/TextureArray.frag")));
 	Program_s solid_program(default_program::solid_program());
 	
 	{
-		Mesh_s city(Mesh(Model("Models/City/edited_city.obj", 5.0f)));
-		UnorderedMaterial_s city_mat(UnorderedMaterial("Models/City/edited_city.obj"));
+		Mesh_s city(Mesh(Model("Models/City/edited_city2.obj", 4.0f)));
+		UnorderedMaterial_s city_mat(UnorderedMaterial("Models/City/edited_city2.obj"));
+		city_mat->set_texture_size(2048, 2048);
 		Graphic_s map;
 		map->load_model(city);
 		map->load_material(city_mat);
 		map->load_program(program);
 		map->set_uniform_all(default_program::basic_uniform_queue(scene, map));
 
-		map->set_position(glm::vec3(0, -15.3f, 0));
+		map->set_position(glm::vec3(0, 0, 0));
 
 		scene.add_graphic(map);
 	}
@@ -91,6 +92,9 @@ int main() {
 
 		//scene.camera.handle_movements(frame.window, frame_time);
 		vehicle->physics_representation.vehicle_control(frame.window);
+		
+		vehicle->sync_with_physics();
+		// let camera follow the car
 		glm::quat camera_rotation = vehicle->chassis->get_rotation();
 		glm::vec3 camera_position = vehicle->chassis->get_position();
 		camera_rotation = camera_rotation * glm::quat(glm::vec3(0, 3.14f, 0));
@@ -100,10 +104,13 @@ int main() {
 		scene.camera.set_position(camera_position);
 
 
+		//vehicle->set_position(vehicle->chassis->get_position() + glm::vec3(0, 0, -0.1f));
+
 		cube_map.bind();
 
 		cube_map.texture_slot = 13;
 		cube_map.bind();
+
 		scene.render();
 		cube_map.texture_slot = 11;
 
