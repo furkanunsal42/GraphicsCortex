@@ -2,9 +2,10 @@
 #include "Config.h"
 
 #include <memory>
+#include <type_traits>
 
 template<typename T>
-class SharedPtr {
+class SharedPtr{
 public:
 
 	SharedPtr() : 

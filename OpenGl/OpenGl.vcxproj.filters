@@ -75,27 +75,6 @@
     <ClCompile Include="API\PhysicsLink.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
-    <ClCompile Include="snippetcommon\SnippetVehicle4WCreate.cpp">
-      <Filter>Kaynak Dosyalar</Filter>
-    </ClCompile>
-    <ClCompile Include="snippetcommon\SnippetVehicleCreate.cpp">
-      <Filter>Kaynak Dosyalar</Filter>
-    </ClCompile>
-    <ClCompile Include="snippetcommon\SnippetVehicleFilterShader.cpp">
-      <Filter>Kaynak Dosyalar</Filter>
-    </ClCompile>
-    <ClCompile Include="snippetcommon\SnippetVehicleNoDriveCreate.cpp">
-      <Filter>Kaynak Dosyalar</Filter>
-    </ClCompile>
-    <ClCompile Include="snippetcommon\SnippetVehicleSceneQuery.cpp">
-      <Filter>Kaynak Dosyalar</Filter>
-    </ClCompile>
-    <ClCompile Include="snippetcommon\SnippetVehicleTankCreate.cpp">
-      <Filter>Kaynak Dosyalar</Filter>
-    </ClCompile>
-    <ClCompile Include="snippetcommon\SnippetVehicleTireFriction.cpp">
-      <Filter>Kaynak Dosyalar</Filter>
-    </ClCompile>
     <ClCompile Include="API\PhysicsVehicle.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
@@ -117,7 +96,7 @@
     <ClCompile Include="API\RamCache.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
-    <ClCompile Include="TextureArrayMain.cpp">
+    <ClCompile Include="ApplicationMain.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
     <ClCompile Include="Dependencies\stb_image\stb_image_resize.cpp">
@@ -130,6 +109,27 @@
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
     <ClCompile Include="API\Mesh.cpp">
+      <Filter>Kaynak Dosyalar</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\physx\snippetcommon\SnippetVehicle4WCreate.cpp">
+      <Filter>Kaynak Dosyalar</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\physx\snippetcommon\SnippetVehicleCreate.cpp">
+      <Filter>Kaynak Dosyalar</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\physx\snippetcommon\SnippetVehicleFilterShader.cpp">
+      <Filter>Kaynak Dosyalar</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\physx\snippetcommon\SnippetVehicleNoDriveCreate.cpp">
+      <Filter>Kaynak Dosyalar</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\physx\snippetcommon\SnippetVehicleSceneQuery.cpp">
+      <Filter>Kaynak Dosyalar</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\physx\snippetcommon\SnippetVehicleTankCreate.cpp">
+      <Filter>Kaynak Dosyalar</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\physx\snippetcommon\SnippetVehicleTireFriction.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
   </ItemGroup>
@@ -479,30 +479,6 @@
     <ClInclude Include="API\PhysicsLink.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
-    <ClInclude Include="snippetcommon\SnippetVehicleWheelQueryResult.h">
-      <Filter>Üst Bilgi Dosyaları</Filter>
-    </ClInclude>
-    <ClInclude Include="snippetcommon\SnippetPrint.h">
-      <Filter>Üst Bilgi Dosyaları</Filter>
-    </ClInclude>
-    <ClInclude Include="snippetcommon\SnippetPVD.h">
-      <Filter>Üst Bilgi Dosyaları</Filter>
-    </ClInclude>
-    <ClInclude Include="snippetcommon\SnippetVehicleConcurrency.h">
-      <Filter>Üst Bilgi Dosyaları</Filter>
-    </ClInclude>
-    <ClInclude Include="snippetcommon\SnippetVehicleCreate.h">
-      <Filter>Üst Bilgi Dosyaları</Filter>
-    </ClInclude>
-    <ClInclude Include="snippetcommon\SnippetVehicleFilterShader.h">
-      <Filter>Üst Bilgi Dosyaları</Filter>
-    </ClInclude>
-    <ClInclude Include="snippetcommon\SnippetVehicleSceneQuery.h">
-      <Filter>Üst Bilgi Dosyaları</Filter>
-    </ClInclude>
-    <ClInclude Include="snippetcommon\SnippetVehicleTireFriction.h">
-      <Filter>Üst Bilgi Dosyaları</Filter>
-    </ClInclude>
     <ClInclude Include="API\PhysicsVehicle.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
@@ -537,6 +513,30 @@
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
     <ClInclude Include="API\SharedPtr.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\physx\snippetcommon\SnippetVehicleWheelQueryResult.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\physx\snippetcommon\SnippetPrint.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\physx\snippetcommon\SnippetPVD.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\physx\snippetcommon\SnippetVehicleConcurrency.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\physx\snippetcommon\SnippetVehicleCreate.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\physx\snippetcommon\SnippetVehicleFilterShader.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\physx\snippetcommon\SnippetVehicleSceneQuery.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\physx\snippetcommon\SnippetVehicleTireFriction.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
   </ItemGroup>
@@ -634,8 +634,5 @@
     <Image Include="Images\StoneTiles\tiles_specular.jpg">
       <Filter>Kaynak Dosyaları</Filter>
     </Image>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="what does a good graphics api  should have.txt" />
   </ItemGroup>
 </Project>

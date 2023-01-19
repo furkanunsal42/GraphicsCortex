@@ -22,7 +22,8 @@ void Object::set_rotation(glm::vec3 rotation){
 	physics.set_rotation(rotation);
 }
 
-Vehicle::Vehicle() { }
+Vehicle::Vehicle() : 
+	physics_representation(PhysicsVehicle()) { }
  
 void Vehicle::load_mesh_chassis_graphics(Mesh_s chassis) {
 	this->chassis->load_model(chassis);

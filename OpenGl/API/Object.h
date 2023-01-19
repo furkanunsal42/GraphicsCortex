@@ -23,7 +23,7 @@ public:
 
 class Vehicle/* : Object */ {
 public:
-	PhysicsVehicle physics_representation = PhysicsVehicle();
+	PhysicsVehicle physics_representation;
 
 	Graphic_s chassis;
 	Graphic_s wheels[4];

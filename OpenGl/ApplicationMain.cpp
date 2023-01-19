@@ -1,8 +1,9 @@
 #include "API/GraphicsCortex.h"
 
+
 int main() {
 
-	Frame frame(1920, 1080, "GraphicsCortex", 4, 1, true, false, false);
+	Frame frame(1920, 1080, "GraphicsCortex", 8, 0, true, false, true);
 	Scene scene;
 	scene.camera.screen_width = 1920;
 	scene.camera.screen_height = 1080;
@@ -13,17 +14,28 @@ int main() {
 	
 	{
 		Mesh_s city(Mesh(Model("Models/City/edited_city2.obj", 4.0f)));
+
 		UnorderedMaterial_s city_mat(UnorderedMaterial("Models/City/edited_city2.obj"));
-		city_mat->set_texture_size(2048, 2048);
+		city_mat->texture_array.generate_mipmap = false;
+		city_mat->set_texture_size(1024, 1024);
 		Graphic_s map;
 		map->load_model(city);
 		map->load_material(city_mat);
 		map->load_program(program);
 		map->set_uniform_all(default_program::basic_uniform_queue(scene, map));
-
+		
 		map->set_position(glm::vec3(0, 0, 0));
 
 		scene.add_graphic(map);
+
+		DirectionalLight_s sunlight(DirectionalLight(glm::vec3(1.0f, 0.9f, 0.9f), glm::vec3(0.4, 0.4, 0.4), solid_program));
+		sunlight->set_uniform_upadte_queue(default_program::directional_light_default_uniform_queue(*sunlight.obj, 0));
+		scene.add_light(sunlight);
+	
+
+		AmbiantLight_s ambinace(AmbiantLight(glm::vec3(0.1f, 0.1f, 0.1f), solid_program));
+		ambinace->set_uniform_upadte_queue(default_program::ambiant_light_default_uniform_queue(*ambinace.obj, 0));
+		scene.add_light(ambinace);
 	}
 
 	Vehicle v;
@@ -52,7 +64,7 @@ int main() {
 		vehicle->load_program_chassis(solid_program);
 
 		vehicle->set_default_uniform_queue_all(scene);
-		vehicle->chassis->set_uniform("use_cube_map_reflection", 1);
+		vehicle->chassis->set_uniform("use_cube_map_reflection", 0);
 		vehicle->chassis->set_uniform("cube_map_reflection_strength", 0.6f);
 
 		vehicle->physics_representation.set_wheel_layout(2.4, -1.5, 4.2, 0.4);
@@ -98,8 +110,8 @@ int main() {
 		glm::quat camera_rotation = vehicle->chassis->get_rotation();
 		glm::vec3 camera_position = vehicle->chassis->get_position();
 		camera_rotation = camera_rotation * glm::quat(glm::vec3(0, 3.14f, 0));
-		camera_position += glm::vec3(0.0f, 1.0f, 0.0f);
-		camera_position += camera_rotation * glm::vec3(0.0f, 0.0f, 0.9f);
+		camera_position += glm::vec3(0.0f, 0.5f, 0.0f);
+		camera_position += camera_rotation * glm::vec3(0.0f, 0.0f, 0.0f);
 		scene.camera.set_rotation(camera_rotation);
 		scene.camera.set_position(camera_position);
 

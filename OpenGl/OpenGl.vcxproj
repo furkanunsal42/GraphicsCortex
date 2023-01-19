@@ -156,7 +156,7 @@
       <PreprocessorDefinitions>GLEW_STATIC;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <AdditionalIncludeDirectories>$(SolutionDir)OpenGl\Dependencies\assimp\include;$(SolutionDir)OpenGl\Dependencies\stb_image;$(SolutionDir)OpenGl\Dependencies\GLEW\include;$(SolutionDir)OpenGl\Dependencies\glm;$(SolutionDir)OpenGl\Dependencies\GLFWx64\include;$(SolutionDir)OpenGl\Dependencies\physx\include;$(SolutionDir)OpenGl\snippetcommon;$(SolutionDir)OpenGl\Dependencies\hiredis\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)OpenGl\Dependencies\assimp\include;$(SolutionDir)OpenGl\Dependencies\stb_image;$(SolutionDir)OpenGl\Dependencies\GLEW\include;$(SolutionDir)OpenGl\Dependencies\glm;$(SolutionDir)OpenGl\Dependencies\GLFWx64\include;$(SolutionDir)OpenGl\Dependencies\physx\include;$(SolutionDir)OpenGl\Dependencies\physx\snippetutils;$(SolutionDir)OpenGl\Dependencies\physx\snippetcommon;$(SolutionDir)OpenGl\Dependencies\hiredis\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>Default</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
@@ -204,14 +204,14 @@
     <ClCompile Include="API\ShaderCompiler.cpp" />
     <ClCompile Include="Dependencies\stb_image\stb_image_resize.cpp" />
     <ClCompile Include="Dependencies\stb_image\stb_image_write.cpp" />
-    <ClCompile Include="snippetcommon\SnippetVehicle4WCreate.cpp" />
-    <ClCompile Include="snippetcommon\SnippetVehicleCreate.cpp" />
-    <ClCompile Include="snippetcommon\SnippetVehicleFilterShader.cpp" />
-    <ClCompile Include="snippetcommon\SnippetVehicleNoDriveCreate.cpp" />
-    <ClCompile Include="snippetcommon\SnippetVehicleSceneQuery.cpp" />
-    <ClCompile Include="snippetcommon\SnippetVehicleTankCreate.cpp" />
-    <ClCompile Include="snippetcommon\SnippetVehicleTireFriction.cpp" />
-    <ClCompile Include="TextureArrayMain.cpp" />
+    <ClCompile Include="ApplicationMain.cpp" />
+    <ClCompile Include="Dependencies\physx\snippetcommon\SnippetVehicle4WCreate.cpp" />
+    <ClCompile Include="Dependencies\physx\snippetcommon\SnippetVehicleCreate.cpp" />
+    <ClCompile Include="Dependencies\physx\snippetcommon\SnippetVehicleFilterShader.cpp" />
+    <ClCompile Include="Dependencies\physx\snippetcommon\SnippetVehicleNoDriveCreate.cpp" />
+    <ClCompile Include="Dependencies\physx\snippetcommon\SnippetVehicleSceneQuery.cpp" />
+    <ClCompile Include="Dependencies\physx\snippetcommon\SnippetVehicleTankCreate.cpp" />
+    <ClCompile Include="Dependencies\physx\snippetcommon\SnippetVehicleTireFriction.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Dependencies\assimp\bin\assimp-vc143-mtd.dll" />
@@ -351,14 +351,14 @@
     <ClInclude Include="API\ShaderCompiler.h" />
     <ClInclude Include="Dependencies\stb_image\stb_image_resize.h" />
     <ClInclude Include="Dependencies\stb_image\stb_image_write.h" />
-    <ClInclude Include="snippetcommon\SnippetPrint.h" />
-    <ClInclude Include="snippetcommon\SnippetPVD.h" />
-    <ClInclude Include="snippetcommon\SnippetVehicleConcurrency.h" />
-    <ClInclude Include="snippetcommon\SnippetVehicleCreate.h" />
-    <ClInclude Include="snippetcommon\SnippetVehicleFilterShader.h" />
-    <ClInclude Include="snippetcommon\SnippetVehicleSceneQuery.h" />
-    <ClInclude Include="snippetcommon\SnippetVehicleTireFriction.h" />
-    <ClInclude Include="snippetcommon\SnippetVehicleWheelQueryResult.h" />
+    <ClInclude Include="Dependencies\physx\snippetcommon\SnippetPrint.h" />
+    <ClInclude Include="Dependencies\physx\snippetcommon\SnippetPVD.h" />
+    <ClInclude Include="Dependencies\physx\snippetcommon\SnippetVehicleConcurrency.h" />
+    <ClInclude Include="Dependencies\physx\snippetcommon\SnippetVehicleCreate.h" />
+    <ClInclude Include="Dependencies\physx\snippetcommon\SnippetVehicleFilterShader.h" />
+    <ClInclude Include="Dependencies\physx\snippetcommon\SnippetVehicleSceneQuery.h" />
+    <ClInclude Include="Dependencies\physx\snippetcommon\SnippetVehicleTireFriction.h" />
+    <ClInclude Include="Dependencies\physx\snippetcommon\SnippetVehicleWheelQueryResult.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Images\Bricks\brickcolor.jpg" />
@@ -392,9 +392,6 @@
     <Image Include="Images\StoneTiles\tiles_color.jpg" />
     <Image Include="Images\StoneTiles\tiles_normal.jpg" />
     <Image Include="Images\StoneTiles\tiles_specular.jpg" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="what does a good graphics api  should have.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

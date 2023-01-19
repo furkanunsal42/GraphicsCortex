@@ -27,8 +27,8 @@ public:
 	std::enable_if_t<std::is_same<T, AmbiantLight_s>::value || std::is_same<T, DirectionalLight_s>::value || std::is_same<T, PointLight_s>::value || std::is_same<T, SpotLight_s>::value, void> 
 		add_light(T light)
 	{
-		_lights.push_back(light);
-		decltype(light)::count += 1;
+		_lights.push_back(light.obj);
+		std::remove_reference_t<decltype(*light.obj)>::count += 1;
 	}
 
 	
