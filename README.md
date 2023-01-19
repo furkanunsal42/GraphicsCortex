@@ -34,7 +34,7 @@ GraphicsCortex is a custom OpenGL based 3D graphics API to be used in the game e
 |   **assimp**  |3D Mesh Loading|
 | **stb_image** |Image Read/Write/Compression/Decompression|
 |   **physx**   |Physics Simulation|
-|   **redis**   |Inter-Language Data Structure Server|
+|   **redis**   |In-Memory Communication Between Other Languages|
 
 
 ### graphical api (work in progress): 
