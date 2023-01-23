@@ -27,7 +27,7 @@ public:
 	static Model generate_model(const std::string& filename, float scale = 1.0f, unsigned int vertex_property_bits = Model::ALL);
 
 	static Image read_image_cached(const std::string& filename, int desired_channels = 4, bool vertical_flip = true);
-	static Image read_model_cached(const std::string& filename);
+	static Model read_model_cached(const std::string& filename, float scale = 1.0f, unsigned int vertex_property_bits = 2047U);
 
 	static void clear_ram(const std::string& filename = "");
 	static void clear_ram_all();
