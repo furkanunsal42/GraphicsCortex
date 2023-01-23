@@ -1,4 +1,6 @@
 #include "AssetImporter.h"
+#include "DirectoryUtils.h"
+#include "BinaryBuffers.h"
 
 Assimp::Importer AssetImporter::_assimp_asset_loader;
 std::unordered_map<std::string, const aiScene*> AssetImporter::_imported_assets;
@@ -16,28 +18,6 @@ const aiScene* AssetImporter::readfile(const std::string& filename, unsigned int
 }
 
 namespace {
-
-	std::string compute_directory(const std::string& file_name) { // "C:\folder\folder\file" -> "C:\folder\folder\"
-		std::string dir = file_name;
-		for (int i = dir.size() - 1; i >= 0; i--) {
-			if (dir[i] != '/' && dir[i] != '\\')
-				dir.pop_back();
-			else
-				break;
-		}
-		return dir;
-	}
-
-	std::string compute_filename(const std::string& file_name) { // "C:\folder\folder\file" -> "file"
-		std::string name = "";
-		for (int i = file_name.size() - 1; i >= 0; i--) {
-			if (file_name[i] != '/' && file_name[i] != '\\')
-				name = file_name[i] + name;
-			else
-				break;
-		}
-		return name;
-	}
 
 	std::vector<char> compute_enabled_bits(unsigned int binary_bits, int bit_count) {
 		ASSERT(bit_count <= 32);
@@ -120,6 +100,43 @@ Model AssetImporter::generate_model(const std::string& filename, float scale, un
 	}
 
 	return Model(imported_scene, scale, vertex_property_bits);
+}
+
+Image AssetImporter::read_image_cached(const std::string& filename, int desired_channels, bool vertical_flip) {
+	std::string native_filename = compute_directory(filename) + compute_filename_typeless(filename) + ".gcimage";
+	if (check_file_exist(native_filename)) {
+		std::cout << "cached image file exists" << std::endl;
+		std::ifstream ifile(native_filename, std::ios::binary | std::ios::in);
+		int image_size;
+		int width, height, channels;
+		bool flip;
+		ifile >> image_size;
+		ifile >> width;
+		ifile >> height;
+		ifile >> channels;
+		ifile >> flip;
+		unsigned char* memory = (unsigned char*)malloc(image_size);
+		read_buffer_from_disc(native_filename, memory, image_size);
+		return Image((unsigned char*)memory, width, height, channels, flip);
+	}
+	else {
+		std::cout << "cached image doesn't exist, caching it" << std::endl;
+		Image image(filename, desired_channels, vertical_flip);
+		size_t size = image.get_size();
+		std::ofstream file(native_filename, std::ios::binary | std::ios::out);
+		file << (int)image.get_size() << ' ';
+		file << image.get_width() << ' ';
+		file << image.get_height() << ' ';
+		file << image.get_channels() << ' ';
+		file << image.get_vertical_flip() << ' ';
+		save_buffer_to_disc(native_filename, image.get_image_data(), size, true);
+		file.close();
+		return image;
+	}
+}
+
+Image AssetImporter::read_model_cached(const std::string& filename) {
+
 }
 
 void AssetImporter::clear_ram(const std::string& filename) {

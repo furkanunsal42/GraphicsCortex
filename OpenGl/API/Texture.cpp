@@ -592,19 +592,24 @@ UnorderedMaterial::~UnorderedMaterial() {
 UnorderedMaterial::UnorderedMaterial(const std::string& filename) :
 	UnorderedMaterial(std::move(AssetImporter::generate_material(filename))) { }
 
+namespace {
+	void read_image(std::string& filename, int desired_channels, Image*& output_image, unsigned int texture_width, unsigned int texture_height) {
+		std::ifstream file;
+		file.open(filename);
+		if (file) {
+			//output_image = new Image(filename, desired_channels);
+			Image&& image = AssetImporter::read_image_cached(filename, desired_channels);
+			output_image = &image;
+		}
+		else { // file doesn't exist
+			std::cout << "[ERROR] Image path not found : " << filename << std::endl;
+			//output_image = new Image("Images/missing_texture.png", desired_channels);
+			Image&& image = AssetImporter::read_image_cached("Images/missing_texture.png", desired_channels);
+			output_image = &image;
+		}
+		output_image->resize(texture_width, texture_height);
 
-void read_image(std::string& filename, int desired_channels, Image*& output_image, unsigned int texture_width, unsigned int texture_height) {
-	std::ifstream file;
-	file.open(filename);
-	if (file) {
-		output_image = new Image(filename, desired_channels);
 	}
-	else { // file doesn't exist
-		std::cout << "[ERROR] Image path not found : " << filename << std::endl;
-		output_image = new Image("Images/missing_texture.png", desired_channels);
-	}
-	output_image->resize(texture_width, texture_height);
-
 }
 
 void UnorderedMaterial::set_texture(const std::string& filename, int desired_channels, int index) {

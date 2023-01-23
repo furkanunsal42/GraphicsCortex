@@ -9,26 +9,27 @@ int main() {
 	scene.camera.screen_height = 1080;
 	scene.camera.max_distance = 1000;
 
+	Image image = AssetImporter::read_image_cached("Images/StoneTiles/tiles_color.jpg");
+
 	Program_s program(Program(Shader("Shaders/TextureArray.vert", "Shaders/TextureArray.frag")));
 	Program_s solid_program(default_program::solid_program());
 	
 	{
 		Mesh_s city(Mesh(Model("Models/City/edited_city2.obj", 4.0f)));
-
 		UnorderedMaterial_s city_mat(UnorderedMaterial("Models/City/edited_city2.obj"));
 		city_mat->texture_array.generate_mipmap = false;
 		city_mat->set_texture_size(1024, 1024);
 		Graphic_s map;
 		map->load_model(city);
 		map->load_material(city_mat);
-		map->load_program(program);
+		map->load_program(solid_program);
 		map->set_uniform_all(default_program::basic_uniform_queue(scene, map));
 		
 		map->set_position(glm::vec3(0, 0, 0));
 
 		scene.add_graphic(map);
 
-		DirectionalLight_s sunlight(DirectionalLight(glm::vec3(1.0f, 0.9f, 0.9f), glm::vec3(0.4, 0.4, 0.4), solid_program));
+		DirectionalLight_s sunlight(DirectionalLight(glm::vec3(1.0f, -0.9f, 0.9f), glm::vec3(0.4, 0.4, 0.4), solid_program));
 		sunlight->set_uniform_upadte_queue(default_program::directional_light_default_uniform_queue(*sunlight.obj, 0));
 		scene.add_light(sunlight);
 	

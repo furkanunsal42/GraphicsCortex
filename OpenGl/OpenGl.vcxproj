@@ -175,10 +175,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="API\AssetImporter.cpp" />
+    <ClCompile Include="API\BinaryBuffers.cpp" />
     <ClCompile Include="API\Camera.cpp" />
     <ClCompile Include="API\CubeMap.cpp" />
     <ClCompile Include="API\Default_Assets.cpp" />
     <ClCompile Include="API\Default_Programs.cpp" />
+    <ClCompile Include="API\DirectoryUtils.cpp" />
     <ClCompile Include="API\FrameBuffer.cpp" />
     <ClCompile Include="API\Image.cpp" />
     <ClCompile Include="API\Lights.cpp" />
@@ -204,7 +206,6 @@
     <ClCompile Include="API\ShaderCompiler.cpp" />
     <ClCompile Include="Dependencies\stb_image\stb_image_resize.cpp" />
     <ClCompile Include="Dependencies\stb_image\stb_image_write.cpp" />
-    <ClCompile Include="ApplicationMain.cpp" />
     <ClCompile Include="Dependencies\physx\snippetcommon\SnippetVehicle4WCreate.cpp" />
     <ClCompile Include="Dependencies\physx\snippetcommon\SnippetVehicleCreate.cpp" />
     <ClCompile Include="Dependencies\physx\snippetcommon\SnippetVehicleFilterShader.cpp" />
@@ -212,6 +213,7 @@
     <ClCompile Include="Dependencies\physx\snippetcommon\SnippetVehicleSceneQuery.cpp" />
     <ClCompile Include="Dependencies\physx\snippetcommon\SnippetVehicleTankCreate.cpp" />
     <ClCompile Include="Dependencies\physx\snippetcommon\SnippetVehicleTireFriction.cpp" />
+    <ClCompile Include="FileMain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Dependencies\assimp\bin\assimp-vc143-mtd.dll" />
@@ -238,12 +240,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="API\AssetImporter.h" />
+    <ClInclude Include="API\BinaryBuffers.h" />
     <ClInclude Include="API\Buffer.h" />
     <ClInclude Include="API\Camera.h" />
     <ClInclude Include="API\Config.h" />
     <ClInclude Include="API\CubeMap.h" />
     <ClInclude Include="API\Debuger.h" />
     <ClInclude Include="API\Default_Assets.h" />
+    <ClInclude Include="API\DirectoryUtils.h" />
     <ClInclude Include="API\FrameBuffer.h" />
     <ClInclude Include="API\GraphicsCortex.h" />
     <ClInclude Include="API\Default_Programs.h" />

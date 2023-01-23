@@ -27,6 +27,8 @@
 #include "ModelTextureTable.h"
 #include "AssetImporter.h"
 #include "SharedPtr.h"
+#include "DirectoryUtils.h"
+#include "BinaryBuffers.h"
 
 #include <PxPhysicsAPI.h>
 

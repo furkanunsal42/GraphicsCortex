@@ -19,28 +19,6 @@ Model::Model(const aiScene* scene, float scale, unsigned int vertex_property_bit
 }
 
 namespace {
-	std::string compute_directory(const std::string& file_name) { // "C:\folder\folder\file" -> "C:\folder\folder\"
-		std::string dir = file_name;
-		for (int i = dir.size() - 1; i >= 0; i--) {
-			if (dir[i] != '/' && dir[i] != '\\')
-				dir.pop_back();
-			else
-				break;
-		}
-		return dir;
-	}
-
-	std::string compute_filename(const std::string& file_name) { // "C:\folder\folder\file" -> "file"
-		std::string name = "";
-		for (int i = file_name.size() - 1; i >= 0; i--) {
-			if (file_name[i] != '/' && file_name[i] != '\\')
-				name = file_name[i] + name;
-			else
-				break;
-		}
-		return name;
-	}
-
 	std::vector<char> compute_enabled_bits(unsigned int binary_bits, int bit_count) {
 		ASSERT(bit_count <= 32);
 		std::vector<char> bits(32);
@@ -107,9 +85,9 @@ void Model::_load_model(const aiScene* scene, float scale, unsigned int vertex_p
 				image_names.push_back(image_name.C_Str());
 			}
 		}
-		_model_texture_table.set_diffuse_index(i, map_indicies[0]);
-		_model_texture_table.set_specular_index(i, map_indicies[1]);
-		_model_texture_table.set_normal_index(i, map_indicies[2]);
+		//_model_texture_table.set_diffuse_index(i, map_indicies[0]);
+		//_model_texture_table.set_specular_index(i, map_indicies[1]);
+		//_model_texture_table.set_normal_index(i, map_indicies[2]);
 
 
 		// -- Generating  Model -- 
@@ -194,6 +172,6 @@ void Model::_load_model(const aiScene* scene, float scale, unsigned int vertex_p
 void Model::clear_ram() {
 	vertex_data.clear();
 	index_data.clear();
-	_model_texture_table.clear();
+	//_model_texture_table.clear();
 	vertex_attribute_structure.clear();
 }

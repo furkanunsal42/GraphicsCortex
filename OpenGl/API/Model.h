@@ -146,7 +146,7 @@ public:
 	void clear_ram();
 
 	
-	ModelTextureTable _model_texture_table; // temp 
+	//ModelTextureTable _model_texture_table; // temp 
 
 
 	friend AssetImporter;

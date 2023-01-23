@@ -27,11 +27,11 @@ public:
 	void save_to_disc(const std::string& target_filename);
 
 	Image(unsigned char* image_data, int width, int height, int channels, bool vertical_flip);
+	unsigned char* _image_data = nullptr;
 private:
 
 	bool _vertical_flip = true;
 	int _width = NULL, _height = NULL, _channels = NULL;
-	unsigned char* _image_data = nullptr;
 	void _read_image(const std::string& file_path, int desired_channels = 4);
 	void _clear_ram();
 };

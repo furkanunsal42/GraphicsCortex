@@ -98,8 +98,6 @@ Image::Image(unsigned char* image_data, int width, int height, int channels, boo
 	if (channels == NULL) {
 		ASSERT(false);
 	}
-
-	image_data = nullptr;
 }
 
 

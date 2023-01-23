@@ -192,3 +192,11 @@ OpenGl/saved_image.png
 OpenGl/Release/RamCache.obj
 OpenGl/Release/TextureArrayMain.obj
 OpenGl/texture_array_save.png
+OpenGl/Release/ApplicationMain.obj
+OpenGl/Release/AssetImporter.obj
+OpenGl/Release/BinaryBuffers.obj
+OpenGl/Release/DirectoryUtils.obj
+OpenGl/Release/FileMain.obj
+OpenGl/Release/Mesh.obj
+OpenGl/Release/AssetImporter.obj
+OpenGl/Release/Mesh.obj
