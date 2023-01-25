@@ -156,7 +156,7 @@
       <PreprocessorDefinitions>GLEW_STATIC;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <AdditionalIncludeDirectories>$(SolutionDir)OpenGl\Dependencies\assimp\include;$(SolutionDir)OpenGl\Dependencies\stb_image;$(SolutionDir)OpenGl\Dependencies\GLEW\include;$(SolutionDir)OpenGl\Dependencies\glm;$(SolutionDir)OpenGl\Dependencies\GLFWx64\include;$(SolutionDir)OpenGl\Dependencies\physx\include;$(SolutionDir)OpenGl\Dependencies\physx\snippetutils;$(SolutionDir)OpenGl\Dependencies\physx\snippetcommon;$(SolutionDir)OpenGl\Dependencies\hiredis\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)OpenGl\API;$(SolutionDir)OpenGl\Dependencies\assimp\include;$(SolutionDir)OpenGl\Dependencies\stb_image;$(SolutionDir)OpenGl\Dependencies\GLEW\include;$(SolutionDir)OpenGl\Dependencies\glm;$(SolutionDir)OpenGl\Dependencies\GLFWx64\include;$(SolutionDir)OpenGl\Dependencies\physx\include;$(SolutionDir)OpenGl\Dependencies\physx\snippetutils;$(SolutionDir)OpenGl\Dependencies\physx\snippetcommon;$(SolutionDir)OpenGl\Dependencies\hiredis\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>Default</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
@@ -213,7 +213,7 @@
     <ClCompile Include="Dependencies\physx\snippetcommon\SnippetVehicleSceneQuery.cpp" />
     <ClCompile Include="Dependencies\physx\snippetcommon\SnippetVehicleTankCreate.cpp" />
     <ClCompile Include="Dependencies\physx\snippetcommon\SnippetVehicleTireFriction.cpp" />
-    <ClCompile Include="FileMain.cpp" />
+    <ClCompile Include="Examples\ApplicationMain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Dependencies\assimp\bin\assimp-vc143-mtd.dll" />

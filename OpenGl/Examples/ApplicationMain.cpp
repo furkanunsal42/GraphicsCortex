@@ -1,4 +1,4 @@
-#include "API/GraphicsCortex.h"
+#include "GraphicsCortex.h"
 
 
 int main() {
@@ -9,7 +9,7 @@ int main() {
 	scene.camera.screen_height = 1080;
 	scene.camera.max_distance = 1000;
 
-	Image image = AssetImporter::read_image_cached("Images/StoneTiles/tiles_color.jpg");
+	//Image image = AssetImporter::read_image_cached("Images/StoneTiles/tiles_color.jpg");
 
 	Program_s program(Program(Shader("Shaders/TextureArray.vert", "Shaders/TextureArray.frag")));
 	Program_s solid_program(default_program::solid_program());

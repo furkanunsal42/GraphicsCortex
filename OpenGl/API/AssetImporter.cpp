@@ -124,44 +124,44 @@ Image AssetImporter::read_image_cached(const std::string& filename, int desired_
 	}
 }
 
-Model AssetImporter::read_model_cached(const std::string& filename, float scale, unsigned int vertex_property_bits) {
-	std::string native_filename = compute_directory(filename) + compute_filename_typeless(filename) + ".gcmodel";
-	if (check_file_exist(native_filename)) {
-		std::cout << "cached model file exists" << std::endl;
-		std::ifstream ifile(native_filename, std::ios::binary | std::ios::in);
-		int image_size;
-		int width, height, channels;
-		bool flip;
-		ifile >> image_size;
-		ifile >> width;
-		ifile >> height;
-		ifile >> channels;
-		ifile >> flip;
-		unsigned char* memory = (unsigned char*)malloc(image_size);
-		read_buffer_from_disc(native_filename, memory, image_size);
-		return Image((unsigned char*)memory, width, height, channels, flip);
-	}
-	else {
-		std::cout << "cached model doesn't exist, caching it" << std::endl;
-		Model model(filename, scale, vertex_property_bits);		
-		std::ofstream file(native_filename, std::ios::binary | std::ios::out);
-		int vertex_data_size = model.vertex_data.size();
-		int index_data_size = model.index_data.size();
-		int attribute_structure_size = model.vertex_attribute_structure.size();
-		file << scale << ' ';
-		file << vertex_property_bits << ' ';
-		file << vertex_data_size << ' ';
-		file << index_data_size << ' ';
-		file << attribute_structure_size << ' ';
-		save_buffer_to_disc(native_filename, &(model.vertex_data[0]), vertex_data_size, true);
-		file << ' ';
-		save_buffer_to_disc(native_filename, &(model.index_data[0]), index_data_size, true);
-		file << ' ';
-		save_buffer_to_disc(native_filename, &(model.vertex_attribute_structure[0]), attribute_structure_size, true);
-		file.close();
-		return model;
-	}
-}
+//Model AssetImporter::read_model_cached(const std::string& filename, float scale, unsigned int vertex_property_bits) {
+//	std::string native_filename = compute_directory(filename) + compute_filename_typeless(filename) + ".gcmodel";
+//	if (check_file_exist(native_filename)) {
+//		std::cout << "cached model file exists" << std::endl;
+//		std::ifstream ifile(native_filename, std::ios::binary | std::ios::in);
+//		int image_size;
+//		int width, height, channels;
+//		bool flip;
+//		ifile >> image_size;
+//		ifile >> width;
+//		ifile >> height;
+//		ifile >> channels;
+//		ifile >> flip;
+//		unsigned char* memory = (unsigned char*)malloc(image_size);
+//		read_buffer_from_disc(native_filename, memory, image_size);
+//		return Image((unsigned char*)memory, width, height, channels, flip);
+//	}
+//	else {
+//		std::cout << "cached model doesn't exist, caching it" << std::endl;
+//		Model model(filename, scale, vertex_property_bits);		
+//		std::ofstream file(native_filename, std::ios::binary | std::ios::out);
+//		int vertex_data_size = model.vertex_data.size();
+//		int index_data_size = model.index_data.size();
+//		int attribute_structure_size = model.vertex_attribute_structure.size();
+//		file << scale << ' ';
+//		file << vertex_property_bits << ' ';
+//		file << vertex_data_size << ' ';
+//		file << index_data_size << ' ';
+//		file << attribute_structure_size << ' ';
+//		save_buffer_to_disc(native_filename, &(model.vertex_data[0]), vertex_data_size, true);
+//		file << ' ';
+//		save_buffer_to_disc(native_filename, &(model.index_data[0]), index_data_size, true);
+//		file << ' ';
+//		save_buffer_to_disc(native_filename, &(model.vertex_attribute_structure[0]), attribute_structure_size, true);
+//		file.close();
+//		return model;
+//	}
+//}
 
 void AssetImporter::clear_ram(const std::string& filename) {
 	

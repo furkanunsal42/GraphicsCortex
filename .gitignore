@@ -200,3 +200,5 @@ OpenGl/Release/FileMain.obj
 OpenGl/Release/Mesh.obj
 OpenGl/Release/AssetImporter.obj
 OpenGl/Release/Mesh.obj
+OpenGl/Release/stb_image_resize.obj
+OpenGl/Release/ModelTextureTable.obj

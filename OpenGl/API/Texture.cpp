@@ -584,7 +584,7 @@ UnorderedMaterial::UnorderedMaterial(int size) :
 		_texture_filenames.push_back("");
 	}
 } 
-
+s
 UnorderedMaterial::~UnorderedMaterial() {
 	texture_array.~TextureArray();
 }
@@ -597,15 +597,15 @@ namespace {
 		std::ifstream file;
 		file.open(filename);
 		if (file) {
-			//output_image = new Image(filename, desired_channels);
-			Image&& image = AssetImporter::read_image_cached(filename, desired_channels);
-			output_image = &image;
+			output_image = new Image(filename, desired_channels);
+			//Image&& image = AssetImporter::read_image_cached(filename, desired_channels);
+			//output_image = &image;
 		}
 		else { // file doesn't exist
 			std::cout << "[ERROR] Image path not found : " << filename << std::endl;
-			//output_image = new Image("Images/missing_texture.png", desired_channels);
-			Image&& image = AssetImporter::read_image_cached("Images/missing_texture.png", desired_channels);
-			output_image = &image;
+			output_image = new Image("Images/missing_texture.png", desired_channels);
+			//Image&& image = AssetImporter::read_image_cached("Images/missing_texture.png", desired_channels);
+			//output_image = &image;
 		}
 		output_image->resize(texture_width, texture_height);
 

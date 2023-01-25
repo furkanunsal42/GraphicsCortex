@@ -135,7 +135,7 @@
     <ClCompile Include="API\DirectoryUtils.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
-    <ClCompile Include="FileMain.cpp">
+    <ClCompile Include="Examples\ApplicationMain.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
   </ItemGroup>
