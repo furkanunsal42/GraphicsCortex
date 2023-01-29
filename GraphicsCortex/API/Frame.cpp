@@ -94,6 +94,11 @@ void Frame::clear_window(float red, float green, float blue, float alpha) {
 
 	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
 	GLCall(glClearColor(red, green, blue, alpha));
+	if (initialize_imgui) {
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
+	}
 }
 
 void Frame::display_performance(int batch_size) {

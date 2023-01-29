@@ -126,7 +126,6 @@ int main() {
 		scene.render();
 		cube_map.texture_slot = 11;
 
-
 		cube_map.draw();
 	}
 
