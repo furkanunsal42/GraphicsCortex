@@ -1,7 +1,14 @@
 #include "GL\glew.h"
+
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
+
 #include "Frame.h"
 #include "Debuger.h"
+
 #include <iostream>
+
 
 bool is_glew_initialized = false;
 bool is_glfw_initialized = false;
@@ -15,8 +22,8 @@ double old_time_accurate = 0;
 int fps_counter_index = 0;
 double seconds_total_batch = 0;
 
-Frame::Frame(int width, int height, const std::string& name, int msaa, int swapinterval, bool depth_test, bool blend, bool face_culling) :
-	window_width(width), window_height(height), window_name(name), multisample(msaa), swapinterval(swapinterval), depth_test(depth_test), blend(blend), face_culling(face_culling)
+Frame::Frame(int width, int height, const std::string& name, int msaa, int swapinterval, bool depth_test, bool blend, bool face_culling, bool initialize_gui) :
+	window_width(width), window_height(height), window_name(name), multisample(msaa), swapinterval(swapinterval), depth_test(depth_test), blend(blend), face_culling(face_culling), initialize_imgui(initialize_gui)
 {
 	multisample = msaa;
 
@@ -34,6 +41,10 @@ Frame::Frame(int width, int height, const std::string& name, int msaa, int swapi
 	window = glfwCreateWindow(width, height, name.c_str(), nullptr, nullptr);
 	glfwMakeContextCurrent(window);
 	glfwSwapInterval(swapinterval);
+	
+	glfwSetWindowSizeCallback(window, [](GLFWwindow* window, int width, int height) {
+		glViewport(0, 0, width, height);
+		});
 
 	if (!is_glew_initialized) {
 		glewInit();
@@ -61,6 +72,13 @@ Frame::Frame(int width, int height, const std::string& name, int msaa, int swapi
 		glEnable(GL_MULTISAMPLE);
 	else
 		glDisable(GL_MULTISAMPLE);
+
+	if (initialize_imgui) {
+		IMGUI_CHECKVERSION();
+		ImGui::CreateContext();
+		ImGui_ImplGlfw_InitForOpenGL(window, true);
+		ImGui_ImplOpenGL3_Init("#version 330");
+	}
 }
 
 Frame::~Frame() {

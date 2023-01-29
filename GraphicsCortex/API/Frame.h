@@ -17,10 +17,10 @@ public:
 	int window_height;
 	std::string window_name;
 	int swapinterval;
-	bool depth_test, blend, face_culling;
+	bool depth_test, blend, face_culling, initialize_imgui;
 	GLFWwindow* window;
 
-	Frame(int width, int height, const std::string& name = "GraphicsCortex", int msaa = 0, int swapinterval = 1, bool depth_test = true, bool blend = false, bool face_culling = true);
+	Frame(int width, int height, const std::string& name = "GraphicsCortex", int msaa = 0, int swapinterval = 1, bool depth_test = true, bool blend = false, bool face_culling = true, bool initialize_gui = true);
 	~Frame();
 
 	GLFWwindow* create_window(int width, int height, std::string name, int msaa = 0, int swapinterval = 1, bool depth_test = true, bool blend = false, bool face_culling = true);

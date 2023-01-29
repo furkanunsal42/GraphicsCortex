@@ -153,7 +153,10 @@
     <ClCompile Include="Dependencies\imgui\imgui_widgets.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
-    <ClCompile Include="Examples\imgui example.cpp">
+    <ClCompile Include="Application\GUI_SceneViewer.cpp">
+      <Filter>Kaynak Dosyalar</Filter>
+    </ClCompile>
+    <ClCompile Include="Mains\ApplicationMain.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
   </ItemGroup>
@@ -593,7 +596,10 @@
     <ClInclude Include="Dependencies\imgui\imstb_truetype.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Users\FurkanPC\AppData\Local\Temp\Rar$DRa26016.13764\imgui-1.89.2\backends\imgui_impl_opengl3_loader.h">
+    <ClInclude Include="Dependencies\imgui\imgui_impl_opengl3_loader.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Application\GUI_SceneViewer.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
   </ItemGroup>
