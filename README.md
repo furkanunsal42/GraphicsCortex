@@ -1,5 +1,5 @@
 # GraphicsCortex
-GraphicsCortex is a custom OpenGL based 3D graphics API to be used in the game engine and simulation applications. It aims to provide a platform to create high-performance physics simulations with realistic graphics. With tools to communicate between python scripts, it enables the training of neural networks in these environments. Since it is first created to train autonomous driving models, it has special tools to create vehicle simulations. Even though the primary purpose of this API is to create said simulations it is also suitable to be used in game engine development.
+GraphicsCortex is a custom OpenGL and Physx based 3D graphics API to be used in the game engine and physics simulation applications. It aims to provide a platform to create high-performance physics simulations with realistic graphics. With tools to communicate between python scripts, it enables the training of deep learning agents in these environments. Since it is first created to train autonomous driving models, it has special tools to create vehicle simulations. Training neural networks is a compute resource heavy proceess itself, so the simulation used for it must be cheap in gpu usage and video memory, also be very fast. GraphicsCortex is developed to use the least amount of resources for simulation and rendering while providing the most amount of control to the user.
 
 ## Some Example Renders of Current Progress
 ### Lighting
@@ -56,6 +56,7 @@ GraphicsCortex is a custom OpenGL based 3D graphics API to be used in the game e
 - animations
 - post processing
 - particle system
+- vehicles
   
 ### future plans for game engine:
 - gui based map design tools
