@@ -13,6 +13,7 @@
 #include "gtc\matrix_transform.hpp"
 #include "gtc\type_ptr.hpp"
 
+#include "CortexMath.h"
 #include "Debuger.h"
 #include "Frame.h"
 #include "Model.h"

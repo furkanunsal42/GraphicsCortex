@@ -256,3 +256,8 @@ GraphicsCortex/Release/imgui_tables.obj
 GraphicsCortex/Release/imgui_widgets.obj
 GraphicsCortex/Release/GUI_SceneViewer.obj
 .vs/GraphicsCortex/v17/fileList.bin
+GraphicsCortex/Release/MathExample.obj
+GraphicsCortex/Release/Matha.obj
+GraphicsCortex/Release/Math.obj
+GraphicsCortex/Release/Gui.obj
+GraphicsCortex/Release/CortexMath.obj
