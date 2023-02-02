@@ -39,16 +39,25 @@ Vec2<float> Layout::get_widget_position() {
 Ui::Ui(Frame& frame) :
 	frame(frame)
 {
+	window_size = Vec2<int>(frame.window_width, frame.window_height);
 	_update_matrix(frame.window_width, frame.window_height);
 	program = default_program::gui_program();
 }
 
 void Ui::new_frame(){
 	
+	if (window_size.x != frame.window_width || window_size.y != frame.window_height) {
+		window_size = Vec2<int>(frame.window_width, frame.window_height);
+		_update_matrix(frame.window_width, frame.window_height);
+	}
+
 	layouts.clear();
 
 	Frame::CursorState cursor_state = frame.get_mouse_state();
-	
+	if (!_hovered)
+		frame.set_cursor_type(Frame::Arrow);
+	_hovered = false;
+
 	if (_cursor_state == cursor_state)
 		_cursor_state_just_changed = false;
 
@@ -82,13 +91,17 @@ bool Ui::box(const std::string& id, const Vec2<float>& size, const Style& style)
 	}
 
 	bool active = _focused_id == id;
-
-	StaticStyle style_to_use = style;
-	if (hover)
-		style_to_use = style.on_hover;
-	if (active)
-		style_to_use = style.on_active;
-
+	StaticStyle style_to_use = (StaticStyle)style;
+	if (hover){
+		_hovered = true;
+		style_to_use = (StaticStyle)style.on_hover;
+		frame.set_cursor_type(style_to_use.cursor_type);
+	}
+	if (active){
+		style_to_use = (StaticStyle)style.on_active;
+		if (hover)
+			frame.set_cursor_type(style_to_use.cursor_type);
+	}
 
 	// render
 	Mesh box_mesh(box_aabb.generate_model());
@@ -98,9 +111,11 @@ bool Ui::box(const std::string& id, const Vec2<float>& size, const Style& style)
 
 	box_graphic.load_program(program_s);
 	box_graphic.load_model(box_mesh_s);
-	box_graphic.set_uniform("screen_position", screen_position.x, screen_position.y);
+	box_graphic.set_uniform("screen_position", screen_position.x, frame.window_height - screen_position.y);
 	box_graphic.set_uniform("projection", projection_matrix);
 	box_graphic.set_uniform("color", style_to_use.color.x, style_to_use.color.y, style_to_use.color.z, 1.0f);
+	box_graphic.set_uniform("rect_size", size.x, size.y);
+	box_graphic.set_uniform("corner_rounding", style_to_use.corner_rounding.x, style_to_use.corner_rounding.y, style_to_use.corner_rounding.z, style_to_use.corner_rounding.w);
 	box_graphic.update_matrix();
 	box_graphic.update_uniforms();
 	box_graphic.draw(false);
@@ -113,5 +128,5 @@ void Ui::end() {
 }
 
 void Ui::_update_matrix(int screen_width, int screen_height) {
-	projection_matrix = glm::ortho(0.0f, (float)screen_width, (float)screen_height, 0.0f);
+	projection_matrix = glm::ortho(0.0f, (float)screen_width, 0.0f, (float)screen_height);
 }

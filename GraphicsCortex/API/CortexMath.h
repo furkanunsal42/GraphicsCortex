@@ -113,7 +113,7 @@ public:
 	AABB2(const Vec2<float> position, const Vec2<float> size) :
 		position(position), size(size) {}
 
-	Vec2<float> position; // bottom-left corner (min x, min y)
+	Vec2<float> position; // top-left corner
 	Vec2<float> size;
 
 	template<typename T>
@@ -128,8 +128,8 @@ public:
 		std::vector<float> verticies{
 			0,			0,			0,
 			size.x,		0,			0,
-			size.x,		size.y,		0,
-			0,			size.y,		0,
+			size.x,		-size.y,	0,
+			0,			-size.y,	0,
 		};
 
 		std::vector<unsigned int> indicies{

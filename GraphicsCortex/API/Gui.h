@@ -44,7 +44,7 @@ public:
 	Vec4<float> margin;
 	float border_thickness;
 	Vec3<float> border_color;
-	Frame::CursorType cursor_type;
+	Frame::CursorType cursor_type = Frame::Arrow;
 
 	Time color_change;
 	Time displacement_change;
@@ -75,7 +75,6 @@ private:
 	std::function<Style(Time)> _on_passive;
 };
 
-
 class Ui {
 public:
 
@@ -92,9 +91,11 @@ private:
 	glm::mat4 projection_matrix;
 	Program program;
 	Frame& frame;
+	
+	Vec2<int> window_size;
 
 	void _update_matrix(int screen_width, int screen_height);
 	Frame::CursorState _cursor_state;
 	bool _cursor_state_just_changed = false;
-	
+	bool _hovered = false;
 };

@@ -42,8 +42,12 @@ Frame::Frame(int width, int height, const std::string& name, int msaa, int swapi
 	glfwMakeContextCurrent(window);
 	glfwSwapInterval(swapinterval);
 	
+	glfwSetWindowUserPointer(window, this);
 	glfwSetWindowSizeCallback(window, [](GLFWwindow* window, int width, int height) {
+		Frame& frame = *(Frame*)glfwGetWindowUserPointer(window);
 		glViewport(0, 0, width, height);
+		frame.window_width = width;
+		frame.window_height = height;
 		});
 
 	if (!is_glew_initialized) {
@@ -154,7 +158,7 @@ Vec2<int> Frame::get_cursor_position() {
 	return Vec2<int>((int)mouse_x, (int)mouse_y);
 }
 
-void Frame::set_cursor_type(uint32_t cursor_type) {
+void Frame::set_cursor_type(Frame::CursorType cursor_type) {
 	switch (cursor_type) {
 	case Frame::Arrow:
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
