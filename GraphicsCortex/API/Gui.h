@@ -33,27 +33,27 @@ namespace {
 
 class StaticStyle {
 public:
-	Vec3<float> color;
-	Vec2<float> displacement;
-	Vec2<float> rotation_euler;
-	Vec4<float> corner_rounding; // corner indicies follows traditional coordinate system partition // 1 | 0
+	std::optional<Vec3<float>> color;
+	std::optional<Vec2<float>> displacement;
+	std::optional<Vec2<float>> rotation_euler;
+	std::optional<Vec4<float>> corner_rounding; // corner indicies follows traditional coordinate system partition // 1 | 0
 																									// --|-- 
 																									// 2 | 3
 
-	Vec4<float> padding;
-	Vec4<float> margin;
-	float border_thickness;
-	Vec3<float> border_color;
-	Frame::CursorType cursor_type = Frame::Arrow;
+	std::optional<Vec4<float>> padding;
+	std::optional<Vec4<float>> margin;
+	std::optional<float> border_thickness;
+	std::optional<Vec3<float>> border_color;
+	std::optional<Frame::CursorType> cursor_type = Frame::Arrow;
 
-	Time color_change;
-	Time displacement_change;
-	Time rotation_change;
-	Time corner_rounding_change;
-	Time padding_change;
-	Time margin_change;
-	Time border_thickness_change;
-	Time border_color_change;
+	std::optional<Time> color_change;
+	std::optional<Time> displacement_change;
+	std::optional<Time> rotation_change;
+	std::optional<Time> corner_rounding_change;
+	std::optional<Time> padding_change;
+	std::optional<Time> margin_change;
+	std::optional<Time> border_thickness_change;
+	std::optional<Time> border_color_change;
 };
 
 class Style : public StaticStyle {
