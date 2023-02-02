@@ -26,6 +26,13 @@ ArrayBuffer::ArrayBuffer(std::vector<float> verticies)
 	initialize_buffer(verticies);
 }
 
+ArrayBuffer::~ArrayBuffer() {
+	if (!initialized)
+		return;
+	GLCall(glDeleteBuffers(1, &id));
+	initialized = false;
+}
+
 void ArrayBuffer::initialize_buffer(const std::vector<float>& verticies) {
 	data_count = verticies.size();
 	initialize_buffer((float*)&verticies[0], data_count);
@@ -35,6 +42,7 @@ void ArrayBuffer::initialize_buffer(float verticies[], int data_count) {
 	GLCall(glGenBuffers(1, &id));
 	GLCall(glBindBuffer(GL_ARRAY_BUFFER, id));
 	GLCall(glBufferData(GL_ARRAY_BUFFER, data_count * sizeof(float), verticies, GL_STATIC_DRAW));
+	initialized = true;
 }
 
 void ArrayBuffer::push_attribute(unsigned int count) {
@@ -80,6 +88,13 @@ IndexBuffer::IndexBuffer(std::vector<unsigned int> verticies, int vertex_dim)
 	initialize_buffer(verticies, vertex_dim);
 }
 
+IndexBuffer::~IndexBuffer() {
+	if (!initialized)
+		return;
+	GLCall(glDeleteBuffers(1, &id));
+	initialized = false;
+}
+
 void IndexBuffer::initialize_buffer(const std::vector<unsigned int>& verticies, int vertex_dim) {
 	data_count = verticies.size();
 	initialize_buffer((unsigned int*)&verticies[0], vertex_dim, data_count);
@@ -89,6 +104,7 @@ void IndexBuffer::initialize_buffer(const unsigned int verticies[], int vertex_d
 	GLCall(glGenBuffers(1, &id));
 	GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id));
 	GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, data_count * sizeof(unsigned int), verticies, GL_STATIC_DRAW));
+	initialized = true;
 }
 
 void IndexBuffer::bind() {

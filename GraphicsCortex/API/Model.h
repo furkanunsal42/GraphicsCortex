@@ -29,6 +29,8 @@ public:
 	Model(const std::string& file_path, float scale = 1.0f, unsigned int vertex_property_bits = ALL);
 	Model(const aiScene* scene, float scale = 1.0f, unsigned int vertex_property_bits = ALL);
 
+	Model(std::vector<float> verticies, std::vector<unsigned int> indicies, std::vector<unsigned int> vertex_attribute_structure = {3});
+
 	Model(Model&& other) = default;
 	Model& operator=(Model&& other) = default;
 

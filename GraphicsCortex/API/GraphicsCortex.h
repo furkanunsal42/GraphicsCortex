@@ -34,6 +34,7 @@
 #include "SharedPtr.h"
 #include "DirectoryUtils.h"
 #include "BinaryBuffers.h"
+#include "Gui.h"
 
 #include <PxPhysicsAPI.h>
 

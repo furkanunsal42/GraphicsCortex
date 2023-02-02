@@ -147,3 +147,53 @@ double Frame::handle_window() {
 	}
 	return get_interval_ms();
 }
+
+Vec2<int> Frame::get_cursor_position() {
+	double mouse_x, mouse_y;
+	glfwGetCursorPos(window, &mouse_x, &mouse_y);
+	return Vec2<int>((int)mouse_x, (int)mouse_y);
+}
+
+void Frame::set_cursor_type(uint32_t cursor_type) {
+	switch (cursor_type) {
+	case Frame::Arrow:
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+		glfwSetCursor(window, glfwCreateStandardCursor(GLFW_ARROW_CURSOR));
+		break;
+	case Frame::IBeam:
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+		glfwSetCursor(window, glfwCreateStandardCursor(GLFW_IBEAM_CURSOR));
+		break;
+	case Frame::Crosshair:
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+		glfwSetCursor(window, glfwCreateStandardCursor(GLFW_CROSSHAIR_CURSOR));
+		break;
+	case Frame::Hand:
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+		glfwSetCursor(window, glfwCreateStandardCursor(GLFW_HAND_CURSOR));
+		break;
+	case Frame::HResize:
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+		glfwSetCursor(window, glfwCreateStandardCursor(GLFW_HRESIZE_CURSOR));
+		break;
+	case Frame::VResize:
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+		glfwSetCursor(window, glfwCreateStandardCursor(GLFW_VRESIZE_CURSOR));
+		break;
+	case Frame::Disabled:
+		glfwSetCursor(window, glfwCreateStandardCursor(GLFW_ARROW_CURSOR));
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		break;
+	}
+}
+
+Frame::CursorState Frame::get_mouse_state() {
+	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+		return Frame::LeftPressed;
+	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE)
+		return Frame::LeftReleased;
+	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
+		return Frame::RightPressed;
+	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_RELEASE)
+		return Frame::RightReleased;
+}

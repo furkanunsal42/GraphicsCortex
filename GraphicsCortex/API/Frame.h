@@ -3,6 +3,7 @@
 
 #include <string>
 #include <GLFW\glfw3.h>
+#include "CortexMath.h"
 
 extern bool is_glew_initialized;
 extern bool is_glfw_initialized;
@@ -29,5 +30,27 @@ public:
 	double get_interval_ms();
 	bool is_running();
 	double handle_window();
+	
+	enum CursorType {
+		Arrow = 0,
+		IBeam,
+		Crosshair,
+		Hand,
+		HResize,
+		VResize,
+		Disabled,
+	};
+	
+	enum CursorState {
+		LeftPressed,
+		LeftReleased,
+		RightPressed,
+		RightReleased,
+	};
+
+	Vec2<int> get_cursor_position();
+	void set_cursor_type(uint32_t cursor_type = Frame::CursorType::Arrow);
+	CursorState get_mouse_state();
+
 private:
 };

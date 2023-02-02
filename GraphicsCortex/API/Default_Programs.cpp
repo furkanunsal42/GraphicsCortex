@@ -55,7 +55,7 @@ namespace default_program {
 		queue.add_uniform_update(uniform_update<float>("color", 0.8f, 0.7f, 0.6f, 1.0f));
 		return queue;
 	}
-
+	
 	uniform_update_queue basic_uniform_queue(Scene& scene, Graphic_s graphic) {
 		uniform_update_queue queue;
 		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("model", &graphic->model_matrix));
@@ -131,6 +131,11 @@ namespace default_program {
 	}
 	Program cubemap_program() {
 		Shader default_shader("Shaders/CubeMap.vert", "Shaders/CubeMap.frag");
+		Program cubemap(default_shader.vertex_shader, default_shader.fragment_shader);
+		return cubemap;
+	}
+	Program gui_program() {
+		Shader default_shader("Shaders/Gui.vert", "Shaders/Gui.frag");
 		Program cubemap(default_shader.vertex_shader, default_shader.fragment_shader);
 		return cubemap;
 	}

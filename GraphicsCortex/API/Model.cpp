@@ -18,6 +18,10 @@ Model::Model(const aiScene* scene, float scale, unsigned int vertex_property_bit
 	_load_model(scene, scale, vertex_property_bits);
 }
 
+Model::Model(std::vector<float> verticies, std::vector<unsigned int> indicies, std::vector<unsigned int> vertex_attribute_structure) : 
+	vertex_data(verticies), index_data(indicies), vertex_attribute_structure(vertex_attribute_structure) {}
+
+
 namespace {
 	std::vector<char> compute_enabled_bits(unsigned int binary_bits, int bit_count) {
 		ASSERT(bit_count <= 32);

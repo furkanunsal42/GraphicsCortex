@@ -162,6 +162,9 @@
     <ClCompile Include="API\CortexMath.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
+    <ClCompile Include="Mains\GuiMain.cpp">
+      <Filter>Kaynak Dosyalar</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\Solid.vert" />
@@ -201,6 +204,8 @@
     <None Include="Dependencies\assimp\bin\assimp-vc143-mtd.dll" />
     <None Include="Shaders\TextureArray.frag" />
     <None Include="Shaders\TextureArray.vert" />
+    <None Include="Shaders\Gui.vert" />
+    <None Include="Shaders\Gui.frag" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="API\Debuger.h">

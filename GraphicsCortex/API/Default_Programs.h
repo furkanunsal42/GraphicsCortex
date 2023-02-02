@@ -10,6 +10,7 @@
 namespace default_program {
 	uniform_update_queue solid_default_uniform_queue(Scene& scene, Graphic_s graphic);
 	uniform_update_queue flat_default_uniform_queue(Scene& scene, Graphic_s graphic);
+	// uniform_update_queue gui_default_uniform_queue();
 	uniform_update_queue basic_uniform_queue(Scene& scene, Graphic_s graphic);
 	uniform_update_queue cubemap_default_uniform_queue(CubeMapTexture& cubemap);
 
@@ -22,4 +23,5 @@ namespace default_program {
 	Program flatcolor_program();
 	Program framebuffer_program();
 	Program cubemap_program();
+	Program gui_program();
 }
