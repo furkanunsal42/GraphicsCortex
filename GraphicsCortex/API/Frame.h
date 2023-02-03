@@ -51,6 +51,7 @@ public:
 	Vec2<int> get_cursor_position();
 	void set_cursor_type(Frame::CursorType cursor_type = Frame::CursorType::Arrow);
 	CursorState get_mouse_state();
+	double get_time_sec();
 
 private:
 	void _window_resize_callback(GLFWwindow* window, int width, int height);

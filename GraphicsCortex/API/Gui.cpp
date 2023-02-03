@@ -28,6 +28,11 @@ Vec2<float> Layout::get_widget_position() {
 	}
 }
 
+Vec2<float> Layout::get_position() {
+	return position;
+}
+
+
 //StaticStyle& Style::get_hover(){
 //	return _on_hover;
 //}
@@ -36,13 +41,15 @@ Vec2<float> Layout::get_widget_position() {
 //	return _on_active;
 //}
 
-template<typename T>
-T optional_get(std::vector<std::optional<T>> fallback_list, T null_value = T()) {
-	for (std::optional<T>& property: fallback_list) {
-		if (property)
-			return property.value();
+namespace {
+	template<typename T>
+	T optional_get(std::vector<std::optional<T>> fallback_list, T null_value = T()) {
+		for (std::optional<T>& property: fallback_list) {
+			if (property)
+				return property.value();
+		}
+		return null_value;
 	}
-	return null_value;
 }
 
 Ui::Ui(Frame& frame) :
@@ -55,12 +62,19 @@ Ui::Ui(Frame& frame) :
 
 void Ui::new_frame(){
 	
+	// update time
+	Time now = frame.get_time_sec() * 1000;
+	frame_time = now - last_update_ms;
+	last_update_ms = now;
+	
+	// update projection matrix on window resize
 	if (window_size.x != frame.window_width || window_size.y != frame.window_height) {
 		window_size = Vec2<int>(frame.window_width, frame.window_height);
 		_update_matrix(frame.window_width, frame.window_height);
 	}
-
+	
 	layouts.clear();
+	_render_calls.clear();
 
 	Frame::CursorState cursor_state = frame.get_mouse_state();
 	if (!_hovered)
@@ -74,7 +88,7 @@ void Ui::new_frame(){
 		_cursor_state_just_changed = true;
 	
 	_cursor_state = cursor_state;
-
+	
 }
 
 void Ui::begin(Layout::LayoutType type){
@@ -164,32 +178,78 @@ bool Ui::box(const std::string& id, const Vec2<float>& size, const Style& style)
 	Vec2<float> padded_size = size - Vec2<float>(padding.y + padding.w, padding.x + padding.z);
 
 	// render
+	_render_calls.push_back([=]() {
+		if (hover) frame.set_cursor_type(cursor_type);
 
-	if (hover) frame.set_cursor_type(cursor_type);
+		Mesh box_mesh(aabb_to_use.generate_model());
+		Mesh_s box_mesh_s = Mesh_s(box_mesh);
+		Program_s program_s = Program_s(program);
+		Graphic box_graphic;
 
-	Mesh box_mesh(aabb_to_use.generate_model());
+		box_graphic.load_program(program_s);
+		box_graphic.load_model(box_mesh_s);
+		box_graphic.set_uniform("screen_position", screen_position.x, frame.window_height - screen_position.y);
+		box_graphic.set_uniform("projection", projection_matrix);
+		box_graphic.set_uniform("rect_color", color.x, color.y, color.z, 1.0f);
+		box_graphic.set_uniform("rect_size", padded_size.x, padded_size.y);
+		box_graphic.set_uniform("corner_rounding", corner_rounding.x, corner_rounding.y, corner_rounding.z, corner_rounding.w);
+		box_graphic.set_uniform("border_color", border_color.x, border_color.y, border_color.z, 1.0f);
+		box_graphic.set_uniform("border_thickness", border_thickness.x, border_thickness.y, border_thickness.z, border_thickness.w);
+
+
+		box_graphic.update_matrix();
+		box_graphic.update_uniforms();
+		box_graphic.draw(false);
+		});
+
+}
+
+void Ui::end(const Style& style) {
+	Vec2<float> size = layouts.back().window_size;
+	Vec2<float> position = layouts.back().get_position();
+	// render
+	
+	Vec3<float> color =				optional_get<Vec3<float>>({			style.color				});
+	Vec2<float> displacement =		optional_get<Vec2<float>>({			style.displacement		});
+	Vec2<float> rotation_euler =	optional_get<Vec2<float>>({			style.rotation_euler	});
+	Vec4<float> corner_rounding =	optional_get<Vec4<float>>({			style.corner_rounding	});
+	Vec4<float> padding =			optional_get<Vec4<float>>({			style.padding			});
+	Vec4<float> margin =			optional_get<Vec4<float>>({			style.margin			});
+	Vec4<float> border_thickness =	optional_get<Vec4<float>>({			style.border_thickness	});
+	Vec3<float> border_color =		optional_get<Vec3<float>>({			style.border_color		});
+	Frame::CursorType cursor_type = optional_get<Frame::CursorType>({	style.cursor_type		});
+
+	position = position + Vec2<float>(margin.y + padding.y, margin.x + padding.x);
+	size = Vec2<float>(size.x - padding.y - padding.w, size.y - padding.x - padding.z);
+
+	AABB2 aabb(position, size);
+	Mesh box_mesh(aabb.generate_model());
 	Mesh_s box_mesh_s = Mesh_s(box_mesh);
 	Program_s program_s = Program_s(program);
 	Graphic box_graphic;
 
+	Vec2<float> padded_size = size - Vec2<float>(padding.y + padding.w, padding.x + padding.z);
+
 	box_graphic.load_program(program_s);
 	box_graphic.load_model(box_mesh_s);
-	box_graphic.set_uniform("screen_position", screen_position.x, frame.window_height - screen_position.y);
+	box_graphic.set_uniform("screen_position", position.x, frame.window_height - position.y);
 	box_graphic.set_uniform("projection", projection_matrix);
 	box_graphic.set_uniform("rect_color", color.x, color.y, color.z, 1.0f);
-	box_graphic.set_uniform("rect_size", padded_size.x, padded_size.y);
+	box_graphic.set_uniform("rect_size", size.x, size.y);
 	box_graphic.set_uniform("corner_rounding", corner_rounding.x, corner_rounding.y, corner_rounding.z, corner_rounding.w);
 	box_graphic.set_uniform("border_color", border_color.x, border_color.y, border_color.z, 1.0f);
 	box_graphic.set_uniform("border_thickness", border_thickness.x, border_thickness.y, border_thickness.z, border_thickness.w);
-	
+
 
 	box_graphic.update_matrix();
 	box_graphic.update_uniforms();
 	box_graphic.draw(false);
-}
+	
+	for (std::function<void()>& call : _render_calls)
+		call();
 
-void Ui::end() {
-	Vec2<float> size = layouts.back().window_size;
+
+	// update layouts
 	layouts.pop_back();
 	layouts.back().add_widget(size);
 }

@@ -146,7 +146,7 @@ public:
 			return false;
 		return true;
 	}
-	Model generate_model() {
+	Model generate_model() const {
 		std::vector<float> verticies{
 			0,			0,			0,
 			size.x,		0,			0,

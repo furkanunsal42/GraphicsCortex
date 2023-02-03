@@ -135,6 +135,10 @@ double Frame::get_interval_ms() {
 	return ms_current;
 }
 
+double Frame::get_time_sec() {
+	return glfwGetTime();
+}
+
 bool Frame::is_running() {
 	return !glfwWindowShouldClose(window);
 }

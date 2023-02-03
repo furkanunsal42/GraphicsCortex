@@ -25,10 +25,11 @@ public:
 
 	void add_widget(const Vec2<float>& size);
 	Vec2<float> get_widget_position();
+	Vec2<float> get_position();
 };
 
 namespace {
-	typedef std::chrono::milliseconds Time;
+	typedef double Time;
 }
 
 class StaticStyle {
@@ -81,17 +82,22 @@ public:
 	void new_frame();
 	void begin(Layout::LayoutType type = Layout::Horizional);
 	bool box(const std::string& id, const Vec2<float>& size, const Style& style);
-	void end();
+	void end(const Style& style);
 
 private:
 	
+	Time last_update_ms;
+	Time frame_time;
+	
+	//std::unordered_map<std::string, Time> animation_state;
+	std::vector<std::function<void()>> _render_calls;
 	std::string _focused_id;
 	std::string _hovered_id;
 	std::vector<Layout> layouts;
 	glm::mat4 projection_matrix;
 	Program program;
 	Frame& frame;
-	
+
 	Vec2<int> window_size;
 
 	void _update_matrix(int screen_width, int screen_height);
