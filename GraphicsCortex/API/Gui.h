@@ -36,9 +36,9 @@ public:
 	std::optional<Vec3<float>> color;
 	std::optional<Vec2<float>> displacement;
 	std::optional<Vec2<float>> rotation_euler;
-	std::optional<Vec4<float>> corner_rounding; // corner indicies follows traditional coordinate system partition // 1 | 0
-																									// --|-- 
-																									// 2 | 3
+	std::optional<Vec4<float>> corner_rounding; // corner indicies follows traditional coordinate system partition	// 1 | 0
+																													// --|-- 
+																													// 2 | 3
 
 	std::optional<Vec4<float>> padding;
 	std::optional<Vec4<float>> margin;
@@ -77,7 +77,6 @@ private:
 
 class Ui {
 public:
-
 	Ui(Frame& frame);
 	void new_frame();
 	void begin(Layout::LayoutType type = Layout::Horizional);
@@ -87,6 +86,7 @@ public:
 private:
 	
 	std::string _focused_id;
+	std::string _hovered_id;
 	std::vector<Layout> layouts;
 	glm::mat4 projection_matrix;
 	Program program;

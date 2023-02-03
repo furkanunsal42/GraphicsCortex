@@ -40,8 +40,9 @@ void edit_cornders(vec2 position, vec2 rectangle_size, vec4 rounding_amount, boo
 			if (discard_frag)
 				discard;
 			else{
-				if(dist - (rounding_amount.x + rounding_displacement.x) > (rounding_amount.x + rounding_displacement.x) / 2)
+				if(dist - (rounding_amount.x + rounding_displacement.x) > (-rounding_displacement.x) / 2){
 					frag_color = vec4(color.xyz, 1 - smoothstep(edge_smoothing * (-rounding_displacement.x), 1 * (-rounding_displacement.x), dist - (rounding_amount.x + rounding_displacement.x)));
+				}
 				else{
 					float mix_amount = 1 - smoothstep(0 * (-rounding_displacement.x), (inner_edge_smoothing) * (-rounding_displacement.x), dist - (rounding_amount.x + rounding_displacement.x));
 					frag_color = vec4(mix(border_color.xyz, rect_color.xyz, mix_amount), 1);
@@ -58,7 +59,7 @@ void edit_cornders(vec2 position, vec2 rectangle_size, vec4 rounding_amount, boo
 			if (discard_frag)
 				discard;
 			else{
-				if(dist - (rounding_amount.y + rounding_displacement.y) > (rounding_amount.y + rounding_displacement.y) / 2)
+				if(dist - (rounding_amount.y + rounding_displacement.y) > (-rounding_displacement.y) / 2)
 					frag_color = vec4(color.xyz, 1 - smoothstep(edge_smoothing * (-rounding_displacement.y), 1 * (-rounding_displacement.y), dist - (rounding_amount.y + rounding_displacement.y)));
 				else{
 					float mix_amount = 1 - smoothstep(0 * (-rounding_displacement.y), (inner_edge_smoothing) * (-rounding_displacement.y), dist - (rounding_amount.y + rounding_displacement.y));
@@ -76,7 +77,7 @@ void edit_cornders(vec2 position, vec2 rectangle_size, vec4 rounding_amount, boo
 			if (discard_frag)
 				discard;
 			else{
-				if(dist - (rounding_amount.z + rounding_displacement.z) > (rounding_amount.z + rounding_displacement.z) / 2)
+				if(dist - (rounding_amount.z + rounding_displacement.z) > (-rounding_displacement.z) / 2)
 					frag_color = vec4(color.xyz, 1 - smoothstep(edge_smoothing * (-rounding_displacement.z), 1 * (-rounding_displacement.z), dist - (rounding_amount.z + rounding_displacement.z)));
 				else{
 					float mix_amount = 1 - smoothstep(0 * (-rounding_displacement.z), (inner_edge_smoothing) * (-rounding_displacement.z), dist - (rounding_amount.z + rounding_displacement.z));
@@ -94,7 +95,7 @@ void edit_cornders(vec2 position, vec2 rectangle_size, vec4 rounding_amount, boo
 			if (discard_frag)
 				discard;
 			else{
-				if(dist - (rounding_amount.w + rounding_displacement.w) > (rounding_amount.w + rounding_displacement.w) / 2)
+				if(dist - (rounding_amount.w + rounding_displacement.w) > (-rounding_displacement.w) / 2)
 					frag_color = vec4(color.xyz, 1 - smoothstep(edge_smoothing * (-rounding_displacement.w), 1 * (-rounding_displacement.w), dist - (rounding_amount.w + rounding_displacement.w)));
 				else{
 					float mix_amount = 1 - smoothstep(0 * (-rounding_displacement.w), (inner_edge_smoothing) * (-rounding_displacement.w), dist - (rounding_amount.w + rounding_displacement.w));
