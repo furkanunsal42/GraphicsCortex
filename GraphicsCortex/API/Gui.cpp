@@ -124,6 +124,17 @@ bool Ui::box(const std::string& id, const Vec2<float>& size, const Style& style)
 		style_to_use.corner_rounding.value_or(style.corner_rounding.value_or(Vec4<float>(0, 0, 0, 0))).y,
 		style_to_use.corner_rounding.value_or(style.corner_rounding.value_or(Vec4<float>(0, 0, 0, 0))).z,
 		style_to_use.corner_rounding.value_or(style.corner_rounding.value_or(Vec4<float>(0, 0, 0, 0))).w);
+	box_graphic.set_uniform("border_color",
+		style_to_use.border_color.value_or(style.border_color.value_or(Vec3<float>(0, 0, 0))).x,
+		style_to_use.border_color.value_or(style.border_color.value_or(Vec3<float>(0, 0, 0))).y,
+		style_to_use.border_color.value_or(style.border_color.value_or(Vec3<float>(0, 0, 0))).z,
+		1.0f);
+	box_graphic.set_uniform("border_thickness",
+		style_to_use.border_thickness.value_or(style.border_thickness.value_or(Vec4<float>(0, 0, 0, 0))).x,
+		style_to_use.border_thickness.value_or(style.border_thickness.value_or(Vec4<float>(0, 0, 0, 0))).y,
+		style_to_use.border_thickness.value_or(style.border_thickness.value_or(Vec4<float>(0, 0, 0, 0))).z,
+		style_to_use.border_thickness.value_or(style.border_thickness.value_or(Vec4<float>(0, 0, 0, 0))).w);
+	
 
 	box_graphic.update_matrix();
 	box_graphic.update_uniforms();

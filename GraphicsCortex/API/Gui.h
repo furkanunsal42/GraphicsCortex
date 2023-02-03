@@ -42,7 +42,7 @@ public:
 
 	std::optional<Vec4<float>> padding;
 	std::optional<Vec4<float>> margin;
-	std::optional<float> border_thickness;
+	std::optional<Vec4<float>> border_thickness;
 	std::optional<Vec3<float>> border_color;
 	std::optional<Frame::CursorType> cursor_type = Frame::Arrow;
 
