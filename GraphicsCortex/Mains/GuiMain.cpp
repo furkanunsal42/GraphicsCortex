@@ -23,7 +23,7 @@ int main() {
 		scene.render();
 		
 		ui.begin(Layout::Horizional);
-		ui.box("box1", Vec2<float>(200, 200	), toggle);
+		ui.box("box1", Vec2<float>(200, 200), toggle);
 		ui.end();
 	}
 }

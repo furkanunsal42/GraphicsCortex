@@ -114,7 +114,7 @@ bool Ui::box(const std::string& id, const Vec2<float>& size, const Style& style)
 	box_graphic.load_model(box_mesh_s);
 	box_graphic.set_uniform("screen_position", screen_position.x, frame.window_height - screen_position.y);
 	box_graphic.set_uniform("projection", projection_matrix);
-	box_graphic.set_uniform("color", 
+	box_graphic.set_uniform("rect_color", 
 		style_to_use.color.value_or(style.color.value_or(Vec3<float>(0, 0, 0))).x,
 		style_to_use.color.value_or(style.color.value_or(Vec3<float>(0, 0, 0))).y,
 		style_to_use.color.value_or(style.color.value_or(Vec3<float>(0, 0, 0))).z, 1.0f);
