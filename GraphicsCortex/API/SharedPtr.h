@@ -14,11 +14,11 @@ public:
 	SharedPtr(std::shared_ptr<T> other_obj) :
 		obj(other_obj) {}
 
-	explicit SharedPtr(T& other) :
+	explicit SharedPtr(const T& other) :
 		obj(std::make_shared<T>(other)) {}
 
-	explicit SharedPtr(T&& other) :
-		obj(std::make_shared<T>(other)) {}
+	//explicit SharedPtr(T&& other) :
+	//	obj(std::make_shared<T>(other)) {}
 
 	T* operator->() const { return obj.get();  }
 
