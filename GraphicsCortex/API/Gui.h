@@ -15,6 +15,7 @@ public:
 
 	Vec2<float> window_size;
 	Vec2<float> position;
+	Vec2<float> _raw_position;
 
 	enum LayoutType {
 		Horizional,
@@ -26,6 +27,11 @@ public:
 	void add_widget(const Vec2<float>& size);
 	Vec2<float> get_widget_position();
 	Vec2<float> get_position();
+	Vec2<float> get_raw_position();
+	void clear();
+	void update_position_by_style(const Vec4<float>& margin, const Vec4<float>& padding);
+
+
 };
 
 namespace {
@@ -76,6 +82,16 @@ private:
 	std::function<Style(Time)> _on_passive;
 };
 
+struct WidgetInfo {
+	std::string id;
+	bool was_hovered;
+	bool was_active;
+	Time hover_begin;
+	Time hover_end;
+	Time active_begin;
+	Time active_end;
+};
+
 class Ui {
 public:
 	Ui(Frame& frame);
@@ -90,7 +106,8 @@ private:
 	Time frame_time;
 	
 	//std::unordered_map<std::string, Time> animation_state;
-	std::vector<std::function<void()>> _render_calls;
+	std::vector<std::function<void(bool& hover_out, AABB2& aabb_out, StaticStyle& style_to_use_out)>> _position_calculation_calls;
+	std::vector<std::function<void(bool hover, AABB2 aabb, StaticStyle style_to_use)>> _render_calls;
 	std::string _focused_id;
 	std::string _hovered_id;
 	std::vector<Layout> layouts;
@@ -99,6 +116,8 @@ private:
 	Frame& frame;
 
 	Vec2<int> window_size;
+
+	std::unordered_map<std::string, WidgetInfo> widget_info_table;
 
 	void _update_matrix(int screen_width, int screen_height);
 	Frame::CursorState _cursor_state;
