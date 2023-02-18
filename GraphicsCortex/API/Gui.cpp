@@ -57,12 +57,102 @@ void Layout::update_position_by_style(const Vec4<float>& margin, const Vec4<floa
 namespace {
 	template<typename T>
 	T optional_get(std::vector<std::optional<T>> fallback_list, T null_value = T()) {
-		for (std::optional<T>& property: fallback_list) {
-			if (property)
-				return property.value();
+		for (std::optional<T>& _property: fallback_list) {
+			if (_property)
+				return _property.value();
 		}
 		return null_value;
 	}
+
+	template<typename T>
+	T optional_get(std::optional<T> optional, T null_value = T()) {
+		if (optional)
+			return optional.value();
+		return null_value;
+	}
+
+	template<typename T>
+	T linear_interpolation(T default_value, T target_value, Time max_time, Time current_time) {
+		return default_value + (target_value - default_value) / (max_time) * (std::min(current_time, max_time));
+	}
+
+	StaticStyle interpolate_styles(Style style, WidgetInfo& widget_info) {
+		StaticStyle style_to_use;
+		Time animation_time;
+		if (widget_info.was_active){
+			style_to_use = style.on_active;
+			animation_time = widget_info.active_duration;
+		}
+		else if (widget_info.was_hovered){
+			style_to_use = style.on_hover;
+			animation_time = widget_info.hover_duration;
+		}
+		else if (widget_info.active_duration > 0) {
+			style_to_use = style.on_active;
+			animation_time = widget_info.active_duration;
+		}
+		else if (widget_info.hover_duration > 0) {
+			style_to_use = style.on_hover;
+			animation_time = widget_info.hover_duration;
+		}
+
+		// insert object to layout
+		Vec3<float> color =				optional_get<Vec3<float>>({			style_to_use.color,				style.color });
+		Vec2<float> displacement =		optional_get<Vec2<float>>({			style_to_use.displacement,		style.displacement });
+		Vec2<float> rotation_euler =	optional_get<Vec2<float>>({			style_to_use.rotation_euler,	style.rotation_euler });
+		Vec4<float> corner_rounding =	optional_get<Vec4<float>>({			style_to_use.corner_rounding,	style.corner_rounding });
+		Vec4<float> padding =			optional_get<Vec4<float>>({			style_to_use.padding,			style.padding });
+		Vec4<float> margin =			optional_get<Vec4<float>>({			style_to_use.margin,			style.margin });
+		Vec4<float> border_thickness =	optional_get<Vec4<float>>({			style_to_use.border_thickness,	style.border_thickness });
+		Vec3<float> border_color =		optional_get<Vec3<float>>({			style_to_use.border_color,		style.border_color });
+		Frame::CursorType cursor_type =	optional_get<Frame::CursorType>({	style_to_use.cursor_type,		style.cursor_type });
+		
+		Vec3<float> color_default =				optional_get<Vec3<float>>({			style.color });
+		Vec2<float> displacement_default =		optional_get<Vec2<float>>({			style.displacement });
+		Vec2<float> rotation_euler_default =	optional_get<Vec2<float>>({			style.rotation_euler });
+		Vec4<float> corner_rounding_default =	optional_get<Vec4<float>>({			style.corner_rounding });
+		Vec4<float> padding_default =			optional_get<Vec4<float>>({			style.padding });
+		Vec4<float> margin_default =			optional_get<Vec4<float>>({			style.margin });
+		Vec4<float> border_thickness_default =	optional_get<Vec4<float>>({			style.border_thickness });
+		Vec3<float> border_color_default =		optional_get<Vec3<float>>({			style.border_color });
+		Frame::CursorType cursor_type_default = optional_get<Frame::CursorType>({	style.cursor_type });
+
+		Time color_change =				style.color_change.value_or(0.0);
+		Time displacement_change =		style.displacement_change.value_or(0.0);
+		Time rotation_change =			style.rotation_change.value_or(0.0);
+		Time corner_rounding_change =	style.corner_rounding_change.value_or(0.0);
+		Time padding_change =			style.padding_change.value_or(0.0);
+		Time margin_change =			style.margin_change.value_or(0.0);
+		Time border_thickness_change =	style.border_thickness_change.value_or(0.0);
+		Time border_color_change =		style.border_color_change.value_or(0.0);
+
+		Time max_animation_duration = std::max({ color_change, displacement_change, rotation_change, corner_rounding_change, padding_change, margin_change, border_thickness_change, border_color_change });
+		widget_info.hover_duration = std::min(widget_info.hover_duration, max_animation_duration);
+		widget_info.active_duration = std::min(widget_info.active_duration, max_animation_duration);
+
+		StaticStyle result;
+		
+		if (color_change > 0)				result.color =				linear_interpolation(color_default,				color,				color_change,				animation_time);
+		else								result.color =				color; 
+		if (displacement_change > 0)		result.displacement =		linear_interpolation(displacement_default,		displacement,		displacement_change,		animation_time);
+		else								result.displacement =		displacement; 
+		if (rotation_change > 0)			result.rotation_euler =		linear_interpolation(rotation_euler_default,	rotation_euler,		rotation_change,			animation_time);
+		else								result.rotation_euler =		rotation_euler; 
+		if (corner_rounding_change > 0)		result.corner_rounding =	linear_interpolation(corner_rounding_default,	corner_rounding,	corner_rounding_change,		animation_time);
+		else								result.corner_rounding =	corner_rounding; 
+		if (padding_change > 0)				result.padding =			linear_interpolation(padding_default,			padding,			padding_change,				animation_time);
+		else								result.padding =			padding; 
+		if (margin_change > 0)				result.margin =				linear_interpolation(margin_default,			margin,				margin_change,				animation_time);
+		else								result.margin =				margin; 	
+		if (border_thickness_change > 0)	result.border_thickness =	linear_interpolation(border_thickness_default,	border_thickness,	border_thickness_change,	animation_time);
+		else								result.border_thickness =	border_thickness; 
+		if (border_color_change > 0)		result.border_color =		linear_interpolation(border_color_default,		border_color,		border_color_change,		animation_time);
+		else								result.border_color =		border_color;
+		result.cursor_type = cursor_type;
+
+		return result;
+	}
+
 }
 
 Ui::Ui(Frame& frame) :
@@ -120,11 +210,14 @@ bool Ui::box(const std::string& id, const Vec2<float>& size, const Style& style)
 		Vec2<float> screen_position = layouts.back().get_widget_position();
 		Vec2<float> screen_position_hover = screen_position;
 
-		Vec4<float> _style_margin = optional_get<Vec4<float>>({ style.margin });
-		Vec4<float> _style_padding = optional_get<Vec4<float>>({ style.padding });
+		WidgetInfo& old_info = widget_info_table[id];
+		StaticStyle interpolated_style = interpolate_styles(style, old_info);
 
-		Vec4<float> _style_margin_hover = optional_get<Vec4<float>>({ style.on_hover.margin , style.margin });
-		Vec4<float> _style_padding_hover = optional_get<Vec4<float>>({ style.on_hover.padding, style.padding });
+		Vec4<float> _style_margin = optional_get<Vec4<float>>({ interpolated_style.margin });
+		Vec4<float> _style_padding = optional_get<Vec4<float>>({ interpolated_style.padding });
+
+		Vec4<float> _style_margin_hover = optional_get<Vec4<float>>({ interpolated_style.margin });
+		Vec4<float> _style_padding_hover = optional_get<Vec4<float>>({ interpolated_style.padding });
 
 		screen_position = screen_position + Vec2<float>(_style_margin.y + _style_padding.y, _style_margin.x + _style_padding.x);
 		screen_position_hover = screen_position_hover + Vec2<float>(_style_margin_hover.y + _style_padding_hover.y, _style_margin_hover.x + _style_padding_hover.x);
@@ -175,42 +268,58 @@ bool Ui::box(const std::string& id, const Vec2<float>& size, const Style& style)
 
 		// determine style_to_use
 		bool active = _focused_id == id;
-		StaticStyle style_to_use = (StaticStyle)style;
-		if (active) style_to_use = (StaticStyle)style.on_active;
-		else if (hover) style_to_use = (StaticStyle)style.on_hover;
+
+		
 
 		// insert object to layout
-		Vec3<float> color =				optional_get<Vec3<float>>({			style_to_use.color,				style.color });
-		Vec2<float> displacement =		optional_get<Vec2<float>>({			style_to_use.displacement,		style.displacement });
-		Vec2<float> rotation_euler =	optional_get<Vec2<float>>({			style_to_use.rotation_euler,	style.rotation_euler });
-		Vec4<float> corner_rounding =	optional_get<Vec4<float>>({			style_to_use.corner_rounding,	style.corner_rounding });
-		Vec4<float> padding =			optional_get<Vec4<float>>({			style_to_use.padding,			style.padding });
-		Vec4<float> margin =			optional_get<Vec4<float>>({			style_to_use.margin,			style.margin });
-		Vec4<float> border_thickness =	optional_get<Vec4<float>>({			style_to_use.border_thickness,	style.border_thickness });
-		Vec3<float> border_color =		optional_get<Vec3<float>>({			style_to_use.border_color,		style.border_color });
-		Frame::CursorType cursor_type =	optional_get<Frame::CursorType>({	style_to_use.cursor_type,		style.cursor_type });
+
+		Vec3<float> color =				optional_get<Vec3<float>>(interpolated_style.color);
+		Vec2<float> displacement =		optional_get<Vec2<float>>(interpolated_style.displacement);
+		Vec2<float> rotation_euler =	optional_get<Vec2<float>>(interpolated_style.rotation_euler);
+		Vec4<float> corner_rounding =	optional_get<Vec4<float>>(interpolated_style.corner_rounding);
+		Vec4<float> padding =			optional_get<Vec4<float>>(interpolated_style.padding);
+		Vec4<float> margin =			optional_get<Vec4<float>>(interpolated_style.margin);
+		Vec4<float> border_thickness =	optional_get<Vec4<float>>(interpolated_style.border_thickness);
+		Vec3<float> border_color =		optional_get<Vec3<float>>(interpolated_style.border_color);
+		Frame::CursorType cursor_type =	optional_get<Frame::CursorType>(interpolated_style.cursor_type);
 
 		layouts.back().add_widget(Vec2<float>(size.x + margin.y + margin.w, size.y + margin.x + margin.z));
 
+		// update widget_info 
+		Time now = frame.get_time_sec();
+		if (old_info.last_update == -1) old_info.last_update = now;
+		
+		Time deltatime = now - old_info.last_update;
+
+		if (hover)		old_info.hover_duration += deltatime;
+		if (!hover)		old_info.hover_duration -= deltatime;
+		if (active)		old_info.active_duration += deltatime;
+		if (!active)	old_info.active_duration -= deltatime;
+
+		old_info.hover_duration = std::max(old_info.hover_duration, 0.0);
+		old_info.active_duration = std::max(old_info.active_duration, 0.0);
+		
+		old_info.last_update = now;
+
 		hover_out = hover;
 		aabb_out = aabb_to_use;
-		style_to_use_out = style_to_use;
+		style_to_use_out = interpolated_style;
 		});
 	
-
-
 	// render
 	_render_calls.push_back([&](bool hover, AABB2 aabb, StaticStyle style_to_use) {
 		
-		Vec3<float> color =				optional_get<Vec3<float>>({			style_to_use.color,				style.color });
-		Vec2<float> displacement =		optional_get<Vec2<float>>({			style_to_use.displacement,		style.displacement });
-		Vec2<float> rotation_euler =	optional_get<Vec2<float>>({			style_to_use.rotation_euler,	style.rotation_euler });
-		Vec4<float> corner_rounding =	optional_get<Vec4<float>>({			style_to_use.corner_rounding,	style.corner_rounding });
-		Vec4<float> padding =			optional_get<Vec4<float>>({			style_to_use.padding,			style.padding });
-		Vec4<float> margin =			optional_get<Vec4<float>>({			style_to_use.margin,			style.margin });
-		Vec4<float> border_thickness =	optional_get<Vec4<float>>({			style_to_use.border_thickness,	style.border_thickness });
-		Vec3<float> border_color =		optional_get<Vec3<float>>({			style_to_use.border_color,		style.border_color });
-		Frame::CursorType cursor_type =	optional_get<Frame::CursorType>({	style_to_use.cursor_type,		style.cursor_type });
+		//Vec3<float> color =				optional_get<Vec3<float>>({			style_to_use.color,				style.color });
+		WidgetInfo& widget_info = widget_info_table[id];
+		Vec3<float> color =				optional_get<Vec3<float>>(style_to_use.color);
+		Vec2<float> displacement =		optional_get<Vec2<float>>(style_to_use.displacement);
+		Vec2<float> rotation_euler =	optional_get<Vec2<float>>(style_to_use.rotation_euler);
+		Vec4<float> corner_rounding =	optional_get<Vec4<float>>(style_to_use.corner_rounding);
+		Vec4<float> padding =			optional_get<Vec4<float>>(style_to_use.padding);
+		Vec4<float> margin =			optional_get<Vec4<float>>(style_to_use.margin);
+		Vec4<float> border_thickness =	optional_get<Vec4<float>>(style_to_use.border_thickness);
+		Vec3<float> border_color =		optional_get<Vec3<float>>(style_to_use.border_color);
+		Frame::CursorType cursor_type =	optional_get<Frame::CursorType>(style_to_use.cursor_type);
 		Vec2<float> padded_size = size - Vec2<float>(padding.y + padding.w, padding.x + padding.z);
 		
 		if (hover) frame.set_cursor_type(cursor_type);
@@ -328,5 +437,6 @@ void Ui::end(const Style& style) {
 }
 
 void Ui::_update_matrix(int screen_width, int screen_height) {
+	
 	projection_matrix = glm::ortho(0.0f, (float)screen_width, 0.0f, (float)screen_height);
 }

@@ -52,7 +52,11 @@ public:
 	std::optional<Vec4<float>> border_thickness;
 	std::optional<Vec3<float>> border_color;
 	std::optional<Frame::CursorType> cursor_type = Frame::Arrow;
+};
 
+class Style : public StaticStyle {
+public:
+	
 	std::optional<Time> color_change;
 	std::optional<Time> displacement_change;
 	std::optional<Time> rotation_change;
@@ -61,10 +65,6 @@ public:
 	std::optional<Time> margin_change;
 	std::optional<Time> border_thickness_change;
 	std::optional<Time> border_color_change;
-};
-
-class Style : public StaticStyle {
-public:
 
 	StaticStyle on_hover;
 	StaticStyle on_active;
@@ -83,13 +83,15 @@ private:
 };
 
 struct WidgetInfo {
-	std::string id;
+public:
+	WidgetInfo(bool was_hovered = false, bool was_active = false, Time hover_duration = 0, Time active_duration = 0, Time last_update = -1) : 
+		was_hovered(was_hovered), was_active(was_active), hover_duration(hover_duration), active_duration(active_duration), last_update(last_update) {}
+
 	bool was_hovered;
 	bool was_active;
-	Time hover_begin;
-	Time hover_end;
-	Time active_begin;
-	Time active_end;
+	Time hover_duration;
+	Time active_duration;
+	Time last_update;
 };
 
 class Ui {
