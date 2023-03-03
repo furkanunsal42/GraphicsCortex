@@ -32,6 +32,8 @@
 #include "ModelTextureTable.h"
 #include "AssetImporter.h"
 #include "SharedPtr.h"
+#include "SharedPtr_RecurringClasses_Part1.h"
+#include "SharedPtr_RecurringClasses_Part2.h"
 #include "DirectoryUtils.h"
 #include "BinaryBuffers.h"
 #include "Gui.h"

@@ -1,0 +1,13 @@
+GraphicsCortex 2023 Roadmap
+
+- better api for shared pointers
+- gui
+- map editor
+- shadows
+- physx bounding box computations
+- better physx
+- better vehicle creation
+- physically based rendering materials
+- compute shaders
+- fluid simulations
+- particle system

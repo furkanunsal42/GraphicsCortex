@@ -1,6 +1,5 @@
 #include "GraphicsCortex.h"
 
-
 int main() {
 
 	Frame frame(1920, 1080, "GraphicsCortex", 8, 0, true, false, true);
@@ -9,12 +8,12 @@ int main() {
 	scene.camera.screen_height = 1080;
 	scene.camera.max_distance = 1000;
 
-	Program_s program(Program(Shader("Shaders/TextureArray.vert", "Shaders/TextureArray.frag")));
+	Program_s program(Shader("Shaders/TextureArray.vert", "Shaders/TextureArray.frag"));
 	Program_s solid_program(default_program::solid_program());
 	
 	{
-		Mesh_s city(Mesh(Model("Models/City/edited_city2.obj", 4.0f)));
-		UnorderedMaterial_s city_mat(UnorderedMaterial("Models/City/edited_city2.obj"));
+		Mesh_s city(Model("Models/City/edited_city2.obj", 4.0f));
+		UnorderedMaterial_s city_mat("Models/City/edited_city2.obj");
 		city_mat->texture_array.generate_mipmap = false;
 		city_mat->set_texture_size(1024, 1024);
 		Graphic_s map;
@@ -27,26 +26,24 @@ int main() {
 
 		scene.add_graphic(map);
 
-		DirectionalLight_s sunlight(DirectionalLight(glm::vec3(1.0f, -0.9f, 0.9f), glm::vec3(0.4, 0.4, 0.4), solid_program));
+		DirectionalLight_s sunlight(glm::vec3(1.0f, -0.9f, 0.9f), glm::vec3(0.4, 0.4, 0.4), solid_program);
 		sunlight->set_uniform_upadte_queue(default_program::directional_light_default_uniform_queue(*sunlight.obj, 0));
 		scene.add_light(sunlight);
-	
 
-		AmbiantLight_s ambinace(AmbiantLight(glm::vec3(0.1f, 0.1f, 0.1f), solid_program));
+		AmbiantLight_s ambinace(glm::vec3(0.1f, 0.1f, 0.1f), solid_program);
 		ambinace->set_uniform_upadte_queue(default_program::ambiant_light_default_uniform_queue(*ambinace.obj, 0));
 		scene.add_light(ambinace);
 	}
-
-	Vehicle v;
-	Vehicle_s  vehicle(v);
+	
+	Vehicle_s  vehicle;
 	{
 		Model chassis_model("Models/porsche_chassis.obj");
 		Model chassis_left_wheel_model("Models/porsche_wheel_left.obj");
 		Model chassis_right_wheel_model("Models/porsche_wheel_right.obj");
 
-		Mesh_s chassis((Mesh(chassis_model)));
-		Mesh_s left_wheel((Mesh(chassis_left_wheel_model)));
-		Mesh_s right_wheel((Mesh(chassis_right_wheel_model)));
+		Mesh_s chassis(chassis_model);
+		Mesh_s left_wheel(chassis_left_wheel_model);
+		Mesh_s right_wheel(chassis_right_wheel_model);
 
 		Material_s tire_material_s;
 		tire_material_s->set_color_texture("Images/cartextures/911_22_930_tire_BaseColor.png", 4);
@@ -114,7 +111,6 @@ int main() {
 		camera_position += camera_rotation * glm::vec3(0.0f, 0.0f, 0.0f);
 		scene.camera.set_rotation(camera_rotation);
 		scene.camera.set_position(camera_position);
-
 
 		//vehicle->set_position(vehicle->chassis->get_position() + glm::vec3(0, 0, -0.1f));
 

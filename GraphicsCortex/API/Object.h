@@ -2,6 +2,7 @@
 
 #include "Graphic.h"
 #include "PhysicsVehicle.h"
+#include "SharedPtr_RecurringClasses_Part1.h"
 
 class Scene;
 

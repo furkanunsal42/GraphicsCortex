@@ -7,7 +7,7 @@ int main() {
 
 	Style toggle;
 	toggle.color = Vec3<float>(0.6f, 0.2f, 0.2f);
-	toggle.corner_rounding = Vec4<float>(50, 50, 50, 50);
+	toggle.corner_rounding = Vec4<float>(30, 30, 30, 30);
 	toggle.margin = Vec4<float>(10, 10, 10, 10);
 	toggle.padding = Vec4<float>(120, 0, 0, 0);
 	toggle.on_hover.cursor_type = Frame::Hand;

@@ -4,12 +4,13 @@
 #include <memory>
 #include <type_traits>
 
+#include "Texture.h"
+#include "Mesh.h"
+#include "ShaderCompiler.h"
+
 template<typename T>
 class SharedPtr{
 public:
-
-	SharedPtr() : 
-		obj(std::make_shared<T>()) {}
 
 	SharedPtr(std::shared_ptr<T> other_obj) :
 		obj(other_obj) {}
@@ -25,37 +26,88 @@ public:
 	std::shared_ptr<T> obj;
 };
 
-class UnorderedMaterial;
-class Material;
-class Mesh;
-class Program;
-class Light;
-class AmbiantLight;
-class DirectionalLight;
-class PointLight;
-class SpotLight;
-class Graphic;
-class Object;
-class Vehicle;
-class PhysicsObject;
-class PhysicsVehicle;
-class PxRigidActor;		// physx
+#define _SHARED_POINTER_DEFINITIONS(type)				\
+	type##_s(std::shared_ptr<type> other_obj) :			\
+		obj(other_obj) {}								\
+														\
+	explicit type##_s(type& other) :					\
+		obj(std::make_shared<type>(other)) {}			\
+														\
+	explicit type##_s(type&& other) :					\
+		obj(std::make_shared<type>(other)) {}			\
+														\
+	type* operator->() const { return obj.get(); }		\
+														\
+	std::shared_ptr<type> obj;			
 
-typedef SharedPtr<UnorderedMaterial> UnorderedMaterial_s;
-typedef SharedPtr<Material> Material_s;
-typedef SharedPtr<Mesh> Mesh_s;
-typedef SharedPtr<Program> Program_s;
-typedef SharedPtr<Light> Light_s;
-typedef SharedPtr<AmbiantLight> AmbiantLight_s;
-typedef SharedPtr<DirectionalLight> DirectionalLight_s;
-typedef SharedPtr<PointLight> PointLight_s;
-typedef SharedPtr<SpotLight> SpotLight_s;
-typedef SharedPtr<Graphic> Graphic_s;
-typedef SharedPtr<Object> Object_s;
-typedef SharedPtr<Vehicle> Vehicle_s;
-typedef SharedPtr<PhysicsObject> PhysicsObject_s;
-typedef SharedPtr<PhysicsVehicle> PhysicsVehicle_s;
+
+class PxRigidActor;		// physx		// implemented
+
+class ArrayBuffer;	// not implemented as shared_pointers yet
+class IndexBuffer;	// not implemented as shared_pointers yet
+
 typedef SharedPtr<PxRigidActor> PxRigidActor_s;		// physx
 
-class ArrayBuffer;
-class IndexBuffer;
+
+class UnorderedMaterial_s {
+public:
+
+	_SHARED_POINTER_DEFINITIONS(UnorderedMaterial)
+
+	UnorderedMaterial_s() :
+		obj(std::make_shared<UnorderedMaterial>()) {}
+
+	UnorderedMaterial_s(int size) :
+		obj(std::make_shared<UnorderedMaterial>(size)) {}
+
+	UnorderedMaterial_s(const std::string& filename) :
+		obj(std::make_shared<UnorderedMaterial>(filename)) {}
+
+};
+
+class Material_s {
+public:
+
+	_SHARED_POINTER_DEFINITIONS(Material)
+
+	Material_s() :
+		obj(std::make_shared<Material>()) {}
+
+};
+
+class Mesh_s {
+public:
+
+	_SHARED_POINTER_DEFINITIONS(Mesh)
+
+	Mesh_s() :
+		obj(std::make_shared<Mesh>()) {}
+
+	Mesh_s(ArrayBuffer& array_buffer, IndexBuffer& index_buffer) :
+		obj(std::make_shared<Mesh>(array_buffer, index_buffer)) {}
+
+	Mesh_s(ArrayBuffer&& array_buffer, IndexBuffer&& index_buffer) :
+		obj(std::make_shared<Mesh>(array_buffer, index_buffer)) {}
+	
+	explicit Mesh_s(const Model& model) :
+		obj(std::make_shared<Mesh>(model)) {}
+
+};
+
+class Program_s {
+public:
+
+	_SHARED_POINTER_DEFINITIONS(Program)
+
+	Program_s() :
+		obj(std::make_shared<Program>()) {}
+
+	Program_s(const std::string& vertex_shader_code, const std::string& fragment_shader_code) :
+		obj(std::make_shared<Program>(vertex_shader_code, fragment_shader_code)) {}
+
+	Program_s(const std::string& vertex_shader_code, const std::string& geometry_shader_code, const std::string& fragment_shader_code) :
+		obj(std::make_shared<Program>(vertex_shader_code, geometry_shader_code, fragment_shader_code)) {}
+
+	explicit Program_s(const Shader& shader) :
+		obj(std::make_shared<Program>(shader)) {}
+};

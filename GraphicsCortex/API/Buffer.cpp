@@ -29,7 +29,7 @@ ArrayBuffer::ArrayBuffer(std::vector<float> verticies)
 ArrayBuffer::~ArrayBuffer() {
 	if (!initialized)
 		return;
-	GLCall(glDeleteBuffers(1, &id));
+	//GLCall(glDeleteBuffers(1, &id));
 	initialized = false;
 }
 
@@ -91,7 +91,7 @@ IndexBuffer::IndexBuffer(std::vector<unsigned int> verticies, int vertex_dim)
 IndexBuffer::~IndexBuffer() {
 	if (!initialized)
 		return;
-	GLCall(glDeleteBuffers(1, &id));
+	//GLCall(glDeleteBuffers(1, &id));
 	initialized = false;
 }
 
