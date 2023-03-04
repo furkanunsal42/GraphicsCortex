@@ -8,13 +8,14 @@
 #include "FrameBuffer.h"
 #include "Object.h"
 #include "Frame.h"
-#include "SharedPtr_RecurringClasses_Part1.h"
-#include "SharedPtr_RecurringClasses_Part2.h"
 
 #include "PhysicsScene.h"
 
 #include <vector>
 #include <type_traits>
+
+#include "SharedPtr_Lights.h"
+#include "SharedPtr_Object.h"
 
 class Scene {
 public:

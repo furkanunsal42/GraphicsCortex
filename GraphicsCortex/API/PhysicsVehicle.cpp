@@ -10,6 +10,9 @@
 PhysicsVehicle::PhysicsVehicle(InitValues init_type, int num_wheels) :
 	numWheels(num_wheels), vehicle_actor(nullptr), is_vehicle_in_air(true), chassis_mesh(nullptr), wheel_mesh(nullptr), differential_type(physx::PxVehicleDifferential4WData::eDIFF_TYPE_LS_4WD)
 {
+
+	std::cout << "vehicle constructor runned" << std::endl;
+
 	PhysxContext::get();
 
 	wheelsSimData = physx::PxVehicleWheelsSimData::allocate(num_wheels);

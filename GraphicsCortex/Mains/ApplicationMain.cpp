@@ -35,7 +35,9 @@ int main() {
 		scene.add_light(ambinace);
 	}
 	
-	Vehicle_s  vehicle;
+	Vehicle vehicle_raw;
+	Vehicle_s vehicle(vehicle_raw);
+	
 	{
 		Model chassis_model("Models/porsche_chassis.obj");
 		Model chassis_left_wheel_model("Models/porsche_wheel_left.obj");

@@ -18,7 +18,10 @@
 
 #include "PhysicsObject.h"
 #include "Mesh.h"
-#include "SharedPtr.h"
+
+#include "SharedPtr_Mesh.h"
+#include "SharedPtr_Materials.h"
+#include "SharedPtr_Program.h"
 
 class Graphic {
 private:

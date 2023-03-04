@@ -32,11 +32,11 @@ Graphic::Graphic(const std::vector<float>& verticies, int data_dim = 2)
 		std::cout << data << " ";
 
 	// data dim is no longer passed in constructer
-	ArrayBuffer array_buffer(verticies/*, data dim*/);
-	IndexBuffer index_buffer(triangles, 3);
+	ArrayBuffer_s array_buffer(verticies/*, data dim*/);
+	IndexBuffer_s index_buffer(triangles, 3);
 
-	this->mesh->array_buffer = array_buffer;
-	this->mesh->index_buffer = index_buffer;
+	this->mesh->array_buffer = array_buffer.obj;
+	this->mesh->index_buffer = index_buffer.obj;
 }
 
 Graphic::Graphic(Material_s material, Program_s renderer):
@@ -72,7 +72,7 @@ void Graphic::draw(bool show_warnings) {
 	}
 
 	if (_is_mesh_loaded) {
-		GLCall(glDrawElements(mode, mesh->index_buffer.data_count, GL_UNSIGNED_INT, nullptr));
+		GLCall(glDrawElements(mode, mesh->index_buffer->data_count, GL_UNSIGNED_INT, nullptr));
 	}
 }
 

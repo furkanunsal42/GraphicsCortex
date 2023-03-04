@@ -1,4 +1,7 @@
 #include "Default_Assets.h"
+#include "SharedPtr_Mesh.h"
+#include "SharedPtr_Materials.h"
+#include "SharedPtr_Program.h"
 
 namespace default_geometry {
 
@@ -125,10 +128,10 @@ namespace default_geometry {
 			 0.5f * scale.x,  -0.5f * scale.y, -0.5f * scale.z,	1.0f, 0.0f,		0.0f, -1.0f, 0.0f,
 		};
 
-		ArrayBuffer array_buffer(custom_verticies);
-		array_buffer.push_attribute(3);
-		array_buffer.push_attribute(2);
-		array_buffer.push_attribute(3);
+		ArrayBuffer_s array_buffer(custom_verticies);
+		array_buffer->push_attribute(3);
+		array_buffer->push_attribute(2);
+		array_buffer->push_attribute(3);
 
 		std::vector<unsigned int> triangles{
 			0, 1, 2, 0, 2, 3,
@@ -139,10 +142,10 @@ namespace default_geometry {
 			20, 21, 22, 20, 22, 23,
 
 		};
-		IndexBuffer index_buffer(triangles, 3);
+		IndexBuffer_s index_buffer(triangles, 3);
 
 		Graphic g;
-		g.load_model(Mesh_s(Mesh(array_buffer, index_buffer)));
+		g.load_model(Mesh_s(array_buffer, index_buffer));
 		return g;
 	}
 
