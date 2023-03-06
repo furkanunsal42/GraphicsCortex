@@ -68,13 +68,27 @@ public:
 
 	StaticStyle on_hover;
 	StaticStyle on_active;
+
+private:
+	std::optional<Time> _current_color_time;
+	std::optional<Time> _current_displacement_time;
+	std::optional<Time> _current_rotation_time;
+	std::optional<Time> _current_corner_rounding_time;
+	std::optional<Time> _current_padding_time;
+	std::optional<Time> _current_margin_time;
+	std::optional<Time> _current_border_thickness_time;
+	std::optional<Time> _current_border_color_time;
 };
 
-class FunctionalStyle : Style {
+class FunctionalStyle : StaticStyle {
 
 	void on_hover(std::function<Style(Time)> hover_function);
 	void on_active(std::function<Style(Time)> active_function);
 	void on_passive(std::function<Style(Time)> passive_function);
+
+	void clear_hover();
+	void clear_active();
+	void clear_passive();
 
 private:
 	std::function<Style(Time)> _on_hover;

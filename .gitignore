@@ -66,8 +66,6 @@ OpenGl/Debug/graphic.obj.enc
 *.db-wal
 *.opendb
 *.idb
-OpenGl/OpenGl.vcxproj
-*.vcxproj
 .vs/OpenGl/v17/fileList.bin
 Debug/OpenGl.exp
 Debug/OpenGl.lib

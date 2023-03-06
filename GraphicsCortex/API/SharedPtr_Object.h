@@ -8,7 +8,7 @@ public:
 
 	_SHARED_POINTER_DEFINITIONS(Object)
 
-		Object_s(Graphic& graphics, PhysicsObject& physics) :
+	Object_s(Graphic& graphics, PhysicsObject& physics) :
 		obj(std::make_shared<Object>(graphics, physics)) {}
 
 };
@@ -18,7 +18,7 @@ public:
 
 	_SHARED_POINTER_DEFINITIONS(Vehicle)
 
-		Vehicle_s() :
-		obj(std::make_shared<Vehicle>(Vehicle())) {} // different
+	Vehicle_s() :
+		obj(std::make_shared<Vehicle>()) {} // different
 
 };

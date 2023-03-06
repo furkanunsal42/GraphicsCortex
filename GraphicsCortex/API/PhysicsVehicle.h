@@ -9,6 +9,8 @@
 
 #include <type_traits>
 
+#include <iostream>
+
 class PhysicsVehicle {
 public:
 	float chassisMass;

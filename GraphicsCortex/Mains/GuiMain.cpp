@@ -25,6 +25,7 @@ int main() {
 	//background.on_hover.margin = Vec4<float>(30, 30, 30, 30);
 	
 
+
 	while (frame.is_running()) {
 		double frame_time = frame.handle_window();
 		frame.clear_window(0, 0, 0, 1);
@@ -35,7 +36,6 @@ int main() {
 		
 		ui.begin(Layout::Horizional);
 		ui.box("box1", Vec2<float>(200, 200), toggle);
-		ui.box("box2", Vec2<float>(200, 200), toggle);
 		ui.end(background);
 	}
 }

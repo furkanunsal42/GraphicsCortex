@@ -159,7 +159,7 @@
     <ClCompile Include="API\CortexMath.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
-    <ClCompile Include="Mains\ApplicationMain.cpp">
+    <ClCompile Include="Mains\GuiMain.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
   </ItemGroup>

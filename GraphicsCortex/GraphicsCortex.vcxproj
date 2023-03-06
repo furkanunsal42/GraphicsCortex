@@ -1,0 +1,434 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{cc050ea6-ac45-4dab-bae2-73551effaaed}</ProjectGuid>
+    <RootNamespace>GraphicsCortex</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>GraphicsCortex</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(SolutionDir)$(ProjectName)</OutDir>
+    <TargetName>$(ProjectName)32</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir>$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(SolutionDir)$(ProjectName)</OutDir>
+    <IntDir>$(Configuration)\</IntDir>
+    <TargetName>$(ProjectName)64</TargetName>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>GLEW_STATIC;WIN32;</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(SolutionDir)OpenGl\Dependencies\assimp\include;$(SolutionDir)OpenGl\Dependencies\stb_image;$(SolutionDir)OpenGl\Dependencies\GLEW\include;$(SolutionDir)OpenGl\Dependencies\glm;$(SolutionDir)OpenGl\Dependencies\GLFW\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <Optimization>Disabled</Optimization>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(SolutionDir)OpenGl\Dependencies\assimp\lib;$(SolutionDir)OpenGl\Dependencies\stb_image;$(SolutionDir)OpenGl\Dependencies\glm;$(SolutionDir)OpenGl\Dependencies\GLEW\lib\Release\Win32;$(SolutionDir)OpenGl\Dependencies\GLFW\lib-vc2022;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>assimp-vc143-mtd.lib;opengl32.lib;glew32s.lib;glfw3.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>GLEW_STATIC;WIN32;GLEW_STATIC;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(SolutionDir)OpenGl\Dependencies\assimp\include;$(SolutionDir)OpenGl\Dependencies\stb_image;$(SolutionDir)OpenGl\Dependencies\GLEW\include;$(SolutionDir)OpenGl\Dependencies\glm;$(SolutionDir)OpenGl\Dependencies\GLFW\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(SolutionDir)OpenGl\Dependencies\assimp\lib;$(SolutionDir)OpenGl\Dependencies\stb_image;$(SolutionDir)OpenGl\Dependencies\glm;$(SolutionDir)OpenGl\Dependencies\GLEW\lib\Release\Win32;$(SolutionDir)OpenGl\Dependencies\GLFW\lib-vc2022;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>assimp-vc143-mtd.lib;opengl32.lib;glew32s.lib;glfw3.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>GLEW_STATIC;WIN32;</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <Optimization>Disabled</Optimization>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <AdditionalIncludeDirectories>$(SolutionDir)OpenGl\Dependencies\assimp\include;$(SolutionDir)OpenGl\Dependencies\stb_image;$(SolutionDir)OpenGl\Dependencies\GLEW\include;$(SolutionDir)OpenGl\Dependencies\glm;$(SolutionDir)OpenGl\Dependencies\GLFWx64\include;$(SolutionDir)OpenGl\Dependencies\physx\include;$(SolutionDir)OpenGl\snippetcommon;$(SolutionDir)OpenGl\Dependencies\hiredis\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(SolutionDir)OpenGl\Dependencies\assimp\lib_debug;$(SolutionDir)OpenGl\Dependencies\stb_image;$(SolutionDir)OpenGl\Dependencies\glm;$(SolutionDir)OpenGl\Dependencies\GLEW\lib\Release\x64;$(SolutionDir)OpenGl\Dependencies\GLFWx64\lib-vc2022;$(SolutionDir)OpenGl\Dependencies\physx\lib_debug;$(SolutionDir)OpenGl\Dependencies\hiredis;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SnippetUtils_static_64.lib;SnippetRender_static_64.lib;SimulationController_static_64.lib;SceneQuery_static_64.lib;PhysXVehicle_static_64.lib;PhysXTask_static_64.lib;PhysXPvdSDK_static_64.lib;PhysXFoundation_64.lib;PhysXExtensions_static_64.lib;PhysXCooking_64.lib;PhysXCommon_64.lib;PhysXCharacterKinematic_static_64.lib;PhysX_64.lib;LowLevelDynamics_static_64.lib;LowLevelAABB_static_64.lib;LowLevel_static_64.lib;assimp-vc143-mtd.lib;zlibstaticd.lib;IrrXMLd.lib;opengl32.lib;glew32s.lib;glfw3.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreSpecificDefaultLibraries>
+      </IgnoreSpecificDefaultLibraries>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>GLEW_STATIC;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <AdditionalIncludeDirectories>$(SolutionDir)GraphicsCortex\API;$(SolutionDir)GraphicsCortex\Dependencies\assimp\include;$(SolutionDir)GraphicsCortex\Dependencies\stb_image;$(SolutionDir)GraphicsCortex\Dependencies\GLEW\include;$(SolutionDir)GraphicsCortex\Dependencies\imgui;$(SolutionDir)GraphicsCortex\Dependencies\glm;$(SolutionDir)GraphicsCortex\Dependencies\GLFWx64\include;$(SolutionDir)GraphicsCortex\Dependencies\physx\include;$(SolutionDir)GraphicsCortex\Dependencies\physx\snippetutils;$(SolutionDir)GraphicsCortex\Dependencies\physx\snippetcommon;$(SolutionDir)GraphicsCortex\Dependencies\hiredis\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(SolutionDir)GraphicsCortex\Dependencies\assimp\lib;$(SolutionDir)GraphicsCortex\Dependencies\stb_image;$(SolutionDir)GraphicsCortex\Dependencies\glm;$(SolutionDir)GraphicsCortex\Dependencies\GLEW\lib\Release\x64;$(SolutionDir)GraphicsCortex\Dependencies\GLFWx64\lib-vc2022;$(SolutionDir)GraphicsCortex\Dependencies\physx\lib_checked;$(SolutionDir)GraphicsCortex\Dependencies\hiredis\libx64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>hiredis.lib;SnippetUtils_static_64.lib;SnippetRender_static_64.lib;SimulationController_static_64.lib;SceneQuery_static_64.lib;PhysXVehicle_static_64.lib;PhysXTask_static_64.lib;PhysXPvdSDK_static_64.lib;PhysXFoundation_64.lib;PhysXExtensions_static_64.lib;PhysXCooking_64.lib;PhysXCommon_64.lib;PhysXCharacterKinematic_static_64.lib;PhysX_64.lib;LowLevelDynamics_static_64.lib;LowLevelAABB_static_64.lib;LowLevel_static_64.lib;assimp-vc143-mt.lib;zlibstatic.lib;IrrXML.lib;opengl32.lib;glew32s.lib;glfw3.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreSpecificDefaultLibraries>libcmt.lib; libcmtd.lib; msvcrtd.lib</IgnoreSpecificDefaultLibraries>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="API\AssetImporter.cpp" />
+    <ClCompile Include="API\BinaryBuffers.cpp" />
+    <ClCompile Include="API\Camera.cpp" />
+    <ClCompile Include="API\CubeMap.cpp" />
+    <ClCompile Include="API\Default_Assets.cpp" />
+    <ClCompile Include="API\Default_Programs.cpp" />
+    <ClCompile Include="API\DirectoryUtils.cpp" />
+    <ClCompile Include="API\FrameBuffer.cpp" />
+    <ClCompile Include="API\Image.cpp" />
+    <ClCompile Include="API\Lights.cpp" />
+    <ClCompile Include="API\CortexMath.cpp" />
+    <ClCompile Include="API\Mesh.cpp" />
+    <ClCompile Include="API\Model.cpp" />
+    <ClCompile Include="API\ModelTextureTable.cpp" />
+    <ClCompile Include="API\PhysicsContext.cpp" />
+    <ClCompile Include="API\PhysicsGeometry.cpp" />
+    <ClCompile Include="API\PhysicsLink.cpp" />
+    <ClCompile Include="API\PhysicsObject.cpp" />
+    <ClCompile Include="API\PhysicsScene.cpp" />
+    <ClCompile Include="API\PhysicsVehicle.cpp" />
+    <ClCompile Include="API\RamCache.cpp" />
+    <ClCompile Include="API\Scene.cpp" />
+    <ClCompile Include="API\Gui.cpp" />
+    <ClCompile Include="API\Texture.cpp" />
+    <ClCompile Include="API\Buffer.cpp" />
+    <ClCompile Include="API\UniformQueue.cpp" />
+    <ClCompile Include="API\Object.cpp" />
+    <ClCompile Include="Dependencies\imgui\imgui.cpp" />
+    <ClCompile Include="Dependencies\imgui\imgui_draw.cpp" />
+    <ClCompile Include="Dependencies\imgui\imgui_impl_glfw.cpp" />
+    <ClCompile Include="Dependencies\imgui\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="Dependencies\imgui\imgui_tables.cpp" />
+    <ClCompile Include="Dependencies\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="Dependencies\stb_image\stb_image.cpp" />
+    <ClCompile Include="API\Frame.cpp" />
+    <ClCompile Include="API\Graphic.cpp" />
+    <ClCompile Include="API\Debuger.cpp" />
+    <ClCompile Include="API\ShaderCompiler.cpp" />
+    <ClCompile Include="Dependencies\stb_image\stb_image_resize.cpp" />
+    <ClCompile Include="Dependencies\stb_image\stb_image_write.cpp" />
+    <ClCompile Include="Dependencies\physx\snippetcommon\SnippetVehicle4WCreate.cpp" />
+    <ClCompile Include="Dependencies\physx\snippetcommon\SnippetVehicleCreate.cpp" />
+    <ClCompile Include="Dependencies\physx\snippetcommon\SnippetVehicleFilterShader.cpp" />
+    <ClCompile Include="Dependencies\physx\snippetcommon\SnippetVehicleNoDriveCreate.cpp" />
+    <ClCompile Include="Dependencies\physx\snippetcommon\SnippetVehicleSceneQuery.cpp" />
+    <ClCompile Include="Dependencies\physx\snippetcommon\SnippetVehicleTankCreate.cpp" />
+    <ClCompile Include="Dependencies\physx\snippetcommon\SnippetVehicleTireFriction.cpp" />
+    <ClCompile Include="Mains\GuiMain.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Dependencies\assimp\bin\assimp-vc143-mtd.dll" />
+    <None Include="Dependencies\assimp\include\assimp\color4.inl" />
+    <None Include="Dependencies\assimp\include\assimp\material.inl" />
+    <None Include="Dependencies\assimp\include\assimp\matrix3x3.inl" />
+    <None Include="Dependencies\assimp\include\assimp\matrix4x4.inl" />
+    <None Include="Dependencies\assimp\include\assimp\quaternion.inl" />
+    <None Include="Dependencies\assimp\include\assimp\SmoothingGroups.inl" />
+    <None Include="Dependencies\assimp\include\assimp\vector2.inl" />
+    <None Include="Dependencies\assimp\include\assimp\vector3.inl" />
+    <None Include="Shaders\CubeMap.frag" />
+    <None Include="Shaders\CubeMap.vert" />
+    <None Include="Shaders\FlatColor.frag" />
+    <None Include="Shaders\FlatColor.vert" />
+    <None Include="Shaders\FrameBuffer.frag" />
+    <None Include="Shaders\FrameBuffer.vert" />
+    <None Include="Shaders\Gui.frag" />
+    <None Include="Shaders\Gui.vert" />
+    <None Include="Shaders\NormalTest.frag" />
+    <None Include="Shaders\Solid.frag" />
+    <None Include="Shaders\Solid.geom" />
+    <None Include="Shaders\Solid.vert" />
+    <None Include="Shaders\TextureArray.frag" />
+    <None Include="Shaders\TextureArray.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="API\AssetImporter.h" />
+    <ClInclude Include="API\BinaryBuffers.h" />
+    <ClInclude Include="API\Buffer.h" />
+    <ClInclude Include="API\Camera.h" />
+    <ClInclude Include="API\Config.h" />
+    <ClInclude Include="API\CubeMap.h" />
+    <ClInclude Include="API\Debuger.h" />
+    <ClInclude Include="API\Default_Assets.h" />
+    <ClInclude Include="API\DirectoryUtils.h" />
+    <ClInclude Include="API\FrameBuffer.h" />
+    <ClInclude Include="API\GraphicsCortex.h" />
+    <ClInclude Include="API\Default_Programs.h" />
+    <ClInclude Include="API\Gui.h" />
+    <ClInclude Include="API\Image.h" />
+    <ClInclude Include="API\Lights.h" />
+    <ClInclude Include="API\CortexMath.h" />
+    <ClInclude Include="API\Mesh.h" />
+    <ClInclude Include="API\Model.h" />
+    <ClInclude Include="API\ModelTextureTable.h" />
+    <ClInclude Include="API\PhysicsContext.h" />
+    <ClInclude Include="API\PhysicsGeometry.h" />
+    <ClInclude Include="API\PhysicsLink.h" />
+    <ClInclude Include="API\PhysicsObject.h" />
+    <ClInclude Include="API\PhysicsScene.h" />
+    <ClInclude Include="API\PhysicsVehicle.h" />
+    <ClInclude Include="API\RamCache.h" />
+    <ClInclude Include="API\Scene.h" />
+    <ClInclude Include="API\SharedPtr_Buffers.h" />
+    <ClInclude Include="API\SharedPtr.h" />
+    <ClInclude Include="API\SharedPtr_Graphic.h" />
+    <ClInclude Include="API\SharedPtr_Lights.h" />
+    <ClInclude Include="API\SharedPtr_Materials.h" />
+    <ClInclude Include="API\SharedPtr_Mesh.h" />
+    <ClInclude Include="API\SharedPtr_Object.h" />
+    <ClInclude Include="API\SharedPtr_PhysicsObject.h" />
+    <ClInclude Include="API\SharedPtr_Program.h" />
+    <ClInclude Include="API\Texture.h" />
+    <ClInclude Include="API\UnifromQueue.h" />
+    <ClInclude Include="API\Object.h" />
+    <ClInclude Include="Application\GUI_SceneViewer.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\aabb.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\ai_assert.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\anim.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\BaseImporter.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\Bitmap.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\BlobIOSystem.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\ByteSwapper.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\camera.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\cexport.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\cfileio.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\cimport.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\color4.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\Compiler\poppack1.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\Compiler\pstdint.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\Compiler\pushpack1.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\config.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\CreateAnimMesh.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\DefaultIOStream.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\DefaultIOSystem.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\DefaultLogger.hpp" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\Defines.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\defs.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\Exceptional.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\Exporter.hpp" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\fast_atof.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\GenericProperty.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\Hash.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\Importer.hpp" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\importerdesc.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\IOStream.hpp" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\IOStreamBuffer.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\IOSystem.hpp" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\irrXMLWrapper.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\light.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\LineSplitter.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\LogAux.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\Logger.hpp" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\LogStream.hpp" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\Macros.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\material.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\MathFunctions.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\matrix3x3.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\matrix4x4.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\MemoryIOWrapper.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\mesh.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\metadata.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\NullLogger.hpp" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\ParsingUtils.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\pbrmaterial.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\port\AndroidJNI\AndroidJNIIOSystem.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\postprocess.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\Profiler.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\ProgressHandler.hpp" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\qnan.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\quaternion.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\RemoveComments.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\scene.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\SceneCombiner.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\SGSpatialSort.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\SkeletonMeshBuilder.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\SmoothingGroups.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\SpatialSort.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\StandardShapes.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\StreamReader.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\StreamWriter.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\StringComparison.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\StringUtils.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\Subdivision.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\texture.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\TinyFormatter.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\types.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\vector2.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\vector3.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\version.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\Vertex.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\XMLTools.h" />
+    <ClInclude Include="Dependencies\assimp\include\assimp\ZipArchiveIOSystem.h" />
+    <ClInclude Include="Dependencies\GLEW\include\GL\eglew.h" />
+    <ClInclude Include="Dependencies\GLEW\include\GL\glew.h" />
+    <ClInclude Include="Dependencies\GLEW\include\GL\glxew.h" />
+    <ClInclude Include="Dependencies\GLEW\include\GL\wglew.h" />
+    <ClInclude Include="Dependencies\imgui\imconfig.h" />
+    <ClInclude Include="Dependencies\imgui\imgui.h" />
+    <ClInclude Include="Dependencies\imgui\imgui_impl_glfw.h" />
+    <ClInclude Include="Dependencies\imgui\imgui_impl_opengl3.h" />
+    <ClInclude Include="Dependencies\imgui\imgui_impl_opengl3_loader.h" />
+    <ClInclude Include="Dependencies\imgui\imgui_internal.h" />
+    <ClInclude Include="Dependencies\imgui\imstb_rectpack.h" />
+    <ClInclude Include="Dependencies\imgui\imstb_textedit.h" />
+    <ClInclude Include="Dependencies\imgui\imstb_truetype.h" />
+    <ClInclude Include="Dependencies\stb_image\stb_image.h" />
+    <ClInclude Include="API\Frame.h" />
+    <ClInclude Include="API\Graphic.h" />
+    <ClInclude Include="API\ShaderCompiler.h" />
+    <ClInclude Include="Dependencies\stb_image\stb_image_resize.h" />
+    <ClInclude Include="Dependencies\stb_image\stb_image_write.h" />
+    <ClInclude Include="Dependencies\physx\snippetcommon\SnippetPrint.h" />
+    <ClInclude Include="Dependencies\physx\snippetcommon\SnippetPVD.h" />
+    <ClInclude Include="Dependencies\physx\snippetcommon\SnippetVehicleConcurrency.h" />
+    <ClInclude Include="Dependencies\physx\snippetcommon\SnippetVehicleCreate.h" />
+    <ClInclude Include="Dependencies\physx\snippetcommon\SnippetVehicleFilterShader.h" />
+    <ClInclude Include="Dependencies\physx\snippetcommon\SnippetVehicleSceneQuery.h" />
+    <ClInclude Include="Dependencies\physx\snippetcommon\SnippetVehicleTireFriction.h" />
+    <ClInclude Include="Dependencies\physx\snippetcommon\SnippetVehicleWheelQueryResult.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Images\Bricks\brickcolor.jpg" />
+    <Image Include="Images\Bricks\bricknormal.png" />
+    <Image Include="Images\Bricks\brickreflection.jpg" />
+    <Image Include="Images\Bricks\BricksFlemishRed001_cube.jpg" />
+    <Image Include="Images\Bricks\BricksFlemishRed001_sphere.jpg" />
+    <Image Include="Images\cobble.png" />
+    <Image Include="Images\CubeMap\Sky\nz.jpg" />
+    <Image Include="Images\CubeMap\Sky\ny.jpg" />
+    <Image Include="Images\CubeMap\Sky\pz.jpg" />
+    <Image Include="Images\CubeMap\Sky\nx.jpg" />
+    <Image Include="Images\CubeMap\Sky\px.jpg" />
+    <Image Include="Images\CubeMap\Sky\py.jpg" />
+    <Image Include="Images\CubeMap\Street\nx.png" />
+    <Image Include="Images\CubeMap\Street\ny.png" />
+    <Image Include="Images\CubeMap\Street\nz.png" />
+    <Image Include="Images\CubeMap\Street\px.png" />
+    <Image Include="Images\CubeMap\Street\py.png" />
+    <Image Include="Images\CubeMap\Street\pz.png" />
+    <Image Include="Images\full_black.png" />
+    <Image Include="Images\full_white.png" />
+    <Image Include="Images\GoldBlock.png" />
+    <Image Include="Images\grass.png" />
+    <Image Include="Images\orange.png" />
+    <Image Include="Images\Stones\brickcolor.jpg" />
+    <Image Include="Images\Stones\bricknormal.png" />
+    <Image Include="Images\Stones\brickreflection.jpg" />
+    <Image Include="Images\Stones\BricksFlemishRed001_cube.jpg" />
+    <Image Include="Images\Stones\BricksFlemishRed001_sphere.jpg" />
+    <Image Include="Images\StoneTiles\tiles_color.jpg" />
+    <Image Include="Images\StoneTiles\tiles_normal.jpg" />
+    <Image Include="Images\StoneTiles\tiles_specular.jpg" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
