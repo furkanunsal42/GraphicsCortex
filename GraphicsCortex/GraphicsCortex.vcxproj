@@ -180,6 +180,7 @@
     <ClCompile Include="API\Camera.cpp" />
     <ClCompile Include="API\CubeMap.cpp" />
     <ClCompile Include="API\Default_Assets.cpp" />
+    <ClCompile Include="API\Default_Gui_Widgets.cpp" />
     <ClCompile Include="API\Default_Programs.cpp" />
     <ClCompile Include="API\DirectoryUtils.cpp" />
     <ClCompile Include="API\FrameBuffer.cpp" />
@@ -258,6 +259,7 @@
     <ClInclude Include="API\CubeMap.h" />
     <ClInclude Include="API\Debuger.h" />
     <ClInclude Include="API\Default_Assets.h" />
+    <ClInclude Include="API\Default_Gui_Widgets.h" />
     <ClInclude Include="API\DirectoryUtils.h" />
     <ClInclude Include="API\FrameBuffer.h" />
     <ClInclude Include="API\GraphicsCortex.h" />

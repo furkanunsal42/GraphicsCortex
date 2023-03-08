@@ -7,24 +7,8 @@ int main() {
 
 	Style toggle;
 	toggle.color = vec3(0.6f, 0.2f, 0.2f);
-	//toggle.corner_rounding = vec4(30, 30, 30, 30);
-	toggle.padding = vec4(20, 20, 20, 20);
-	toggle.on_hover.cursor_type = Frame::Hand;
-	toggle.on_hover.color = vec3(0.8, 0.8, 0.8);
-	toggle.on_hover.corner_rounding = vec4(50, 50, 50, 50);
-	//toggle.on_hover.padding = vec4(20, 20, 20, 20);
-	toggle.color_change = 1;
-	toggle.corner_rounding_change = 1;
-	toggle.padding_change = 1;
 
-	Style background;
-	background.color = vec3(0.6, 0.6, 0.6);
-	//background.margin = vec4(20, 0, 0, 0);
-	background.on_hover.color = vec3(0.50, 0.50, 0.50);
-	//background.on_hover.margin = vec4(30, 30, 30, 30);
-	
 	Box box1(frame, toggle, AABB2(vec2(0, 0), vec2(100, 100)));
-	box1.overwrite_style.corner_rounding = vec4(20, 20, 0, 0);
 	Box box2(frame, toggle, AABB2(vec2(200, 200), vec2(150, 150)));
 
 	while (frame.is_running()) {

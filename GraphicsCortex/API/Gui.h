@@ -113,7 +113,7 @@ public:
 	
 	std::optional<Vec3<float>> color;
 	std::optional<Vec2<float>> displacement;
-	std::optional<Vec2<float>> rotation_euler;
+	std::optional<Vec2<float>> rotation_euler;	// not implemented 
 	std::optional<Vec4<float>> corner_rounding; // corner indicies follows traditional coordinate system partition	// 1 | 0
 																													// --|-- 
 																													// 2 | 3
@@ -199,8 +199,9 @@ private:
 
 	Style _style;
 	Frame& _frame_ref;
-	AABB2 _aabb;			//aabb size will be padded
-	vec2 _original_size;	//original size will not be padded		
+	AABB2 _aabb;				//aabb size will be padded and displaced
+	vec2 _original_size;		//original size will not be padded		
+	vec2 _original_position;	//original size will not be displaced
 	Graphic_s _graphic_representation;
 	
 	_widget_info _info;
@@ -209,9 +210,10 @@ private:
 class Gui {	// similiar function with UI class, new implementation 
 public:
 	Gui() = delete;
-	static void new_frame(const Frame& frame);
+	static void new_frame(Frame& frame);
 	static glm::mat4 _projection_matrix;
 	static Vec2<int> window_size;
+	static bool _hover_happened;
 };
 
 // css-like layout structure

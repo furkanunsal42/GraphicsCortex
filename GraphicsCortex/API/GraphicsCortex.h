@@ -44,6 +44,8 @@
 #include "BinaryBuffers.h"
 #include "Gui.h"
 #include "_templated_overloads.h"
+#include "Default_Gui_Widgets.h"
+
 
 #include <PxPhysicsAPI.h>
 

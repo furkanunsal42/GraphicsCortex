@@ -76,7 +76,7 @@ namespace {
 		return default_value + (target_value - default_value) / (max_time) * (std::min(current_time, max_time));
 	}
 
-	StaticStyle interpolate_styles(Style style, StaticStyle target_style, _widget_info& widget_info) {
+	StaticStyle interpolate_styles(Style style, StaticStyle target_style, _widget_info& widget_info, bool hover) {
 		// insert object to layout
 		Vec3<float> color =				optional_get<Vec3<float>>({			target_style.color,				style.color });
 		Vec2<float> displacement =		optional_get<Vec2<float>>({			target_style.displacement,		style.displacement });
@@ -128,32 +128,42 @@ namespace {
 		StaticStyle result;
 		
 		if (color_change > 0)				result.color =				linear_interpolation(color_default,				color,				color_change,				widget_info._current_color_time);
-		else								result.color =				color; 
+		else if (hover)						result.color =				color; 
+		else								result.color =				color_default; 
 		if (displacement_change > 0)		result.displacement =		linear_interpolation(displacement_default,		displacement,		displacement_change,		widget_info._current_displacement_time);
-		else								result.displacement =		displacement; 
+		else if (hover)						result.displacement =		displacement; 
+		else								result.displacement =		displacement_default; 
 		if (rotation_change > 0)			result.rotation_euler =		linear_interpolation(rotation_euler_default,	rotation_euler,		rotation_change,			widget_info._current_rotation_time);
-		else								result.rotation_euler =		rotation_euler; 
+		else if (hover)						result.rotation_euler =		rotation_euler;
+		else								result.rotation_euler =		rotation_euler_default;
 		if (corner_rounding_change > 0)		result.corner_rounding =	linear_interpolation(corner_rounding_default,	corner_rounding,	corner_rounding_change,		widget_info._current_corner_rounding_time);
-		else								result.corner_rounding =	corner_rounding; 
+		else if (hover)						result.corner_rounding =	corner_rounding;
+		else								result.corner_rounding =	corner_rounding_default;
 		if (padding_change > 0)				result.padding =			linear_interpolation(padding_default,			padding,			padding_change,				widget_info._current_padding_time);
-		else								result.padding =			padding; 
+		else if (hover)						result.padding =			padding;
+		else								result.padding =			padding_default;
 		if (margin_change > 0)				result.margin =				linear_interpolation(margin_default,			margin,				margin_change,				widget_info._current_margin_time);
-		else								result.margin =				margin; 	
+		else if (hover)						result.margin =				margin;
+		else 								result.margin =				margin_default;
 		if (border_thickness_change > 0)	result.border_thickness =	linear_interpolation(border_thickness_default,	border_thickness,	border_thickness_change,	widget_info._current_border_thickness_time);
-		else								result.border_thickness =	border_thickness; 
+		else if (hover)						result.border_thickness =	border_thickness;
+		else 								result.border_thickness =	border_thickness_default;
 		if (border_color_change > 0)		result.border_color =		linear_interpolation(border_color_default,		border_color,		border_color_change,		widget_info._current_border_color_time);
-		else								result.border_color =		border_color;
-		result.cursor_type = cursor_type;
+		else if (hover)						result.border_color =		border_color;
+		else 								result.border_color =		border_color_default;
+		
+		if (hover)	result.cursor_type = cursor_type;
+		else		result.cursor_type = cursor_type_default;
 
 		return result;
 	}
 
-	StaticStyle interpolate_styles(Style style, _widget_info& widget_info) {
+	StaticStyle interpolate_styles(Style style, _widget_info& widget_info, bool hover) {
 		StaticStyle style_to_use = style;
 		if (widget_info.is_hovering) {
 			style_to_use = style.on_hover;
 		}
-		return interpolate_styles(style, style_to_use, widget_info);
+		return interpolate_styles(style, style_to_use, widget_info, hover);
 	}
 
 	StaticStyle merge_styles_by_priority(std::vector<StaticStyle> styles) {
@@ -376,15 +386,16 @@ Box::Box(Frame& frame, Style style, AABB2 aabb):
 	Box(frame, style, aabb, Program_s(default_program::gui_program())) { }
 
 Box::Box(Frame& frame, Style style, AABB2 aabb, Program_s custom_renderer):
-	_frame_ref(frame), _style(style), _aabb(aabb), _original_size(aabb.size)
+	_frame_ref(frame), _style(style), _aabb(aabb), _original_size(aabb.size), _original_position(aabb.position)
 {
 	_graphic_representation->load_program(custom_renderer);
 	_graphic_representation->load_model(Mesh_s(_aabb.generate_model()));
 	//_update_matrix(_frame_ref.window_width, _frame_ref.window_height);
 }
 
-void Box::set_position(Vec2<float> positoin){
-	_aabb.position = positoin;
+void Box::set_position(Vec2<float> position){
+	_aabb.position = position;
+	_original_position = position;
 }
 
 void Box::set_size(Vec2<float> size){
@@ -399,17 +410,19 @@ bool Box::is_mouse_hover(){
 void Box::render(Time deltatime){
 
 	StaticStyle default_style = merge_styles_by_priority({ overwrite_style, _style });
-	StaticStyle hover_style = merge_styles_by_priority({ overwrite_style.on_hover, _style.on_hover });
+	StaticStyle hover_style = merge_styles_by_priority({ overwrite_style.on_hover, _style.on_hover, default_style });
 
 	StaticStyle style_to_use = default_style;
 	_info.is_hovering = false;
-	if (is_mouse_hover()) {
+	bool hover = is_mouse_hover();
+	if (hover) {
 		style_to_use = hover_style;
 		_info.is_hovering = true;
+		Gui::_hover_happened = true;
 	}
 	Style base_style = merge_static_style_with_style(default_style, _style);
 	Style target_style = merge_static_style_with_style(hover_style, _style);	// append timing information of style to style_to_use, TODO: merge timing information of _style and overwrite_style here
-	StaticStyle interpolated_style = interpolate_styles(base_style, target_style, _info);
+	StaticStyle interpolated_style = interpolate_styles(base_style, target_style, _info, hover);
 	Vec3<float> color =				optional_get<Vec3<float>>		( interpolated_style.color );
 	Vec2<float> displacement =		optional_get<Vec2<float>>		( interpolated_style.displacement );
 	Vec2<float> rotation_euler =	optional_get<Vec2<float>>		( interpolated_style.rotation_euler );
@@ -421,6 +434,10 @@ void Box::render(Time deltatime){
 	Frame::CursorType cursor_type =	optional_get<Frame::CursorType>	( interpolated_style.cursor_type );
 
 	Vec2<float> padded_size = _original_size - Vec2<float>(padding.y + padding.w, padding.x + padding.z);
+	Vec2<float> displaced_position = _original_position + displacement;
+	if (_aabb.position != displaced_position) {
+		_aabb.position = displaced_position;
+	}
 	if (_aabb.size != padded_size) {
 		_aabb.size = padded_size;
 		_graphic_representation->mesh->load_model(_aabb.generate_model());
@@ -437,8 +454,9 @@ void Box::render(Time deltatime){
 	_graphic_representation->update_matrix();
 	_graphic_representation->update_uniforms();
 	_graphic_representation->draw(false);
-
-	_frame_ref.set_cursor_type(cursor_type);
+	
+	if (hover)
+		_frame_ref.set_cursor_type(cursor_type);
 
 	//_info.last_update = _frame_ref.get_time_sec();
 	_info.increment_time(deltatime);
@@ -447,13 +465,17 @@ void Box::render(Time deltatime){
 
 glm::mat4 Gui::_projection_matrix;
 Vec2<int> Gui::window_size;
+bool Gui::_hover_happened;
 
-void Gui::new_frame(const Frame& frame) {
+void Gui::new_frame(Frame& frame) {
 	vec2i current_window_size(frame.window_width, frame.window_height);
 	if (window_size != current_window_size){
 		window_size = current_window_size;
 		_projection_matrix = glm::ortho(0.0f, (float)window_size.x, 0.0f, (float)window_size.y);
 	}
+	if (!_hover_happened)
+		frame.set_cursor_type(Frame::Arrow);
+	_hover_happened = false;
 }
 
 
