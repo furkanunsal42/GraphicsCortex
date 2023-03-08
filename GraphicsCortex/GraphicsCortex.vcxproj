@@ -289,6 +289,7 @@
     <ClInclude Include="API\Texture.h" />
     <ClInclude Include="API\UnifromQueue.h" />
     <ClInclude Include="API\Object.h" />
+    <ClInclude Include="API\_templated_overloads.h" />
     <ClInclude Include="Application\GUI_SceneViewer.h" />
     <ClInclude Include="Dependencies\assimp\include\assimp\aabb.h" />
     <ClInclude Include="Dependencies\assimp\include\assimp\ai_assert.h" />

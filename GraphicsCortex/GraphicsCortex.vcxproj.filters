@@ -637,6 +637,9 @@
     <ClInclude Include="API\SharedPtr_PhysicsObject.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
+    <ClInclude Include="API\_templated_overloads.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Images\orange.png">

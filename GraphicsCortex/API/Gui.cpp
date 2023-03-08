@@ -155,6 +155,50 @@ namespace {
 
 }
 
+std::string Persentage::RespectedAttribute_to_string(const RespectedAttribute& attribute) {
+	switch (attribute) {
+	case SIZE_X:
+		return "SIZE_X";
+		break;
+	case SIZE_Y:
+		return "SIZE_Y";
+		break;
+	case PADDED_SIZE_X:
+		return "PADDED_SIZE_X";
+		break;
+	case PADDED_SIZE_Y:
+		return "PADDED_SIZE_Y";
+		break;
+	case POSITION_X:
+		return "POSITION_X";
+		break;
+	case POSITION_Y:
+		return "POSITION_Y";
+		break;
+	case PADDED_POSITION_X:
+		return "PADDED_POSITION_X";
+		break;
+	case PADDED_POSITION_Y:
+		return "PADDED_POSITION_Y";
+		break;
+	case PARENT_WIDTH:
+		return "PARENT_WIDTH";
+		break;
+	case PARENT_HEIGHT:
+		return "PARENT_HEIGHT";
+		break;
+	case AVAILABLE_WIDTH:
+		return "AVAILABLE_WIDTH";
+		break;
+	case AVAILABLE_HEIGHT:
+		return "AVAILABLE_HEIGHT";
+		break;
+	}
+}
+
+Persentage::Persentage(float value, RespectedAttribute attribute_type) : 
+	value(value), attribute_type(attribute_type) {}
+
 
 // object based system
 

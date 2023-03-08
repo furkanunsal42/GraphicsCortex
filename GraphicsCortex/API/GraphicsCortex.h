@@ -43,6 +43,7 @@
 #include "DirectoryUtils.h"
 #include "BinaryBuffers.h"
 #include "Gui.h"
+#include "_templated_overloads.h"
 
 #include <PxPhysicsAPI.h>
 

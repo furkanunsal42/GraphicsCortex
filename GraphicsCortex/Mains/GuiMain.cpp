@@ -28,8 +28,6 @@ int main() {
 	box1.overwrite_style.corner_rounding = vec4(20, 20, 0, 0);
 	Box box2(frame, toggle, AABB2(vec2(200, 200), vec2(150, 150)));
 
-	
-
 	while (frame.is_running()) {
 		double frame_time = frame.handle_window();
 		frame.clear_window(0, 0, 0, 1);

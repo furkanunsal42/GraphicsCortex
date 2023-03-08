@@ -7,6 +7,7 @@
 #include <functional>
 #include <chrono>
 #include <optional>
+#include <iostream>
 
 #include "SharedPtr_Graphic.h"
 
@@ -70,9 +71,15 @@ public:
 		AVAILABLE_HEIGHT,
 	};
 
+	static std::string RespectedAttribute_to_string(const RespectedAttribute& attribute);
+
+
+	Persentage(float value, RespectedAttribute attribute_type);
+
 	RespectedAttribute attribute_type;
 	float value;
 };
+
 
 template<typename T>
 struct StyleAttribute {
@@ -97,6 +104,7 @@ public:
 		use_persentage = true;
 	}
 };
+
 
 class StaticStyle {
 public:
