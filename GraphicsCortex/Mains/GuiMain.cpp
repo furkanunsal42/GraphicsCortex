@@ -6,9 +6,18 @@ int main() {
 	Ui ui(frame);
 
 	Style toggle;
-	toggle.color = vec3(0.6f, 0.2f, 0.2f);
-
-	Box box1(frame, toggle, AABB2(vec2(0, 0), vec2(100, 100)));
+	toggle.color = vec3(0xffffff);
+	toggle.corner_rounding = vec4(13, 13, 13, 13);
+	toggle.border_color = vec3(0xD6D6D6);
+	toggle.border_thickness = vec4(3, 3, 3, 3);
+	toggle.on_hover.cursor_type = Frame::Hand;
+	toggle.on_hover.displacement = vec2(0, -10);
+	toggle.on_hover.color = vec3(0xfdfdfd);
+	toggle.displacement_change = 0.3;
+	toggle.color_change = 0.3;
+	toggle.displacement_interpolation = Interpolation::polynomial(0.65);
+	
+	Box box1(frame, toggle, AABB2(vec2(100, 100), vec2(200, 60)));
 	Box box2(frame, toggle, AABB2(vec2(200, 200), vec2(150, 150)));
 
 	while (frame.is_running()) {

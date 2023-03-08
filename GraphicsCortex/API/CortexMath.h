@@ -11,11 +11,17 @@ public:
 	T x = NULL;
 	T y = NULL;
 
-	Vec2(const glm::vec2& glm_vector) :
-		x(glm_vector.x), y(glm_vector.y) {}
+	Vec2() :
+		x(0.0f), y(0.0f) {}
 
-	Vec2(const T& x = NULL, const T& y = NULL) :
+	Vec2(const T& x, const T& y) :
 		x(x), y(y) {}
+
+	Vec2(uint32_t hexcode) {
+		uint8_t* bytes = (uint8_t*)&hexcode;
+		x = *(bytes + 1) / 255.0f;
+		y = *(bytes + 0) / 255.0f;
+	}
 
 	Vec2 operator+(const Vec2& other) const {
 		return Vec2(x + other.x, y + other.y);
@@ -63,8 +69,18 @@ public:
 	Vec3(const glm::vec3& glm_vector) :
 		x(glm_vector.x), y(glm_vector.y), z(glm_vector.z) {}
 
-	Vec3(const T& x = NULL, const T& y = NULL, const T& z = NULL) :
+	Vec3() :
+		x(0.0f), y(0.0f), z(0.0f) {}
+
+	Vec3(const T& x, const T& y, const T& z) :
 		x(x), y(y), z(z) {}
+
+	Vec3(uint32_t hexcode){
+		uint8_t* bytes = (uint8_t*)&hexcode;
+		x = *(bytes + 2) / 255.0f;
+		y = *(bytes + 1) / 255.0f;
+		z = *(bytes + 0) / 255.0f;
+	}
 
 	Vec3 operator+(const Vec3& other) const {
 		return Vec3(x + other.x, y + other.y, z + other.z);
@@ -110,11 +126,19 @@ public:
 	T z = NULL;
 	T w = NULL;
 
-	Vec4(const glm::vec4& glm_vector) :
-		x(glm_vector.x), y(glm_vector.y), z(glm_vector.z), w(glm_vector.w) {}
+	Vec4() :
+		x(0.0f), y(0.0f), z(0.0f), w(0.0f) {}
 
-	Vec4(const T& x = NULL, const T& y = NULL, const T& z = NULL, const T& w = NULL) :
+	Vec4(const T& x, const T& y, const T& z, const T& w) :
 		x(x), y(y), z(z), w(w) {}
+
+	Vec4(uint32_t hexcode) {
+		uint8_t* bytes = (uint8_t*)&hexcode;
+		x = *(bytes + 3) / 255.0f;
+		y = *(bytes + 2) / 255.0f;
+		z = *(bytes + 1) / 255.0f;
+		w = *(bytes + 0) / 255.0f;
+	}
 
 	Vec4 operator+(const Vec4& other) const {
 		return Vec4(x + other.x, y + other.y, z + other.z, w + other.w);

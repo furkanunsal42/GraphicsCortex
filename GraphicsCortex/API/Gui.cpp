@@ -54,6 +54,19 @@ void Layout::update_position_by_style(const Vec4<float>& margin, const Vec4<floa
 //	return _on_active;
 //}
 
+_interpolation Interpolation::linear() {
+	_interpolation result;
+	result.interpolation_type = _interpolation::Linear;
+	return result;
+}
+
+_interpolation Interpolation::polynomial(float power) {
+	_interpolation result;
+	result.interpolation_type = _interpolation::Polynomial;
+	result.power = power;
+	return result;
+}
+
 namespace {
 	template<typename T>
 	T optional_get(std::vector<std::optional<T>> fallback_list, T null_value = T()) {
@@ -73,7 +86,12 @@ namespace {
 
 	template<typename T>
 	T linear_interpolation(T default_value, T target_value, Time max_time, Time current_time) {
-		return default_value + (target_value - default_value) / (max_time) * (std::min(current_time, max_time));
+		return default_value + (target_value - default_value) / max_time * (std::min(current_time, max_time));
+	}
+
+	template<typename T>
+	T polynomial_interpolation(T default_value, T target_value, Time max_time, Time current_time, float power = 1.0f) {
+		return linear_interpolation(default_value, target_value, std::pow(max_time, power), std::pow(current_time, power));
 	}
 
 	StaticStyle interpolate_styles(Style style, StaticStyle target_style, _widget_info& widget_info, bool hover) {
@@ -127,28 +145,28 @@ namespace {
 
 		StaticStyle result;
 		
-		if (color_change > 0)				result.color =				linear_interpolation(color_default,				color,				color_change,				widget_info._current_color_time);
+		if (color_change > 0)				result.color =				style.color_interpolation.value_or(Interpolation::linear()).interpolate(color_default,				color,				color_change,				widget_info._current_color_time);
 		else if (hover)						result.color =				color; 
 		else								result.color =				color_default; 
-		if (displacement_change > 0)		result.displacement =		linear_interpolation(displacement_default,		displacement,		displacement_change,		widget_info._current_displacement_time);
+		if (displacement_change > 0)		result.displacement =		style.displacement_interpolation.value_or(Interpolation::linear()).interpolate(displacement_default,		displacement,		displacement_change,		widget_info._current_displacement_time);
 		else if (hover)						result.displacement =		displacement; 
 		else								result.displacement =		displacement_default; 
-		if (rotation_change > 0)			result.rotation_euler =		linear_interpolation(rotation_euler_default,	rotation_euler,		rotation_change,			widget_info._current_rotation_time);
+		if (rotation_change > 0)			result.rotation_euler =		style.rotation_interpolation.value_or(Interpolation::linear()).interpolate(rotation_euler_default,	rotation_euler,		rotation_change,			widget_info._current_rotation_time);
 		else if (hover)						result.rotation_euler =		rotation_euler;
 		else								result.rotation_euler =		rotation_euler_default;
-		if (corner_rounding_change > 0)		result.corner_rounding =	linear_interpolation(corner_rounding_default,	corner_rounding,	corner_rounding_change,		widget_info._current_corner_rounding_time);
+		if (corner_rounding_change > 0)		result.corner_rounding =	style.corner_rounding_interpolation.value_or(Interpolation::linear()).interpolate(corner_rounding_default,	corner_rounding,	corner_rounding_change,		widget_info._current_corner_rounding_time);
 		else if (hover)						result.corner_rounding =	corner_rounding;
 		else								result.corner_rounding =	corner_rounding_default;
-		if (padding_change > 0)				result.padding =			linear_interpolation(padding_default,			padding,			padding_change,				widget_info._current_padding_time);
+		if (padding_change > 0)				result.padding =			style.padding_interpolation.value_or(Interpolation::linear()).interpolate(padding_default,			padding,			padding_change,				widget_info._current_padding_time);
 		else if (hover)						result.padding =			padding;
 		else								result.padding =			padding_default;
-		if (margin_change > 0)				result.margin =				linear_interpolation(margin_default,			margin,				margin_change,				widget_info._current_margin_time);
+		if (margin_change > 0)				result.margin =				style.margin_interpolation.value_or(Interpolation::linear()).interpolate(margin_default,			margin,				margin_change,				widget_info._current_margin_time);
 		else if (hover)						result.margin =				margin;
 		else 								result.margin =				margin_default;
-		if (border_thickness_change > 0)	result.border_thickness =	linear_interpolation(border_thickness_default,	border_thickness,	border_thickness_change,	widget_info._current_border_thickness_time);
+		if (border_thickness_change > 0)	result.border_thickness =	style.border_thickness_interpolation.value_or(Interpolation::linear()).interpolate(border_thickness_default,	border_thickness,	border_thickness_change,	widget_info._current_border_thickness_time);
 		else if (hover)						result.border_thickness =	border_thickness;
 		else 								result.border_thickness =	border_thickness_default;
-		if (border_color_change > 0)		result.border_color =		linear_interpolation(border_color_default,		border_color,		border_color_change,		widget_info._current_border_color_time);
+		if (border_color_change > 0)		result.border_color =		style.border_color_interpolation.value_or(Interpolation::linear()).interpolate(border_color_default,		border_color,		border_color_change,		widget_info._current_border_color_time);
 		else if (hover)						result.border_color =		border_color;
 		else 								result.border_color =		border_color_default;
 		

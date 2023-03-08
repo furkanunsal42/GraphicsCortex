@@ -54,6 +54,47 @@ namespace gui {
 
 }
 
+class _interpolation{
+public:
+
+	_interpolation() = default;
+		
+	enum type{
+		Linear,
+		Polynomial
+	};
+
+	type interpolation_type = _interpolation::Linear;
+	float power = 1.0f;
+	
+	template<typename T>
+	T interpolate(T default_value, T target_value, Time max_time, Time current_time) {
+		switch (interpolation_type) {
+		case Linear:
+			return _linear_interpolation(default_value, target_value, max_time, current_time);
+			break;
+		case Polynomial:
+			return _polynomial_interpolation(default_value, target_value, max_time, current_time);
+			break;
+		}
+	}
+
+private:
+	template<typename T>
+	T _linear_interpolation(T default_value, T target_value, Time max_time, Time current_time) {
+		return default_value + (target_value - default_value) / max_time * (std::min(current_time, max_time));
+	}
+	template<typename T>
+	T _polynomial_interpolation(T default_value, T target_value, Time max_time, Time current_time) {
+		return _linear_interpolation(default_value, target_value, std::pow(max_time, power), std::pow(current_time, power));
+	}
+};
+
+namespace Interpolation {
+	_interpolation linear();
+	_interpolation polynomial(float power = 1.0f);
+}
+
 struct Persentage {
 public:
 	enum RespectedAttribute {
@@ -136,6 +177,15 @@ public:
 	std::optional<Time> margin_change;
 	std::optional<Time> border_thickness_change;
 	std::optional<Time> border_color_change;
+
+	std::optional<_interpolation> color_interpolation;
+	std::optional<_interpolation> displacement_interpolation;
+	std::optional<_interpolation> rotation_interpolation;
+	std::optional<_interpolation> corner_rounding_interpolation;
+	std::optional<_interpolation> padding_interpolation;
+	std::optional<_interpolation> margin_interpolation;
+	std::optional<_interpolation> border_thickness_interpolation;
+	std::optional<_interpolation> border_color_interpolation;
 
 	StaticStyle on_hover;
 	StaticStyle on_active;
