@@ -23,6 +23,14 @@ public:
 	Vec2 operator-(const Vec2& other) const {
 		return Vec2(x - other.x, y - other.y);
 	}
+	bool operator==(const Vec2& other) {
+		if (x == other.x && y == other.y)
+			return true;
+		return false;
+	}
+	bool operator!=(const Vec2& other) {
+		return !operator==(other);
+	}
 
 	glm::vec2 get_glm() const {
 		return glm::vec2(x, y);
@@ -64,7 +72,14 @@ public:
 	Vec3 operator-(const Vec3& other) const {
 		return Vec3(x - other.x, y - other.y, z - other.z);
 	}
-
+	bool operator==(const Vec3& other) {
+		if (x == other.x && y == other.y && z == other.z)
+			return true;
+		return false;
+	}
+	bool operator!=(const Vec3& other) {
+		return !operator==(other);
+	}
 	glm::vec3 get_glm() const {
 		return glm::vec3(x, y, z);
 	}
@@ -106,6 +121,14 @@ public:
 	}
 	Vec4 operator-(const Vec4& other) const {
 		return Vec4(x - other.x, y - other.y, z - other.z, w - other.w);
+	}
+	bool operator==(const Vec4& other) {
+		if (x == other.x && y == other.y && z == other.z && w == other.w)
+			return true;
+		return false;
+	}
+	bool operator!=(const Vec4& other) {
+		return !operator==(other);
 	}
 
 	glm::vec4 get_glm() const {
@@ -174,6 +197,16 @@ public:
 			return false;
 		return true;
 	}
+
+	bool operator==(const AABB2& other) {
+		if (position == other.position && size == other.size)
+			return true;
+		return false;
+	}
+	bool operator!=(const AABB2& other) {
+		return !operator==(other);
+	}
+
 	Model generate_model() const {
 		std::vector<float> verticies{
 			0,			0,			0,
@@ -198,6 +231,15 @@ public:
 
 	Vec3<float> position; // bottom_left_back corner (min x, min y, min z)
 	Vec3<float> size;
+
+	bool operator==(const AABB3& other) {
+		if (position == other.position && size == other.size)
+			return true;
+		return false;
+	}
+	bool operator!=(const AABB3& other) {
+		return !operator==(other);
+	}
 
 	template<typename T>
 	bool does_contain(Vec3<T> point_position);

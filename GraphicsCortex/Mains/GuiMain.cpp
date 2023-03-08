@@ -7,16 +7,15 @@ int main() {
 
 	Style toggle;
 	toggle.color = vec3(0.6f, 0.2f, 0.2f);
-	toggle.corner_rounding = vec4(30, 30, 30, 30);
-	toggle.margin = vec4(10, 10, 10, 10);
-	toggle.padding = vec4(120, 0, 0, 0);
+	//toggle.corner_rounding = vec4(30, 30, 30, 30);
+	toggle.padding = vec4(20, 20, 20, 20);
 	toggle.on_hover.cursor_type = Frame::Hand;
 	toggle.on_hover.color = vec3(0.8, 0.8, 0.8);
-	toggle.on_hover.corner_rounding = vec4(80, 80, 80, 80);
-	toggle.on_hover.padding = vec4(20, 20, 20, 20);
-	toggle.color_change = 0.1;
-	toggle.corner_rounding_change = 0.1;
-	toggle.padding_change = 0.2;
+	toggle.on_hover.corner_rounding = vec4(50, 50, 50, 50);
+	//toggle.on_hover.padding = vec4(20, 20, 20, 20);
+	toggle.color_change = 1;
+	toggle.corner_rounding_change = 1;
+	toggle.padding_change = 1;
 
 	Style background;
 	background.color = vec3(0.6, 0.6, 0.6);
@@ -33,11 +32,14 @@ int main() {
 		frame.clear_window(0, 0, 0, 1);
 		frame.display_performance(180);
 		
+		Gui::new_frame(frame);
 		//ui.new_frame();
 
-		//scene.render();
+		scene.render();
 		
-		box1.render(0);
+
+		box1.render((float)frame_time/1000.0f);
+
 
 		//ui.begin(Layout::Horizional);
 		//

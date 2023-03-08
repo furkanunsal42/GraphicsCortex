@@ -109,8 +109,8 @@ public:
 class StaticStyle {
 public:
 	
-	StyleAttribute<vec3f> color_attrib;	// work in progress
-
+	// StyleAttribute<vec3f> color_attrib;	// work in progress
+	
 	std::optional<Vec3<float>> color;
 	std::optional<Vec2<float>> displacement;
 	std::optional<Vec2<float>> rotation_euler;
@@ -141,14 +141,6 @@ public:
 	StaticStyle on_active;
 
 private:
-	std::optional<Time> _current_color_time;
-	std::optional<Time> _current_displacement_time;
-	std::optional<Time> _current_rotation_time;
-	std::optional<Time> _current_corner_rounding_time;
-	std::optional<Time> _current_padding_time;
-	std::optional<Time> _current_margin_time;
-	std::optional<Time> _current_border_thickness_time;
-	std::optional<Time> _current_border_color_time;
 };
 
 class FunctionalStyle : StaticStyle {
@@ -168,8 +160,24 @@ private:
 };
 
 
-
 // object based structure
+
+struct _widget_info {
+public:
+	bool is_hovering;
+	//Time last_update;
+
+	Time _current_color_time = 0;
+	Time _current_displacement_time = 0;
+	Time _current_rotation_time = 0;
+	Time _current_corner_rounding_time = 0;
+	Time _current_padding_time = 0;
+	Time _current_margin_time = 0;
+	Time _current_border_thickness_time = 0;
+	Time _current_border_color_time = 0;
+
+	void increment_time(Time deltatime);
+};
 
 class Box {
 public:
@@ -191,15 +199,19 @@ private:
 
 	Style _style;
 	Frame& _frame_ref;
-	AABB2 _aabb;
+	AABB2 _aabb;			//aabb size will be padded
+	vec2 _original_size;	//original size will not be padded		
 	Graphic_s _graphic_representation;
+	
+	_widget_info _info;
+};
 
-	//bool is_hovering;
-	//Time last_update; 
-
-	glm::mat4 _projection_matrix;
-
-	void _update_matrix(int screen_width, int screen_height);
+class Gui {	// similiar function with UI class, new implementation 
+public:
+	Gui() = delete;
+	static void new_frame(const Frame& frame);
+	static glm::mat4 _projection_matrix;
+	static Vec2<int> window_size;
 };
 
 // css-like layout structure
@@ -216,7 +228,7 @@ public:
 	Time last_update;
 };
 
-class Ui {
+class Ui {	// legacy
 public:
 	Ui(Frame& frame);
 	void new_frame();
