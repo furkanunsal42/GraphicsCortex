@@ -155,6 +155,76 @@ namespace {
 
 }
 
+
+// object based system
+
+Box::Box(Frame& frame, Style style, AABB2 aabb): 
+	Box(frame, style, aabb, Program_s(default_program::gui_program())) { }
+
+Box::Box(Frame& frame, Style style, AABB2 aabb, Program_s custom_renderer):
+	_frame_ref(frame), _style(style), _aabb(aabb)
+{
+	_graphic_representation->load_program(custom_renderer);
+	_graphic_representation->load_model(Mesh_s(_aabb.generate_model()));
+	_update_matrix(_frame_ref.window_width, _frame_ref.window_height);
+}
+
+void Box::set_position(Vec2<float> positoin){
+	_aabb.position = positoin;
+}
+
+void Box::set_size(Vec2<float> size){
+	_aabb.size = size;
+	_graphic_representation->mesh->load_model(_aabb.generate_model());
+}
+
+bool Box::is_mouse_hover(){
+	return _aabb.does_contain(_frame_ref.get_cursor_position());
+}
+
+void Box::_update_matrix(int screen_width, int screen_height) {
+	_projection_matrix = glm::ortho(0.0f, (float)screen_width, 0.0f, (float)screen_height);
+}
+
+void Box::render(Time deltatime){
+
+	StaticStyle style_to_use = _style;
+	StaticStyle overwrite_style_to_use = overwrite_style;
+	if (is_mouse_hover()) {
+		style_to_use = _style.on_hover;
+		overwrite_style_to_use = overwrite_style.on_hover;
+	}
+
+	Vec3<float> color =				optional_get<Vec3<float>>		({ overwrite_style_to_use.color,			style_to_use.color				} );
+	Vec2<float> displacement =		optional_get<Vec2<float>>		({ overwrite_style_to_use.displacement,		style_to_use.displacement		} );
+	Vec2<float> rotation_euler =	optional_get<Vec2<float>>		({ overwrite_style_to_use.rotation_euler,	style_to_use.rotation_euler		} );
+	Vec4<float> corner_rounding =	optional_get<Vec4<float>>		({ overwrite_style_to_use.corner_rounding,	style_to_use.corner_rounding	} );
+	Vec4<float> padding =			optional_get<Vec4<float>>		({ overwrite_style_to_use.padding,			style_to_use.padding			} );
+	Vec4<float> margin =			optional_get<Vec4<float>>		({ overwrite_style_to_use.margin,			style_to_use.margin				} );
+	Vec4<float> border_thickness =	optional_get<Vec4<float>>		({ overwrite_style_to_use.border_thickness,	style_to_use.border_thickness	} );
+	Vec3<float> border_color =		optional_get<Vec3<float>>		({ overwrite_style_to_use.border_color,		style_to_use.border_color		} );
+	Frame::CursorType cursor_type =	optional_get<Frame::CursorType>	({ overwrite_style_to_use.cursor_type,		style_to_use.cursor_type		} );
+	Vec2<float> padded_size = _aabb.size - Vec2<float>(padding.y + padding.w, padding.x + padding.z);
+
+	_graphic_representation->set_uniform("screen_position",		_aabb.position.x, _frame_ref.window_height - _aabb.position.y);
+	_graphic_representation->set_uniform("projection",			_projection_matrix);
+	_graphic_representation->set_uniform("rect_color",			color.x, color.y, color.z, 1.0f);
+	_graphic_representation->set_uniform("rect_size",			padded_size.x, padded_size.y);
+	_graphic_representation->set_uniform("corner_rounding",		corner_rounding.x, corner_rounding.y, corner_rounding.z, corner_rounding.w);
+	_graphic_representation->set_uniform("border_color",		border_color.x, border_color.y, border_color.z, 1.0f);
+	_graphic_representation->set_uniform("border_thickness",	border_thickness.x, border_thickness.y, border_thickness.z, border_thickness.w);
+
+	_graphic_representation->update_matrix();
+	_graphic_representation->update_uniforms();
+	_graphic_representation->draw(false);
+
+	_frame_ref.set_cursor_type(cursor_type);
+}
+
+
+
+// css-like system
+
 Ui::Ui(Frame& frame) :
 	frame(frame)
 {
@@ -324,8 +394,7 @@ bool Ui::box(const std::string& id, const Vec2<float>& size, const Style& style)
 		
 		if (hover) frame.set_cursor_type(cursor_type);
 
-		Mesh box_mesh(aabb.generate_model());
-		Mesh_s box_mesh_s = Mesh_s(box_mesh);
+		Mesh_s box_mesh_s = Mesh_s(aabb.generate_model());
 		Program_s program_s = Program_s(program);
 		Graphic box_graphic;
 
@@ -406,8 +475,7 @@ void Ui::end(const Style& style) {
 	position = layouts.back().get_position();
 	size = layouts.back().window_size;
 
-	Mesh box_mesh(aabb.generate_model());
-	Mesh_s box_mesh_s = Mesh_s(box_mesh);
+	Mesh_s box_mesh_s = Mesh_s(aabb.generate_model());
 	Program_s program_s = Program_s(program);
 	Graphic box_graphic;
 

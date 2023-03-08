@@ -129,6 +129,34 @@ std::ostream& operator<<(std::ostream& stream, const Vec4<T>& other) {
 	return stream;
 }
 
+// easier to type namings
+typedef Vec2<float> vec2;	// default
+typedef Vec2<int8_t> vec2c;
+typedef Vec2<int16_t> vec2s;
+typedef Vec2<int32_t> vec2i;
+typedef Vec2<uint32_t> vec2ui;
+typedef Vec2<uint64_t> vec2l;
+typedef Vec2<float> vec2f;
+typedef Vec2<double> vec2d;
+
+typedef Vec3<float> vec3;	// default
+typedef Vec3<int8_t> vec3c;
+typedef Vec3<int16_t> vec3s;
+typedef Vec3<int32_t> vec3i;
+typedef Vec3<uint32_t> vec3ui;
+typedef Vec3<uint64_t> vec3l;
+typedef Vec3<float> vec3f;
+typedef Vec3<double> vec3d;
+
+typedef Vec4<float> vec4;	// default
+typedef Vec4<int8_t> vec4c;
+typedef Vec4<int16_t> vec4s;
+typedef Vec4<int32_t> vec4i;
+typedef Vec4<uint32_t> vec4ui;
+typedef Vec4<uint64_t> vec4l;
+typedef Vec4<float> vec4f;
+typedef Vec4<double> vec4d;
+
 
 class AABB2 {
 public:

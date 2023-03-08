@@ -83,6 +83,8 @@ Frame::Frame(int width, int height, const std::string& name, int msaa, int swapi
 		ImGui_ImplGlfw_InitForOpenGL(window, true);
 		ImGui_ImplOpenGL3_Init("#version 330");
 	}
+
+	set_cursor_type(Arrow);
 }
 
 Frame::~Frame() {
@@ -163,36 +165,41 @@ Vec2<int> Frame::get_cursor_position() {
 }
 
 void Frame::set_cursor_type(Frame::CursorType cursor_type) {
+	if (_current_cursor_type == cursor_type)
+		return;
+
 	switch (cursor_type) {
-	case Frame::Arrow:
-		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-		glfwSetCursor(window, glfwCreateStandardCursor(GLFW_ARROW_CURSOR));
-		break;
-	case Frame::IBeam:
-		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-		glfwSetCursor(window, glfwCreateStandardCursor(GLFW_IBEAM_CURSOR));
-		break;
-	case Frame::Crosshair:
-		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-		glfwSetCursor(window, glfwCreateStandardCursor(GLFW_CROSSHAIR_CURSOR));
-		break;
-	case Frame::Hand:
-		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-		glfwSetCursor(window, glfwCreateStandardCursor(GLFW_HAND_CURSOR));
-		break;
-	case Frame::HResize:
-		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-		glfwSetCursor(window, glfwCreateStandardCursor(GLFW_HRESIZE_CURSOR));
-		break;
-	case Frame::VResize:
-		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-		glfwSetCursor(window, glfwCreateStandardCursor(GLFW_VRESIZE_CURSOR));
-		break;
-	case Frame::Disabled:
-		glfwSetCursor(window, glfwCreateStandardCursor(GLFW_ARROW_CURSOR));
-		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-		break;
-	}
+		case Frame::Arrow:
+			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+			glfwSetCursor(window, glfwCreateStandardCursor(GLFW_ARROW_CURSOR));
+			break;
+		case Frame::IBeam:
+			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+			glfwSetCursor(window, glfwCreateStandardCursor(GLFW_IBEAM_CURSOR));
+			break;
+		case Frame::Crosshair:
+			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+			glfwSetCursor(window, glfwCreateStandardCursor(GLFW_CROSSHAIR_CURSOR));
+			break;
+		case Frame::Hand:
+			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+			glfwSetCursor(window, glfwCreateStandardCursor(GLFW_HAND_CURSOR));
+			break;
+		case Frame::HResize:
+			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+			glfwSetCursor(window, glfwCreateStandardCursor(GLFW_HRESIZE_CURSOR));
+			break;
+		case Frame::VResize:
+			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+			glfwSetCursor(window, glfwCreateStandardCursor(GLFW_VRESIZE_CURSOR));
+			break;
+		case Frame::Disabled:
+			glfwSetCursor(window, glfwCreateStandardCursor(GLFW_ARROW_CURSOR));
+			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+			break;
+		}
+
+	_current_cursor_type = cursor_type;
 }
 
 Frame::CursorState Frame::get_mouse_state() {
