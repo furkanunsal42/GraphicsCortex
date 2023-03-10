@@ -26,7 +26,7 @@ float calculate_distance(vec2 point_a, vec2 point_b){
 	return sqrt(pow(point_a.x-point_b.x, 2) + pow(point_a.y-point_b.y, 2));
 }
 
-void edit_cornders(vec2 position, vec2 rectangle_size, vec4 rounding_amount, bool discard_frag = true, vec4 rounding_displacement = vec4(0.0f), vec4 color = vec4(1)){
+void edit_cornders(vec2 position, vec2 rectangle_size, vec4 rounding_amount, bool discard_frag/* = true*/, vec4 rounding_displacement/* = vec4(0.0f)*/, vec4 color/* = vec4(1)*/){
 
 	vec2 tr_corner = vec2(position.x + rectangle_size.x, position.y);
 	vec2 bl_corner = vec2(position.x, position.y - rectangle_size.y);
@@ -106,7 +106,7 @@ void edit_cornders(vec2 position, vec2 rectangle_size, vec4 rounding_amount, boo
 	}
 }
 
-void edit_edges(vec2 position, vec2 rect_size, vec4 edge_thickness, bool discard_flag = false, vec4 color = vec4(1, 1, 1, 1)){
+void edit_edges(vec2 position, vec2 rect_size, vec4 edge_thickness, bool discard_flag/* = false*/, vec4 color/* = vec4(1, 1, 1, 1)*/){
 	// top
 	if (is_inside(position, vec2(rect_size.x, edge_thickness.x), gl_FragCoord.xy)){
 		if (discard_flag)
@@ -166,10 +166,9 @@ void edit_edges(vec2 position, vec2 rect_size, vec4 edge_thickness, bool discard
 
 }
 
-
 void main(){
 	frag_color = rect_color;
-	edit_cornders(screen_position, rect_size, corner_rounding, true);
+	edit_cornders(screen_position, rect_size, corner_rounding, true, vec4(0.0f), vec4(1.0f));
 	edit_edges(screen_position, rect_size, border_thickness, false, border_color);
 	edit_cornders(screen_position, rect_size, corner_rounding, false, -1 * border_thickness, border_color);
 }

@@ -7,6 +7,8 @@ int main() {
 	Style simple_button;
 	simple_button.color = gui::colorcode(0x282828);
 	simple_button.corner_rounding = Persentage(0.2f, Persentage::MIN_SIZE_DIM);
+	simple_button.border_color = gui::colorcode(0x1e1e1e);
+	simple_button.border_thickness = Persentage(0.1f, Persentage::MIN_SIZE_DIM);
 	simple_button.on_hover.cursor_type = Frame::Hand;
 	simple_button.on_hover.color = gui::colorcode(0x424242);
 	simple_button.on_hover.displacement = gui::displacement(10, 0);
@@ -27,6 +29,7 @@ int main() {
 		for (int i = 0; i < 10; i++) {
 			Gui::box(AABB2(vec2f(100, (60 + 10) * i + 100), vec2f(100, 60)), simple_button, frame).render();
 		}
+		Gui::box(AABB2(vec2f(100, frame.window_height - 100), vec2f(100, 60)), simple_button, frame).render();
 
 	}
 	Gui::_destroy();
