@@ -14,14 +14,11 @@ public:
 	Vec2() :
 		x(0.0f), y(0.0f) {}
 
+	Vec2(const T& value) :
+		x(value), y(value) {}
+
 	Vec2(const T& x, const T& y) :
 		x(x), y(y) {}
-
-	Vec2(uint32_t hexcode) {
-		uint8_t* bytes = (uint8_t*)&hexcode;
-		x = *(bytes + 1) / 255.0f;
-		y = *(bytes + 0) / 255.0f;
-	}
 
 	Vec2 operator+(const Vec2& other) const {
 		return Vec2(x + other.x, y + other.y);
@@ -72,16 +69,12 @@ public:
 	Vec3() :
 		x(0.0f), y(0.0f), z(0.0f) {}
 
+	Vec3(const T& value) :
+		x(value), y(value), z(value) {}
+
 	Vec3(const T& x, const T& y, const T& z) :
 		x(x), y(y), z(z) {}
-
-	Vec3(uint32_t hexcode){
-		uint8_t* bytes = (uint8_t*)&hexcode;
-		x = *(bytes + 2) / 255.0f;
-		y = *(bytes + 1) / 255.0f;
-		z = *(bytes + 0) / 255.0f;
-	}
-
+	
 	Vec3 operator+(const Vec3& other) const {
 		return Vec3(x + other.x, y + other.y, z + other.z);
 	}
@@ -129,16 +122,11 @@ public:
 	Vec4() :
 		x(0.0f), y(0.0f), z(0.0f), w(0.0f) {}
 
+	Vec4(const T& value) :
+		x(value), y(value), z(value), w(value) {}
+
 	Vec4(const T& x, const T& y, const T& z, const T& w) :
 		x(x), y(y), z(z), w(w) {}
-
-	Vec4(uint32_t hexcode) {
-		uint8_t* bytes = (uint8_t*)&hexcode;
-		x = *(bytes + 3) / 255.0f;
-		y = *(bytes + 2) / 255.0f;
-		z = *(bytes + 1) / 255.0f;
-		w = *(bytes + 0) / 255.0f;
-	}
 
 	Vec4 operator+(const Vec4& other) const {
 		return Vec4(x + other.x, y + other.y, z + other.z, w + other.w);
@@ -269,3 +257,8 @@ public:
 	bool does_contain(Vec3<T> point_position);
 	Model generate_model();
 };
+
+// glm
+std::ostream& operator<<(std::ostream& os, const glm::vec2 vector);
+std::ostream& operator<<(std::ostream& os, const glm::vec3 vector);
+std::ostream& operator<<(std::ostream& os, const glm::vec4 vector);

@@ -159,10 +159,10 @@
     <ClCompile Include="API\CortexMath.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
-    <ClCompile Include="Mains\GuiMain.cpp">
+    <ClCompile Include="API\Default_Gui_Widgets.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
-    <ClCompile Include="API\Default_Gui_Widgets.cpp">
+    <ClCompile Include="Mains\GuiMain.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
   </ItemGroup>
@@ -206,6 +206,8 @@
     <None Include="Shaders\TextureArray.vert" />
     <None Include="Shaders\Gui.vert" />
     <None Include="Shaders\Gui.frag" />
+    <None Include="Custom Shaders\Depth.frag" />
+    <None Include="Custom Shaders\Depth.vert" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="API\Debuger.h">

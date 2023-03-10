@@ -24,4 +24,5 @@ namespace default_program {
 	Program framebuffer_program();
 	Program cubemap_program();
 	Program gui_program();
+	Program_s gui_program_s();
 }

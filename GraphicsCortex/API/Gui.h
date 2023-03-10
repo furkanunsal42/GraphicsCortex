@@ -42,7 +42,7 @@ namespace {
 }
 
 namespace gui {
-
+	
 	typedef vec3f color;
 	typedef vec2f displacement;
 	typedef vec2f rotation_euler;
@@ -51,6 +51,8 @@ namespace gui {
 	typedef vec4f margin;
 	typedef vec4f border_thickness;
 	typedef vec3f border_color;
+
+	color colorcode(uint32_t hexcode);
 
 }
 
@@ -95,6 +97,8 @@ namespace Interpolation {
 	_interpolation polynomial(float power = 1.0f);
 }
 
+struct _widget_info;
+
 struct Persentage {
 public:
 	enum RespectedAttribute {
@@ -102,6 +106,8 @@ public:
 		SIZE_Y,
 		PADDED_SIZE_X,
 		PADDED_SIZE_Y,
+		MAX_SIZE_DIM,
+		MIN_SIZE_DIM,
 		POSITION_X,
 		POSITION_Y,
 		PADDED_POSITION_X,
@@ -117,6 +123,8 @@ public:
 
 	Persentage(float value, RespectedAttribute attribute_type);
 
+	float get_value(const _widget_info& info);
+
 	RespectedAttribute attribute_type;
 	float value;
 };
@@ -129,20 +137,38 @@ public:
 	StyleAttribute() :
 		use_persentage(false), value(T()) {}
 
+	bool use_value = false;
 	bool use_persentage = false;
 	union {
-		std::optional<T> value;
-		std::optional<Persentage> persentage;
+		T value;
+		Persentage persentage;
 	};
 
 	void operator=(const T& other) {
 		value = other;
+		use_value = true;
 		use_persentage = false;
 	}
 
 	void operator=(const Persentage& other) {
 		persentage = other;
 		use_persentage = true;
+		use_value = false;
+	}
+
+	bool exist() {
+		return use_value || use_persentage;
+	}
+
+	T get_value(const _widget_info& info) {
+		if (use_value)
+			return value;
+		else if (use_persentage) {
+			return T(persentage.get_value(info));
+		}
+		else {
+			return T();	// default case 
+		}
 	}
 };
 
@@ -155,7 +181,7 @@ public:
 	std::optional<Vec3<float>> color;
 	std::optional<Vec2<float>> displacement;
 	std::optional<Vec2<float>> rotation_euler;	// not implemented 
-	std::optional<Vec4<float>> corner_rounding; // corner indicies follows traditional coordinate system partition	// 1 | 0
+	StyleAttribute<vec4f> corner_rounding; // corner indicies follows traditional coordinate system partition	// 1 | 0
 																													// --|-- 
 																													// 2 | 3
 
@@ -214,6 +240,9 @@ private:
 
 struct _widget_info {
 public:
+	vec2f size;
+	vec2f position;
+
 	bool is_hovering;
 	//Time last_update;
 
@@ -236,7 +265,7 @@ public:
 	Box(Frame& frame, Style style, AABB2 aabb);
 	Box(Frame& frame, Style style, AABB2 aabb, Program_s custom_renderer);
 	
-	void set_position(Vec2<float> positoin);
+	void set_position(Vec2<float> position);
 	void set_size(Vec2<float> size);
 
 	bool is_mouse_hover();
@@ -244,6 +273,9 @@ public:
 	void render(Time deltatime);
 
 	Style overwrite_style;
+
+	vec2f get_size();
+	vec2f get_position();
 
 private:
 
@@ -253,7 +285,7 @@ private:
 	vec2 _original_size;		//original size will not be padded		
 	vec2 _original_position;	//original size will not be displaced
 	Graphic_s _graphic_representation;
-	
+
 	_widget_info _info;
 };
 
@@ -264,8 +296,15 @@ public:
 	static glm::mat4 _projection_matrix;
 	static Vec2<int> window_size;
 	static bool _hover_happened;
+	static Program_s default_gui_renderer;
+private:
+	static void _initialize();
+	static bool _initialized;
+
+	friend Box;
 };
 
+/*
 // css-like layout structure
 
 struct WidgetInfo {
@@ -312,3 +351,4 @@ private:
 	bool _cursor_state_just_changed = false;
 	bool _hovered = false;
 };
+*/

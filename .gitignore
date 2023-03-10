@@ -262,3 +262,4 @@ GraphicsCortex/Release/CortexMath.obj
 GraphicsCortex/Release/GuiMain.obj
 GraphicsCortex/Release/glm_test.obj
 GraphicsCortex/Release/Default_Gui_Widgets.obj
+GraphicsCortex/Release/DepthMap.obj

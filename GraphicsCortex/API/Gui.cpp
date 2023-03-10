@@ -67,6 +67,15 @@ _interpolation Interpolation::polynomial(float power) {
 	return result;
 }
 
+vec3f gui::colorcode(uint32_t hexcode) {
+	color result;
+	uint8_t* bytes = (uint8_t*)&hexcode;
+	result.x = *(bytes + 2) / 255.0f;
+	result.y = *(bytes + 1) / 255.0f;
+	result.z = *(bytes + 0) / 255.0f;
+	return result;
+}
+
 namespace {
 	template<typename T>
 	T optional_get(std::vector<std::optional<T>> fallback_list, T null_value = T()) {
@@ -85,6 +94,22 @@ namespace {
 	}
 
 	template<typename T>
+	T style_attribute_get(std::vector<StyleAttribute<T>> fallback_list, const _widget_info& info, T null_value = T()) {	// TODO: implement for Persentage
+		for (StyleAttribute<T>& attribute : fallback_list) {
+			if (attribute.exist())
+				return attribute.get_value(info);
+		}
+		return null_value;
+	}
+
+	template<typename T>
+	T style_attribute_get(StyleAttribute<T> attribute, const _widget_info& info, T null_value = T()) {	// TODO: implement for Persentage
+		if (attribute.exist())
+			return attribute.get_value(info);
+		return null_value;
+	}
+
+	template<typename T>
 	T linear_interpolation(T default_value, T target_value, Time max_time, Time current_time) {
 		return default_value + (target_value - default_value) / max_time * (std::min(current_time, max_time));
 	}
@@ -99,7 +124,7 @@ namespace {
 		Vec3<float> color =				optional_get<Vec3<float>>({			target_style.color,				style.color });
 		Vec2<float> displacement =		optional_get<Vec2<float>>({			target_style.displacement,		style.displacement });
 		Vec2<float> rotation_euler =	optional_get<Vec2<float>>({			target_style.rotation_euler,	style.rotation_euler });
-		Vec4<float> corner_rounding =	optional_get<Vec4<float>>({			target_style.corner_rounding,	style.corner_rounding });
+		Vec4<float> corner_rounding =	style_attribute_get<Vec4<float>>({	target_style.corner_rounding,	style.corner_rounding}, widget_info);
 		Vec4<float> padding =			optional_get<Vec4<float>>({			target_style.padding,			style.padding });
 		Vec4<float> margin =			optional_get<Vec4<float>>({			target_style.margin,			style.margin });
 		Vec4<float> border_thickness =	optional_get<Vec4<float>>({			target_style.border_thickness,	style.border_thickness });
@@ -109,7 +134,7 @@ namespace {
 		Vec3<float> color_default =				optional_get<Vec3<float>>({			style.color });
 		Vec2<float> displacement_default =		optional_get<Vec2<float>>({			style.displacement });
 		Vec2<float> rotation_euler_default =	optional_get<Vec2<float>>({			style.rotation_euler });
-		Vec4<float> corner_rounding_default =	optional_get<Vec4<float>>({			style.corner_rounding });
+		Vec4<float> corner_rounding_default =	style_attribute_get<Vec4<float>>({			style.corner_rounding }, widget_info);
 		Vec4<float> padding_default =			optional_get<Vec4<float>>({			style.padding });
 		Vec4<float> margin_default =			optional_get<Vec4<float>>({			style.margin });
 		Vec4<float> border_thickness_default =	optional_get<Vec4<float>>({			style.border_thickness });
@@ -145,28 +170,28 @@ namespace {
 
 		StaticStyle result;
 		
-		if (color_change > 0)				result.color =				style.color_interpolation.value_or(Interpolation::linear()).interpolate(color_default,				color,				color_change,				widget_info._current_color_time);
+		if (color_change > 0)				result.color =				style.color_interpolation.value_or(Interpolation::linear()).interpolate(			color_default,				color,				color_change,				widget_info._current_color_time);
 		else if (hover)						result.color =				color; 
 		else								result.color =				color_default; 
-		if (displacement_change > 0)		result.displacement =		style.displacement_interpolation.value_or(Interpolation::linear()).interpolate(displacement_default,		displacement,		displacement_change,		widget_info._current_displacement_time);
+		if (displacement_change > 0)		result.displacement =		style.displacement_interpolation.value_or(Interpolation::linear()).interpolate(		displacement_default,		displacement,		displacement_change,		widget_info._current_displacement_time);
 		else if (hover)						result.displacement =		displacement; 
 		else								result.displacement =		displacement_default; 
-		if (rotation_change > 0)			result.rotation_euler =		style.rotation_interpolation.value_or(Interpolation::linear()).interpolate(rotation_euler_default,	rotation_euler,		rotation_change,			widget_info._current_rotation_time);
+		if (rotation_change > 0)			result.rotation_euler =		style.rotation_interpolation.value_or(Interpolation::linear()).interpolate(			rotation_euler_default,		rotation_euler,		rotation_change,			widget_info._current_rotation_time);
 		else if (hover)						result.rotation_euler =		rotation_euler;
 		else								result.rotation_euler =		rotation_euler_default;
-		if (corner_rounding_change > 0)		result.corner_rounding =	style.corner_rounding_interpolation.value_or(Interpolation::linear()).interpolate(corner_rounding_default,	corner_rounding,	corner_rounding_change,		widget_info._current_corner_rounding_time);
+		if (corner_rounding_change > 0)		result.corner_rounding =	style.corner_rounding_interpolation.value_or(Interpolation::linear()).interpolate(	corner_rounding_default,	corner_rounding,	corner_rounding_change,		widget_info._current_corner_rounding_time);
 		else if (hover)						result.corner_rounding =	corner_rounding;
 		else								result.corner_rounding =	corner_rounding_default;
-		if (padding_change > 0)				result.padding =			style.padding_interpolation.value_or(Interpolation::linear()).interpolate(padding_default,			padding,			padding_change,				widget_info._current_padding_time);
+		if (padding_change > 0)				result.padding =			style.padding_interpolation.value_or(Interpolation::linear()).interpolate(			padding_default,			padding,			padding_change,				widget_info._current_padding_time);
 		else if (hover)						result.padding =			padding;
 		else								result.padding =			padding_default;
-		if (margin_change > 0)				result.margin =				style.margin_interpolation.value_or(Interpolation::linear()).interpolate(margin_default,			margin,				margin_change,				widget_info._current_margin_time);
+		if (margin_change > 0)				result.margin =				style.margin_interpolation.value_or(Interpolation::linear()).interpolate(			margin_default,				margin,				margin_change,				widget_info._current_margin_time);
 		else if (hover)						result.margin =				margin;
 		else 								result.margin =				margin_default;
-		if (border_thickness_change > 0)	result.border_thickness =	style.border_thickness_interpolation.value_or(Interpolation::linear()).interpolate(border_thickness_default,	border_thickness,	border_thickness_change,	widget_info._current_border_thickness_time);
+		if (border_thickness_change > 0)	result.border_thickness =	style.border_thickness_interpolation.value_or(Interpolation::linear()).interpolate(	border_thickness_default,	border_thickness,	border_thickness_change,	widget_info._current_border_thickness_time);
 		else if (hover)						result.border_thickness =	border_thickness;
 		else 								result.border_thickness =	border_thickness_default;
-		if (border_color_change > 0)		result.border_color =		style.border_color_interpolation.value_or(Interpolation::linear()).interpolate(border_color_default,		border_color,		border_color_change,		widget_info._current_border_color_time);
+		if (border_color_change > 0)		result.border_color =		style.border_color_interpolation.value_or(Interpolation::linear()).interpolate(		border_color_default,		border_color,		border_color_change,		widget_info._current_border_color_time);
 		else if (hover)						result.border_color =		border_color;
 		else 								result.border_color =		border_color_default;
 		
@@ -184,11 +209,11 @@ namespace {
 		return interpolate_styles(style, style_to_use, widget_info, hover);
 	}
 
-	StaticStyle merge_styles_by_priority(std::vector<StaticStyle> styles) {
+	StaticStyle merge_styles_by_priority(std::vector<StaticStyle> styles, const _widget_info& info) {
 		std::vector<std::optional<vec3f>> colors;
 		std::vector<std::optional<vec2f>> displacements;
 		std::vector<std::optional<vec2f>> rotation_eulers;
-		std::vector<std::optional<vec4f>> corner_roundings;
+		std::vector<StyleAttribute<vec4f>> corner_roundings;
 		std::vector<std::optional<vec4f>> paddings;
 		std::vector<std::optional<vec4f>> margins;
 		std::vector<std::optional<vec4f>> border_thicknesss;
@@ -210,7 +235,7 @@ namespace {
 		Vec3<float> color =				optional_get<Vec3<float>>( colors );
 		Vec2<float> displacement =		optional_get<Vec2<float>>( displacements );
 		Vec2<float> rotation_euler =	optional_get<Vec2<float>>( rotation_eulers );
-		Vec4<float> corner_rounding =	optional_get<Vec4<float>>( corner_roundings );
+		Vec4<float> corner_rounding =	style_attribute_get<Vec4<float>>( corner_roundings , info);
 		Vec4<float> padding =			optional_get<Vec4<float>>( paddings );
 		Vec4<float> margin =			optional_get<Vec4<float>>( margins );
 		Vec4<float> border_thickness =	optional_get<Vec4<float>>( border_thicknesss );
@@ -232,8 +257,8 @@ namespace {
 		return merged_style;
 	}
 
-	Style merge_static_style_with_style(const StaticStyle& static_style, const Style& style) {
-		StaticStyle merged_style = merge_styles_by_priority({ static_style, style });
+	Style merge_static_style_with_style(const StaticStyle& static_style, const Style& style, const _widget_info& info) {
+		StaticStyle merged_style = merge_styles_by_priority({ static_style, style }, info);
 		Style style_copy = style;
 
 		style_copy.color = merged_style.color;
@@ -248,7 +273,7 @@ namespace {
 
 		return style_copy;
 	}
-
+	/*
 	StaticStyle interpolate_styles(Style style, WidgetInfo& widget_info) {
 		StaticStyle style_to_use;
 		Time animation_time;
@@ -325,7 +350,7 @@ namespace {
 
 		return result;
 	}
-
+	*/
 }
 
 std::string Persentage::RespectedAttribute_to_string(const RespectedAttribute& attribute) {
@@ -372,6 +397,61 @@ std::string Persentage::RespectedAttribute_to_string(const RespectedAttribute& a
 Persentage::Persentage(float value, RespectedAttribute attribute_type) : 
 	value(value), attribute_type(attribute_type) {}
 
+float Persentage::get_value(const _widget_info& info) {
+	switch (attribute_type) {
+	case SIZE_X :
+		return value * info.size.x;	
+		break;
+	case SIZE_Y :
+		return value * info.size.y;
+		break;
+	case PADDED_SIZE_X :
+		return 0;	
+		break;
+	case PADDED_SIZE_Y :
+		return 0;	
+		break;
+	case MAX_SIZE_DIM: {
+		float max_size = info.size.x;
+		if (info.size.y > max_size)
+			max_size = info.size.y;
+		return value * max_size;
+		break;
+	}
+	case MIN_SIZE_DIM: {
+		float min_size = info.size.x;
+		if (info.size.y < min_size)
+			min_size = info.size.y;
+		return value * min_size;
+		break;
+	}
+	case POSITION_X :
+		return value * info.position.x;
+		break;
+	case POSITION_Y :
+		return value * info.position.y;
+		break;
+	case PADDED_POSITION_X :
+		return 0;	
+		break;
+	case PADDED_POSITION_Y :
+		return 0;	
+		break;
+	case PARENT_WIDTH :
+		return 0;	
+		break;
+	case PARENT_HEIGHT :
+		return 0;	
+		break;
+	case AVAILABLE_WIDTH :
+		return 0;	
+		break;
+	case AVAILABLE_HEIGHT :
+		return 0;
+		break;
+	}
+	return 0;
+}
 
 // object based system
 
@@ -399,26 +479,40 @@ void _widget_info::increment_time(Time deltatime) {
 	}
 }
 
+Box::Box(Frame& frame, Style style, AABB2 aabb) :
+	_frame_ref(frame), _style(style), _aabb(aabb), _original_size(aabb.size), _original_position(aabb.position)
+{
+	Gui::_initialize();
+	
+	_graphic_representation->load_program(Gui::default_gui_renderer);
+	_graphic_representation->load_model(Mesh_s(_aabb.generate_model()));
+	//_update_matrix(_frame_ref.window_width, _frame_ref.window_height);
 
-Box::Box(Frame& frame, Style style, AABB2 aabb): 
-	Box(frame, style, aabb, Program_s(default_program::gui_program())) { }
+	_info.size = _original_size;
+	_info.position = _original_position;
+}
 
 Box::Box(Frame& frame, Style style, AABB2 aabb, Program_s custom_renderer):
 	_frame_ref(frame), _style(style), _aabb(aabb), _original_size(aabb.size), _original_position(aabb.position)
 {
+	Gui::_initialize();
+
 	_graphic_representation->load_program(custom_renderer);
 	_graphic_representation->load_model(Mesh_s(_aabb.generate_model()));
 	//_update_matrix(_frame_ref.window_width, _frame_ref.window_height);
+
+	_info.size = _original_size;
+	_info.position = _original_position;
 }
 
 void Box::set_position(Vec2<float> position){
-	_aabb.position = position;
 	_original_position = position;
+	_info.position = position;
 }
 
 void Box::set_size(Vec2<float> size){
-	_aabb.size = size;
-	_graphic_representation->mesh->load_model(_aabb.generate_model());
+	_info.size = size;
+	_original_size = size;
 }
 
 bool Box::is_mouse_hover(){
@@ -427,8 +521,8 @@ bool Box::is_mouse_hover(){
 
 void Box::render(Time deltatime){
 
-	StaticStyle default_style = merge_styles_by_priority({ overwrite_style, _style });
-	StaticStyle hover_style = merge_styles_by_priority({ overwrite_style.on_hover, _style.on_hover, default_style });
+	StaticStyle default_style = merge_styles_by_priority({ overwrite_style, _style }, _info);
+	StaticStyle hover_style = merge_styles_by_priority({ overwrite_style.on_hover, _style.on_hover, default_style }, _info);
 
 	StaticStyle style_to_use = default_style;
 	_info.is_hovering = false;
@@ -438,13 +532,13 @@ void Box::render(Time deltatime){
 		_info.is_hovering = true;
 		Gui::_hover_happened = true;
 	}
-	Style base_style = merge_static_style_with_style(default_style, _style);
-	Style target_style = merge_static_style_with_style(hover_style, _style);	// append timing information of style to style_to_use, TODO: merge timing information of _style and overwrite_style here
+	Style base_style = merge_static_style_with_style(default_style, _style, _info);
+	Style target_style = merge_static_style_with_style(hover_style, _style, _info);	// append timing information of style to style_to_use, TODO: merge timing information of _style and overwrite_style here
 	StaticStyle interpolated_style = interpolate_styles(base_style, target_style, _info, hover);
 	Vec3<float> color =				optional_get<Vec3<float>>		( interpolated_style.color );
 	Vec2<float> displacement =		optional_get<Vec2<float>>		( interpolated_style.displacement );
 	Vec2<float> rotation_euler =	optional_get<Vec2<float>>		( interpolated_style.rotation_euler );
-	Vec4<float> corner_rounding =	optional_get<Vec4<float>>		( interpolated_style.corner_rounding );
+	Vec4<float> corner_rounding =	style_attribute_get<Vec4<float>>( interpolated_style.corner_rounding , _info);
 	Vec4<float> padding =			optional_get<Vec4<float>>		( interpolated_style.padding );
 	Vec4<float> margin =			optional_get<Vec4<float>>		( interpolated_style.margin );
 	Vec4<float> border_thickness =	optional_get<Vec4<float>>		( interpolated_style.border_thickness );
@@ -481,11 +575,22 @@ void Box::render(Time deltatime){
 }
 
 
+vec2f Box::get_size(){
+	return _original_size;
+}
+vec2f Box::get_position(){
+	return _original_position;
+}
+
 glm::mat4 Gui::_projection_matrix;
 Vec2<int> Gui::window_size;
 bool Gui::_hover_happened;
+Program_s Gui::default_gui_renderer;	// can only be initialized after initializing opengl, thus initialized by Gui::new_frame() 
+bool Gui::_initialized = false;
 
 void Gui::new_frame(Frame& frame) {
+	_initialize();
+	
 	vec2i current_window_size(frame.window_width, frame.window_height);
 	if (window_size != current_window_size){
 		window_size = current_window_size;
@@ -496,7 +601,13 @@ void Gui::new_frame(Frame& frame) {
 	_hover_happened = false;
 }
 
+void Gui::_initialize() {
+	if (!_initialized)
+		default_gui_renderer = default_program::gui_program_s();
+	_initialized = true;
+}
 
+/*
 // css-like system
 
 Ui::Ui(Frame& frame) :
@@ -782,3 +893,4 @@ void Ui::_update_matrix(int screen_width, int screen_height) {
 	
 	projection_matrix = glm::ortho(0.0f, (float)screen_width, 0.0f, (float)screen_height);
 }
+*/

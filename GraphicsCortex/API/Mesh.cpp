@@ -14,13 +14,12 @@ Mesh::Mesh(const Model& model) :
 
 void Mesh::load_model(const Model& model)
 {
-	array_buffer->initialize_buffer(model.vertex_data);
+	array_buffer->load_buffer(model.vertex_data);
 
-	array_buffer->vertex_attribute_structure.clear();
 	for (unsigned int attribute : model.vertex_attribute_structure)
 		array_buffer->push_attribute(attribute);
 
-	index_buffer->initialize_buffer(model.index_data, 3);
+	index_buffer->load_buffer(model.index_data, 3);
 }
 
 void Mesh::bind() {

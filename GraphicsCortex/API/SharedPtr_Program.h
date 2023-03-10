@@ -7,7 +7,7 @@ public:
 
 	_SHARED_POINTER_DEFINITIONS(Program)
 
-		Program_s() :
+	Program_s() :
 		obj(std::make_shared<Program>()) {}
 
 	Program_s(const std::string& vertex_shader_code, const std::string& fragment_shader_code) :

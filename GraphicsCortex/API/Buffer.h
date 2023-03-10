@@ -17,12 +17,15 @@ public:
 	ArrayBuffer(std::vector<float> verticies);
 	~ArrayBuffer();
 	void push_attribute(unsigned int count);
-	void initialize_buffer(const std::vector<float>& verticies);
-	void initialize_buffer(float verticies[], int data_count);
+	void load_buffer(const std::vector<float>& verticies);
+	void load_buffer(float verticies[], int data_count);
 	void bind();
 	void unbind();
 
 private:
+	void _initialize_buffer(const std::vector<float>& verticies);
+	void _initialize_buffer(float verticies[], int data_count);
+	void _deallocate();
 	bool initialized = false;
 };
 
@@ -36,12 +39,16 @@ public:
 	IndexBuffer(unsigned int verticies[], int vertex_dim, int data_count);
 	IndexBuffer(std::vector<unsigned int> verticies, int vertex_dim);
 	~IndexBuffer();
-	void initialize_buffer(const std::vector<unsigned int>& verticies, int vertex_dim);
-	void initialize_buffer(const unsigned int verticies[], int vertex_dim, int data_count);
+	void load_buffer(const std::vector<unsigned int>& verticies, int vertex_dim);
+	void load_buffer(const unsigned int verticies[], int vertex_dim, int data_count);
 	void bind();
 	void unbind();
 
 private:
+	void _initialize_buffer(const std::vector<unsigned int>& verticies, int vertex_dim);
+	void _initialize_buffer(const unsigned int verticies[], int vertex_dim, int data_count);
+	void _deallocate();
+
 	bool initialized = false;
 };
 
