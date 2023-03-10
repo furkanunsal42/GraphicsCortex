@@ -481,8 +481,8 @@ void _widget_info::increment_time(Time deltatime) {
 	}
 }
 
-Box::Box(Frame& frame, const std::string& name, Style style, AABB2 aabb) :
-	_frame_ref(frame), _style(style), _aabb(aabb), _original_size(aabb.size), _original_position(aabb.position), name(name)
+Box::Box(Frame& frame, Style style, AABB2 aabb, uint32_t id) :
+	_frame_ref(frame), _style(style), _aabb(aabb), _original_size(aabb.size), _original_position(aabb.position), _id(id)
 {
 	Gui::_initialize();
 	
@@ -494,8 +494,8 @@ Box::Box(Frame& frame, const std::string& name, Style style, AABB2 aabb) :
 	_info.position = _original_position;
 }
 
-Box::Box(Frame& frame, const std::string& name, Style style, AABB2 aabb, Program_s custom_renderer):
-	_frame_ref(frame), _style(style), _aabb(aabb), _original_size(aabb.size), _original_position(aabb.position), name(name)
+Box::Box(Frame& frame, Style style, AABB2 aabb, Program_s custom_renderer, uint32_t id):
+	_frame_ref(frame), _style(style), _aabb(aabb), _original_size(aabb.size), _original_position(aabb.position), _id(id)
 {
 	Gui::_initialize();
 
@@ -521,7 +521,7 @@ bool Box::is_mouse_hover(){
 	return _aabb.does_contain(_frame_ref.get_cursor_position());
 }
 
-void Box::render(Time deltatime_sec){
+void Box::render(){
 
 	StaticStyle default_style = merge_styles_by_priority({ overwrite_style, _style }, _info);
 	StaticStyle hover_style = merge_styles_by_priority({ overwrite_style.on_hover, _style.on_hover, default_style }, _info);
@@ -573,7 +573,7 @@ void Box::render(Time deltatime_sec){
 		_frame_ref.set_cursor_type(cursor_type);
 
 	//_info.last_update = _frame_ref.get_time_sec();
-	_info.increment_time(deltatime_sec);
+	_info.increment_time(Gui::_frame_time_ms / 1000.0f);
 }
 
 
@@ -592,6 +592,7 @@ bool Gui::_initialized = false;
 std::vector<Box> Gui::widget_table;
 std::vector<std::function<void(Time)>> Gui::render_queue;
 Time Gui::_frame_time_ms;
+uint32_t Gui::_widget_next_id;
 
 void Gui::new_frame(Frame& frame, Time frame_time_ms) {
 	_initialize();
@@ -607,6 +608,7 @@ void Gui::new_frame(Frame& frame, Time frame_time_ms) {
 	_hover_happened = false;
 
 	render_queue.clear();
+	_widget_next_id = 0;
 }
 
 void Gui::_initialize() {
@@ -629,20 +631,19 @@ void Gui::render(Time deltatime) {
 	}
 }
 
-void Gui::box(const std::string& name, AABB2 aabb, Style style, Frame& frame) {
+Box& Gui::box(AABB2 aabb, Style style, Frame& frame) {
 	// append to table if mentioned for the first time
-	auto same_name = [&name](Box box) { return box.name == name; };
+	uint32_t next_id = _widget_next_id++;
+	auto same_name = [next_id](Box box) { return box._id == next_id; };
 	auto found_box = std::find_if(widget_table.begin(), widget_table.end(), same_name);
 	if (found_box == widget_table.end()) {
-		widget_table.push_back(Box (frame, name, style, aabb));
+		widget_table.push_back(Box (frame, style, aabb, next_id));
 		int widget_count = widget_table.size() - 1;
-		widget_table[widget_count].render(_frame_time_ms / 1000.0f);
+		return widget_table[widget_count];
 	}
 	else {
-		return (*found_box).render(_frame_time_ms / 1000.0f);
+		return (*found_box);
 	}
-
-
 }
 
 /*

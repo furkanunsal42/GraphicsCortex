@@ -262,23 +262,23 @@ class Box {
 public:
 	Style style;
 
-	Box(Frame& frame, const std::string& name, Style style, AABB2 aabb);
-	Box(Frame& frame, const std::string& name, Style style, AABB2 aabb, Program_s custom_renderer);
+	Box(Frame& frame, Style style, AABB2 aabb, uint32_t id = 0);
+	Box(Frame& frame, Style style, AABB2 aabb, Program_s custom_renderer, uint32_t id = 0);
 	
 	void set_position(Vec2<float> position);
 	void set_size(Vec2<float> size);
 
 	bool is_mouse_hover();
 
-	void render(Time deltatime);
+	void render();
 
 	Style overwrite_style;
 
 	vec2f get_size();
 	vec2f get_position();
 
-	std::string name;
 
+	uint32_t _id = 0;
 private:
 
 	Style _style;
@@ -302,7 +302,7 @@ public:
 
 	static void render(Time delatime);
 	
-	static void box(const std::string& name, AABB2 aabb, Style style, Frame& frame);
+	static Box& box(AABB2 aabb, Style style, Frame& frame);
 
 	static void _destroy();
 private:
@@ -314,6 +314,8 @@ private:
 
 	static void _initialize();
 	static bool _initialized;
+
+	static uint32_t _widget_next_id;
 
 	friend Box;
 };
