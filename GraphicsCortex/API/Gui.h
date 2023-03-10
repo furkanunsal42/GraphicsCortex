@@ -262,8 +262,8 @@ class Box {
 public:
 	Style style;
 
-	Box(Frame& frame, Style style, AABB2 aabb);
-	Box(Frame& frame, Style style, AABB2 aabb, Program_s custom_renderer);
+	Box(Frame& frame, const std::string& name, Style style, AABB2 aabb);
+	Box(Frame& frame, const std::string& name, Style style, AABB2 aabb, Program_s custom_renderer);
 	
 	void set_position(Vec2<float> position);
 	void set_size(Vec2<float> size);
@@ -276,6 +276,8 @@ public:
 
 	vec2f get_size();
 	vec2f get_position();
+
+	std::string name;
 
 private:
 
@@ -292,12 +294,24 @@ private:
 class Gui {	// similiar function with UI class, new implementation 
 public:
 	Gui() = delete;
-	static void new_frame(Frame& frame);
+	static void new_frame(Frame& frame, Time frame_time);
 	static glm::mat4 _projection_matrix;
 	static Vec2<int> window_size;
 	static bool _hover_happened;
 	static Program_s default_gui_renderer;
+
+	static void render(Time delatime);
+	
+	static void box(const std::string& name, AABB2 aabb, Style style, Frame& frame);
+
+	static void _destroy();
 private:
+
+	static Time _frame_time_ms;
+
+	static std::vector<Box> widget_table;
+	static std::vector<std::function<void(Time)>> render_queue;
+
 	static void _initialize();
 	static bool _initialized;
 

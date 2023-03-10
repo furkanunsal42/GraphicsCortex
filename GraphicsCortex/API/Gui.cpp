@@ -2,6 +2,8 @@
 #include "Graphic.h"
 #include "Default_Programs.h"
 
+#include <algorithm>
+
 Layout::Layout(uint32_t type, const AABB2& aabb) :
 	type((Layout::LayoutType)type), window_size(aabb.size), position(aabb.position) {}
 
@@ -479,8 +481,8 @@ void _widget_info::increment_time(Time deltatime) {
 	}
 }
 
-Box::Box(Frame& frame, Style style, AABB2 aabb) :
-	_frame_ref(frame), _style(style), _aabb(aabb), _original_size(aabb.size), _original_position(aabb.position)
+Box::Box(Frame& frame, const std::string& name, Style style, AABB2 aabb) :
+	_frame_ref(frame), _style(style), _aabb(aabb), _original_size(aabb.size), _original_position(aabb.position), name(name)
 {
 	Gui::_initialize();
 	
@@ -492,8 +494,8 @@ Box::Box(Frame& frame, Style style, AABB2 aabb) :
 	_info.position = _original_position;
 }
 
-Box::Box(Frame& frame, Style style, AABB2 aabb, Program_s custom_renderer):
-	_frame_ref(frame), _style(style), _aabb(aabb), _original_size(aabb.size), _original_position(aabb.position)
+Box::Box(Frame& frame, const std::string& name, Style style, AABB2 aabb, Program_s custom_renderer):
+	_frame_ref(frame), _style(style), _aabb(aabb), _original_size(aabb.size), _original_position(aabb.position), name(name)
 {
 	Gui::_initialize();
 
@@ -519,7 +521,7 @@ bool Box::is_mouse_hover(){
 	return _aabb.does_contain(_frame_ref.get_cursor_position());
 }
 
-void Box::render(Time deltatime){
+void Box::render(Time deltatime_sec){
 
 	StaticStyle default_style = merge_styles_by_priority({ overwrite_style, _style }, _info);
 	StaticStyle hover_style = merge_styles_by_priority({ overwrite_style.on_hover, _style.on_hover, default_style }, _info);
@@ -571,7 +573,7 @@ void Box::render(Time deltatime){
 		_frame_ref.set_cursor_type(cursor_type);
 
 	//_info.last_update = _frame_ref.get_time_sec();
-	_info.increment_time(deltatime);
+	_info.increment_time(deltatime_sec);
 }
 
 
@@ -587,10 +589,14 @@ Vec2<int> Gui::window_size;
 bool Gui::_hover_happened;
 Program_s Gui::default_gui_renderer;	// can only be initialized after initializing opengl, thus initialized by Gui::new_frame() 
 bool Gui::_initialized = false;
+std::vector<Box> Gui::widget_table;
+std::vector<std::function<void(Time)>> Gui::render_queue;
+Time Gui::_frame_time_ms;
 
-void Gui::new_frame(Frame& frame) {
+void Gui::new_frame(Frame& frame, Time frame_time_ms) {
 	_initialize();
-	
+	_frame_time_ms = frame_time_ms;
+
 	vec2i current_window_size(frame.window_width, frame.window_height);
 	if (window_size != current_window_size){
 		window_size = current_window_size;
@@ -599,12 +605,44 @@ void Gui::new_frame(Frame& frame) {
 	if (!_hover_happened)
 		frame.set_cursor_type(Frame::Arrow);
 	_hover_happened = false;
+
+	render_queue.clear();
 }
 
 void Gui::_initialize() {
 	if (!_initialized)
 		default_gui_renderer = default_program::gui_program_s();
 	_initialized = true;
+}
+
+void Gui::_destroy() {
+	widget_table.clear();
+}
+
+
+void Gui::render(Time deltatime) {
+	//for (auto widget : widget_table) {
+	//	widget.render(deltatime);
+	//}
+	for (auto render_call : render_queue) {
+		render_call(deltatime);
+	}
+}
+
+void Gui::box(const std::string& name, AABB2 aabb, Style style, Frame& frame) {
+	// append to table if mentioned for the first time
+	auto same_name = [&name](Box box) { return box.name == name; };
+	auto found_box = std::find_if(widget_table.begin(), widget_table.end(), same_name);
+	if (found_box == widget_table.end()) {
+		widget_table.push_back(Box (frame, name, style, aabb));
+		int widget_count = widget_table.size() - 1;
+		widget_table[widget_count].render(_frame_time_ms / 1000.0f);
+	}
+	else {
+		return (*found_box).render(_frame_time_ms / 1000.0f);
+	}
+
+
 }
 
 /*
