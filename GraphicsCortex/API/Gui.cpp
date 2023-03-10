@@ -121,24 +121,24 @@ namespace {
 
 	StaticStyle interpolate_styles(Style style, StaticStyle target_style, _widget_info& widget_info, bool hover) {
 		// insert object to layout
-		Vec3<float> color =				optional_get<Vec3<float>>({			target_style.color,				style.color });
-		Vec2<float> displacement =		optional_get<Vec2<float>>({			target_style.displacement,		style.displacement });
-		Vec2<float> rotation_euler =	optional_get<Vec2<float>>({			target_style.rotation_euler,	style.rotation_euler });
-		Vec4<float> corner_rounding =	style_attribute_get<Vec4<float>>({	target_style.corner_rounding,	style.corner_rounding}, widget_info);
-		Vec4<float> padding =			optional_get<Vec4<float>>({			target_style.padding,			style.padding });
-		Vec4<float> margin =			optional_get<Vec4<float>>({			target_style.margin,			style.margin });
-		Vec4<float> border_thickness =	optional_get<Vec4<float>>({			target_style.border_thickness,	style.border_thickness });
-		Vec3<float> border_color =		optional_get<Vec3<float>>({			target_style.border_color,		style.border_color });
-		Frame::CursorType cursor_type =	optional_get<Frame::CursorType>({	target_style.cursor_type,		style.cursor_type });
+		Vec3<float> color =				style_attribute_get<Vec3<float>>({			target_style.color,				style.color }, widget_info);
+		Vec2<float> displacement =		style_attribute_get<Vec2<float>>({			target_style.displacement,		style.displacement }, widget_info);
+		Vec2<float> rotation_euler =	style_attribute_get<Vec2<float>>({			target_style.rotation_euler,	style.rotation_euler }, widget_info);
+		Vec4<float> corner_rounding =	style_attribute_get<Vec4<float>>({			target_style.corner_rounding,	style.corner_rounding}, widget_info);
+		Vec4<float> padding =			style_attribute_get<Vec4<float>>({			target_style.padding,			style.padding }, widget_info);
+		Vec4<float> margin =			style_attribute_get<Vec4<float>>({			target_style.margin,			style.margin }, widget_info);
+		Vec4<float> border_thickness =	style_attribute_get<Vec4<float>>({			target_style.border_thickness,	style.border_thickness }, widget_info);
+		Vec3<float> border_color =		style_attribute_get<Vec3<float>>({			target_style.border_color,		style.border_color }, widget_info);
+		Frame::CursorType cursor_type = optional_get<Frame::CursorType>({	target_style.cursor_type,		style.cursor_type });
 		
-		Vec3<float> color_default =				optional_get<Vec3<float>>({			style.color });
-		Vec2<float> displacement_default =		optional_get<Vec2<float>>({			style.displacement });
-		Vec2<float> rotation_euler_default =	optional_get<Vec2<float>>({			style.rotation_euler });
-		Vec4<float> corner_rounding_default =	style_attribute_get<Vec4<float>>({			style.corner_rounding }, widget_info);
-		Vec4<float> padding_default =			optional_get<Vec4<float>>({			style.padding });
-		Vec4<float> margin_default =			optional_get<Vec4<float>>({			style.margin });
-		Vec4<float> border_thickness_default =	optional_get<Vec4<float>>({			style.border_thickness });
-		Vec3<float> border_color_default =		optional_get<Vec3<float>>({			style.border_color });
+		Vec3<float> color_default =				style_attribute_get<Vec3<float>>({	style.color }, widget_info);
+		Vec2<float> displacement_default =		style_attribute_get<Vec2<float>>({	style.displacement }, widget_info);
+		Vec2<float> rotation_euler_default =	style_attribute_get<Vec2<float>>({	style.rotation_euler }, widget_info);
+		Vec4<float> corner_rounding_default =	style_attribute_get<Vec4<float>>({	style.corner_rounding }, widget_info);
+		Vec4<float> padding_default =			style_attribute_get<Vec4<float>>({	style.padding }, widget_info);
+		Vec4<float> margin_default =			style_attribute_get<Vec4<float>>({	style.margin }, widget_info);
+		Vec4<float> border_thickness_default =	style_attribute_get<Vec4<float>>({	style.border_thickness }, widget_info);
+		Vec3<float> border_color_default =		style_attribute_get<Vec3<float>>({	style.border_color }, widget_info);
 		Frame::CursorType cursor_type_default = optional_get<Frame::CursorType>({	style.cursor_type });
 
 		Time color_change =				style.color_change.value_or(0.0);
@@ -210,17 +210,17 @@ namespace {
 	}
 
 	StaticStyle merge_styles_by_priority(std::vector<StaticStyle> styles, const _widget_info& info) {
-		std::vector<std::optional<vec3f>> colors;
-		std::vector<std::optional<vec2f>> displacements;
-		std::vector<std::optional<vec2f>> rotation_eulers;
+		std::vector<StyleAttribute<vec3f>> colors;
+		std::vector<StyleAttribute<vec2f>> displacements;
+		std::vector<StyleAttribute<vec2f>> rotation_eulers;
 		std::vector<StyleAttribute<vec4f>> corner_roundings;
-		std::vector<std::optional<vec4f>> paddings;
-		std::vector<std::optional<vec4f>> margins;
-		std::vector<std::optional<vec4f>> border_thicknesss;
-		std::vector<std::optional<vec3f>> border_colors;
+		std::vector<StyleAttribute<vec4f>> paddings;
+		std::vector<StyleAttribute<vec4f>> margins;
+		std::vector<StyleAttribute<vec4f>> border_thicknesss;
+		std::vector<StyleAttribute<vec3f>> border_colors;
 		std::vector<std::optional<Frame::CursorType>> cursor_types;
 		
-		for (StaticStyle& style : styles) {
+		for (const StaticStyle& style : styles) {
 			colors.push_back			(	style.color );
 			displacements.push_back		(	style.displacement );
 			rotation_eulers.push_back	(	style.rotation_euler );
@@ -232,15 +232,15 @@ namespace {
 			cursor_types.push_back		(	style.cursor_type );
 		}
 
-		Vec3<float> color =				optional_get<Vec3<float>>( colors );
-		Vec2<float> displacement =		optional_get<Vec2<float>>( displacements );
-		Vec2<float> rotation_euler =	optional_get<Vec2<float>>( rotation_eulers );
+		Vec3<float> color =				style_attribute_get<Vec3<float>>( colors, info);
+		Vec2<float> displacement =		style_attribute_get<Vec2<float>>( displacements, info);
+		Vec2<float> rotation_euler =	style_attribute_get<Vec2<float>>( rotation_eulers, info);
 		Vec4<float> corner_rounding =	style_attribute_get<Vec4<float>>( corner_roundings , info);
-		Vec4<float> padding =			optional_get<Vec4<float>>( paddings );
-		Vec4<float> margin =			optional_get<Vec4<float>>( margins );
-		Vec4<float> border_thickness =	optional_get<Vec4<float>>( border_thicknesss );
-		Vec3<float> border_color =		optional_get<Vec3<float>>( border_colors );
-		Frame::CursorType cursor_type =	optional_get<Frame::CursorType>( cursor_types);
+		Vec4<float> padding =			style_attribute_get<Vec4<float>>( paddings, info);
+		Vec4<float> margin =			style_attribute_get<Vec4<float>>( margins, info);
+		Vec4<float> border_thickness =	style_attribute_get<Vec4<float>>( border_thicknesss, info);
+		Vec3<float> border_color =		style_attribute_get<Vec3<float>>( border_colors, info);
+		Frame::CursorType cursor_type =	optional_get<Frame::CursorType>( cursor_types );
 	
 		StaticStyle merged_style;
 		
@@ -535,14 +535,14 @@ void Box::render(Time deltatime){
 	Style base_style = merge_static_style_with_style(default_style, _style, _info);
 	Style target_style = merge_static_style_with_style(hover_style, _style, _info);	// append timing information of style to style_to_use, TODO: merge timing information of _style and overwrite_style here
 	StaticStyle interpolated_style = interpolate_styles(base_style, target_style, _info, hover);
-	Vec3<float> color =				optional_get<Vec3<float>>		( interpolated_style.color );
-	Vec2<float> displacement =		optional_get<Vec2<float>>		( interpolated_style.displacement );
-	Vec2<float> rotation_euler =	optional_get<Vec2<float>>		( interpolated_style.rotation_euler );
-	Vec4<float> corner_rounding =	style_attribute_get<Vec4<float>>( interpolated_style.corner_rounding , _info);
-	Vec4<float> padding =			optional_get<Vec4<float>>		( interpolated_style.padding );
-	Vec4<float> margin =			optional_get<Vec4<float>>		( interpolated_style.margin );
-	Vec4<float> border_thickness =	optional_get<Vec4<float>>		( interpolated_style.border_thickness );
-	Vec3<float> border_color =		optional_get<Vec3<float>>		( interpolated_style.border_color );
+	Vec3<float> color =				style_attribute_get<Vec3<float>>( interpolated_style.color, _info);
+	Vec2<float> displacement =		style_attribute_get<Vec2<float>>( interpolated_style.displacement, _info);
+	Vec2<float> rotation_euler =	style_attribute_get<Vec2<float>>( interpolated_style.rotation_euler, _info);
+	Vec4<float> corner_rounding =	style_attribute_get<Vec4<float>>( interpolated_style.corner_rounding, _info);
+	Vec4<float> padding =			style_attribute_get<Vec4<float>>( interpolated_style.padding, _info);
+	Vec4<float> margin =			style_attribute_get<Vec4<float>>( interpolated_style.margin, _info);
+	Vec4<float> border_thickness =	style_attribute_get<Vec4<float>>( interpolated_style.border_thickness, _info);
+	Vec3<float> border_color =		style_attribute_get<Vec3<float>>( interpolated_style.border_color, _info);
 	Frame::CursorType cursor_type =	optional_get<Frame::CursorType>	( interpolated_style.cursor_type );
 
 	Vec2<float> padded_size = _original_size - Vec2<float>(padding.y + padding.w, padding.x + padding.z);

@@ -178,17 +178,17 @@ public:
 	
 	// StyleAttribute<vec3f> color_attrib;	// work in progress
 	
-	std::optional<Vec3<float>> color;
-	std::optional<Vec2<float>> displacement;
-	std::optional<Vec2<float>> rotation_euler;	// not implemented 
+	StyleAttribute<vec3f> color;
+	StyleAttribute<vec2f> displacement;
+	StyleAttribute<vec2f> rotation_euler;	// not implemented 
 	StyleAttribute<vec4f> corner_rounding; // corner indicies follows traditional coordinate system partition	// 1 | 0
 																													// --|-- 
 																													// 2 | 3
 
-	std::optional<Vec4<float>> padding;
-	std::optional<Vec4<float>> margin;
-	std::optional<Vec4<float>> border_thickness;
-	std::optional<Vec3<float>> border_color;
+	StyleAttribute<vec4f> padding;
+	StyleAttribute<vec4f> margin;
+	StyleAttribute<vec4f> border_thickness;
+	StyleAttribute<vec3f> border_color;
 	std::optional<Frame::CursorType> cursor_type;
 };
 
