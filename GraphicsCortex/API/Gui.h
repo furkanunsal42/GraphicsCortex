@@ -121,9 +121,9 @@ public:
 	static std::string RespectedAttribute_to_string(const RespectedAttribute& attribute);
 
 
-	Persentage(float value, RespectedAttribute attribute_type);
+	Persentage(float value = 0, RespectedAttribute attribute_type = MIN_SIZE_DIM);
 
-	float get_value(const _widget_info& info);
+	float get_value(const _widget_info& info) const;
 
 	RespectedAttribute attribute_type;
 	float value;
@@ -156,11 +156,11 @@ public:
 		use_value = false;
 	}
 
-	bool exist() {
+	bool exist() const {
 		return use_value || use_persentage;
 	}
 
-	T get_value(const _widget_info& info) {
+	T get_value(const _widget_info& info) const {
 		if (use_value)
 			return value;
 		else if (use_persentage) {
@@ -298,7 +298,7 @@ public:
 	static glm::mat4 _projection_matrix;
 	static Vec2<int> window_size;
 	static bool _hover_happened;
-	static Program_s default_gui_renderer;
+	
 
 	static void render(Time delatime);
 	
@@ -316,6 +316,15 @@ private:
 	static bool _initialized;
 
 	static uint32_t _widget_next_id;
+	
+	static Program_s default_gui_renderer;
+	static unsigned int _default_uniform_screen_position;
+	static unsigned int _default_uniform_projection;
+	static unsigned int _default_uniform_rect_color;
+	static unsigned int _default_uniform_rect_size;
+	static unsigned int _default_uniform_corner_rounding;
+	static unsigned int _default_uniform_border_color;
+	static unsigned int _default_uniform_border_thickness;
 
 	friend Box;
 };

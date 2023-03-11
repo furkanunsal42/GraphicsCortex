@@ -80,8 +80,8 @@ vec3f gui::colorcode(uint32_t hexcode) {
 
 namespace {
 	template<typename T>
-	T optional_get(std::vector<std::optional<T>> fallback_list, T null_value = T()) {
-		for (std::optional<T>& _property: fallback_list) {
+	T optional_get(const std::vector<std::optional<T>>& fallback_list, T null_value = T()) {
+		for (const std::optional<T>& _property: fallback_list) {
 			if (_property)
 				return _property.value();
 		}
@@ -89,15 +89,15 @@ namespace {
 	}
 
 	template<typename T>
-	T optional_get(std::optional<T> optional, T null_value = T()) {
+	T optional_get(const std::optional<T>& optional, T null_value = T()) {
 		if (optional)
 			return optional.value();
 		return null_value;
 	}
 
 	template<typename T>
-	T style_attribute_get(std::vector<StyleAttribute<T>> fallback_list, const _widget_info& info, T null_value = T()) {	// TODO: implement for Persentage
-		for (StyleAttribute<T>& attribute : fallback_list) {
+	T style_attribute_get(const std::vector<StyleAttribute<T>>& fallback_list, const _widget_info& info, T null_value = T()) {	// TODO: implement for Persentage
+		for (const StyleAttribute<T>& attribute : fallback_list) {
 			if (attribute.exist())
 				return attribute.get_value(info);
 		}
@@ -105,32 +105,22 @@ namespace {
 	}
 
 	template<typename T>
-	T style_attribute_get(StyleAttribute<T> attribute, const _widget_info& info, T null_value = T()) {	// TODO: implement for Persentage
+	T style_attribute_get(const StyleAttribute<T>& attribute, const _widget_info& info, T null_value = T()) {	// TODO: implement for Persentage
 		if (attribute.exist())
 			return attribute.get_value(info);
 		return null_value;
 	}
 
-	template<typename T>
-	T linear_interpolation(T default_value, T target_value, Time max_time, Time current_time) {
-		return default_value + (target_value - default_value) / max_time * (std::min(current_time, max_time));
-	}
-
-	template<typename T>
-	T polynomial_interpolation(T default_value, T target_value, Time max_time, Time current_time, float power = 1.0f) {
-		return linear_interpolation(default_value, target_value, std::pow(max_time, power), std::pow(current_time, power));
-	}
-
 	StaticStyle interpolate_styles(Style style, StaticStyle target_style, _widget_info& widget_info, bool hover) {
 		// insert object to layout
-		Vec3<float> color =				style_attribute_get<Vec3<float>>({			target_style.color,				style.color }, widget_info);
-		Vec2<float> displacement =		style_attribute_get<Vec2<float>>({			target_style.displacement,		style.displacement }, widget_info);
-		Vec2<float> rotation_euler =	style_attribute_get<Vec2<float>>({			target_style.rotation_euler,	style.rotation_euler }, widget_info);
-		Vec4<float> corner_rounding =	style_attribute_get<Vec4<float>>({			target_style.corner_rounding,	style.corner_rounding}, widget_info);
-		Vec4<float> padding =			style_attribute_get<Vec4<float>>({			target_style.padding,			style.padding }, widget_info);
-		Vec4<float> margin =			style_attribute_get<Vec4<float>>({			target_style.margin,			style.margin }, widget_info);
-		Vec4<float> border_thickness =	style_attribute_get<Vec4<float>>({			target_style.border_thickness,	style.border_thickness }, widget_info);
-		Vec3<float> border_color =		style_attribute_get<Vec3<float>>({			target_style.border_color,		style.border_color }, widget_info);
+		Vec3<float> color =				style_attribute_get<Vec3<float>>({	target_style.color,				style.color }, widget_info);
+		Vec2<float> displacement =		style_attribute_get<Vec2<float>>({	target_style.displacement,		style.displacement }, widget_info);
+		Vec2<float> rotation_euler =	style_attribute_get<Vec2<float>>({	target_style.rotation_euler,	style.rotation_euler }, widget_info);
+		Vec4<float> corner_rounding =	style_attribute_get<Vec4<float>>({	target_style.corner_rounding,	style.corner_rounding}, widget_info);
+		Vec4<float> padding =			style_attribute_get<Vec4<float>>({	target_style.padding,			style.padding }, widget_info);
+		Vec4<float> margin =			style_attribute_get<Vec4<float>>({	target_style.margin,			style.margin }, widget_info);
+		Vec4<float> border_thickness =	style_attribute_get<Vec4<float>>({	target_style.border_thickness,	style.border_thickness }, widget_info);
+		Vec3<float> border_color =		style_attribute_get<Vec3<float>>({	target_style.border_color,		style.border_color }, widget_info);
 		Frame::CursorType cursor_type = optional_get<Frame::CursorType>({	target_style.cursor_type,		style.cursor_type });
 		
 		Vec3<float> color_default =				style_attribute_get<Vec3<float>>({	style.color }, widget_info);
@@ -211,7 +201,7 @@ namespace {
 		return interpolate_styles(style, style_to_use, widget_info, hover);
 	}
 
-	StaticStyle merge_styles_by_priority(std::vector<StaticStyle> styles, const _widget_info& info) {
+	StaticStyle merge_styles_by_priority(const std::vector<StaticStyle>& styles, const _widget_info& info) {
 		std::vector<StyleAttribute<vec3f>> colors;
 		std::vector<StyleAttribute<vec2f>> displacements;
 		std::vector<StyleAttribute<vec2f>> rotation_eulers;
@@ -222,47 +212,52 @@ namespace {
 		std::vector<StyleAttribute<vec3f>> border_colors;
 		std::vector<std::optional<Frame::CursorType>> cursor_types;
 		
-		for (const StaticStyle& style : styles) {
-			colors.push_back			(	style.color );
-			displacements.push_back		(	style.displacement );
-			rotation_eulers.push_back	(	style.rotation_euler );
-			corner_roundings.push_back	(	style.corner_rounding );
-			paddings.push_back			(	style.padding );
-			margins.push_back			(	style.margin );
-			border_thicknesss.push_back	(	style.border_thickness );
-			border_colors.push_back		(	style.border_color );
-			cursor_types.push_back		(	style.cursor_type );
-		}
-
-		Vec3<float> color =				style_attribute_get<Vec3<float>>( colors, info);
-		Vec2<float> displacement =		style_attribute_get<Vec2<float>>( displacements, info);
-		Vec2<float> rotation_euler =	style_attribute_get<Vec2<float>>( rotation_eulers, info);
-		Vec4<float> corner_rounding =	style_attribute_get<Vec4<float>>( corner_roundings , info);
-		Vec4<float> padding =			style_attribute_get<Vec4<float>>( paddings, info);
-		Vec4<float> margin =			style_attribute_get<Vec4<float>>( margins, info);
-		Vec4<float> border_thickness =	style_attribute_get<Vec4<float>>( border_thicknesss, info);
-		Vec3<float> border_color =		style_attribute_get<Vec3<float>>( border_colors, info);
-		Frame::CursorType cursor_type =	optional_get<Frame::CursorType>( cursor_types );
-	
 		StaticStyle merged_style;
-		
-		merged_style.color = color;
-		merged_style.displacement = displacement;
-		merged_style.rotation_euler = rotation_euler;
-		merged_style.corner_rounding = corner_rounding;
-		merged_style.padding = padding;
-		merged_style.margin = margin;
-		merged_style.border_thickness = border_thickness;
-		merged_style.border_color = border_color;
-		merged_style.cursor_type = cursor_type;
+
+		for (const StaticStyle& style : styles) {
+			if (style.color.exist())
+				merged_style.color = style.color;
+		}
+		for (const StaticStyle& style : styles) {
+			if (style.displacement.exist())
+				merged_style.displacement = style.displacement;
+		}
+		for (const StaticStyle& style : styles) {
+			if (style.rotation_euler.exist())
+				merged_style.rotation_euler = style.rotation_euler;
+		}
+		for (const StaticStyle& style : styles) {
+			if (style.corner_rounding.exist())
+				merged_style.corner_rounding = style.corner_rounding;
+		}
+		for (const StaticStyle& style : styles) {
+			if (style.padding.exist())
+				merged_style.padding = style.padding;
+		}
+		for (const StaticStyle& style : styles) {
+			if (style.margin.exist())
+				merged_style.margin = style.margin;
+		}
+		for (const StaticStyle& style : styles) {
+			if (style.border_thickness.exist())
+				merged_style.border_thickness = style.border_thickness;
+		}
+		for (const StaticStyle& style : styles) {
+			if (style.border_color.exist())
+				merged_style.border_color = style.border_color;
+		}
+		for (const StaticStyle& style : styles) {
+			if (style.cursor_type)
+				merged_style.cursor_type = style.cursor_type.value();
+		}
 
 		return merged_style;
 	}
 
-	Style merge_static_style_with_style(const StaticStyle& static_style, const Style& style, const _widget_info& info) {
+	Style merge_static_style_with_style(const StaticStyle& static_style, Style& style, const _widget_info& info) {
 		StaticStyle merged_style = merge_styles_by_priority({ static_style, style }, info);
 		Style style_copy = style;
-
+		
 		style_copy.color = merged_style.color;
 		style_copy.displacement = merged_style.displacement;
 		style_copy.rotation_euler = merged_style.rotation_euler;
@@ -399,7 +394,7 @@ std::string Persentage::RespectedAttribute_to_string(const RespectedAttribute& a
 Persentage::Persentage(float value, RespectedAttribute attribute_type) : 
 	value(value), attribute_type(attribute_type) {}
 
-float Persentage::get_value(const _widget_info& info) {
+float Persentage::get_value(const _widget_info& info) const {
 	switch (attribute_type) {
 	case SIZE_X :
 		return value * info.size.x;	
@@ -521,16 +516,17 @@ bool Box::is_mouse_hover(){
 	return _aabb.does_contain(_frame_ref.get_cursor_position());
 }
 
+
 void Box::render(){
 
 	StaticStyle default_style = merge_styles_by_priority({ overwrite_style, _style }, _info);
 	StaticStyle hover_style = merge_styles_by_priority({ overwrite_style.on_hover, _style.on_hover, default_style }, _info);
-
+	
 	StaticStyle style_to_use = default_style;
 	_info.is_hovering = false;
 	bool hover = is_mouse_hover();
 	if (hover) {
-		style_to_use = hover_style;
+	//	style_to_use = hover_style;
 		_info.is_hovering = true;
 		Gui::_hover_happened = true;
 	}
@@ -557,16 +553,16 @@ void Box::render(){
 		_graphic_representation->mesh->load_model(_aabb.generate_model());
 	}
 
-	_graphic_representation->set_uniform("screen_position",		_aabb.position.x, _frame_ref.window_height - _aabb.position.y);
-	_graphic_representation->set_uniform("projection",			Gui::_projection_matrix);
-	_graphic_representation->set_uniform("rect_color",			color.x, color.y, color.z, 1.0f);
-	_graphic_representation->set_uniform("rect_size",			padded_size.x, padded_size.y);
-	_graphic_representation->set_uniform("corner_rounding",		corner_rounding.x, corner_rounding.y, corner_rounding.z, corner_rounding.w);
-	_graphic_representation->set_uniform("border_color",		border_color.x, border_color.y, border_color.z, 1.0f);
-	_graphic_representation->set_uniform("border_thickness",	border_thickness.x, border_thickness.y, border_thickness.z, border_thickness.w);
+	Gui::default_gui_renderer->update_uniform(Gui::_default_uniform_screen_position,	_aabb.position.x, _frame_ref.window_height - _aabb.position.y);
+	//Gui::default_gui_renderer->update_uniform(Gui::_default_uniform_projection, Gui::_projection_matrix);
+	Gui::default_gui_renderer->update_uniform(Gui::_default_uniform_rect_color,			color.x, color.y, color.z, 1.0f);
+	Gui::default_gui_renderer->update_uniform(Gui::_default_uniform_rect_size,			padded_size.x, padded_size.y);
+	Gui::default_gui_renderer->update_uniform(Gui::_default_uniform_corner_rounding,	corner_rounding.x, corner_rounding.y, corner_rounding.z, corner_rounding.w);
+	Gui::default_gui_renderer->update_uniform(Gui::_default_uniform_border_color,		border_color.x, border_color.y, border_color.z, 1.0f);
+	Gui::default_gui_renderer->update_uniform(Gui::_default_uniform_border_thickness,	border_thickness.x, border_thickness.y, border_thickness.z, border_thickness.w);
 
 	_graphic_representation->update_matrix();
-	_graphic_representation->update_uniforms();
+	//_graphic_representation->update_uniforms();
 	_graphic_representation->draw(false);
 	
 	if (hover)
@@ -593,6 +589,14 @@ std::vector<Box> Gui::widget_table;
 std::vector<std::function<void(Time)>> Gui::render_queue;
 Time Gui::_frame_time_ms;
 uint32_t Gui::_widget_next_id;
+unsigned int Gui::_default_uniform_screen_position;
+unsigned int Gui::_default_uniform_projection;
+unsigned int Gui::_default_uniform_rect_color;
+unsigned int Gui::_default_uniform_rect_size;
+unsigned int Gui::_default_uniform_corner_rounding;
+unsigned int Gui::_default_uniform_border_color;
+unsigned int Gui::_default_uniform_border_thickness;
+
 
 void Gui::new_frame(Frame& frame, Time frame_time_ms) {
 	_initialize();
@@ -602,6 +606,7 @@ void Gui::new_frame(Frame& frame, Time frame_time_ms) {
 	if (window_size != current_window_size){
 		window_size = current_window_size;
 		_projection_matrix = glm::ortho(0.0f, (float)window_size.x, 0.0f, (float)window_size.y);
+		Gui::default_gui_renderer->update_uniform(Gui::_default_uniform_projection, Gui::_projection_matrix);
 	}
 	if (!_hover_happened)
 		frame.set_cursor_type(Frame::Arrow);
@@ -612,8 +617,17 @@ void Gui::new_frame(Frame& frame, Time frame_time_ms) {
 }
 
 void Gui::_initialize() {
-	if (!_initialized)
+	if (!_initialized){
 		default_gui_renderer = default_program::gui_program_s();
+		_default_uniform_screen_position = default_gui_renderer->define_get_uniform_id("screen_position");
+		_default_uniform_projection = default_gui_renderer->define_get_uniform_id("projection");
+		_default_uniform_rect_color = default_gui_renderer->define_get_uniform_id("rect_color");
+		_default_uniform_rect_size = default_gui_renderer->define_get_uniform_id("rect_size");
+		_default_uniform_corner_rounding = default_gui_renderer->define_get_uniform_id("corner_rounding");
+		_default_uniform_border_color = default_gui_renderer->define_get_uniform_id("border_color");
+		_default_uniform_border_thickness = default_gui_renderer->define_get_uniform_id("border_thickness");
+
+	}
 	_initialized = true;
 }
 
@@ -634,6 +648,11 @@ void Gui::render(Time deltatime) {
 Box& Gui::box(AABB2 aabb, Style style, Frame& frame) {
 	// append to table if mentioned for the first time
 	uint32_t next_id = _widget_next_id++;
+	if (widget_table.size() >= next_id + 1) {
+		if (widget_table[next_id]._id == next_id) {
+			return widget_table[next_id];
+		}
+	}
 	auto same_name = [next_id](Box box) { return box._id == next_id; };
 	auto found_box = std::find_if(widget_table.begin(), widget_table.end(), same_name);
 	if (found_box == widget_table.end()) {
