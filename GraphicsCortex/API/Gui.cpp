@@ -215,40 +215,58 @@ namespace {
 		StaticStyle merged_style;
 
 		for (const StaticStyle& style : styles) {
-			if (style.color.exist())
+			if (style.color.exist()) {
 				merged_style.color = style.color;
+				break;
+			}
 		}
 		for (const StaticStyle& style : styles) {
-			if (style.displacement.exist())
+			if (style.displacement.exist()) {
 				merged_style.displacement = style.displacement;
+				break;
+			}
 		}
 		for (const StaticStyle& style : styles) {
-			if (style.rotation_euler.exist())
+			if (style.rotation_euler.exist()) {
 				merged_style.rotation_euler = style.rotation_euler;
+				break;
+			}
 		}
 		for (const StaticStyle& style : styles) {
-			if (style.corner_rounding.exist())
+			if (style.corner_rounding.exist()) {
 				merged_style.corner_rounding = style.corner_rounding;
+				break;
+			}
 		}
 		for (const StaticStyle& style : styles) {
-			if (style.padding.exist())
+			if (style.padding.exist()) {
 				merged_style.padding = style.padding;
+				break;
+			}
 		}
 		for (const StaticStyle& style : styles) {
-			if (style.margin.exist())
+			if (style.margin.exist()) {
 				merged_style.margin = style.margin;
+				break;
+			}
 		}
 		for (const StaticStyle& style : styles) {
-			if (style.border_thickness.exist())
+			if (style.border_thickness.exist()) {
 				merged_style.border_thickness = style.border_thickness;
+				break;
+			}
 		}
 		for (const StaticStyle& style : styles) {
-			if (style.border_color.exist())
+			if (style.border_color.exist()) {
 				merged_style.border_color = style.border_color;
+				break;
+			}		
 		}
 		for (const StaticStyle& style : styles) {
-			if (style.cursor_type)
+			if (style.cursor_type) {
 				merged_style.cursor_type = style.cursor_type.value();
+				break;
+			}
 		}
 
 		return merged_style;
@@ -524,12 +542,20 @@ void Box::render(){
 	
 	StaticStyle style_to_use = default_style;
 	_info.is_hovering = false;
+	_info.is_click_pressed = false;
+
 	bool hover = is_mouse_hover();
 	if (hover) {
 	//	style_to_use = hover_style;
 		_info.is_hovering = true;
 		Gui::_hover_happened = true;
+		if (_frame_ref.get_mouse_state() == Frame::CursorState::LeftPressed)
+			_info.is_click_pressed = true;
+		if (_frame_ref.get_mouse_state() == Frame::CursorState::LeftReleased)
+			_info.is_click_released = true;
 	}
+
+
 	Style base_style = merge_static_style_with_style(default_style, _style, _info);
 	Style target_style = merge_static_style_with_style(hover_style, _style, _info);	// append timing information of style to style_to_use, TODO: merge timing information of _style and overwrite_style here
 	StaticStyle interpolated_style = interpolate_styles(base_style, target_style, _info, hover);
@@ -561,8 +587,6 @@ void Box::render(){
 	Gui::default_gui_renderer->update_uniform(Gui::_default_uniform_border_color,		border_color.x, border_color.y, border_color.z, 1.0f);
 	Gui::default_gui_renderer->update_uniform(Gui::_default_uniform_border_thickness,	border_thickness.x, border_thickness.y, border_thickness.z, border_thickness.w);
 
-	_graphic_representation->update_matrix();
-	//_graphic_representation->update_uniforms();
 	_graphic_representation->draw(false);
 	
 	if (hover)
@@ -578,6 +602,19 @@ vec2f Box::get_size(){
 }
 vec2f Box::get_position(){
 	return _original_position;
+}
+
+bool Box::hovering(){
+	return _info.is_hovering;
+}
+bool Box::click_released(){
+	return _info.is_click_released;
+}
+bool Box::click_pressed(){
+	return _info.is_click_pressed;
+}
+bool click_holding() {
+	// TODO
 }
 
 glm::mat4 Gui::_projection_matrix;
@@ -645,11 +682,13 @@ void Gui::render(Time deltatime) {
 	}
 }
 
-Box& Gui::box(AABB2 aabb, Style style, Frame& frame) {
+Box& Gui::box(AABB2 aabb, Style style, Frame& frame, bool draw) {
 	// append to table if mentioned for the first time
 	uint32_t next_id = _widget_next_id++;
 	if (widget_table.size() >= next_id + 1) {
 		if (widget_table[next_id]._id == next_id) {
+			if (draw)
+				widget_table[next_id].render();
 			return widget_table[next_id];
 		}
 	}
@@ -658,9 +697,13 @@ Box& Gui::box(AABB2 aabb, Style style, Frame& frame) {
 	if (found_box == widget_table.end()) {
 		widget_table.push_back(Box (frame, style, aabb, next_id));
 		int widget_count = widget_table.size() - 1;
+		if (draw)
+			widget_table[widget_count].render();
 		return widget_table[widget_count];
 	}
 	else {
+		if (draw)
+			(*found_box).render();
 		return (*found_box);
 	}
 }

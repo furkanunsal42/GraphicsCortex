@@ -244,6 +244,8 @@ public:
 	vec2f position;
 
 	bool is_hovering;
+	bool is_click_pressed;
+	bool is_click_released;
 	//Time last_update;
 
 	Time _current_color_time = 0;
@@ -277,6 +279,10 @@ public:
 	vec2f get_size();
 	vec2f get_position();
 
+	bool hovering();
+	bool click_released();
+	bool click_pressed();
+	bool click_holding();
 
 	uint32_t _id = 0;
 private:
@@ -302,7 +308,7 @@ public:
 
 	static void render(Time delatime);
 	
-	static Box& box(AABB2 aabb, Style style, Frame& frame);
+	static Box& box(AABB2 aabb, Style style, Frame& frame, bool draw = true);
 
 	static void _destroy();
 private:
