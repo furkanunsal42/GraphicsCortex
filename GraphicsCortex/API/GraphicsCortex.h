@@ -46,7 +46,6 @@
 #include "_templated_overloads.h"
 #include "Default_Gui_Widgets.h"
 
-
 #include <PxPhysicsAPI.h>
 
 #include "PhysicsContext.h"
@@ -62,5 +61,6 @@
 
 #include "RamCache.h"
 
-#include <freetype/freetype.h>
+#include <ft2build.h>
+#include FT_FREETYPE_H
 

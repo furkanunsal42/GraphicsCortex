@@ -1,5 +1,6 @@
 #include "GraphicsCortex.h"
 
+
 int main() {
 	Frame frame(1920, 1080, "GraphicsCortex", 16, 0, false, true, false, false);
 	Scene scene;
