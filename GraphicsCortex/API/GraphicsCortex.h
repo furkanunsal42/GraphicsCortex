@@ -62,3 +62,5 @@
 
 #include "RamCache.h"
 
+#include <freetype/freetype.h>
+
