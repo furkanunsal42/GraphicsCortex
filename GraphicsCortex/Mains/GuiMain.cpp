@@ -21,6 +21,10 @@ int main() {
 	dropdown_button.color_interpolation = Interpolation::polynomial(3);
 	dropdown_button.cursor_type = Frame::Hand;
 
+	DropBox dropbox(vec2(100, 100), vec2(100, 40), vec2(200, 40), simple_button, dropdown_button, frame);
+
+
+
 	while (frame.is_running()) {
 		double frame_time = frame.handle_window();
 		frame.clear_window(1, 1, 1, 1);
@@ -29,13 +33,9 @@ int main() {
 		Gui::new_frame(frame, frame_time);
 
 		scene.render(frame_time);
-		
-		auto dropbox = Gui::box(AABB2(vec2(100, 100), vec2(100, 60)), simple_button, frame);
-		AABB2 dropbox_panel(vec2(100, 100 + 60), vec2(100, 5 * 60));
-		for (int i = 0; i < 5; i++) {
-			Gui::box(AABB2(vec2(100, 100 + (i + 1) * (60)), vec2(100, 60)), dropdown_button, frame, dropbox.hovering() || dropbox_panel.does_contain(frame.get_cursor_position()));
-		}
 
+		dropbox.render();
+		
 
 	}
 	Gui::_destroy();

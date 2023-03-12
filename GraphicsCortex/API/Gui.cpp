@@ -368,6 +368,44 @@ namespace {
 	*/
 }
 
+std::optional<Frame::CursorType> cursor_type;
+
+void StaticStyle::clear() {
+	color = StyleAttribute<vec3f>();
+	displacement = StyleAttribute<vec2f>();
+	rotation_euler = StyleAttribute<vec2f>();	
+	corner_rounding = StyleAttribute<vec4f>(); 
+	padding = StyleAttribute<vec4f>();
+	margin = StyleAttribute<vec4f>();
+	border_thickness = StyleAttribute<vec4f>();
+	border_color = StyleAttribute<vec3f>();
+}
+
+void Style::clear() {
+	StaticStyle::clear();
+
+	color_change = std::optional<Time>();
+	displacement_change = std::optional<Time>();
+	rotation_change = std::optional<Time>();
+	corner_rounding_change = std::optional<Time>();
+	padding_change = std::optional<Time>();
+	margin_change = std::optional<Time>();
+	border_thickness_change = std::optional<Time>();
+	border_color_change = std::optional<Time>();
+
+	color_interpolation = std::optional<_interpolation>();
+	displacement_interpolation = std::optional<_interpolation>();
+	rotation_interpolation = std::optional<_interpolation>();
+	corner_rounding_interpolation = std::optional<_interpolation>();
+	padding_interpolation = std::optional<_interpolation>();
+	margin_interpolation = std::optional<_interpolation>();
+	border_thickness_interpolation = std::optional<_interpolation>();
+	border_color_interpolation = std::optional<_interpolation>();
+
+	on_hover.clear();
+	on_active.clear();
+}
+
 std::string Persentage::RespectedAttribute_to_string(const RespectedAttribute& attribute) {
 	switch (attribute) {
 	case SIZE_X:
@@ -541,8 +579,12 @@ void Box::render(){
 	StaticStyle hover_style = merge_styles_by_priority({ overwrite_style.on_hover, _style.on_hover, default_style }, _info);
 	
 	StaticStyle style_to_use = default_style;
+
+	bool cursor_pressing_previously = _info.is_click_pressed;
+
 	_info.is_hovering = false;
 	_info.is_click_pressed = false;
+	_info.is_click_released = false;
 
 	bool hover = is_mouse_hover();
 	if (hover) {
@@ -552,7 +594,8 @@ void Box::render(){
 		if (_frame_ref.get_mouse_state() == Frame::CursorState::LeftPressed)
 			_info.is_click_pressed = true;
 		if (_frame_ref.get_mouse_state() == Frame::CursorState::LeftReleased)
-			_info.is_click_released = true;
+			if(cursor_pressing_previously)
+				_info.is_click_released = true;
 	}
 
 
@@ -613,7 +656,7 @@ bool Box::click_released(){
 bool Box::click_pressed(){
 	return _info.is_click_pressed;
 }
-bool click_holding() {
+bool Box::click_holding() {
 	// TODO
 }
 

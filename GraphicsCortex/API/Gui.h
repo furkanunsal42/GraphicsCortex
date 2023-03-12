@@ -190,6 +190,8 @@ public:
 	StyleAttribute<vec4f> border_thickness;
 	StyleAttribute<vec3f> border_color;
 	std::optional<Frame::CursorType> cursor_type;
+
+	virtual void clear();
 };
 
 class Style : public StaticStyle {
@@ -216,10 +218,12 @@ public:
 	StaticStyle on_hover;
 	StaticStyle on_active;
 
+	void clear();
+
 private:
 };
 
-class FunctionalStyle : StaticStyle {
+class FunctionalStyle : public StaticStyle {
 
 	void on_hover(std::function<Style(Time)> hover_function);
 	void on_active(std::function<Style(Time)> active_function);
@@ -228,6 +232,8 @@ class FunctionalStyle : StaticStyle {
 	void clear_hover();
 	void clear_active();
 	void clear_passive();
+
+	
 
 private:
 	std::function<Style(Time)> _on_hover;
@@ -243,9 +249,10 @@ public:
 	vec2f size;
 	vec2f position;
 
-	bool is_hovering;
-	bool is_click_pressed;
-	bool is_click_released;
+	bool is_hovering = false;
+	bool is_click_pressed = false;		//	just pressed the click while hovering
+	bool is_click_released = false;		//	just released the click while hovering
+	bool is_click_holding = false;		//	began pressing while hovering and still hovers while pressing
 	//Time last_update;
 
 	Time _current_color_time = 0;
@@ -333,6 +340,11 @@ private:
 	static unsigned int _default_uniform_border_thickness;
 
 	friend Box;
+};
+
+class CustomWidget {
+public:
+	virtual void render() {}
 };
 
 /*
