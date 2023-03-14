@@ -228,6 +228,8 @@
   <ItemGroup>
     <None Include="Custom Shaders\Depth.frag" />
     <None Include="Custom Shaders\Depth.vert" />
+    <None Include="Custom Shaders\Texture.frag" />
+    <None Include="Custom Shaders\Texture.vert" />
     <None Include="Dependencies\assimp\bin\assimp-vc143-mtd.dll" />
     <None Include="Dependencies\assimp\include\assimp\color4.inl" />
     <None Include="Dependencies\assimp\include\assimp\material.inl" />

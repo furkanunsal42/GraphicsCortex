@@ -7,7 +7,7 @@ public:
 
 	_SHARED_POINTER_DEFINITIONS(UnorderedMaterial)
 
-		UnorderedMaterial_s() :
+	UnorderedMaterial_s() :
 		obj(std::make_shared<UnorderedMaterial>()) {}
 
 	UnorderedMaterial_s(int size) :
@@ -23,7 +23,7 @@ public:
 
 	_SHARED_POINTER_DEFINITIONS(Material)
 
-		Material_s() :
+	Material_s() :
 		obj(std::make_shared<Material>()) {}
 
 };

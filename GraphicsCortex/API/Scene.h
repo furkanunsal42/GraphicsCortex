@@ -19,6 +19,9 @@
 
 class Scene {
 public:
+
+	Scene(const Frame& frame);
+
 	Camera camera;
 	std::string model_uniform_name = "model";
 	std::string view_uniform_name = "view";

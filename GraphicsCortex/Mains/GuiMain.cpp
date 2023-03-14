@@ -5,26 +5,9 @@ int main() {
 	Frame frame(1920, 1080, "GraphicsCortex", 16, 0, false, true, false, false);
 	Scene scene;
 
-	FT_Library  library;   /* handle to library     */
-	FT_Face     face;      /* handle to face object */
-
-	FT_Error error = FT_Init_FreeType(&library);
-	if (error) { }
-
-	error = FT_New_Face(library,
-		"/usr/share/fonts/truetype/arial.ttf",
-		0,
-		&face);
-	if (error == FT_Err_Unknown_File_Format)
-	{
-	}
-	else if (error)
-	{
-	}
-
 	Style simple_button;
 	simple_button.color = gui::colorcode(0x282828);
-	simple_button.corner_rounding = Persentage(0.2f, Persentage::MIN_SIZE_DIM);
+	//simple_button.corner_rounding = Persentage(0.2f, Persentage::MIN_SIZE_DIM);
 	simple_button.border_color = gui::colorcode(0x1e1e1e);
 	simple_button.border_thickness = Persentage(0.1f, Persentage::MIN_SIZE_DIM);
 	simple_button.on_hover.cursor_type = Frame::Hand;

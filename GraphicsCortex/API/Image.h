@@ -13,6 +13,7 @@ public:
 
 	~Image();
 
+	//void flip_verticaly();
 	unsigned char* get_image_data();
 	int get_width();
 	int get_height();

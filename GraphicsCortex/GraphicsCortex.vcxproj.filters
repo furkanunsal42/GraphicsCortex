@@ -208,6 +208,8 @@
     <None Include="Shaders\Gui.frag" />
     <None Include="Custom Shaders\Depth.frag" />
     <None Include="Custom Shaders\Depth.vert" />
+    <None Include="Custom Shaders\Texture.vert" />
+    <None Include="Custom Shaders\Texture.frag" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="API\Debuger.h">

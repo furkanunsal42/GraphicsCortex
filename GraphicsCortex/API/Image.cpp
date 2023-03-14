@@ -60,6 +60,21 @@ void Image::_clear_ram() {
 	stbi_image_free(_image_data);
 }
 
+//void Image::flip_verticaly() {
+//	
+//	unsigned char* flipped_data = new unsigned char[get_size()];
+//
+//	for (int y = 0; y < _height; y++) {
+//		for (int x = 0; x < _width; x++) {
+//			for (int ch = 0; ch < _channels; ch++)
+//				flipped_data[((_height - 1 - y) * _width + x) * _channels + ch] = flipped_data[(y * _width + x) * _channels + ch];
+//		}
+//	}
+//
+//
+//}
+
+
 unsigned char* Image::get_image_data() {
 	return _image_data;
 }
