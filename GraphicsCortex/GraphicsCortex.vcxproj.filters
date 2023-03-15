@@ -162,7 +162,7 @@
     <ClCompile Include="API\Default_Gui_Widgets.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
-    <ClCompile Include="Mains\text rendering.cpp">
+    <ClCompile Include="Mains\GuiMain.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
   </ItemGroup>

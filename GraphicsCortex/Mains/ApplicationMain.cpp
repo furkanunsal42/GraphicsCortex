@@ -3,7 +3,7 @@
 int main() {
 
 	Frame frame(1920, 1080, "GraphicsCortex", 8, 0, true, false, true);
-	Scene scene;
+	Scene scene(frame);
 	scene.camera.screen_width = 1920;
 	scene.camera.screen_height = 1080;
 	scene.camera.max_distance = 1000;
@@ -14,6 +14,7 @@ int main() {
 	{
 		Mesh_s city(Model("Models/City/edited_city2.obj", 4.0f));
 		UnorderedMaterial_s city_mat("Models/City/edited_city2.obj");
+		city_mat->texture_array.mipmap_bias = 0;
 		city_mat->texture_array.generate_mipmap = false;
 		city_mat->set_texture_size(1024, 1024);
 		Graphic_s map;

@@ -20,6 +20,7 @@ public:
 	unsigned int mag_filter = GL_NEAREST;
 	unsigned int wrap_s = GL_REPEAT;
 	unsigned int wrap_t = GL_REPEAT;
+	float mipmap_bias = -1;
 	unsigned int internal_format = NULL;
 	unsigned int format = NULL;
 	unsigned int data_type = GL_UNSIGNED_BYTE;

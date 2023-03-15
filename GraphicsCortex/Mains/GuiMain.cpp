@@ -3,7 +3,7 @@
 
 int main() {
 	Frame frame(1920, 1080, "GraphicsCortex", 16, 0, false, true, false, false);
-	Scene scene;
+	Scene scene(frame);
 
 	Style simple_button;
 	simple_button.color = gui::colorcode(0x282828);
@@ -23,8 +23,6 @@ int main() {
 	dropdown_button.cursor_type = Frame::Hand;
 
 	DropBox dropbox(vec2(100, 100), vec2(100, 40), vec2(200, 40), simple_button, dropdown_button, frame);
-
-
 
 	while (frame.is_running()) {
 		double frame_time = frame.handle_window();

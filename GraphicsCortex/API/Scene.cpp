@@ -16,7 +16,6 @@
 Scene::Scene(const Frame& frame) {
 	camera.screen_width = frame.window_width;
 	camera.screen_height = frame.window_height;
-	camera.fov = 90;
 }
 
 void Scene::add_graphic(Graphic_s graphic) {

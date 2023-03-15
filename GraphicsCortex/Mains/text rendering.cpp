@@ -22,9 +22,16 @@ public:
 
 		// quick and dirty max texture size estimate
 
-		int glyph_amount = 256;
-		int tex_height = font_size * std::sqrt(glyph_amount);
-		tex_height = std::pow(2, std::ceil(std::log2(tex_height)));
+		int max_glyph_amount = 512;
+		int supported_glyph_amount = 0;
+		for (int i = 0; i < max_glyph_amount; i++) {
+			if (!FT_Get_Char_Index(face, i))
+				continue;
+			supported_glyph_amount++;
+		}
+		int tex_height = font_size * std::sqrt(supported_glyph_amount);
+		//tex_height = std::pow(2, std::ceil(std::log2(tex_height)));
+		tex_height = std::max(512, tex_height);
 		int tex_width = tex_height;
 
 		// render glyphs to atlas
@@ -33,8 +40,13 @@ public:
 
 		int pen_x = 0, pen_y = 0;
 
-		for (int i = 0; i < glyph_amount; ++i) {
-			FT_Load_Char(face, i, FT_LOAD_RENDER | FT_LOAD_FORCE_AUTOHINT | FT_LOAD_TARGET_LIGHT);
+		for (int i = 0; i < max_glyph_amount; ++i) {
+			if (!FT_Get_Char_Index(face, i)) {
+				std::cout << "failed to load char with index: " << i << std::endl;
+				continue;
+			}
+
+			FT_Error char_load_error = FT_Load_Char(face, i, FT_LOAD_RENDER | FT_LOAD_FORCE_AUTOHINT | FT_LOAD_TARGET_LIGHT);
 			FT_Bitmap* bmp = &face->glyph->bitmap;
 
 			if (pen_x + bmp->width >= tex_width) {
@@ -61,14 +73,21 @@ public:
 			info.x1 = (float)(pen_x + bmp->width) / tex_width;
 			info.y1 = (float)(pen_y + bmp->rows) / tex_height;
 
-			info.x_off = (float)face->glyph->bitmap_left;
-			info.y_off = (float)face->glyph->bitmap_top;
+			info.x_off = (float)face->glyph->bitmap_left / tex_width;
+			info.y_off = (float)face->glyph->bitmap_top / tex_height;
 			info.advance = (float)(face->glyph->advance.x >> 6) / tex_width;
 
 			glyphs[i] = info;
 
 			pen_x += bmp->width + 1;
 		}
+
+		glyph_info new_line;
+		new_line.x0 = 0;
+		new_line.y0 = 0;
+		new_line.x1 = 0;
+		new_line.y1 = (float)((face->size->metrics.height) >> 6) / tex_height;
+		glyphs['\n'] = new_line;
 
 		FT_Done_FreeType(ft);
 
@@ -83,7 +102,7 @@ public:
 
 	}
 
-	void generate_text_graphic(const std::string& text, Scene& scene) {
+	void generate_text_graphic(const std::string& text, Scene& scene, float scale = 1) {
 
 		std::vector<float> verticies;
 		std::vector<unsigned int> indicies;
@@ -94,15 +113,29 @@ public:
 		int char_count = 0;
 
 		for (const char& character : text) {
+		
 			const glyph_info& character_info = glyphs[character];
+
+			float uv_width = character_info.x1 - character_info.x0;
+			float uv_height = character_info.y1 - character_info.y0;
 			
-			std::cout << character_info.x_off << ", " << character_info.y_off << std::endl;
+			float xpos = pen_x + character_info.x_off * scale;
+			float ypos = pen_y - (uv_height - character_info.y_off) * scale;
+
+			float w = uv_width * scale;
+			float h = uv_height * scale;
+
+			if (character == '\n') {
+				pen_x = 0;
+				pen_y -= uv_height;
+				continue;
+			}
 
 			float new_verticies[] = {
-				0 + pen_x - character_info.x_off,	0 - character_info.y_off + pen_y,	0, character_info.x0, 1 - character_info.y1,
-				1 + pen_x - character_info.x_off,	0 - character_info.y_off + pen_y,	0, character_info.x1, 1 - character_info.y1,
-				0 + pen_x - character_info.x_off,	1 - character_info.y_off + pen_y,	0, character_info.x0, 1 - character_info.y0,
-				1 + pen_x - character_info.x_off,	1 - character_info.y_off + pen_y,	0, character_info.x1, 1 - character_info.y0,
+				xpos,		ypos,		0,	character_info.x0, 1 - character_info.y1,
+				xpos + w,	ypos,		0,	character_info.x1, 1 - character_info.y1,
+				xpos,		ypos + h,	0,	character_info.x0, 1 - character_info.y0,
+				xpos + w,	ypos + h,	0,	character_info.x1, 1 - character_info.y0,
 			};
 
 			unsigned int new_indicies[] = {
@@ -116,7 +149,7 @@ public:
 			for (unsigned int value : new_indicies)
 				indicies.push_back(value);
 
-			pen_x += 1 + character_info.advance;
+			pen_x += character_info.advance * scale;
 			char_count++;
 
 		}
@@ -142,13 +175,29 @@ public:
 
 int main() {
 
-	Frame frame(1920, 1080, "GraphicsCortex", 0, 0, true, true, false, false);
+	Frame frame(1920, 1080, "GraphicsCortex", 4, 0, true, true, false, false);
 	Scene scene(frame);
+	scene.camera.perspective = true;
 
-	Font font("Fonts\\Roboto-Thin.ttf", 100);
+	Font font("Fonts\\Roboto-Thin.ttf", 50);
 	font._font_atlas.texture_slot = 0;
-	font.generate_text_graphic("Text in OpenGL?? Nani??", scene);
-
+	font.generate_text_graphic("\
+									It is a dark time for the Rebellion. \n\
+									Although the Death Star has been destroyed, \n\
+									Imperial troops have driven the Rebel forces \n\
+									from their hidden base and pursued them across \n\
+									the galaxy. \n\
+									\n\
+									Evading the dreaded Imperial Starfleet, a group \n\
+									of freedom fighters led by Luke Skywalker has \n\
+									established a new secret base on the remote ice \n\
+									world of Hoth.\n\
+									\n\
+									The evil lord Darth Vader, obsessed with finding \n\
+									young Skywalker, has dispatched thousands of remote \n\
+									probes into the far reaches of space", scene);
+	font.graphics_representation->set_position(glm::vec3(0, 0, 0));
+	
 	while (frame.is_running()) {
 		double frametime = frame.handle_window();
 		frame.clear_window();
@@ -158,6 +207,8 @@ int main() {
 
 		font._font_atlas.bind();
 		scene.render();
+
+		font.graphics_representation->set_position(font.graphics_representation->get_position() + glm::vec3(0, 3.0f/100 * frametime/1000, 0));
 
 		font.graphics_representation->update_matrix();
 		font.graphics_representation->update_uniforms();

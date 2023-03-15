@@ -129,8 +129,8 @@ void Texture::load_image(Image& image) {
 	GLCall(glTexParameteri(target, GL_TEXTURE_MAG_FILTER, mag_filter));
 	GLCall(glTexParameteri(target, GL_TEXTURE_WRAP_S, wrap_s));
 	GLCall(glTexParameteri(target, GL_TEXTURE_WRAP_T, wrap_t));
-
-	//if (compress_image)
+	GLCall(glTexParameterf(target, GL_TEXTURE_LOD_BIAS, mipmap_bias))
+		//if (compress_image)
 		//glCompressedTexImage2D(target, 0, internal_format, width, height, 0, );
 	//else 
 	GLCall(glTexImage2D(target, 0, internal_format, width, height, 0, format, data_type, image.get_image_data()));
@@ -176,6 +176,7 @@ void Texture::bind() {
 	GLCall(glTexParameteri(target, GL_TEXTURE_MAG_FILTER, mag_filter));
 	GLCall(glTexParameteri(target, GL_TEXTURE_WRAP_S, wrap_s));
 	GLCall(glTexParameteri(target, GL_TEXTURE_WRAP_T, wrap_t));
+	GLCall(glTexParameterf(target, GL_TEXTURE_LOD_BIAS, mipmap_bias))
 }
 
 void Texture::unbind() {
@@ -499,6 +500,8 @@ void TextureArray::initialize_blank_images(int width, int height, int depth, int
 		GLCall(glTexParameteri(target, GL_TEXTURE_MAG_FILTER, mag_filter));
 		GLCall(glTexParameteri(target, GL_TEXTURE_WRAP_S, wrap_s));
 		GLCall(glTexParameteri(target, GL_TEXTURE_WRAP_T, wrap_t));
+		GLCall(glTexParameterf(target, GL_TEXTURE_LOD_BIAS, mipmap_bias))
+
 		if (generate_mipmap) {
 			GLCall(glGenerateMipmap(target));
 		}
@@ -519,6 +522,8 @@ void TextureArray::bind() {
 	GLCall(glTexParameteri(target, GL_TEXTURE_MAG_FILTER, mag_filter));
 	GLCall(glTexParameteri(target, GL_TEXTURE_WRAP_S, wrap_s));
 	GLCall(glTexParameteri(target, GL_TEXTURE_WRAP_T, wrap_t));
+	GLCall(glTexParameterf(target, GL_TEXTURE_LOD_BIAS, mipmap_bias))
+
 }
 
 void TextureArray::unbind() {
