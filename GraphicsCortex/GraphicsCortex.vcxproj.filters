@@ -162,7 +162,10 @@
     <ClCompile Include="API\Default_Gui_Widgets.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
-    <ClCompile Include="Mains\GuiMain.cpp">
+    <ClCompile Include="Mains\text rendering.cpp">
+      <Filter>Kaynak Dosyalar</Filter>
+    </ClCompile>
+    <ClCompile Include="API\Font.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
   </ItemGroup>
@@ -210,6 +213,8 @@
     <None Include="Custom Shaders\Depth.vert" />
     <None Include="Custom Shaders\Texture.vert" />
     <None Include="Custom Shaders\Texture.frag" />
+    <None Include="Shaders\Text.frag" />
+    <None Include="Shaders\Text.vert" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="API\Debuger.h">
@@ -648,6 +653,9 @@
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
     <ClInclude Include="API\Default_Gui_Widgets.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="API\Font.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
   </ItemGroup>

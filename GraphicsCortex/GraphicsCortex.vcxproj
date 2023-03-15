@@ -183,6 +183,7 @@
     <ClCompile Include="API\Default_Gui_Widgets.cpp" />
     <ClCompile Include="API\Default_Programs.cpp" />
     <ClCompile Include="API\DirectoryUtils.cpp" />
+    <ClCompile Include="API\Font.cpp" />
     <ClCompile Include="API\FrameBuffer.cpp" />
     <ClCompile Include="API\Image.cpp" />
     <ClCompile Include="API\Lights.cpp" />
@@ -223,7 +224,7 @@
     <ClCompile Include="Dependencies\physx\snippetcommon\SnippetVehicleSceneQuery.cpp" />
     <ClCompile Include="Dependencies\physx\snippetcommon\SnippetVehicleTankCreate.cpp" />
     <ClCompile Include="Dependencies\physx\snippetcommon\SnippetVehicleTireFriction.cpp" />
-    <ClCompile Include="Mains\GuiMain.cpp" />
+    <ClCompile Include="Mains\text rendering.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Custom Shaders\Depth.frag" />
@@ -251,6 +252,8 @@
     <None Include="Shaders\Solid.frag" />
     <None Include="Shaders\Solid.geom" />
     <None Include="Shaders\Solid.vert" />
+    <None Include="Shaders\Text.frag" />
+    <None Include="Shaders\Text.vert" />
     <None Include="Shaders\TextureArray.frag" />
     <None Include="Shaders\TextureArray.vert" />
   </ItemGroup>
@@ -265,6 +268,7 @@
     <ClInclude Include="API\Default_Assets.h" />
     <ClInclude Include="API\Default_Gui_Widgets.h" />
     <ClInclude Include="API\DirectoryUtils.h" />
+    <ClInclude Include="API\Font.h" />
     <ClInclude Include="API\FrameBuffer.h" />
     <ClInclude Include="API\GraphicsCortex.h" />
     <ClInclude Include="API\Default_Programs.h" />

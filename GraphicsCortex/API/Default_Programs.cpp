@@ -123,7 +123,6 @@ namespace default_program {
 		Program renderer(default_shader.vertex_shader, default_shader.fragment_shader);
 		return renderer;
 	}
-
 	Program framebuffer_program() {
 		Shader default_shader("Shaders/FrameBuffer.vert", "Shaders/FrameBuffer.frag");
 		Program renderer(default_shader.vertex_shader, default_shader.fragment_shader);
@@ -139,8 +138,34 @@ namespace default_program {
 		Program renderer(default_shader.vertex_shader, default_shader.fragment_shader);
 		return renderer;
 	}
+	Program text_program() {
+		Shader default_shader("Shaders/Text.vert", "Shaders/Text.frag");
+		Program renderer(default_shader.vertex_shader, default_shader.fragment_shader);
+		return renderer;
+	}
+
+	Program_s flatcolor_program_s() {
+		Shader default_shader("Shaders/FlatColor.vert", "Shaders/FlatColor.frag");
+		Program_s renderer(default_shader.vertex_shader, default_shader.fragment_shader);
+		return renderer;
+	}
+	Program_s framebuffer_program_s() {
+		Shader default_shader("Shaders/FrameBuffer.vert", "Shaders/FrameBuffer.frag");
+		Program_s renderer(default_shader.vertex_shader, default_shader.fragment_shader);
+		return renderer;
+	}
+	Program_s cubemap_program_s() {
+		Shader default_shader("Shaders/CubeMap.vert", "Shaders/CubeMap.frag");
+		Program_s renderer(default_shader.vertex_shader, default_shader.fragment_shader);
+		return renderer;
+	}
 	Program_s gui_program_s() {
 		Shader default_shader("Shaders/Gui.vert", "Shaders/Gui.frag");
+		Program_s renderer(default_shader.vertex_shader, default_shader.fragment_shader);
+		return renderer;
+	}
+	Program_s text_program_s() {
+		Shader default_shader("Shaders/Text.vert", "Shaders/Text.frag");
 		Program_s renderer(default_shader.vertex_shader, default_shader.fragment_shader);
 		return renderer;
 	}

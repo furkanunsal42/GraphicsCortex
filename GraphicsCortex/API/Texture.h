@@ -16,11 +16,11 @@ public:
 
 	// default paremeters
 	bool generate_mipmap = true;
-	unsigned int min_filter = GL_LINEAR_MIPMAP_NEAREST;
-	unsigned int mag_filter = GL_NEAREST;
+	unsigned int min_filter = GL_LINEAR_MIPMAP_LINEAR;
+	unsigned int mag_filter = GL_LINEAR;
 	unsigned int wrap_s = GL_REPEAT;
 	unsigned int wrap_t = GL_REPEAT;
-	float mipmap_bias = -1;
+	float mipmap_bias = 0.0f;
 	unsigned int internal_format = NULL;
 	unsigned int format = NULL;
 	unsigned int data_type = GL_UNSIGNED_BYTE;

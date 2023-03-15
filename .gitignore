@@ -267,3 +267,4 @@ GraphicsCortex/Release/text rendering.obj
 *.json
 *.sqlite
 GraphicsCortex/Images/.vs/Images/v17/.wsuo
+GraphicsCortex/Release/Font.obj
