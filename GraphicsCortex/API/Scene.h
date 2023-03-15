@@ -62,5 +62,4 @@ private:
 	
 	std::vector<std::shared_ptr<Object>> _objects;
 	std::vector<std::shared_ptr<Vehicle>> _vehicles;
-
 };

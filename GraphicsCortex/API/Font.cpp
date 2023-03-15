@@ -1,6 +1,8 @@
 #include "Font.h"
 #include "Default_Programs.h"
 
+#include <codecvt>
+
 Font::Font(const std::string& filename, int font_size) {
 	FT_Library ft;
 	FT_Face    face;
@@ -31,7 +33,7 @@ Font::Font(const std::string& filename, int font_size) {
 
 	for (int i = 0; i < max_glyph_amount; ++i) {
 		if (!FT_Get_Char_Index(face, i)) {
-			std::cout << "failed to load char with index: " << i << std::endl;
+			//std::cout << "failed to load char with index: " << i << std::endl;
 			continue;
 		}
 
@@ -80,7 +82,6 @@ Font::Font(const std::string& filename, int font_size) {
 	FT_Done_FreeType(ft);
 
 	Image font_atlas(png_data, tex_width, tex_height, 4, true);
-	font_atlas.save_to_disc("atlas.png");
 
 	_font_atlas.mipmap_bias = 0.5f;
 	_font_atlas.load_image(font_atlas);
@@ -89,7 +90,7 @@ Font::Font(const std::string& filename, int font_size) {
 
 }
 
-void Font::generate_text_graphic(const std::string& text, Scene& scene, float scale, float text_max_width, bool wait_for_words) {
+void Font::generate_text_graphic(const std::u32string& text, Scene& scene, float scale, float text_max_width, bool wait_for_words) {
 
 	std::vector<float> verticies;
 	std::vector<unsigned int> indicies;
@@ -101,7 +102,7 @@ void Font::generate_text_graphic(const std::string& text, Scene& scene, float sc
 
 	bool next_line_at_next_space = false;
 
-	for (const char& character : text) {
+	for (const uint32_t& character : text) {
 
 		if (text_max_width) {
 			if (pen_x > text_max_width)
@@ -122,7 +123,7 @@ void Font::generate_text_graphic(const std::string& text, Scene& scene, float sc
 		if (character == ' ') {
 			if (next_line_at_next_space) {
 				pen_x = 0;
-				pen_y -= glyphs['\n'].y1;
+				pen_y -= glyphs['\n'].y1 * scale;
 				next_line_at_next_space = false;
 				continue;
 			}
@@ -130,7 +131,7 @@ void Font::generate_text_graphic(const std::string& text, Scene& scene, float sc
 
 		if (character == '\n') {
 			pen_x = 0;
-			pen_y -= uv_height;
+			pen_y -= uv_height * scale;
 			next_line_at_next_space = false;
 			continue;
 		}
@@ -171,5 +172,172 @@ void Font::generate_text_graphic(const std::string& text, Scene& scene, float sc
 	graphics_representation->set_uniform_all(default_program::basic_uniform_queue(scene, graphics_representation));
 	graphics_representation->set_uniform("texture_slot", 0);
 	graphics_representation->set_uniform("screen_resolution", (float*)&scene.camera.screen_width, (float*)&scene.camera.screen_height);
+}
 
+void Font::generate_text_graphic(const std::u16string& text, Scene& scene, float scale, float text_max_width, bool wait_for_words) {
+
+	std::vector<float> verticies;
+	std::vector<unsigned int> indicies;
+
+	float pen_x = 0;
+	float pen_y = 0;
+
+	int char_count = 0;
+
+	bool next_line_at_next_space = false;
+
+	for (const uint16_t& character : text) {
+
+		if (text_max_width) {
+			if (pen_x > text_max_width)
+				next_line_at_next_space = true;
+		}
+
+		const glyph_info& character_info = glyphs[character];
+
+		float uv_width = character_info.x1 - character_info.x0;
+		float uv_height = character_info.y1 - character_info.y0;
+
+		float xpos = pen_x + character_info.x_off * scale;
+		float ypos = pen_y - (uv_height - character_info.y_off) * scale;
+
+		float w = uv_width * scale;
+		float h = uv_height * scale;
+
+		if (character == ' ') {
+			if (next_line_at_next_space) {
+				pen_x = 0;
+				pen_y -= glyphs['\n'].y1 * scale;
+				next_line_at_next_space = false;
+				continue;
+			}
+		}
+
+		if (character == '\n') {
+			pen_x = 0;
+			pen_y -= uv_height * scale;
+			next_line_at_next_space = false;
+			continue;
+		}
+
+		float new_verticies[] = {
+			xpos,		ypos,		0,	character_info.x0, 1 - character_info.y1,
+			xpos + w,	ypos,		0,	character_info.x1, 1 - character_info.y1,
+			xpos,		ypos + h,	0,	character_info.x0, 1 - character_info.y0,
+			xpos + w,	ypos + h,	0,	character_info.x1, 1 - character_info.y0,
+		};
+
+		unsigned int new_indicies[] = {
+			0 + char_count * 4, 1 + char_count * 4, 3 + char_count * 4,
+			0 + char_count * 4, 3 + char_count * 4, 2 + char_count * 4,
+		};
+
+		for (float value : new_verticies)
+			verticies.push_back(value);
+
+		for (unsigned int value : new_indicies)
+			indicies.push_back(value);
+
+		pen_x += character_info.advance * scale;
+		char_count++;
+
+	}
+
+	ArrayBuffer_s arraybuffer;
+	arraybuffer->load_buffer(verticies);
+	arraybuffer->push_attribute(3);
+	arraybuffer->push_attribute(2);
+
+	IndexBuffer_s indexbuffer;
+	indexbuffer->load_buffer(indicies, 3);
+
+	Mesh_s text_mesh(arraybuffer, indexbuffer);
+	graphics_representation->load_model(text_mesh);
+	graphics_representation->set_uniform_all(default_program::basic_uniform_queue(scene, graphics_representation));
+	graphics_representation->set_uniform("texture_slot", 0);
+	graphics_representation->set_uniform("screen_resolution", (float*)&scene.camera.screen_width, (float*)&scene.camera.screen_height);
+}
+
+void Font::generate_text_graphic(const std::string& text, Scene& scene, float scale, float text_max_width, bool wait_for_words) {
+
+	std::vector<float> verticies;
+	std::vector<unsigned int> indicies;
+
+	float pen_x = 0;
+	float pen_y = 0;
+
+	int char_count = 0;
+
+	bool next_line_at_next_space = false;
+
+	for (const uint8_t& character : text) {
+
+		if (text_max_width) {
+			if (pen_x > text_max_width)
+				next_line_at_next_space = true;
+		}
+
+		const glyph_info& character_info = glyphs[character];
+
+		float uv_width = character_info.x1 - character_info.x0;
+		float uv_height = character_info.y1 - character_info.y0;
+
+		float xpos = pen_x + character_info.x_off * scale;
+		float ypos = pen_y - (uv_height - character_info.y_off) * scale;
+
+		float w = uv_width * scale;
+		float h = uv_height * scale;
+
+		if (character == ' ') {
+			if (next_line_at_next_space) {
+				pen_x = 0;
+				pen_y -= glyphs['\n'].y1 * scale;
+				next_line_at_next_space = false;
+				continue;
+			}
+		}
+
+		if (character == '\n') {
+			pen_x = 0;
+			pen_y -= uv_height * scale;
+			next_line_at_next_space = false;
+			continue;
+		}
+
+		float new_verticies[] = {
+			xpos,		ypos,		0,	character_info.x0, 1 - character_info.y1,
+			xpos + w,	ypos,		0,	character_info.x1, 1 - character_info.y1,
+			xpos,		ypos + h,	0,	character_info.x0, 1 - character_info.y0,
+			xpos + w,	ypos + h,	0,	character_info.x1, 1 - character_info.y0,
+		};
+
+		unsigned int new_indicies[] = {
+			0 + char_count * 4, 1 + char_count * 4, 3 + char_count * 4,
+			0 + char_count * 4, 3 + char_count * 4, 2 + char_count * 4,
+		};
+
+		for (float value : new_verticies)
+			verticies.push_back(value);
+
+		for (unsigned int value : new_indicies)
+			indicies.push_back(value);
+
+		pen_x += character_info.advance * scale;
+		char_count++;
+
+	}
+
+	ArrayBuffer_s arraybuffer;
+	arraybuffer->load_buffer(verticies);
+	arraybuffer->push_attribute(3);
+	arraybuffer->push_attribute(2);
+
+	IndexBuffer_s indexbuffer;
+	indexbuffer->load_buffer(indicies, 3);
+
+	Mesh_s text_mesh(arraybuffer, indexbuffer);
+	graphics_representation->load_model(text_mesh);
+	graphics_representation->set_uniform_all(default_program::basic_uniform_queue(scene, graphics_representation));
+	graphics_representation->set_uniform("texture_slot", 0);
+	graphics_representation->set_uniform("screen_resolution", (float*)&scene.camera.screen_width, (float*)&scene.camera.screen_height);
 }
