@@ -22,18 +22,34 @@ int main() {
 	dropdown_button.color_interpolation = Interpolation::polynomial(3);
 	dropdown_button.cursor_type = Frame::Hand;
 
-	DropBox dropbox(vec2(100, 100), vec2(100, 40), vec2(200, 40), simple_button, dropdown_button, frame);
+	Style navbar_backround;
+	navbar_backround.color = gui::colorcode(0x1E1E1E);
+
+	Font text("Fonts\\Roboto-Regular.ttf");
+	text.generate_text_graphic("File", scene, 0.2f);
+	text.graphics_representation->set_uniform("text_color", 0.0f, 0.0f, 0.0f, 1.0f);
+	text.graphics_representation->set_position(glm::vec3(0, 0, -1));
 
 	while (frame.is_running()) {
 		double frame_time = frame.handle_window();
 		frame.clear_window(1, 1, 1, 1);
-		frame.display_performance(180);
+		//frame.display_performance(180);
 		
 		Gui::new_frame(frame, frame_time);
-
+		
 		scene.render(frame_time);
+		
+		text._font_atlas.bind();
+		text.graphics_representation->update_matrix();
+		text.graphics_representation->update_uniforms();
+		text.graphics_representation->draw(false);
 
-		dropbox.render();
+		//Gui::box(vec2(0, 0), vec2(1920, 30), navbar_backround, frame, true);
+
+		
+		//auto& button = Gui::box(vec2(200, 100), vec2(60, 30), simple_button, frame, true);
+		//if (button.hovering())
+		//	std::cout << "press" << std::endl;
 		
 
 	}

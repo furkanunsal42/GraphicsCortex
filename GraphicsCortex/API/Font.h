@@ -15,7 +15,7 @@ struct glyph_info {
 
 class Font {
 public:
-	Font(const std::string& filename, int font_size = 100);
+	Font(const std::string& filename = "Fonts\\Roboto-Thin.ttf", int font_size = 100);
 
 	void generate_text_graphic(const std::u32string& text, Scene& scene, float scale = 1, float text_max_width = 0, bool wait_for_words = true);
 	void generate_text_graphic(const std::u16string& text, Scene& scene, float scale = 1, float text_max_width = 0, bool wait_for_words = true);

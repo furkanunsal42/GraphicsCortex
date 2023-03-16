@@ -1,8 +1,6 @@
 #include "Font.h"
 #include "Default_Programs.h"
 
-#include <codecvt>
-
 Font::Font(const std::string& filename, int font_size) {
 	FT_Library ft;
 	FT_Face    face;
@@ -13,7 +11,7 @@ Font::Font(const std::string& filename, int font_size) {
 
 	// quick and dirty max texture size estimate
 
-	int max_glyph_amount = 512;
+	int max_glyph_amount = 256;
 	int supported_glyph_amount = 0;
 	for (int i = 0; i < max_glyph_amount; i++) {
 		if (!FT_Get_Char_Index(face, i))
@@ -27,13 +25,13 @@ Font::Font(const std::string& filename, int font_size) {
 
 	// render glyphs to atlas
 
-	unsigned char* png_data = (unsigned char*)calloc(tex_width * tex_height * 4, 1);
+	unsigned char* png_data = new unsigned char[tex_width * tex_height * 4];
 
 	int pen_x = 0, pen_y = 0;
 
 	for (int i = 0; i < max_glyph_amount; ++i) {
 		if (!FT_Get_Char_Index(face, i)) {
-			//std::cout << "failed to load char with index: " << i << std::endl;
+			std::cout << "failed to load char with index: " << i << std::endl;
 			continue;
 		}
 

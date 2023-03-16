@@ -316,6 +316,7 @@ public:
 	static void render(Time delatime);
 	
 	static Box& box(AABB2 aabb, Style style, Frame& frame, bool draw = true);
+	static Box& box(vec2 position, vec2 size, Style style, Frame& frame, bool draw = true);
 
 	static void _destroy();
 private:

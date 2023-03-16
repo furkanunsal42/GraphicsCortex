@@ -751,6 +751,10 @@ Box& Gui::box(AABB2 aabb, Style style, Frame& frame, bool draw) {
 	}
 }
 
+Box& Gui::box(vec2 position, vec2 size, Style style, Frame& frame, bool draw) {
+	return box(AABB2(position, size), style, frame, draw);
+}
+
 /*
 // css-like system
 
