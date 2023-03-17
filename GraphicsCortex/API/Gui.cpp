@@ -692,6 +692,12 @@ void Gui::new_frame(Time frame_time_ms) {
 
 	render_queue.clear();
 	_widget_next_id = 0;
+
+	layout_table.clear();
+	layout_min_size_table.clear();
+	layout_styles_table.clear();
+	layout_draw_flags_table.clear();
+
 }
 
 void Gui::_initialize() {
@@ -746,6 +752,37 @@ Box& Gui::box(AABB2 aabb, Style style, bool draw) {
 
 Box& Gui::box(vec2 position, vec2 size, Style style, bool draw) {
 	return box(AABB2(position, size), style, draw);
+}
+
+void Gui::layout(vec2 position, vec2 min_size, Style style, bool draw) {
+	layout_table.push_back(Layout(Layout::Vertical, position, vec2(0)));
+	layout_styles_table.push_back(style);
+	layout_min_size_table.push_back(min_size);
+	layout_draw_flags_table.push_back(draw);
+}
+
+Box& Gui::layout_end() {
+	bool draw = layout_draw_flags_table.back();
+	Layout& layout = layout_table.back();
+	Style& style = layout_styles_table.back();
+	vec2& min_size = layout_min_size_table.back();
+	
+	// render layout itself
+	vec2 size = vec2(std::max(min_size.x, layout.window_size.x), std::max(min_size.y, layout.window_size.y));
+
+	layout_table.pop_back();
+	layout_styles_table.pop_back();
+	layout_min_size_table.pop_back();
+	layout_draw_flags_table.pop_back();
+	
+	return box(layout.position, size, style, draw);
+}
+
+Box& Gui::content(vec2 size, Style style, bool draw) {
+	Layout& layout = layout_table.back();
+	Box& content = box(layout.get_widget_position(), size, style, draw);
+	layout.add_widget(size);
+	return content;
 }
 
 /*

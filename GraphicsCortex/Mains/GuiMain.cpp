@@ -24,8 +24,6 @@ int main() {
 	Style navbar_backround;
 	navbar_backround.color = gui::colorcode(0x1E1E1E);
 
-	DropBox dropbox(vec2(100, 0), vec2(60, 30), vec2(120, 30), simple_button, dropdown_button, gui);
-
 	Font text("Fonts\\Roboto-Regular.ttf");
 	text.generate_text_graphic("File", scene, 0.2f);
 	text.graphics_representation->set_uniform("text_color", 0.0f, 0.0f, 0.0f, 1.0f);
@@ -40,14 +38,13 @@ int main() {
 		
 		scene.render(frame_time);
 		
-		text._font_atlas.bind();
-		text.graphics_representation->update_matrix();
-		text.graphics_representation->update_uniforms();
-		text.graphics_representation->draw(false);
-
 		gui.box(vec2(0, 0), vec2(1920, 30), navbar_backround, true);		// topbar
 		
-		dropbox.render();
-
+		gui.layout(vec2(100, 100), vec2(100, 100), navbar_backround, true);
+		gui.content(vec2(50, 50), dropdown_button, true);
+		gui.content(vec2(50, 50), dropdown_button, true);
+		gui.content(vec2(50, 50), dropdown_button, true);
+		gui.layout_end();
+		
 	}
 }

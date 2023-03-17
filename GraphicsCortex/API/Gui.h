@@ -320,12 +320,23 @@ public:
 	Box& box(AABB2 aabb, Style style, bool draw = true);
 	Box& box(vec2 position, vec2 size, Style style, bool draw = true);
 
+	void layout(vec2 position, vec2 min_size, Style style, bool draw = true);
+	Box& layout_end();
+
+	Box& content(vec2 size, Style style, bool draw = true);
+
+
 private:
 
 	Time _frame_time_ms;
 
 	std::vector<Box> widget_table;
 	std::vector<std::function<void(Time)>> render_queue;
+
+	std::vector<Layout> layout_table;
+	std::vector<vec2> layout_min_size_table;
+	std::vector<Style> layout_styles_table;
+	std::vector<uint8_t> layout_draw_flags_table;
 
 	uint32_t _widget_next_id;
 	Frame& _frame_ref;

@@ -268,3 +268,14 @@ GraphicsCortex/Release/text rendering.obj
 *.sqlite
 GraphicsCortex/Images/.vs/Images/v17/.wsuo
 GraphicsCortex/Release/Font.obj
+GraphicsCortex/Debug/BinaryBuffers.obj
+GraphicsCortex/Debug/DirectoryUtils.obj
+GraphicsCortex/Debug/imgui.obj
+GraphicsCortex/Debug/imgui_draw.obj
+GraphicsCortex/Debug/imgui_impl_opengl3.obj
+GraphicsCortex/Debug/imgui_tables.obj
+GraphicsCortex/Debug/imgui_widgets.obj
+GraphicsCortex/Debug/ModelTextureTable.obj
+GraphicsCortex/Debug/stb_image.obj
+GraphicsCortex/Debug/stb_image_resize.obj
+GraphicsCortex/Debug/stb_image_write.obj
