@@ -31,7 +31,7 @@ Font::Font(const std::string& filename, int font_size) {
 
 	for (int i = 0; i < max_glyph_amount; ++i) {
 		if (!FT_Get_Char_Index(face, i)) {
-			std::cout << "failed to load char with index: " << i << std::endl;
+			//std::cout << "failed to load char with index: " << i << std::endl;
 			continue;
 		}
 

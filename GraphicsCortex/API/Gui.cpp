@@ -532,8 +532,8 @@ void _widget_info::increment_time(Time deltatime) {
 	}
 }
 
-Box::Box(Frame& frame, Style style, AABB2 aabb, uint32_t id) :
-	_frame_ref(frame), _style(style), _aabb(aabb), _original_size(aabb.size), _original_position(aabb.position), _id(id)
+Box::Box(Gui& gui, Style style, AABB2 aabb, uint32_t id) :
+	_gui_ref(gui), _style(style), _aabb(aabb), _original_size(aabb.size), _original_position(aabb.position), _id(id)
 {
 	Gui::_initialize();
 	
@@ -545,8 +545,8 @@ Box::Box(Frame& frame, Style style, AABB2 aabb, uint32_t id) :
 	_info.position = _original_position;
 }
 
-Box::Box(Frame& frame, Style style, AABB2 aabb, Program_s custom_renderer, uint32_t id):
-	_frame_ref(frame), _style(style), _aabb(aabb), _original_size(aabb.size), _original_position(aabb.position), _id(id)
+Box::Box(Gui& gui, Style style, AABB2 aabb, Program_s custom_renderer, uint32_t id):
+	_gui_ref(gui), _style(style), _aabb(aabb), _original_size(aabb.size), _original_position(aabb.position), _id(id)
 {
 	Gui::_initialize();
 
@@ -569,9 +569,8 @@ void Box::set_size(Vec2<float> size){
 }
 
 bool Box::is_mouse_hover(){
-	return _aabb.does_contain(_frame_ref.get_cursor_position());
+	return _aabb.does_contain(_gui_ref._frame_ref.get_cursor_position());
 }
-
 
 void Box::render(){
 
@@ -590,10 +589,10 @@ void Box::render(){
 	if (hover) {
 	//	style_to_use = hover_style;
 		_info.is_hovering = true;
-		Gui::_hover_happened = true;
-		if (_frame_ref.get_mouse_state() == Frame::CursorState::LeftPressed)
+		_gui_ref._hover_happened = true;
+		if (_gui_ref._frame_ref.get_mouse_state() == Frame::CursorState::LeftPressed)
 			_info.is_click_pressed = true;
-		if (_frame_ref.get_mouse_state() == Frame::CursorState::LeftReleased)
+		if (_gui_ref._frame_ref.get_mouse_state() == Frame::CursorState::LeftReleased)
 			if(cursor_pressing_previously)
 				_info.is_click_released = true;
 	}
@@ -622,7 +621,7 @@ void Box::render(){
 		_graphic_representation->mesh->load_model(_aabb.generate_model());
 	}
 
-	Gui::default_gui_renderer->update_uniform(Gui::_default_uniform_screen_position,	_aabb.position.x, _frame_ref.window_height - _aabb.position.y);
+	Gui::default_gui_renderer->update_uniform(Gui::_default_uniform_screen_position,	_aabb.position.x, _gui_ref._frame_ref.window_height - _aabb.position.y);
 	//Gui::default_gui_renderer->update_uniform(Gui::_default_uniform_projection, Gui::_projection_matrix);
 	Gui::default_gui_renderer->update_uniform(Gui::_default_uniform_rect_color,			color.x, color.y, color.z, 1.0f);
 	Gui::default_gui_renderer->update_uniform(Gui::_default_uniform_rect_size,			padded_size.x, padded_size.y);
@@ -632,13 +631,12 @@ void Box::render(){
 
 	_graphic_representation->draw(false);
 	
-	if (hover)
-		_frame_ref.set_cursor_type(cursor_type);
+	if (hover && cursor_type != Frame::Arrow)
+		_gui_ref._dominant_cursor_style = cursor_type;
 
 	//_info.last_update = _frame_ref.get_time_sec();
-	_info.increment_time(Gui::_frame_time_ms / 1000.0f);
+	_info.increment_time(_gui_ref._frame_time_ms / 1000.0f);
 }
-
 
 vec2f Box::get_size(){
 	return _original_size;
@@ -654,21 +652,14 @@ bool Box::click_released(){
 	return _info.is_click_released;
 }
 bool Box::click_pressed(){
-	return _info.is_click_pressed;
+	return _info.is_click_pressed;		// bug: is not a pulse
 }
 bool Box::click_holding() {
-	// TODO
+	return _info.is_click_pressed;
 }
 
-glm::mat4 Gui::_projection_matrix;
-Vec2<int> Gui::window_size;
-bool Gui::_hover_happened;
-Program_s Gui::default_gui_renderer;	// can only be initialized after initializing opengl, thus initialized by Gui::new_frame() 
-bool Gui::_initialized = false;
-std::vector<Box> Gui::widget_table;
-std::vector<std::function<void(Time)>> Gui::render_queue;
-Time Gui::_frame_time_ms;
-uint32_t Gui::_widget_next_id;
+bool Gui::_initialized;
+Program_s Gui::default_gui_renderer;
 unsigned int Gui::_default_uniform_screen_position;
 unsigned int Gui::_default_uniform_projection;
 unsigned int Gui::_default_uniform_rect_color;
@@ -677,20 +668,27 @@ unsigned int Gui::_default_uniform_corner_rounding;
 unsigned int Gui::_default_uniform_border_color;
 unsigned int Gui::_default_uniform_border_thickness;
 
+Gui::Gui(Frame& frame) :
+	_frame_ref(frame){}
 
-void Gui::new_frame(Frame& frame, Time frame_time_ms) {
+void Gui::new_frame(Time frame_time_ms) {
 	_initialize();
 	_frame_time_ms = frame_time_ms;
 
-	vec2i current_window_size(frame.window_width, frame.window_height);
+	vec2i current_window_size(_frame_ref.window_width, _frame_ref.window_height);
 	if (window_size != current_window_size){
 		window_size = current_window_size;
 		_projection_matrix = glm::ortho(0.0f, (float)window_size.x, 0.0f, (float)window_size.y);
 		Gui::default_gui_renderer->update_uniform(Gui::_default_uniform_projection, Gui::_projection_matrix);
 	}
 	if (!_hover_happened)
-		frame.set_cursor_type(Frame::Arrow);
+		_frame_ref.set_cursor_type(Frame::Arrow);
+	else
+		_frame_ref.set_cursor_type(_dominant_cursor_style);
+	_dominant_cursor_style = Frame::Arrow;
 	_hover_happened = false;
+
+
 
 	render_queue.clear();
 	_widget_next_id = 0;
@@ -711,11 +709,6 @@ void Gui::_initialize() {
 	_initialized = true;
 }
 
-void Gui::_destroy() {
-	widget_table.clear();
-}
-
-
 void Gui::render(Time deltatime) {
 	//for (auto widget : widget_table) {
 	//	widget.render(deltatime);
@@ -725,7 +718,7 @@ void Gui::render(Time deltatime) {
 	}
 }
 
-Box& Gui::box(AABB2 aabb, Style style, Frame& frame, bool draw) {
+Box& Gui::box(AABB2 aabb, Style style, bool draw) {
 	// append to table if mentioned for the first time
 	uint32_t next_id = _widget_next_id++;
 	if (widget_table.size() >= next_id + 1) {
@@ -738,7 +731,7 @@ Box& Gui::box(AABB2 aabb, Style style, Frame& frame, bool draw) {
 	auto same_name = [next_id](Box box) { return box._id == next_id; };
 	auto found_box = std::find_if(widget_table.begin(), widget_table.end(), same_name);
 	if (found_box == widget_table.end()) {
-		widget_table.push_back(Box (frame, style, aabb, next_id));
+		widget_table.push_back(Box (*this, style, aabb, next_id));
 		int widget_count = widget_table.size() - 1;
 		if (draw)
 			widget_table[widget_count].render();
@@ -751,8 +744,8 @@ Box& Gui::box(AABB2 aabb, Style style, Frame& frame, bool draw) {
 	}
 }
 
-Box& Gui::box(vec2 position, vec2 size, Style style, Frame& frame, bool draw) {
-	return box(AABB2(position, size), style, frame, draw);
+Box& Gui::box(vec2 position, vec2 size, Style style, bool draw) {
+	return box(AABB2(position, size), style, draw);
 }
 
 /*

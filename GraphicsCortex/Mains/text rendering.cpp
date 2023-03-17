@@ -4,6 +4,7 @@ int main() {
 
 	Frame frame(1920, 1080, "GraphicsCortex", 16, 0, true, true, false, false);
 	Scene scene(frame);
+
 	scene.camera.perspective = true;
 
 	Font font("Fonts\\Roboto-Regular.ttf", 200);
@@ -25,7 +26,7 @@ int main() {
 									probes into the far reaches of space", scene, 1, 1, true);
 
 	font.graphics_representation->set_position(glm::vec3(0, 0, 0));
-	font.graphics_representation->set_uniform("text_color", 0.7f, 0.7f, 0.2f, 0.8f);
+	font.graphics_representation->set_uniform("text_color", 242.0f/255, 166.0f/255, 0.0f/255, 1.0f);
 
 	while (frame.is_running()) {
 		double frametime = frame.handle_window();
@@ -37,7 +38,7 @@ int main() {
 		font._font_atlas.bind();
 		scene.render();
 
-		font.graphics_representation->set_position(font.graphics_representation->get_position() + glm::vec3(0, 3.0f/100 * frametime/1000, 0));
+		font.graphics_representation->set_position(font.graphics_representation->get_position() + glm::vec3(0, 6.0f/100 * frametime/1000, 0));
 
 		font.graphics_representation->update_matrix();
 		font.graphics_representation->update_uniforms();

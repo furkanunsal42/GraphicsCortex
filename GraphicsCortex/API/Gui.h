@@ -267,12 +267,14 @@ public:
 	void increment_time(Time deltatime);
 };
 
+class Gui;
+
 class Box {
 public:
 	Style style;
 
-	Box(Frame& frame, Style style, AABB2 aabb, uint32_t id = 0);
-	Box(Frame& frame, Style style, AABB2 aabb, Program_s custom_renderer, uint32_t id = 0);
+	Box(Gui& gui, Style style, AABB2 aabb, uint32_t id = 0);
+	Box(Gui& gui, Style style, AABB2 aabb, Program_s custom_renderer, uint32_t id = 0);
 	
 	void set_position(Vec2<float> position);
 	void set_size(Vec2<float> size);
@@ -295,7 +297,7 @@ public:
 private:
 
 	Style _style;
-	Frame& _frame_ref;
+	Gui& _gui_ref;
 	AABB2 _aabb;				//aabb size will be padded and displaced
 	vec2 _original_size;		//original size will not be padded		
 	vec2 _original_position;	//original size will not be displaced
@@ -306,31 +308,31 @@ private:
 
 class Gui {	// similiar function with UI class, new implementation 
 public:
-	Gui() = delete;
-	static void new_frame(Frame& frame, Time frame_time);
-	static glm::mat4 _projection_matrix;
-	static Vec2<int> window_size;
-	static bool _hover_happened;
-	
+	Gui(Frame& frame);
+	void new_frame(Time frame_time);
+	glm::mat4 _projection_matrix;
+	Vec2<int> window_size;
+	bool _hover_happened;
+	Frame::CursorType _dominant_cursor_style = Frame::Arrow;
 
-	static void render(Time delatime);
+	void render(Time delatime);
 	
-	static Box& box(AABB2 aabb, Style style, Frame& frame, bool draw = true);
-	static Box& box(vec2 position, vec2 size, Style style, Frame& frame, bool draw = true);
+	Box& box(AABB2 aabb, Style style, bool draw = true);
+	Box& box(vec2 position, vec2 size, Style style, bool draw = true);
 
-	static void _destroy();
 private:
 
-	static Time _frame_time_ms;
+	Time _frame_time_ms;
 
-	static std::vector<Box> widget_table;
-	static std::vector<std::function<void(Time)>> render_queue;
+	std::vector<Box> widget_table;
+	std::vector<std::function<void(Time)>> render_queue;
+
+	uint32_t _widget_next_id;
+	Frame& _frame_ref;
 
 	static void _initialize();
 	static bool _initialized;
 
-	static uint32_t _widget_next_id;
-	
 	static Program_s default_gui_renderer;
 	static unsigned int _default_uniform_screen_position;
 	static unsigned int _default_uniform_projection;
