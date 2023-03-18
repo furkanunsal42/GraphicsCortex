@@ -61,8 +61,10 @@ Frame::Frame(int width, int height, const std::string& name, int msaa, int swapi
 	else
 		glDisable(GL_CULL_FACE);
 
-	if (depth_test)
+	if (depth_test){
 		glEnable(GL_DEPTH_TEST);
+		glDepthFunc(GL_LEQUAL);
+	}
 	else
 		glDisable(GL_DEPTH_TEST);
 

@@ -627,7 +627,8 @@ void Box::render(){
 	Gui::default_gui_renderer->update_uniform(Gui::_default_uniform_rect_size,			padded_size.x, padded_size.y);
 	Gui::default_gui_renderer->update_uniform(Gui::_default_uniform_corner_rounding,	corner_rounding.x, corner_rounding.y, corner_rounding.z, corner_rounding.w);
 	Gui::default_gui_renderer->update_uniform(Gui::_default_uniform_border_color,		border_color.x, border_color.y, border_color.z, 1.0f);
-	Gui::default_gui_renderer->update_uniform(Gui::_default_uniform_border_thickness,	border_thickness.x, border_thickness.y, border_thickness.z, border_thickness.w);
+	Gui::default_gui_renderer->update_uniform(Gui::_default_uniform_border_thickness, border_thickness.x, border_thickness.y, border_thickness.z, border_thickness.w);
+	Gui::default_gui_renderer->update_uniform(Gui::_default_uniform_z_index, _gui_ref._current_z_index);
 
 	_graphic_representation->draw(false);
 	
@@ -667,6 +668,7 @@ unsigned int Gui::_default_uniform_rect_size;
 unsigned int Gui::_default_uniform_corner_rounding;
 unsigned int Gui::_default_uniform_border_color;
 unsigned int Gui::_default_uniform_border_thickness;
+unsigned int Gui::_default_uniform_z_index;
 
 Gui::Gui(Frame& frame) :
 	_frame_ref(frame){}
@@ -697,7 +699,7 @@ void Gui::new_frame(Time frame_time_ms) {
 	layout_min_size_table.clear();
 	layout_styles_table.clear();
 	layout_draw_flags_table.clear();
-
+	_current_z_index = 0;
 }
 
 void Gui::_initialize() {
@@ -710,7 +712,7 @@ void Gui::_initialize() {
 		_default_uniform_corner_rounding = default_gui_renderer->define_get_uniform_id("corner_rounding");
 		_default_uniform_border_color = default_gui_renderer->define_get_uniform_id("border_color");
 		_default_uniform_border_thickness = default_gui_renderer->define_get_uniform_id("border_thickness");
-
+		_default_uniform_z_index = default_gui_renderer->define_get_uniform_id("z_index");
 	}
 	_initialized = true;
 }
@@ -729,8 +731,12 @@ Box& Gui::box(AABB2 aabb, Style style, bool draw) {
 	uint32_t next_id = _widget_next_id++;
 	if (widget_table.size() >= next_id + 1) {
 		if (widget_table[next_id]._id == next_id) {
-			if (draw)
+			if (draw){
+				widget_table[next_id].set_position(aabb.position);
+				widget_table[next_id].set_size(aabb.size);
+				widget_table[next_id].style = style;
 				widget_table[next_id].render();
+			}
 			return widget_table[next_id];
 		}
 	}
@@ -744,8 +750,12 @@ Box& Gui::box(AABB2 aabb, Style style, bool draw) {
 		return widget_table[widget_count];
 	}
 	else {
-		if (draw)
+		if (draw){
+			(*found_box).set_position(aabb.position);
+			(*found_box).set_size(aabb.size);
+			(*found_box).style = style;
 			(*found_box).render();
+		}
 		return (*found_box);
 	}
 }
@@ -759,9 +769,11 @@ void Gui::layout(vec2 position, vec2 min_size, Style style, bool draw) {
 	layout_styles_table.push_back(style);
 	layout_min_size_table.push_back(min_size);
 	layout_draw_flags_table.push_back(draw);
+	_current_z_index++;
 }
 
 Box& Gui::layout_end() {
+	_current_z_index--;
 	bool draw = layout_draw_flags_table.back();
 	Layout& layout = layout_table.back();
 	Style& style = layout_styles_table.back();
@@ -780,8 +792,11 @@ Box& Gui::layout_end() {
 
 Box& Gui::content(vec2 size, Style style, bool draw) {
 	Layout& layout = layout_table.back();
+	bool draw_parent_layout = layout_draw_flags_table.back();
+	draw = draw && draw_parent_layout;
 	Box& content = box(layout.get_widget_position(), size, style, draw);
-	layout.add_widget(size);
+	if (draw)
+		layout.add_widget(size);
 	return content;
 }
 

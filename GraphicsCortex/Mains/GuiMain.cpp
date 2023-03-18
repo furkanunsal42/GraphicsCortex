@@ -1,8 +1,7 @@
 #include "GraphicsCortex.h"
 
-
 int main() {
-	Frame frame(1920, 1080, "GraphicsCortex", 16, 0, false, true, false, false);
+	Frame frame(1920, 1080, "GraphicsCortex", 16, 0, true, true, true, false);
 	Scene scene(frame);
 	Gui gui(frame);
 
@@ -29,6 +28,8 @@ int main() {
 	text.graphics_representation->set_uniform("text_color", 0.0f, 0.0f, 0.0f, 1.0f);
 	text.graphics_representation->set_position(glm::vec3(0, 0, -1));
 
+	bool show_dropdown = false;
+
 	while (frame.is_running()) {
 		double frame_time = frame.handle_window();
 		frame.clear_window(1, 1, 1, 1);
@@ -39,12 +40,18 @@ int main() {
 		scene.render(frame_time);
 		
 		gui.box(vec2(0, 0), vec2(1920, 30), navbar_backround, true);		// topbar
-		
-		gui.layout(vec2(100, 100), vec2(100, 100), navbar_backround, true);
-		gui.content(vec2(50, 50), dropdown_button, true);
-		gui.content(vec2(50, 50), dropdown_button, true);
-		gui.content(vec2(50, 50), dropdown_button, true);
+
+		auto& dropdown = gui.box(vec2(100, 0), vec2(60, 30), simple_button, true);
+		if (dropdown.click_released())
+			show_dropdown = !show_dropdown;
+		gui.layout(vec2(100, 0 + 30), vec2(0, 0), navbar_backround, show_dropdown);
+		if (gui.content(vec2(180, 30), dropdown_button, true).click_released()) {
+			std::cout << "1 pressed" << std::endl;
+		}
+		gui.content(vec2(180, 30), dropdown_button, true);
+		gui.content(vec2(180, 30), dropdown_button, true);
+		gui.content(vec2(180, 30), dropdown_button, true);
 		gui.layout_end();
-		
+
 	}
 }

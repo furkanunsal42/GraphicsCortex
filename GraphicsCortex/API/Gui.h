@@ -352,6 +352,9 @@ private:
 	static unsigned int _default_uniform_corner_rounding;
 	static unsigned int _default_uniform_border_color;
 	static unsigned int _default_uniform_border_thickness;
+	static unsigned int _default_uniform_z_index;
+
+	float _current_z_index = 32;
 
 	friend Box;
 };
