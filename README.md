@@ -35,7 +35,7 @@ GraphicsCortex is a custom OpenGL and Physx based 3D graphics API to be used in 
 | **stb_image** |Image Read/Write/Compression/Decompression|
 |   **physx**   |Physics Simulation|
 |   **redis**   |In-Memory Communication Between Other Languages|
-
+|  **FreeType** |Font File Loading|
 
 ### graphical api (work in progress): 
 - simple, consistant and powerful structure for graphics
