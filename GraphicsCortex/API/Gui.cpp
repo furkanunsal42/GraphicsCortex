@@ -613,19 +613,24 @@ void Box::render(){
 	Frame::CursorType cursor_type =	optional_get<Frame::CursorType>	( interpolated_style.cursor_type );
 
 	Vec2<float> padded_size = _original_size - Vec2<float>(padding.y + padding.w, padding.x + padding.z);
-	Vec2<float> displaced_position = _original_position + displacement;
-	if (_aabb.position != displaced_position) {
-		_aabb.position = displaced_position;
+	Vec2<float> displaced_position = _original_position + displacement + vec2(padding.y, padding.x) + vec2(margin.y, margin.x);
+
+	_current_position = displaced_position;
+	_current_size = padded_size;
+	_current_style = interpolated_style;
+
+	if (_aabb.position != _current_position) {
+		_aabb.position = _current_position;
 	}
-	if (_aabb.size != padded_size) {
-		_aabb.size = padded_size;
+	if (_aabb.size != _current_size) {
+		_aabb.size = _current_size;
 		_graphic_representation->mesh->load_model(_aabb.generate_model());
 	}
 
 	Gui::default_gui_renderer->update_uniform(Gui::_default_gui_uniform_screen_position,	_aabb.position.x, _gui_ref._frame_ref.window_height - _aabb.position.y);
 	//Gui::default_gui_renderer->update_uniform(Gui::_default_gui_uniform_projection, Gui::_projection_matrix);
 	Gui::default_gui_renderer->update_uniform(Gui::_default_gui_uniform_rect_color,			color.x, color.y, color.z, 1.0f);
-	Gui::default_gui_renderer->update_uniform(Gui::_default_gui_uniform_rect_size,			padded_size.x, padded_size.y);
+	Gui::default_gui_renderer->update_uniform(Gui::_default_gui_uniform_rect_size,			_current_size.x, _current_size.y);
 	Gui::default_gui_renderer->update_uniform(Gui::_default_gui_uniform_corner_rounding,	corner_rounding.x, corner_rounding.y, corner_rounding.z, corner_rounding.w);
 	Gui::default_gui_renderer->update_uniform(Gui::_default_gui_uniform_border_color,		border_color.x, border_color.y, border_color.z, 1.0f);
 	Gui::default_gui_renderer->update_uniform(Gui::_default_gui_uniform_border_thickness, border_thickness.x, border_thickness.y, border_thickness.z, border_thickness.w);
@@ -640,11 +645,22 @@ void Box::render(){
 	_info.increment_time(_gui_ref._frame_time_ms / 1000.0f);
 }
 
-vec2f Box::get_size(){
+vec2f Box::get_original_size(){
 	return _original_size;
 }
-vec2f Box::get_position(){
+vec2f Box::get_original_position(){
 	return _original_position;
+}
+
+vec2 Box::get_current_size(){
+	return _current_size;
+}
+vec2 Box::get_current_position(){
+	return _current_position;
+}
+
+StaticStyle Box::get_current_style() {
+	return _current_style;
 }
 
 bool Box::hovering(){
@@ -783,8 +799,8 @@ Box& Gui::box(vec2 position, vec2 size, Style style, bool draw) {
 	return box(AABB2(position, size), style, draw);
 }
 
-void Gui::layout(vec2 position, vec2 min_size, Style style, bool draw) {
-	layout_table.push_back(Layout(Layout::Vertical, position, vec2(0)));
+void Gui::layout(vec2 position, vec2 min_size, Style style, Layout::LayoutType layout_type, bool draw) {
+	layout_table.push_back(Layout(layout_type, position, vec2(0)));
 	layout_styles_table.push_back(style);
 	layout_min_size_table.push_back(min_size);
 	layout_draw_flags_table.push_back(draw);
@@ -821,8 +837,10 @@ Box& Gui::content(vec2 size, Style style, bool draw) {
 	bool draw_parent_layout = layout_draw_flags_table.back();
 	draw = draw && draw_parent_layout;
 	Box& content = box(layout.get_widget_position(), size, style, draw);
-	if (draw)
-		layout.add_widget(size);
+	if (draw){
+		vec4 content_margin = content.get_current_style().margin.get_value(content._info);
+		layout.add_widget(content.get_original_size() + vec2(content_margin.y + content_margin.w, content_margin.x + content_margin.z));
+	}
 	return content;
 }
 

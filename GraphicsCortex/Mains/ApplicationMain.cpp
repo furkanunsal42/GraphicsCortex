@@ -63,7 +63,7 @@ int main() {
 		vehicle->load_program_chassis(solid_program);
 
 		vehicle->set_default_uniform_queue_all(scene);
-		vehicle->chassis->set_uniform("use_cube_map_reflection", 0);
+		vehicle->chassis->set_uniform("use_cube_map_reflection", 1);
 		vehicle->chassis->set_uniform("cube_map_reflection_strength", 0.6f);
 
 		vehicle->physics_representation.set_wheel_layout(2.4, -1.5, 4.2, 0.4);
@@ -111,7 +111,7 @@ int main() {
 		glm::vec3 camera_position = vehicle->chassis->get_position();
 		camera_rotation = camera_rotation * glm::quat(glm::vec3(0, 3.14f, 0));
 		camera_position += glm::vec3(0.0f, 0.5f, 0.0f);
-		camera_position += camera_rotation * glm::vec3(0.0f, 0.0f, 0.0f);
+		camera_position += camera_rotation * glm::vec3(0.0f, 0.5f, 1.0f);
 		scene.camera.set_rotation(camera_rotation);
 		scene.camera.set_position(camera_position);
 

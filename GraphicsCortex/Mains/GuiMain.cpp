@@ -14,7 +14,7 @@ int main() {
 	simple_button.color_interpolation = Interpolation::polynomial(3);
 
 	Style dropdown_button;
-	dropdown_button.color = gui::colorcode(0x383838);
+	dropdown_button.color = gui::colorcode(0x3F855A);
 	dropdown_button.on_hover.color = gui::colorcode(0x475F95);
 	dropdown_button.color_change = 0.1;
 	dropdown_button.color_interpolation = Interpolation::polynomial(3);
@@ -27,6 +27,7 @@ int main() {
 	panel_elements.color = gui::colorcode(0x383838);
 	panel_elements.on_hover.color = gui::colorcode(0x475F95);
 	panel_elements.margin = vec4(10);
+	
 
 	Style scene_elements;
 	scene_elements.color = gui::colorcode(0x383838);
@@ -35,7 +36,6 @@ int main() {
 	scene_elements.border_thickness = vec4(1);
 	scene_elements.border_color_change = 0.1;
 	scene_elements.border_color_interpolation = Interpolation::polynomial(3);
-
 
 	Font text("Fonts\\Roboto-Regular.ttf");
 	text.generate_text_graphic("File", scene, 0.2f);
@@ -66,7 +66,7 @@ int main() {
 		auto& dropdown = gui.box(vec2(100, 0), vec2(60, 30), simple_button, true);
 		if (dropdown.click_released())
 			show_dropdown = !show_dropdown;
-		gui.layout(vec2(100, 0 + 30), vec2(0, 0), navbar_backround, show_dropdown);
+		gui.layout(vec2(100, 0 + 30), vec2(0, 0), navbar_backround, Layout::Vertical, show_dropdown);
 		gui.change_layout_z(1);
 		if (gui.content(vec2(180, 30), dropdown_button, true).click_released()) {
 			std::cout << "1 pressed" << std::endl;
@@ -79,7 +79,7 @@ int main() {
 		gui.layout_end();
 
 		// Scene Viewer
-		gui.layout(vec2(0, 40), vec2(200, 100), navbar_backround, true);
+		gui.layout(vec2(0, 40), vec2(200, 100), navbar_backround, Layout::Vertical, true);
 		gui.content(vec2(200, 30), navbar_backround, true);
 		gui.content(vec2(200, 30), scene_elements, true);
 		gui.content(vec2(200, 30), scene_elements, true);
@@ -87,11 +87,13 @@ int main() {
 		gui.content(vec2(200, 30), scene_elements, true);
 		gui.content(vec2(200, 30), scene_elements, true);
 		gui.content(vec2(200, 30), scene_elements, true);
-		gui.layout_end();
+		auto& scene_viewer_panel = gui.layout_end();
+		scene_viewer_panel.overwrite_style.border_color = gui::color(0xff0000);
+		scene_viewer_panel.overwrite_style.border_thickness = vec4(1);
 
 
 		// Movable Panel
-		gui.layout(panel_location, vec2(100, 100), navbar_backround, true);
+		gui.layout(panel_location, vec2(100, 100), navbar_backround, Layout::Vertical, true);
 		auto& panel_holder = gui.content(vec2(200, 30), navbar_backround);
 		gui.content(vec2(200, 100), panel_elements);
 		gui.content(vec2(200, 100), panel_elements);

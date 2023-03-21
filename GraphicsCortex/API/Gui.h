@@ -285,13 +285,17 @@ public:
 
 	Style overwrite_style;
 
-	vec2f get_size();
-	vec2f get_position();
+	vec2f get_original_size();
+	vec2f get_original_position();
 
 	bool hovering();
 	bool click_released();
 	bool click_pressed();
 	bool click_holding();
+
+	vec2 get_current_size();
+	vec2 get_current_position();
+	StaticStyle get_current_style();
 
 	uint32_t _id = 0;
 private:
@@ -303,7 +307,13 @@ private:
 	vec2 _original_position;	//original size will not be displaced
 	Graphic_s _graphic_representation;
 
+	vec2 _current_position;			// after interpolation
+	vec2 _current_size;				// after interpolation
+	StaticStyle _current_style;		// after interpolation
+
 	_widget_info _info;
+
+	friend Gui;
 };
 
 class Text {
@@ -333,7 +343,7 @@ public:
 	Box& box(AABB2 aabb, Style style, bool draw = true);
 	Box& box(vec2 position, vec2 size, Style style, bool draw = true);
 
-	void layout(vec2 position, vec2 min_size, Style style, bool draw = true);
+	void layout(vec2 position, vec2 min_size, Style style, Layout::LayoutType layout_type = Layout::Vertical, bool draw = true);
 	Box& layout_end();
 
 	Box& content(vec2 size, Style style, bool draw = true);
