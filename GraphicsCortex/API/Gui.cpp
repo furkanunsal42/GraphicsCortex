@@ -379,6 +379,7 @@ void StaticStyle::clear() {
 	margin = StyleAttribute<vec4f>();
 	border_thickness = StyleAttribute<vec4f>();
 	border_color = StyleAttribute<vec3f>();
+	cursor_type = Frame::Arrow;
 }
 
 void Style::clear() {
@@ -621,14 +622,14 @@ void Box::render(){
 		_graphic_representation->mesh->load_model(_aabb.generate_model());
 	}
 
-	Gui::default_gui_renderer->update_uniform(Gui::_default_uniform_screen_position,	_aabb.position.x, _gui_ref._frame_ref.window_height - _aabb.position.y);
-	//Gui::default_gui_renderer->update_uniform(Gui::_default_uniform_projection, Gui::_projection_matrix);
-	Gui::default_gui_renderer->update_uniform(Gui::_default_uniform_rect_color,			color.x, color.y, color.z, 1.0f);
-	Gui::default_gui_renderer->update_uniform(Gui::_default_uniform_rect_size,			padded_size.x, padded_size.y);
-	Gui::default_gui_renderer->update_uniform(Gui::_default_uniform_corner_rounding,	corner_rounding.x, corner_rounding.y, corner_rounding.z, corner_rounding.w);
-	Gui::default_gui_renderer->update_uniform(Gui::_default_uniform_border_color,		border_color.x, border_color.y, border_color.z, 1.0f);
-	Gui::default_gui_renderer->update_uniform(Gui::_default_uniform_border_thickness, border_thickness.x, border_thickness.y, border_thickness.z, border_thickness.w);
-	Gui::default_gui_renderer->update_uniform(Gui::_default_uniform_z_index, _gui_ref._current_z_index);
+	Gui::default_gui_renderer->update_uniform(Gui::_default_gui_uniform_screen_position,	_aabb.position.x, _gui_ref._frame_ref.window_height - _aabb.position.y);
+	//Gui::default_gui_renderer->update_uniform(Gui::_default_gui_uniform_projection, Gui::_projection_matrix);
+	Gui::default_gui_renderer->update_uniform(Gui::_default_gui_uniform_rect_color,			color.x, color.y, color.z, 1.0f);
+	Gui::default_gui_renderer->update_uniform(Gui::_default_gui_uniform_rect_size,			padded_size.x, padded_size.y);
+	Gui::default_gui_renderer->update_uniform(Gui::_default_gui_uniform_corner_rounding,	corner_rounding.x, corner_rounding.y, corner_rounding.z, corner_rounding.w);
+	Gui::default_gui_renderer->update_uniform(Gui::_default_gui_uniform_border_color,		border_color.x, border_color.y, border_color.z, 1.0f);
+	Gui::default_gui_renderer->update_uniform(Gui::_default_gui_uniform_border_thickness, border_thickness.x, border_thickness.y, border_thickness.z, border_thickness.w);
+	Gui::default_gui_renderer->update_uniform(Gui::_default_gui_uniform_z_index, _gui_ref._current_z_index);
 
 	_graphic_representation->draw(false);
 	
@@ -661,14 +662,23 @@ bool Box::click_holding() {
 
 bool Gui::_initialized;
 Program_s Gui::default_gui_renderer;
-unsigned int Gui::_default_uniform_screen_position;
-unsigned int Gui::_default_uniform_projection;
-unsigned int Gui::_default_uniform_rect_color;
-unsigned int Gui::_default_uniform_rect_size;
-unsigned int Gui::_default_uniform_corner_rounding;
-unsigned int Gui::_default_uniform_border_color;
-unsigned int Gui::_default_uniform_border_thickness;
-unsigned int Gui::_default_uniform_z_index;
+unsigned int Gui::_default_gui_uniform_screen_position;
+unsigned int Gui::_default_gui_uniform_projection;
+unsigned int Gui::_default_gui_uniform_rect_color;
+unsigned int Gui::_default_gui_uniform_rect_size;
+unsigned int Gui::_default_gui_uniform_corner_rounding;
+unsigned int Gui::_default_gui_uniform_border_color;
+unsigned int Gui::_default_gui_uniform_border_thickness;
+unsigned int Gui::_default_gui_uniform_z_index;
+
+Program_s Gui::default_text_renderer;
+unsigned int Gui::_default_text_uniform_texture_slot;
+unsigned int Gui::_default_text_uniform_screen_resolution;
+unsigned int Gui::_default_text_uniform_text_color;
+unsigned int Gui::_default_text_uniform_model;
+unsigned int Gui::_default_text_uniform_view;
+unsigned int Gui::_default_text_uniform_projection;
+
 
 Gui::Gui(Frame& frame) :
 	_frame_ref(frame){}
@@ -680,8 +690,8 @@ void Gui::new_frame(Time frame_time_ms) {
 	vec2i current_window_size(_frame_ref.window_width, _frame_ref.window_height);
 	if (window_size != current_window_size){
 		window_size = current_window_size;
-		_projection_matrix = glm::ortho(0.0f, (float)window_size.x, 0.0f, (float)window_size.y);
-		Gui::default_gui_renderer->update_uniform(Gui::_default_uniform_projection, Gui::_projection_matrix);
+		_projection_matrix = glm::ortho(0.0f, (float)window_size.x, 0.0f, (float)window_size.y, -100.0f, 100.0f);
+		Gui::default_gui_renderer->update_uniform(Gui::_default_gui_uniform_projection, Gui::_projection_matrix);
 	}
 	if (!_hover_happened)
 		_frame_ref.set_cursor_type(Frame::Arrow);
@@ -705,14 +715,23 @@ void Gui::new_frame(Time frame_time_ms) {
 void Gui::_initialize() {
 	if (!_initialized){
 		default_gui_renderer = default_program::gui_program_s();
-		_default_uniform_screen_position = default_gui_renderer->define_get_uniform_id("screen_position");
-		_default_uniform_projection = default_gui_renderer->define_get_uniform_id("projection");
-		_default_uniform_rect_color = default_gui_renderer->define_get_uniform_id("rect_color");
-		_default_uniform_rect_size = default_gui_renderer->define_get_uniform_id("rect_size");
-		_default_uniform_corner_rounding = default_gui_renderer->define_get_uniform_id("corner_rounding");
-		_default_uniform_border_color = default_gui_renderer->define_get_uniform_id("border_color");
-		_default_uniform_border_thickness = default_gui_renderer->define_get_uniform_id("border_thickness");
-		_default_uniform_z_index = default_gui_renderer->define_get_uniform_id("z_index");
+		_default_gui_uniform_screen_position = default_gui_renderer->define_get_uniform_id("screen_position");
+		_default_gui_uniform_projection = default_gui_renderer->define_get_uniform_id("projection");
+		_default_gui_uniform_rect_color = default_gui_renderer->define_get_uniform_id("rect_color");
+		_default_gui_uniform_rect_size = default_gui_renderer->define_get_uniform_id("rect_size");
+		_default_gui_uniform_corner_rounding = default_gui_renderer->define_get_uniform_id("corner_rounding");
+		_default_gui_uniform_border_color = default_gui_renderer->define_get_uniform_id("border_color");
+		_default_gui_uniform_border_thickness = default_gui_renderer->define_get_uniform_id("border_thickness");
+		_default_gui_uniform_z_index = default_gui_renderer->define_get_uniform_id("z_index");
+	
+		Program_s default_text_renderer = default_program::text_program_s();
+		_default_text_uniform_texture_slot = default_text_renderer->define_get_uniform_id("texture_slot");
+		_default_text_uniform_screen_resolution = default_text_renderer->define_get_uniform_id("screen_resolution");
+		_default_text_uniform_text_color = default_text_renderer->define_get_uniform_id("text_color");
+		_default_text_uniform_model = default_text_renderer->define_get_uniform_id("model");
+		_default_text_uniform_view = default_text_renderer->define_get_uniform_id("view");
+		_default_text_uniform_projection = default_text_renderer->define_get_uniform_id("projection");
+
 	}
 	_initialized = true;
 }
@@ -769,11 +788,18 @@ void Gui::layout(vec2 position, vec2 min_size, Style style, bool draw) {
 	layout_styles_table.push_back(style);
 	layout_min_size_table.push_back(min_size);
 	layout_draw_flags_table.push_back(draw);
-	_current_z_index++;
+	change_layout_z(1);
+}
+
+void Gui::change_layout_z(float z_displacement) {
+	_z_index_buff += z_displacement;
+	_current_z_index += z_displacement;
 }
 
 Box& Gui::layout_end() {
-	_current_z_index--;
+	_current_z_index -= _z_index_buff;
+	_z_index_buff = 0;
+
 	bool draw = layout_draw_flags_table.back();
 	Layout& layout = layout_table.back();
 	Style& style = layout_styles_table.back();

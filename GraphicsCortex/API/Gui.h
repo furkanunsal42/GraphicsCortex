@@ -3,13 +3,13 @@
 #include "CortexMath.h"
 #include "Frame.h"
 #include "ShaderCompiler.h"
+#include "Font.h"
+#include "SharedPtr_Graphic.h"
 
 #include <functional>
 #include <chrono>
 #include <optional>
 #include <iostream>
-
-#include "SharedPtr_Graphic.h"
 
 class Layout {
 public:
@@ -306,6 +306,19 @@ private:
 	_widget_info _info;
 };
 
+class Text {
+public:
+	Text(Gui& gui, vec2 position, unsigned int font_size, std::u32string text, uint32_t id = 0);
+	Text(Gui& gui, vec2 position, unsigned int font_size, std::u32string text, Program_s custom_renderer, uint32_t id = 0);
+
+	void render();
+
+private:
+
+	uint32_t _id;
+	Font _font;
+};
+
 class Gui {	// similiar function with UI class, new implementation 
 public:
 	Gui(Frame& frame);
@@ -325,12 +338,13 @@ public:
 
 	Box& content(vec2 size, Style style, bool draw = true);
 
-
+	void change_layout_z(float z_displacement);
 private:
 
 	Time _frame_time_ms;
 
 	std::vector<Box> widget_table;
+	std::vector<Text> font_table;
 	std::vector<std::function<void(Time)>> render_queue;
 
 	std::vector<Layout> layout_table;
@@ -345,16 +359,26 @@ private:
 	static bool _initialized;
 
 	static Program_s default_gui_renderer;
-	static unsigned int _default_uniform_screen_position;
-	static unsigned int _default_uniform_projection;
-	static unsigned int _default_uniform_rect_color;
-	static unsigned int _default_uniform_rect_size;
-	static unsigned int _default_uniform_corner_rounding;
-	static unsigned int _default_uniform_border_color;
-	static unsigned int _default_uniform_border_thickness;
-	static unsigned int _default_uniform_z_index;
+	static unsigned int _default_gui_uniform_screen_position;
+	static unsigned int _default_gui_uniform_projection;
+	static unsigned int _default_gui_uniform_rect_color;
+	static unsigned int _default_gui_uniform_rect_size;
+	static unsigned int _default_gui_uniform_corner_rounding;
+	static unsigned int _default_gui_uniform_border_color;
+	static unsigned int _default_gui_uniform_border_thickness;
+	static unsigned int _default_gui_uniform_z_index;
 
-	float _current_z_index = 32;
+	static Program_s default_text_renderer;
+	static unsigned int _default_text_uniform_texture_slot;
+	static unsigned int _default_text_uniform_screen_resolution;
+	static unsigned int _default_text_uniform_text_color;
+	static unsigned int _default_text_uniform_model;
+	static unsigned int _default_text_uniform_view;
+	static unsigned int _default_text_uniform_projection;
+
+
+	float _current_z_index = 0;
+	float _z_index_buff = 0;
 
 	friend Box;
 };

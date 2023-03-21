@@ -84,7 +84,7 @@ Font::Font(const std::string& filename, int font_size) {
 	_font_atlas.mipmap_bias = 0.5f;
 	_font_atlas.load_image(font_atlas);
 
-	graphics_representation->load_program(default_program::text_program_s());
+	//graphics_representation->load_program(default_program::text_program_s());
 
 }
 
@@ -167,9 +167,9 @@ void Font::generate_text_graphic(const std::u32string& text, Scene& scene, float
 
 	Mesh_s text_mesh(arraybuffer, indexbuffer);
 	graphics_representation->load_model(text_mesh);
-	graphics_representation->set_uniform_all(default_program::basic_uniform_queue(scene, graphics_representation));
-	graphics_representation->set_uniform("texture_slot", 0);
-	graphics_representation->set_uniform("screen_resolution", (float*)&scene.camera.screen_width, (float*)&scene.camera.screen_height);
+	//graphics_representation->set_uniform_all(default_program::basic_uniform_queue(scene, graphics_representation));
+	//graphics_representation->set_uniform("texture_slot", 0);
+	//graphics_representation->set_uniform("screen_resolution", (float*)&scene.camera.screen_width, (float*)&scene.camera.screen_height);
 }
 
 void Font::generate_text_graphic(const std::u16string& text, Scene& scene, float scale, float text_max_width, bool wait_for_words) {
@@ -251,9 +251,9 @@ void Font::generate_text_graphic(const std::u16string& text, Scene& scene, float
 
 	Mesh_s text_mesh(arraybuffer, indexbuffer);
 	graphics_representation->load_model(text_mesh);
-	graphics_representation->set_uniform_all(default_program::basic_uniform_queue(scene, graphics_representation));
-	graphics_representation->set_uniform("texture_slot", 0);
-	graphics_representation->set_uniform("screen_resolution", (float*)&scene.camera.screen_width, (float*)&scene.camera.screen_height);
+	//graphics_representation->set_uniform_all(default_program::basic_uniform_queue(scene, graphics_representation));
+	//graphics_representation->set_uniform("texture_slot", 0);
+	//graphics_representation->set_uniform("screen_resolution", (float*)&scene.camera.screen_width, (float*)&scene.camera.screen_height);
 }
 
 void Font::generate_text_graphic(const std::string& text, Scene& scene, float scale, float text_max_width, bool wait_for_words) {
@@ -335,7 +335,7 @@ void Font::generate_text_graphic(const std::string& text, Scene& scene, float sc
 
 	Mesh_s text_mesh(arraybuffer, indexbuffer);
 	graphics_representation->load_model(text_mesh);
-	graphics_representation->set_uniform_all(default_program::basic_uniform_queue(scene, graphics_representation));
-	graphics_representation->set_uniform("texture_slot", 0);
-	graphics_representation->set_uniform("screen_resolution", (float*)&scene.camera.screen_width, (float*)&scene.camera.screen_height);
+	//graphics_representation->set_uniform_all(default_program::basic_uniform_queue(scene, graphics_representation));
+	//graphics_representation->set_uniform("texture_slot", 0);
+	//graphics_representation->set_uniform("screen_resolution", (float*)&scene.camera.screen_width, (float*)&scene.camera.screen_height);
 }
