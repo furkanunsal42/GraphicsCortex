@@ -279,3 +279,5 @@ GraphicsCortex/Debug/ModelTextureTable.obj
 GraphicsCortex/Debug/stb_image.obj
 GraphicsCortex/Debug/stb_image_resize.obj
 GraphicsCortex/Debug/stb_image_write.obj
+GraphicsCortex/Release/text_rendering2.obj
+GraphicsCortex/Release/Text.obj

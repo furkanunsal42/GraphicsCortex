@@ -94,6 +94,7 @@ int main() {
 
 		// Movable Panel
 		gui.layout(panel_location, vec2(100, 100), navbar_backround, Layout::Vertical, true);
+		gui.change_layout_z(2);
 		auto& panel_holder = gui.content(vec2(200, 30), navbar_backround);
 		gui.content(vec2(200, 100), panel_elements);
 		gui.content(vec2(200, 100), panel_elements);

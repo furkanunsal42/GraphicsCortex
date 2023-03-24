@@ -88,6 +88,8 @@ Font::Font(const std::string& filename, int font_size) {
 
 }
 
+/*
+
 void Font::generate_text_graphic(const std::u32string& text, Scene& scene, float scale, float text_max_width, bool wait_for_words) {
 
 	std::vector<float> verticies;
@@ -339,3 +341,4 @@ void Font::generate_text_graphic(const std::string& text, Scene& scene, float sc
 	//graphics_representation->set_uniform("texture_slot", 0);
 	//graphics_representation->set_uniform("screen_resolution", (float*)&scene.camera.screen_width, (float*)&scene.camera.screen_height);
 }
+*/

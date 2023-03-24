@@ -200,6 +200,7 @@
     <ClCompile Include="API\RamCache.cpp" />
     <ClCompile Include="API\Scene.cpp" />
     <ClCompile Include="API\Gui.cpp" />
+    <ClCompile Include="API\Text.cpp" />
     <ClCompile Include="API\Texture.cpp" />
     <ClCompile Include="API\Buffer.cpp" />
     <ClCompile Include="API\UniformQueue.cpp" />
@@ -224,7 +225,7 @@
     <ClCompile Include="Dependencies\physx\snippetcommon\SnippetVehicleSceneQuery.cpp" />
     <ClCompile Include="Dependencies\physx\snippetcommon\SnippetVehicleTankCreate.cpp" />
     <ClCompile Include="Dependencies\physx\snippetcommon\SnippetVehicleTireFriction.cpp" />
-    <ClCompile Include="Mains\GuiMain.cpp" />
+    <ClCompile Include="Mains\text rendering.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Custom Shaders\Depth.frag" />
@@ -289,6 +290,7 @@
     <ClInclude Include="API\Scene.h" />
     <ClInclude Include="API\SharedPtr_Buffers.h" />
     <ClInclude Include="API\SharedPtr.h" />
+    <ClInclude Include="API\SharedPtr_Font.h" />
     <ClInclude Include="API\SharedPtr_Graphic.h" />
     <ClInclude Include="API\SharedPtr_Lights.h" />
     <ClInclude Include="API\SharedPtr_Materials.h" />
@@ -296,6 +298,7 @@
     <ClInclude Include="API\SharedPtr_Object.h" />
     <ClInclude Include="API\SharedPtr_PhysicsObject.h" />
     <ClInclude Include="API\SharedPtr_Program.h" />
+    <ClInclude Include="API\Text.h" />
     <ClInclude Include="API\Texture.h" />
     <ClInclude Include="API\UnifromQueue.h" />
     <ClInclude Include="API\Object.h" />

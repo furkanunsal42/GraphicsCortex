@@ -676,6 +676,17 @@ bool Box::click_holding() {
 	return _info.is_click_pressed;
 }
 
+//Text::Text(Gui& gui, vec2 position, unsigned int font_size, std::u32string text, vec3 color, uint32_t id, bool position_center){
+//	
+//}
+//Text::Text(Gui& gui, vec2 position, unsigned int font_size, std::u32string text, Program_s custom_renderer, vec3 color, uint32_t id, bool position_center){
+//	
+//}
+//
+//void Text::render() {
+//
+//}
+
 bool Gui::_initialized;
 Program_s Gui::default_gui_renderer;
 unsigned int Gui::_default_gui_uniform_screen_position;
@@ -813,9 +824,6 @@ void Gui::change_layout_z(float z_displacement) {
 }
 
 Box& Gui::layout_end() {
-	_current_z_index -= _z_index_buff;
-	_z_index_buff = 0;
-
 	bool draw = layout_draw_flags_table.back();
 	Layout& layout = layout_table.back();
 	Style& style = layout_styles_table.back();
@@ -829,7 +837,15 @@ Box& Gui::layout_end() {
 	layout_min_size_table.pop_back();
 	layout_draw_flags_table.pop_back();
 	
-	return box(layout.position, size, style, draw);
+	_z_index_buff--;
+	_current_z_index--;
+
+	auto& result = box(layout.position, size, style, draw);
+	
+	_current_z_index -= _z_index_buff;
+	_z_index_buff = 0;
+
+	return result;
 }
 
 Box& Gui::content(vec2 size, Style style, bool draw) {

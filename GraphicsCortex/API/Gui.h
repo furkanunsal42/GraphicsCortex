@@ -316,18 +316,23 @@ private:
 	friend Gui;
 };
 
-class Text {
-public:
-	Text(Gui& gui, vec2 position, unsigned int font_size, std::u32string text, uint32_t id = 0);
-	Text(Gui& gui, vec2 position, unsigned int font_size, std::u32string text, Program_s custom_renderer, uint32_t id = 0);
-
-	void render();
-
-private:
-
-	uint32_t _id;
-	Font _font;
-};
+//class Text {
+//public:
+//	Text(Gui& gui, vec2 position, unsigned int font_size, std::u32string text, vec3 color = vec3(1), uint32_t id = 0, bool position_center = true);
+//	Text(Gui& gui, vec2 position, unsigned int font_size, std::u32string text, Program_s custom_renderer, vec3 color = vec3(1), uint32_t id = 0, bool position_center = true);
+//
+//	void render();
+//
+//private:
+//
+//	uint32_t _id;
+//	Font _font;
+//	vec3 _color;
+//	Gui& _gui_ref;
+//	unsigned int _font_size;
+//	std::u32string _text;
+//	vec2 _position;
+//};
 
 class Gui {	// similiar function with UI class, new implementation 
 public:
@@ -354,7 +359,7 @@ private:
 	Time _frame_time_ms;
 
 	std::vector<Box> widget_table;
-	std::vector<Text> font_table;
+	//std::vector<Text> font_table;
 	std::vector<std::function<void(Time)>> render_queue;
 
 	std::vector<Layout> layout_table;

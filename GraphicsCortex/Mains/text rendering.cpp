@@ -7,9 +7,10 @@ int main() {
 
 	scene.camera.perspective = true;
 
-	Font font("Fonts\\Roboto-Regular.ttf", 200);
-	font._font_atlas.texture_slot = 0;
-	font.generate_text_graphic("\
+	Font_s font("Fonts\\Roboto-Regular.ttf", 200);
+	Text text(font);
+
+	text.set_text("\
 									It is a dark time for the Rebellion. Although \
 									the Death Star has been destroyed, \
 									Imperial troops have driven the Rebel forces \
@@ -23,10 +24,16 @@ int main() {
 									\n\n\
 									The evil lord Darth Vader, obsessed with finding \
 									young Skywalker, has dispatched thousands of remote \
-									probes into the far reaches of space", scene, 1, 1, true);
+									probes into the far reaches of space");
 
-	font.graphics_representation->set_position(glm::vec3(0, 0, 0));
-	font.graphics_representation->set_uniform("text_color", 242.0f/255, 166.0f/255, 0.0f/255, 1.0f);
+	text.set_max_width(1);
+	text.render();
+	text.graphic->set_position(glm::vec3(0, 0, 0));
+	text.graphic->set_uniform_all(default_program::basic_uniform_queue(scene, text.graphic));
+	text.graphic->set_uniform("text_color", 242.0f / 255, 166.0f / 255, 0.0f / 255, 1.0f);
+	text.graphic->set_uniform("texture_slot", 0);
+	text.graphic->set_uniform("screen_resolution", (float*)&scene.camera.screen_width, (float*)&scene.camera.screen_height);
+
 
 	while (frame.is_running()) {
 		double frametime = frame.handle_window();
@@ -35,14 +42,11 @@ int main() {
 
 		scene.camera.handle_movements(frame.window, frametime);
 
-		font._font_atlas.bind();
 		scene.render();
 
-		font.graphics_representation->set_position(font.graphics_representation->get_position() + glm::vec3(0, 6.0f/100 * frametime/1000, 0));
+		text.graphic->set_position(text.graphic->get_position() + glm::vec3(0, 6.0f / 100 * frametime / 1000, 0));
 
-		font.graphics_representation->update_matrix();
-		font.graphics_representation->update_uniforms();
-		font.graphics_representation->draw(false);
+		text.render();
 		//scene.render(false);
 	}
 }
