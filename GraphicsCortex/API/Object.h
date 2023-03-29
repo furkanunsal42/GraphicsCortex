@@ -4,7 +4,7 @@
 #include "PhysicsVehicle.h"
 
 #include "SharedPtr_Graphic.h"
-
+class Camera;
 class Scene;
 
 // objects are structures that sync physics and graphics
@@ -84,10 +84,10 @@ public:
 	void set_uniform_queue_all(uniform_update_queue&& chassis, uniform_update_queue&& left_wheel, uniform_update_queue&& right_wheel);
 	void set_uniform_queue_all(uniform_update_queue&& all);
 
-	void set_default_uniform_queue_chassis(Scene& scene);
-	void set_default_uniform_queue_left_wheel(Scene& scene);
-	void set_default_uniform_queue_right_wheel(Scene& scene);
-	void set_default_uniform_queue_all(Scene& scene);
+	void set_default_uniform_queue_chassis(Camera& camera);
+	void set_default_uniform_queue_left_wheel(Camera& camera);
+	void set_default_uniform_queue_right_wheel(Camera& camera);
+	void set_default_uniform_queue_all(Camera& camera);
 
 	void sync_with_physics();
 

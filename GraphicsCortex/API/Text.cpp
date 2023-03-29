@@ -5,26 +5,103 @@ Program_s Text::_default_text_renderer;
 bool Text::_default_renderer_initialized = false;
 
 Text::Text(Font_s font, const std::string& text) :
+	_font(font) 
+{
+	if (!_custom_renderer_loaded && !_default_renderer_initialized)
+		_initialize_default_renderer();
+	graphic->load_program(_default_text_renderer);
+
+	set_text(text);
+}
+
+Text::Text(Font_s font, const std::u16string& text) :
 	_font(font)
 {
+	if (!_custom_renderer_loaded && !_default_renderer_initialized)
+		_initialize_default_renderer();
+	graphic->load_program(_default_text_renderer);
+
+	set_text(text);
+}
+
+Text::Text(Font_s font, const std::u32string& text) :
+	_font(font)
+{
+	if (!_custom_renderer_loaded && !_default_renderer_initialized)
+		_initialize_default_renderer();
+	graphic->load_program(_default_text_renderer);
+
 	set_text(text);
 }
 
 Text::Text(Font_s font, Program_s custom_renderer, const std::string& text) :
 	_font(font)
 {
+	if (!_custom_renderer_loaded && !_default_renderer_initialized)
+		_initialize_default_renderer();
+
 	set_text(text);
+
+	graphic->load_program(custom_renderer);
+	_custom_renderer_loaded = true;
+}
+
+Text::Text(Font_s font, Program_s custom_renderer, const std::u16string& text) :
+	_font(font)
+{
+	if (!_custom_renderer_loaded && !_default_renderer_initialized)
+		_initialize_default_renderer();
+
+	set_text(text);
+
+	graphic->load_program(custom_renderer);
+	_custom_renderer_loaded = true;
+}
+
+Text::Text(Font_s font, Program_s custom_renderer, const std::u32string& text) :
+	_font(font)
+{
+	if (!_custom_renderer_loaded && !_default_renderer_initialized)
+		_initialize_default_renderer();
+
+	set_text(text);
+
 	graphic->load_program(custom_renderer);
 	_custom_renderer_loaded = true;
 }
 
 void Text::set_text(const std::string& text){
 	_graphic_needs_update = true;
-	_text = text;
+	text8 = text;
+	_string_type = ASCI;
 }
 
-std::string Text::get_text(){
-	return _text;
+void Text::set_text(const std::u16string& text){
+	_graphic_needs_update = true;
+	text16 = text;
+	_string_type = UTF_16;
+}
+
+void Text::set_text(const std::u32string& text){
+	_graphic_needs_update = true;
+	text32 = text;
+	_string_type = UTF_32;
+}
+
+std::string Text::get_text8() {
+	return text8;
+}
+
+std::u16string Text::get_text16() {
+	return text16;
+}
+
+std::u32string Text::get_text32() {
+	return text32;
+}
+
+Text::string_type Text::get_string_type() {
+	return _string_type;
 }
 
 void Text::set_scale(float scale){
@@ -50,6 +127,7 @@ void Text::set_wait_for_words(bool wait_for_words){
 	_wait_for_words = wait_for_words;
 	
 }
+
 bool Text::get_wait_for_words(){
 	return _wait_for_words;
 }
@@ -155,14 +233,9 @@ void Text::_initialize_default_renderer() {
 }
 
 void Text::render(){
-	if (!_custom_renderer_loaded && !_default_renderer_initialized)
-		_initialize_default_renderer();
-
 	if (_graphic_needs_update)
 		_update_graphic();
 
-	if (!_custom_renderer_loaded)
-		graphic->load_program(_default_text_renderer);
 	_font->_font_atlas.texture_slot = 0;
 	_font->_font_atlas.bind();
 

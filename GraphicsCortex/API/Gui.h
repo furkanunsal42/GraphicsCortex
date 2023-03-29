@@ -3,7 +3,7 @@
 #include "CortexMath.h"
 #include "Frame.h"
 #include "ShaderCompiler.h"
-#include "Font.h"
+#include "Text.h"
 #include "SharedPtr_Graphic.h"
 
 #include <functional>
@@ -297,6 +297,10 @@ public:
 	vec2 get_current_position();
 	StaticStyle get_current_style();
 
+	std::unordered_map<std::string, float> data;
+
+	void initialize_data(const std::string& key, int value);
+
 	uint32_t _id = 0;
 private:
 
@@ -316,29 +320,29 @@ private:
 	friend Gui;
 };
 
-//class Text {
-//public:
-//	Text(Gui& gui, vec2 position, unsigned int font_size, std::u32string text, vec3 color = vec3(1), uint32_t id = 0, bool position_center = true);
-//	Text(Gui& gui, vec2 position, unsigned int font_size, std::u32string text, Program_s custom_renderer, vec3 color = vec3(1), uint32_t id = 0, bool position_center = true);
-//
-//	void render();
-//
-//private:
-//
-//	uint32_t _id;
-//	Font _font;
-//	vec3 _color;
-//	Gui& _gui_ref;
-//	unsigned int _font_size;
-//	std::u32string _text;
-//	vec2 _position;
-//};
+class GuiText {
+public:
+	GuiText(Gui& gui, vec2 position, unsigned int font_size, std::u32string text, vec3 color = vec3(1), uint32_t id = 0, bool position_center = true);
+	GuiText(Gui& gui, vec2 position, unsigned int font_size, std::u32string text, Program_s custom_renderer, vec3 color = vec3(1), uint32_t id = 0, bool position_center = true);
+
+	void render();
+
+private:
+
+	uint32_t _id;
+	Font _font;
+	vec3 _color;
+	Gui& _gui_ref;
+	unsigned int _font_size;
+	std::u32string _text;
+	vec2 _position;
+};
 
 class Gui {	// similiar function with UI class, new implementation 
 public:
 	Gui(Frame& frame);
 	void new_frame(Time frame_time);
-	glm::mat4 _projection_matrix;
+	Camera camera;
 	Vec2<int> window_size;
 	bool _hover_happened;
 	Frame::CursorType _dominant_cursor_style = Frame::Arrow;
@@ -351,7 +355,9 @@ public:
 	void layout(vec2 position, vec2 min_size, Style style, Layout::LayoutType layout_type = Layout::Vertical, bool draw = true);
 	Box& layout_end();
 
-	Box& content(vec2 size, Style style, bool draw = true);
+	Box& content(vec2 size, Style style, bool draw = true, bool force_insert = false);
+
+	Frame& get_frame_referance();
 
 	void change_layout_z(float z_displacement);
 private:
@@ -382,15 +388,6 @@ private:
 	static unsigned int _default_gui_uniform_border_color;
 	static unsigned int _default_gui_uniform_border_thickness;
 	static unsigned int _default_gui_uniform_z_index;
-
-	static Program_s default_text_renderer;
-	static unsigned int _default_text_uniform_texture_slot;
-	static unsigned int _default_text_uniform_screen_resolution;
-	static unsigned int _default_text_uniform_text_color;
-	static unsigned int _default_text_uniform_model;
-	static unsigned int _default_text_uniform_view;
-	static unsigned int _default_text_uniform_projection;
-
 
 	float _current_z_index = 0;
 	float _z_index_buff = 0;

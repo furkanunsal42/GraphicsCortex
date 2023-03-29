@@ -676,14 +676,20 @@ bool Box::click_holding() {
 	return _info.is_click_pressed;
 }
 
-//Text::Text(Gui& gui, vec2 position, unsigned int font_size, std::u32string text, vec3 color, uint32_t id, bool position_center){
+void Box::initialize_data(const std::string& key, int value) {
+	if (data.find(key) == data.end())
+		data[key] = value;
+}
+
+
+//GuiText::GuiText(Gui& gui, vec2 position, unsigned int font_size, std::u32string text, vec3 color, uint32_t id, bool position_center){
 //	
 //}
-//Text::Text(Gui& gui, vec2 position, unsigned int font_size, std::u32string text, Program_s custom_renderer, vec3 color, uint32_t id, bool position_center){
+//GuiText::GuiText(Gui& gui, vec2 position, unsigned int font_size, std::u32string text, Program_s custom_renderer, vec3 color, uint32_t id, bool position_center){
 //	
 //}
 //
-//void Text::render() {
+//void GuiText::render() {
 //
 //}
 
@@ -698,17 +704,13 @@ unsigned int Gui::_default_gui_uniform_border_color;
 unsigned int Gui::_default_gui_uniform_border_thickness;
 unsigned int Gui::_default_gui_uniform_z_index;
 
-Program_s Gui::default_text_renderer;
-unsigned int Gui::_default_text_uniform_texture_slot;
-unsigned int Gui::_default_text_uniform_screen_resolution;
-unsigned int Gui::_default_text_uniform_text_color;
-unsigned int Gui::_default_text_uniform_model;
-unsigned int Gui::_default_text_uniform_view;
-unsigned int Gui::_default_text_uniform_projection;
-
-
 Gui::Gui(Frame& frame) :
-	_frame_ref(frame){}
+	_frame_ref(frame)
+{
+	camera.screen_width = frame.window_width;
+	camera.screen_height = frame.window_height;
+	camera.perspective = false;
+}
 
 void Gui::new_frame(Time frame_time_ms) {
 	_initialize();
@@ -717,8 +719,8 @@ void Gui::new_frame(Time frame_time_ms) {
 	vec2i current_window_size(_frame_ref.window_width, _frame_ref.window_height);
 	if (window_size != current_window_size){
 		window_size = current_window_size;
-		_projection_matrix = glm::ortho(0.0f, (float)window_size.x, 0.0f, (float)window_size.y, -100.0f, 100.0f);
-		Gui::default_gui_renderer->update_uniform(Gui::_default_gui_uniform_projection, Gui::_projection_matrix);
+		camera.projection_matrix = glm::ortho(0.0f, (float)window_size.x, 0.0f, (float)window_size.y, -100.0f, 100.0f);
+		Gui::default_gui_renderer->update_uniform(Gui::_default_gui_uniform_projection, Gui::camera.projection_matrix);
 	}
 	if (!_hover_happened)
 		_frame_ref.set_cursor_type(Frame::Arrow);
@@ -750,15 +752,6 @@ void Gui::_initialize() {
 		_default_gui_uniform_border_color = default_gui_renderer->define_get_uniform_id("border_color");
 		_default_gui_uniform_border_thickness = default_gui_renderer->define_get_uniform_id("border_thickness");
 		_default_gui_uniform_z_index = default_gui_renderer->define_get_uniform_id("z_index");
-	
-		Program_s default_text_renderer = default_program::text_program_s();
-		_default_text_uniform_texture_slot = default_text_renderer->define_get_uniform_id("texture_slot");
-		_default_text_uniform_screen_resolution = default_text_renderer->define_get_uniform_id("screen_resolution");
-		_default_text_uniform_text_color = default_text_renderer->define_get_uniform_id("text_color");
-		_default_text_uniform_model = default_text_renderer->define_get_uniform_id("model");
-		_default_text_uniform_view = default_text_renderer->define_get_uniform_id("view");
-		_default_text_uniform_projection = default_text_renderer->define_get_uniform_id("projection");
-
 	}
 	_initialized = true;
 }
@@ -848,16 +841,20 @@ Box& Gui::layout_end() {
 	return result;
 }
 
-Box& Gui::content(vec2 size, Style style, bool draw) {
+Box& Gui::content(vec2 size, Style style, bool draw, bool force_insert) {
 	Layout& layout = layout_table.back();
 	bool draw_parent_layout = layout_draw_flags_table.back();
-	draw = draw && draw_parent_layout;
+	draw = (draw && draw_parent_layout) || force_insert;
 	Box& content = box(layout.get_widget_position(), size, style, draw);
 	if (draw){
 		vec4 content_margin = content.get_current_style().margin.get_value(content._info);
 		layout.add_widget(content.get_original_size() + vec2(content_margin.y + content_margin.w, content_margin.x + content_margin.z));
 	}
 	return content;
+}
+
+Frame& Gui::get_frame_referance() {
+	return _frame_ref;
 }
 
 /*

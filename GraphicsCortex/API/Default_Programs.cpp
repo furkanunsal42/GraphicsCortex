@@ -8,15 +8,15 @@ namespace default_program {
 		return solid_program;
 	}
 
-	uniform_update_queue solid_default_uniform_queue(Scene& scene, Graphic_s graphic) {
+	uniform_update_queue solid_default_uniform_queue(Camera& camera, Graphic_s graphic) {
 		uniform_update_queue queue;
 		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("model", &graphic->model_matrix));
-		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("view", &scene.camera.view_matrix));
-		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("projection", &scene.camera.projection_matrix));
+		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("view", &camera.view_matrix));
+		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("projection", &camera.projection_matrix));
 		queue.add_uniform_update(uniform_update<int>("cube_map", 13));
 		queue.add_uniform_update(uniform_update<int>("use_cube_map_reflection", 0));
 		queue.add_uniform_update(uniform_update<float>("cube_map_reflection_strength", 0.85));
-		queue.add_uniform_update(dynamic_uniform_update<float>("camera_coords", &scene.camera.position.x, &scene.camera.position.y, &scene.camera.position.z));
+		queue.add_uniform_update(dynamic_uniform_update<float>("camera_coords", &camera.position.x, &camera.position.y, &camera.position.z));
 
 		//mesh.model._model_texture_table.update_uniform_array();
 		//int array_size;
@@ -46,21 +46,21 @@ namespace default_program {
 		return queue;
 	}
 
-	uniform_update_queue flat_default_uniform_queue(Scene& scene, Graphic_s graphic) {
+	uniform_update_queue flat_default_uniform_queue(Camera& camera, Graphic_s graphic) {
 		uniform_update_queue queue;
 		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("model", &graphic->model_matrix));
-		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("view", &scene.camera.view_matrix));
-		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("projection", &scene.camera.projection_matrix));
+		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("view", &camera.view_matrix));
+		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("projection", &camera.projection_matrix));
 
 		queue.add_uniform_update(uniform_update<float>("color", 0.8f, 0.7f, 0.6f, 1.0f));
 		return queue;
 	}
 	
-	uniform_update_queue basic_uniform_queue(Scene& scene, Graphic_s graphic) {
+	uniform_update_queue basic_uniform_queue(Camera& camera, Graphic_s graphic) {
 		uniform_update_queue queue;
 		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("model", &graphic->model_matrix));
-		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("view", &scene.camera.view_matrix));
-		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("projection", &scene.camera.projection_matrix));
+		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("view", &camera.view_matrix));
+		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("projection", &camera.projection_matrix));
 
 		return queue;
 	}
@@ -72,6 +72,18 @@ namespace default_program {
 		queue.add_uniform_update(dynamic_uniform_update<int>("cubemap", &cubemap.texture_slot));
 		return queue;
 	}
+
+	uniform_update_queue text_uniform_queue(Camera& camera, Text& text) {
+		uniform_update_queue queue;
+		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("model", &text.graphic->model_matrix));
+		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("view", &camera.view_matrix));
+		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("projection", &camera.projection_matrix));
+		queue.add_uniform_update(dynamic_uniform_update<int>("texture_slot", (int*)&text._font->_font_atlas.texture_slot));
+		queue.add_uniform_update(dynamic_uniform_update<float>("screen_resolution", &camera.screen_width, &camera.screen_height));
+		queue.add_uniform_update(dynamic_uniform_update<float>("text_color", &text._color.x, &text._color.y, &text._color.z, &text._color.w));
+		return queue;
+	}
+
 
 	uniform_update_queue ambiant_light_default_uniform_queue(AmbiantLight& ambiant_light, int light_index) {
 		uniform_update_queue queue;
