@@ -70,6 +70,15 @@ Text::Text(Font_s font, Program_s custom_renderer, const std::u32string& text) :
 	_custom_renderer_loaded = true;
 }
 
+Text::~Text() {
+	if (_string_type == ASCI)
+		text8.~basic_string();
+	else if (_string_type == UTF_16)
+		text16.~basic_string();
+	else if (_string_type == UTF_32)
+		text32.~basic_string();
+}
+
 void Text::set_text(const std::string& text){
 	_graphic_needs_update = true;
 	text8 = text;
@@ -150,62 +159,177 @@ void Text::_update_graphic() {
 	int char_count = 0;
 
 	bool next_line_at_next_space = false;
+	
+	if(_string_type == ASCI){
+		for (const uint8_t& character : text8) {
 
-	for (const uint8_t& character : _text) {
+			if (_text_max_width) {
+				if (pen_x > _text_max_width)
+					next_line_at_next_space = true;
+			}
 
-		if (_text_max_width) {
-			if (pen_x > _text_max_width)
-				next_line_at_next_space = true;
-		}
+			const glyph_info& character_info = _font->glyphs[character];
 
-		const glyph_info& character_info = _font->glyphs[character];
+			float uv_width = character_info.x1 - character_info.x0;
+			float uv_height = character_info.y1 - character_info.y0;
 
-		float uv_width = character_info.x1 - character_info.x0;
-		float uv_height = character_info.y1 - character_info.y0;
+			float xpos = pen_x + character_info.x_off * _scale;
+			float ypos = pen_y - (uv_height - character_info.y_off) * _scale;
 
-		float xpos = pen_x + character_info.x_off * _scale;
-		float ypos = pen_y - (uv_height - character_info.y_off) * _scale;
+			float w = uv_width * _scale;
+			float h = uv_height * _scale;
 
-		float w = uv_width * _scale;
-		float h = uv_height * _scale;
+			if (character == ' ') {
+				if (next_line_at_next_space) {
+					pen_x = 0;
+					pen_y -= _font->glyphs['\n'].y1 * _scale;
+					next_line_at_next_space = false;
+					continue;
+				}
+			}
 
-		if (character == ' ') {
-			if (next_line_at_next_space) {
+			if (character == '\n') {
 				pen_x = 0;
-				pen_y -= _font->glyphs['\n'].y1 * _scale;
+				pen_y -= uv_height * _scale;
 				next_line_at_next_space = false;
 				continue;
 			}
+
+			float new_verticies[] = {
+				xpos,		ypos,		0,	character_info.x0, 1 - character_info.y1,
+				xpos + w,	ypos,		0,	character_info.x1, 1 - character_info.y1,
+				xpos,		ypos + h,	0,	character_info.x0, 1 - character_info.y0,
+				xpos + w,	ypos + h,	0,	character_info.x1, 1 - character_info.y0,
+			};
+
+			unsigned int new_indicies[] = {
+				0 + char_count * 4, 1 + char_count * 4, 3 + char_count * 4,
+				0 + char_count * 4, 3 + char_count * 4, 2 + char_count * 4,
+			};
+
+			for (float value : new_verticies)
+				verticies.push_back(value);
+
+			for (unsigned int value : new_indicies)
+				indicies.push_back(value);
+
+			pen_x += character_info.advance * _scale;
+			char_count++;
 		}
+	}
+	else if (_string_type == UTF_16) {
+		for (const uint16_t& character : text16) {
 
-		if (character == '\n') {
-			pen_x = 0;
-			pen_y -= uv_height * _scale;
-			next_line_at_next_space = false;
-			continue;
+			if (_text_max_width) {
+				if (pen_x > _text_max_width)
+					next_line_at_next_space = true;
+			}
+
+			const glyph_info& character_info = _font->glyphs[character];
+
+			float uv_width = character_info.x1 - character_info.x0;
+			float uv_height = character_info.y1 - character_info.y0;
+
+			float xpos = pen_x + character_info.x_off * _scale;
+			float ypos = pen_y - (uv_height - character_info.y_off) * _scale;
+
+			float w = uv_width * _scale;
+			float h = uv_height * _scale;
+
+			if (character == ' ') {
+				if (next_line_at_next_space) {
+					pen_x = 0;
+					pen_y -= _font->glyphs['\n'].y1 * _scale;
+					next_line_at_next_space = false;
+					continue;
+				}
+			}
+
+			if (character == '\n') {
+				pen_x = 0;
+				pen_y -= uv_height * _scale;
+				next_line_at_next_space = false;
+				continue;
+			}
+
+			float new_verticies[] = {
+				xpos,		ypos,		0,	character_info.x0, 1 - character_info.y1,
+				xpos + w,	ypos,		0,	character_info.x1, 1 - character_info.y1,
+				xpos,		ypos + h,	0,	character_info.x0, 1 - character_info.y0,
+				xpos + w,	ypos + h,	0,	character_info.x1, 1 - character_info.y0,
+			};
+
+			unsigned int new_indicies[] = {
+				0 + char_count * 4, 1 + char_count * 4, 3 + char_count * 4,
+				0 + char_count * 4, 3 + char_count * 4, 2 + char_count * 4,
+			};
+
+			for (float value : new_verticies)
+				verticies.push_back(value);
+
+			for (unsigned int value : new_indicies)
+				indicies.push_back(value);
+
+			pen_x += character_info.advance * _scale;
+			char_count++;
 		}
+	}
+	else if (_string_type == UTF_32) {
+		for (const uint32_t& character : text32) {
 
-		float new_verticies[] = {
-			xpos,		ypos,		0,	character_info.x0, 1 - character_info.y1,
-			xpos + w,	ypos,		0,	character_info.x1, 1 - character_info.y1,
-			xpos,		ypos + h,	0,	character_info.x0, 1 - character_info.y0,
-			xpos + w,	ypos + h,	0,	character_info.x1, 1 - character_info.y0,
-		};
+			if (_text_max_width) {
+				if (pen_x > _text_max_width)
+					next_line_at_next_space = true;
+			}
 
-		unsigned int new_indicies[] = {
-			0 + char_count * 4, 1 + char_count * 4, 3 + char_count * 4,
-			0 + char_count * 4, 3 + char_count * 4, 2 + char_count * 4,
-		};
+			const glyph_info& character_info = _font->glyphs[character];
 
-		for (float value : new_verticies)
-			verticies.push_back(value);
+			float uv_width = character_info.x1 - character_info.x0;
+			float uv_height = character_info.y1 - character_info.y0;
 
-		for (unsigned int value : new_indicies)
-			indicies.push_back(value);
+			float xpos = pen_x + character_info.x_off * _scale;
+			float ypos = pen_y - (uv_height - character_info.y_off) * _scale;
 
-		pen_x += character_info.advance * _scale;
-		char_count++;
+			float w = uv_width * _scale;
+			float h = uv_height * _scale;
 
+			if (character == ' ') {
+				if (next_line_at_next_space) {
+					pen_x = 0;
+					pen_y -= _font->glyphs['\n'].y1 * _scale;
+					next_line_at_next_space = false;
+					continue;
+				}
+			}
+
+			if (character == '\n') {
+				pen_x = 0;
+				pen_y -= uv_height * _scale;
+				next_line_at_next_space = false;
+				continue;
+			}
+
+			float new_verticies[] = {
+				xpos,		ypos,		0,	character_info.x0, 1 - character_info.y1,
+				xpos + w,	ypos,		0,	character_info.x1, 1 - character_info.y1,
+				xpos,		ypos + h,	0,	character_info.x0, 1 - character_info.y0,
+				xpos + w,	ypos + h,	0,	character_info.x1, 1 - character_info.y0,
+			};
+
+			unsigned int new_indicies[] = {
+				0 + char_count * 4, 1 + char_count * 4, 3 + char_count * 4,
+				0 + char_count * 4, 3 + char_count * 4, 2 + char_count * 4,
+			};
+
+			for (float value : new_verticies)
+				verticies.push_back(value);
+
+			for (unsigned int value : new_indicies)
+				indicies.push_back(value);
+
+			pen_x += character_info.advance * _scale;
+			char_count++;
+		}
 	}
 
 	ArrayBuffer_s arraybuffer;
@@ -218,10 +342,6 @@ void Text::_update_graphic() {
 
 	Mesh_s text_mesh(arraybuffer, indexbuffer);
 	graphic->load_model(text_mesh);
-	//graphics_representation->set_uniform_all(default_program::basic_uniform_queue(scene, graphics_representation));
-	//graphics_representation->set_uniform("texture_slot", 0);
-	//graphics_representation->set_uniform("screen_resolution", (float*)&scene.camera.screen_width, (float*)&scene.camera.screen_height);
-	
 	_graphic_needs_update = false;
 }
 

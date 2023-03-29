@@ -10,12 +10,14 @@ namespace default_program {
 class Text {
 public:
 	Text(Font_s font, const std::string& text = u8"");
-	Text(Font_s font, const std::u16string& text = u"");
-	Text(Font_s font, const std::u32string& text = U"");
+	Text(Font_s font, const std::u16string& text);
+	Text(Font_s font, const std::u32string& text);
 
 	Text(Font_s font, Program_s custom_renderer, const std::string& text = u8"");
-	Text(Font_s font, Program_s custom_renderer, const std::u16string& text = u"");
-	Text(Font_s font, Program_s custom_renderer, const std::u32string& text = U"");
+	Text(Font_s font, Program_s custom_renderer, const std::u16string& text);
+	Text(Font_s font, Program_s custom_renderer, const std::u32string& text);
+
+	~Text();
 
 	void set_text(const std::string& text);
 	void set_text(const std::u16string& text);

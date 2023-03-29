@@ -168,7 +168,7 @@
     <ClCompile Include="API\Text.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
-    <ClCompile Include="Mains\GuiMain.cpp">
+    <ClCompile Include="Mains\text rendering.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
   </ItemGroup>

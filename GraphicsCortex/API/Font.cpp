@@ -11,14 +11,14 @@ Font::Font(const std::string& filename, int font_size) {
 
 	// quick and dirty max texture size estimate
 
-	int max_glyph_amount = 256;
+	int max_glyph_amount = 2 << 12;
 	int supported_glyph_amount = 0;
 	for (int i = 0; i < max_glyph_amount; i++) {
 		if (!FT_Get_Char_Index(face, i))
 			continue;
 		supported_glyph_amount++;
 	}
-	int tex_height = font_size * std::sqrt(supported_glyph_amount);
+	int tex_height = font_size * 1.1f * std::sqrt(supported_glyph_amount);
 	//tex_height = std::pow(2, std::ceil(std::log2(tex_height)));
 	tex_height = std::max(512, tex_height);
 	int tex_width = tex_height;
@@ -80,10 +80,11 @@ Font::Font(const std::string& filename, int font_size) {
 	FT_Done_FreeType(ft);
 
 	Image font_atlas(png_data, tex_width, tex_height, 4, true);
+	font_atlas.save_to_disc("atlas.png");
 
 	_font_atlas.mipmap_bias = 0.5f;
 	_font_atlas.load_image(font_atlas);
-
+	
 	//graphics_representation->load_program(default_program::text_program_s());
 
 }
