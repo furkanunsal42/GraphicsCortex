@@ -131,6 +131,8 @@ public:
 			functional_updates.erase(functional_updates.begin() + index);
 	}
 
+	void clear();
+
 	void update_uniforms();
 };
 

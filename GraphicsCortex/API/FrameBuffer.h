@@ -34,7 +34,6 @@ public:
 
 	void release();
 
-	void generate_framebuffer_object();
 	bool is_initialized();
 
 	void bind();
@@ -44,8 +43,24 @@ public:
 
 	void load_program(Program_s program);
 
+	enum {
+		COLOR_CHANNEL = 1,
+		DEPTH_CHANNEL = 2,
+		STENCIL_CHANNEL = 4,
+		ALL_CHANNELS = 1 | 2 | 4
+	};
+
+	enum {
+		BLIT_NEAREST_INTERPOLATION,
+		BLIT_LINEAR_INTERPOLATION,
+	};
+
+	void blit_section(const FrameBuffer& target_buffer, const glm::vec4& source_rect, const glm::vec4& target_rect, unsigned int mask_bits = ALL_CHANNELS, unsigned int interpolation = BLIT_NEAREST_INTERPOLATION);
+	void blit_section_to_screen(const glm::vec4& source_rect, const glm::vec4& target_rect, unsigned int mask_bits = ALL_CHANNELS, unsigned int interpolation = BLIT_NEAREST_INTERPOLATION);
+
 private:
 
+	void generate_framebuffer_object();
 	Graphic screen;
 	
 	bool _is_initialized = false;

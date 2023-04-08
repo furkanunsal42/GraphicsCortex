@@ -29,8 +29,8 @@ public:
 
 	_SHARED_POINTER_DEFINITIONS(DirectionalLight)
 
-		DirectionalLight_s(const glm::vec3& direction, const glm::vec3& color, Program_s program) :
-		obj(std::make_shared<DirectionalLight>(direction, color, program)) {}
+	DirectionalLight_s(const glm::vec3& position, const glm::vec3& direction, const glm::vec3& color, Program_s program) :
+		obj(std::make_shared<DirectionalLight>(position, direction, color, program)) {}
 };
 
 class PointLight_s {

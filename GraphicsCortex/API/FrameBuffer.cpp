@@ -153,6 +153,7 @@ Image FrameBuffer::save(bool vertical_flip) {
 	GLCall(glReadBuffer(GL_COLOR_ATTACHMENT0));
 	GLCall(glReadPixels(0, 0, w, h, GL_RGB, GL_UNSIGNED_BYTE, i_pixels));
 	GLCall(glReadPixels(0, 0, w, h, color_texture.format, color_texture.data_type, i_pixels));
+	unbind();
 
 	return Image(i_pixels, w, h, channels, vertical_flip);
 }
@@ -174,4 +175,14 @@ void FrameBuffer::release() {
 	GLCall(glDeleteFramebuffers(1, &id));
 	
 	_is_initialized = false;
+}
+
+void FrameBuffer::blit_section(const FrameBuffer& target_buffer, const glm::vec4& source_rect, const glm::vec4& target_rect, unsigned int mask_bits, unsigned int interpolation){
+		
+
+}
+
+void FrameBuffer::blit_section_to_screen(const glm::vec4& source_rect, const glm::vec4& target_rect, unsigned int mask_bits, unsigned int interpolation){
+		
+
 }

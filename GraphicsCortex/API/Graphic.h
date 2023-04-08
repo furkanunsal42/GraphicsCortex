@@ -167,7 +167,8 @@ protected:
 	}
 
 	void set_uniform_update_queue(uniform_update_queue& original) {
-		
+		_uniform_update_queue.clear();
+
 		if (_is_program_loaded) {
 			_uniform_update_queue.copy(original);
 			_uniform_update_queue.link_program(renderer);
@@ -180,6 +181,8 @@ protected:
 	}
 
 	void set_uniform_update_queue(uniform_update_queue&& original) {
+		_uniform_update_queue.clear();
+
 		if (_is_program_loaded) {
 			_uniform_update_queue.copy(original);
 			_uniform_update_queue.link_program(renderer);

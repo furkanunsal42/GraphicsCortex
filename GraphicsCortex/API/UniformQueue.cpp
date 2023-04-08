@@ -476,3 +476,27 @@ void uniform_update_queue::update_uniforms() {
 	for (std::function<void()>& update : functional_updates)
 		update();
 }
+
+void uniform_update_queue::clear() {
+	uniform_queue_int.clear();
+	uniform_queue_char.clear();
+	uniform_queue_bool.clear();
+	uniform_queue_float.clear();
+	uniform_queue_mat4.clear();
+	uniform_queue_mat3.clear();
+	uniform_queue_mat2.clear();
+
+	// -------------------------------------------------------------
+
+	dynamic_uniform_queue_int.clear();
+	dynamic_uniform_queue_char.clear();
+	dynamic_uniform_queue_bool.clear();
+	dynamic_uniform_queue_float.clear();
+	dynamic_uniform_queue_mat4.clear();
+	dynamic_uniform_queue_mat3.clear();
+	dynamic_uniform_queue_mat2.clear();
+
+	// --------------------------------------------------------------
+
+	functional_updates.clear();
+}

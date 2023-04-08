@@ -68,8 +68,13 @@ public:
 	std::string shader_name = "d_lights";
 	glm::vec3 color;
 	glm::vec3 direction;
+	
+	glm::vec3 position;
+	glm::mat4 light_view_matrix;
+	glm::mat4 light_projection_matrix;
 
-	DirectionalLight(const glm::vec3& direction, const glm::vec3& color, Program_s program);
+	DirectionalLight(const glm::vec3& position, const glm::vec3& direction, const glm::vec3& color, Program_s program);
+	void update_matricies();
 	void update_uniforms();
 	void define_uniforms(int max_count);
 };
