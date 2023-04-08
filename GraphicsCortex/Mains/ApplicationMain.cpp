@@ -21,17 +21,17 @@ int main() {
 		map->load_model(city);
 		map->load_material(city_mat);
 		map->load_program(program);
-		map->set_uniform_all(default_program::basic_uniform_queue(scene, map));
+		map->set_uniform_all(default_program::basic_uniform_queue(scene.camera, map));
 		
 		map->set_position(glm::vec3(0, 0, 0));
 
 		scene.add_graphic(map);
 
-		DirectionalLight_s sunlight(glm::vec3(1.0f, -0.9f, 0.9f), glm::vec3(0.4, 0.4, 0.4), solid_program);
+		DirectionalLight_s sunlight(glm::vec3(1.0f, -1.0f, 1.0f), glm::vec3(0.4, 0.4, 0.4), solid_program);
 		sunlight->set_uniform_upadte_queue(default_program::directional_light_default_uniform_queue(*sunlight.obj, 0));
 		scene.add_light(sunlight);
 
-		AmbiantLight_s ambinace(glm::vec3(0.1f, 0.1f, 0.1f), solid_program);
+		AmbiantLight_s ambinace(glm::vec3(0.3f, 0.3f, 0.3f), solid_program);
 		ambinace->set_uniform_upadte_queue(default_program::ambiant_light_default_uniform_queue(*ambinace.obj, 0));
 		scene.add_light(ambinace);
 	}
@@ -40,7 +40,7 @@ int main() {
 	Vehicle_s vehicle(vehicle_raw);
 	
 	{
-		Model chassis_model("Models/porsche_chassis.obj");
+		Model chassis_model("Models/porsche_chassis.obj", 1, Model::COORD_XYZ | Model::TEX_COORD_XY | Model::NORMAL_XYZ);
 		Model chassis_left_wheel_model("Models/porsche_wheel_left.obj");
 		Model chassis_right_wheel_model("Models/porsche_wheel_right.obj");
 
@@ -48,11 +48,11 @@ int main() {
 		Mesh_s left_wheel(chassis_left_wheel_model);
 		Mesh_s right_wheel(chassis_right_wheel_model);
 
-		Material_s tire_material_s;
-		tire_material_s->set_color_texture("Images/cartextures/911_22_930_tire_BaseColor.png", 4);
+		UnorderedMaterial_s tire_material_s(1);
+		tire_material_s->set_texture("Images/cartextures/911_22_930_tire_BaseColor.png", 4, 0, UnorderedMaterial::COLOR);
 
-		Material_s chassis_material_s;
-		chassis_material_s->set_color_texture("Images/cartextures/911_22_paint_BaseColor.png", 4);
+		UnorderedMaterial_s chassis_material_s(1);
+		chassis_material_s->set_texture("Images/cartextures/911_22_paint_BaseColor.png", 4, 0, UnorderedMaterial::COLOR);
 
 		vehicle->load_mesh_all_graphics(chassis, left_wheel, right_wheel);
 		vehicle->load_model_all_physics(chassis_model, chassis_left_wheel_model, chassis_right_wheel_model);
@@ -62,7 +62,7 @@ int main() {
 		vehicle->load_program_all(program);
 		vehicle->load_program_chassis(solid_program);
 
-		vehicle->set_default_uniform_queue_all(scene);
+		vehicle->set_default_uniform_queue_all(scene.camera);
 		vehicle->chassis->set_uniform("use_cube_map_reflection", 1);
 		vehicle->chassis->set_uniform("cube_map_reflection_strength", 0.6f);
 

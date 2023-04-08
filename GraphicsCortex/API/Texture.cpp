@@ -616,10 +616,14 @@ namespace {
 	}
 }
 
-void UnorderedMaterial::set_texture(const std::string& filename, int desired_channels, int index) {
+void UnorderedMaterial::set_texture(const std::string& filename, int desired_channels, int index, TextureType type) {
+	
 	_texture_filenames[index] = filename;
 	_texture_desired_channels[index] = desired_channels;
 	_is_texture_loaded[index] = false;
+
+	if (_active_textures_by_type[type] == -1)
+		_active_textures_by_type[type] = index;
 }
 
 void UnorderedMaterial::bind() {
@@ -627,22 +631,6 @@ void UnorderedMaterial::bind() {
 	for (int i = 0; i < array_size; i++) {
 		images.push_back(nullptr);
 	}
-
-	/*
-	for (int i = 0; i < _texture_filenames.size(); i++) {
-		std::fstream file;
-		file.open(_texture_filenames[i]);
-		if (!file) {
-			std::cout << "Repleace the filename " << _texture_filenames[i] << " with : " << std::endl;
-			std::string input;
-			std::cin >> input;
-			_texture_filenames[i] = input;
-		}
-		else {
-			file.close();
-		}
-	}
-	*/
 
 	std::vector<std::thread> task;
 	for (int i = 0; i < array_size; i++) {

@@ -35,21 +35,30 @@ void Camera::handle_movements(GLFWwindow* window, double frame_time_ms) {
 	if (glfwGetKey(window, GLFW_KEY_W) == 1) {
 		glm::vec3 forward_vector = glm::vec3(0.0f, 0.0f, -1.0f);
 		forward_vector = glm::normalize(rotation_quat * forward_vector);
+		forward_vector = glm::vec3(glm::dot(forward_vector, glm::vec3(1.0f, 0.0f, 0.0f)), 0.0f, glm::dot(forward_vector, glm::vec3(0.0f, 0.0f, 1.0f)));
+		forward_vector = glm::normalize(forward_vector);
 		position += forward_vector * (float)(movement_speed * frame_time_ms);
+		
 	}
 	if (glfwGetKey(window, GLFW_KEY_S) == 1) {
 		glm::vec3 forward_vector = glm::vec3(0.0f, 0.0f, -1.0f);
 		forward_vector = glm::normalize(rotation_quat * forward_vector);
+		forward_vector = glm::vec3(glm::dot(forward_vector, glm::vec3(1.0f, 0.0f, 0.0f)), 0.0f, glm::dot(forward_vector, glm::vec3(0.0f, 0.0f, 1.0f)));
+		forward_vector = glm::normalize(forward_vector);
 		position += -forward_vector * (float)(movement_speed * frame_time_ms);
 	}
 	if (glfwGetKey(window, GLFW_KEY_D) == 1) {
 		glm::vec3 forward_vector = glm::vec3(0.0f, 0.0f, -1.0f);
 		forward_vector = glm::normalize(rotation_quat * forward_vector);
+		forward_vector = glm::vec3(glm::dot(forward_vector, glm::vec3(1.0f, 0.0f, 0.0f)), 0.0f, glm::dot(forward_vector, glm::vec3(0.0f, 0.0f, 1.0f)));
+		forward_vector = glm::normalize(forward_vector);
 		position += glm::cross(forward_vector, up_vector) * (float)(movement_speed * frame_time_ms);
 	}
 	if (glfwGetKey(window, GLFW_KEY_A) == 1) {
 		glm::vec3 forward_vector = glm::vec3(0.0f, 0.0f, -1.0f);
 		forward_vector = glm::normalize(rotation_quat * forward_vector);
+		forward_vector = glm::vec3(glm::dot(forward_vector, glm::vec3(1.0f, 0.0f, 0.0f)), 0.0f, glm::dot(forward_vector, glm::vec3(0.0f, 0.0f, 1.0f)));
+		forward_vector = glm::normalize(forward_vector);
 		position += -glm::cross(forward_vector, up_vector) * (float)(movement_speed * frame_time_ms);
 	}
 	if (glfwGetKey(window, GLFW_KEY_SPACE) == 1) {

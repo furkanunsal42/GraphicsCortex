@@ -1,6 +1,7 @@
 #pragma once
 #include "Config.h"
 #include "Image.h"
+#include "glm.hpp"
 
 #include "GL\glew.h"
 
@@ -154,6 +155,13 @@ private:
 	int depth = NULL;
 };
 
+class Camera;
+class Graphic_s;
+class uniform_update_queue;
+namespace default_program {
+	uniform_update_queue solid_default_uniform_queue(Camera& camera, Graphic_s graphic);
+}
+
 
 class UnorderedMaterial {
 public:
@@ -172,7 +180,13 @@ public:
 	UnorderedMaterial& operator=(const UnorderedMaterial& other) = default;
 	UnorderedMaterial& operator=(UnorderedMaterial&& other) = default;
 
-	void set_texture(const std::string& filename, int desired_channels, int index);
+	enum TextureType {
+		COLOR,
+		SPECULAR,
+		NORMAL,
+	};
+
+	void set_texture(const std::string& filename, int desired_channels, int index, TextureType type = COLOR);
 
 	void bind();
 	void unbind();
@@ -190,8 +204,15 @@ protected:
 	int array_size;
 	std::vector<bool> _is_texture_loaded;
 	std::vector<int> _texture_desired_channels;
+	std::vector<TextureType> _texture_types;
 	std::vector<std::string> _texture_filenames;
+	
+	// texture type is enabled if at least one of type is loaded
+	glm::vec3 _active_textures_by_type = glm::vec3(-1.0f, -1.0f, -1.0f);	// example: _active_textures_by_type[0] -> active color map index to use in texture array, -1 means none
+
 	bool _first_texture_set = true;
+
+	friend uniform_update_queue default_program::solid_default_uniform_queue(Camera& camera, Graphic_s graphic);
 };
 
 class Material : public UnorderedMaterial{

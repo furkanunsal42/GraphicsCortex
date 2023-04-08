@@ -31,6 +31,7 @@ public:
 		ASCI,
 		UTF_16,
 		UTF_32,
+		NON_INITIALIZED,
 	};
 
 	string_type get_string_type();
@@ -58,8 +59,9 @@ private:
 		std::u16string text16;
 		std::u32string text32;
 	};
+	void _deconstruct_text();
 
-	string_type _string_type = ASCI;
+	string_type _string_type = NON_INITIALIZED;
 
 	float _scale = 1;
 	float _text_max_width = 0;

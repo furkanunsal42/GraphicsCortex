@@ -38,9 +38,12 @@ public:
 		COORD_X = 1,
 		COORD_Y = 2,
 		COORD_Z = 4,
+		COORD_XYZ = 1 | 2 | 4,
 
 		TEX_COORD_X = 8,
 		TEX_COORD_Y = 16,
+		TEX_COORD_XY = 8 | 16,
+
 		TEX_COORD_Z_DIFFUSE = 32,
 		TEX_COORD_Z_SPECULAR = 64,
 		TEX_COORD_Z_NORMAL = 128,
@@ -48,6 +51,8 @@ public:
 		NORMAL_X = 256,
 		NORMAL_Y = 512,
 		NORMAL_Z = 1024,
+		NORMAL_XYZ = 256 | 512 | 1024,
+
 		ALL = 2047,
 		PROPERTY_COUNT = 11,
 	};

@@ -2,11 +2,6 @@
 
 
 namespace default_program {
-	Program solid_program() {
-		Shader default_shader("Shaders/Solid.vert", "Shaders/Solid.geom", "Shaders/Solid.frag");
-		Program solid_program(default_shader.vertex_shader, default_shader.geometry_shader, default_shader.fragment_shader);
-		return solid_program;
-	}
 
 	uniform_update_queue solid_default_uniform_queue(Camera& camera, Graphic_s graphic) {
 		uniform_update_queue queue;
@@ -17,6 +12,7 @@ namespace default_program {
 		queue.add_uniform_update(uniform_update<int>("use_cube_map_reflection", 0));
 		queue.add_uniform_update(uniform_update<float>("cube_map_reflection_strength", 0.85));
 		queue.add_uniform_update(dynamic_uniform_update<float>("camera_coords", &camera.position.x, &camera.position.y, &camera.position.z));
+		queue.add_uniform_update(dynamic_uniform_update<float>("active_texture_indicies", &graphic->unordered_material->_active_textures_by_type.x, &graphic->unordered_material->_active_textures_by_type.y, &graphic->unordered_material->_active_textures_by_type.z));
 
 		//mesh.model._model_texture_table.update_uniform_array();
 		//int array_size;
@@ -130,6 +126,11 @@ namespace default_program {
 		return queue;
 	}
 
+	Program solid_program() {
+		Shader default_shader("Shaders/Solid.vert", "Shaders/Solid.geom", "Shaders/Solid.frag");
+		Program solid_program(default_shader.vertex_shader, default_shader.geometry_shader, default_shader.fragment_shader);
+		return solid_program;
+	}
 	Program flatcolor_program() {
 		Shader default_shader("Shaders/FlatColor.vert", "Shaders/FlatColor.frag");
 		Program renderer(default_shader.vertex_shader, default_shader.fragment_shader);
@@ -156,6 +157,12 @@ namespace default_program {
 		return renderer;
 	}
 
+
+	Program_s solid_program_s() {
+		Shader default_shader("Shaders/Solid.vert", "Shaders/Solid.geom", "Shaders/Solid.frag");
+		Program_s renderer(default_shader.vertex_shader, default_shader.geometry_shader, default_shader.fragment_shader);
+		return renderer;
+	}
 	Program_s flatcolor_program_s() {
 		Shader default_shader("Shaders/FlatColor.vert", "Shaders/FlatColor.frag");
 		Program_s renderer(default_shader.vertex_shader, default_shader.fragment_shader);

@@ -81,20 +81,35 @@ Text::~Text() {
 
 void Text::set_text(const std::string& text){
 	_graphic_needs_update = true;
-	text8 = text;
+	_deconstruct_text();
+	text8 = std::string(text);
 	_string_type = ASCI;
 }
 
 void Text::set_text(const std::u16string& text){
 	_graphic_needs_update = true;
-	text16 = text;
+	_deconstruct_text();
+	text16 = std::u16string(text);
 	_string_type = UTF_16;
 }
 
 void Text::set_text(const std::u32string& text){
 	_graphic_needs_update = true;
-	text32 = text;
+	_deconstruct_text();
+	text32 = std::u32string(text);
 	_string_type = UTF_32;
+}
+
+void Text::_deconstruct_text() {
+	
+	// since union doesn't know which implementation of deconstruct to use we have to call it manually
+
+	if (_string_type == ASCI)
+		text8.~basic_string();
+	else if (_string_type == UTF_16)
+		text16.~basic_string();
+	else if (_string_type == UTF_32)
+		text32.~basic_string();
 }
 
 std::string Text::get_text8() {

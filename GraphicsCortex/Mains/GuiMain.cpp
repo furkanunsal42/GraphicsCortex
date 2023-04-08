@@ -99,7 +99,7 @@ int main() {
 
 	Font_s font("Fonts\\Roboto-Regular.ttf", 100);
 	Text text(font, "File");
-	text.set_scale(1080 / 5);
+	text.set_scale(1080 / 3);
 	text.set_wait_for_words(1080);
 	text.graphic->set_position(glm::vec3(0, 0, -1));
 	text.set_color(vec4(0, 0, 0, 1));
