@@ -41,6 +41,7 @@
 #include "SharedPtr_Object.h"
 #include "SharedPtr_PhysicsObject.h"
 #include "SharedPtr_Font.h"
+#include "SharedPtr_FrameBuffer.h"
 #include "DirectoryUtils.h"
 #include "BinaryBuffers.h"
 #include "Gui.h"

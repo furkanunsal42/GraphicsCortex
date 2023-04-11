@@ -78,8 +78,9 @@ int main() {
 		plane->load_program(solid_program);
 		plane->set_uniform_all(plane_solid_uniforms);
 		scene.render(false);
+	
+		shadowmap.blit_section_to_screen(glm::vec4(0, 0, 1920/2, 1080), glm::vec4(0, 0, 1920/2, 1080), FrameBuffer::ALL_CHANNELS, FrameBuffer::BLIT_NEAREST_INTERPOLATION);
 
-
-
+		
 	}
 }

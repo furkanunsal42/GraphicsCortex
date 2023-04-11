@@ -291,6 +291,7 @@
     <ClInclude Include="API\SharedPtr_Buffers.h" />
     <ClInclude Include="API\SharedPtr.h" />
     <ClInclude Include="API\SharedPtr_Font.h" />
+    <ClInclude Include="API\SharedPtr_FrameBuffer.h" />
     <ClInclude Include="API\SharedPtr_Graphic.h" />
     <ClInclude Include="API\SharedPtr_Lights.h" />
     <ClInclude Include="API\SharedPtr_Materials.h" />

@@ -36,7 +36,13 @@ public:
 
 	bool is_initialized();
 
-	void bind();
+	enum {
+		WRITE_TARGET = 1,
+		READ_TARGET = 2,
+		WRITE_READ_TARGET = 1 | 2,
+	};
+
+	void bind(unsigned int bind_target = WRITE_READ_TARGET);
 	void unbind();
 	void render(unsigned int source_texture = FrameBuffer::COLOR_TEXTURE);
 	Image save(bool vertical_flip = true);
@@ -55,7 +61,7 @@ public:
 		BLIT_LINEAR_INTERPOLATION,
 	};
 
-	void blit_section(const FrameBuffer& target_buffer, const glm::vec4& source_rect, const glm::vec4& target_rect, unsigned int mask_bits = ALL_CHANNELS, unsigned int interpolation = BLIT_NEAREST_INTERPOLATION);
+	void blit_section(FrameBuffer& target_buffer, const glm::vec4& source_rect, const glm::vec4& target_rect, unsigned int mask_bits = ALL_CHANNELS, unsigned int interpolation = BLIT_NEAREST_INTERPOLATION);
 	void blit_section_to_screen(const glm::vec4& source_rect, const glm::vec4& target_rect, unsigned int mask_bits = ALL_CHANNELS, unsigned int interpolation = BLIT_NEAREST_INTERPOLATION);
 
 private:

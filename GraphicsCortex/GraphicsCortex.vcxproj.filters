@@ -667,6 +667,9 @@
     <ClInclude Include="API\Text.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
+    <ClInclude Include="API\SharedPtr_FrameBuffer.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Images\orange.png">

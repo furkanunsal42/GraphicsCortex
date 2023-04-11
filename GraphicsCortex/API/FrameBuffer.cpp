@@ -85,10 +85,25 @@ bool FrameBuffer::is_initialized() {
 	return _is_initialized;
 }
 
-void FrameBuffer::bind() {
+void FrameBuffer::bind(unsigned int bind_target) {
+	
+	int read_buffer_id, write_buffer_id = 0;
+	GLCall(glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING, &read_buffer_id));
+	GLCall(glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &write_buffer_id));
+	
 	generate_framebuffer_object();
 
-	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, id));
+	if (bind_target == READ_TARGET) {
+		GLCall(glBindFramebuffer(GL_READ_FRAMEBUFFER, id));
+		GLCall(glBindFramebuffer(GL_DRAW_FRAMEBUFFER, write_buffer_id));
+	}
+	else if (bind_target == WRITE_TARGET) {
+		GLCall(glBindFramebuffer(GL_READ_FRAMEBUFFER, read_buffer_id));
+		GLCall(glBindFramebuffer(GL_DRAW_FRAMEBUFFER, id));
+	}
+	else if (bind_target == WRITE_READ_TARGET) {
+		GLCall(glBindFramebuffer(GL_FRAMEBUFFER, id));
+	}
 }
 
 void FrameBuffer::unbind() {
@@ -177,12 +192,61 @@ void FrameBuffer::release() {
 	_is_initialized = false;
 }
 
-void FrameBuffer::blit_section(const FrameBuffer& target_buffer, const glm::vec4& source_rect, const glm::vec4& target_rect, unsigned int mask_bits, unsigned int interpolation){
-		
+enum {
+	COLOR_CHANNEL = 1,
+	DEPTH_CHANNEL = 2,
+	STENCIL_CHANNEL = 4,
+	ALL_CHANNELS = 1 | 2 | 4
+};
+
+// rect format -> xy = low_left, zw-> high_right
+// x -> x0, y -> y0, z -> x1, w -> y1
+void FrameBuffer::blit_section(FrameBuffer& target_buffer, const glm::vec4& source_rect, const glm::vec4& target_rect, unsigned int mask_bits, unsigned int interpolation){
+	
+	bind(READ_TARGET);
+	target_buffer.bind(WRITE_TARGET);
+	
+	unsigned int gl_interpolation;
+	if (interpolation == BLIT_NEAREST_INTERPOLATION)
+		gl_interpolation = GL_NEAREST;
+	else if (interpolation == BLIT_LINEAR_INTERPOLATION)
+		gl_interpolation = GL_LINEAR;
+
+	unsigned int gl_mask = 0;
+	if (mask_bits ^ COLOR_CHANNEL)
+		gl_mask |= GL_COLOR_BUFFER_BIT;
+	if (mask_bits ^ DEPTH_CHANNEL)
+		gl_mask |= GL_DEPTH_BUFFER_BIT;
+	if (mask_bits ^ STENCIL_CHANNEL)
+		gl_mask |= GL_STENCIL_BUFFER_BIT;
+
+	GLCall(glBlitFramebuffer(source_rect.x, source_rect.y, source_rect.z, source_rect.w,
+		target_rect.x, target_rect.y, target_rect.z, target_rect.w,
+		gl_mask, gl_interpolation));
 
 }
 
 void FrameBuffer::blit_section_to_screen(const glm::vec4& source_rect, const glm::vec4& target_rect, unsigned int mask_bits, unsigned int interpolation){
 		
+	bind(READ_TARGET);
+	GLCall(glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0));
+
+	unsigned int gl_interpolation;
+	if (interpolation == BLIT_NEAREST_INTERPOLATION)
+		gl_interpolation = GL_NEAREST;
+	else if (interpolation == BLIT_LINEAR_INTERPOLATION)
+		gl_interpolation = GL_LINEAR;
+
+	unsigned int gl_mask = 0;
+	if (mask_bits ^ COLOR_CHANNEL)
+		gl_mask |= GL_COLOR_BUFFER_BIT;
+	if (mask_bits ^ DEPTH_CHANNEL)
+		gl_mask |= GL_DEPTH_BUFFER_BIT;
+	if (mask_bits ^ STENCIL_CHANNEL)
+		gl_mask |= GL_STENCIL_BUFFER_BIT;
+
+	GLCall(glBlitFramebuffer(source_rect.x, source_rect.y, source_rect.z, source_rect.w,
+		target_rect.x, target_rect.y, target_rect.z, target_rect.w,
+		gl_mask, gl_interpolation));
 
 }
