@@ -95,6 +95,8 @@ namespace default_program {
 
 		queue.add_uniform_update(dynamic_uniform_update<float>("d_lights[" + std::to_string(light_index) + "].color", &directional_light.color.x, &directional_light.color.y, &directional_light.color.z));
 		queue.add_uniform_update(dynamic_uniform_update<float>("d_lights[" + std::to_string(light_index) + "].direction", &directional_light.direction.x, &directional_light.direction.y, &directional_light.direction.z));
+		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("d_lights[" + std::to_string(light_index) + "].view_matrix", &directional_light.light_view_matrix));
+		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("d_lights[" + std::to_string(light_index) + "].projection_matrix", &directional_light.light_projection_matrix));
 		queue.add_uniform_update(dynamic_uniform_update<int>("d_lights_count", &DirectionalLight::count));
 
 		return queue;

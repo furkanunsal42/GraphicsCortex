@@ -53,7 +53,8 @@ DirectionalLight::DirectionalLight(const glm::vec3& position, const glm::vec3& d
 
 void DirectionalLight::update_matricies() {
 	light_view_matrix = glm::lookAt(position, position + direction, glm::vec3(0.0f, 1.0f, 0.0f));
-	light_projection_matrix = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 0.1f, 100.0f);
+	float scale = 10;
+	light_projection_matrix = glm::ortho(-scale, scale, -scale, scale, 0.1f, 100.0f);
 }
 
 void DirectionalLight::update_uniforms() {

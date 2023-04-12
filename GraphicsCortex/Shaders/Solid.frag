@@ -8,6 +8,13 @@ in vec3 frag_normal;
 in vec3 frag_space_coord;
 in mat3 frag_TBN;
 
+
+// temp
+uniform sampler2D shadow_map;
+uniform mat4 model;
+uniform mat4 view;
+uniform mat4 projection;
+
 struct ambiant_light{
 	vec3 color;
 };
@@ -15,6 +22,9 @@ struct ambiant_light{
 struct directional_light{
 	vec3 direction;
 	vec3 color;
+	// temp
+	mat4 view_matrix;
+	mat4 projection_matrix;
 };
 
 struct point_light{
@@ -116,6 +126,19 @@ vec3 calculate_specular_light(vec3 light_direction, vec3 current_position, vec3 
 }
 
 vec3 calculate_directional_light(vec3 light_direction, vec3 light_color, vec3 normal){
+	// temp
+	vec4 position_by_light = (d_lights[0].projection_matrix * d_lights[0].view_matrix * vec4(frag_space_coord, 1));
+	position_by_light = position_by_light / position_by_light.w;
+	position_by_light = position_by_light * 0.5 + 0.5;
+
+	float closest_distance_to_light = texture(shadow_map, position_by_light.xy).r;
+	float fragment_distance_to_light = position_by_light.z;
+	float shadow_acne_bias = 0.005;
+	
+	if(closest_distance_to_light + shadow_acne_bias < fragment_distance_to_light)
+		return(vec3(0));	// in shadow
+	// temp end
+
 	vec3 color = light_color * (max(dot(-light_direction, normal), 0));
 	color += calculate_specular_light(light_direction, frag_space_coord, camera_coords, light_color, normal);
 	return color;
@@ -170,7 +193,7 @@ vec3 calculate_total_light(vec3 normal, vec3 space_coords){
 }
 
 void main(){
-
+	
 	vec3 normal;
 	if(bool(active_texture_indicies[2] > -0.5))
 		normal = normalize(frag_TBN * ((texture(texture_array_slot, vec3(tex_coords, active_texture_indicies[2])) * 2).xyz - 1));
@@ -191,4 +214,6 @@ void main(){
 
 	if(frag_color.a < 0.1f)
 		discard;
+
+	
 }
