@@ -1,5 +1,50 @@
 #include "GraphicsCortex.h"
 
+
+template<typename T>
+class UniformUpdater {
+public:
+
+	UniformUpdater(std::function<void(T)> update_call = [](){}) {
+		_uniform_update_call = update_call;
+	}
+
+	void operator()(T object) {
+		_uniform_update_call(object);
+	}
+
+	void operator()(const std::vector<T>& objects) {
+		for (auto& object : objects)
+			_uniform_update_call(object);
+	}
+	
+	void set_uniform_call(std::function<void(T)> update_call) {
+		_uniform_update_call = update_call;
+	}
+
+private:
+	std::function<void(T)> _uniform_update_call;
+
+};
+
+class RenderPipeline {
+public:
+	std::unordered_map<std::string, FrameBuffer_s> framebuffers;
+	std::unordered_map<std::string, Graphic_s> graphics;
+	std::unordered_map<std::string, Program_s> programs;
+	std::unordered_map<std::string, Light_s> ligths;
+	
+	UniformUpdater<Graphic_s> _graphic_uniforms;
+	UniformUpdater<AmbiantLight_s> _ambiantlight_uniforms;
+	UniformUpdater<DirectionalLight_s> _directionallight_uniforms;
+	UniformUpdater<PointLight_s> _pointlight_uniforms;
+	UniformUpdater<SpotLight_s> _spotlight_uniforms;
+
+
+};
+
+
+
 int main() {
 
 	Frame frame(1920, 1080, "GraphicsCortex", 0, 0, true, true, true, false);
@@ -16,7 +61,7 @@ int main() {
 	sunlight->set_uniform_upadte_queue(default_program::directional_light_default_uniform_queue(*sunlight.obj, 0));
 	scene.add_light(sunlight);
 
-	AmbiantLight_s ambiance(glm::vec3(0.1, 0.1, 0.1), solid_program);
+	AmbiantLight_s ambiance(glm::vec3(0.2, 0.2, 0.2), solid_program);
 	ambiance->set_uniform_upadte_queue(default_program::ambiant_light_default_uniform_queue(*ambiance.obj, 0));
 	scene.add_light(ambiance);
 
@@ -61,10 +106,14 @@ int main() {
 	shadowmap->load_program(framebuffer_program);
 	shadowmap->texture_slot = 2;
 
+
 	while (frame.is_running()) {
 		double frame_time = frame.handle_window();
 		frame.display_performance();
 		scene.camera.handle_movements(frame.window, frame_time);
+
+		box->set_rotation(box->get_rotation() * glm::quat(glm::vec3(0, 0.0005 * frame_time, 0)));
+		//plane->set_rotation(plane->get_rotation() * glm::quat(glm::vec3(0, -0.0002 * frame_time, 0)));
 
 		shadowmap->bind();
 		

@@ -55,11 +55,12 @@ public:
 
 	void sync_with_physics();
 
-private:
-	bool _is_framebuffer_loaded = false;
 	std::vector<std::shared_ptr<Graphic>> _graphics;
 	std::vector<std::shared_ptr<Light>> _lights;
 	
 	std::vector<std::shared_ptr<Object>> _objects;
 	std::vector<std::shared_ptr<Vehicle>> _vehicles;
+
+private:
+	bool _is_framebuffer_loaded = false;
 };
