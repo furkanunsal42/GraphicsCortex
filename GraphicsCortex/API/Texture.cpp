@@ -689,6 +689,11 @@ unsigned int UnorderedMaterial::get_texture_height() {
 	return texture_height;
 }
 
+glm::vec3 UnorderedMaterial::get_active_textures_by_type() {
+	return _active_textures_by_type;
+}
+
+
 // ------------------------------------------------------------------------------------
 
 Material::Material() : UnorderedMaterial(3) { }

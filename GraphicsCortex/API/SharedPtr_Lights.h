@@ -19,8 +19,10 @@ public:
 
 	_SHARED_POINTER_DEFINITIONS(AmbiantLight)
 
-		AmbiantLight_s(const glm::vec3& color, Program_s program) :
+	AmbiantLight_s(const glm::vec3& color, Program_s program) :
 		obj(std::make_shared<AmbiantLight>(color, program)) {}
+	AmbiantLight_s(const glm::vec3& color = glm::vec3(0.1, 0.1, 0.1)) :
+		obj(std::make_shared<AmbiantLight>(color)) {}
 
 };
 
@@ -31,6 +33,9 @@ public:
 
 	DirectionalLight_s(const glm::vec3& position, const glm::vec3& direction, const glm::vec3& color, Program_s program) :
 		obj(std::make_shared<DirectionalLight>(position, direction, color, program)) {}
+	DirectionalLight_s(const glm::vec3& position = glm::vec3(0, 0, 0), const glm::vec3& direction = glm::vec3(0, -1, 0), const glm::vec3& color = glm::vec3(1, 1, 1)) :
+		obj(std::make_shared<DirectionalLight>(position, direction, color)) {}
+
 };
 
 class PointLight_s {

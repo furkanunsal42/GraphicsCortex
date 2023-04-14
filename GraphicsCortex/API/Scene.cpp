@@ -14,8 +14,8 @@
 #include "PhysicsScene.h"
 
 Scene::Scene(const Frame& frame) {
-	camera.screen_width = frame.window_width;
-	camera.screen_height = frame.window_height;
+	camera->screen_width = frame.window_width;
+	camera->screen_height = frame.window_height;
 }
 
 void Scene::add_graphic(Graphic_s graphic) {
@@ -41,7 +41,7 @@ void Scene::render(bool show_warnings) {
 	
 	sync_with_physics();
 
-	camera.update_matrixes();
+	camera->update_matrixes();
 
 	for (std::shared_ptr<Light> light : _lights) {
 		light->update_uniform_queue();
@@ -51,7 +51,7 @@ void Scene::render(bool show_warnings) {
 		graphic->update_matrix();
 		if (!graphic->is_uniform_queue_loaded()) {
 			std::cout << "[Opengl Error] Graphic::update_uniforms() was called but no uniform_queue is specified, basic uniform queue is being loaded to graphic by the respected scene" << std::endl;
-			graphic->set_uniform_all(default_program::basic_uniform_queue(camera, Graphic_s(graphic)));
+			graphic->set_uniform_all(default_program::basic_uniform_queue(*camera.obj, Graphic_s(graphic)));
 		}
 		graphic->update_uniforms();
 		graphic->draw(show_warnings);
@@ -60,7 +60,7 @@ void Scene::render(bool show_warnings) {
 		object->graphics->update_matrix();
 		if (!object->graphics->is_uniform_queue_loaded()) {
 			std::cout << "[Opengl Error] Graphic::update_uniforms() was called but no uniform_queue is specified, basic uniform queue is being loaded to graphic by the respected scene" << std::endl;
-			object->graphics->set_uniform_all(default_program::basic_uniform_queue(camera, Graphic_s(object->graphics)));
+			object->graphics->set_uniform_all(default_program::basic_uniform_queue(*camera.obj, Graphic_s(object->graphics)));
 		}
 		object->graphics->update_uniforms();
 		object->graphics->draw(show_warnings);
@@ -69,7 +69,7 @@ void Scene::render(bool show_warnings) {
 		vehicle->chassis->update_matrix();
 		if (!vehicle->chassis->is_uniform_queue_loaded()) {
 			std::cout << "[Opengl Error] Graphic::update_uniforms() was called but no uniform_queue is specified, basic uniform queue is being loaded to graphic by the respected scene" << std::endl;
-			vehicle->chassis->set_uniform_all(default_program::basic_uniform_queue(camera, Graphic_s(vehicle->chassis)));
+			vehicle->chassis->set_uniform_all(default_program::basic_uniform_queue(*camera.obj, Graphic_s(vehicle->chassis)));
 		}
 		vehicle->chassis->update_uniforms();
 		vehicle->chassis->draw(show_warnings);
@@ -77,7 +77,7 @@ void Scene::render(bool show_warnings) {
 			wheel->update_matrix();
 			if (!wheel->is_uniform_queue_loaded()) {
 				std::cout << "[Opengl Error] Graphic::update_uniforms() was called but no uniform_queue is specified, basic uniform queue is being loaded to graphic by the respected scene" << std::endl;
-				wheel->set_uniform_all(default_program::basic_uniform_queue(camera, wheel));
+				wheel->set_uniform_all(default_program::basic_uniform_queue(*camera.obj, wheel));
 			}
 			wheel->update_uniforms();
 			wheel->draw(show_warnings);

@@ -29,7 +29,7 @@ public:
 
 	Program_s program;
 
-	FrameBuffer(int width, int height, int anti_alliasing = 0, bool readable_depth_stencil_buffer = false);
+	FrameBuffer(int width = 1024, int height = 1024, int anti_alliasing = 0, bool readable_depth_stencil_buffer = false);
 	~FrameBuffer();
 
 	void release();

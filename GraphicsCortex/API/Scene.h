@@ -16,13 +16,14 @@
 
 #include "SharedPtr_Lights.h"
 #include "SharedPtr_Object.h"
+#include "SharedPtr_Camera.h"
 
 class Scene {
 public:
 
 	Scene(const Frame& frame);
 
-	Camera camera;
+	Camera_s camera;
 	std::string model_uniform_name = "model";
 	std::string view_uniform_name = "view";
 	std::string projection_uniform_name = "projection";

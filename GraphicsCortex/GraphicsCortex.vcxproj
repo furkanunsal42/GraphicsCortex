@@ -225,7 +225,7 @@
     <ClCompile Include="Dependencies\physx\snippetcommon\SnippetVehicleSceneQuery.cpp" />
     <ClCompile Include="Dependencies\physx\snippetcommon\SnippetVehicleTankCreate.cpp" />
     <ClCompile Include="Dependencies\physx\snippetcommon\SnippetVehicleTireFriction.cpp" />
-    <ClCompile Include="Mains\DepthMap.cpp" />
+    <ClCompile Include="Mains\PipelineMain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Custom Shaders\Depth.frag" />
@@ -290,6 +290,7 @@
     <ClInclude Include="API\Scene.h" />
     <ClInclude Include="API\SharedPtr_Buffers.h" />
     <ClInclude Include="API\SharedPtr.h" />
+    <ClInclude Include="API\SharedPtr_Camera.h" />
     <ClInclude Include="API\SharedPtr_Font.h" />
     <ClInclude Include="API\SharedPtr_FrameBuffer.h" />
     <ClInclude Include="API\SharedPtr_Graphic.h" />

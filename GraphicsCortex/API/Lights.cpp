@@ -21,6 +21,9 @@ AmbiantLight::AmbiantLight(const glm::vec3& color, Program_s renderer) :
 	program = renderer.obj;
 }
 
+AmbiantLight::AmbiantLight(const glm::vec3& color) : 
+	color(color) {}
+
 void AmbiantLight::update_uniforms() {
 	std::string uniform_name = shader_name + "[" + std::to_string(count) + "]";
 	program->update_uniform(uniform_name + ".color", color.x, color.y, color.z);
@@ -45,9 +48,15 @@ void AmbiantLight::define_uniforms(int max_count) {
 int AmbiantLight::count = 0;
 
 DirectionalLight::DirectionalLight(const glm::vec3& position, const glm::vec3& direction, const glm::vec3& color, Program_s renderer) :
-	position(position), direction(direction), color(color) 
+	position(position), direction(direction), color(color)
 {
 	program = renderer.obj;
+	update_matricies();
+}
+
+DirectionalLight::DirectionalLight(const glm::vec3& position, const glm::vec3& direction, const glm::vec3& color) : 
+	position(position), direction(direction), color(color)
+{
 	update_matricies();
 }
 

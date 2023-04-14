@@ -198,6 +198,8 @@ public:
 	unsigned int get_texture_width();
 	unsigned int get_texture_height();
 
+	glm::vec3 get_active_textures_by_type();
+
 protected:
 	unsigned int texture_width = 1024;
 	unsigned int texture_height = 1024;

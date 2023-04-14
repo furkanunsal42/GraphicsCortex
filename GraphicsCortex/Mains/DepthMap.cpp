@@ -1,57 +1,12 @@
 #include "GraphicsCortex.h"
 
-
-template<typename T>
-class UniformUpdater {
-public:
-
-	UniformUpdater(std::function<void(T)> update_call = [](){}) {
-		_uniform_update_call = update_call;
-	}
-
-	void operator()(T object) {
-		_uniform_update_call(object);
-	}
-
-	void operator()(const std::vector<T>& objects) {
-		for (auto& object : objects)
-			_uniform_update_call(object);
-	}
-	
-	void set_uniform_call(std::function<void(T)> update_call) {
-		_uniform_update_call = update_call;
-	}
-
-private:
-	std::function<void(T)> _uniform_update_call;
-
-};
-
-class RenderPipeline {
-public:
-	std::unordered_map<std::string, FrameBuffer_s> framebuffers;
-	std::unordered_map<std::string, Graphic_s> graphics;
-	std::unordered_map<std::string, Program_s> programs;
-	std::unordered_map<std::string, Light_s> ligths;
-	
-	UniformUpdater<Graphic_s> _graphic_uniforms;
-	UniformUpdater<AmbiantLight_s> _ambiantlight_uniforms;
-	UniformUpdater<DirectionalLight_s> _directionallight_uniforms;
-	UniformUpdater<PointLight_s> _pointlight_uniforms;
-	UniformUpdater<SpotLight_s> _spotlight_uniforms;
-
-
-};
-
-
-
 int main() {
 
 	Frame frame(1920, 1080, "GraphicsCortex", 0, 0, true, true, true, false);
 	Scene scene(frame);
-	scene.camera.screen_width = 1920;
-	scene.camera.screen_height = 1080;
-	scene.camera.max_distance = 100.0f;
+	scene.camera->screen_width = 1920;
+	scene.camera->screen_height = 1080;
+	scene.camera->max_distance = 100.0f;
 
 	Program_s solid_program = default_program::solid_program_s();
 	Program_s depth_program(Shader("Custom Shaders/Depth.vert", "Custom Shaders/Depth.frag"));
@@ -75,7 +30,7 @@ int main() {
 
 	Graphic_s box(default_geometry::cube());
 	box->load_material(bricks_material);
-	auto box_solid_uniforms = default_program::solid_default_uniform_queue(scene.camera, box);
+	auto box_solid_uniforms = default_program::solid_default_uniform_queue(*scene.camera, box);
 	box_solid_uniforms.add_uniform_update(uniform_update<int>("shadow_map", 2));
 
 	uniform_update_queue box_shadowmap_uniforms;
@@ -88,7 +43,7 @@ int main() {
 
 	Graphic_s plane(default_geometry::cube(glm::vec3(20, 0.1, 20)));
 	plane->load_material(stone_tile_material);
-	auto plane_solid_uniforms = default_program::solid_default_uniform_queue(scene.camera, plane);
+	auto plane_solid_uniforms = default_program::solid_default_uniform_queue(*scene.camera.obj, plane);
 	plane_solid_uniforms.add_uniform_update(uniform_update<int>("shadow_map", 2));
 
 	uniform_update_queue plane_shadowmap_uniforms;
@@ -110,7 +65,7 @@ int main() {
 	while (frame.is_running()) {
 		double frame_time = frame.handle_window();
 		frame.display_performance();
-		scene.camera.handle_movements(frame.window, frame_time);
+		scene.camera->handle_movements(frame.window, frame_time);
 
 		box->set_rotation(box->get_rotation() * glm::quat(glm::vec3(0, 0.0005 * frame_time, 0)));
 		//plane->set_rotation(plane->get_rotation() * glm::quat(glm::vec3(0, -0.0002 * frame_time, 0)));
