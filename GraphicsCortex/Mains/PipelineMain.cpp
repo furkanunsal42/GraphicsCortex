@@ -10,29 +10,29 @@ template<typename T>
 class UniformUpdater {
 public:
 
-	UniformUpdater(std::function<void(T, Program_s, Camera_s)> update_call = [](T, Program_s, Camera_s) {}) {
+	UniformUpdater(std::function<void(T, Program_s, Camera_s, int)> update_call = [](T, Program_s, Camera_s, int) {}) {
 		_uniform_update_call = update_call;
 	}
 
-	void operator()(T object, Program_s program, Camera_s camera) {
-		_uniform_update_call(object, program, camera);
+	void operator()(T object, Program_s program, Camera_s camera, int object_index) {
+		_uniform_update_call(object, program, camera, int object_index);
 	}
 
-	void operator()(const std::vector<T>& objects, Program_s program, Camera_s camera) {
+	void operator()(const std::vector<T>& objects, Program_s program, Camera_s camera, int object_index) {
 		for (auto& object : objects)
-			_uniform_update_call(object, program, camera);
+			_uniform_update_call(object, program, camera, int object_index);
 	}
 
-	void set_uniform_call(std::function<void(T, Program_s, Camera_s)> update_call) {
+	void set_uniform_call(std::function<void(T, Program_s, Camera_s, int)> update_call) {
 		_uniform_update_call = update_call;
 	}
 
-	void operator=(std::function<void(T, Program_s, Camera_s)> update_call) {
+	void operator=(std::function<void(T, Program_s, Camera_s, int)> update_call) {
 		set_uniform_call(update_call);
 	}
 
 private:
-	std::function<void(T, Program_s, Camera_s)> _uniform_update_call;
+	std::function<void(T, Program_s, Camera_s, int)> _uniform_update_call;
 
 };
 
@@ -105,24 +105,37 @@ public:
 		Program_s active_program = (*program_iterator).second;
 
 		// update all uniforms
-
-		for (auto& name_ambiant_pair : ambiant_ligths)
-			ambiantlight_uniforms[_active_uniform_updater_name_ambiant_light](name_ambiant_pair.second, active_program, active_camera);
+		int object_index = 0;
+		for (auto& name_ambiant_pair : ambiant_ligths) {
+			ambiantlight_uniforms[_active_uniform_updater_name_ambiant_light](name_ambiant_pair.second, active_program, active_camera, object_index++);
+		}
+		
+		object_index = 0;
 		for (auto& name_directional_pair : directional_ligths) {
 			name_directional_pair.second->update_matricies();
-			directionallight_uniforms[_active_uniform_updater_name_directional_light](name_directional_pair.second, active_program, active_camera);
+			directionallight_uniforms[_active_uniform_updater_name_directional_light](name_directional_pair.second, active_program, active_camera, object_index++);
 		}
-		for (auto& name_spot_pair : spot_ligths)
-			spotlight_uniforms[_active_uniform_updater_name_spot_light](name_spot_pair.second, active_program, active_camera);
-		for (auto& name_point_pair : point_ligths)
-			pointlight_uniforms[_active_uniform_updater_name_point_light](name_point_pair.second, active_program, active_camera);
-		for (auto& name_framebuffer_pair : framebuffers)
-			framebuffer_uniforms[_active_uniform_updater_name_framebuffer](name_framebuffer_pair.second, active_program, active_camera);
 
+		object_index = 0;
+		for (auto& name_spot_pair : spot_ligths) {
+			spotlight_uniforms[_active_uniform_updater_name_spot_light](name_spot_pair.second, active_program, active_camera, object_index++);
+		}
+
+		object_index = 0;
+		for (auto& name_point_pair : point_ligths) {
+			pointlight_uniforms[_active_uniform_updater_name_point_light](name_point_pair.second, active_program, active_camera, object_index++);
+		}
+
+		object_index = 0;
+		for (auto& name_framebuffer_pair : framebuffers) {
+			framebuffer_uniforms[_active_uniform_updater_name_framebuffer](name_framebuffer_pair.second, active_program, active_camera, object_index++);
+		}
+
+		object_index = 0;
 		for (auto& name_graphic_pair : graphics){
 			Graphic_s graphic = name_graphic_pair.second;
 			graphic->update_matrix();
-			graphic_uniforms[_active_uniform_updater_name_graphic](graphic, active_program, active_camera);
+			graphic_uniforms[_active_uniform_updater_name_graphic](graphic, active_program, active_camera, object_index++);
 			graphic->draw(false);
 		}
 	}
@@ -192,7 +205,7 @@ int main() {
 	pipeline.programs["depth"] = depth_program;
 	pipeline.programs["framebuffer"] = framebuffer_program;
 
-	pipeline.graphic_uniforms["solid"] = [](Graphic_s graphic, Program_s program, Camera_s camera) {
+	pipeline.graphic_uniforms["solid"] = [](Graphic_s graphic, Program_s program, Camera_s camera, int object_index) {
 		program->update_uniform("model", graphic->model_matrix);
 		program->update_uniform("view", camera->view_matrix);
 		program->update_uniform("projection", camera->projection_matrix);
@@ -204,10 +217,19 @@ int main() {
 		program->update_uniform("shadow_map", 2);
 	};
 
-	pipeline.graphic_uniforms["shadowmap"] = [](Graphic_s graphic, Program_s program, Camera_s camera) {
+	pipeline.directionallight_uniforms["solid"] = [](DirectionalLight_s directional_light, Program_s program, Camera_s camera, int light_index) {
+		program->update_uniform("model", graphic->model_matrix);
+		queue.add_uniform_update(dynamic_uniform_update<float>("d_lights[" + std::to_string(light_index) + "].color", &directional_light.color.x, &directional_light.color.y, &directional_light.color.z));
+		queue.add_uniform_update(dynamic_uniform_update<float>("d_lights[" + std::to_string(light_index) + "].direction", &directional_light.direction.x, &directional_light.direction.y, &directional_light.direction.z));
+		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("d_lights[" + std::to_string(light_index) + "].view_matrix", &directional_light.light_view_matrix));
+		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("d_lights[" + std::to_string(light_index) + "].projection_matrix", &directional_light.light_projection_matrix));
+		queue.add_uniform_update(dynamic_uniform_update<int>("d_lights_count", &DirectionalLight::count));
+	};
+
+	pipeline.graphic_uniforms["shadowmap"] = [](Graphic_s graphic, Program_s program, Camera_s camera, int object_index) {
 		program->update_uniform("model", graphic->model_matrix);
 	};
-	pipeline.directionallight_uniforms["shadowmap"] = [](DirectionalLight_s light, Program_s program, Camera_s camera) {
+	pipeline.directionallight_uniforms["shadowmap"] = [](DirectionalLight_s light, Program_s program, Camera_s camera, int object_index) {
 		program->update_uniform("view", light->light_view_matrix);
 		program->update_uniform("projection", light->light_projection_matrix);
 	};
@@ -226,7 +248,7 @@ int main() {
 		box->set_rotation(box->get_rotation() * glm::quat(glm::vec3(0, 0.0005 * frame_time, 0)));
 		//plane->set_rotation(plane->get_rotation() * glm::quat(glm::vec3(0, -0.0002 * frame_time, 0)));
 
-		//pipeline.activate_framebuffer("shadowmap");
+		pipeline.framebuffers["shadowmap"]->bind();
 		pipeline.activate_camera("default_camera");
 		pipeline.activate_program("depth");
 		pipeline.activate_uniforms_graphic("shadowmap");
@@ -234,16 +256,16 @@ int main() {
 		frame.clear_window(0.2, 0.2, 0.2);
 		pipeline.render();
 		
-		//shadowmap->unbind();
+		pipeline.framebuffers["shadowmap"]->unbind();
+		pipeline.framebuffers["shadowmap"]->color_texture.bind();
 
-		//shadowmap->color_texture.bind();
-		//
-		//frame.clear_window(1, 1, 1, 1);
-		//box->load_program(solid_program);
-		//box->set_uniform_all(box_solid_uniforms);
-		//plane->load_program(solid_program);
-		//plane->set_uniform_all(plane_solid_uniforms);
-		//scene.render(false);
+		frame.clear_window(1, 1, 1, 1);
+		pipeline.activate_program("solid");
+		pipeline.activate_uniforms_graphic("solid");
+		pipeline.activate_uniforms_directional_light("solid");
+		pipeline.activate_uniforms_ambiant_light("solid");
+
+		pipeline.render();
 
 		//shadowmap->save().save_to_disc("shadowmap_image.png");
 
