@@ -1,10 +1,10 @@
 #include "GraphicsCortex.h"
 
-//#define UniformFunction_Graphic_s (Graphic_s graphic, Program_s program, std::reference_wrapper<Camera> camera)
-//#define UniformFunction_DirectionalLight_s (DirectionalLight_s directional_light, Program_s program, std::reference_wrapper<Camera> camera)
-//#define UniformFunction_AmbiantLight_s (AmbiantLight_s ambiant_light, Program_s program, std::reference_wrapper<Camera> camera)
-//#define UniformFunction_PointLight_s (PointLight_s point_light, Program_s program, std::reference_wrapper<Camera> camera)
-//#define UniformFunction_SpotLight_s (SpotLight_s spot_light, Program_s program, std::reference_wrapper<Camera> camera)
+#define UniformFunction_Graphic_s Graphic_s graphic, Program_s program, Camera_s camera, int object_index
+#define UniformFunction_DirectionalLight_s DirectionalLight_s directional_light, Program_s program, Camera_s camera, int object_index
+#define UniformFunction_AmbiantLight_s AmbiantLight_s ambiant_light, Program_s program, Camera_s camera, int object_index
+#define UniformFunction_PointLight_s PointLight_s point_light, Program_s program, Camera_s camera, int object_index
+#define UniformFunction_SpotLight_s SpotLight_s spot_light, Program_s program, Camera_s camera, int object_index
 
 template<typename T>
 class UniformUpdater {
@@ -15,12 +15,12 @@ public:
 	}
 
 	void operator()(T object, Program_s program, Camera_s camera, int object_index) {
-		_uniform_update_call(object, program, camera, int object_index);
+		_uniform_update_call(object, program, camera, object_index);
 	}
 
 	void operator()(const std::vector<T>& objects, Program_s program, Camera_s camera, int object_index) {
 		for (auto& object : objects)
-			_uniform_update_call(object, program, camera, int object_index);
+			_uniform_update_call(object, program, camera, object_index);
 	}
 
 	void set_uniform_call(std::function<void(T, Program_s, Camera_s, int)> update_call) {
@@ -86,6 +86,15 @@ public:
 		_active_name_camera = camera_name;
 	}
 
+	void reset_active_objects() {
+		_active_uniform_updater_name_graphic = "";
+		_active_uniform_updater_name_ambiant_light = "";
+		_active_uniform_updater_name_directional_light = "";
+		_active_uniform_updater_name_point_light = "";
+		_active_uniform_updater_name_spot_light = "";
+		_active_uniform_updater_name_framebuffer = "";
+	}
+
 	void render() {
 
 		auto camera_iterator = cameras.find(_active_name_camera);
@@ -103,6 +112,9 @@ public:
 
 		Camera_s active_camera = (*camera_iterator).second;
 		Program_s active_program = (*program_iterator).second;
+
+		active_program->bind();
+		active_camera->update_matrixes();
 
 		// update all uniforms
 		int object_index = 0;
@@ -150,7 +162,6 @@ private:
 	std::string _active_uniform_updater_name_spot_light;
 	std::string _active_uniform_updater_name_framebuffer;
 
-
 	// object activation
 
 	std::string _active_name_program;
@@ -171,13 +182,8 @@ int main() {
 	Program_s framebuffer_program = default_program::framebuffer_program_s();
 
 	DirectionalLight_s sunlight(glm::vec3(4, 2, 4), glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(1, 1, 1), solid_program);
-	sunlight->update_matricies();
-	sunlight->set_uniform_upadte_queue(default_program::directional_light_default_uniform_queue(*sunlight.obj, 0));
-	scene.add_light(sunlight);
 
 	AmbiantLight_s ambiance(glm::vec3(0.2, 0.2, 0.2), solid_program);
-	ambiance->set_uniform_upadte_queue(default_program::ambiant_light_default_uniform_queue(*ambiance.obj, 0));
-	scene.add_light(ambiance);
 
 	UnorderedMaterial_s bricks_material(2);
 	bricks_material->set_texture("Images/Bricks/brickcolor.jpg", 4, 0, UnorderedMaterial::COLOR);
@@ -205,33 +211,37 @@ int main() {
 	pipeline.programs["depth"] = depth_program;
 	pipeline.programs["framebuffer"] = framebuffer_program;
 
-	pipeline.graphic_uniforms["solid"] = [](Graphic_s graphic, Program_s program, Camera_s camera, int object_index) {
+	pipeline.graphic_uniforms["solid"] = [](UniformFunction_Graphic_s) {
 		program->update_uniform("model", graphic->model_matrix);
 		program->update_uniform("view", camera->view_matrix);
 		program->update_uniform("projection", camera->projection_matrix);
 		program->update_uniform("cube_map", 13);
 		program->update_uniform("use_cube_map_reflection", 0);
 		program->update_uniform("cube_map_reflection_strength", 0.85f);
-		program->update_uniform("camera_coords", glm::vec3(camera->position.x, camera->position.y, camera->position.z));
+		program->update_uniform("camera_coords", camera->position);
 		program->update_uniform("active_texture_indicies", graphic->unordered_material->get_active_textures_by_type());
 		program->update_uniform("shadow_map", 2);
 	};
 
-	pipeline.directionallight_uniforms["solid"] = [](DirectionalLight_s directional_light, Program_s program, Camera_s camera, int light_index) {
-		program->update_uniform("model", graphic->model_matrix);
-		queue.add_uniform_update(dynamic_uniform_update<float>("d_lights[" + std::to_string(light_index) + "].color", &directional_light.color.x, &directional_light.color.y, &directional_light.color.z));
-		queue.add_uniform_update(dynamic_uniform_update<float>("d_lights[" + std::to_string(light_index) + "].direction", &directional_light.direction.x, &directional_light.direction.y, &directional_light.direction.z));
-		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("d_lights[" + std::to_string(light_index) + "].view_matrix", &directional_light.light_view_matrix));
-		queue.add_uniform_update(dynamic_uniform_update<glm::mat4>("d_lights[" + std::to_string(light_index) + "].projection_matrix", &directional_light.light_projection_matrix));
-		queue.add_uniform_update(dynamic_uniform_update<int>("d_lights_count", &DirectionalLight::count));
+	pipeline.ambiantlight_uniforms["solid"] = [](UniformFunction_AmbiantLight_s) {
+		program->update_uniform("a_lights[" + std::to_string(object_index) + "].color", ambiant_light->color);
+		program->update_uniform("a_lights_count", object_index+1);
 	};
 
-	pipeline.graphic_uniforms["shadowmap"] = [](Graphic_s graphic, Program_s program, Camera_s camera, int object_index) {
+	pipeline.directionallight_uniforms["solid"] = [](UniformFunction_DirectionalLight_s) {
+		program->update_uniform("d_lights[" + std::to_string(object_index) + "].color", directional_light->color);
+		program->update_uniform("d_lights[" + std::to_string(object_index) + "].direction", directional_light->direction);
+		program->update_uniform("d_lights[" + std::to_string(object_index) + "].view_matrix", directional_light->light_view_matrix);
+		program->update_uniform("d_lights[" + std::to_string(object_index) + "].projection_matrix", directional_light->light_projection_matrix);
+		program->update_uniform("d_lights_count", object_index+1);
+	};
+	 
+	pipeline.graphic_uniforms["shadowmap"] = [](UniformFunction_Graphic_s) {
 		program->update_uniform("model", graphic->model_matrix);
 	};
-	pipeline.directionallight_uniforms["shadowmap"] = [](DirectionalLight_s light, Program_s program, Camera_s camera, int object_index) {
-		program->update_uniform("view", light->light_view_matrix);
-		program->update_uniform("projection", light->light_projection_matrix);
+	pipeline.directionallight_uniforms["shadowmap"] = [](UniformFunction_DirectionalLight_s) {
+		program->update_uniform("view", directional_light->light_view_matrix);
+		program->update_uniform("projection", directional_light->light_projection_matrix);
 	};
 
 	pipeline.cameras["default_camera"] = scene.camera;
@@ -247,6 +257,7 @@ int main() {
 
 		box->set_rotation(box->get_rotation() * glm::quat(glm::vec3(0, 0.0005 * frame_time, 0)));
 		//plane->set_rotation(plane->get_rotation() * glm::quat(glm::vec3(0, -0.0002 * frame_time, 0)));
+		pipeline.reset_active_objects();
 
 		pipeline.framebuffers["shadowmap"]->bind();
 		pipeline.activate_camera("default_camera");
@@ -257,6 +268,8 @@ int main() {
 		pipeline.render();
 		
 		pipeline.framebuffers["shadowmap"]->unbind();
+		
+		pipeline.framebuffers["shadowmap"]->color_texture.texture_slot = 2;
 		pipeline.framebuffers["shadowmap"]->color_texture.bind();
 
 		frame.clear_window(1, 1, 1, 1);

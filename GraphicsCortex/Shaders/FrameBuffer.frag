@@ -5,7 +5,7 @@
 layout (location = 0) out vec4 frag_color;
 in vec2 frag_tex_coords;
 uniform sampler2D texture_slot;
-uniform int edge_detect;
+//niform int edge_detect;
 
 float offset = 4/600.0f;
 int kernel[] = int[](
