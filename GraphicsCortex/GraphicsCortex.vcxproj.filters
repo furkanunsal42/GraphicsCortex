@@ -168,7 +168,10 @@
     <ClCompile Include="API\Text.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
-    <ClCompile Include="Mains\PipelineMain.cpp">
+    <ClCompile Include="API\RenderPipeline.cpp">
+      <Filter>Kaynak Dosyalar</Filter>
+    </ClCompile>
+    <ClCompile Include="Mains\ApplicationMainPipeline.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
   </ItemGroup>
@@ -212,8 +215,8 @@
     <None Include="Shaders\TextureArray.vert" />
     <None Include="Shaders\Gui.vert" />
     <None Include="Shaders\Gui.frag" />
-    <None Include="Custom Shaders\Depth.frag" />
-    <None Include="Custom Shaders\Depth.vert" />
+    <None Include="Shaders\Depth.frag" />
+    <None Include="Shaders\Depth.vert" />
     <None Include="Custom Shaders\Texture.vert" />
     <None Include="Custom Shaders\Texture.frag" />
     <None Include="Shaders\Text.frag" />
@@ -671,6 +674,12 @@
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
     <ClInclude Include="API\SharedPtr_Camera.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="API\UniformUpdater.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="API\RenderPipeline.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
   </ItemGroup>

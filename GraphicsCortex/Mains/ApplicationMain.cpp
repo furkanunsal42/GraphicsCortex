@@ -4,9 +4,9 @@ int main() {
 
 	Frame frame(1920, 1080, "GraphicsCortex", 8, 0, true, false, true);
 	Scene scene(frame);
-	scene.camera.screen_width = 1920;
-	scene.camera.screen_height = 1080;
-	scene.camera.max_distance = 1000;
+	scene.camera->screen_width = 1920;
+	scene.camera->screen_height = 1080;
+	scene.camera->max_distance = 1000;
 
 	Program_s program(Shader("Shaders/TextureArray.vert", "Shaders/TextureArray.frag"));
 	Program_s solid_program(default_program::solid_program());
@@ -21,13 +21,13 @@ int main() {
 		map->load_model(city);
 		map->load_material(city_mat);
 		map->load_program(program);
-		map->set_uniform_all(default_program::basic_uniform_queue(scene.camera, map));
+		map->set_uniform_all(default_program::basic_uniform_queue(*scene.camera.obj, map));
 		
 		map->set_position(glm::vec3(0, 0, 0));
 
 		scene.add_graphic(map);
 
-		DirectionalLight_s sunlight(glm::vec3(1.0f, -1.0f, 1.0f), glm::vec3(0.4, 0.4, 0.4), solid_program);
+		DirectionalLight_s sunlight(glm::vec3(0.0f, 20.0f, 0.0f), glm::vec3(1.0f, -1.0f, 1.0f), glm::vec3(0.4, 0.4, 0.4), solid_program);
 		sunlight->set_uniform_upadte_queue(default_program::directional_light_default_uniform_queue(*sunlight.obj, 0));
 		scene.add_light(sunlight);
 
@@ -62,7 +62,7 @@ int main() {
 		vehicle->load_program_all(program);
 		vehicle->load_program_chassis(solid_program);
 
-		vehicle->set_default_uniform_queue_all(scene.camera);
+		vehicle->set_default_uniform_queue_all(*scene.camera.obj);
 		vehicle->chassis->set_uniform("use_cube_map_reflection", 1);
 		vehicle->chassis->set_uniform("cube_map_reflection_strength", 0.6f);
 
@@ -83,7 +83,7 @@ int main() {
 	Program_s cubemap_program(default_program::cubemap_program());
 	CubeMapTexture cube_map;
 	cube_map.set_program(cubemap_program);
-	cube_map.camera = &scene.camera;
+	cube_map.camera = scene.camera.obj.get();
 	cube_map.set_update_queue(default_program::cubemap_default_uniform_queue(cube_map));
 	cube_map.face_texture_filepaths[RIGHT] = "Images/CubeMap/Sky/px.jpg";
 	cube_map.face_texture_filepaths[LEFT] = "Images/CubeMap/Sky/nx.jpg";
@@ -112,8 +112,8 @@ int main() {
 		camera_rotation = camera_rotation * glm::quat(glm::vec3(0, 3.14f, 0));
 		camera_position += glm::vec3(0.0f, 0.5f, 0.0f);
 		camera_position += camera_rotation * glm::vec3(0.0f, 0.5f, 1.0f);
-		scene.camera.set_rotation(camera_rotation);
-		scene.camera.set_position(camera_position);
+		scene.camera->set_rotation(camera_rotation);
+		scene.camera->set_position(camera_position);
 
 		//vehicle->set_position(vehicle->chassis->get_position() + glm::vec3(0, 0, -0.1f));
 

@@ -29,6 +29,7 @@
 #include "FrameBuffer.h"
 #include "CubeMap.h"
 #include "UnifromQueue.h"
+#include "UniformUpdater.h"
 #include "ModelTextureTable.h"
 #include "AssetImporter.h"
 #include "SharedPtr.h"
@@ -51,6 +52,7 @@
 #include "Font.h"
 #include "Text.h"
 #include "RamCache.h"
+#include "RenderPipeline.h"
 
 #include "PhysicsContext.h"
 #include "PhysicsGeometry.h"

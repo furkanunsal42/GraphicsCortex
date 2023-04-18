@@ -158,7 +158,11 @@ namespace default_program {
 		Program renderer(default_shader.vertex_shader, default_shader.fragment_shader);
 		return renderer;
 	}
-
+	Program depth_program() {
+		Shader default_shader("Shaders/Depth.vert", "Shaders/Depth.frag");
+		Program renderer(default_shader.vertex_shader, default_shader.fragment_shader);
+		return renderer;
+	}
 
 	Program_s solid_program_s() {
 		Shader default_shader("Shaders/Solid.vert", "Shaders/Solid.geom", "Shaders/Solid.frag");
@@ -189,6 +193,84 @@ namespace default_program {
 		Shader default_shader("Shaders/Text.vert", "Shaders/Text.frag");
 		Program_s renderer(default_shader.vertex_shader, default_shader.fragment_shader);
 		return renderer;
+	}
+	Program_s depth_program_s() {
+		Shader default_shader("Shaders/Depth.vert", "Shaders/Depth.frag");
+		Program_s renderer(default_shader.vertex_shader, default_shader.fragment_shader);
+		return renderer;
+	}
+
+
+
+	RenderPipeline default_pipeline(Frame& frame) {
+		RenderPipeline pipeline;
+		pipeline.programs["solid"] = solid_program_s();
+		pipeline.programs["depth"] = depth_program_s();
+		pipeline.programs["framebuffer"] = framebuffer_program_s();
+
+		FrameBuffer_s shadowmap(frame.window_width, frame.window_height);
+
+		pipeline.framebuffers["shadowmap"] = shadowmap;
+
+		pipeline.graphic_uniforms["solid"] = [](UniformFunction_Graphic_s) {
+			program->update_uniform("model", graphic->model_matrix);
+			program->update_uniform("view", camera->view_matrix);
+			program->update_uniform("projection", camera->projection_matrix);
+			program->update_uniform("cube_map", 13);
+			program->update_uniform("use_cube_map_reflection", 0);
+			program->update_uniform("cube_map_reflection_strength", 0.85f);
+			program->update_uniform("camera_coords", camera->position);
+			program->update_uniform("active_texture_indicies", graphic->unordered_material->get_active_textures_by_type());
+			program->update_uniform("shadow_map", 2);
+		};
+
+		pipeline.ambiantlight_uniforms["solid"] = [](UniformFunction_AmbiantLight_s) {
+			program->update_uniform("a_lights[" + std::to_string(object_index) + "].color", ambiant_light->color);
+			program->update_uniform("a_lights_count", object_index + 1);
+		};
+
+		pipeline.directionallight_uniforms["solid"] = [](UniformFunction_DirectionalLight_s) {
+			program->update_uniform("d_lights[" + std::to_string(object_index) + "].color", directional_light->color);
+			program->update_uniform("d_lights[" + std::to_string(object_index) + "].direction", directional_light->direction);
+			program->update_uniform("d_lights[" + std::to_string(object_index) + "].view_matrix", directional_light->light_view_matrix);
+			program->update_uniform("d_lights[" + std::to_string(object_index) + "].projection_matrix", directional_light->light_projection_matrix);
+			program->update_uniform("d_lights_count", object_index + 1);
+		};
+
+		pipeline.graphic_uniforms["shadowmap"] = [](UniformFunction_Graphic_s) {
+			program->update_uniform("model", graphic->model_matrix);
+		};
+		pipeline.directionallight_uniforms["shadowmap"] = [](UniformFunction_DirectionalLight_s) {
+			program->update_uniform("view", directional_light->light_view_matrix);
+			program->update_uniform("projection", directional_light->light_projection_matrix);
+		};
+
+		pipeline.set_rendering_sequence([](RenderPipeline& pipeline, Frame& frame) {
+			pipeline.reset_active_objects();
+
+			pipeline.framebuffers["shadowmap"]->bind();
+			pipeline.activate_program("depth");
+			pipeline.activate_uniforms_graphic("shadowmap");
+			pipeline.activate_uniforms_directional_light("shadowmap");
+			frame.clear_window(0.2, 0.2, 0.2);
+
+			pipeline.render();
+
+			pipeline.framebuffers["shadowmap"]->unbind();
+			
+			pipeline.framebuffers["shadowmap"]->color_texture.texture_slot = 2;
+			pipeline.framebuffers["shadowmap"]->color_texture.bind();
+			
+			frame.clear_window(1, 1, 1, 1);
+			pipeline.activate_program("solid");
+			pipeline.activate_uniforms_graphic("solid");
+			pipeline.activate_uniforms_directional_light("solid");
+			pipeline.activate_uniforms_ambiant_light("solid");
+			
+			pipeline.render();
+		});
+
+		return pipeline;
 	}
 
 }

@@ -282,3 +282,7 @@ GraphicsCortex/Debug/stb_image_write.obj
 GraphicsCortex/Release/text_rendering2.obj
 GraphicsCortex/Release/Text.obj
 GraphicsCortex/Release/PipelineMain.obj
+GraphicsCortex/Release/ApplicationMainPipeline.obj
+GraphicsCortex/Release/PipelineMain.obj
+GraphicsCortex/Release/RenderPipeline.obj
+GraphicsCortex/Release/UniformUpdater.obj

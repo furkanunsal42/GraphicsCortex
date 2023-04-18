@@ -5,6 +5,8 @@
 #include "UnifromQueue.h"
 #include "Text.h"
 
+#include "RenderPipeline.h"
+
 #include <glm.hpp>
 #include <vector>
 
@@ -27,6 +29,7 @@ namespace default_program {
 	Program cubemap_program();
 	Program gui_program();
 	Program text_program();
+	Program depth_program();
 
 	Program_s solid_program_s();
 	Program_s flatcolor_program_s();
@@ -34,4 +37,7 @@ namespace default_program {
 	Program_s cubemap_program_s();
 	Program_s gui_program_s();
 	Program_s text_program_s();
+	Program_s depth_program_s();
+
+	RenderPipeline default_pipeline(Frame& frame);
 }

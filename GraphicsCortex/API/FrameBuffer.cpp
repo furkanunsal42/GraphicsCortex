@@ -192,13 +192,6 @@ void FrameBuffer::release() {
 	_is_initialized = false;
 }
 
-enum {
-	COLOR_CHANNEL = 1,
-	DEPTH_CHANNEL = 2,
-	STENCIL_CHANNEL = 4,
-	ALL_CHANNELS = 1 | 2 | 4
-};
-
 // rect format -> xy = low_left, zw-> high_right
 // x -> x0, y -> y0, z -> x1, w -> y1
 void FrameBuffer::blit_section(FrameBuffer& target_buffer, const glm::vec4& source_rect, const glm::vec4& target_rect, unsigned int mask_bits, unsigned int interpolation){
