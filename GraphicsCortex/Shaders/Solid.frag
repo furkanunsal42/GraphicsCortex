@@ -7,13 +7,12 @@ in vec2 tex_coords;
 in vec3 frag_normal;
 in vec3 frag_space_coord;
 in mat3 frag_TBN;
-
+in float map_index_color;
+in float map_index_specular;
+in float map_index_normal;
 
 // temp
 uniform sampler2D shadow_map;
-uniform mat4 model;
-uniform mat4 view;
-uniform mat4 projection;
 
 struct ambiant_light{
 	vec3 color;
@@ -48,7 +47,6 @@ struct spot_light{
 //maps 
 uniform sampler2DArray texture_array_slot;
 uniform samplerCube cube_map;
-uniform vec3 active_texture_indicies;
 
 // flags
 uniform int use_cube_map_reflection = 0;
@@ -97,8 +95,8 @@ vec3 calculate_specular_light(vec3 light_direction, vec3 current_position, vec3 
 		cos_angle = 0.6;
 
 	vec3 specular_map_color;
-	if (active_texture_indicies[1] > -0.5)
-		specular_map_color = texture(texture_array_slot, vec3(tex_coords, active_texture_indicies[1])).rgb;
+	if (map_index_specular > -0.5 && false)
+		specular_map_color = texture(texture_array_slot, vec3(tex_coords, map_index_specular)).rgb;
 	else
 		specular_map_color = vec3(1.0);
 	
@@ -195,15 +193,15 @@ vec3 calculate_total_light(vec3 normal, vec3 space_coords){
 void main(){
 	
 	vec3 normal;
-	if(bool(active_texture_indicies[2] > -0.5))
-		normal = normalize(frag_TBN * ((texture(texture_array_slot, vec3(tex_coords, active_texture_indicies[2])) * 2).xyz - 1));
+	if(bool(map_index_normal > -0.5) && false)
+		normal = normalize(frag_TBN * ((texture(texture_array_slot, vec3(tex_coords, map_index_normal)) * 2).xyz - 1));
 	else
 		normal = frag_normal;
 
 	vec3 total_light = calculate_total_light(normal, frag_space_coord);
 	vec4 color;
-	if (bool(active_texture_indicies[0] > -0.5))
-		color = texture(texture_array_slot, vec3(tex_coords, active_texture_indicies[0]));
+	if (bool(map_index_color > -0.5))
+		color = texture(texture_array_slot, vec3(tex_coords, map_index_color));
 	else
 		color = vec4(1.0);
 

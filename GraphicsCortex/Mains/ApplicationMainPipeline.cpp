@@ -15,7 +15,7 @@ int main() {
 	//Program_s solid_program(default_program::solid_program());
 
 	{
-		Mesh_s city(Model("Models/City/edited_city2.obj", 4.0f, Model::COORD_XYZ | Model::NORMAL_XYZ | Model::TEX_COORD_XY));
+		Mesh_s city(Model("Models/City/edited_city2.obj", 4.0f, Model::COORD_XYZ | Model::NORMAL_XYZ | Model::TEX_COORD_XY | Model::TEX_COORD_Z_DIFFUSE | Model::TEX_COORD_Z_SPECULAR | Model::TEX_COORD_Z_NORMAL));
 		UnorderedMaterial_s city_mat("Models/City/edited_city2.obj");
 		city_mat->texture_array.mipmap_bias = 0;
 		city_mat->texture_array.generate_mipmap = false;
@@ -27,8 +27,8 @@ int main() {
 
 		pipeline.graphics["map"] = map;
 
-		DirectionalLight_s sunlight(glm::vec3(0.0f, 200.0f, 0.0f), glm::vec3(1.0f, -1.0f, 1.0f), glm::vec3(0.4, 0.4, 0.4));
-		AmbiantLight_s ambiance(glm::vec3(0.3f, 0.3f, 0.3f));
+		DirectionalLight_s sunlight(glm::vec3(0.0f, 200.0f, 0.0f), glm::vec3(1.0f, -1.0f, 1.0f), glm::vec3(0.8, 0.8, 0.8));
+		AmbiantLight_s ambiance(glm::vec3(0.7f, 0.7f, 0.7f));
 
 		pipeline.directional_ligths["sun"] = sunlight;
 		pipeline.ambiant_ligths["ambiance"] = ambiance;
@@ -128,7 +128,7 @@ int main() {
 		//scene.render();
 		cube_map.texture_slot = 11;
 
-		//cube_map.draw();
+		cube_map.draw();
 	}
 
 

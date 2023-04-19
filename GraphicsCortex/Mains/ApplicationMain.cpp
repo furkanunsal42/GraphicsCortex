@@ -12,7 +12,7 @@ int main() {
 	Program_s solid_program(default_program::solid_program());
 	
 	{
-		Mesh_s city(Model("Models/City/edited_city2.obj", 4.0f));
+		Mesh_s city(Model("Models/City/edited_city2.obj", 4.0f, Model::COORD_XYZ | Model::TEX_COORD_XY | Model::TEX_COORD_Z_DIFFUSE | Model::TEX_COORD_Z_SPECULAR | Model::TEX_COORD_Z_NORMAL | Model::NORMAL_XYZ));
 		UnorderedMaterial_s city_mat("Models/City/edited_city2.obj");
 		city_mat->texture_array.mipmap_bias = 0;
 		city_mat->texture_array.generate_mipmap = false;

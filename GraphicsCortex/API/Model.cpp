@@ -169,7 +169,8 @@ void Model::_load_model(const aiScene* scene, float scale, unsigned int vertex_p
 	
 	vertex_attribute_structure.push_back(coord_dim);		// position
 	vertex_attribute_structure.push_back(tex_coord_dim);	// texture uv
-	vertex_attribute_structure.push_back(map_index_dim);	// mesh index
+	for (int i = 0; i < map_index_dim; i++)
+		vertex_attribute_structure.push_back(1);			// map index
 	vertex_attribute_structure.push_back(normals_dim);		// normals
 }
 
