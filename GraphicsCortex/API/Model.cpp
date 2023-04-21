@@ -167,6 +167,11 @@ void Model::_load_model(const aiScene* scene, float scale, unsigned int vertex_p
 		bit++;
 	}
 	
+	std::cout << coord_dim << " ";
+	std::cout << tex_coord_dim << " ";
+	std::cout << map_index_dim << " ";
+	std::cout << normals_dim << std::endl;
+
 	vertex_attribute_structure.push_back(coord_dim);		// position
 	vertex_attribute_structure.push_back(tex_coord_dim);	// texture uv
 	for (int i = 0; i < map_index_dim; i++)

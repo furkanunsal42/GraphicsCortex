@@ -2,17 +2,17 @@
 
 int main() {
 
-	Frame frame(1920, 1080, "GraphicsCortex", 8, 0, true, false, true);
+	Frame frame(1920, 1080, "GraphicsCortex", 0, 0, true, false, true);
 	Scene scene(frame);
 	scene.camera->screen_width = 1920;
 	scene.camera->screen_height = 1080;
 	scene.camera->max_distance = 1000;
 
 	Program_s program(Shader("Shaders/TextureArray.vert", "Shaders/TextureArray.frag"));
-	Program_s solid_program(default_program::solid_program());
-	
+	Program_s solid_program = default_program::solid_program_s();
+
 	{
-		Mesh_s city(Model("Models/City/edited_city2.obj", 4.0f, Model::COORD_XYZ | Model::TEX_COORD_XY | Model::TEX_COORD_Z_DIFFUSE | Model::TEX_COORD_Z_SPECULAR | Model::TEX_COORD_Z_NORMAL | Model::NORMAL_XYZ));
+		Mesh_s city(Model("Models/City/edited_city2.obj", 4.0f));
 		UnorderedMaterial_s city_mat("Models/City/edited_city2.obj");
 		city_mat->texture_array.mipmap_bias = 0;
 		city_mat->texture_array.generate_mipmap = false;
@@ -22,7 +22,7 @@ int main() {
 		map->load_material(city_mat);
 		map->load_program(program);
 		map->set_uniform_all(default_program::basic_uniform_queue(*scene.camera.obj, map));
-		
+
 		map->set_position(glm::vec3(0, 0, 0));
 
 		scene.add_graphic(map);
@@ -35,10 +35,10 @@ int main() {
 		ambinace->set_uniform_upadte_queue(default_program::ambiant_light_default_uniform_queue(*ambinace.obj, 0));
 		scene.add_light(ambinace);
 	}
-	
+
 	Vehicle vehicle_raw;
 	Vehicle_s vehicle(vehicle_raw);
-	
+
 	{
 		Model chassis_model("Models/porsche_chassis.obj", 1, Model::COORD_XYZ | Model::TEX_COORD_XY | Model::NORMAL_XYZ);
 		Model chassis_left_wheel_model("Models/porsche_wheel_left.obj");
@@ -69,7 +69,7 @@ int main() {
 		vehicle->physics_representation.set_wheel_layout(2.4, -1.5, 4.2, 0.4);
 
 		vehicle->physics_representation.compile();
-		
+
 		vehicle->set_position(glm::vec3(0, 2, 0));
 		scene.add_object(vehicle);
 	}
@@ -96,7 +96,7 @@ int main() {
 	cube_map.load_queue(true);
 
 	while (frame.is_running()) {
-		
+
 		double frame_time = frame.handle_window();
 		PhysicsScene::get().simulate_step(frame_time / 1000.0f);
 		frame.clear_window(0.25f, 0.25f, 0.25f);
@@ -104,7 +104,7 @@ int main() {
 
 		//scene.camera.handle_movements(frame.window, frame_time);
 		vehicle->physics_representation.vehicle_control(frame.window);
-		
+
 		vehicle->sync_with_physics();
 		// let camera follow the car
 		glm::quat camera_rotation = vehicle->chassis->get_rotation();

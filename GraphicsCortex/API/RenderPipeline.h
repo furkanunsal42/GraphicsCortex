@@ -15,6 +15,7 @@ public:
 	std::unordered_map<std::string, PointLight_s> point_ligths;
 	std::unordered_map<std::string, SpotLight_s> spot_ligths;
 	std::unordered_map<std::string, Camera_s> cameras;
+	std::unordered_map<std::string, Graphic_s> deattached_graphics;
 
 	std::unordered_map<std::string, UniformUpdater<Graphic_s>> graphic_uniforms;
 	std::unordered_map<std::string, UniformUpdater<AmbiantLight_s>> ambiantlight_uniforms;
@@ -38,7 +39,12 @@ public:
 	void activate_camera(const std::string& camera_name);
 
 	void reset_active_objects();
+	void bind_active_objects();
 	void render();
+
+	void deattach_graphic(const std::string& graphic_name);
+	void attach_garphic(const std::string& graphic_name);
+	void render_single_graphic(const std::string& graphic_name);
 
 	void set_rendering_sequence(std::function<void(RenderPipeline&, Frame&)> rendering_sequence);
 	void render_sequence(Frame& frame);

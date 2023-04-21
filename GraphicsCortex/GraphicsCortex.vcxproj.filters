@@ -176,15 +176,12 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\Solid.vert" />
-    <None Include="Shaders\Solid.frag" />
     <None Include="Shaders\FlatColor.vert" />
     <None Include="Shaders\FlatColor.frag" />
     <None Include="Shaders\FrameBuffer.vert" />
     <None Include="Shaders\FrameBuffer.frag" />
     <None Include="Shaders\CubeMap.vert" />
     <None Include="Shaders\CubeMap.frag" />
-    <None Include="Shaders\Solid.geom" />
     <None Include="Shaders\NormalTest.frag" />
     <None Include="Dependencies\assimp\include\assimp\color4.inl">
       <Filter>Üst Bilgi Dosyaları</Filter>
@@ -221,6 +218,12 @@
     <None Include="Custom Shaders\Texture.frag" />
     <None Include="Shaders\Text.frag" />
     <None Include="Shaders\Text.vert" />
+    <None Include="Shaders\Solid_multitexture.vert" />
+    <None Include="Shaders\Solid.frag" />
+    <None Include="Shaders\Solid.geom" />
+    <None Include="Shaders\Solid.vert" />
+    <None Include="Shaders\Solid_multitexture.frag" />
+    <None Include="Shaders\Solid_multitexture.geom" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="API\Debuger.h">

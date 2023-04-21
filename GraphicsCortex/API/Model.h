@@ -26,8 +26,8 @@ public:
 	std::vector<unsigned int> index_data;
 	std::vector<unsigned int> vertex_attribute_structure;
 
-	Model(const std::string& file_path, float scale = 1.0f, unsigned int vertex_property_bits = ALL);
-	Model(const aiScene* scene, float scale = 1.0f, unsigned int vertex_property_bits = ALL);
+	Model(const std::string& file_path, float scale = 1.0f, unsigned int vertex_property_bits = COORD_XYZ | TEX_COORD_XY | NORMAL_XYZ);
+	Model(const aiScene* scene, float scale = 1.0f, unsigned int vertex_property_bits = COORD_XYZ | TEX_COORD_XY | NORMAL_XYZ);
 
 	Model(std::vector<float> verticies, std::vector<unsigned int> indicies, std::vector<unsigned int> vertex_attribute_structure = {3});
 
@@ -57,7 +57,7 @@ public:
 		PROPERTY_COUNT = 11,
 	};
 
-	void load_model(const std::string& file_path, float scale = 1.0f, unsigned int vertex_property_bits = ALL);
+	void load_model(const std::string& file_path, float scale = 1.0f, unsigned int vertex_property_bits = COORD_XYZ | TEX_COORD_XY | NORMAL_XYZ);
 
 	template<typename T>
 	std::enable_if_t<std::is_same<T, float>::value, std::vector<T>>

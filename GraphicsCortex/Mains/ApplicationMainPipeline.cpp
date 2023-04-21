@@ -7,15 +7,59 @@ int main() {
 	scene.camera->max_distance = 1000.0f;
 
 	RenderPipeline pipeline = default_program::default_pipeline(frame);
-	
+	pipeline.programs["solid"] = default_program::solid_program_multitexture_s();
 	pipeline.cameras["default_camera"] = scene.camera;
 	pipeline.activate_camera("default_camera");
 
-	//Program_s program(Shader("Shaders/TextureArray.vert", "Shaders/TextureArray.frag"));
-	//Program_s solid_program(default_program::solid_program());
+	pipeline.programs["solid_multitexture"] = default_program::solid_program_multitexture_s();
+	
+	pipeline.graphic_uniforms["solid_chassis"] = [](UniformFunction_Graphic_s) {
+		program->update_uniform("model", graphic->model_matrix);
+		program->update_uniform("view", camera->view_matrix);
+		program->update_uniform("projection", camera->projection_matrix);
+		program->update_uniform("cube_map", 13);
+		program->update_uniform("use_cube_map_reflection", 1);
+		program->update_uniform("cube_map_reflection_strength", 0.85f);
+		program->update_uniform("camera_coords", camera->position);
+		program->update_uniform("active_texture_indicies", graphic->unordered_material->get_active_textures_by_type());
+		program->update_uniform("shadow_map", 2);
+	};
+
+	pipeline.set_rendering_sequence([](RenderPipeline& pipeline, Frame& frame) {
+			pipeline.reset_active_objects();
+
+			pipeline.framebuffers["shadowmap"]->bind();
+			pipeline.activate_program("depth");
+			pipeline.activate_uniforms_graphic("shadowmap");
+			pipeline.activate_uniforms_directional_light("shadowmap");
+			frame.clear_window(0.2, 0.2, 0.2);
+
+			pipeline.render();
+			pipeline.render_single_graphic("map");
+
+			pipeline.framebuffers["shadowmap"]->unbind();
+			
+			pipeline.framebuffers["shadowmap"]->color_texture.texture_slot = 2;
+			pipeline.framebuffers["shadowmap"]->color_texture.bind();
+			
+			frame.clear_window(1, 1, 1, 1);
+			pipeline.activate_program("solid");
+			pipeline.activate_uniforms_directional_light("solid");
+			pipeline.activate_uniforms_ambiant_light("solid");
+			pipeline.activate_uniforms_graphic("solid_chassis");
+			pipeline.render_single_graphic("vehicle_chassis");
+			
+			pipeline.activate_program("solid_multitexture");
+			pipeline.activate_uniforms_graphic("solid");
+			pipeline.render_single_graphic("map");
+
+			pipeline.activate_program("solid");
+			pipeline.activate_uniforms_graphic("solid");
+			pipeline.render();
+		});
 
 	{
-		Mesh_s city(Model("Models/City/edited_city2.obj", 4.0f, Model::COORD_XYZ | Model::NORMAL_XYZ | Model::TEX_COORD_XY | Model::TEX_COORD_Z_DIFFUSE | Model::TEX_COORD_Z_SPECULAR | Model::TEX_COORD_Z_NORMAL));
+		Mesh_s city(Model("Models/City/edited_city2.obj", 4.0f, Model::COORD_XYZ | Model::NORMAL_XYZ | Model::TEX_COORD_XY | Model::TEX_COORD_Z_DIFFUSE | Model::TEX_COORD_Z_NORMAL | Model::TEX_COORD_Z_SPECULAR));
 		UnorderedMaterial_s city_mat("Models/City/edited_city2.obj");
 		city_mat->texture_array.mipmap_bias = 0;
 		city_mat->texture_array.generate_mipmap = false;
@@ -26,6 +70,7 @@ int main() {
 		map->set_position(glm::vec3(0, 0, 0));
 
 		pipeline.graphics["map"] = map;
+		pipeline.deattach_graphic("map");
 
 		DirectionalLight_s sunlight(glm::vec3(0.0f, 200.0f, 0.0f), glm::vec3(1.0f, -1.0f, 1.0f), glm::vec3(0.8, 0.8, 0.8));
 		AmbiantLight_s ambiance(glm::vec3(0.7f, 0.7f, 0.7f));
@@ -38,9 +83,9 @@ int main() {
 	Vehicle_s vehicle(vehicle_raw);
 
 	{
-		Model chassis_model("Models/porsche_chassis.obj", 1, Model::COORD_XYZ | Model::TEX_COORD_XY | Model::NORMAL_XYZ);
-		Model chassis_left_wheel_model("Models/porsche_wheel_left.obj");
-		Model chassis_right_wheel_model("Models/porsche_wheel_right.obj");
+		Model chassis_model("Models/porsche_chassis.obj", 1, Model::ALL);
+		Model chassis_left_wheel_model("Models/porsche_wheel_left.obj", 1);
+		Model chassis_right_wheel_model("Models/porsche_wheel_right.obj", 1);
 
 		Mesh_s chassis(chassis_model);
 		Mesh_s left_wheel(chassis_left_wheel_model);
@@ -60,8 +105,9 @@ int main() {
 
 		pipeline.graphics["vehicle_chassis"] = vehicle->chassis;
 		for (int i = 0; i < 4; i++)
-			pipeline.graphics["chassis" + std::to_string(i)] = vehicle->wheels[i];
+			pipeline.graphics["wheel" + std::to_string(i)] = vehicle->wheels[i];
 
+		pipeline.deattach_graphic("vehicle_chassis");
 
 		//vehicle->chassis->set_uniform("use_cube_map_reflection", 1);
 		//vehicle->chassis->set_uniform("cube_map_reflection_strength", 0.6f);

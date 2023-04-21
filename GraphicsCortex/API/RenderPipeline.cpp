@@ -41,7 +41,7 @@ void RenderPipeline::reset_active_objects() {
 	_active_uniform_updater_name_framebuffer = "";
 }
 
-void RenderPipeline::render() {
+void RenderPipeline::bind_active_objects() {
 
 	auto camera_iterator = cameras.find(_active_name_camera);
 	auto program_iterator = programs.find(_active_name_program);
@@ -88,13 +88,59 @@ void RenderPipeline::render() {
 	for (auto& name_framebuffer_pair : framebuffers) {
 		framebuffer_uniforms[_active_uniform_updater_name_framebuffer](name_framebuffer_pair.second, active_program, active_camera, object_index++);
 	}
+}
 
-	object_index = 0;
+void RenderPipeline::render() {
+	
+	bind_active_objects();
+
+	int object_index = 0;
 	for (auto& name_graphic_pair : graphics) {
 		Graphic_s graphic = name_graphic_pair.second;
 		graphic->update_matrix();
-		graphic_uniforms[_active_uniform_updater_name_graphic](graphic, active_program, active_camera, object_index++);
+		graphic_uniforms[_active_uniform_updater_name_graphic](graphic, programs[_active_name_program], cameras[_active_name_camera], object_index++);
 		graphic->draw(false);
+	}
+}
+
+void RenderPipeline::deattach_graphic(const std::string& graphic_name){
+	auto graphic = graphics.find(graphic_name);
+	if (graphic != graphics.end()){
+		deattached_graphics[graphic->first] = graphic->second;
+		graphics.erase(graphic);
+	}
+}
+
+void RenderPipeline::attach_garphic(const std::string& graphic_name){
+	auto graphic = deattached_graphics.find(graphic_name);
+	if (graphic != deattached_graphics.end()){
+		graphics[graphic->first] = graphic->second;
+		deattached_graphics.erase(graphic);
+	}
+}
+
+void RenderPipeline::render_single_graphic(const std::string& graphic_name){
+
+	bind_active_objects();
+
+	{
+		auto graphic_iterator_attached = graphics.find(graphic_name);
+		if (graphic_iterator_attached != graphics.end()) {
+			Graphic_s& graphic = graphic_iterator_attached->second;
+			graphic->update_matrix();
+			graphic_uniforms[_active_uniform_updater_name_graphic](graphic, programs[_active_name_program], cameras[_active_name_camera], 0);
+			graphic->draw(false);
+		}
+	}
+
+	{
+		auto graphic_iterator_deattached = deattached_graphics.find(graphic_name);
+		if (graphic_iterator_deattached != deattached_graphics.end()) {
+			Graphic_s& graphic = graphic_iterator_deattached->second;
+			graphic->update_matrix();
+			graphic_uniforms[_active_uniform_updater_name_graphic](graphic, programs[_active_name_program], cameras[_active_name_camera], 0);
+			graphic->draw(false);
+		}
 	}
 }
 

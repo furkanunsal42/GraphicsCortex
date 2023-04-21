@@ -24,6 +24,7 @@ namespace default_program {
 	uniform_update_queue spot_light_default_uniform_queue(SpotLight& spot_light, int light_ingdex);
 
 	Program solid_program();
+	Program solid_program_multitexture();
 	Program flatcolor_program();
 	Program framebuffer_program();
 	Program cubemap_program();
@@ -32,6 +33,7 @@ namespace default_program {
 	Program depth_program();
 
 	Program_s solid_program_s();
+	Program_s solid_program_multitexture_s();
 	Program_s flatcolor_program_s();
 	Program_s framebuffer_program_s();
 	Program_s cubemap_program_s();

@@ -133,6 +133,11 @@ namespace default_program {
 		Program solid_program(default_shader.vertex_shader, default_shader.geometry_shader, default_shader.fragment_shader);
 		return solid_program;
 	}
+	Program solid_program_multitexture() {
+		Shader default_shader("Shaders/Solid_multitexture.vert", "Shaders/Solid_multitexture.geom", "Shaders/Solid_multitexture.frag");
+		Program renderer(default_shader.vertex_shader, default_shader.geometry_shader, default_shader.fragment_shader);
+		return renderer;
+	}
 	Program flatcolor_program() {
 		Shader default_shader("Shaders/FlatColor.vert", "Shaders/FlatColor.frag");
 		Program renderer(default_shader.vertex_shader, default_shader.fragment_shader);
@@ -166,6 +171,11 @@ namespace default_program {
 
 	Program_s solid_program_s() {
 		Shader default_shader("Shaders/Solid.vert", "Shaders/Solid.geom", "Shaders/Solid.frag");
+		Program_s renderer(default_shader.vertex_shader, default_shader.geometry_shader, default_shader.fragment_shader);
+		return renderer;
+	}
+	Program_s solid_program_multitexture_s() {
+		Shader default_shader("Shaders/Solid_multitexture.vert", "Shaders/Solid_multitexture.geom", "Shaders/Solid_multitexture.frag");
 		Program_s renderer(default_shader.vertex_shader, default_shader.geometry_shader, default_shader.fragment_shader);
 		return renderer;
 	}

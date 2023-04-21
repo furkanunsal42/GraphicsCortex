@@ -9,9 +9,6 @@ out vec2 tex_coords;
 out vec3 frag_normal;
 out vec3 frag_space_coord;
 out mat3 frag_TBN;
-out float map_index_color;
-out float map_index_specular;
-out float map_index_normal;
 in DATA
 {
 	vec2 tex_coords;
@@ -20,9 +17,6 @@ in DATA
 	mat4 projection;
 	mat4 model;
 	mat4 view;
-	float map_index_color;
-	float map_index_specular;
-	float map_index_normal;
 } data_in[];
 
 void main(){
@@ -54,9 +48,6 @@ void main(){
 	tex_coords = data_in[0].tex_coords;
 	frag_normal = data_in[0].frag_normal;
 	frag_space_coord = data_in[0].frag_space_coord;
-	map_index_color = data_in[0].map_index_color;
-	map_index_specular = data_in[0].map_index_color;
-	map_index_normal = data_in[0].map_index_color;
 	EmitVertex();
 
 	frag_TBN = TBN;
@@ -64,9 +55,6 @@ void main(){
 	tex_coords = data_in[1].tex_coords;
 	frag_normal = data_in[1].frag_normal;
 	frag_space_coord = data_in[1].frag_space_coord;
-	map_index_color = data_in[1].map_index_color;
-	map_index_specular = data_in[1].map_index_color;
-	map_index_normal = data_in[1].map_index_color;
 	EmitVertex();
 
 	frag_TBN = TBN;
@@ -74,9 +62,6 @@ void main(){
 	tex_coords = data_in[2].tex_coords;
 	frag_normal = data_in[2].frag_normal;
 	frag_space_coord = data_in[2].frag_space_coord;
-	map_index_color = data_in[2].map_index_color;
-	map_index_specular = data_in[2].map_index_color;
-	map_index_normal = data_in[2].map_index_color;
 	EmitVertex();
 	EndPrimitive();
 }

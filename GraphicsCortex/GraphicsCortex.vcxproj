@@ -254,6 +254,9 @@
     <None Include="Shaders\Solid.frag" />
     <None Include="Shaders\Solid.geom" />
     <None Include="Shaders\Solid.vert" />
+    <None Include="Shaders\Solid_multitexture.frag" />
+    <None Include="Shaders\Solid_multitexture.geom" />
+    <None Include="Shaders\Solid_multitexture.vert" />
     <None Include="Shaders\Text.frag" />
     <None Include="Shaders\Text.vert" />
     <None Include="Shaders\TextureArray.frag" />
