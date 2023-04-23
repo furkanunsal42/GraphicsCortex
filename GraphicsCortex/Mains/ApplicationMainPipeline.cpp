@@ -109,9 +109,6 @@ int main() {
 
 		pipeline.deattach_graphic("vehicle_chassis");
 
-		//vehicle->chassis->set_uniform("use_cube_map_reflection", 1);
-		//vehicle->chassis->set_uniform("cube_map_reflection_strength", 0.6f);
-
 		vehicle->physics_representation.set_wheel_layout(2.4, -1.5, 4.2, 0.4);
 
 		vehicle->physics_representation.compile();
@@ -161,8 +158,6 @@ int main() {
 		camera_position += camera_rotation * glm::vec3(0.0f, 0.5f, 1.0f);
 		scene.camera->set_rotation(camera_rotation);
 		scene.camera->set_position(camera_position);
-
-		//vehicle->set_position(vehicle->chassis->get_position() + glm::vec3(0, 0, -0.1f));
 
 		cube_map.bind();
 

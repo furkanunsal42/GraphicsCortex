@@ -12,7 +12,7 @@ int main() {
 	Program_s solid_program = default_program::solid_program_s();
 
 	{
-		Mesh_s city(Model("Models/City/edited_city2.obj", 4.0f));
+		Mesh_s city(Model("Models/City/edited_city2.obj", 4.0f, Model::ALL));
 		UnorderedMaterial_s city_mat("Models/City/edited_city2.obj");
 		city_mat->texture_array.mipmap_bias = 0;
 		city_mat->texture_array.generate_mipmap = false;
@@ -41,8 +41,8 @@ int main() {
 
 	{
 		Model chassis_model("Models/porsche_chassis.obj", 1, Model::COORD_XYZ | Model::TEX_COORD_XY | Model::NORMAL_XYZ);
-		Model chassis_left_wheel_model("Models/porsche_wheel_left.obj");
-		Model chassis_right_wheel_model("Models/porsche_wheel_right.obj");
+		Model chassis_left_wheel_model("Models/porsche_wheel_left.obj", 1, Model::COORD_XYZ | Model::TEX_COORD_XY | Model::NORMAL_XYZ);
+		Model chassis_right_wheel_model("Models/porsche_wheel_right.obj", 1, Model::COORD_XYZ | Model::TEX_COORD_XY | Model::NORMAL_XYZ);
 
 		Mesh_s chassis(chassis_model);
 		Mesh_s left_wheel(chassis_left_wheel_model);

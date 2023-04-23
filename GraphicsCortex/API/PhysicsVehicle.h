@@ -66,8 +66,9 @@ public:
 	wheel_type wheel_type;
 	physx::PxVec3* wheelOffsets; // array of PxVec3, a vector for each wheel
 	float max_steer;
-	float max_handbreak_torque;
-	
+	float max_handbrake_torque;
+	float max_brake_torque;
+
 	// suspension
 	float max_suspension_compression;
 	float max_suspension_droop;

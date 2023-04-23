@@ -30,10 +30,10 @@ int main() {
 	text.set_scale(1);
 	text.render();
 	text.graphic->set_position(glm::vec3(0, 0, -1));
-	text.graphic->set_uniform_all(default_program::basic_uniform_queue(scene.camera, text.graphic));
+	text.graphic->set_uniform_all(default_program::basic_uniform_queue(*scene.camera.obj, text.graphic));
 	text.graphic->set_uniform("text_color", 242.0f / 255, 166.0f / 255, 0.0f / 255, 1.0f);
 	text.graphic->set_uniform("texture_slot", 0);
-	text.graphic->set_uniform("screen_resolution", (float*)&scene.camera.screen_width, (float*)&scene.camera.screen_height);
+	text.graphic->set_uniform("screen_resolution", (float*)&scene.camera->screen_width, (float*)&scene.camera->screen_height);
 
 	while (frame.is_running()) {
 		double frametime = frame.handle_window();
@@ -42,7 +42,7 @@ int main() {
 
 		gui.new_frame(frametime);
 
-		scene.camera.handle_movements(frame.window, frametime);
+		scene.camera->handle_movements(frame.window, frametime);
 
 		scene.render();
 

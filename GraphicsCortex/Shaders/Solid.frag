@@ -215,5 +215,7 @@ void main(){
 	if(frag_color.a < 0.1f)
 		discard;
 
+	float gamma = 2.2;
+	frag_color.rgb = pow(frag_color.rgb, vec3(1.0/gamma));
 	
 }

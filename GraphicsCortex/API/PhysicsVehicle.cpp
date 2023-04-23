@@ -44,8 +44,9 @@ PhysicsVehicle::PhysicsVehicle(InitValues init_type, int num_wheels) :
 		physx::PxMaterial* wheel_material = PhysxContext::get().physics->createMaterial(0.3f, 0.2f, 0.7f);
 		wheelMaterial = wheel_material;
 
-		max_steer = physx::PxPi * 0.3333f;
-		max_handbreak_torque = 4000.0f;
+		max_steer = physx::PxPi * 0.4f;
+		max_handbrake_torque = 4000.0f;
+		max_brake_torque = 6000.0f;
 		ackermann_accuracy = 1.0f;
 		clutch_strength = 10.0f;
 		gear_switch_time = 0.1f;
@@ -78,7 +79,8 @@ PhysicsVehicle::PhysicsVehicle(InitValues init_type, int num_wheels) :
 		wheelMOI = 0.0f;
 		wheelMaterial = NULL;
 		max_steer = 0.0f;
-		max_handbreak_torque = 0.0f;
+		max_handbrake_torque = 0.0f;
+		max_brake_torque = 0.0f;
 		ackermann_accuracy = 0.0f;
 		clutch_strength = 0.0f;
 		gear_switch_time = 0.0f;
@@ -177,8 +179,14 @@ void PhysicsVehicle::_create_wheel_sim() {
 		}
 
 		//Enable the handbrake for the rear wheels only.
-		wheels[snippetvehicle::PxVehicleDrive4WWheelOrder::eREAR_LEFT].mMaxHandBrakeTorque = max_handbreak_torque;
-		wheels[snippetvehicle::PxVehicleDrive4WWheelOrder::eREAR_RIGHT].mMaxHandBrakeTorque = max_handbreak_torque;
+		wheels[snippetvehicle::PxVehicleDrive4WWheelOrder::eREAR_LEFT].mMaxHandBrakeTorque = max_handbrake_torque;
+		wheels[snippetvehicle::PxVehicleDrive4WWheelOrder::eREAR_RIGHT].mMaxHandBrakeTorque = max_handbrake_torque;
+
+		wheels[snippetvehicle::PxVehicleDrive4WWheelOrder::eREAR_LEFT].mMaxBrakeTorque= max_brake_torque;
+		wheels[snippetvehicle::PxVehicleDrive4WWheelOrder::eREAR_RIGHT].mMaxBrakeTorque = max_brake_torque;
+		wheels[snippetvehicle::PxVehicleDrive4WWheelOrder::eFRONT_LEFT].mMaxBrakeTorque = max_brake_torque;
+		wheels[snippetvehicle::PxVehicleDrive4WWheelOrder::eFRONT_RIGHT].mMaxBrakeTorque = max_brake_torque;
+
 		//Enable steering for the front wheels only.
 		wheels[snippetvehicle::PxVehicleDrive4WWheelOrder::eFRONT_LEFT].mMaxSteer = max_steer;
 		wheels[snippetvehicle::PxVehicleDrive4WWheelOrder::eFRONT_RIGHT].mMaxSteer = max_steer;
