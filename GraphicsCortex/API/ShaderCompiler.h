@@ -31,8 +31,21 @@ public:
 class Program {
 private:
 	unsigned int compile_shader(unsigned int type, const std::string& shader_source);
-	void _detect_and_define_all_uniforms(const std::string& shader_code);
+	//void _detect_and_define_all_uniforms(const std::string& shader_code);	LEGACY
+	void _detect_and_define_all_uniforms();
 public:
+	enum VariableType{
+		INT,
+		FLOAT,
+		BOOLEAN,
+		VEC2,
+		VEC3,
+		VEC4,
+		MAT2,
+		MAT3,
+		MAT4,
+	};
+	
 	unsigned int id = 0;
 	std::unordered_map<std::string, unsigned int> uniforms;
 	

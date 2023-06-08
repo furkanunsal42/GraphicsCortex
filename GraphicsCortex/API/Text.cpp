@@ -233,7 +233,7 @@ void Text::_update_graphic() {
 		}
 	}
 	else if (_string_type == UTF_16) {
-		for (const uint16_t& character : text16) {
+		for (const uint16_t& character : text16) {	
 
 			if (_text_max_width) {
 				if (pen_x > _text_max_width)

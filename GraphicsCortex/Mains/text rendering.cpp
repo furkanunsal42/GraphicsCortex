@@ -10,21 +10,13 @@ int main() {
 	Text text(font);
 
 	text.set_text(U"\
-									aeıioöuüğşİÇç öğretmenim Свободное время\n\
-									It is a dark time for the Rebellion. Although \
-									the Death Star has been destroyed, \
-									Imperial troops have driven the Rebel forces \
-									from their hidden base and pursued them \
-									across the galaxy. \
-									\n\n\
-									Evading the dreaded Imperial Starfleet, a group \
-									of freedom fighters led by Luke Skywalker has \
-									established a new secret base on the remote ice \
-									world of Hoth. \
-									\n\n\
-									The evil lord Darth Vader, obsessed with finding \
-									young Skywalker, has dispatched thousands of remote \
-									probes into the far reaches of space");
+						Long ago in a distant galaxy, an electro-optical workload and its trusty image processing software were unleashed upon the world of technology! \n\
+						\n\
+						But as they began to process images, a conflict arose between them, each claiming to be the true master of the satellite imagery domain. \n\
+						\n\
+						Before the final pixel was processed, the workload and its software opened a portal in cyberspace and flung the engineering team into the future, where their processing power is law!\n\
+						\n\
+						Now the team seeks to return to the present and restore order to the chaotic world of image processing that is Ascende Superius!\n");
 
 	text.set_max_width(1);
 	text.set_scale(1);

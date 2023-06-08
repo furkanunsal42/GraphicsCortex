@@ -96,7 +96,7 @@ Program::Program(const std::string& vertex_shader_code, const std::string& geome
 
 Program::Program(const Shader& shader) : Program(shader.vertex_shader, shader.geometry_shader, shader.fragment_shader) {}
 
-
+/*	LEGACY
 void Program::_detect_and_define_all_uniforms(const std::string& shader_code) {
 	// detect uniform definitions
 	std::stringstream ss(shader_code);
@@ -142,6 +142,42 @@ void Program::_detect_and_define_all_uniforms(const std::string& shader_code) {
 		}
 	}
 }
+*/
+
+void Program::_detect_and_define_all_uniforms() {
+	GLint i;
+	GLint count;
+
+	GLint size; // size of the variable
+	GLenum type; // type of the variable (float, vec3 or mat4, etc)
+
+	const GLsizei bufSize = 64; // maximum name length
+	GLchar name[bufSize]; // variable name in GLSL
+	GLsizei length; // name length
+
+	glGetProgramiv(id, GL_ACTIVE_ATTRIBUTES, &count);
+	printf("Active Attributes: %d\n", count);
+
+	for (i = 0; i < count; i++)
+	{
+		glGetActiveAttrib(id, (GLuint)i, bufSize, &length, &size, &type, name);
+
+		printf("Attribute #%d Type: %u Name: %s\n", i, type, name);
+	}
+
+	glGetProgramiv(id, GL_ACTIVE_UNIFORMS, &count);
+	printf("Active Uniforms: %d\n", count);
+
+	for (i = 0; i < count; i++)
+	{
+		glGetActiveUniform(id, (GLuint)i, bufSize, &length, &size, &type, name);
+
+		printf("Uniform #%d Type: %u Name: %s\n", i, type, name);
+	}
+
+
+
+}
 
 void Program::compile(const std::string& vertex_shader_code, const std::string& fragment_shader_code) {
 	id = glCreateProgram();
@@ -156,8 +192,7 @@ void Program::compile(const std::string& vertex_shader_code, const std::string& 
 	GLCall(glDeleteShader(fragment_shader));
 
 	#ifdef DEFINE_SHADER_UNIFORMS_UPON_COMPILE
-	_detect_and_define_all_uniforms(vertex_shader_code);
-	_detect_and_define_all_uniforms(fragment_shader_code);
+	_detect_and_define_all_uniforms();
 	#endif
 }
 
@@ -177,9 +212,7 @@ void Program::compile(const std::string& vertex_shader_code, const std::string& 
 	GLCall(glDeleteShader(fragment_shader));
 
 	#ifdef DEFINE_SHADER_UNIFORMS_UPON_COMPILE
-	_detect_and_define_all_uniforms(vertex_shader_code);
-	_detect_and_define_all_uniforms(geometry_shader_code);
-	_detect_and_define_all_uniforms(fragment_shader_code);
+	_detect_and_define_all_uniforms();
 	#endif
 }
 

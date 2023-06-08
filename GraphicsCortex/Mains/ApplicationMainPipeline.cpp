@@ -61,6 +61,8 @@ int main() {
 	{
 		Mesh_s city(Model("Models/City/edited_city2.obj", 4.0f, Model::COORD_XYZ | Model::NORMAL_XYZ | Model::TEX_COORD_XY | Model::TEX_COORD_Z_DIFFUSE | Model::TEX_COORD_Z_NORMAL | Model::TEX_COORD_Z_SPECULAR));
 		UnorderedMaterial_s city_mat("Models/City/edited_city2.obj");
+		//Mesh_s city(Model("Models/City2/city2.obj", 1.0f, Model::COORD_XYZ | Model::NORMAL_XYZ | Model::TEX_COORD_XY | Model::TEX_COORD_Z_DIFFUSE | Model::TEX_COORD_Z_NORMAL | Model::TEX_COORD_Z_SPECULAR));
+		//UnorderedMaterial_s city_mat("Models/City2/city2.obj");
 		city_mat->texture_array.mipmap_bias = 0;
 		city_mat->texture_array.generate_mipmap = false;
 		city_mat->set_texture_size(1024, 1024);
