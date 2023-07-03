@@ -9,6 +9,7 @@ in vec3 frag_space_coord;
 in mat3 frag_TBN;
 
 // temp
+uniform sampler2D shadow_map;
 
 struct ambiant_light{
 	vec3 color;
@@ -20,7 +21,6 @@ struct directional_light{
 	// temp
 	mat4 view_matrix;
 	mat4 projection_matrix;
-	sampler2D shadow_map;
 };
 
 struct point_light{
