@@ -97,6 +97,13 @@ int main() {
 
 	auto styles = define_styles();
 
+	Style layout_style;
+	layout_style.color = gui::colorcode(0x0c0c0c);
+	
+	Style element1;
+	element1.color = gui::colorcode(0x2f2f2f);
+	element1.margin = Persentage(100, Persentage::MAX_SIZE_DIM);
+
 	Font_s font("Fonts\\Roboto-Regular.ttf", 100);
 	Text text(font, "File");
 	text.set_scale(1080 / 3);
@@ -119,5 +126,17 @@ int main() {
 		gui_draw_topbar(gui, styles);
 		gui_draw_scene_viewer(gui, styles);
 		gui_draw_moveable_panel(gui, styles);
+
+		//gui.layout(vec2(100, 100), vec2(100, 100), layout_style);
+		//gui.content(vec2(80, 80), element1);
+		//gui.layout_end();
+
+
 	}
 }
+
+// positioning through recursive layouts
+// custom objects with state
+// floating layouts
+// mouse hover and click catching
+// dynamically changing gui

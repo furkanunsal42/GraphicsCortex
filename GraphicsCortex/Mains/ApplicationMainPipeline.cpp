@@ -29,6 +29,8 @@ int main() {
 			pipeline.reset_active_objects();
 
 			pipeline.framebuffers["shadowmap"]->bind();
+			glViewport(0, 0, frame.window_width * 8, frame.window_height * 8);
+
 			pipeline.activate_program("depth");
 			pipeline.activate_uniforms_graphic("shadowmap");
 			pipeline.activate_uniforms_directional_light("shadowmap");
@@ -38,6 +40,8 @@ int main() {
 			pipeline.render_single_graphic("map");
 
 			pipeline.framebuffers["shadowmap"]->unbind();
+			glViewport(0, 0, frame.window_width, frame.window_height);
+
 			
 			pipeline.framebuffers["shadowmap"]->color_texture.texture_slot = 2;
 			pipeline.framebuffers["shadowmap"]->color_texture.bind();
