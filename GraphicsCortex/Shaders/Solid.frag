@@ -8,12 +8,7 @@ in vec3 frag_normal;
 in vec3 frag_space_coord;
 in mat3 frag_TBN;
 
-
 // temp
-uniform sampler2D shadow_map;
-uniform mat4 model;
-uniform mat4 view;
-uniform mat4 projection;
 
 struct ambiant_light{
 	vec3 color;
@@ -25,6 +20,7 @@ struct directional_light{
 	// temp
 	mat4 view_matrix;
 	mat4 projection_matrix;
+	sampler2D shadow_map;
 };
 
 struct point_light{
@@ -131,7 +127,7 @@ vec3 calculate_directional_light(vec3 light_direction, vec3 light_color, vec3 no
 	position_by_light = position_by_light / position_by_light.w;
 	position_by_light = position_by_light * 0.5 + 0.5;
 
-	float closest_distance_to_light = texture(shadow_map, position_by_light.xy).r;
+	float closest_distance_to_light = texture(d_lights[0].shadow_map, position_by_light.xy).r;
 	float fragment_distance_to_light = position_by_light.z;
 	float shadow_acne_bias = 0.005;
 	

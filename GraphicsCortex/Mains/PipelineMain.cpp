@@ -6,9 +6,9 @@ int main() {
 	Frame frame(1920, 1080, "GraphicsCortex", 0, 0, true, true, true, false);
 	Scene scene(frame);
 
-	DirectionalLight_s sunlight(glm::vec3(4, 2, 4), glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(1, 1, 1));
+	DirectionalLight_s sunlight(glm::vec3(4, 2, 4), glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(0.7, 0.7, 0.7));
 
-	AmbiantLight_s ambiance(glm::vec3(0.2, 0.2, 0.2));
+	AmbiantLight_s ambiance(glm::vec3(0.6, 0.6, 0.6));
 
 	UnorderedMaterial_s bricks_material(2);
 	bricks_material->set_texture("Images/Bricks/brickcolor.jpg", 4, 0, UnorderedMaterial::COLOR);

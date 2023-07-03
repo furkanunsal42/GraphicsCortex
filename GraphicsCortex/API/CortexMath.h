@@ -102,7 +102,42 @@ public:
 	std::enable_if_t<std::is_arithmetic_v<NUM>, Vec3> operator/(const NUM& coefficient) const {
 		return Vec3(x / coefficient, y / coefficient, z / coefficient);
 	}
+
+	template<typename NUM>
+	std::enable_if_t<std::is_arithmetic_v<NUM>, Vec3> operator+(const NUM& number) const {
+		return Vec3(x + number, y + number, z + number);
+	}
+	
+	template<typename NUM>
+	std::enable_if_t<std::is_arithmetic_v<NUM>, Vec3> operator-(const NUM& number) const {
+		return Vec3(x - number, y - number, z - number);
+	}
 };
+
+template<typename NUM, typename T>
+std::enable_if_t<std::is_arithmetic_v<NUM>, Vec3<T>> operator*(NUM num, const Vec3<T>& vec){
+	return vec * num;
+}
+
+template<typename NUM, typename T>
+std::enable_if_t<std::is_arithmetic_v<NUM>, Vec3<T>> operator/(NUM num, const Vec3<T>& vec) {
+	return Vec3<T>(num/vec.x, num/vec.y, num/vec.z);
+}
+
+template<typename NUM, typename T>
+std::enable_if_t<std::is_arithmetic_v<NUM>, Vec3<T>> operator+(NUM num, const Vec3<T>& vec) {
+	return vec + num;
+}
+
+template<typename NUM, typename T>
+std::enable_if_t<std::is_arithmetic_v<NUM>, Vec3<T>> operator-(NUM num, const Vec3<T>& vec) {
+	return vec - num;
+}
+
+template<typename T>
+Vec3<T> operator-(const Vec3<T>& vec) {
+	return vec * -1;
+}
 
 template<typename T>
 std::ostream& operator<<(std::ostream& stream, const Vec3<T>& other) {
