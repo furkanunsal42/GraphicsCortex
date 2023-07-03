@@ -97,7 +97,8 @@ Program::Program(const std::string& vertex_shader_code, const std::string& geome
 Program::Program(const Shader& shader) : Program(shader.vertex_shader, shader.geometry_shader, shader.fragment_shader) {}
 
 
-void Program::_detect_and_define_all_uniforms(const std::string& shader_code) {
+void Program::_detect_and_define_all_uniforms_legacy(const std::string& shader_code) {
+
 	// detect uniform definitions
 	std::stringstream ss(shader_code);
 	std::string line;
@@ -143,6 +144,24 @@ void Program::_detect_and_define_all_uniforms(const std::string& shader_code) {
 	}
 }
 
+void Program::_detect_and_define_all_uniforms(unsigned int id) {
+	int uniform_amount;
+	GLCall(glGetProgramiv(id, GL_ACTIVE_UNIFORMS, &uniform_amount));
+
+	for (int i = 0; i < uniform_amount; i++)
+	{
+		int name_length;
+		int size;
+		GLenum type;
+		char name[64];
+		GLCall(glGetActiveUniform(id, (GLuint)i, 32, &name_length, &size, &type, name));
+
+		std::cout << name << std::endl;
+		define_uniform(std::string(name));
+
+	}
+}
+
 void Program::compile(const std::string& vertex_shader_code, const std::string& fragment_shader_code) {
 	id = glCreateProgram();
 	unsigned int vertex_shader = compile_shader(GL_VERTEX_SHADER, vertex_shader_code);
@@ -156,8 +175,7 @@ void Program::compile(const std::string& vertex_shader_code, const std::string& 
 	GLCall(glDeleteShader(fragment_shader));
 
 	#ifdef DEFINE_SHADER_UNIFORMS_UPON_COMPILE
-	_detect_and_define_all_uniforms(vertex_shader_code);
-	_detect_and_define_all_uniforms(fragment_shader_code);
+	_detect_and_define_all_uniforms(id);
 	#endif
 }
 
@@ -177,9 +195,7 @@ void Program::compile(const std::string& vertex_shader_code, const std::string& 
 	GLCall(glDeleteShader(fragment_shader));
 
 	#ifdef DEFINE_SHADER_UNIFORMS_UPON_COMPILE
-	_detect_and_define_all_uniforms(vertex_shader_code);
-	_detect_and_define_all_uniforms(geometry_shader_code);
-	_detect_and_define_all_uniforms(fragment_shader_code);
+	_detect_and_define_all_uniforms(id);
 	#endif
 }
 

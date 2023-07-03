@@ -31,7 +31,8 @@ public:
 class Program {
 private:
 	unsigned int compile_shader(unsigned int type, const std::string& shader_source);
-	void _detect_and_define_all_uniforms(const std::string& shader_code);
+	void _detect_and_define_all_uniforms_legacy(const std::string& shader_code);
+	void _detect_and_define_all_uniforms(unsigned int id);
 public:
 	unsigned int id = 0;
 	std::unordered_map<std::string, unsigned int> uniforms;
