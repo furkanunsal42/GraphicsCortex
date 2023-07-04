@@ -44,6 +44,8 @@ public:
 	
 	unsigned int mode = GL_TRIANGLES;
 
+	float cubemap_reflections_strength = 0.0f; // values between 1.0f - 0.0f (<0.1f means false)
+
 	Graphic();
 	Graphic(Mesh_s mesh, Material_s material, Program_s renderer);
 	Graphic(Mesh_s mesh, UnorderedMaterial_s material, Program_s renderer);

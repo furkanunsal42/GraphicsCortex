@@ -5,63 +5,6 @@ int main() {
 	Frame frame(1920, 1080, "GraphicsCortex", 8, 0, true, false, true);
 	Scene scene(frame);
 	scene.camera->max_distance = 1000.0f;
-	/*
-	RenderPipeline pipeline = default_program::default_pipeline(frame);
-	pipeline.programs["solid"] = default_program::solid_program_s();
-	pipeline.cameras["default_camera"] = scene.camera;
-	pipeline.activate_camera("default_camera");
-
-	pipeline.programs["solid_multitexture"] = default_program::solid_program_multitexture_s();
-	
-	pipeline.graphic_uniforms["solid_chassis"] = [](UniformFunction_Graphic_s) {
-		program->update_uniform("model", graphic->model_matrix);
-		program->update_uniform("view", camera->view_matrix);
-		program->update_uniform("projection", camera->projection_matrix);
-		program->update_uniform("cube_map", 13);
-		program->update_uniform("use_cube_map_reflection", 1);
-		program->update_uniform("cube_map_reflection_strength", 0.85f);
-		program->update_uniform("camera_coords", camera->position);
-		program->update_uniform("active_texture_indicies", graphic->unordered_material->get_active_textures_by_type());
-		program->update_uniform("shadow_map", 2);
-	};
-
-	pipeline.set_rendering_sequence([](RenderPipeline* pipeline, Frame& frame) {
-			pipeline->reset_active_objects();
-
-			pipeline->framebuffers["shadowmap"]->bind();
-			glViewport(0, 0, frame.window_width * 8, frame.window_height * 8);
-
-			pipeline->activate_program("depth");
-			pipeline->activate_uniforms_graphic("shadowmap");
-			pipeline->activate_uniforms_directional_light("shadowmap");
-			frame.clear_window(0.2, 0.2, 0.2);
-
-			pipeline->render();
-			pipeline->render_single_graphic("map");
-
-			pipeline->framebuffers["shadowmap"]->unbind();
-			glViewport(0, 0, frame.window_width, frame.window_height);
-
-			
-			pipeline->framebuffers["shadowmap"]->color_texture.texture_slot = 2;
-			pipeline->framebuffers["shadowmap"]->color_texture.bind();
-			
-			frame.clear_window(1, 1, 1, 1);
-			pipeline->activate_program("solid_multitexture");
-			pipeline->activate_uniforms_directional_light("solid");
-			pipeline->activate_uniforms_ambiant_light("solid");
-			pipeline->activate_uniforms_graphic("solid_chassis");
-			pipeline->render_single_graphic("vehicle_chassis");
-			
-			pipeline->activate_program("solid_multitexture");
-			pipeline->activate_uniforms_graphic("solid");
-			pipeline->render_single_graphic("map");
-
-			pipeline->activate_program("solid");
-			pipeline->activate_uniforms_graphic("solid");
-			pipeline->render();
-		});
-		*/
 	
 	RenderPipeline_MultiTextured pipeline = default_program::multitextured_pipeline(frame);
 	pipeline.cameras["default_camera"] = scene.camera;
@@ -93,7 +36,7 @@ int main() {
 	Vehicle_s vehicle(vehicle_raw);
 
 	{
-		Model chassis_model("Models/porsche_chassis.obj", 1, Model::ALL);
+		Model chassis_model("Models/porsche_chassis.obj", 1, Model::COORD_XYZ | Model::NORMAL_XYZ | Model::TEX_COORD_XY);
 		Model chassis_left_wheel_model("Models/porsche_wheel_left.obj", 1);
 		Model chassis_right_wheel_model("Models/porsche_wheel_right.obj", 1);
 
@@ -113,11 +56,11 @@ int main() {
 		vehicle->load_material_left_wheel(tire_material_s);
 		vehicle->load_material_right_wheel(tire_material_s);
 
+		vehicle->chassis->cubemap_reflections_strength = 0.85f;
+
 		pipeline.graphics["vehicle_chassis"] = vehicle->chassis;
 		for (int i = 0; i < 4; i++)
 			pipeline.graphics["wheel" + std::to_string(i)] = vehicle->wheels[i];
-
-		pipeline.deattach_graphic("vehicle_chassis");
 
 		vehicle->physics_representation.set_wheel_layout(2.4, -1.5, 4.2, 0.4);
 
