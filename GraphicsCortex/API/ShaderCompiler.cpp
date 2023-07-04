@@ -8,23 +8,31 @@
 #include <GL\glew.h>
 #include "Debuger.h"
 
+#include "DirectoryUtils.h"
+
 Shader::Shader() { ; }
 
 Shader::Shader(const std::string& target_file)
 {
 	read_shader(target_file);
+	filename = compute_filename(target_file);
 }
 Shader::Shader(const std::string& vertex_target_file, const std::string& fragment_target_file) {
 	read_shader(vertex_target_file);
 	read_shader(fragment_target_file);
+	filename = compute_filename(vertex_target_file)+ " | " + compute_filename(fragment_target_file);
 }
 Shader::Shader(const std::string& vertex_target_file, const std::string& geometry_terget_file, const std::string& fragment_target_file) {
 	read_shader(vertex_target_file);
 	read_shader(geometry_terget_file);
 	read_shader(fragment_target_file);
+	filename = compute_filename(vertex_target_file) + " | " + compute_filename(geometry_terget_file) + " | " + compute_filename(fragment_target_file);
 }
 
 void Shader::read_shader(const std::string& target_file) {
+
+	filename = target_file;
+
 	std::string type = "";
 	std::ifstream file(target_file);
 	std::string line;
@@ -84,17 +92,30 @@ unsigned int Program::compile_shader(unsigned int type, const std::string& shade
 Program::Program() {
 	id = 0;
 }
+
 Program::Program(const std::string& vertex_shader_code, const std::string& fragment_shader_code) {
+	std::cout << "[ProgramInfo] nameless program is compiling." << std::endl;
+
 	compile(vertex_shader_code, fragment_shader_code);
 }
 Program::Program(const std::string& vertex_shader_code, const std::string& geometry_shader_code, const std::string& fragment_shader_code) {
+	std::cout << "[ProgramInfo] nameless program is compiling." << std::endl;
+
 	if (geometry_shader_code == "")
 		compile(vertex_shader_code, fragment_shader_code);
 	else
 		compile(vertex_shader_code, geometry_shader_code, fragment_shader_code);
 }
 
-Program::Program(const Shader& shader) : Program(shader.vertex_shader, shader.geometry_shader, shader.fragment_shader) {}
+Program::Program(const Shader& shader)
+{
+	std::cout << "[ProgramInfo] " + shader.filename + " is compiling." << std::endl;
+
+	if (shader.geometry_shader == "")
+		compile(shader.vertex_shader, shader.fragment_shader);
+	else
+		compile(shader.vertex_shader, shader.geometry_shader, shader.fragment_shader);
+}
 
 
 void Program::_detect_and_define_all_uniforms_legacy(const std::string& shader_code) {
@@ -156,7 +177,6 @@ void Program::_detect_and_define_all_uniforms(unsigned int id) {
 		char name[64];
 		GLCall(glGetActiveUniform(id, (GLuint)i, 32, &name_length, &size, &type, name));
 
-		std::cout << name << std::endl;
 		define_uniform(std::string(name));
 
 	}

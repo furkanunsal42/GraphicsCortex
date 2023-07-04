@@ -19,6 +19,9 @@ public:
 	std::string vertex_shader = "";
 	std::string fragment_shader = "";
 	std::string geometry_shader = "";
+
+	std::string filename = "";
+
 	Shader();
 	Shader(const std::string& target_file);
 	Shader(const std::string& vertex_target_file, const std::string& fragment_target_file);

@@ -7,7 +7,7 @@ int main() {
 	scene.camera->max_distance = 1000.0f;
 
 	RenderPipeline pipeline = default_program::default_pipeline(frame);
-	pipeline.programs["solid"] = default_program::solid_program_multitexture_s();
+	pipeline.programs["solid"] = default_program::solid_program_s();
 	pipeline.cameras["default_camera"] = scene.camera;
 	pipeline.activate_camera("default_camera");
 
@@ -47,7 +47,7 @@ int main() {
 			pipeline.framebuffers["shadowmap"]->color_texture.bind();
 			
 			frame.clear_window(1, 1, 1, 1);
-			pipeline.activate_program("solid");
+			pipeline.activate_program("solid_multitexture");
 			pipeline.activate_uniforms_directional_light("solid");
 			pipeline.activate_uniforms_ambiant_light("solid");
 			pipeline.activate_uniforms_graphic("solid_chassis");
@@ -63,10 +63,10 @@ int main() {
 		});
 
 	{
-		Mesh_s city(Model("Models/City/edited_city2.obj", 4.0f, Model::COORD_XYZ | Model::NORMAL_XYZ | Model::TEX_COORD_XY | Model::TEX_COORD_Z_DIFFUSE | Model::TEX_COORD_Z_NORMAL | Model::TEX_COORD_Z_SPECULAR));
-		UnorderedMaterial_s city_mat("Models/City/edited_city2.obj");
-		//Mesh_s city(Model("Models/City2/city2.obj", 1.0f, Model::COORD_XYZ | Model::NORMAL_XYZ | Model::TEX_COORD_XY | Model::TEX_COORD_Z_DIFFUSE | Model::TEX_COORD_Z_NORMAL | Model::TEX_COORD_Z_SPECULAR));
-		//UnorderedMaterial_s city_mat("Models/City2/city2.obj");
+		//Mesh_s city(Model("Models/City/edited_city2.obj", 4.0f, Model::COORD_XYZ | Model::NORMAL_XYZ | Model::TEX_COORD_XY | Model::TEX_COORD_Z_DIFFUSE | Model::TEX_COORD_Z_NORMAL | Model::TEX_COORD_Z_SPECULAR));
+		//UnorderedMaterial_s city_mat("Models/City/edited_city2.obj");
+		Mesh_s city(Model("Models/City2/city2.obj", 1.0f, Model::COORD_XYZ | Model::NORMAL_XYZ | Model::TEX_COORD_XY | Model::TEX_COORD_Z_DIFFUSE | Model::TEX_COORD_Z_NORMAL | Model::TEX_COORD_Z_SPECULAR));
+		UnorderedMaterial_s city_mat("Models/City2/city2.obj");
 		city_mat->texture_array.mipmap_bias = 0;
 		city_mat->texture_array.generate_mipmap = false;
 		city_mat->set_texture_size(1024, 1024);

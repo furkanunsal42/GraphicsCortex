@@ -131,7 +131,7 @@ vec3 calculate_directional_light(vec3 light_direction, vec3 light_color, vec3 no
 
 	float closest_distance_to_light = texture(shadow_map, position_by_light.xy).r;
 	float fragment_distance_to_light = position_by_light.z;
-	float shadow_acne_bias = 0.005;
+	float shadow_acne_bias = 0.0025;
 	
 	if(closest_distance_to_light + shadow_acne_bias < fragment_distance_to_light)
 		return(vec3(0));	// in shadow

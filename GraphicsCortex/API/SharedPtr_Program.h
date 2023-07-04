@@ -12,7 +12,7 @@ public:
 
 	Program_s(const std::string& vertex_shader_code, const std::string& fragment_shader_code) :
 		obj(std::make_shared<Program>(vertex_shader_code, fragment_shader_code)) {}
-
+	
 	Program_s(const std::string& vertex_shader_code, const std::string& geometry_shader_code, const std::string& fragment_shader_code) :
 		obj(std::make_shared<Program>(vertex_shader_code, geometry_shader_code, fragment_shader_code)) {}
 

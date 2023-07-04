@@ -27,6 +27,11 @@ std::unordered_map<std::string, Style> define_styles() {
 	styles["panel_elements"].color = gui::colorcode(0x383838);
 	styles["panel_elements"].on_hover.color = gui::colorcode(0x475F95);
 	styles["panel_elements"].margin = vec4(10);
+	styles["panel_elements"].on_hover.corner_rounding = vec4(50);
+	styles["panel_elements"].corner_rounding_change = 0.4;
+	styles["panel_elements"].corner_rounding_interpolation = Interpolation::polynomial(3);
+
+
 	
 	return styles;
 }
