@@ -253,36 +253,36 @@ namespace default_program {
 			program->update_uniform("projection", directional_light->light_projection_matrix);
 		};
 
-		pipeline.set_rendering_sequence([](RenderPipeline& pipeline, Frame& frame) {
-			pipeline.reset_active_objects();
+		pipeline.set_rendering_sequence([](RenderPipeline* pipeline, Frame& frame) {
+			pipeline->reset_active_objects();
 
-			pipeline.framebuffers["shadowmap"]->bind();
-			pipeline.activate_program("depth");
-			pipeline.activate_uniforms_graphic("shadowmap");
-			pipeline.activate_uniforms_directional_light("shadowmap");
+			pipeline->framebuffers["shadowmap"]->bind();
+			pipeline->activate_program("depth");
+			pipeline->activate_uniforms_graphic("shadowmap");
+			pipeline->activate_uniforms_directional_light("shadowmap");
 			frame.clear_window(0.2, 0.2, 0.2);
 
-			pipeline.render();
+			pipeline->render();
 
-			pipeline.framebuffers["shadowmap"]->unbind();
+			pipeline->framebuffers["shadowmap"]->unbind();
 			
-			pipeline.framebuffers["shadowmap"]->color_texture.texture_slot = 2;
-			pipeline.framebuffers["shadowmap"]->color_texture.bind();
+			pipeline->framebuffers["shadowmap"]->color_texture.texture_slot = 2;
+			pipeline->framebuffers["shadowmap"]->color_texture.bind();
 			
 			frame.clear_window(1, 1, 1, 1);
-			pipeline.activate_program("solid");
-			pipeline.activate_uniforms_graphic("solid");
-			pipeline.activate_uniforms_directional_light("solid");
-			pipeline.activate_uniforms_ambiant_light("solid");
+			pipeline->activate_program("solid");
+			pipeline->activate_uniforms_graphic("solid");
+			pipeline->activate_uniforms_directional_light("solid");
+			pipeline->activate_uniforms_ambiant_light("solid");
 			
-			pipeline.render();
+			pipeline->render();
 		});
 
 		return pipeline;
 	}
 
-	RenderPipeline default_pipeline_multitextured(Frame& frame) {
-		RenderPipeline pipeline;
+	RenderPipeline_MultiTextured multitextured_pipeline(Frame& frame) {
+		RenderPipeline_MultiTextured pipeline;
 		pipeline.programs["solid"] = solid_program_s();
 		pipeline.programs["solid_multitexture"] = solid_program_multitexture_s();
 		pipeline.programs["depth"] = depth_program_s();
@@ -325,41 +325,40 @@ namespace default_program {
 			program->update_uniform("projection", directional_light->light_projection_matrix);
 		};
 
-		pipeline.set_rendering_sequence([](RenderPipeline& pipeline, Frame& frame) {
-			pipeline.reset_active_objects();
+		pipeline.set_rendering_sequence([](RenderPipeline* pipeline_r, Frame& frame) {
+			RenderPipeline_MultiTextured* pipeline = (RenderPipeline_MultiTextured*)pipeline_r;
 
-			pipeline.framebuffers["shadowmap"]->bind();
+			pipeline->reset_active_objects();
+
+			pipeline->framebuffers["shadowmap"]->bind();
 			glViewport(0, 0, frame.window_width * 8, frame.window_height * 8);
 
-			pipeline.activate_program("depth");
-			pipeline.activate_uniforms_graphic("shadowmap");
-			pipeline.activate_uniforms_directional_light("shadowmap");
+			pipeline->activate_program("depth");
+			pipeline->activate_uniforms_graphic("shadowmap");
+			pipeline->activate_uniforms_directional_light("shadowmap");
 			frame.clear_window(0.2, 0.2, 0.2);
 
-			pipeline.render();
-			pipeline.render_single_graphic("map");
+			pipeline->render();
+			pipeline->render_multitextured();
 
-			pipeline.framebuffers["shadowmap"]->unbind();
+			pipeline->framebuffers["shadowmap"]->unbind();
 			glViewport(0, 0, frame.window_width, frame.window_height);
 
 
-			pipeline.framebuffers["shadowmap"]->color_texture.texture_slot = 2;
-			pipeline.framebuffers["shadowmap"]->color_texture.bind();
+			pipeline->framebuffers["shadowmap"]->color_texture.texture_slot = 2;
+			pipeline->framebuffers["shadowmap"]->color_texture.bind();
 
 			frame.clear_window(1, 1, 1, 1);
-			pipeline.activate_program("solid");
-			pipeline.activate_uniforms_directional_light("solid");
-			pipeline.activate_uniforms_ambiant_light("solid");
-			pipeline.activate_uniforms_graphic("solid_chassis");
-			pipeline.render_single_graphic("vehicle_chassis");
+			pipeline->activate_program("solid");
+			pipeline->activate_uniforms_directional_light("solid");
+			pipeline->activate_uniforms_ambiant_light("solid");
+			pipeline->activate_program("solid_multitexture");
+			pipeline->activate_uniforms_graphic("solid");
+			pipeline->render_multitextured();
 
-			pipeline.activate_program("solid_multitexture");
-			pipeline.activate_uniforms_graphic("solid");
-			pipeline.render_single_graphic("map");
-
-			pipeline.activate_program("solid");
-			pipeline.activate_uniforms_graphic("solid");
-			pipeline.render();
+			pipeline->activate_program("solid");
+			pipeline->activate_uniforms_graphic("solid");
+			pipeline->render();
 			});
 
 		return pipeline;

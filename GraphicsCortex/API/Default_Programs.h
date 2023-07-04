@@ -10,6 +10,8 @@
 #include <glm.hpp>
 #include <vector>
 
+#include "CustomRenderPipelines.h"
+
 namespace default_program {
 	uniform_update_queue solid_default_uniform_queue(Camera& camera, Graphic_s graphic);
 	uniform_update_queue flat_default_uniform_queue(Camera& camera, Graphic_s graphic);
@@ -42,4 +44,7 @@ namespace default_program {
 	Program_s depth_program_s();
 
 	RenderPipeline default_pipeline(Frame& frame);
+	RenderPipeline_MultiTextured multitextured_pipeline(Frame& frame);
+
+
 }

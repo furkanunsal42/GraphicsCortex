@@ -46,12 +46,12 @@ public:
 	void attach_garphic(const std::string& graphic_name);
 	void render_single_graphic(const std::string& graphic_name);
 
-	void set_rendering_sequence(std::function<void(RenderPipeline&, Frame&)> rendering_sequence);
+	void set_rendering_sequence(std::function<void(RenderPipeline*, Frame&)> rendering_sequence);
 	void render_sequence(Frame& frame);
 
-private:
+protected:
 
-	std::function<void(RenderPipeline&, Frame&)> _rendering_sequence;
+	std::function<void(RenderPipeline*, Frame&)> _rendering_sequence;
 
 	// uniform updating
 	std::string _active_uniform_updater_name_graphic;

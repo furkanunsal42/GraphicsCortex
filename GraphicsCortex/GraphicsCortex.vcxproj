@@ -179,6 +179,7 @@
     <ClCompile Include="API\BinaryBuffers.cpp" />
     <ClCompile Include="API\Camera.cpp" />
     <ClCompile Include="API\CubeMap.cpp" />
+    <ClCompile Include="API\CustomRenderPipelines.h" />
     <ClCompile Include="API\Default_Assets.cpp" />
     <ClCompile Include="API\Default_Gui_Widgets.cpp" />
     <ClCompile Include="API\Default_Programs.cpp" />

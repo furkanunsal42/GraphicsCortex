@@ -5,7 +5,7 @@ int main() {
 	Frame frame(1920, 1080, "GraphicsCortex", 8, 0, true, false, true);
 	Scene scene(frame);
 	scene.camera->max_distance = 1000.0f;
-
+	/*
 	RenderPipeline pipeline = default_program::default_pipeline(frame);
 	pipeline.programs["solid"] = default_program::solid_program_s();
 	pipeline.cameras["default_camera"] = scene.camera;
@@ -25,48 +25,53 @@ int main() {
 		program->update_uniform("shadow_map", 2);
 	};
 
-	pipeline.set_rendering_sequence([](RenderPipeline& pipeline, Frame& frame) {
-			pipeline.reset_active_objects();
+	pipeline.set_rendering_sequence([](RenderPipeline* pipeline, Frame& frame) {
+			pipeline->reset_active_objects();
 
-			pipeline.framebuffers["shadowmap"]->bind();
+			pipeline->framebuffers["shadowmap"]->bind();
 			glViewport(0, 0, frame.window_width * 8, frame.window_height * 8);
 
-			pipeline.activate_program("depth");
-			pipeline.activate_uniforms_graphic("shadowmap");
-			pipeline.activate_uniforms_directional_light("shadowmap");
+			pipeline->activate_program("depth");
+			pipeline->activate_uniforms_graphic("shadowmap");
+			pipeline->activate_uniforms_directional_light("shadowmap");
 			frame.clear_window(0.2, 0.2, 0.2);
 
-			pipeline.render();
-			pipeline.render_single_graphic("map");
+			pipeline->render();
+			pipeline->render_single_graphic("map");
 
-			pipeline.framebuffers["shadowmap"]->unbind();
+			pipeline->framebuffers["shadowmap"]->unbind();
 			glViewport(0, 0, frame.window_width, frame.window_height);
 
 			
-			pipeline.framebuffers["shadowmap"]->color_texture.texture_slot = 2;
-			pipeline.framebuffers["shadowmap"]->color_texture.bind();
+			pipeline->framebuffers["shadowmap"]->color_texture.texture_slot = 2;
+			pipeline->framebuffers["shadowmap"]->color_texture.bind();
 			
 			frame.clear_window(1, 1, 1, 1);
-			pipeline.activate_program("solid_multitexture");
-			pipeline.activate_uniforms_directional_light("solid");
-			pipeline.activate_uniforms_ambiant_light("solid");
-			pipeline.activate_uniforms_graphic("solid_chassis");
-			pipeline.render_single_graphic("vehicle_chassis");
+			pipeline->activate_program("solid_multitexture");
+			pipeline->activate_uniforms_directional_light("solid");
+			pipeline->activate_uniforms_ambiant_light("solid");
+			pipeline->activate_uniforms_graphic("solid_chassis");
+			pipeline->render_single_graphic("vehicle_chassis");
 			
-			pipeline.activate_program("solid_multitexture");
-			pipeline.activate_uniforms_graphic("solid");
-			pipeline.render_single_graphic("map");
+			pipeline->activate_program("solid_multitexture");
+			pipeline->activate_uniforms_graphic("solid");
+			pipeline->render_single_graphic("map");
 
-			pipeline.activate_program("solid");
-			pipeline.activate_uniforms_graphic("solid");
-			pipeline.render();
+			pipeline->activate_program("solid");
+			pipeline->activate_uniforms_graphic("solid");
+			pipeline->render();
 		});
+		*/
+	
+	RenderPipeline_MultiTextured pipeline = default_program::multitextured_pipeline(frame);
+	pipeline.cameras["default_camera"] = scene.camera;
+	pipeline.activate_camera("default_camera");
 
 	{
-		//Mesh_s city(Model("Models/City/edited_city2.obj", 4.0f, Model::COORD_XYZ | Model::NORMAL_XYZ | Model::TEX_COORD_XY | Model::TEX_COORD_Z_DIFFUSE | Model::TEX_COORD_Z_NORMAL | Model::TEX_COORD_Z_SPECULAR));
-		//UnorderedMaterial_s city_mat("Models/City/edited_city2.obj");
-		Mesh_s city(Model("Models/City2/city2.obj", 1.0f, Model::COORD_XYZ | Model::NORMAL_XYZ | Model::TEX_COORD_XY | Model::TEX_COORD_Z_DIFFUSE | Model::TEX_COORD_Z_NORMAL | Model::TEX_COORD_Z_SPECULAR));
-		UnorderedMaterial_s city_mat("Models/City2/city2.obj");
+		Mesh_s city(Model("Models/City/edited_city2.obj", 4.0f, Model::COORD_XYZ | Model::NORMAL_XYZ | Model::TEX_COORD_XY | Model::TEX_COORD_Z_DIFFUSE | Model::TEX_COORD_Z_NORMAL | Model::TEX_COORD_Z_SPECULAR));
+		UnorderedMaterial_s city_mat("Models/City/edited_city2.obj");
+		//Mesh_s city(Model("Models/City2/city2.obj", 1.0f, Model::COORD_XYZ | Model::NORMAL_XYZ | Model::TEX_COORD_XY | Model::TEX_COORD_Z_DIFFUSE | Model::TEX_COORD_Z_NORMAL | Model::TEX_COORD_Z_SPECULAR));
+		//UnorderedMaterial_s city_mat("Models/City2/city2.obj");
 		city_mat->texture_array.mipmap_bias = 0;
 		city_mat->texture_array.generate_mipmap = false;
 		city_mat->set_texture_size(1024, 1024);
@@ -75,8 +80,7 @@ int main() {
 		map->load_material(city_mat);
 		map->set_position(glm::vec3(0, 0, 0));
 
-		pipeline.graphics["map"] = map;
-		pipeline.deattach_graphic("map");
+		pipeline.multitextued_graphics["map"] = map;
 
 		DirectionalLight_s sunlight(glm::vec3(0.0f, 200.0f, 0.0f), glm::vec3(1.0f, -1.0f, 1.0f), glm::vec3(0.8, 0.8, 0.8));
 		AmbiantLight_s ambiance(glm::vec3(0.7f, 0.7f, 0.7f));

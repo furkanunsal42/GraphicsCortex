@@ -53,6 +53,7 @@
 #include "Text.h"
 #include "RamCache.h"
 #include "RenderPipeline.h"
+#include "CustomRenderPipelines.h"
 
 #include "PhysicsContext.h"
 #include "PhysicsGeometry.h"

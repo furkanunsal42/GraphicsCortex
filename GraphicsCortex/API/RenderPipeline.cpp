@@ -144,10 +144,10 @@ void RenderPipeline::render_single_graphic(const std::string& graphic_name){
 	}
 }
 
-void RenderPipeline::set_rendering_sequence(std::function<void(RenderPipeline&, Frame&)> rendering_sequence) {
+void RenderPipeline::set_rendering_sequence(std::function<void(RenderPipeline*, Frame&)> rendering_sequence) {
 	_rendering_sequence = rendering_sequence;
 }
 
 void RenderPipeline::render_sequence(Frame& frame) {
-	_rendering_sequence(*this, frame);
+	_rendering_sequence(this, frame);
 }
