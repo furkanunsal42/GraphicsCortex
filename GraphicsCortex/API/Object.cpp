@@ -23,7 +23,8 @@ void Object::set_rotation(glm::vec3 rotation){
 }
 
 Vehicle::Vehicle() : 
-	physics_representation(PhysicsVehicle()) { }
+	physics_representation(PhysicsVehicle()) {
+}
  
 void Vehicle::load_mesh_chassis_graphics(Mesh_s chassis) {
 	this->chassis->load_model(chassis);

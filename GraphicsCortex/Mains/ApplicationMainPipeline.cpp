@@ -32,8 +32,7 @@ int main() {
 		pipeline.ambiant_ligths["ambiance"] = ambiance;
 	}
 
-	Vehicle vehicle_raw;
-	Vehicle_s vehicle(vehicle_raw);
+	Vehicle_s vehicle;
 
 	{
 		Model chassis_model("Models/porsche_chassis.obj", 1, Model::COORD_XYZ | Model::NORMAL_XYZ | Model::TEX_COORD_XY);

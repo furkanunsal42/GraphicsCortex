@@ -6,7 +6,6 @@
 #include "SnippetVehicleTireFriction.h"
 
 #include "iostream"
-
 PhysicsVehicle::PhysicsVehicle(InitValues init_type, int num_wheels) :
 	numWheels(num_wheels), vehicle_actor(nullptr), is_vehicle_in_air(true), chassis_mesh(nullptr), wheel_mesh(nullptr), differential_type(physx::PxVehicleDifferential4WData::eDIFF_TYPE_LS_4WD)
 {
@@ -35,14 +34,12 @@ PhysicsVehicle::PhysicsVehicle(InitValues init_type, int num_wheels) :
 			(chassisDims.x * chassisDims.x + chassisDims.y * chassisDims.y) * chassisMass / 12.0f);
 
 		chassisCMOffset = physx::PxVec3(0.0f, -chassisDims.y * 0.5f + 0.65f, 0.25f);
-		physx::PxMaterial* chasis_material = PhysxContext::get().physics->createMaterial(0.5f, 0.5f, 0.5f);
-		chassisMaterial = chasis_material;
+		chassisMaterial = PhysxContext::get().physics->createMaterial(0.5f, 0.5f, 0.5f);;
 		wheelMass = 20.0f;
 		wheelWidth = 0.2f;
 		wheelRadius = 0.5f;
 		wheelMOI = 0.5f * wheelMass * wheelRadius * wheelRadius;
-		physx::PxMaterial* wheel_material = PhysxContext::get().physics->createMaterial(0.3f, 0.2f, 0.7f);
-		wheelMaterial = wheel_material;
+		wheelMaterial = PhysxContext::get().physics->createMaterial(0.3f, 0.2f, 0.7f);
 
 		max_steer = physx::PxPi * 0.4f;
 		max_handbrake_torque = 4000.0f;
@@ -103,6 +100,21 @@ PhysicsVehicle::PhysicsVehicle(InitValues init_type, int num_wheels) :
 	SceneQueryData = snippetvehicle::VehicleSceneQueryData::allocate(1, num_wheels, 1, 1, snippetvehicle::WheelSceneQueryPreFilterBlocking, NULL, PhysxContext::get().physics_allocator);
 	BatchQuery = snippetvehicle::VehicleSceneQueryData::setUpBatchedSceneQuery(0, *SceneQueryData, PhysxContext::get().physics_scene);
 }
+
+PhysicsVehicle::~PhysicsVehicle() {
+	if (chassisMaterial!= nullptr) chassisMaterial->release();
+	if (wheelMaterial!= nullptr) wheelMaterial->release();
+	if (vehicle_actor!= nullptr) vehicle_actor->release();
+	vehicle_drive->free();
+	PhysxContext::get().physics_allocator.deallocate(wheelsSimData);
+	PhysxContext::get().physics_allocator.deallocate(SceneQueryData);
+	if (BatchQuery!= nullptr) BatchQuery->release();
+	if (chassis_mesh!= nullptr) chassis_mesh->release();
+	if (wheel_mesh!= nullptr) wheel_mesh->release();
+	if (FrictionPairs != nullptr) FrictionPairs->release();
+	delete[] wheelOffsets;
+}
+
 
 void PhysicsVehicle::_initialize_box_chassis_mesh() {
 	if (chassis_mesh != nullptr)
@@ -424,9 +436,9 @@ void PhysicsVehicle::compile() {
 
 	_create_wheel_sim();
 	_create_drive_sim();
-
+	
 	_create_drive();
-	_create_control();
+	//_create_control();
 }
 
 void PhysicsVehicle::set_gear(gear input_gear) {

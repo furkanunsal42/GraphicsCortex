@@ -19,6 +19,6 @@ public:
 	_SHARED_POINTER_DEFINITIONS(Vehicle)
 
 	Vehicle_s() :
-		obj(std::make_shared<Vehicle>()) {} // different
+		obj(std::shared_ptr<Vehicle>(new Vehicle())) {} // different
 
 };

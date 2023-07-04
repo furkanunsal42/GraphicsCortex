@@ -288,7 +288,7 @@ namespace default_program {
 		pipeline.programs["depth"] = depth_program_s();
 		pipeline.programs["framebuffer"] = framebuffer_program_s();
 
-		FrameBuffer_s shadowmap(frame.window_width * 8, frame.window_height * 8);
+		FrameBuffer_s shadowmap(frame.window_width, frame.window_height);
 
 		pipeline.framebuffers["shadowmap"] = shadowmap;
 

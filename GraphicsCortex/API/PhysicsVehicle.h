@@ -17,7 +17,7 @@ public:
 	physx::PxVec3 chassisDims;
 	physx::PxVec3 chassisMOI;
 	physx::PxVec3 chassisCMOffset;
-	physx::PxMaterial* chassisMaterial;
+	physx::PxMaterial* chassisMaterial = nullptr;
 	physx::PxFilterData chassisSimFilterData;  //word0 = collide type, word1 = collide against types, word2 = PxPairFlags
 
 	float wheelMass;
@@ -28,13 +28,13 @@ public:
 	int numWheels;
 	physx::PxFilterData wheelSimFilterData;	//word0 = collide type, word1 = collide against types, word2 = PxPairFlags
 	
-	physx::PxRigidDynamic* vehicle_actor;
-	physx::PxVehicleDrive4W* vehicle_drive;
+	physx::PxRigidDynamic* vehicle_actor = nullptr;
+	physx::PxVehicleDrive4W* vehicle_drive = nullptr;
 
-	snippetvehicle::VehicleSceneQueryData* SceneQueryData;
+	snippetvehicle::VehicleSceneQueryData* SceneQueryData = nullptr;
 	physx::PxBatchQuery* BatchQuery;
 
-	snippetvehicle::PxVehicleDrivableSurfaceToTireFrictionPairs* FrictionPairs;
+	snippetvehicle::PxVehicleDrivableSurfaceToTireFrictionPairs* FrictionPairs = nullptr;
 
 	physx::PxVehicleDrive4WRawInputData InputData;
 	physx::PxVehicleKeySmoothingData KeySmoothingData;
@@ -64,7 +64,7 @@ public:
 	
 	//wheel
 	wheel_type wheel_type;
-	physx::PxVec3* wheelOffsets; // array of PxVec3, a vector for each wheel
+	physx::PxVec3* wheelOffsets = nullptr; // array of PxVec3, a vector for each wheel
 	float max_steer;
 	float max_handbrake_torque;
 	float max_brake_torque;
@@ -108,6 +108,7 @@ public:
 	};
 
 	PhysicsVehicle(InitValues init_type = InitValues::default_values, int num_wheels = 4);
+	~PhysicsVehicle();
 
 	void compile();
 	
@@ -144,8 +145,7 @@ public:
 
 	physx::PxVec3 get_position();
 	physx::PxQuat get_rotation();
-
-	private:
+private:
 	void _initialize_box_chassis_mesh();
 	void _initialize_cylinder_wheel_mesh();
 	void _calculate_default_wheel_offsets();

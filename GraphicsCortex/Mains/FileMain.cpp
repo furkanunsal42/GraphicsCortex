@@ -1,8 +1,15 @@
-#include "API/GraphicsCortex.h"
+#include "GraphicsCortex.h"
 
 int main() {
-	Image image = AssetImporter::read_image_cached("Images/orange.png", 3);
-	image.save_to_disc("cached_image.png");
+	for (int i = 0; i < 1000000; i++) {
+		Vehicle v;
+		if ( i % 10000 == 0)
+			std::cout << i << std::endl;
+	}
+
+	
+	//Image image = AssetImporter::read_image_cached("Images/orange.png", 3);
+	//image.save_to_disc("cached_image.png");
 
 	//Image image("Images/orange.png", 4, true);
 	//
