@@ -47,7 +47,7 @@ int main() {
 		tire_material_s->set_texture("Images/cartextures/911_22_930_tire_BaseColor.png", 4, 0, UnorderedMaterial::COLOR);
 
 		UnorderedMaterial_s chassis_material_s(1);
-		chassis_material_s->set_texture("Images/cartextures/911_22_paint_BaseColor.png", 4, 0, UnorderedMaterial::COLOR);
+		chassis_material_s->set_texture("Images/full_black.png", 4, 0, UnorderedMaterial::COLOR);
 
 		vehicle->load_mesh_all_graphics(chassis, left_wheel, right_wheel);
 		vehicle->load_model_all_physics(chassis_model, chassis_left_wheel_model, chassis_right_wheel_model);
@@ -55,7 +55,7 @@ int main() {
 		vehicle->load_material_left_wheel(tire_material_s);
 		vehicle->load_material_right_wheel(tire_material_s);
 
-		vehicle->chassis->cubemap_reflections_strength = 0.85f;
+		vehicle->chassis->set_reflection_strength(0.15f);
 
 		pipeline.graphics["vehicle_chassis"] = vehicle->chassis;
 		for (int i = 0; i < 4; i++)
@@ -98,8 +98,8 @@ int main() {
 		frame.clear_window(0.25f, 0.25f, 0.25f);
 		frame.display_performance(180);
 
-		//scene.camera->handle_movements(frame.window, frame_time);
-		vehicle->physics_representation.vehicle_control(frame.window);
+		scene.camera->handle_movements(frame.window, frame_time);
+		//vehicle->physics_representation.vehicle_control(frame.window);
 
 		vehicle->sync_with_physics();
 		// let camera follow the car
@@ -108,8 +108,8 @@ int main() {
 		camera_rotation = camera_rotation * glm::quat(glm::vec3(0, 3.14f, 0));
 		camera_position += glm::vec3(0.0f, 0.5f, 0.0f);
 		camera_position += camera_rotation * glm::vec3(0.0f, 0.5f, 1.0f);
-		scene.camera->set_rotation(camera_rotation);
-		scene.camera->set_position(camera_position);
+		//scene.camera->set_rotation(camera_rotation);
+		//scene.camera->set_position(camera_position);
 
 		cube_map.bind();
 

@@ -29,6 +29,9 @@ private:
 	glm::quat _last_updated_rotation = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
 
 	uniform_update_queue _uniform_update_queue;
+
+	float cubemap_reflections_strength = 0.0f;
+
 public:
 
 	std::shared_ptr<Mesh> mesh = nullptr;
@@ -43,8 +46,6 @@ public:
 	glm::mat4 model_matrix;
 	
 	unsigned int mode = GL_TRIANGLES;
-
-	float cubemap_reflections_strength = 0.0f; // values between 1.0f - 0.0f (<0.1f means false)
 
 	Graphic();
 	Graphic(Mesh_s mesh, Material_s material, Program_s renderer);
@@ -83,6 +84,9 @@ public:
 	void set_position(glm::vec3 position);
 	void set_rotation(glm::quat rotation);
 	void set_model_matrix(glm::mat4 model_matrix);
+
+	void set_reflection_strength(float reflection);
+	float get_reflection_strength();
 
 	template<typename T, typename... Ts>
 	void set_uniform(const std::string& uniform_name, T uniform_value, Ts... uniform_values) {

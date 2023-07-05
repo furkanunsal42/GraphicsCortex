@@ -161,6 +161,14 @@ void Graphic::set_rotation(glm::quat rotation) {
 	this->rotation = rotation;
 }
 
+void Graphic::set_reflection_strength(float reflection){
+	cubemap_reflections_strength = reflection;
+}
+
+float Graphic::get_reflection_strength(){
+	return cubemap_reflections_strength;
+}
+
 void Graphic::update_uniform_queue() {
 	_uniform_update_queue.update_uniforms();
 }
