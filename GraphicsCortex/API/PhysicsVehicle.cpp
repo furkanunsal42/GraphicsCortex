@@ -9,7 +9,6 @@
 PhysicsVehicle::PhysicsVehicle(InitValues init_type, int num_wheels) :
 	numWheels(num_wheels), vehicle_actor(nullptr), is_vehicle_in_air(true), chassis_mesh(nullptr), wheel_mesh(nullptr), differential_type(physx::PxVehicleDifferential4WData::eDIFF_TYPE_LS_4WD)
 {
-
 	PhysxContext::get();
 
 	wheelsSimData = physx::PxVehicleWheelsSimData::allocate(num_wheels);
@@ -102,15 +101,16 @@ PhysicsVehicle::PhysicsVehicle(InitValues init_type, int num_wheels) :
 }
 
 PhysicsVehicle::~PhysicsVehicle() {
-	if (chassisMaterial!= nullptr) chassisMaterial->release();
-	if (wheelMaterial!= nullptr) wheelMaterial->release();
-	if (vehicle_actor!= nullptr) vehicle_actor->release();
-	vehicle_drive->free();
+	if (chassisMaterial != nullptr) chassisMaterial->release();
+	if (wheelMaterial != nullptr) wheelMaterial->release();
+	if (vehicle_actor != nullptr) vehicle_actor->release();
+	//if (vehicle_drive != nullptr) vehicle_drive->free();
+	PhysxContext::get().physics_allocator.deallocate(vehicle_drive);
 	PhysxContext::get().physics_allocator.deallocate(wheelsSimData);
 	PhysxContext::get().physics_allocator.deallocate(SceneQueryData);
-	if (BatchQuery!= nullptr) BatchQuery->release();
-	if (chassis_mesh!= nullptr) chassis_mesh->release();
-	if (wheel_mesh!= nullptr) wheel_mesh->release();
+	if (BatchQuery != nullptr) BatchQuery->release();
+	if (chassis_mesh != nullptr) chassis_mesh->release();
+	if (wheel_mesh != nullptr) wheel_mesh->release();
 	if (FrictionPairs != nullptr) FrictionPairs->release();
 	delete[] wheelOffsets;
 }
@@ -438,7 +438,7 @@ void PhysicsVehicle::compile() {
 	_create_drive_sim();
 	
 	_create_drive();
-	//_create_control();
+	_create_control();
 }
 
 void PhysicsVehicle::set_gear(gear input_gear) {

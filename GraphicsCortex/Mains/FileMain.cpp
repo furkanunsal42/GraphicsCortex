@@ -2,7 +2,7 @@
 
 int main() {
 	for (int i = 0; i < 1000000; i++) {
-		Vehicle v;
+		Vehicle_s physics_representation;
 		if ( i % 10000 == 0)
 			std::cout << i << std::endl;
 	}
