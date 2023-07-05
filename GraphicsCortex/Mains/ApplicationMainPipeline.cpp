@@ -5,7 +5,8 @@ int main() {
 	Frame frame(1920, 1080, "GraphicsCortex", 8, 0, true, false, true);
 	Scene scene(frame);
 	scene.camera->max_distance = 1000.0f;
-	
+
+
 	RenderPipeline_MultiTextured pipeline = default_program::multitextured_pipeline(frame);
 	pipeline.cameras["default_camera"] = scene.camera;
 	pipeline.activate_camera("default_camera");
@@ -55,7 +56,7 @@ int main() {
 		vehicle->load_material_left_wheel(tire_material_s);
 		vehicle->load_material_right_wheel(tire_material_s);
 
-		vehicle->chassis->set_reflection_strength(0.15f);
+		vehicle->chassis->set_reflection_strength(0.35f);
 
 		pipeline.graphics["vehicle_chassis"] = vehicle->chassis;
 		for (int i = 0; i < 4; i++)
@@ -98,8 +99,8 @@ int main() {
 		frame.clear_window(0.25f, 0.25f, 0.25f);
 		frame.display_performance(180);
 
-		scene.camera->handle_movements(frame.window, frame_time);
-		//vehicle->physics_representation.vehicle_control(frame.window);
+		//scene.camera->handle_movements(frame.window, frame_time);
+		vehicle->physics_representation.vehicle_control(frame.window);
 
 		vehicle->sync_with_physics();
 		// let camera follow the car
@@ -108,8 +109,8 @@ int main() {
 		camera_rotation = camera_rotation * glm::quat(glm::vec3(0, 3.14f, 0));
 		camera_position += glm::vec3(0.0f, 0.5f, 0.0f);
 		camera_position += camera_rotation * glm::vec3(0.0f, 0.5f, 1.0f);
-		//scene.camera->set_rotation(camera_rotation);
-		//scene.camera->set_position(camera_position);
+		scene.camera->set_rotation(camera_rotation);
+		scene.camera->set_position(camera_position);
 
 		cube_map.bind();
 

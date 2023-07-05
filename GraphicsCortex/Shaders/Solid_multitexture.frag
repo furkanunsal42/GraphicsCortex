@@ -193,7 +193,7 @@ vec3 calculate_total_light(vec3 normal, vec3 space_coords){
 void main(){
 	
 	vec3 normal;
-	if(bool(map_index_normal > -0.5) && false)
+	if(bool(map_index_normal > -0.5))
 		normal = normalize(frag_TBN * ((texture(texture_array_slot, vec3(tex_coords, map_index_normal)) * 2).xyz - 1));
 	else
 		normal = frag_normal;
@@ -213,5 +213,7 @@ void main(){
 	if(frag_color.a < 0.1f)
 		discard;
 
+	float gamma = 1.2;
+	frag_color.rgb = pow(frag_color.rgb, vec3(1.0/gamma));
 	
 }

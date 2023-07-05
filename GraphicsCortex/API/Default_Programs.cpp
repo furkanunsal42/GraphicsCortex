@@ -352,13 +352,12 @@ namespace default_program {
 			pipeline->activate_program("solid");
 			pipeline->activate_uniforms_directional_light("solid");
 			pipeline->activate_uniforms_ambiant_light("solid");
+			pipeline->activate_uniforms_graphic("solid");
+			pipeline->render();
+
 			pipeline->activate_program("solid_multitexture");
 			pipeline->activate_uniforms_graphic("solid");
 			pipeline->render_multitextured();
-
-			pipeline->activate_program("solid");
-			pipeline->activate_uniforms_graphic("solid");
-			pipeline->render();
 			});
 
 		return pipeline;

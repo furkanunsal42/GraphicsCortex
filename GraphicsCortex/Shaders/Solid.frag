@@ -199,7 +199,7 @@ void main(){
 	vec3 total_light = calculate_total_light(normal, frag_space_coord);
 	vec4 color;
 	if (bool(active_texture_indicies[0] > -0.5))
-		color = texture(texture_array_slot, vec3(tex_coords, active_texture_indicies[0]));
+		color = texture(texture_array_slot, vec3(tex_coords, active_texture_indicies[0])) + vec4(0.05, 0.05, 0.05, 0);
 	else
 		color = vec4(1.0);
 
@@ -211,7 +211,7 @@ void main(){
 	if(frag_color.a < 0.1f)
 		discard;
 
-	float gamma = 2.2;
+	float gamma = 1.2;
 	frag_color.rgb = pow(frag_color.rgb, vec3(1.0/gamma));
 	
 }
