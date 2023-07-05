@@ -9,7 +9,7 @@ int main() {
 	scene.camera->max_distance = 100.0f;
 
 	Program_s solid_program = default_program::solid_program_s();
-	Program_s depth_program(Shader("Custom Shaders/Depth.vert", "Custom Shaders/Depth.frag"));
+	Program_s depth_program(Shader("Shaders/Depth.vert", "Shaders/Depth.frag"));
 
 	DirectionalLight_s sunlight(glm::vec3(4, 2, 4), glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(1, 1, 1), solid_program);
 	sunlight->update_matricies();
@@ -30,7 +30,7 @@ int main() {
 
 	Graphic_s box(default_geometry::cube());
 	box->load_material(bricks_material);
-	auto box_solid_uniforms = default_program::solid_default_uniform_queue(*scene.camera, box);
+	auto box_solid_uniforms = default_program::solid_default_uniform_queue(*scene.camera.obj, box);
 	box_solid_uniforms.add_uniform_update(uniform_update<int>("shadow_map", 2));
 
 	uniform_update_queue box_shadowmap_uniforms;

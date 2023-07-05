@@ -151,3 +151,39 @@ void RenderPipeline::set_rendering_sequence(std::function<void(RenderPipeline*, 
 void RenderPipeline::render_sequence(Frame& frame) {
 	_rendering_sequence(this, frame);
 }
+
+std::string RenderPipeline::get_active_program_name(){
+	return _active_name_program;
+}
+
+std::string RenderPipeline::get_active_framebuffer_name(){
+	return _active_name_framebuffer;
+}
+
+std::string RenderPipeline::get_active_camera_name(){
+	return _active_name_camera;
+}
+
+std::string RenderPipeline::get_active_uniform_updater_name_graphic(){
+	return _active_uniform_updater_name_graphic;
+}
+
+std::string RenderPipeline::get_active_uniform_updater_name_ambiant_light(){
+	return _active_uniform_updater_name_ambiant_light;
+}
+
+std::string RenderPipeline::get_active_uniform_updater_name_directional_light(){
+	return _active_uniform_updater_name_directional_light;
+}
+
+std::string RenderPipeline::get_active_uniform_updater_name_point_light(){
+	return _active_uniform_updater_name_point_light;
+}
+
+std::string RenderPipeline::get_active_uniform_updater_name_spot_light(){
+	return _active_uniform_updater_name_spot_light;
+}
+
+std::string RenderPipeline::get_active_uniform_updater_name_framebuffer(){
+	return _active_uniform_updater_name_framebuffer;
+}

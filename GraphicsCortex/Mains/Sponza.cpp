@@ -10,32 +10,32 @@ int main() {
 	pipeline.cameras["camera"] = scene.camera;
 	pipeline.activate_camera("camera");
 
-	pipeline.set_rendering_sequence([](RenderPipeline& pipeline, Frame& frame) {
-			pipeline.reset_active_objects();
+	pipeline.set_rendering_sequence([](RenderPipeline* pipeline, Frame& frame) {
+			pipeline->reset_active_objects();
 
-			pipeline.framebuffers["shadowmap"]->bind();
-			pipeline.activate_program("depth");
-			pipeline.activate_uniforms_graphic("shadowmap");
-			pipeline.activate_uniforms_directional_light("shadowmap");
+			pipeline->framebuffers["shadowmap"]->bind();
+			pipeline->activate_program("depth");
+			pipeline->activate_uniforms_graphic("shadowmap");
+			pipeline->activate_uniforms_directional_light("shadowmap");
 			frame.clear_window(0.2, 0.2, 0.2);
 
-			pipeline.render();
+			pipeline->render();
 
-			pipeline.framebuffers["shadowmap"]->unbind();
+			pipeline->framebuffers["shadowmap"]->unbind();
 			
-			pipeline.framebuffers["shadowmap"]->color_texture.texture_slot = 2;
-			pipeline.framebuffers["shadowmap"]->color_texture.bind();
+			pipeline->framebuffers["shadowmap"]->color_texture.texture_slot = 2;
+			pipeline->framebuffers["shadowmap"]->color_texture.bind();
 			
 			frame.clear_window(1, 1, 1, 1);
-			pipeline.activate_program("solid");
-			pipeline.activate_uniforms_graphic("solid");
-			pipeline.activate_uniforms_directional_light("solid");
-			pipeline.activate_uniforms_ambiant_light("solid");
+			pipeline->activate_program("solid");
+			pipeline->activate_uniforms_graphic("solid");
+			pipeline->activate_uniforms_directional_light("solid");
+			pipeline->activate_uniforms_ambiant_light("solid");
 
-			pipeline.activate_program("solid_multitexture");
-			pipeline.render_single_graphic("sponza");
+			pipeline->activate_program("solid_multitexture");
+			pipeline->render_single_graphic("sponza");
 
-			pipeline.render();
+			pipeline->render();
 		});
 
 	Mesh_s sponza_mesh(Model("Models/Sponza/Sponza.fbx", 0.1f, Model::ALL));

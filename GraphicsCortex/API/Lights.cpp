@@ -8,7 +8,7 @@ void Light::update_uniforms() {
 }
 
 void Light::define_uniforms(int max_count) {
-	std::cout << "[WARNING] light._define_uniforms(max_count) executed" << std::endl;
+	std::cout << "[WARNING] light.define_uniforms(max_count) executed" << std::endl;
 }
 
 void Light::update_uniform_queue() {

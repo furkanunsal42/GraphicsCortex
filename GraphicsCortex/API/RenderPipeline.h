@@ -49,6 +49,16 @@ public:
 	void set_rendering_sequence(std::function<void(RenderPipeline*, Frame&)> rendering_sequence);
 	void render_sequence(Frame& frame);
 
+	std::string get_active_program_name();
+	std::string get_active_framebuffer_name();
+	std::string get_active_camera_name();
+	std::string get_active_uniform_updater_name_graphic();
+	std::string get_active_uniform_updater_name_ambiant_light();
+	std::string get_active_uniform_updater_name_directional_light();
+	std::string get_active_uniform_updater_name_point_light();
+	std::string get_active_uniform_updater_name_spot_light();
+	std::string get_active_uniform_updater_name_framebuffer();
+
 protected:
 
 	std::function<void(RenderPipeline*, Frame&)> _rendering_sequence;

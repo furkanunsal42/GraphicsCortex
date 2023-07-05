@@ -300,7 +300,6 @@ namespace default_program {
 			program->update_uniform("use_cube_map_reflection", (int)(graphic->get_reflection_strength() > 0.001));
 			program->update_uniform("cube_map_reflection_strength", graphic->get_reflection_strength());
 			program->update_uniform("camera_coords", camera->position);
-			program->update_uniform("active_texture_indicies", graphic->unordered_material->get_active_textures_by_type());
 			program->update_uniform("shadow_map", 2);
 		};
 
@@ -330,25 +329,29 @@ namespace default_program {
 
 			pipeline->reset_active_objects();
 
+			for (auto& d_light_pair : pipeline->directional_ligths) {
+				DirectionalLight_s& d_light = d_light_pair.second;
+				//d_light->position = pipeline->cameras[pipeline->get_active_camera_name()]->position;
+				//d_light->update_matricies();
+			}
+			
 			pipeline->framebuffers["shadowmap"]->bind();
 			glViewport(0, 0, frame.window_width * 8, frame.window_height * 8);
-
+			
 			pipeline->activate_program("depth");
 			pipeline->activate_uniforms_graphic("shadowmap");
 			pipeline->activate_uniforms_directional_light("shadowmap");
 			frame.clear_window(0.2, 0.2, 0.2);
-
+			
 			pipeline->render();
 			pipeline->render_multitextured();
-
+			
 			pipeline->framebuffers["shadowmap"]->unbind();
 			glViewport(0, 0, frame.window_width, frame.window_height);
-
-
+			
 			pipeline->framebuffers["shadowmap"]->color_texture.texture_slot = 2;
 			pipeline->framebuffers["shadowmap"]->color_texture.bind();
 
-			frame.clear_window(1, 1, 1, 1);
 			pipeline->activate_program("solid");
 			pipeline->activate_uniforms_directional_light("solid");
 			pipeline->activate_uniforms_ambiant_light("solid");

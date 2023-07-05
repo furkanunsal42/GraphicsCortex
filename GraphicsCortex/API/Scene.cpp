@@ -44,6 +44,7 @@ void Scene::render(bool show_warnings) {
 	camera->update_matrixes();
 
 	for (std::shared_ptr<Light> light : _lights) {
+		light->update_matricies();
 		light->update_uniform_queue();
 	}
 

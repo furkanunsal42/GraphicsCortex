@@ -2,17 +2,16 @@
 
 int main() {
 
-	Frame frame(1920, 1080, "GraphicsCortex", 8, 0, true, false, true);
+	Frame frame(1920, 1080, "GraphicsCortex", 0, 0, true, false, true);
 	Scene scene(frame);
 	scene.camera->max_distance = 1000.0f;
-
 
 	RenderPipeline_MultiTextured pipeline = default_program::multitextured_pipeline(frame);
 	pipeline.cameras["default_camera"] = scene.camera;
 	pipeline.activate_camera("default_camera");
 
 	{
-		Mesh_s city(Model("Models/City/edited_city2.obj", 4.0f, Model::COORD_XYZ | Model::NORMAL_XYZ | Model::TEX_COORD_XY | Model::TEX_COORD_Z_DIFFUSE | Model::TEX_COORD_Z_NORMAL | Model::TEX_COORD_Z_SPECULAR));
+		Mesh_s city(Model("Models/City/edited_city2.obj", 4.0f, Model::ALL));
 		UnorderedMaterial_s city_mat("Models/City/edited_city2.obj");
 		//Mesh_s city(Model("Models/City2/city2.obj", 1.0f, Model::COORD_XYZ | Model::NORMAL_XYZ | Model::TEX_COORD_XY | Model::TEX_COORD_Z_DIFFUSE | Model::TEX_COORD_Z_NORMAL | Model::TEX_COORD_Z_SPECULAR));
 		//UnorderedMaterial_s city_mat("Models/City2/city2.obj");
@@ -26,7 +25,7 @@ int main() {
 
 		pipeline.multitextued_graphics["map"] = map;
 
-		DirectionalLight_s sunlight(glm::vec3(0.0f, 200.0f, 0.0f), glm::vec3(1.0f, -1.0f, 1.0f), glm::vec3(0.8, 0.8, 0.8));
+		DirectionalLight_s sunlight(glm::vec3(0.0f, 200.0f, 0.0f), glm::vec3(1, -1.0f, 1), glm::vec3(0.8, 0.8, 0.8));
 		AmbiantLight_s ambiance(glm::vec3(0.7f, 0.7f, 0.7f));
 
 		pipeline.directional_ligths["sun"] = sunlight;
@@ -56,7 +55,7 @@ int main() {
 		vehicle->load_material_left_wheel(tire_material_s);
 		vehicle->load_material_right_wheel(tire_material_s);
 
-		vehicle->chassis->set_reflection_strength(0.35f);
+		vehicle->chassis->set_reflection_strength(0.15f);
 
 		pipeline.graphics["vehicle_chassis"] = vehicle->chassis;
 		for (int i = 0; i < 4; i++)
@@ -99,18 +98,19 @@ int main() {
 		frame.clear_window(0.25f, 0.25f, 0.25f);
 		frame.display_performance(180);
 
-		//scene.camera->handle_movements(frame.window, frame_time);
-		vehicle->physics_representation.vehicle_control(frame.window);
+		scene.camera->handle_movements(frame.window, frame_time);
+		//vehicle->physics_representation.vehicle_control(frame.window);
 
 		vehicle->sync_with_physics();
+
 		// let camera follow the car
 		glm::quat camera_rotation = vehicle->chassis->get_rotation();
 		glm::vec3 camera_position = vehicle->chassis->get_position();
 		camera_rotation = camera_rotation * glm::quat(glm::vec3(0, 3.14f, 0));
 		camera_position += glm::vec3(0.0f, 0.5f, 0.0f);
 		camera_position += camera_rotation * glm::vec3(0.0f, 0.5f, 1.0f);
-		scene.camera->set_rotation(camera_rotation);
-		scene.camera->set_position(camera_position);
+		//scene.camera->set_rotation(camera_rotation);
+		//scene.camera->set_position(camera_position);
 
 		cube_map.bind();
 

@@ -166,7 +166,6 @@ Image FrameBuffer::save(bool vertical_flip) {
 	unsigned char* i_pixels = new unsigned char[image_size / sizeof(unsigned char)];
 	GLCall(glBindFramebuffer(GL_READ_FRAMEBUFFER, id));
 	GLCall(glReadBuffer(GL_COLOR_ATTACHMENT0));
-	GLCall(glReadPixels(0, 0, w, h, GL_RGB, GL_UNSIGNED_BYTE, i_pixels));
 	GLCall(glReadPixels(0, 0, w, h, color_texture.format, color_texture.data_type, i_pixels));
 	unbind();
 
