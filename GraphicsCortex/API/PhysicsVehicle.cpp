@@ -104,8 +104,12 @@ PhysicsVehicle::~PhysicsVehicle() {
 	if (chassisMaterial != nullptr) chassisMaterial->release();
 	if (wheelMaterial != nullptr) wheelMaterial->release();
 	if (vehicle_actor != nullptr) vehicle_actor->release();
-	//if (vehicle_drive != nullptr) vehicle_drive->free();
-	PhysxContext::get().physics_allocator.deallocate(vehicle_drive);
+	
+	if(compiled)
+		if (vehicle_drive != nullptr) vehicle_drive->free();
+	if (!compiled)
+		PhysxContext::get().physics_allocator.deallocate(vehicle_drive);
+
 	PhysxContext::get().physics_allocator.deallocate(wheelsSimData);
 	PhysxContext::get().physics_allocator.deallocate(SceneQueryData);
 	if (BatchQuery != nullptr) BatchQuery->release();
@@ -439,6 +443,8 @@ void PhysicsVehicle::compile() {
 	
 	_create_drive();
 	_create_control();
+
+	compiled = true;
 }
 
 void PhysicsVehicle::set_gear(gear input_gear) {

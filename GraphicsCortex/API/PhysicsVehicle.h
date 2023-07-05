@@ -92,6 +92,8 @@ public:
 	float auto_gear_up_rotation_target = 0.7;
 	float auto_gear_down_rotation_target = 0.4;
 
+	bool compiled = false;
+
 	enum InitValues {
 		null_values,
 		default_values,

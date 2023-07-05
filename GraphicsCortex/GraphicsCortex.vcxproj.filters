@@ -174,7 +174,7 @@
     <ClCompile Include="API\CustomRenderPipelines.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClCompile>
-    <ClCompile Include="Mains\FileMain.cpp">
+    <ClCompile Include="Mains\ApplicationMainPipeline.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
   </ItemGroup>
