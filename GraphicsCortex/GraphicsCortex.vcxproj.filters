@@ -174,7 +174,7 @@
     <ClCompile Include="API\CustomRenderPipelines.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClCompile>
-    <ClCompile Include="Mains\DepthMap.cpp">
+    <ClCompile Include="Mains\ApplicationMain.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
   </ItemGroup>
@@ -227,6 +227,7 @@
     <None Include="Shaders\Solid.vert" />
     <None Include="Shaders\Solid_multitexture.frag" />
     <None Include="Shaders\Solid_multitexture.geom" />
+    <None Include="Matrix\Shaders\Matrix.frag" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="API\Debuger.h">
