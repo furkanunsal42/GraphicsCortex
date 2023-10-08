@@ -31,6 +31,9 @@ public:
 	Graphic_s chassis;
 	Graphic_s wheels[4];
 
+	bool chassis_graphic_initialized = false;
+	bool wheel_graphic_initialized = false;
+
 	enum wheel_index {
 		FRONT_LEFT = 0,
 		FRONT_RIGHT,

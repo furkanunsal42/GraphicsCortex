@@ -28,16 +28,19 @@ Vehicle::Vehicle() :
  
 void Vehicle::load_mesh_chassis_graphics(Mesh_s chassis) {
 	this->chassis->load_model(chassis);
+	chassis_graphic_initialized = true;
 }
 
 void Vehicle::load_mesh_left_wheel_graphics(Mesh_s left_wheel) {
 	this->wheels[FRONT_LEFT]->load_model(left_wheel);
 	this->wheels[REAR_LEFT]->load_model(left_wheel);
+	wheel_graphic_initialized = true;
 }
 
 void Vehicle::load_mesh_right_wheel_graphics(Mesh_s right_wheel) {
 	this->wheels[FRONT_RIGHT]->load_model(right_wheel);
 	this->wheels[REAR_RIGHT]->load_model(right_wheel);
+	wheel_graphic_initialized = true;
 }
 
 void Vehicle::load_mesh_all_graphics(Mesh_s chassis, Mesh_s left_wheel, Mesh_s right_wheel) {
@@ -50,6 +53,7 @@ void Vehicle::load_model_chassis_physics(Model& chassis) {
 	std::vector<physx::PxVec3> data = chassis.get_partial_data<physx::PxVec3>("111");
 	this->physics_representation.set_chasis_mesh(create_geometry::convex_hull(data));
 }
+
 void Vehicle::load_model_left_wheel_physics(Model& left_wheel) {
 	std::vector<physx::PxVec3> data = left_wheel.get_partial_data<physx::PxVec3>("111");
 	this->physics_representation.set_wheel_mesh(create_geometry::convex_hull(data));

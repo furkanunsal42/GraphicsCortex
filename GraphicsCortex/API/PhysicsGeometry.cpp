@@ -25,6 +25,35 @@ namespace create_geometry {
 		return physx::PxPlane(nx, ny, nz, distance);
 	}
 
+	physx::PxTriangleMeshGeometry triangle_mesh(const physx::PxVec3* verticies, unsigned int vertex_count, const unsigned int* indicies, unsigned int index_count) {
+		physx::PxTriangleMeshDesc meshDesc;
+
+		meshDesc.points.count = vertex_count;
+		meshDesc.points.stride = sizeof(verticies[0]);
+		meshDesc.points.data = verticies;
+
+		meshDesc.triangles.count = index_count / 3;
+		meshDesc.triangles.stride = sizeof(indicies[0]) * 3;
+		meshDesc.triangles.data = (const int*)indicies;
+
+		auto context = PhysxContext::get();
+
+		physx::PxDefaultMemoryOutputStream writeBuffer;
+		physx::PxTriangleMeshCookingResult::Enum result;
+		bool status = context.physics_cooking->cookTriangleMesh(meshDesc, writeBuffer, &result);
+		if (!status)
+			return NULL;
+
+		physx::PxDefaultMemoryInputData readBuffer(writeBuffer.getData(), writeBuffer.getSize());
+		physx::PxTriangleMesh* triagnle_mesh = context.physics->createTriangleMesh(readBuffer);
+
+		return physx::PxTriangleMeshGeometry(triagnle_mesh);
+	}
+
+	physx::PxTriangleMeshGeometry triangle_mesh(const std::vector<physx::PxVec3>& verticies, const std::vector<unsigned int>& indicies) {
+		return triangle_mesh(&(verticies[0]), verticies.size(), &(indicies[0]), indicies.size());
+	}
+
 	physx::PxHeightFieldGeometry heightfield(physx::PxHeightFieldSample heightfield_data[], unsigned int column_size, unsigned int row_size, heightfield_array_type array_type) {
 		if (column_size == 0 || row_size == 0) {
 			std::cout << "[PhysX Error] create_geometry::heightfield() is called but column_size or row_size was zero.\n";

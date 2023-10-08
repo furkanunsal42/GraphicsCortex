@@ -34,13 +34,17 @@ namespace create_geometry {
 
 		return physx::PxConvexMeshGeometry(convex_mesh);
 	}
-	
+
 	template<typename T>
 	std::enable_if_t<std::is_same<T, physx::PxVec3>::value || std::is_same<T, glm::vec3>::value, physx::PxConvexMeshGeometry>
 		convex_hull(const std::vector<T>& verticies, unsigned int max_verticies = 20) {
 		return convex_hull(&(verticies[0]), verticies.size(), max_verticies);
 	}
-	
+
+	physx::PxTriangleMeshGeometry triangle_mesh(const physx::PxVec3* verticies, unsigned int vertex_count, const unsigned int* indicies, unsigned int index_count);
+
+	physx::PxTriangleMeshGeometry triangle_mesh(const std::vector<physx::PxVec3>& verticies, const std::vector<unsigned int>& indicies);
+
 	physx::PxPlane plane(float nx, float ny, float nz, float distance);
 
 	template<typename T>

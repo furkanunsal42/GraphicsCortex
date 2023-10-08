@@ -9,7 +9,7 @@ in vec3 frag_space_coord;
 in mat3 frag_TBN;
 
 // temp
-uniform sampler2D shadow_map;
+//uniform sampler2D shadow_map;
 
 struct ambiant_light{
 	vec3 color;
@@ -123,16 +123,16 @@ vec3 calculate_specular_light(vec3 light_direction, vec3 current_position, vec3 
 
 vec3 calculate_directional_light(vec3 light_direction, vec3 light_color, vec3 normal){
 	// temp
-	vec4 position_by_light = (d_lights[0].projection_matrix * d_lights[0].view_matrix * vec4(frag_space_coord, 1));
-	position_by_light = position_by_light / position_by_light.w;
-	position_by_light = position_by_light * 0.5 + 0.5;
-
-	float closest_distance_to_light = texture(shadow_map, position_by_light.xy).r;
-	float fragment_distance_to_light = position_by_light.z;
-	float shadow_acne_bias = 0.0025;
-	
-	if(closest_distance_to_light + shadow_acne_bias < fragment_distance_to_light)
-		return(vec3(0));	// in shadow
+	//vec4 position_by_light = (d_lights[0].projection_matrix * d_lights[0].view_matrix * vec4(frag_space_coord, 1));
+	//position_by_light = position_by_light / position_by_light.w;
+	//position_by_light = position_by_light * 0.5 + 0.5;
+	//
+	//float closest_distance_to_light = texture(shadow_map, position_by_light.xy).r;
+	//float fragment_distance_to_light = position_by_light.z;
+	//float shadow_acne_bias = 0.0025;
+	//
+	//if(closest_distance_to_light + shadow_acne_bias < fragment_distance_to_light)
+	//	return(vec3(0));	// in shadow
 	// temp end
 
 	vec3 color = light_color * (max(dot(-light_direction, normal), 0));

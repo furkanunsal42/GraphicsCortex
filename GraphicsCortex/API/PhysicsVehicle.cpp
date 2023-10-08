@@ -541,6 +541,89 @@ void PhysicsVehicle::vehicle_control(GLFWwindow* window) {
 	//std::cout << "gear: " << vehicle_drive->mDriveDynData.getCurrentGear() << std::endl;
 }
 
+void PhysicsVehicle::vehicle_control_joystick(GLFWwindow* window) {
+	int first_available_joystick = -1;
+	for (int i = GLFW_JOYSTICK_1; i <= GLFW_JOYSTICK_16; i++) {
+		if (glfwJoystickPresent(GLFW_JOYSTICK_1)) first_available_joystick = i;
+	}
+	if (first_available_joystick == -1) return;
+
+	int axesCount;
+	const float* axes = glfwGetJoystickAxes(GLFW_JOYSTICK_1, &axesCount);
+
+
+	bool forward;
+	bool backward;
+	bool left;
+	bool right;
+	if (axesCount > 0) {
+		right = axes[0] < -0.5f;
+		left = axes[0] > 0.5f;
+	}
+
+	if (axesCount > 1) {
+		backward = axes[1] > 0.5f;
+		forward = axes[1] < -0.5f;
+	}
+
+	//std::cout << "Axis 1: " << axes[0] << " ";
+	//std::cout << "Axis 2: " << axes[1] << " ";
+
+	InputData.setDigitalAccel(false);
+	InputData.setDigitalBrake(false);
+	InputData.setDigitalHandbrake(false);
+	InputData.setDigitalSteerLeft(false);
+	InputData.setDigitalSteerRight(false);
+	InputData.setGearUp(false);
+	InputData.setGearDown(false);
+
+	vehicle_drive->mDriveDynData.setUseAutoGears(true);
+
+	if (forward) {
+		if (vehicle_drive->computeForwardSpeed() < -0.2)
+			InputData.setDigitalBrake(true);
+		else {
+			if (vehicle_drive->mDriveDynData.getTargetGear() < snippetvehicle::PxVehicleGearsData::eFIRST)
+				vehicle_drive->mDriveDynData.forceGearChange(snippetvehicle::PxVehicleGearsData::eFIRST);
+			InputData.setDigitalAccel(true);
+		}
+	}
+	if (backward) {
+		if (vehicle_drive->computeForwardSpeed() > 0.2)
+			InputData.setDigitalBrake(true);
+		else {
+			if (vehicle_drive->mDriveDynData.getTargetGear() > snippetvehicle::PxVehicleGearsData::eREVERSE)
+				vehicle_drive->mDriveDynData.forceGearChange(snippetvehicle::PxVehicleGearsData::eREVERSE);
+			InputData.setDigitalAccel(true);
+		}
+	}
+	if (right) {
+		InputData.setDigitalSteerRight(true);
+	}
+	if (left) {
+		InputData.setDigitalSteerLeft(true);
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_SPACE) == 1) {
+		InputData.setDigitalHandbrake(true);
+	}
+
+	if (forward && backward) {
+		InputData.setDigitalAccel(false);
+	}
+	if (!forward && !backward) {
+		vehicle_drive->mDriveDynData.forceGearChange(snippetvehicle::PxVehicleGearsData::eNEUTRAL);
+		InputData.setDigitalAccel(false);
+	}
+	if (left && right) {
+		InputData.setDigitalSteerLeft(false);
+		InputData.setDigitalSteerRight(false);
+	}
+
+	//std::cout << "rotation: " << vehicle_drive->mDriveDynData.getEngineRotationSpeed() << std::endl;
+	//std::cout << "gear: " << vehicle_drive->mDriveDynData.getCurrentGear() << std::endl;
+}
+
 void PhysicsVehicle::set_position(float x, float y, float z) {
 	physx::PxTransform transform = vehicle_actor->getGlobalPose();
 	transform.p = physx::PxVec3(x, y, z);

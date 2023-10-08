@@ -1,0 +1,2745 @@
+# Blender 3.5.0 MTL File: 'nogaro.blend'
+# www.blender.org
+
+newmtl 72NOIR
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/noir.png
+
+newmtl 73BASIC
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/noir.png
+
+newmtl 73BODY
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/73body.png
+
+newmtl 76SHADOW
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/shadow.png
+
+newmtl AEROCLUB01
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/aeroclub01.png
+
+newmtl AIRCON
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/airconold.png
+
+newmtl ANNEXE
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/annexe.png
+
+newmtl ARMCO
+Ns 150.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/armco_base2.png
+
+newmtl BARRE_METAL
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/vp_pit_01.png
+
+newmtl BASEBETON2
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/basebeton2.png
+
+newmtl BBLANCHE
+Ns 16.000006
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/bblanche.png
+
+newmtl BILLBRDBK
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/billbrdbk.png
+
+newmtl BLANCH
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/blanc.png
+
+newmtl BOITEELEC
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/boiteelec.png
+
+newmtl BRAKE50
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/pan50.png
+
+newmtl BRAKE50BACK
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/pan50back.png
+
+newmtl BRICOMAR
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/bricomarch.png
+
+newmtl BRIDGE_DUNLOP2
+Ns 16.000006
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/dunlop.png
+
+newmtl BYELLOW
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/byellow.png
+
+newmtl C5_VEHICLE_3
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/curitiba_bus_03.png
+
+newmtl C5_VEHICLE_4
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/curitiba_bus_03_v.png
+
+newmtl CACHEVUE
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/vp_cachevue.png
+
+newmtl CAR01
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/veh_moderncars.png
+
+newmtl CARTE
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/terraain_nogaro_new_uncompessed.png
+
+newmtl CEMENTWALL2
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/concretefence2.png
+
+newmtl CEMENTWALL3
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/concrete_wall_tunnelb.png
+
+newmtl CIMENTERIE
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/ciment.png
+
+newmtl CONCRETEFENCE
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/concretefence.png
+
+newmtl CONE01
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/plot_orange.png
+
+newmtl CONEA2
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/conea.png
+
+newmtl COULEUR1
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/couleur1.png
+
+newmtl COULEUR2
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/couleur2.png
+
+newmtl COULEUR3
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/couleur3.png
+
+newmtl CROWD
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.050000 0.050000 0.050000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/CROWDS_02.png
+
+newmtl DOOR
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/vp_door.png
+
+newmtl EQ_SECURITY
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/eq_security.png
+
+newmtl EXT
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/ext2.png
+
+newmtl FENCEA
+Ns 16.000006
+Ka 1.000000 1.000000 1.000000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/fenceb.png
+
+newmtl FIREOLD2
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/fireold.png
+
+newmtl FIREOLDPOTE2
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/vp-gurdrcrssa.png
+
+newmtl FIREOLDSTAND8
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/gird.png
+
+newmtl FLAG01
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/flags.png
+
+newmtl FLAG03
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/NOGARO_FLAG.png
+
+newmtl FOUCADE
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/foucade.png
+
+newmtl FPOSTWDA
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/fpostwda.png
+
+newmtl GATEBLEU
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/gatebleu.png
+
+newmtl GATEPIT
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/basetex.png
+
+newmtl GLASS04
+Ns 119.999992
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/glass4.png
+
+newmtl GLASS0B
+Ns 119.999992
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/glass5.png
+
+newmtl GLASS5
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/glass4.png
+
+newmtl GRASS04
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/grass02c.png
+
+newmtl GRASSA
+Ns 16.000006
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/grass01.png
+
+newmtl GRASSA02
+Ns 16.000006
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/grass02.png
+
+newmtl GRASSBLADE2
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/lemans3d.png
+
+newmtl GRASSHILL
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/grasspatch.png
+
+newmtl GRASS_FAR
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/lemans3d.png
+
+newmtl GRASS_NOGARO
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/BBgrass4_monza_ks1.png
+
+newmtl GRILLE2
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/grille2.png
+
+newmtl GRISFONCE
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/grisfonce.png
+
+newmtl GRPITLA
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/GRLT_NEW.png
+
+newmtl GRVL01
+Ns 16.000006
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/trap_detail90.png
+map_Ks C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/sand_base_90.png
+map_Bump C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/sand_base_nm90.png
+
+newmtl GRVLA
+Ns 16.000006
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/trap_detail90.png
+map_Ks C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/sand_base_90.png
+map_Bump C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/sand_base_nm90.png
+
+newmtl GRXS
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/grass_oschersleben.png
+
+newmtl GRXS02
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/grass_oschersleben.png
+
+newmtl GRXS02AB
+Ns 16.000006
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/grass02b.png
+
+newmtl GRXS02AC
+Ns 16.000006
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/grass02c.png
+
+newmtl GRXS04
+Ns 16.000006
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/grass04.png
+
+newmtl GRXSA
+Ns 16.000006
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/grass01.png
+
+newmtl GRXSA02
+Ns 16.000006
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/grass02.png
+
+newmtl GURDRCRSSA
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/gurdrcrssa.png
+
+newmtl HOUSEA2
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/vp_housea.png
+
+newmtl LANDSCAPE
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/factory01.png
+
+newmtl LAPOSTE
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/laposte.png
+
+newmtl LILSHADOW
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/shadow.png
+
+newmtl LOGOA
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/logob.png
+
+newmtl LOGOB
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/logoa.png
+
+newmtl LOGOBLANCPAIN01
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/logoblancpainb.png
+
+newmtl LOGOC
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/logoc.png
+
+newmtl LOGOD
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/logod.png
+
+newmtl LOGOE
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/logoe.png
+
+newmtl LOGONOGARO
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/logonogaro.png
+
+newmtl LOGOPIXSIM
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/logof.png
+
+newmtl MANCHE
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/manche.png
+
+newmtl MATERIA_111
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/gravel.png
+
+newmtl MATERIA_112
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/basetex.png
+
+newmtl MATERIA_114
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/bnogaro.png
+
+newmtl MATERIA_116
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/transitions.png
+
+newmtl MATERIA_12879
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/logoblancpainw.png
+
+newmtl MATERIA_12883
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/logopirelli02.png
+
+newmtl MATERIA_12888
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/bois.png
+
+newmtl MATERIA_12890
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/pan100.png
+
+newmtl MATERIA_12892
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/pan200.png
+
+newmtl MATERIA_12904
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/metalpoteaurouille.png
+
+newmtl MATERIA_12905
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/basebeton.png
+
+newmtl MATERIA_12907
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/parking.png
+
+newmtl MATERIA_12908
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/edge.png
+
+newmtl MATERIA_12946
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/rf2led.png
+
+newmtl MATERIA_12981
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/metal4.png
+
+newmtl MATERIA_12998
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/skidmarks01.png
+
+newmtl MATERIA_13013
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/antena.png
+
+newmtl MATERIA_13073
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/vp_housea.png
+
+newmtl MATERIA_13075
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/buildingshouseold.png
+
+newmtl MATERIA_13076
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/logog.png
+
+newmtl MATERIA_13078
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/glass.png
+
+newmtl MATERIA_22
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/pit_plafond.png
+
+newmtl MATERIA_28
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/pit_mur.png
+
+newmtl MATERIA_30
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/pit_poteaub.png
+
+newmtl MATERIA_31
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/vp-pitdecos.png
+
+newmtl MATERIA_32
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/glass.png
+
+newmtl MATERIA_35
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/red.png
+
+newmtl MATERIA_38
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/vp_bleuclair.png
+
+newmtl MATERIA_40
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/vp_jauneclair.png
+
+newmtl MATERIA_42
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/vp_vertclair.png
+
+newmtl MATERIA_50
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/vp_victorywall.png
+
+newmtl MATERIA_52
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/vp_pit_06.png
+
+newmtl MATERIA_53
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/rooftiles.png
+
+newmtl MATERIA_61
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/wallpit.png
+
+newmtl MATERIA_79
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/desat_new.png
+
+newmtl MATERIA_83
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/trees4.png
+
+newmtl MATERIA_87
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/Map #03.png
+
+newmtl MATERIA_88
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/trees_wall_id1.png
+
+newmtl METAL2
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/metal2.png
+
+newmtl METAL88
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/metalpoteaurouille.png
+
+newmtl METAL9
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/metalpoteaurouille.png
+
+newmtl METALGLASS
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/glass.png
+
+newmtl METALPITBARRI￯﾿ﾯ￯ﾾ﾿￯ﾾﾨRE2
+Ns 0.999999
+Ka 1.000000 1.000000 1.000000
+Ks 0.200000 0.200000 0.200000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/metal4.png
+
+newmtl METALPLATEFACTORY
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/metalplatesfactory.png
+
+newmtl METAL_PIT
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/metal.png
+
+newmtl METLA6PANE
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/vp_pit_04.png
+
+newmtl MONZ_MOVER_01
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/mover_01.png
+
+newmtl NEON
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/neon.png
+
+newmtl NEW_MATERIAL_1040
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/vp_housec.png
+
+newmtl NEW_MATERIAL_111
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/tire_yellow.png
+
+newmtl NEW_MATERIAL_1126
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/hangarvp01.png
+
+newmtl NEW_MATERIAL_1128
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/hangarvp02.png
+
+newmtl NEW_MATERIAL_1141
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/aiport.png
+
+newmtl NEW_MATERIAL_1143
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/toithangar.png
+
+newmtl NEW_MATERIAL_1144
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/aeroclub.png
+
+newmtl NEW_MATERIAL_1145
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/aeroclubtoit.png
+
+newmtl NEW_MATERIAL_1163
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/hangarvp03.png
+
+newmtl NEW_MATERIAL_1181
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/planeb.png
+
+newmtl NEW_MATERIAL_1183
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/wheel.png
+
+newmtl NEW_MATERIAL_1187
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/aeroclubtoit.png
+
+newmtl NEW_MATERIAL_1189
+Ns 119.999992
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/glass2.png
+
+newmtl NEW_MATERIAL_1203
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/vp-oldpit02.png
+
+newmtl NEW_MATERIAL_1205
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/vp-oldpit03.png
+
+newmtl NEW_MATERIAL_1208
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/logohelix.png
+
+newmtl NEW_MATERIAL_1221
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/hangarsi.png
+
+newmtl NEW_MATERIAL_1223
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/vp_pit_05.png
+
+newmtl NEW_MATERIAL_1225
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/vp_pit_05.png
+
+newmtl NEW_MATERIAL_1232
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/airportd.png
+
+newmtl NEW_MATERIAL_1233
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/hangar01.png
+
+newmtl NEW_MATERIAL_1239
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/hangarsi.png
+
+newmtl NEW_MATERIAL_1376
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/58top1.png
+
+newmtl NEW_MATERIAL_1378
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/58side1.png
+
+newmtl NEW_MATERIAL_1380
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/58head2.png
+
+newmtl NEW_MATERIAL_1382
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/58tyre.png
+
+newmtl NEW_MATERIAL_1384
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/58head1.png
+
+newmtl NEW_MATERIAL_1386
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/58back1.png
+
+newmtl NEW_MATERIAL_524
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/logok.png
+
+newmtl NEW_MATERIAL_554
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/bat1.png
+
+newmtl NEW_MATERIAL_557
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/interieur.png
+
+newmtl NEW_MATERIAL_561
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/logoi.png
+
+newmtl NEW_MATERIAL_580
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/planchebleu.png
+
+newmtl NEW_MATERIAL_616
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/logoj.png
+
+newmtl NEW_MATERIAL_636
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/nogaropanneau.png
+
+newmtl NEW_MATERIAL_640
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/clock.png
+
+newmtl NOIRGLASS
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/noir.png
+
+newmtl NOSMOKIN
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/nosmoking.png
+
+newmtl PANELPOSITION
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/positionpanel.png
+
+newmtl PANNEAU60
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/p60.png
+
+newmtl PANNEUAPIT
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/panneaupit.png
+
+newmtl PARKING
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/testparking.png
+
+newmtl PIRELLI_BULDING
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/pirelli.png
+
+newmtl PITDETAIL
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/vp_toolboxes.png
+
+newmtl PITFENCE
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/vp_standgrey_fence.png
+
+newmtl PITPOTEAU
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/vp_fencepol.png
+
+newmtl PITSPONS01
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/pitsponsor.png
+
+newmtl PITTENT01_1
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/pittent01.png
+
+newmtl PITTENTE01
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/pit_01.png
+
+newmtl PIT_BETON
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/pit_beton.png
+
+newmtl PIT_PANEL
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/vp_pit_02.png
+
+newmtl PIT_POTEAU
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/Map #15.png
+
+newmtl PIT_POTEAUGLASS
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/pit_poteau.png
+
+newmtl PIT_TENT
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/pittent01.png
+
+newmtl PLANE
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/planea.png
+
+newmtl POLEA
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/polea.png
+
+newmtl PORTATIQUE01
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/metal4.png
+
+newmtl POTEAU_MANCHE
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/gstnda.png
+
+newmtl PUBBANNER
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/drapeaupub.png
+
+newmtl RDLTA
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/GRLT_NEW.png
+
+newmtl RDLTB
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/GRLT_NEW.png
+
+newmtl RDLTC
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/GRLT_NEW.png
+
+newmtl RDLTD
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/GRLT_NEW.png
+
+newmtl RDLTE
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/GRLT_NEW.png
+
+newmtl RDPITLA
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/GRLT_NEW.png
+
+newmtl RMBL01
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/grille.png
+
+newmtl RMBL03
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/vibreur1.png
+
+newmtl RMBL06
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/vibreur3.png
+
+newmtl RMBL08
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/vibreur1.png
+
+newmtl RMBLA01
+Ns 16.000006
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/rmbl01.png
+
+newmtl ROADBITUME
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/bitumeexter.png
+
+newmtl ROADBLEND
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/road_blend.png
+
+newmtl ROAD_BLUE_WET
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/roadablue.png
+
+newmtl ROAD_CEMENT_WET
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/blockcement.png
+
+newmtl ROAD_PIT
+Ns 16.000006
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/road_pit.png
+
+newmtl ROAD_PIT_WET
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/road_pit.png
+
+newmtl ROAD_SOL
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/pit_sol.png
+
+newmtl ROAD_SOLOLDPIT
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/sol-oldpit.png
+
+newmtl ROAD_TRACKC_WET
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/roadc.png
+
+newmtl ROAD_TRACKD_WET
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/roadd.png
+
+newmtl ROAD_TRACKMAIN3_WET
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/roada.png
+
+newmtl ROAD_TRACKMAIN_WET
+Ns 16.000006
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/roada.png
+
+newmtl ROAD_TRICOLOR_WET
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/tricolor.png
+
+newmtl ROAD_YELLOW_WET
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/roadayellow.png
+
+newmtl SEWER
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/sewer.png
+
+newmtl SHADOWS_CAR
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/shadow.png
+
+newmtl SPEAKER
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/vp_speaker.png
+
+newmtl STANDSTARI
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/standstairs.png
+
+newmtl STEP
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/step.png
+
+newmtl STEP2
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/step2.png
+
+newmtl TENTD
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/tentd.png
+
+newmtl THGLASS
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/bld_glass.png
+
+newmtl TIRECOVERRED
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/tire_cover_red.png
+
+newmtl TIRECOVERRED2
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/tire_cover_red_yellow.png
+
+newmtl TIRECOVERYELLOW
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/tire_cover_yellow.png
+
+newmtl TIRECOVERYELLOW2
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/tire_cover_yellow_red.png
+
+newmtl TIREWALL3D
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/tyres3dred.png
+
+newmtl TIREWALL3DYELLOW
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/tyres3dyellow.png
+
+newmtl TIREWALL_BLACK
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/tire_black.png
+
+newmtl TIREWALL_BLACK_TOP
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/tire_map_top_black.png
+
+newmtl TIREWALL_RED
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/tire_red.png
+
+newmtl TIREWALL_RED_TOP
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/tire_map_top_red.png
+
+newmtl TIREWALL_YELLOW
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/tire_yellow.png
+
+newmtl TIREWALL_YELLOW_TOP
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/tire_map_top_white.png
+
+newmtl TOUR3
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/vp-oldpit01.png
+
+newmtl TREE01
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/treeb.png
+
+newmtl TREE02
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/oaktree4.png
+
+newmtl TREE03
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/brnchc.png
+
+newmtl TREE05
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/tree_oak02.png
+
+newmtl TREE06
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/oaktree2da.png
+
+newmtl TREE07
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/tree_oak02.png
+
+newmtl TREE08
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/tree_oak01.png
+
+newmtl TREE09
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/brnchc.png
+
+newmtl TREE10
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/001b0800.png
+
+newmtl TREE11
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/desat_new.png
+
+newmtl TREE12
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/oaktree6.png
+
+newmtl TROTTOIR
+Ns 16.000006
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/trottoir.png
+
+newmtl TROTTOIR_PIT
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/trottoirpit.png
+
+newmtl TRUCK03
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/transportershq.png
+
+newmtl TRUCK05
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/veh_rescue.png
+
+newmtl USINETOIT
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/hangarro.png
+
+newmtl VALE2
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/vale.png
+
+newmtl VOILP01
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/voilepub01.png
+
+newmtl VPPIT07
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/vp_pit_07.png
+
+newmtl VPSHOP
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/vp_shop.png
+
+newmtl VPSHOPSHADOWS
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/shadow.png
+
+newmtl VP_SHADOW
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/vp_shad2.png
+
+newmtl WALL
+Ns 16.000006
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/wall.png
+
+newmtl WALL01
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/wall02.png
+
+newmtl WALL03
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/wall03.png
+
+newmtl WALL04
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/wall04.png
+
+newmtl WALL05
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/wall05.png
+
+newmtl WALL06
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/wall06.png
+
+newmtl WALL07
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/wall07.png
+
+newmtl WALL08
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/wall08.png
+
+newmtl WALL09
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/wall09.png
+
+newmtl WALL10
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/wall10.png
+
+newmtl WALLORANGE
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/wallorange.png
+
+newmtl WALLWHITE
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/wallwhite.png
+
+newmtl WC
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/wc.png
+
+newmtl WIRE
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/wirea.png
+
+newmtl YLOPITLA
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/GRLT_NEW.png
+
+newmtl marshall
+Ns 8.000002
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/commissario_NEW.png
+map_Bump C:/Users/FurkanPC/Desktop/nogaro paul armagnac model/obj/texture/commissario_NEW_NM.png

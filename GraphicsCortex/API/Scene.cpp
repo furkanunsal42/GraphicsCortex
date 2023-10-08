@@ -66,21 +66,26 @@ void Scene::render(bool show_warnings) {
 		object->graphics->draw(show_warnings);
 	}
 	for (std::shared_ptr<Vehicle> vehicle : _vehicles) {
-		vehicle->chassis->update_matrix();
-		if (!vehicle->chassis->is_uniform_queue_loaded()) {
-			std::cout << "[Opengl Error] Graphic::update_uniforms() was called but no uniform_queue is specified, basic uniform queue is being loaded to graphic by the respected scene" << std::endl;
-			vehicle->chassis->set_uniform_all(default_program::basic_uniform_queue(*camera.obj, Graphic_s(vehicle->chassis)));
-		}
-		vehicle->chassis->update_uniforms();
-		vehicle->chassis->draw(show_warnings);
-		for (Graphic_s wheel : vehicle->wheels) {
-			wheel->update_matrix();
-			if (!wheel->is_uniform_queue_loaded()) {
+		if (vehicle->chassis_graphic_initialized) {
+			vehicle->chassis->update_matrix();
+			if (!vehicle->chassis->is_uniform_queue_loaded()) {
 				std::cout << "[Opengl Error] Graphic::update_uniforms() was called but no uniform_queue is specified, basic uniform queue is being loaded to graphic by the respected scene" << std::endl;
-				wheel->set_uniform_all(default_program::basic_uniform_queue(*camera.obj, wheel));
+				vehicle->chassis->set_uniform_all(default_program::basic_uniform_queue(*camera.obj, Graphic_s(vehicle->chassis)));
 			}
-			wheel->update_uniforms();
-			wheel->draw(show_warnings);
+			vehicle->chassis->update_uniforms();
+			vehicle->chassis->draw(show_warnings);
+		}
+		
+		if (vehicle->wheel_graphic_initialized) {
+			for (Graphic_s wheel : vehicle->wheels) {
+				wheel->update_matrix();
+				if (!wheel->is_uniform_queue_loaded()) {
+					std::cout << "[Opengl Error] Graphic::update_uniforms() was called but no uniform_queue is specified, basic uniform queue is being loaded to graphic by the respected scene" << std::endl;
+					wheel->set_uniform_all(default_program::basic_uniform_queue(*camera.obj, wheel));
+				}
+				wheel->update_uniforms();
+				wheel->draw(show_warnings);
+			}
 		}
 	}
 }

@@ -27,7 +27,7 @@ public:
 	physx::PxMaterial* wheelMaterial;
 	int numWheels;
 	physx::PxFilterData wheelSimFilterData;	//word0 = collide type, word1 = collide against types, word2 = PxPairFlags
-	
+
 	physx::PxRigidDynamic* vehicle_actor = nullptr;
 	physx::PxVehicleDrive4W* vehicle_drive = nullptr;
 
@@ -38,6 +38,7 @@ public:
 
 	physx::PxVehicleDrive4WRawInputData InputData;
 	physx::PxVehicleKeySmoothingData KeySmoothingData;
+	//*physx::PxVehiclePadSmoothingData PadSmoothingData;
 	physx::PxF32 SteerVsForwardSpeedData[2 * 8];
 	physx::PxFixedSizeLookupTable<8> SteerVsForwardSpeedTable;
 
@@ -61,7 +62,7 @@ public:
 		NORMAL = 0,
 		WORN,
 	};
-	
+
 	//wheel
 	wheel_type wheel_type;
 	physx::PxVec3* wheelOffsets = nullptr; // array of PxVec3, a vector for each wheel
@@ -76,7 +77,7 @@ public:
 	float suspension_spring_damper_rate;
 	physx::PxVec3 suspension_travel_direction;
 	float suspension_force_application_offset;	//Suspension force application point 0.3 metres below 
-	
+
 	float tire_force_application_offset;		//tire force application point 0.3 metres below 
 
 	// camber angles
@@ -113,22 +114,23 @@ public:
 	~PhysicsVehicle();
 
 	void compile();
-	
+
 	void set_gear(gear gear);
 	void set_gear_autouse(bool autouse);
 
 	void simulation_step(long double timestep);
-	
+
 	void set_chasis_mesh(physx::PxConvexMesh* convex_mesh);
 	void set_chasis_mesh(physx::PxConvexMeshGeometry convex_mesh_geometry);
-	
+
 	void set_wheel_mesh(physx::PxConvexMesh* convex_mesh);
 	void set_wheel_mesh(physx::PxConvexMeshGeometry convex_mesh_geometry);
 
 	void set_wheel_layout(float x_seperation, float y_displacement, float z_seperation, float z_displacement);
 
 	void vehicle_control(GLFWwindow* window);
-	
+	void vehicle_control_joystick(GLFWwindow* window);
+
 	void set_position(float x, float y, float z);
 
 	template<typename T>

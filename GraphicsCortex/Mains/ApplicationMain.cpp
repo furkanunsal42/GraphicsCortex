@@ -2,18 +2,31 @@
 
 int main() {
 
-	Frame frame(1920, 1080, "GraphicsCortex", 0, 0, true, false, true);
+	Frame frame(1920 *2, 1080*2, "GraphicsCortex", 0, 0, true, false, true);
 	Scene scene(frame);
-	scene.camera->screen_width = 1920;
-	scene.camera->screen_height = 1080;
+	scene.camera->screen_width = 1920*2;
+	scene.camera->screen_height = 1080*2;
 	scene.camera->max_distance = 1000;
 
 	Program_s program(Shader("Shaders/TextureArray.vert", "Shaders/TextureArray.frag"));
 	Program_s solid_program = default_program::solid_program_s();
 
 	{
-		Mesh_s city(Model("Models/City/edited_city2.obj", 4.0f, Model::ALL));
-		UnorderedMaterial_s city_mat("Models/City/edited_city2.obj");
+		Model city_model("Models/circuit/nogaro.obj", 1.0f, Model::ALL);
+		Model city_model_collision("Models/circuit/collision.obj", 1.0f, Model::COORD_XYZ);
+		Model city_model_ground("Models/circuit/ground_physics.obj", 1.0f, Model::COORD_XYZ);
+		Mesh_s city(city_model);
+		
+		PhysicsObject map_physics(create_geometry::triangle_mesh(city_model_collision.get_partial_data<physx::PxVec3>("111"), city_model_collision.index_data), PhysicsObject::STATIC, true);
+		map_physics.make_drivable();
+		scene.add_physics(map_physics);
+		
+		PhysicsObject map_ground(create_geometry::triangle_mesh(city_model_ground.get_partial_data<physx::PxVec3>("111"), city_model_ground.index_data), PhysicsObject::STATIC, true);
+		map_ground.make_drivable();
+		scene.add_physics(map_ground);
+
+
+		UnorderedMaterial_s city_mat("Models/circuit/nogaro.obj");
 		city_mat->texture_array.mipmap_bias = 0;
 		city_mat->texture_array.generate_mipmap = false;
 		city_mat->set_texture_size(1024, 1024);
@@ -36,11 +49,13 @@ int main() {
 		scene.add_light(ambinace);
 	}
 
+
 	Vehicle vehicle_raw;
 	Vehicle_s vehicle(vehicle_raw);
 
 	{
-		Model chassis_model("Models/porsche_chassis.obj", 1, Model::COORD_XYZ | Model::TEX_COORD_XY | Model::NORMAL_XYZ);
+		Model chassis_model("Models/teducar/teduCar.fbx", 0.006f, Model::COORD_XYZ | Model::TEX_COORD_XY | Model::NORMAL_XYZ);
+		Model chassis_model_physics("Models/test2.obj", 1.0f, Model::COORD_XYZ | Model::TEX_COORD_XY | Model::NORMAL_XYZ);
 		Model chassis_left_wheel_model("Models/porsche_wheel_left.obj", 1, Model::COORD_XYZ | Model::TEX_COORD_XY | Model::NORMAL_XYZ);
 		Model chassis_right_wheel_model("Models/porsche_wheel_right.obj", 1, Model::COORD_XYZ | Model::TEX_COORD_XY | Model::NORMAL_XYZ);
 
@@ -51,22 +66,24 @@ int main() {
 		UnorderedMaterial_s tire_material_s(1);
 		tire_material_s->set_texture("Images/cartextures/911_22_930_tire_BaseColor.png", 4, 0, UnorderedMaterial::COLOR);
 
-		UnorderedMaterial_s chassis_material_s(1);
-		chassis_material_s->set_texture("Images/cartextures/911_22_paint_BaseColor.png", 4, 0, UnorderedMaterial::COLOR);
+		UnorderedMaterial_s chassis_material_s("Models/teducar/teduCar.fbx");
 
-		vehicle->load_mesh_all_graphics(chassis, left_wheel, right_wheel);
-		vehicle->load_model_all_physics(chassis_model, chassis_left_wheel_model, chassis_right_wheel_model);
+		vehicle->load_mesh_chassis_graphics(chassis);
+		//vehicle->load_model_left_wheel_physics(chassis_left_wheel_model);
+		//vehicle->load_model_right_wheel_physics(chassis_right_wheel_model);
+		//vehicle->load_model_chassis_physics(chassis_model_physics);
+		//vehicle->physics_representation.
 		vehicle->load_material_chassis(chassis_material_s);
-		vehicle->load_material_left_wheel(tire_material_s);
-		vehicle->load_material_right_wheel(tire_material_s);
-		vehicle->load_program_all(program);
+		//vehicle->load_material_left_wheel(tire_material_s);
+		//vehicle->load_material_right_wheel(tire_material_s);
+		//vehicle->load_program_all(program);
 		vehicle->load_program_chassis(solid_program);
 
 		vehicle->set_default_uniform_queue_all(*scene.camera.obj);
 		vehicle->chassis->set_uniform("use_cube_map_reflection", 1);
-		vehicle->chassis->set_uniform("cube_map_reflection_strength", 0.6f);
+		vehicle->chassis->set_uniform("cube_map_reflection_strength", 0.3f);
 
-		vehicle->physics_representation.set_wheel_layout(2.4, -1.5, 4.2, 0.4);
+		vehicle->physics_representation.set_wheel_layout(3.4, -1.4f, 4.2, -0.0f);
 
 		vehicle->physics_representation.compile();
 
@@ -74,7 +91,7 @@ int main() {
 		scene.add_object(vehicle);
 	}
 
-	PhysicsObject ground_plane(create_geometry::plane(0, 1, 0, 0));
+	PhysicsObject ground_plane(create_geometry::plane(0, 1, 0, 2.4f));
 	{
 		ground_plane.make_drivable();
 		scene.add_physics(ground_plane);
@@ -102,15 +119,15 @@ int main() {
 		frame.clear_window(0.25f, 0.25f, 0.25f);
 		frame.display_performance(180);
 
-		//scene.camera.handle_movements(frame.window, frame_time);
+		scene.camera->handle_movements(frame.window, frame_time);
 		vehicle->physics_representation.vehicle_control(frame.window);
-
 		vehicle->sync_with_physics();
+
 		// let camera follow the car
 		glm::quat camera_rotation = vehicle->chassis->get_rotation();
 		glm::vec3 camera_position = vehicle->chassis->get_position();
 		camera_rotation = camera_rotation * glm::quat(glm::vec3(0, 3.14f, 0));
-		camera_position += glm::vec3(0.0f, 0.5f, 0.0f);
+		camera_position += glm::vec3(0.0f, 0.7f, 0.0f);
 		camera_position += camera_rotation * glm::vec3(0.0f, 0.5f, 1.0f);
 		scene.camera->set_rotation(camera_rotation);
 		scene.camera->set_position(camera_position);

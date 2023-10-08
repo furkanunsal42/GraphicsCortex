@@ -42,6 +42,21 @@ void Image::_read_image(const std::string& file_path, int desired_channels) {
 
 	_image_data = stbi_load(file_path.c_str(), &_width, &_height, &_channels, desired_channels);
 	
+	int w;
+	int h;
+	int c;
+
+	//stbi_info(file_path.c_str(), &w, &h, &c);
+	//if (_width != w) {
+	//	_width = w;
+	//}
+	//if (_height != h) {
+	//	_height = h;
+	//}
+	//if (_channels != c) {
+	//	_channels = c;
+	//}
+
 	_channels = desired_channels;
 }
 
