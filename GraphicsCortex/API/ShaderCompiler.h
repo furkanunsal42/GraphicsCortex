@@ -31,15 +31,71 @@ public:
 };
 
 
+struct UniformData {
+	enum Type {
+		Unknown,
+		Int,
+		Float,
+		Vec2,
+		Vec3,
+		Vec4,
+		Mat2,
+		Mat3,
+		Mat4,
+	};
+
+	UniformData() {
+		name = "";
+		type = Unknown;
+		index = -1;
+	}
+
+	UniformData(std::string name, Type type, unsigned int index) {
+		this->name = name;
+		this->type = type;
+		this->index = index;
+	}
+
+	Type type;
+	std::string name;
+	unsigned int index;
+};
+
+struct AttributeData {
+	enum Type {
+		Unknown,
+		Int,
+		Float,
+		Vec2,
+		Vec3,
+		Vec4,
+		Mat2,
+		Mat3,
+		Mat4,
+	};
+
+	enum Purpose {
+		VertexPosition,
+		VertexNormal,
+		TextureCoordinate,
+		Custom,
+	};
+
+	Type type;
+	std::string name;
+	unsigned int id;
+	int layout_index;
+};
+
 class Program {
 private:
 	unsigned int compile_shader(unsigned int type, const std::string& shader_source);
-	void _detect_and_define_all_uniforms_legacy(const std::string& shader_code);
-	void _detect_and_define_all_uniforms(unsigned int id);
+	void _define_all_uniforms(unsigned int id);
 public:
 	unsigned int id = 0;
-	std::unordered_map<std::string, unsigned int> uniforms;
-	
+	std::unordered_map<std::string, UniformData> uniforms;
+	std::unordered_map<std::string, AttributeData> attributes;
+
 	Program();
 	Program(const std::string& vertex_shader_code, const std::string& fragment_shader_code);
 	Program(const std::string& vertex_shader_code, const std::string& geometry_shader_code, const std::string& fragment_shader_code);
@@ -49,8 +105,6 @@ public:
 	void compile(const std::string& vertex_shader_code, const std::string& geometry_shader_code, const std::string& fragment_shader_code);
 	void bind();
 	void unbind();
-	void define_uniform(const std::string& name);
-	unsigned int define_get_uniform_id(const std::string& name);
 
 	// template definitions
 	

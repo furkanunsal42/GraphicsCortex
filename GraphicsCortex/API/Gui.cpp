@@ -744,14 +744,14 @@ void Gui::new_frame(Time frame_time_ms) {
 void Gui::_initialize() {
 	if (!_initialized){
 		default_gui_renderer = default_program::gui_program_s();
-		_default_gui_uniform_screen_position = default_gui_renderer->define_get_uniform_id("screen_position");
-		_default_gui_uniform_projection = default_gui_renderer->define_get_uniform_id("projection");
-		_default_gui_uniform_rect_color = default_gui_renderer->define_get_uniform_id("rect_color");
-		_default_gui_uniform_rect_size = default_gui_renderer->define_get_uniform_id("rect_size");
-		_default_gui_uniform_corner_rounding = default_gui_renderer->define_get_uniform_id("corner_rounding");
-		_default_gui_uniform_border_color = default_gui_renderer->define_get_uniform_id("border_color");
-		_default_gui_uniform_border_thickness = default_gui_renderer->define_get_uniform_id("border_thickness");
-		_default_gui_uniform_z_index = default_gui_renderer->define_get_uniform_id("z_index");
+		_default_gui_uniform_screen_position =	default_gui_renderer->uniforms["screen_position"].index;
+		_default_gui_uniform_projection =		default_gui_renderer->uniforms["projection"].index;
+		_default_gui_uniform_rect_color =		default_gui_renderer->uniforms["rect_color"].index;
+		_default_gui_uniform_rect_size =		default_gui_renderer->uniforms["rect_size"].index;
+		_default_gui_uniform_corner_rounding =	default_gui_renderer->uniforms["corner_rounding"].index;
+		_default_gui_uniform_border_color =		default_gui_renderer->uniforms["border_color"].index;
+		_default_gui_uniform_border_thickness = default_gui_renderer->uniforms["border_thickness"].index;
+		_default_gui_uniform_z_index =			default_gui_renderer->uniforms["z_index"].index;
 	}
 	_initialized = true;
 }

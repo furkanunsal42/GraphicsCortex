@@ -16,23 +16,20 @@ public:
 	bool _uniforms_defined = false; // needed to manualy reset if light is moved from a shader to another, not the expected use of this class but to make is possible, we have to make this parameter public.
 	static int count;
 	virtual void update_uniforms();
-	virtual void define_uniforms(int max_count);
 
 	std::shared_ptr<Program> program;
 
 	template<typename T>
 	void add_uniform_update_queue(uniform_update<T>* uniform_queue) {
 		uniform_queue->program = program;
-		program->define_uniform(uniform_queue->uniform_name);
-		uniform_queue->uniform_id = program->uniforms[uniform_queue->uniform_name];
+		uniform_queue->uniform_id = program->uniforms[uniform_queue->uniform_name].index;
 		_uniform_update_queue.add_uniform_update(*uniform_queue);
 
 	}
 	template<typename T>
 	void add_uniform_update_queue(dynamic_uniform_update<T>* dynamic_uniform_queue) {
 		dynamic_uniform_queue->program = program;
-		program->define_uniform(dynamic_uniform_queue->uniform_name);
-		dynamic_uniform_queue->uniform_id = program->uniforms[dynamic_uniform_queue->uniform_name];
+		dynamic_uniform_queue->uniform_id = program->uniforms[dynamic_uniform_queue->uniform_name].index;
 		_uniform_update_queue.add_uniform_update(*dynamic_uniform_queue);
 	}
 
@@ -60,7 +57,6 @@ public:
 	AmbiantLight(const glm::vec3& color, Program_s program);
 	AmbiantLight(const glm::vec3& color = glm::vec3(0.1, 0.1, 0.1));
 	void update_uniforms();
-	void define_uniforms(int max_count);
 };
 
 class DirectionalLight : public Light {
@@ -78,7 +74,6 @@ public:
 	DirectionalLight(const glm::vec3& position = glm::vec3(0, 0, 0), const glm::vec3& direction = glm::vec3(0, -1, 0), const glm::vec3& color = glm::vec3(1, 1, 1));
 	void update_matricies();
 	void update_uniforms();
-	void define_uniforms(int max_count);
 };
 
 class PointLight : public Light {
@@ -93,7 +88,6 @@ public:
 
 	PointLight(const glm::vec3& position, const glm::vec3& color, float constant_term, float linear_term, float exponential_term, Program_s program);
 	void update_uniforms();
-	void define_uniforms(int max_count);
 };
 
 class SpotLight : public Light {
@@ -110,5 +104,4 @@ public:
 
 	SpotLight(const glm::vec3& position, const glm::vec3& direction,  const glm::vec3& color, float constant_term, float linear_term, float exponential_term, float angle, Program_s program);
 	void update_uniforms();
-	void define_uniforms(int max_count);
 };

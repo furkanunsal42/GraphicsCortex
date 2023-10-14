@@ -116,8 +116,7 @@ protected:
 			return;
 		}
 		uniform_queue.program = renderer;
-		renderer->define_uniform(uniform_queue.uniform_name);
-		uniform_queue.uniform_id = renderer->uniforms[uniform_queue.uniform_name];
+		uniform_queue.uniform_id = renderer->uniforms[uniform_queue.uniform_name].index;
 		_uniform_update_queue.add_uniform_update(uniform_queue);
 		_is_uniforms_loaded = true;
 	}
@@ -128,8 +127,7 @@ protected:
 			return;
 		}
 		uniform_queue.program = renderer;
-		renderer->define_uniform(uniform_queue.uniform_name);
-		uniform_queue.uniform_id = renderer->uniforms[uniform_queue.uniform_name];
+		uniform_queue.uniform_id = renderer->uniforms[uniform_queue.uniform_name].index;
 		_uniform_update_queue.add_uniform_update(uniform_queue);
 		_is_uniforms_loaded = true;
 	}
@@ -141,8 +139,7 @@ protected:
 			return;
 		}
 		dynamic_uniform_queue.program = renderer;
-		renderer->define_uniform(dynamic_uniform_queue.uniform_name);
-		dynamic_uniform_queue.uniform_id = renderer->uniforms[dynamic_uniform_queue.uniform_name];
+		dynamic_uniform_queue.uniform_id = renderer->uniforms[dynamic_uniform_queue.uniform_name].index;
 		_uniform_update_queue.add_uniform_update(dynamic_uniform_queue);
 		_is_uniforms_loaded = true;
 	}
@@ -153,8 +150,7 @@ protected:
 			return;
 		}
 		dynamic_uniform_queue.program = renderer;
-		renderer->define_uniform(dynamic_uniform_queue.uniform_name);
-		dynamic_uniform_queue.uniform_id = renderer->uniforms[dynamic_uniform_queue.uniform_name];
+		dynamic_uniform_queue.uniform_id = renderer->uniforms[dynamic_uniform_queue.uniform_name].index;
 		_uniform_update_queue.add_uniform_update(dynamic_uniform_queue);
 		_is_uniforms_loaded = true;
 	}

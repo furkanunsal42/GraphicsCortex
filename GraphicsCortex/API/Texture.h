@@ -137,7 +137,8 @@ public:
 	void load_images(std::vector<Image>& images);
 	void initialize_blank_images(int width, int height, int depth, int channels);
 
-	void load_single_image(Image& image, int index);
+	void load_single_image(Image& image, int index, bool generate_mipmaps = false);
+	void generate_mipmaps();
 
 	void bind();
 	void unbind();
@@ -189,6 +190,7 @@ public:
 	void set_texture(const std::string& filename, int desired_channels, int index, TextureType type = COLOR);
 
 	void bind();
+	void bind_single_threaded();
 	void unbind();
 
 	void set_texture_width(unsigned int width);

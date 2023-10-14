@@ -118,8 +118,7 @@ void uniform_update_queue::link_program(std::shared_ptr<Program> program) {
 void uniform_update_queue::update_uniform_ids() {
 	for (uniform_update<int>& update : uniform_queue_int) {
 		if (auto lock = update.program.lock()) {
-			lock->define_uniform(update.uniform_name);
-			update.uniform_id = lock->uniforms[update.uniform_name];
+			update.uniform_id = lock->uniforms[update.uniform_name].index;
 		}
 		else {
 			std::cout << "[Opengl Error] uniform_update_queue::update_uniform_ids() was called but at least one of the updates has either non-initialized or expired program." << std::endl;
@@ -127,8 +126,7 @@ void uniform_update_queue::update_uniform_ids() {
 	}
 	for (uniform_update<char>& update : uniform_queue_char) {
 		if (auto lock = update.program.lock()) {
-			lock->define_uniform(update.uniform_name);
-			update.uniform_id = lock->uniforms[update.uniform_name];
+			update.uniform_id = lock->uniforms[update.uniform_name].index;
 		}
 		else {
 			std::cout << "[Opengl Error] uniform_update_queue::update_uniform_ids() was called but at least one of the updates has either non-initialized or expired program." << std::endl;
@@ -136,8 +134,7 @@ void uniform_update_queue::update_uniform_ids() {
 	}
 	for (uniform_update<bool>& update : uniform_queue_bool) {
 		if (auto lock = update.program.lock()) {
-			lock->define_uniform(update.uniform_name);
-			update.uniform_id = lock->uniforms[update.uniform_name];
+			update.uniform_id = lock->uniforms[update.uniform_name].index;
 		}
 		else {
 			std::cout << "[Opengl Error] uniform_update_queue::update_uniform_ids() was called but at least one of the updates has either non-initialized or expired program." << std::endl;
@@ -145,8 +142,7 @@ void uniform_update_queue::update_uniform_ids() {
 	}
 	for(uniform_update<float>&update : uniform_queue_float) {
 		if (auto lock = update.program.lock()) {
-			lock->define_uniform(update.uniform_name);
-			update.uniform_id = lock->uniforms[update.uniform_name];
+			update.uniform_id = lock->uniforms[update.uniform_name].index;
 		}
 		else {
 			std::cout << "[Opengl Error] uniform_update_queue::update_uniform_ids() was called but at least one of the updates has either non-initialized or expired program." << std::endl;
@@ -154,8 +150,7 @@ void uniform_update_queue::update_uniform_ids() {
 	}
 	for (uniform_update<glm::mat4>& update : uniform_queue_mat4) {
 		if (auto lock = update.program.lock()) {
-			lock->define_uniform(update.uniform_name);
-			update.uniform_id = lock->uniforms[update.uniform_name];
+			update.uniform_id = lock->uniforms[update.uniform_name].index;
 		}
 		else {
 			std::cout << "[Opengl Error] uniform_update_queue::update_uniform_ids() was called but at least one of the updates has either non-initialized or expired program." << std::endl;
@@ -163,8 +158,7 @@ void uniform_update_queue::update_uniform_ids() {
 	}
 	for (uniform_update<glm::mat3>& update : uniform_queue_mat3) {
 		if (auto lock = update.program.lock()) {
-			lock->define_uniform(update.uniform_name);
-			update.uniform_id = lock->uniforms[update.uniform_name];
+			update.uniform_id = lock->uniforms[update.uniform_name].index;
 		}
 		else {
 			std::cout << "[Opengl Error] uniform_update_queue::update_uniform_ids() was called but at least one of the updates has either non-initialized or expired program." << std::endl;
@@ -172,8 +166,7 @@ void uniform_update_queue::update_uniform_ids() {
 	}
 	for (uniform_update<glm::mat2>& update : uniform_queue_mat2) {
 		if (auto lock = update.program.lock()) {
-			lock->define_uniform(update.uniform_name);
-			update.uniform_id = lock->uniforms[update.uniform_name];
+			update.uniform_id = lock->uniforms[update.uniform_name].index;
 		}
 		else {
 			std::cout << "[Opengl Error] uniform_update_queue::update_uniform_ids() was called but at least one of the updates has either non-initialized or expired program." << std::endl;
@@ -182,8 +175,7 @@ void uniform_update_queue::update_uniform_ids() {
 
 	for (dynamic_uniform_update<int>& update : dynamic_uniform_queue_int) {
 		if (auto lock = update.program.lock()) {
-			lock->define_uniform(update.uniform_name);
-			update.uniform_id = lock->uniforms[update.uniform_name];
+			update.uniform_id = lock->uniforms[update.uniform_name].index;
 		}
 		else {
 			std::cout << "[Opengl Error] uniform_update_queue::update_uniform_ids() was called but at least one of the updates has either non-initialized or expired program." << std::endl;
@@ -191,8 +183,7 @@ void uniform_update_queue::update_uniform_ids() {
 	}
 	for (dynamic_uniform_update<char>& update : dynamic_uniform_queue_char) {
 		if (auto lock = update.program.lock()) {
-			lock->define_uniform(update.uniform_name);
-			update.uniform_id = lock->uniforms[update.uniform_name];
+			update.uniform_id = lock->uniforms[update.uniform_name].index;
 		}
 		else {
 			std::cout << "[Opengl Error] uniform_update_queue::update_uniform_ids() was called but at least one of the updates has either non-initialized or expired program." << std::endl;
@@ -200,8 +191,7 @@ void uniform_update_queue::update_uniform_ids() {
 	}
 	for (dynamic_uniform_update<bool>& update : dynamic_uniform_queue_bool) {
 		if (auto lock = update.program.lock()) {
-			lock->define_uniform(update.uniform_name);
-			update.uniform_id = lock->uniforms[update.uniform_name];
+			update.uniform_id = lock->uniforms[update.uniform_name].index;
 		}
 		else {
 			std::cout << "[Opengl Error] uniform_update_queue::update_uniform_ids() was called but at least one of the updates has either non-initialized or expired program." << std::endl;
@@ -209,8 +199,7 @@ void uniform_update_queue::update_uniform_ids() {
 	}
 	for (dynamic_uniform_update<float>& update : dynamic_uniform_queue_float) {
 		if (auto lock = update.program.lock()) {
-			lock->define_uniform(update.uniform_name);
-			update.uniform_id = lock->uniforms[update.uniform_name];
+			update.uniform_id = lock->uniforms[update.uniform_name].index;
 		}
 		else {
 			std::cout << "[Opengl Error] uniform_update_queue::update_uniform_ids() was called but at least one of the updates has either non-initialized or expired program." << std::endl;
@@ -218,8 +207,7 @@ void uniform_update_queue::update_uniform_ids() {
 	}
 	for (dynamic_uniform_update<glm::mat4>& update : dynamic_uniform_queue_mat4) {
 		if (auto lock = update.program.lock()) {
-			lock->define_uniform(update.uniform_name);
-			update.uniform_id = lock->uniforms[update.uniform_name];
+			update.uniform_id = lock->uniforms[update.uniform_name].index;
 		}
 		else {
 			std::cout << "[Opengl Error] uniform_update_queue::update_uniform_ids() was called but at least one of the updates has either non-initialized or expired program." << std::endl;
@@ -227,8 +215,7 @@ void uniform_update_queue::update_uniform_ids() {
 	}
 	for (dynamic_uniform_update<glm::mat3>& update : dynamic_uniform_queue_mat3) {
 		if (auto lock = update.program.lock()) {
-			lock->define_uniform(update.uniform_name);
-			update.uniform_id = lock->uniforms[update.uniform_name];
+			update.uniform_id = lock->uniforms[update.uniform_name].index;
 		}
 		else {
 			std::cout << "[Opengl Error] uniform_update_queue::update_uniform_ids() was called but at least one of the updates has either non-initialized or expired program." << std::endl;
@@ -236,8 +223,7 @@ void uniform_update_queue::update_uniform_ids() {
 	}
 	for (dynamic_uniform_update<glm::mat2>& update : dynamic_uniform_queue_mat2) {
 		if (auto lock = update.program.lock()) {
-			lock->define_uniform(update.uniform_name);
-			update.uniform_id = lock->uniforms[update.uniform_name];
+			update.uniform_id = lock->uniforms[update.uniform_name].index;
 		}
 		else {
 			std::cout << "[Opengl Error] uniform_update_queue::update_uniform_ids() was called but at least one of the updates has either non-initialized or expired program." << std::endl;

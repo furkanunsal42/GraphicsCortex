@@ -366,7 +366,7 @@ bool TextureArray::is_initialized() {
 	return _is_initialized;
 }
 
-void TextureArray::load_single_image(Image& image, int index) {
+void TextureArray::load_single_image(Image& image, int index, bool _generate_mipmaps) {
 
 	generate_texture_object();
 
@@ -410,10 +410,15 @@ void TextureArray::load_single_image(Image& image, int index) {
 	//else 
 	GLCall(glTexSubImage3D(target, 0, 0, 0, index, image.get_width(), image.get_height(), 1, format, data_type, image.get_image_data()));
 
-	if (generate_mipmap)
-		GLCall(glGenerateMipmap(target));
+	if (this->generate_mipmap && _generate_mipmaps)
+		generate_mipmaps();
 
 	_loaded_on_gpu = true;
+}
+
+void TextureArray::generate_mipmaps() {
+	if (generate_mipmap)
+		GLCall(glGenerateMipmap(target));
 }
 
 void TextureArray::load_images(std::vector<Image>& images) {
@@ -501,10 +506,6 @@ void TextureArray::initialize_blank_images(int width, int height, int depth, int
 		GLCall(glTexParameteri(target, GL_TEXTURE_WRAP_S, wrap_s));
 		GLCall(glTexParameteri(target, GL_TEXTURE_WRAP_T, wrap_t));
 		GLCall(glTexParameterf(target, GL_TEXTURE_LOD_BIAS, mipmap_bias))
-
-		if (generate_mipmap) {
-			GLCall(glGenerateMipmap(target));
-		}
 	}
 	else if (target == GL_TEXTURE_2D_MULTISAMPLE_ARRAY) {
 		GLCall(glTexImage3DMultisample(target, multisample_amount, internal_format, this->width, this->height, this->depth, GL_TRUE));
@@ -633,19 +634,68 @@ void UnorderedMaterial::set_texture(const std::string& filename, int desired_cha
 }
 
 void UnorderedMaterial::bind() {
+	float image_read_duration = 0.0f;
+	float texture_load_duration = 0.0f;
+
 	std::vector<Image*> images;
 	for (int i = 0; i < array_size; i++) {
 		images.push_back(nullptr);
 	}
-
+	int total_texture_load_happened = 0;
 	std::vector<std::thread> task;
 	for (int i = 0; i < array_size; i++) {
-		if (!_is_texture_loaded[i])
+		if (!_is_texture_loaded[i]) {
+			total_texture_load_happened++;
 			task.push_back(std::thread(&read_image, std::ref(_texture_filenames[i]), _texture_desired_channels[i], std::ref(images[i]), texture_width, texture_height));
+		}
 	}
 
-	for (int i = 0; i < task.size(); i++) {
-		task[i].join();
+	texture_array.texture_slot = material_texture_slot;
+	for (int i = 0; i < array_size; i++) {
+		
+		auto image_read_begin_time = std::chrono::system_clock::now();
+		if (!_is_texture_loaded[i])
+			task[i].join();
+		image_read_duration += std::chrono::duration<float>(std::chrono::system_clock::now() - image_read_begin_time).count();
+		
+		auto texture_load_begin_time = std::chrono::system_clock::now();
+		if (images[i] != nullptr) {
+			if (_first_texture_set && images[i] != nullptr) {
+				_first_texture_set = false;
+				texture_array.initialize_blank_images(images[i]->get_width(), images[i]->get_height(), array_size, images[i]->get_channels());
+			}
+			texture_array.load_single_image(*images[i], i, false);
+			delete images[i];
+			_is_texture_loaded[i] = true;
+		}
+		else
+			texture_array.bind();
+		texture_load_duration += std::chrono::duration<float>(std::chrono::system_clock::now() - texture_load_begin_time).count();
+	}
+
+	if (total_texture_load_happened != 0) texture_array.generate_mipmaps();
+
+	float total_duration_seconds = image_read_duration + texture_load_duration;
+	if (total_duration_seconds > 1.0f && total_texture_load_happened != 0) {
+		std::cout << "[MaterialLoad Info] " << total_texture_load_happened << " textures loaded in " << total_duration_seconds << " seconds in total. image_read_time : " << image_read_duration << ", texture_load_time : " << texture_load_duration << std::endl;
+	}
+}
+
+void UnorderedMaterial::bind_single_threaded() {
+	auto begin_time = std::chrono::system_clock::now();
+
+	std::vector<Image*> images;
+	for (int i = 0; i < array_size; i++) {
+		images.push_back(nullptr);
+	}
+	int total_texture_load_happened = 0;
+	std::vector<std::thread> task;
+	for (int i = 0; i < array_size; i++) {
+		if (!_is_texture_loaded[i]) {
+			total_texture_load_happened++;
+	
+			read_image(_texture_filenames[i], _texture_desired_channels[i], images[i], texture_width, texture_height);
+		}
 	}
 
 	if (_first_texture_set) {
@@ -668,6 +718,11 @@ void UnorderedMaterial::bind() {
 		else
 			texture_array.bind();
 	}
+
+	auto end_time = std::chrono::system_clock::now();
+	std::chrono::duration<float> loading_time = end_time - begin_time;
+	if (total_texture_load_happened != 0)
+		std::cout << "[MaterialLoad Info] " << total_texture_load_happened << " images loaded in " << loading_time.count() << " seconds " << std::endl;
 }
 
 void UnorderedMaterial::unbind() {
