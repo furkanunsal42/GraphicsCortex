@@ -4,8 +4,8 @@ int main() {
 
 	Frame frame(1920, 1080, "GraphicsCortex", 0, 0, true, false, true);
 	Scene scene(frame);
-	scene.camera->screen_width = 1920;
-	scene.camera->screen_height = 1080;
+	scene.camera->screen_width = frame.window_width;
+	scene.camera->screen_height = frame.window_height;
 	scene.camera->max_distance = 1000;
 
 	Program_s program(Shader("Shaders/TextureArray.vert", "Shaders/TextureArray.frag"));
@@ -14,7 +14,7 @@ int main() {
 	{
 		Model city_model("Models/circuit/nogaro.obj", 1.0f, Model::ALL);
 		Model city_model_collision("Models/circuit/collision.obj", 1.0f, Model::COORD_XYZ);
-		Model city_model_ground("Models/circuit/nogaro.obj", 1.0f, Model::COORD_XYZ);
+		Model city_model_ground("Models/circuit/ground_physics.obj", 1.0f, Model::COORD_XYZ);
 		Mesh_s city(city_model);
 		
 		PhysicsObject map_physics(create_geometry::triangle_mesh(city_model_collision.get_partial_data<physx::PxVec3>("111"), city_model_collision.index_data), PhysicsObject::STATIC, true);
@@ -90,11 +90,11 @@ int main() {
 		scene.add_object(vehicle);
 	}
 	
-	//PhysicsObject ground_plane(create_geometry::plane(0, 1, 0, 2.4f));
-	//{
-	//	ground_plane.make_drivable();
-	//	scene.add_physics(ground_plane);
-	//}
+	PhysicsObject ground_plane(create_geometry::plane(0, 1, 0, 2.4f));
+	{
+		ground_plane.make_drivable();
+		scene.add_physics(ground_plane);
+	}
 
 	Program_s cubemap_program(default_program::cubemap_program());
 	CubeMapTexture cube_map;

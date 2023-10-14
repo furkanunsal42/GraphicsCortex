@@ -11,3 +11,13 @@ GraphicsCortex 2023 Roadmap
 - compute shaders
 - fluid simulations
 - particle system
+
+2024
+- better uniforms
+- port to physx 5
+- prefabs
+- render pipeline
+- OpenCL and Compute Shaders
+- fluids, gasses and cloths
+- PBR
+- faster asset importing
