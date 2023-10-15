@@ -117,7 +117,7 @@ Program::Program(const Shader& shader)
 		compile(shader.vertex_shader, shader.geometry_shader, shader.fragment_shader);
 }
 
-void Program::_define_all_uniforms(unsigned int id) {
+void Program::_define_all_uniforms() {
 	int uniform_amount;
 	GLCall(glGetProgramiv(id, GL_ACTIVE_UNIFORMS, &uniform_amount));
 
@@ -132,7 +132,328 @@ void Program::_define_all_uniforms(unsigned int id) {
 
 		std::string uniform_name(name, name_length);
 
-		uniforms[uniform_name] = UniformData(uniform_name, UniformData::Float, i);
+		UniformData::Type uniform_type;
+		switch (type) {
+			case GL_FLOAT:
+				uniform_type = UniformData::FLOAT;
+				break;
+			case GL_FLOAT_VEC2:
+				uniform_type = UniformData::FLOAT_VEC2;
+				break;
+			case GL_FLOAT_VEC3:
+				uniform_type = UniformData::FLOAT_VEC3;
+				break;
+			case GL_FLOAT_VEC4:
+				uniform_type = UniformData::FLOAT_VEC4;
+				break;
+			case GL_DOUBLE:
+				uniform_type = UniformData::DOUBLE;
+				break;
+			case GL_DOUBLE_VEC2:
+				uniform_type = UniformData::DOUBLE_VEC2;
+				break;
+			case GL_DOUBLE_VEC3:
+				uniform_type = UniformData::DOUBLE_VEC3;
+				break;
+			case GL_DOUBLE_VEC4:
+				uniform_type = UniformData::DOUBLE_VEC4;
+				break;
+			case GL_INT:
+				uniform_type = UniformData::INT;
+				break;
+			case GL_INT_VEC2:
+				uniform_type = UniformData::INT_VEC2;
+				break;
+			case GL_INT_VEC3:
+				uniform_type = UniformData::INT_VEC3;
+				break;
+			case GL_INT_VEC4:
+				uniform_type = UniformData::INT_VEC4;
+				break;
+			case GL_UNSIGNED_INT:
+				uniform_type = UniformData::UNSIGNED_INT;
+				break;
+			case GL_UNSIGNED_INT_VEC2:
+				uniform_type = UniformData::UNSIGNED_INT_VEC2;
+				break;
+			case GL_UNSIGNED_INT_VEC3:
+				uniform_type = UniformData::UNSIGNED_INT_VEC3;
+				break;
+			case GL_UNSIGNED_INT_VEC4:
+				uniform_type = UniformData::UNSIGNED_INT_VEC4;
+				break;
+			case GL_BOOL:
+				uniform_type = UniformData::BOOL;
+				break;
+			case GL_BOOL_VEC2:
+				uniform_type = UniformData::BOOL_VEC2;
+				break;
+			case GL_BOOL_VEC3:
+				uniform_type = UniformData::BOOL_VEC3;
+				break;
+			case GL_BOOL_VEC4:
+				uniform_type = UniformData::BOOL_VEC4;
+				break;
+			case GL_FLOAT_MAT2:
+				uniform_type = UniformData::FLOAT_MAT2;
+				break;
+			case GL_FLOAT_MAT3:
+				uniform_type = UniformData::FLOAT_MAT3;
+				break;
+			case GL_FLOAT_MAT4:
+				uniform_type = UniformData::FLOAT_MAT4;
+				break;
+			case GL_FLOAT_MAT2x3:
+				uniform_type = UniformData::FLOAT_MAT2x3;
+				break;
+			case GL_FLOAT_MAT2x4:
+				uniform_type = UniformData::FLOAT_MAT2x4;
+				break;
+			case GL_FLOAT_MAT3x2:
+				uniform_type = UniformData::FLOAT_MAT3x2;
+				break;
+			case GL_FLOAT_MAT3x4:
+				uniform_type = UniformData::FLOAT_MAT3x4;
+				break;
+			case GL_FLOAT_MAT4x2:
+				uniform_type = UniformData::FLOAT_MAT4x2;
+				break;
+			case GL_FLOAT_MAT4x3:
+				uniform_type = UniformData::FLOAT_MAT4x3;
+				break;
+			case GL_DOUBLE_MAT2:
+				uniform_type = UniformData::DOUBLE_MAT2;
+				break;
+			case GL_DOUBLE_MAT3:
+				uniform_type = UniformData::DOUBLE_MAT3;
+				break;
+			case GL_DOUBLE_MAT4:
+				uniform_type = UniformData::DOUBLE_MAT4;
+				break;
+			case GL_DOUBLE_MAT2x3:
+				uniform_type = UniformData::DOUBLE_MAT2x3;
+				break;
+			case GL_DOUBLE_MAT2x4:
+				uniform_type = UniformData::DOUBLE_MAT2x4;
+				break;
+			case GL_DOUBLE_MAT3x2:
+				uniform_type = UniformData::DOUBLE_MAT3x2;
+				break;
+			case GL_DOUBLE_MAT3x4:
+				uniform_type = UniformData::DOUBLE_MAT3x4;
+				break;
+			case GL_DOUBLE_MAT4x2:
+				uniform_type = UniformData::DOUBLE_MAT4x2;
+				break;
+			case GL_DOUBLE_MAT4x3:
+				uniform_type = UniformData::DOUBLE_MAT4x3;
+				break;
+			case GL_SAMPLER_1D:
+				uniform_type = UniformData::SAMPLER_1D;
+				break;
+			case GL_SAMPLER_2D:
+				uniform_type = UniformData::SAMPLER_2D;
+				break;
+			case GL_SAMPLER_3D:
+				uniform_type = UniformData::SAMPLER_3D;
+				break;
+			case GL_SAMPLER_CUBE:
+				uniform_type = UniformData::SAMPLER_CUBE;
+				break;
+			case GL_SAMPLER_1D_SHADOW:
+				uniform_type = UniformData::SAMPLER_1D_SHADOW;
+				break;
+			case GL_SAMPLER_2D_SHADOW:
+				uniform_type = UniformData::SAMPLER_2D_SHADOW;
+				break;
+			case GL_SAMPLER_1D_ARRAY:
+				uniform_type = UniformData::SAMPLER_1D_ARRAY;
+				break;
+			case GL_SAMPLER_2D_ARRAY:
+				uniform_type = UniformData::SAMPLER_2D_ARRAY;
+				break;
+			case GL_SAMPLER_1D_ARRAY_SHADOW:
+				uniform_type = UniformData::SAMPLER_1D_ARRAY_SHADOW;
+				break;
+			case GL_SAMPLER_2D_ARRAY_SHADOW:
+				uniform_type = UniformData::SAMPLER_2D_ARRAY_SHADOW;
+				break;
+			case GL_SAMPLER_2D_MULTISAMPLE:
+				uniform_type = UniformData::SAMPLER_2D_MULTISAMPLE;
+				break;
+			case GL_SAMPLER_2D_MULTISAMPLE_ARRAY:
+				uniform_type = UniformData::SAMPLER_2D_MULTISAMPLE_ARRAY;
+				break;
+			case GL_SAMPLER_CUBE_SHADOW:
+				uniform_type = UniformData::SAMPLER_CUBE_SHADOW;
+				break;
+			case GL_SAMPLER_BUFFER:
+				uniform_type = UniformData::SAMPLER_BUFFER;
+				break;
+			case GL_SAMPLER_2D_RECT:
+				uniform_type = UniformData::SAMPLER_2D_RECT;
+				break;
+			case GL_SAMPLER_2D_RECT_SHADOW:
+				uniform_type = UniformData::SAMPLER_2D_RECT_SHADOW;
+				break;
+			case GL_INT_SAMPLER_1D:
+				uniform_type = UniformData::INT_SAMPLER_1D;
+				break;
+			case GL_INT_SAMPLER_2D:
+				uniform_type = UniformData::INT_SAMPLER_2D;
+				break;
+			case GL_INT_SAMPLER_3D:
+				uniform_type = UniformData::INT_SAMPLER_3D;
+				break;
+			case GL_INT_SAMPLER_CUBE:
+				uniform_type = UniformData::INT_SAMPLER_CUBE;
+				break;
+			case GL_INT_SAMPLER_1D_ARRAY:
+				uniform_type = UniformData::INT_SAMPLER_1D_ARRAY;
+				break;
+			case GL_INT_SAMPLER_2D_ARRAY:
+				uniform_type = UniformData::INT_SAMPLER_2D_ARRAY;
+				break;
+			case GL_INT_SAMPLER_2D_MULTISAMPLE:
+				uniform_type = UniformData::INT_SAMPLER_2D_MULTISAMPLE;
+				break;
+			case GL_INT_SAMPLER_2D_MULTISAMPLE_ARRAY:
+				uniform_type = UniformData::INT_SAMPLER_2D_MULTISAMPLE_ARRAY;
+				break;
+			case GL_INT_SAMPLER_BUFFER:
+				uniform_type = UniformData::INT_SAMPLER_BUFFER;
+				break;
+			case GL_INT_SAMPLER_2D_RECT:
+				uniform_type = UniformData::INT_SAMPLER_2D_RECT;
+				break;
+			case GL_UNSIGNED_INT_SAMPLER_1D:
+				uniform_type = UniformData::UNSIGNED_INT_SAMPLER_1D;
+				break;
+			case GL_UNSIGNED_INT_SAMPLER_2D:
+				uniform_type = UniformData::UNSIGNED_INT_SAMPLER_2D;
+				break;
+			case GL_UNSIGNED_INT_SAMPLER_3D:
+				uniform_type = UniformData::UNSIGNED_INT_SAMPLER_3D;
+				break;
+			case GL_UNSIGNED_INT_SAMPLER_CUBE:
+				uniform_type = UniformData::UNSIGNED_INT_SAMPLER_CUBE;
+				break;
+			case GL_UNSIGNED_INT_SAMPLER_1D_ARRAY:
+				uniform_type = UniformData::UNSIGNED_INT_SAMPLER_1D_ARRAY;
+				break;
+			case GL_UNSIGNED_INT_SAMPLER_2D_ARRAY:
+				uniform_type = UniformData::UNSIGNED_INT_SAMPLER_2D_ARRAY;
+				break;
+			case GL_UNSIGNED_INT_SAMPLER_2D_MULTISAMPLE:
+				uniform_type = UniformData::UNSIGNED_INT_SAMPLER_2D_MULTISAMPLE;
+				break;
+			case GL_UNSIGNED_INT_SAMPLER_2D_MULTISAMPLE_ARRAY:
+				uniform_type = UniformData::UNSIGNED_INT_SAMPLER_2D_MULTISAMPLE_ARRAY;
+				break;
+			case GL_UNSIGNED_INT_SAMPLER_BUFFER:
+				uniform_type = UniformData::UNSIGNED_INT_SAMPLER_BUFFER;
+				break;
+			case GL_UNSIGNED_INT_SAMPLER_2D_RECT:
+				uniform_type = UniformData::UNSIGNED_INT_SAMPLER_2D_RECT;
+				break;
+			case GL_IMAGE_1D:
+				uniform_type = UniformData::IMAGE_1D;
+				break;
+			case GL_IMAGE_2D:
+				uniform_type = UniformData::IMAGE_2D;
+				break;
+			case GL_IMAGE_3D:
+				uniform_type = UniformData::IMAGE_3D;
+				break;
+			case GL_IMAGE_2D_RECT:
+				uniform_type = UniformData::IMAGE_2D_RECT;
+				break;
+			case GL_IMAGE_CUBE:
+				uniform_type = UniformData::IMAGE_CUBE;
+				break;
+			case GL_IMAGE_BUFFER:
+				uniform_type = UniformData::IMAGE_BUFFER;
+				break;
+			case GL_IMAGE_1D_ARRAY:
+				uniform_type = UniformData::IMAGE_1D_ARRAY;
+				break;
+			case GL_IMAGE_2D_ARRAY:
+				uniform_type = UniformData::IMAGE_2D_ARRAY;
+				break;
+			case GL_IMAGE_2D_MULTISAMPLE:
+				uniform_type = UniformData::IMAGE_2D_MULTISAMPLE;
+				break;
+			case GL_IMAGE_2D_MULTISAMPLE_ARRAY:
+				uniform_type = UniformData::IMAGE_2D_MULTISAMPLE_ARRAY;
+				break;
+			case GL_INT_IMAGE_1D:
+				uniform_type = UniformData::INT_IMAGE_1D;
+				break;
+			case GL_INT_IMAGE_2D:
+				uniform_type = UniformData::INT_IMAGE_2D;
+				break;
+			case GL_INT_IMAGE_3D:
+				uniform_type = UniformData::INT_IMAGE_3D;
+				break;
+			case GL_INT_IMAGE_2D_RECT:
+				uniform_type = UniformData::INT_IMAGE_2D_RECT;
+				break;
+			case GL_INT_IMAGE_CUBE:
+				uniform_type = UniformData::INT_IMAGE_CUBE;
+				break;
+			case GL_INT_IMAGE_BUFFER:
+				uniform_type = UniformData::INT_IMAGE_BUFFER;
+				break;
+			case GL_INT_IMAGE_1D_ARRAY:
+				uniform_type = UniformData::INT_IMAGE_1D_ARRAY;
+				break;
+			case GL_INT_IMAGE_2D_ARRAY:
+				uniform_type = UniformData::INT_IMAGE_2D_ARRAY;
+				break;
+			case GL_INT_IMAGE_2D_MULTISAMPLE:
+				uniform_type = UniformData::INT_IMAGE_2D_MULTISAMPLE;
+				break;
+			case GL_INT_IMAGE_2D_MULTISAMPLE_ARRAY:
+				uniform_type = UniformData::INT_IMAGE_2D_MULTISAMPLE_ARRAY;
+				break;
+			case GL_UNSIGNED_INT_IMAGE_1D:
+				uniform_type = UniformData::UNSIGNED_INT_IMAGE_1D;
+				break;
+			case GL_UNSIGNED_INT_IMAGE_2D:
+				uniform_type = UniformData::UNSIGNED_INT_IMAGE_2D;
+				break;
+			case GL_UNSIGNED_INT_IMAGE_3D:
+				uniform_type = UniformData::UNSIGNED_INT_IMAGE_3D;
+				break;
+			case GL_UNSIGNED_INT_IMAGE_2D_RECT:
+				uniform_type = UniformData::UNSIGNED_INT_IMAGE_2D_RECT;
+				break;
+			case GL_UNSIGNED_INT_IMAGE_CUBE:
+				uniform_type = UniformData::UNSIGNED_INT_IMAGE_CUBE;
+				break;
+			case GL_UNSIGNED_INT_IMAGE_BUFFER:
+				uniform_type = UniformData::UNSIGNED_INT_IMAGE_BUFFER;
+				break;
+			case GL_UNSIGNED_INT_IMAGE_1D_ARRAY:
+				uniform_type = UniformData::UNSIGNED_INT_IMAGE_1D_ARRAY;
+				break;
+			case GL_UNSIGNED_INT_IMAGE_2D_ARRAY:
+				uniform_type = UniformData::UNSIGNED_INT_IMAGE_2D_ARRAY;
+				break;
+			case GL_UNSIGNED_INT_IMAGE_2D_MULTISAMPLE:
+				uniform_type = UniformData::UNSIGNED_INT_IMAGE_2D_MULTISAMPLE;
+				break;
+			case GL_UNSIGNED_INT_IMAGE_2D_MULTISAMPLE_ARRAY:
+				uniform_type = UniformData::UNSIGNED_INT_IMAGE_2D_MULTISAMPLE_ARRAY;
+				break;
+			case GL_UNSIGNED_INT_ATOMIC_COUNTER:
+				uniform_type = UniformData::UNSIGNED_INT_ATOMIC_COUNTER;
+				break;
+			default:
+				uniform_type = UniformData::UNKNOWN;
+		}
+
+		uniforms[uniform_name] = UniformData(uniform_name, uniform_type, i);
 	}
 }
 
@@ -148,7 +469,7 @@ void Program::compile(const std::string& vertex_shader_code, const std::string& 
 	GLCall(glDeleteShader(vertex_shader));
 	GLCall(glDeleteShader(fragment_shader));
 
-	_define_all_uniforms(id);
+	_define_all_uniforms();
 }
 
 void Program::compile(const std::string& vertex_shader_code, const std::string& geometry_shader_code, const std::string& fragment_shader_code){
@@ -166,7 +487,7 @@ void Program::compile(const std::string& vertex_shader_code, const std::string& 
 	GLCall(glDeleteShader(geometry_shader));
 	GLCall(glDeleteShader(fragment_shader));
 
-	_define_all_uniforms(id);
+	_define_all_uniforms();
 }
 
 void Program::bind() {
@@ -291,4 +612,3 @@ void Program::update_uniform(unsigned int uniform_id, glm::vec2& a) {
 	bind();
 	GLCall(glUniform2fv(uniform_id, 1, glm::value_ptr(a)));
 }
-
