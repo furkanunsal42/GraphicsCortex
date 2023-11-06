@@ -18,6 +18,9 @@
 #include "SharedPtr_Object.h"
 #include "SharedPtr_Camera.h"
 
+class Text;
+class CubeMapTexture;
+
 class Scene {
 public:
 
@@ -35,13 +38,14 @@ public:
 		add_light(T light)
 	{
 		_lights.push_back(light.obj);
-		std::remove_reference_t<decltype(*light.obj)>::count += 1;
 	}
 
 	
 	void add_graphic(Graphic_s graphic);
 	void add_object(Object_s object);
 	void add_object(Vehicle_s vehicle);
+	void add_text(std::shared_ptr<Text> text);
+	void set_skybox(std::shared_ptr<CubeMapTexture> cubemap);
 
 	template<typename T>
 	std::enable_if_t<std::is_same<T, PhysicsObject>::value || std::is_same<T, PhysicsVehicle>::value || std::is_same<T, physx::PxRigidActor*>::value, void>
@@ -61,6 +65,10 @@ public:
 	
 	std::vector<std::shared_ptr<Object>> _objects;
 	std::vector<std::shared_ptr<Vehicle>> _vehicles;
+
+	std::vector<std::shared_ptr<Text>> _texts;
+
+	std::shared_ptr<CubeMapTexture> skybox;
 
 private:
 	bool _is_framebuffer_loaded = false;

@@ -8,7 +8,7 @@
 
 #include "ShaderCompiler.h"
 
-class Camera {
+class Camera : public UpdatesDefaultUniforms{
 public:
 	glm::vec3 up_vector = glm::vec3(0.0f, 1.0f, 0.0f);
 	glm::mat4 view_matrix = glm::mat4(1.0f);
@@ -38,4 +38,6 @@ public:
 	void update_matrixes();
 	void update_uniforms(Program& program);
 	void handle_movements(GLFWwindow* window, double frame_time_ms = 16.6f);
+
+	void update_default_uniforms(Program& program);
 };

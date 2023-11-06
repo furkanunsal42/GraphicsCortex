@@ -8,6 +8,8 @@
 #include <string>
 #include <vector>
 
+#include "ShaderCompiler.h"
+
 class Material;
 class FrameBuffer;
 
@@ -159,12 +161,8 @@ private:
 class Camera;
 class Graphic_s;
 class uniform_update_queue;
-namespace default_program {
-	uniform_update_queue solid_default_uniform_queue(Camera& camera, Graphic_s graphic);
-}
 
-
-class UnorderedMaterial {
+class UnorderedMaterial : public UpdatesDefaultUniforms{
 public:
 	int material_texture_slot = 0;
 
@@ -202,6 +200,8 @@ public:
 
 	glm::vec3 get_active_textures_by_type();
 
+	void update_default_uniforms(Program& program);
+
 protected:
 	unsigned int texture_width = 1024;
 	unsigned int texture_height = 1024;
@@ -216,7 +216,6 @@ protected:
 
 	bool _first_texture_set = true;
 
-	friend uniform_update_queue default_program::solid_default_uniform_queue(Camera& camera, Graphic_s graphic);
 };
 
 class Material : public UnorderedMaterial{

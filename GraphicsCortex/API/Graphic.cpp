@@ -65,8 +65,10 @@ void Graphic::draw(bool show_warnings) {
 		mesh->bind();
 	
 	if (_is_material_loaded) {
-		if (use_unordered_material)
+		if (use_unordered_material) {
 			unordered_material->bind();
+			unordered_material->update_default_uniforms(*renderer);
+		}
 		else
 			material->bind();
 	}
@@ -195,4 +197,14 @@ void Graphic::set_uniform_all(uniform_update_queue&& new_update_queue) {
 
 void Graphic::update_uniforms() {
 	update_uniform_queue();
+}
+
+void Graphic::update_default_uniforms(Program& program) {
+	program.update_uniform("model", model_matrix);
+
+	program.update_uniform("cube_map", 13);
+	program.update_uniform("use_cube_map_reflection", 0);
+	program.update_uniform("cube_map_reflection_strength", 0.85f);
+
+	program.update_uniform("color", 0.8f, 0.7f, 0.6f, 1.0f);
 }

@@ -9,9 +9,6 @@
 #include FT_FREETYPE_H
 
 class Text;
-namespace default_program {
-	uniform_update_queue text_uniform_queue(Camera& camera, Text& text);
-}
 
 struct glyph_info {
 	float x0, y0, x1, y1;	// coords of glyph in the texture atlas
@@ -33,6 +30,5 @@ private:
 	std::unordered_map<uint32_t, glyph_info> glyphs;
 
 	friend Text;
-	friend uniform_update_queue default_program::text_uniform_queue(Camera& camera, Text& text);
 };
 

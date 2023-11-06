@@ -8,7 +8,7 @@ int main() {
 
 	DirectionalLight_s sunlight(glm::vec3(4, 2, 4), glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(0.7, 0.7, 0.7));
 
-	AmbiantLight_s ambiance(glm::vec3(0.6, 0.6, 0.6));
+	AmbiantLight_s ambiance(glm::vec3(0.1, 0.1, 0.1));
 
 	UnorderedMaterial_s bricks_material(2);
 	bricks_material->set_texture("Images/Bricks/brickcolor.jpg", 4, 0, UnorderedMaterial::COLOR);

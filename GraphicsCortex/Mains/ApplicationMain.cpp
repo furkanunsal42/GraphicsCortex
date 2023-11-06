@@ -33,18 +33,13 @@ int main() {
 		map->load_model(city);
 		map->load_material(city_mat);
 		map->load_program(program);
-		map->set_uniform_all(default_program::basic_uniform_queue(*scene.camera.obj, map));
-
 		map->set_position(glm::vec3(0, 0, 0));
-
 		scene.add_graphic(map);
 
-		DirectionalLight_s sunlight(glm::vec3(0.0f, 20.0f, 0.0f), glm::vec3(1.0f, -1.0f, 1.0f), glm::vec3(0.4, 0.4, 0.4), solid_program);
-		sunlight->set_uniform_upadte_queue(default_program::directional_light_default_uniform_queue(*sunlight.obj, 0));
+		DirectionalLight_s sunlight(glm::vec3(0.0f, 20.0f, 0.0f), glm::vec3(1.0f, -1.0f, 1.0f), glm::vec3(0.4, 0.4, 0.4));
 		scene.add_light(sunlight);
 
-		AmbiantLight_s ambinace(glm::vec3(0.3f, 0.3f, 0.3f), solid_program);
-		ambinace->set_uniform_upadte_queue(default_program::ambiant_light_default_uniform_queue(*ambinace.obj, 0));
+		AmbiantLight_s ambinace(glm::vec3(0.3f, 0.3f, 0.3f));
 		scene.add_light(ambinace);
 	}
 
@@ -68,22 +63,15 @@ int main() {
 		UnorderedMaterial_s chassis_material_s("Models/teducar/teduCar.fbx");
 	
 		vehicle->load_mesh_chassis_graphics(chassis);
-		//vehicle->load_model_left_wheel_physics(chassis_left_wheel_model);
-		//vehicle->load_model_right_wheel_physics(chassis_right_wheel_model);
-		//vehicle->load_model_chassis_physics(chassis_model_physics);
-		//vehicle->physics_representation.
+		vehicle->load_model_chassis_physics(chassis_model);
 		vehicle->load_material_chassis(chassis_material_s);
-		//vehicle->load_material_left_wheel(tire_material_s);
-		//vehicle->load_material_right_wheel(tire_material_s);
-		//vehicle->load_program_all(program);
 		vehicle->load_program_chassis(solid_program);
 	
-		vehicle->set_default_uniform_queue_all(*scene.camera.obj);
 		vehicle->chassis->set_uniform("use_cube_map_reflection", 1);
 		vehicle->chassis->set_uniform("cube_map_reflection_strength", 0.3f);
 	
-		vehicle->physics_representation.set_wheel_layout(3.4, -1.4f, 4.2, -0.0f);
-	
+		vehicle->physics_representation.set_wheel_layout(2.6f, -3.4f, 3.8, -0.0f);
+		//vehicle->physics_representation.chassisDims = physx::PxVec3(1.2f, 1.3f, 2.6f);
 		vehicle->physics_representation.compile();
 	
 		vehicle->set_position(glm::vec3(0, 2, 0));
@@ -97,19 +85,19 @@ int main() {
 	}
 
 	Program_s cubemap_program(default_program::cubemap_program());
-	CubeMapTexture cube_map;
-	cube_map.set_program(cubemap_program);
-	cube_map.camera = scene.camera.obj.get();
-	cube_map.set_update_queue(default_program::cubemap_default_uniform_queue(cube_map));
-	cube_map.face_texture_filepaths[RIGHT] = "Images/CubeMap/Sky/px.jpg";
-	cube_map.face_texture_filepaths[LEFT] = "Images/CubeMap/Sky/nx.jpg";
-	cube_map.face_texture_filepaths[TOP] = "Images/CubeMap/Sky/py.jpg";
-	cube_map.face_texture_filepaths[BOTTOM] = "Images/CubeMap/Sky/ny.jpg";
-	cube_map.face_texture_filepaths[FRONT] = "Images/CubeMap/Sky/pz.jpg";
-	cube_map.face_texture_filepaths[BACK] = "Images/CubeMap/Sky/nz.jpg";
+	std::shared_ptr<CubeMapTexture> cube_map = std::make_shared<CubeMapTexture>();
+	cube_map->set_program(cubemap_program);
+	cube_map->camera = scene.camera.obj.get();
+	cube_map->face_texture_filepaths[RIGHT] = "Images/CubeMap/Sky/px.jpg";
+	cube_map->face_texture_filepaths[LEFT] = "Images/CubeMap/Sky/nx.jpg";
+	cube_map->face_texture_filepaths[TOP] = "Images/CubeMap/Sky/py.jpg";
+	cube_map->face_texture_filepaths[BOTTOM] = "Images/CubeMap/Sky/ny.jpg";
+	cube_map->face_texture_filepaths[FRONT] = "Images/CubeMap/Sky/pz.jpg";
+	cube_map->face_texture_filepaths[BACK] = "Images/CubeMap/Sky/nz.jpg";
 
-	cube_map.read_queue(3);
-	cube_map.load_queue(true);
+	cube_map->read_queue(3);
+	cube_map->load_queue(true);
+	scene.set_skybox(cube_map);
 
 	while (frame.is_running()) {
 
@@ -131,15 +119,12 @@ int main() {
 		scene.camera->set_rotation(camera_rotation);
 		scene.camera->set_position(camera_position);
 
-		cube_map.bind();
+		cube_map->bind();
 
-		cube_map.texture_slot = 13;
-		cube_map.bind();
+		cube_map->texture_slot = 13;
+		cube_map->bind();
 
 		scene.render();
-		cube_map.texture_slot = 11;
-
-		cube_map.draw();
 	}
 
 

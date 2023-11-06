@@ -638,6 +638,20 @@ void Box::render(){
 
 	_graphic_representation->draw(false);
 	
+	if (_text_string != U"") {
+		if (_text == nullptr) _text = std::make_shared<Text>(_gui_ref._font);
+		_text->set_text(_text_string);
+
+		_text->set_max_width(1920);
+		_text->set_scale(1920/4);
+		_text->graphic->set_position(glm::vec3(_aabb.position.x, _gui_ref._frame_ref.window_height - _aabb.position.y - _current_size.y / 2, _gui_ref._current_z_index));
+		_text->set_color(vec4(1, 1, 1, 1.0f));
+		
+		_text->update_default_uniforms(*_text->graphic->renderer);
+		_gui_ref.camera.update_default_uniforms(*_text->graphic->renderer);
+		_text->render();
+	}
+
 	if (hover && cursor_type != Frame::Arrow)
 		_gui_ref._dominant_cursor_style = cursor_type;
 

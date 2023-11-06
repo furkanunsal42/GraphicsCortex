@@ -179,23 +179,6 @@ void Vehicle::set_uniform_queue_all(uniform_update_queue&& all) {
 	set_uniform_queue_all(all, all, all);
 }
 
-void Vehicle::set_default_uniform_queue_chassis(Camera& camera) {
-	set_uniform_queue_chassis(default_program::solid_default_uniform_queue(camera, chassis));
-}
-void Vehicle::set_default_uniform_queue_left_wheel(Camera& camera) {
-	this->wheels[FRONT_LEFT]->set_uniform_all(default_program::solid_default_uniform_queue(camera, wheels[FRONT_LEFT]));
-	this->wheels[REAR_LEFT]->set_uniform_all(default_program::solid_default_uniform_queue(camera, wheels[REAR_LEFT]));
-}
-void Vehicle::set_default_uniform_queue_right_wheel(Camera& camera) {
-	this->wheels[FRONT_RIGHT]->set_uniform_all(default_program::solid_default_uniform_queue(camera, wheels[FRONT_RIGHT]));
-	this->wheels[REAR_RIGHT]->set_uniform_all(default_program::solid_default_uniform_queue(camera, wheels[REAR_RIGHT]));
-}
-void Vehicle::set_default_uniform_queue_all(Camera& camera) {
-	set_default_uniform_queue_chassis(camera);
-	set_default_uniform_queue_left_wheel(camera);
-	set_default_uniform_queue_right_wheel(camera);
-}
-
 void Vehicle::sync_with_physics() {
 	
 	int shape_count = physics_representation.vehicle_actor->getNbShapes();

@@ -6,7 +6,6 @@
 
 #include "Frame.h"
 #include "Debuger.h"
-
 #include <iostream>
 
 

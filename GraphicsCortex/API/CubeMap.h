@@ -14,7 +14,7 @@ enum cube_map {
 	RIGHT = 0, LEFT, TOP, BOTTOM, FRONT, BACK
 };
 
-class CubeMapTexture{
+class CubeMapTexture : public UpdatesDefaultUniforms{
 public:
 	Graphic cube = default_geometry::cube(glm::vec3(2, 2, 2));
 	Camera* camera = nullptr;
@@ -50,6 +50,8 @@ public:
 	void set_program(Program_s renderer);
 	void set_update_queue(uniform_update_queue& update_queue);
 	void set_update_queue(uniform_update_queue&& update_queue);
+
+	void update_default_uniforms(Program& program);
 
 private:
 	void _read_data_stbi(int n, int desired_channels);

@@ -227,7 +227,7 @@
     <ClCompile Include="Dependencies\physx\snippetcommon\SnippetVehicleSceneQuery.cpp" />
     <ClCompile Include="Dependencies\physx\snippetcommon\SnippetVehicleTankCreate.cpp" />
     <ClCompile Include="Dependencies\physx\snippetcommon\SnippetVehicleTireFriction.cpp" />
-    <ClCompile Include="Mains\ApplicationMain.cpp" />
+    <ClCompile Include="Mains\GuiMain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Matrix\Shaders\Matrix.frag" />

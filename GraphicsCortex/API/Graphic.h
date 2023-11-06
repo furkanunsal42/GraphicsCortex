@@ -23,7 +23,7 @@
 #include "SharedPtr_Materials.h"
 #include "SharedPtr_Program.h"
 
-class Graphic {
+class Graphic : public UpdatesDefaultUniforms {
 private:
 	glm::vec3 _last_updated_position = glm::vec3(0.0f, 0.0f, 0.0f);
 	glm::quat _last_updated_rotation = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
@@ -106,6 +106,9 @@ public:
 	void set_uniform_all(uniform_update_queue&& new_update_queue);
 
 	void update_uniforms();
+
+	// UpdatesDefaultUniforms
+	void update_default_uniforms(Program& program);
 
 protected:
 

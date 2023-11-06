@@ -110,12 +110,13 @@ int main() {
 	element1.margin = Persentage(100, Persentage::MAX_SIZE_DIM);
 
 	Font_s font("Fonts\\Roboto-Regular.ttf", 100);
-	Text text(font, "File");
-	text.set_scale(1080 / 3);
-	text.set_wait_for_words(1080);
-	text.graphic->set_position(glm::vec3(0, 0, -1));
-	text.set_color(vec4(0, 0, 0, 1));
-	text.graphic->set_uniform_all(default_program::text_uniform_queue(gui.camera, text));
+	std::shared_ptr<Text> text = std::make_shared<Text>(font, "File");
+	text->set_max_width(1);
+	text->set_scale(1);
+	scene.add_text(text);
+	text->graphic->set_position(glm::vec3(0, 0, -1));
+	text->set_color(vec4(242.0f / 255, 166.0f / 255, 0.0f / 255, 1.0f));
+	scene.add_text(text);
 
 	while (frame.is_running()) {
 		double frame_time = frame.handle_window();
@@ -126,8 +127,6 @@ int main() {
 		
 		scene.render(frame_time);
 		
-		text.render();
-		
 		gui_draw_topbar(gui, styles);
 		gui_draw_scene_viewer(gui, styles);
 		gui_draw_moveable_panel(gui, styles);
@@ -135,8 +134,6 @@ int main() {
 		//gui.layout(vec2(100, 100), vec2(100, 100), layout_style);
 		//gui.content(vec2(80, 80), element1);
 		//gui.layout_end();
-
-
 	}
 }
 

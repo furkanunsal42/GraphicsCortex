@@ -612,3 +612,4 @@ void Program::update_uniform(unsigned int uniform_id, glm::vec2& a) {
 	bind();
 	GLCall(glUniform2fv(uniform_id, 1, glm::value_ptr(a)));
 }
+

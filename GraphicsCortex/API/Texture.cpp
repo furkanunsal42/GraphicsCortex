@@ -754,6 +754,11 @@ glm::vec3 UnorderedMaterial::get_active_textures_by_type() {
 	return _active_textures_by_type;
 }
 
+void UnorderedMaterial::update_default_uniforms(Program& program) {
+	program.update_uniform("active_texture_indicies", _active_textures_by_type);
+}
+
+
 
 // ------------------------------------------------------------------------------------
 

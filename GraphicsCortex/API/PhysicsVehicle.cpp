@@ -38,7 +38,7 @@ PhysicsVehicle::PhysicsVehicle(InitValues init_type, int num_wheels) :
 		wheelWidth = 0.2f;
 		wheelRadius = 0.5f;
 		wheelMOI = 0.5f * wheelMass * wheelRadius * wheelRadius;
-		wheelMaterial = PhysxContext::get().physics->createMaterial(0.3f, 0.2f, 0.7f);
+		wheelMaterial = PhysxContext::get().physics->createMaterial(0.8f, 0.8f, 0.7f);
 
 		max_steer = physx::PxPi * 0.4f;
 		max_handbrake_torque = 4000.0f;
@@ -55,7 +55,7 @@ PhysicsVehicle::PhysicsVehicle(InitValues init_type, int num_wheels) :
 		suspension_spring_damper_rate = 4500.0f;
 		suspension_travel_direction = physx::PxVec3(0.0f, -1.0f, 0.0f);
 		suspension_force_application_offset = -0.3f;	//Suspension force application point 0.3 metres below 
-		tire_force_application_offset = -0.3f;			//tire force application point 0.3 metres below 
+		tire_force_application_offset = -0.3f;			//tire force applicatsion point 0.3 metres below 
 		
 		camber_angle_at_rest = 0.0f;
 		camber_angle_at_max_droop = 0.01f;
@@ -101,15 +101,16 @@ PhysicsVehicle::PhysicsVehicle(InitValues init_type, int num_wheels) :
 }
 
 PhysicsVehicle::~PhysicsVehicle() {
-	if (chassisMaterial != nullptr) chassisMaterial->release();
-	if (wheelMaterial != nullptr) wheelMaterial->release();
-	if (vehicle_actor != nullptr) vehicle_actor->release();
+	if (chassisMaterial != nullptr) if(chassisMaterial->isReleasable()) chassisMaterial->release();
+	if (wheelMaterial != nullptr) if(wheelMaterial->isReleasable()) wheelMaterial->release();
+	return;
+	if (vehicle_actor != nullptr) if(vehicle_actor->isReleasable()) vehicle_actor->release();
 	
 	if(compiled)
 		if (vehicle_drive != nullptr) vehicle_drive->free();
 	if (!compiled)
 		PhysxContext::get().physics_allocator.deallocate(vehicle_drive);
-
+	
 	PhysxContext::get().physics_allocator.deallocate(wheelsSimData);
 	PhysxContext::get().physics_allocator.deallocate(SceneQueryData);
 	if (BatchQuery != nullptr) BatchQuery->release();

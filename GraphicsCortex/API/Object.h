@@ -88,11 +88,6 @@ public:
 	void set_uniform_queue_all(uniform_update_queue&& chassis, uniform_update_queue&& left_wheel, uniform_update_queue&& right_wheel);
 	void set_uniform_queue_all(uniform_update_queue&& all);
 
-	void set_default_uniform_queue_chassis(Camera& camera);
-	void set_default_uniform_queue_left_wheel(Camera& camera);
-	void set_default_uniform_queue_right_wheel(Camera& camera);
-	void set_default_uniform_queue_all(Camera& camera);
-
 	void sync_with_physics();
 
 	void set_position(glm::vec3 position);

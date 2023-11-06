@@ -3,11 +3,7 @@
 #include "SharedPtr_Program.h"
 #include "SharedPtr_Font.h"
 
-namespace default_program {
-	uniform_update_queue text_uniform_queue(Camera& camera, Text& text);
-}
-
-class Text {
+class Text : public UpdatesDefaultUniforms {
 public:
 	Text(Font_s font, const std::string& text = u8"");
 	Text(Font_s font, const std::u16string& text);
@@ -19,9 +15,9 @@ public:
 
 	~Text();
 
-	void set_text(const std::string& text);
-	void set_text(const std::u16string& text);
 	void set_text(const std::u32string& text);
+	void set_text(const std::u16string& text);
+	void set_text(const std::string& text);
 
 	std::string get_text8();
 	std::u16string get_text16();
@@ -47,6 +43,8 @@ public:
 
 	void render();
 
+	void update_default_uniforms(Program& program);
+
 	Graphic_s graphic;
 
 private:
@@ -55,7 +53,7 @@ private:
 	void _update_graphic();
 
 	union {
-		std::string text8;
+		std::string text8 = "";
 		std::u16string text16;
 		std::u32string text32;
 	};
@@ -76,5 +74,4 @@ private:
 	static bool _default_renderer_initialized;
 	static void _initialize_default_renderer();
 
-	friend uniform_update_queue default_program::text_uniform_queue(Camera& camera, Text& text);
 };

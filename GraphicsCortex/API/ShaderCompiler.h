@@ -277,3 +277,9 @@ public:
 	void update_uniform(unsigned int uniform_id, glm::vec3& a);
 	void update_uniform(unsigned int uniform_id, glm::vec2& a);
 };
+
+ class UpdatesDefaultUniforms {
+ public:
+	 virtual void update_default_uniforms(Program& program) { };
+
+ };

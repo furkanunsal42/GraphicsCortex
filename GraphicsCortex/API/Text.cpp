@@ -374,7 +374,15 @@ void Text::render(){
 	_font->_font_atlas.texture_slot = 0;
 	_font->_font_atlas.bind();
 
+	update_default_uniforms(*graphic->renderer);
+
 	graphic->update_matrix();
 	graphic->update_uniforms();
+	graphic->update_default_uniforms(*graphic->renderer);
 	graphic->draw(false);
+}
+
+void Text::update_default_uniforms(Program& program) {
+	program.update_uniform("texture_slot", (int)_font->_font_atlas.texture_slot);
+	program.update_uniform("text_color", _color.x, _color.y, _color.z, _color.w);
 }

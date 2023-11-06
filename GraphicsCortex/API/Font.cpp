@@ -18,7 +18,7 @@ Font::Font(const std::string& filename, int font_size) {
 			continue;
 		supported_glyph_amount++;
 	}
-	int tex_height = font_size * 1.1f * std::sqrt(supported_glyph_amount);
+	int tex_height = font_size * 1.2f * std::sqrt(supported_glyph_amount);
 	//tex_height = std::pow(2, std::ceil(std::log2(tex_height)));
 	tex_height = std::max(512, tex_height);
 	int tex_width = tex_height;

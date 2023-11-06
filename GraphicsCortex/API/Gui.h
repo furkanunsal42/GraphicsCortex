@@ -315,6 +315,9 @@ private:
 	vec2 _current_size;				// after interpolation
 	StaticStyle _current_style;		// after interpolation
 
+	std::u32string _text_string = U"Hello World";
+	std::shared_ptr<Text> _text;
+
 	_widget_info _info;
 
 	friend Gui;
@@ -391,6 +394,8 @@ private:
 
 	float _current_z_index = 0;
 	float _z_index_buff = 0;
+
+	std::shared_ptr<Font> _font = std::make_shared<Font>();
 
 	friend Box;
 };

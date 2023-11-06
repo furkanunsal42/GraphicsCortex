@@ -10,8 +10,11 @@
 #include "Default_Programs.h"
 #include "Debuger.h"
 #include "Frame.h"
+#include "Text.h"
+#include "CubeMap.h"
 
 #include "PhysicsScene.h"
+
 
 Scene::Scene(const Frame& frame) {
 	camera->screen_width = frame.window_width;
@@ -32,6 +35,14 @@ void Scene::add_object(Vehicle_s vehicle) {
 	PhysicsScene::get().add_actor(vehicle->physics_representation);
 }
 
+void Scene::add_text(std::shared_ptr<Text> text) {
+	_texts.push_back(text);
+}
+
+void Scene::set_skybox(std::shared_ptr<CubeMapTexture> cubemap) {
+	skybox = cubemap;
+}
+
 void Scene::set_framebuffer(FrameBuffer& framebuffer) {
 	frame_buffer = std::move(framebuffer);
 	_is_framebuffer_loaded = true;
@@ -43,51 +54,94 @@ void Scene::render(bool show_warnings) {
 
 	camera->update_matrixes();
 
-	for (std::shared_ptr<Light> light : _lights) {
-		light->update_uniform_queue();
-	}
-
 	for(std::shared_ptr<Graphic> graphic : _graphics){
 		graphic->update_matrix();
-		if (!graphic->is_uniform_queue_loaded()) {
-			std::cout << "[Opengl Error] Graphic::update_uniforms() was called but no uniform_queue is specified, basic uniform queue is being loaded to graphic by the respected scene" << std::endl;
-			graphic->set_uniform_all(default_program::basic_uniform_queue(*camera.obj, Graphic_s(graphic)));
-		}
+
+		graphic->update_default_uniforms(*graphic->renderer);
+		camera->update_default_uniforms(*graphic->renderer);
+		
 		graphic->update_uniforms();
+
+		AmbiantLight::temp_light_index = 0;
+		DirectionalLight::temp_light_index = 0;
+		PointLight::temp_light_index = 0;
+		SpotLight::temp_light_index = 0;
+		for (std::shared_ptr<Light> light : _lights)
+			light->update_default_uniforms(*graphic->renderer);
+
 		graphic->draw(show_warnings);
 	}
 	for (std::shared_ptr<Object> object : _objects) {
 		object->graphics->update_matrix();
-		if (!object->graphics->is_uniform_queue_loaded()) {
-			std::cout << "[Opengl Error] Graphic::update_uniforms() was called but no uniform_queue is specified, basic uniform queue is being loaded to graphic by the respected scene" << std::endl;
-			object->graphics->set_uniform_all(default_program::basic_uniform_queue(*camera.obj, Graphic_s(object->graphics)));
-		}
+
+		object->graphics->update_default_uniforms(*object->graphics->renderer);
+		camera->update_default_uniforms(*object->graphics->renderer);
+
 		object->graphics->update_uniforms();
+
+		AmbiantLight::temp_light_index = 0;
+		DirectionalLight::temp_light_index = 0;
+		PointLight::temp_light_index = 0;
+		SpotLight::temp_light_index = 0;
+		for (std::shared_ptr<Light> light : _lights)
+			light->update_default_uniforms(*object->graphics->renderer);
+
 		object->graphics->draw(show_warnings);
 	}
+
 	for (std::shared_ptr<Vehicle> vehicle : _vehicles) {
 		if (vehicle->chassis_graphic_initialized) {
 			vehicle->chassis->update_matrix();
-			if (!vehicle->chassis->is_uniform_queue_loaded()) {
-				std::cout << "[Opengl Error] Graphic::update_uniforms() was called but no uniform_queue is specified, basic uniform queue is being loaded to graphic by the respected scene" << std::endl;
-				vehicle->chassis->set_uniform_all(default_program::basic_uniform_queue(*camera.obj, Graphic_s(vehicle->chassis)));
-			}
+		
+			vehicle->chassis->update_default_uniforms(*vehicle->chassis->renderer);
+			camera->update_default_uniforms(*vehicle->chassis->renderer);
+			
 			vehicle->chassis->update_uniforms();
+
+			AmbiantLight::temp_light_index = 0;
+			DirectionalLight::temp_light_index = 0;
+			PointLight::temp_light_index = 0;
+			SpotLight::temp_light_index = 0;
+			for (std::shared_ptr<Light> light : _lights)
+				light->update_default_uniforms(*vehicle->chassis->renderer);
+
 			vehicle->chassis->draw(show_warnings);
 		}
 		
 		if (vehicle->wheel_graphic_initialized) {
 			for (Graphic_s wheel : vehicle->wheels) {
 				wheel->update_matrix();
-				if (!wheel->is_uniform_queue_loaded()) {
-					std::cout << "[Opengl Error] Graphic::update_uniforms() was called but no uniform_queue is specified, basic uniform queue is being loaded to graphic by the respected scene" << std::endl;
-					wheel->set_uniform_all(default_program::basic_uniform_queue(*camera.obj, wheel));
-				}
+
+				wheel->update_default_uniforms(*wheel->renderer);
+				camera->update_default_uniforms(*wheel->renderer);
+
 				wheel->update_uniforms();
+
+				AmbiantLight::temp_light_index = 0;
+				DirectionalLight::temp_light_index = 0;
+				PointLight::temp_light_index = 0;
+				SpotLight::temp_light_index = 0;
+				for (std::shared_ptr<Light> light : _lights)
+					light->update_default_uniforms(*wheel->renderer);
+				
 				wheel->draw(show_warnings);
 			}
 		}
 	}
+
+	for (std::shared_ptr<Text> text : _texts) {
+		text->update_default_uniforms(*text->graphic->renderer);
+		camera->update_default_uniforms(*text->graphic->renderer);
+		text->graphic->update_uniforms();
+		text->render();
+	}
+
+	if (skybox != nullptr) {
+		skybox->texture_slot = 11;
+		skybox->update_default_uniforms(*skybox->cube.renderer);
+		skybox->draw();
+	}
+	
 }
 
 void Scene::render_to_framebuffer(Frame& frame, bool show_warnings) { 

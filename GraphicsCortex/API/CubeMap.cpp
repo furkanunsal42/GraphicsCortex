@@ -108,9 +108,11 @@ void CubeMapTexture::bind() {
 void CubeMapTexture::draw() {
 	bind();
 	camera->update_matrixes();
+	camera->update_default_uniforms(*cube.renderer);
 	cube.renderer->bind();
 
 	cube.update_uniforms();
+	cube.update_default_uniforms(*cube.renderer);
 	
 	bool face_culling = glIsEnabled(GL_CULL_FACE);
 	GLCall(glDisable(GL_CULL_FACE));
@@ -140,4 +142,8 @@ void CubeMapTexture::set_update_queue(uniform_update_queue& update_queue) {
 
 void CubeMapTexture::set_update_queue(uniform_update_queue&& update_queue) {
 	cube.set_uniform_all(update_queue);
+}
+
+void CubeMapTexture::update_default_uniforms(Program& program) {
+	program.update_uniform("cubemap", texture_slot);
 }
