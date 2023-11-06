@@ -71,7 +71,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>$(SolutionDir)$(ProjectName)\</OutDir>
+    <OutDir>$(SolutionDir)GraphicsCortex\</OutDir>
     <TargetName>$(ProjectName)64</TargetName>
     <IntDir>$(Configuration)\</IntDir>
   </PropertyGroup>
@@ -142,6 +142,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Source\ApplicationMain.cpp" />
+    <ClCompile Include="Source\Editor.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Source\Editor.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

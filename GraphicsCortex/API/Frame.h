@@ -2,7 +2,6 @@
 #include "Config.h"
 
 #include <string>
-#include <GLFW\glfw3.h>
 #include "CortexMath.h"
 
 extern bool is_glew_initialized;
@@ -10,6 +9,8 @@ extern bool is_glfw_initialized;
 extern int fps_counter_batch;
 extern double frame_time_ms;
 extern double frame_rate_fps;
+
+struct GLFWwindow;
 
 class Frame {
 public:

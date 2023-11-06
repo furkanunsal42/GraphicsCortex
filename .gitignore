@@ -291,3 +291,5 @@ GraphicsCortex/Release/CustomRenderPipelines.obj
 GraphicsCortex/Release/CustomRenderPipelines.obj
 GraphicsCortex/Release/CustomRenderPipelines.obj
 GraphicsCortex/GraphicsCortex64.lib
+CortexEditor/Release/Editor.obj
+CortexEditor/Release/ApplicationMain.obj
