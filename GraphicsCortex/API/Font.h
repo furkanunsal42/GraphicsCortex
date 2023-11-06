@@ -22,12 +22,9 @@ class Font {
 public:
 	Font(const std::string& filename = "Fonts\\Roboto-Thin.ttf", int font_size = 100);
 
-
-
-private:
-	
-	Texture _font_atlas;
 	std::unordered_map<uint32_t, glyph_info> glyphs;
+private:
+	Texture _font_atlas;
 
 	friend Text;
 };

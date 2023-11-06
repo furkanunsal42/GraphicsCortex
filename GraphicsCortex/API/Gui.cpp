@@ -643,9 +643,10 @@ void Box::render(){
 		_text->set_text(_text_string);
 
 		_text->set_max_width(1920);
-		_text->set_scale(1920/4);
-		_text->graphic->set_position(glm::vec3(_aabb.position.x, _gui_ref._frame_ref.window_height - _aabb.position.y - _current_size.y / 2, _gui_ref._current_z_index));
-		_text->set_color(vec4(1, 1, 1, 1.0f));
+		_text->set_scale(_gui_ref.camera.screen_height/32 * 16);
+		float text_height = (_gui_ref._font->glyphs[u'l'].y1 - _gui_ref._font->glyphs[u'l'].y0) * _text->get_scale();
+		_text->graphic->set_position(glm::vec3(_aabb.position.x, _gui_ref._frame_ref.window_height - _aabb.position.y - _current_size.y / 2 - text_height / 2, _gui_ref._current_z_index));
+		_text->set_color(vec4(0, 0, 0, 1.0f));
 		
 		_text->update_default_uniforms(*_text->graphic->renderer);
 		_gui_ref.camera.update_default_uniforms(*_text->graphic->renderer);
@@ -693,6 +694,14 @@ bool Box::click_holding() {
 void Box::initialize_data(const std::string& key, int value) {
 	if (data.find(key) == data.end())
 		data[key] = value;
+}
+
+void Box::set_text(std::u32string& string) {
+	_text_string = string;
+}
+
+std::u32string& Box::get_text() {
+	return _text_string;
 }
 
 
@@ -779,7 +788,7 @@ void Gui::render(Time deltatime) {
 	}
 }
 
-Box& Gui::box(AABB2 aabb, Style style, bool draw) {
+Box& Gui::box(AABB2 aabb, Style style, std::u32string text, bool draw) {
 	// append to table if mentioned for the first time
 	uint32_t next_id = _widget_next_id++;
 	if (widget_table.size() >= next_id + 1) {
@@ -788,6 +797,7 @@ Box& Gui::box(AABB2 aabb, Style style, bool draw) {
 				widget_table[next_id].set_position(aabb.position);
 				widget_table[next_id].set_size(aabb.size);
 				widget_table[next_id].style = style;
+				widget_table[next_id].set_text(text);
 				widget_table[next_id].render();
 			}
 			return widget_table[next_id];
@@ -798,8 +808,10 @@ Box& Gui::box(AABB2 aabb, Style style, bool draw) {
 	if (found_box == widget_table.end()) {
 		widget_table.push_back(Box (*this, style, aabb, next_id));
 		int widget_count = widget_table.size() - 1;
-		if (draw)
+		if (draw) {
+			widget_table[next_id].set_text(text);
 			widget_table[widget_count].render();
+		}
 		return widget_table[widget_count];
 	}
 	else {
@@ -813,14 +825,15 @@ Box& Gui::box(AABB2 aabb, Style style, bool draw) {
 	}
 }
 
-Box& Gui::box(vec2 position, vec2 size, Style style, bool draw) {
-	return box(AABB2(position, size), style, draw);
+Box& Gui::box(vec2 position, vec2 size, Style style, std::u32string text, bool draw) {
+	return box(AABB2(position, size), style, text, draw);
 }
 
-void Gui::layout(vec2 position, vec2 min_size, Style style, Layout::LayoutType layout_type, bool draw) {
+void Gui::layout(vec2 position, vec2 min_size, Style style, std::u32string text, Layout::LayoutType layout_type, bool draw) {
 	layout_table.push_back(Layout(layout_type, position, vec2(0)));
 	layout_styles_table.push_back(style);
 	layout_min_size_table.push_back(min_size);
+	layout_strings_table.push_back(text);
 	layout_draw_flags_table.push_back(draw);
 	change_layout_z(1);
 }
@@ -834,6 +847,7 @@ Box& Gui::layout_end() {
 	bool draw = layout_draw_flags_table.back();
 	Layout& layout = layout_table.back();
 	Style& style = layout_styles_table.back();
+	std::u32string& text = layout_strings_table.back();
 	vec2& min_size = layout_min_size_table.back();
 	
 	// render layout itself
@@ -847,7 +861,7 @@ Box& Gui::layout_end() {
 	_z_index_buff--;
 	_current_z_index--;
 
-	auto& result = box(layout.position, size, style, draw);
+	auto& result = box(layout.position, size, style, text, draw);
 	
 	_current_z_index -= _z_index_buff;
 	_z_index_buff = 0;
@@ -855,11 +869,11 @@ Box& Gui::layout_end() {
 	return result;
 }
 
-Box& Gui::content(vec2 size, Style style, bool draw, bool force_insert) {
+Box& Gui::content(vec2 size, Style style, std::u32string text, bool draw, bool force_insert) {
 	Layout& layout = layout_table.back();
 	bool draw_parent_layout = layout_draw_flags_table.back();
 	draw = (draw && draw_parent_layout) || force_insert;
-	Box& content = box(layout.get_widget_position(), size, style, draw);
+	Box& content = box(layout.get_widget_position(), size, style, text, draw);
 	if (draw){
 		vec4 content_margin = content.get_current_style().margin.get_value(content._info);
 		layout.add_widget(content.get_original_size() + vec2(content_margin.y + content_margin.w, content_margin.x + content_margin.z));

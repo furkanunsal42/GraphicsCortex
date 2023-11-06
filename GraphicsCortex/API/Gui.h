@@ -301,6 +301,9 @@ public:
 
 	void initialize_data(const std::string& key, int value);
 
+	void set_text(std::u32string& string);
+	std::u32string& get_text();
+
 	uint32_t _id = 0;
 private:
 
@@ -315,30 +318,12 @@ private:
 	vec2 _current_size;				// after interpolation
 	StaticStyle _current_style;		// after interpolation
 
-	std::u32string _text_string = U"Hello World";
+	std::u32string _text_string = U"";
 	std::shared_ptr<Text> _text;
 
 	_widget_info _info;
 
 	friend Gui;
-};
-
-class GuiText {
-public:
-	GuiText(Gui& gui, vec2 position, unsigned int font_size, std::u32string text, vec3 color = vec3(1), uint32_t id = 0, bool position_center = true);
-	GuiText(Gui& gui, vec2 position, unsigned int font_size, std::u32string text, Program_s custom_renderer, vec3 color = vec3(1), uint32_t id = 0, bool position_center = true);
-
-	void render();
-
-private:
-
-	uint32_t _id;
-	Font _font;
-	vec3 _color;
-	Gui& _gui_ref;
-	unsigned int _font_size;
-	std::u32string _text;
-	vec2 _position;
 };
 
 class Gui {	// similiar function with UI class, new implementation 
@@ -352,13 +337,13 @@ public:
 
 	void render(Time delatime);
 	
-	Box& box(AABB2 aabb, Style style, bool draw = true);
-	Box& box(vec2 position, vec2 size, Style style, bool draw = true);
+	Box& box(AABB2 aabb, Style style, std::u32string text = U"", bool draw = true);
+	Box& box(vec2 position, vec2 size, Style style, std::u32string text = U"", bool draw = true);
 
-	void layout(vec2 position, vec2 min_size, Style style, Layout::LayoutType layout_type = Layout::Vertical, bool draw = true);
+	void layout(vec2 position, vec2 min_size, Style style, std::u32string text = U"", Layout::LayoutType layout_type = Layout::Vertical, bool draw = true);
 	Box& layout_end();
 
-	Box& content(vec2 size, Style style, bool draw = true, bool force_insert = false);
+	Box& content(vec2 size, Style style, std::u32string text = U"", bool draw = true, bool force_insert = false);
 
 	Frame& get_frame_referance();
 
@@ -374,6 +359,7 @@ private:
 	std::vector<Layout> layout_table;
 	std::vector<vec2> layout_min_size_table;
 	std::vector<Style> layout_styles_table;
+	std::vector<std::u32string> layout_strings_table;
 	std::vector<uint8_t> layout_draw_flags_table;
 
 	uint32_t _widget_next_id;
@@ -395,7 +381,7 @@ private:
 	float _current_z_index = 0;
 	float _z_index_buff = 0;
 
-	std::shared_ptr<Font> _font = std::make_shared<Font>();
+	std::shared_ptr<Font> _font = std::make_shared<Font>("Fonts\\Roboto-Thin.ttf", 200);
 
 	friend Box;
 };

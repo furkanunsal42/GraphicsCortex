@@ -43,13 +43,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -160,6 +160,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)GraphicsCortex\API;$(SolutionDir)GraphicsCortex\Dependencies\assimp\include;$(SolutionDir)GraphicsCortex\Dependencies\stb_image;$(SolutionDir)GraphicsCortex\Dependencies\GLEW\include;$(SolutionDir)GraphicsCortex\Dependencies\imgui;$(SolutionDir)GraphicsCortex\Dependencies\glm;$(SolutionDir)GraphicsCortex\Dependencies\GLFWx64\include;$(SolutionDir)GraphicsCortex\Dependencies\physx\include;$(SolutionDir)GraphicsCortex\Dependencies\physx\snippetutils;$(SolutionDir)GraphicsCortex\Dependencies\physx\snippetcommon;$(SolutionDir)GraphicsCortex\Dependencies\hiredis\include;$(SolutionDir)GraphicsCortex\Dependencies\freetype\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <LanguageStandard_C>stdc11</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -227,7 +228,6 @@
     <ClCompile Include="Dependencies\physx\snippetcommon\SnippetVehicleSceneQuery.cpp" />
     <ClCompile Include="Dependencies\physx\snippetcommon\SnippetVehicleTankCreate.cpp" />
     <ClCompile Include="Dependencies\physx\snippetcommon\SnippetVehicleTireFriction.cpp" />
-    <ClCompile Include="Mains\GuiMain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Matrix\Shaders\Matrix.frag" />

@@ -32,7 +32,7 @@ int main(){
 
 		scene.render();
 
-		gui.layout(vec2(100, 100), vec2(100, 200), box_style);
+		gui.layout(vec2(100, 100), vec2(100, 200), box_style, U"hello there");
 		gui.layout_end();
 	}
 }

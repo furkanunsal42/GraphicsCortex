@@ -38,36 +38,35 @@ std::unordered_map<std::string, Style> define_styles() {
 
 void gui_draw_topbar(Gui& gui, std::unordered_map<std::string, Style>& styles) {
 	
-	gui.box(vec2(0, 0), vec2(1920, 30), styles["navbar_backround"], true);		// topbar
+	gui.box(vec2(0, 0), vec2(1920, 30), styles["navbar_backround"], U"", true);		// topbar
 
 	// File Button
-	auto& dropdown = gui.box(vec2(100, 0), vec2(60, 30), styles["simple_button"], true);
+	auto& dropdown = gui.box(vec2(100, 0), vec2(60, 30), styles["simple_button"], U"File", true);
 	if (dropdown.click_released())
 		dropdown.data["show"] = !(bool)dropdown.data["show"];
-	gui.layout(vec2(100, 0 + 30), vec2(0, 0), styles["navbar_backround"], Layout::Vertical, dropdown.data["show"]);
+	gui.layout(vec2(100, 0 + 30), vec2(0, 0), styles["navbar_backround"], U"", Layout::Vertical, dropdown.data["show"]);
 	gui.change_layout_z(1);
-	if (gui.content(vec2(180, 30), styles["dropdown_button"], true).click_released()) {
+	if (gui.content(vec2(180, 30), styles["dropdown_button"], U"New", true).click_released()) {
 		std::cout << "1 pressed" << std::endl;
 	}
-	gui.content(vec2(180, 30), styles["dropdown_button"], true);
-	gui.content(vec2(180, 30), styles["dropdown_button"], true);
-	gui.content(vec2(180, 30), styles["dropdown_button"], true);
-	gui.content(vec2(180, 30), styles["dropdown_button"], true);
-	gui.content(vec2(180, 30), styles["dropdown_button"], true);
+	gui.content(vec2(180, 30), styles["dropdown_button"], U"Open", true);
+	gui.content(vec2(180, 30), styles["dropdown_button"], U"Open Recent", true);
+	gui.content(vec2(180, 30), styles["dropdown_button"], U"Save", true);
+	gui.content(vec2(180, 30), styles["dropdown_button"], U"Save As", true);
 	gui.layout_end();
 }
 
 void gui_draw_scene_viewer(Gui& gui, std::unordered_map<std::string, Style>& styles) {
 
 	// Scene Viewer
-	gui.layout(vec2(0, 40), vec2(200, 100), styles["navbar_backround"], Layout::Vertical, true);
-	gui.content(vec2(200, 30), styles["navbar_backround"], true);
-	gui.content(vec2(200, 30), styles["scene_elements"], true);
-	gui.content(vec2(200, 30), styles["scene_elements"], true);
-	gui.content(vec2(200, 30), styles["scene_elements"], true);
-	gui.content(vec2(200, 30), styles["scene_elements"], true);
-	gui.content(vec2(200, 30), styles["scene_elements"], true);
-	gui.content(vec2(200, 30), styles["scene_elements"], true);
+	gui.layout(vec2(0, 40), vec2(200, 100), styles["navbar_backround"], U"", Layout::Vertical, true);
+	gui.content(vec2(200, 30), styles["navbar_backround"], U"", true);
+	gui.content(vec2(200, 30), styles["scene_elements"], U"", true);
+	gui.content(vec2(200, 30), styles["scene_elements"], U"", true);
+	gui.content(vec2(200, 30), styles["scene_elements"], U"", true);
+	gui.content(vec2(200, 30), styles["scene_elements"], U"", true);
+	gui.content(vec2(200, 30), styles["scene_elements"], U"", true);
+	gui.content(vec2(200, 30), styles["scene_elements"], U"", true);
 	auto& scene_viewer_panel = gui.layout_end();
 	scene_viewer_panel.overwrite_style.border_color = gui::color(0xff0000);
 	scene_viewer_panel.overwrite_style.border_thickness = vec4(1);
@@ -76,10 +75,10 @@ void gui_draw_scene_viewer(Gui& gui, std::unordered_map<std::string, Style>& sty
 void gui_draw_moveable_panel(Gui& gui, std::unordered_map<std::string, Style>& styles) {
 	
 	// Movable Panel
-	auto& size_variable = gui.box(vec2(), vec2(), styles[""], false);
+	auto& size_variable = gui.box(vec2(), vec2(), styles[""], U"", false);
 	size_variable.initialize_data("position_x", 100);
 	size_variable.initialize_data("position_y", 100);
-	gui.layout(vec2(size_variable.data["position_x"], size_variable.data["position_y"]), vec2(100, 100), styles["navbar_background"], Layout::Vertical, true);
+	gui.layout(vec2(size_variable.data["position_x"], size_variable.data["position_y"]), vec2(100, 100), styles["navbar_background"], U"", Layout::Vertical, true);
 	gui.change_layout_z(2);
 	auto& panel_holder = gui.content(vec2(200, 30), styles["navbar_background"]);
 	gui.content(vec2(200, 100), styles["panel_elements"]);
@@ -96,7 +95,7 @@ void gui_draw_moveable_panel(Gui& gui, std::unordered_map<std::string, Style>& s
 }
 
 int main() {
-	Frame frame(1920, 1080, "GraphicsCortex", 16, 0, true, true, true, false);
+	Frame frame(1920, 1080, "GraphicsCortex", 4, 0, true, true, true, false);
 	Scene scene(frame);
 	Gui gui(frame);
 
