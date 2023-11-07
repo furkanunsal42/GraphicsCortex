@@ -23,10 +23,7 @@ public:
 	std::shared_ptr<Frame> frame;
 	std::shared_ptr<Gui> gui;
 
-	void push_layer(std::shared_ptr<UILayer> layer) {
-		layers.push_back(layer);
-		layer->init();
-	}
+	void push_layer(std::shared_ptr<UILayer> layer);
 
 	int current_scene_index;
 	std::vector<std::shared_ptr<Scene>> scenes;

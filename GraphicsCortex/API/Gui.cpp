@@ -113,6 +113,8 @@ namespace {
 
 	StaticStyle interpolate_styles(Style style, StaticStyle target_style, _widget_info& widget_info, bool hover) {
 		// insert object to layout
+		Vec3<float> text_color =		style_attribute_get<Vec3<float>>({ target_style.text_color,			style.text_color}, widget_info);
+		float text_size =				style_attribute_get<float>({		target_style.text_size,			style.text_size}, widget_info, 12.0f);
 		Vec3<float> color =				style_attribute_get<Vec3<float>>({	target_style.color,				style.color }, widget_info);
 		Vec2<float> displacement =		style_attribute_get<Vec2<float>>({	target_style.displacement,		style.displacement }, widget_info);
 		Vec2<float> rotation_euler =	style_attribute_get<Vec2<float>>({	target_style.rotation_euler,	style.rotation_euler }, widget_info);
@@ -123,6 +125,8 @@ namespace {
 		Vec3<float> border_color =		style_attribute_get<Vec3<float>>({	target_style.border_color,		style.border_color }, widget_info);
 		Frame::CursorType cursor_type = optional_get<Frame::CursorType>({	target_style.cursor_type,		style.cursor_type });
 		
+		Vec3<float> text_color_default =		style_attribute_get<Vec3<float>>({	style.text_color }, widget_info);
+		float text_size_default =				style_attribute_get<float>({		style.text_size }, widget_info, 12.0f);
 		Vec3<float> color_default =				style_attribute_get<Vec3<float>>({	style.color }, widget_info);
 		Vec2<float> displacement_default =		style_attribute_get<Vec2<float>>({	style.displacement }, widget_info);
 		Vec2<float> rotation_euler_default =	style_attribute_get<Vec2<float>>({	style.rotation_euler }, widget_info);
@@ -133,6 +137,8 @@ namespace {
 		Vec3<float> border_color_default =		style_attribute_get<Vec3<float>>({	style.border_color }, widget_info);
 		Frame::CursorType cursor_type_default = optional_get<Frame::CursorType>({	style.cursor_type });
 
+		Time text_color_change =		style.text_color_change.value_or(0.0);
+		Time text_size_change =			style.text_size_change.value_or(0.0);
 		Time color_change =				style.color_change.value_or(0.0);
 		Time displacement_change =		style.displacement_change.value_or(0.0);
 		Time rotation_change =			style.rotation_change.value_or(0.0);
@@ -142,6 +148,9 @@ namespace {
 		Time border_thickness_change =	style.border_thickness_change.value_or(0.0);
 		Time border_color_change =		style.border_color_change.value_or(0.0);
 
+
+		widget_info._current_text_color_time =			std::min(text_color_change, widget_info._current_text_color_time);
+		widget_info._current_text_size_time =			std::min(text_size_change, widget_info._current_text_size_time);
 		widget_info._current_color_time =				std::min(color_change, widget_info._current_color_time);
 		widget_info._current_displacement_time =		std::min(displacement_change, widget_info._current_displacement_time);
 		widget_info._current_rotation_time =			std::min(rotation_change, widget_info._current_rotation_time);
@@ -150,7 +159,9 @@ namespace {
 		widget_info._current_margin_time =				std::min(margin_change, widget_info._current_margin_time);
 		widget_info._current_border_thickness_time =	std::min(border_thickness_change, widget_info._current_border_thickness_time);
 		widget_info._current_border_color_time =		std::min(border_color_change, widget_info._current_border_color_time);
-
+		
+		widget_info._current_text_color_time =			std::max((Time)0.0f, widget_info._current_text_color_time);
+		widget_info._current_text_size_time =			std::max((Time)0.0f, widget_info._current_text_size_time);
 		widget_info._current_color_time =				std::max((Time)0.0f, widget_info._current_color_time);
 		widget_info._current_displacement_time =		std::max((Time)0.0f, widget_info._current_displacement_time);
 		widget_info._current_rotation_time =			std::max((Time)0.0f, widget_info._current_rotation_time);
@@ -162,6 +173,12 @@ namespace {
 
 		StaticStyle result;
 		
+		if (text_color_change > 0)			result.text_color = style.text_color_interpolation.value_or(Interpolation::linear()).interpolate(text_color_default, text_color, text_color_change, widget_info._current_text_color_time);
+		else if (hover)						result.text_color = text_color;
+		else								result.text_color = text_color_default;
+		if (text_size_change > 0)			result.text_size = style.text_size_interpolation.value_or(Interpolation::linear()).interpolate(text_size_default, text_size, text_size_change, widget_info._current_text_size_time);
+		else if (hover)						result.text_size = text_size;
+		else								result.text_size = text_size_default;
 		if (color_change > 0)				result.color =				style.color_interpolation.value_or(Interpolation::linear()).interpolate(			color_default,				color,				color_change,				widget_info._current_color_time);
 		else if (hover)						result.color =				color; 
 		else								result.color =				color_default; 
@@ -371,6 +388,8 @@ namespace {
 std::optional<Frame::CursorType> cursor_type;
 
 void StaticStyle::clear() {
+	text_color = StyleAttribute<vec3f>();
+	text_size = 12.0f;
 	color = StyleAttribute<vec3f>();
 	displacement = StyleAttribute<vec2f>();
 	rotation_euler = StyleAttribute<vec2f>();	
@@ -385,6 +404,8 @@ void StaticStyle::clear() {
 void Style::clear() {
 	StaticStyle::clear();
 
+	text_color_change = std::optional<Time>();
+	text_size_change = std::optional<Time>();
 	color_change = std::optional<Time>();
 	displacement_change = std::optional<Time>();
 	rotation_change = std::optional<Time>();
@@ -394,6 +415,8 @@ void Style::clear() {
 	border_thickness_change = std::optional<Time>();
 	border_color_change = std::optional<Time>();
 
+	text_color_interpolation = std::optional<_interpolation>();
+	text_size_interpolation = std::optional<_interpolation>();
 	color_interpolation = std::optional<_interpolation>();
 	displacement_interpolation = std::optional<_interpolation>();
 	rotation_interpolation = std::optional<_interpolation>();
@@ -512,6 +535,8 @@ float Persentage::get_value(const _widget_info& info) const {
 void _widget_info::increment_time(Time deltatime) {
 	//last_update = now;
 	if (is_hovering) {
+		_current_text_color_time += deltatime;
+		_current_text_size_time += deltatime;
 		_current_color_time += deltatime;
 		_current_displacement_time += deltatime;
 		_current_rotation_time += deltatime;
@@ -522,6 +547,8 @@ void _widget_info::increment_time(Time deltatime) {
 		_current_border_color_time += deltatime;
 	}
 	else {
+		_current_text_color_time -= deltatime;
+		_current_text_size_time -= deltatime;
 		_current_color_time -= deltatime;
 		_current_displacement_time -= deltatime;
 		_current_rotation_time -= deltatime;
@@ -602,6 +629,9 @@ void Box::render(){
 	Style base_style = merge_static_style_with_style(default_style, _style, _info);
 	Style target_style = merge_static_style_with_style(hover_style, _style, _info);	// append timing information of style to style_to_use, TODO: merge timing information of _style and overwrite_style here
 	StaticStyle interpolated_style = interpolate_styles(base_style, target_style, _info, hover);
+
+	Vec3<float> text_color =		style_attribute_get<Vec3<float>>(interpolated_style.text_color, _info);
+	float text_size =				style_attribute_get<float>(interpolated_style.text_size, _info);
 	Vec3<float> color =				style_attribute_get<Vec3<float>>( interpolated_style.color, _info);
 	Vec2<float> displacement =		style_attribute_get<Vec2<float>>( interpolated_style.displacement, _info);
 	Vec2<float> rotation_euler =	style_attribute_get<Vec2<float>>( interpolated_style.rotation_euler, _info);
@@ -642,15 +672,19 @@ void Box::render(){
 		if (_text == nullptr) _text = std::make_shared<Text>(_gui_ref._font);
 		_text->set_text(_text_string);
 
-		_text->set_max_width(1920);
-		_text->set_scale(_gui_ref.camera.screen_height/32 * 16);
+		_text->set_max_width(_gui_ref.camera.screen_width);
+		_text->set_scale(0.02 * text_size);
 		float text_height = (_gui_ref._font->glyphs[u'l'].y1 - _gui_ref._font->glyphs[u'l'].y0) * _text->get_scale();
-		_text->graphic->set_position(glm::vec3(_aabb.position.x, _gui_ref._frame_ref.window_height - _aabb.position.y - _current_size.y / 2 - text_height / 2, _gui_ref._current_z_index));
-		_text->set_color(vec4(0, 0, 0, 1.0f));
+		_text->graphic->set_position(glm::vec3((_aabb.position.x) / _gui_ref.camera.screen_width, (_gui_ref._frame_ref.window_height - _aabb.position.y - _current_size.y / 2 - text_size / 2) / _gui_ref.camera.screen_width, _gui_ref._current_z_index));
+		_text->set_color(vec4(text_color.x, text_color.y, text_color.z, 1.0f));
 		
+		_gui_ref.camera.projection_matrix = glm::ortho(0.0f, 1.0f, 0.0f, (float)_gui_ref.window_size.y / _gui_ref.window_size.x, -100.0f, 100.0f);
 		_text->update_default_uniforms(*_text->graphic->renderer);
 		_gui_ref.camera.update_default_uniforms(*_text->graphic->renderer);
+
 		_text->render();
+		_gui_ref.camera.projection_matrix = glm::ortho(0.0f, (float)_gui_ref.window_size.x, 0.0f, (float)_gui_ref.window_size.y, -100.0f, 100.0f);
+
 	}
 
 	if (hover && cursor_type != Frame::Arrow)
@@ -752,7 +786,9 @@ void Gui::new_frame(Time frame_time_ms) {
 	_dominant_cursor_style = Frame::Arrow;
 	_hover_happened = false;
 
-
+	if (layout_table.size() > 0) {
+		std::cout << "[GUI Error] layout() was called but associated layout_end() was never called before new frame" << std::endl;
+	}
 
 	render_queue.clear();
 	_widget_next_id = 0;
@@ -871,6 +907,9 @@ Box& Gui::layout_end() {
 
 Box& Gui::content(vec2 size, Style style, std::u32string text, bool draw, bool force_insert) {
 	Layout& layout = layout_table.back();
+	vec2 parent_min_size = layout_min_size_table.back();
+	if (size.x < 0) size.x = std::fmax(layout.window_size.x, parent_min_size.x);
+	if (size.y < 0) size.y = std::fmax(layout.window_size.y, parent_min_size.y);
 	bool draw_parent_layout = layout_draw_flags_table.back();
 	draw = (draw && draw_parent_layout) || force_insert;
 	Box& content = box(layout.get_widget_position(), size, style, text, draw);

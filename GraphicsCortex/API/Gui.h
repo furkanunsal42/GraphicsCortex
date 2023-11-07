@@ -177,7 +177,8 @@ class StaticStyle {
 public:
 	
 	// StyleAttribute<vec3f> color_attrib;	// work in progress
-	
+	StyleAttribute<vec3f> text_color;
+	StyleAttribute<float> text_size;
 	StyleAttribute<vec3f> color;
 	StyleAttribute<vec2f> displacement;
 	StyleAttribute<vec2f> rotation_euler;	// not implemented 
@@ -197,6 +198,8 @@ public:
 class Style : public StaticStyle {
 public:
 	
+	std::optional<Time> text_color_change;
+	std::optional<Time> text_size_change;
 	std::optional<Time> color_change;
 	std::optional<Time> displacement_change;
 	std::optional<Time> rotation_change;
@@ -206,6 +209,8 @@ public:
 	std::optional<Time> border_thickness_change;
 	std::optional<Time> border_color_change;
 
+	std::optional<_interpolation> text_color_interpolation;
+	std::optional<_interpolation> text_size_interpolation;
 	std::optional<_interpolation> color_interpolation;
 	std::optional<_interpolation> displacement_interpolation;
 	std::optional<_interpolation> rotation_interpolation;
@@ -255,6 +260,8 @@ public:
 	bool is_click_holding = false;		//	began pressing while hovering and still hovers while pressing
 	//Time last_update;
 
+	Time _current_text_color_time = 0;
+	Time _current_text_size_time = 0;
 	Time _current_color_time = 0;
 	Time _current_displacement_time = 0;
 	Time _current_rotation_time = 0;

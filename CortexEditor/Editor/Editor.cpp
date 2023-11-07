@@ -8,6 +8,11 @@ Editor::Editor() {
 	scenes.push_back(std::make_shared<Scene>(*frame));
 }
 
+void Editor::push_layer(std::shared_ptr<UILayer> layer) {
+	layers.push_back(layer);
+	layer->init();
+}
+
 Editor& Editor::get() {
 	static Editor instance;
 	return instance;
