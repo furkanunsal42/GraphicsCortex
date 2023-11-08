@@ -43,11 +43,6 @@ void Scene::set_skybox(std::shared_ptr<CubeMapTexture> cubemap) {
 	skybox = cubemap;
 }
 
-void Scene::set_framebuffer(FrameBuffer& framebuffer) {
-	frame_buffer = std::move(framebuffer);
-	_is_framebuffer_loaded = true;
-}
-
 void Scene::render(bool show_warnings) {
 	
 	sync_with_physics();
@@ -144,12 +139,7 @@ void Scene::render(bool show_warnings) {
 	
 }
 
-void Scene::render_to_framebuffer(Frame& frame, bool show_warnings) { 
-	if (!_is_framebuffer_loaded) {
-		std::cout << "[Opengl Error] Scene::render_to_framebuffer() is called but Scene::framebuffer is not set." << std::endl;
-		return;
-	}
-
+void Scene::render_to_framebuffer(FrameBuffer& frame_buffer, Frame& frame, bool show_warnings) {
 	frame_buffer.bind();
 
 	frame.clear_window(background_color.x, background_color.y, background_color.z, background_color.w);
@@ -157,7 +147,6 @@ void Scene::render_to_framebuffer(Frame& frame, bool show_warnings) {
 	render(show_warnings);
 
 	frame_buffer.unbind();
-	frame_buffer.render();
 }
 
 void Scene::sync_with_physics() {

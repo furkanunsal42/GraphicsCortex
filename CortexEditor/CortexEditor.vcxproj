@@ -148,6 +148,7 @@
     <ClInclude Include="Editor\Editor.h" />
     <ClInclude Include="Editor\ScenePanel.h" />
     <ClInclude Include="Editor\TopBar.h" />
+    <ClInclude Include="Editor\ViewPort.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
