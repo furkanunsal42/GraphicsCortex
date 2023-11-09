@@ -141,8 +141,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Mains\ApplicationMain.cpp" />
     <ClCompile Include="Editor\Editor.cpp" />
+    <ClCompile Include="Mains\ApplicationMain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Editor\Editor.h" />

@@ -140,6 +140,8 @@ void Scene::render(bool show_warnings) {
 }
 
 void Scene::render_to_framebuffer(FrameBuffer& frame_buffer, Frame& frame, bool show_warnings) {
+	frame.set_viewport(frame_buffer.width, frame_buffer.height);
+
 	frame_buffer.bind();
 
 	frame.clear_window(background_color.x, background_color.y, background_color.z, background_color.w);
@@ -147,6 +149,8 @@ void Scene::render_to_framebuffer(FrameBuffer& frame_buffer, Frame& frame, bool 
 	render(show_warnings);
 
 	frame_buffer.unbind();
+	
+	frame.set_viewport(frame.window_width, frame.window_height);
 }
 
 void Scene::sync_with_physics() {

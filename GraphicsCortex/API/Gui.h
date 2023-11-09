@@ -34,7 +34,6 @@ public:
 	void clear();
 	void update_position_by_style(const Vec4<float>& margin, const Vec4<float>& padding);
 
-
 };
 
 namespace {

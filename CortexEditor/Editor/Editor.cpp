@@ -18,9 +18,13 @@ Editor& Editor::get() {
 	return instance;
 }
 
+std::shared_ptr<Scene> Editor::get_current_scene() {
+	return scenes[current_scene_index];
+}
+
 void Editor::render() {
 	
-	double deltatime = frame->handle_window();
+	deltatime = frame->handle_window();
 	frame->clear_window(1, 1, 1, 1);
 	gui->new_frame(deltatime);
 	frame->display_performance(180);

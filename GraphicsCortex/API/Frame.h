@@ -31,7 +31,9 @@ public:
 	double get_interval_ms();
 	bool is_running();
 	double handle_window();
-	
+	void set_viewport(int width, int height);
+	void set_viewport(glm::vec2 size);
+
 	enum CursorType {
 		Arrow = 0,
 		IBeam,

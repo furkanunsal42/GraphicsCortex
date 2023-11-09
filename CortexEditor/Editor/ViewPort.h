@@ -9,7 +9,7 @@ class ViewPort : public UILayer {
 	Style searchbar_style;
 
 
-	vec2 position = vec2(0, 30);
+	vec2 position = vec2(200, 30);
 	vec2 size = vec2(800, 600);
 
 	std::shared_ptr<FrameBuffer> scene_render;
@@ -53,8 +53,13 @@ class ViewPort : public UILayer {
 	void on_gui_render() {
 		Editor& editor = Editor::get();
 		std::shared_ptr<Scene> current_scene = editor.scenes[editor.current_scene_index];
-		
+		current_scene->camera->screen_width = size.x;
+		current_scene->camera->screen_height = size.y;
+
 		current_scene->render_to_framebuffer(*scene_render, *editor.frame);
 		
+		scene_render->blit_section_to_screen(glm::vec4(0, 0, size.x, size.y), glm::vec4(position.x, editor.gui->window_size.y - position.y - size.y, position.x + size.x, editor.gui->window_size.y - position.y));
+
+		editor.get_current_scene()->camera->handle_movements(editor.frame->window, editor.deltatime);
 	}
 };

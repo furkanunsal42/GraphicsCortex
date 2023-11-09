@@ -20,6 +20,7 @@ private:
 	void operator=(const Editor&) = delete;
 	std::vector<std::shared_ptr<UILayer>> layers;
 public:
+	double deltatime;
 	std::shared_ptr<Frame> frame;
 	std::shared_ptr<Gui> gui;
 
@@ -29,6 +30,8 @@ public:
 	std::vector<std::shared_ptr<Scene>> scenes;
 
 	static Editor& get();
+
+	std::shared_ptr<Scene> get_current_scene();
 
 	void render();
 };

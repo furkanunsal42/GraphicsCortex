@@ -49,7 +49,7 @@ Frame::Frame(int width, int height, const std::string& name, int msaa, int swapi
 		glViewport(0, 0, width, height);
 		frame.window_width = width;
 		frame.window_height = height;
-		});
+	});
 
 	if (!is_glew_initialized) {
 		glewInit();
@@ -159,6 +159,14 @@ double Frame::handle_window() {
 		get_interval_ms(); // reset it
 	}
 	return get_interval_ms();
+}
+
+void Frame::set_viewport(int width, int height) {
+	GLCall(glViewport(0, 0, width, height));
+}
+
+void Frame::set_viewport(glm::vec2 size) {
+	set_viewport(size.x, size.y);
 }
 
 Vec2<int> Frame::get_cursor_position() {
