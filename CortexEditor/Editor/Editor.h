@@ -18,6 +18,8 @@ private:
 	Editor();
 	Editor(const Editor&) = delete;
 	void operator=(const Editor&) = delete;
+	~Editor();
+
 	std::vector<std::shared_ptr<UILayer>> layers;
 public:
 	double deltatime;

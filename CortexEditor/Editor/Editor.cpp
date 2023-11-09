@@ -8,6 +8,17 @@ Editor::Editor() {
 	scenes.push_back(std::make_shared<Scene>(*frame));
 }
 
+Editor::~Editor() {
+	for (std::shared_ptr<UILayer>& layer : layers) 
+		layer = nullptr;
+
+	for (std::shared_ptr<Scene>& scene : scenes)
+		scene = nullptr;
+	
+	gui = nullptr;
+	frame = nullptr;
+}
+
 void Editor::push_layer(std::shared_ptr<UILayer> layer) {
 	layers.push_back(layer);
 	layer->init();
