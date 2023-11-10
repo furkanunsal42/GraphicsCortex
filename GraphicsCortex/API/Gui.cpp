@@ -832,7 +832,7 @@ Box& Gui::box(AABB2 aabb, Style style, std::u32string text, bool draw) {
 			if (draw){
 				widget_table[next_id].set_position(aabb.position);
 				widget_table[next_id].set_size(aabb.size);
-				widget_table[next_id].style = style;
+				widget_table[next_id]._style = style;
 				widget_table[next_id].set_text(text);
 				widget_table[next_id].render();
 			}
@@ -854,7 +854,7 @@ Box& Gui::box(AABB2 aabb, Style style, std::u32string text, bool draw) {
 		if (draw){
 			(*found_box).set_position(aabb.position);
 			(*found_box).set_size(aabb.size);
-			(*found_box).style = style;
+			(*found_box)._style = style;
 			(*found_box).render();
 		}
 		return (*found_box);

@@ -223,3 +223,7 @@ Frame::CursorState Frame::get_mouse_state() {
 	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_RELEASE)
 		return Frame::RightReleased;
 }
+
+bool Frame::get_key_press(Frame::Key key) {
+	return glfwGetKey(window, (int)key);
+}

@@ -60,6 +60,6 @@ class ViewPort : public UILayer {
 		
 		scene_render->blit_section_to_screen(glm::vec4(0, 0, size.x, size.y), glm::vec4(position.x, editor.gui->window_size.y - position.y - size.y, position.x + size.x, editor.gui->window_size.y - position.y));
 
-		editor.get_current_scene()->camera->handle_movements(editor.frame->window, editor.deltatime);
+		//editor.get_current_scene()->camera->handle_movements(editor.frame->window, editor.deltatime);
 	}
 };

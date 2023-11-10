@@ -155,6 +155,10 @@ public:
 		use_value = false;
 	}
 
+	void disable(){
+		use_value = use_persentage = false;
+	}
+
 	bool exist() const {
 		return use_value || use_persentage;
 	}
@@ -277,7 +281,6 @@ class Gui;
 
 class Box {
 public:
-	Style style;
 
 	Box(Gui& gui, Style style, AABB2 aabb, uint32_t id = 0);
 	Box(Gui& gui, Style style, AABB2 aabb, Program_s custom_renderer, uint32_t id = 0);
