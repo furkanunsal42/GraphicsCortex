@@ -47,7 +47,7 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -187,6 +187,7 @@
     <ClCompile Include="API\DirectoryUtils.cpp" />
     <ClCompile Include="API\Font.cpp" />
     <ClCompile Include="API\FrameBuffer.cpp" />
+    <ClCompile Include="API\Gui2.cpp" />
     <ClCompile Include="API\Image.cpp" />
     <ClCompile Include="API\Lights.cpp" />
     <ClCompile Include="API\CortexMath.cpp" />
@@ -228,6 +229,7 @@
     <ClCompile Include="Dependencies\physx\snippetcommon\SnippetVehicleSceneQuery.cpp" />
     <ClCompile Include="Dependencies\physx\snippetcommon\SnippetVehicleTankCreate.cpp" />
     <ClCompile Include="Dependencies\physx\snippetcommon\SnippetVehicleTireFriction.cpp" />
+    <ClCompile Include="Mains\GuiMain2.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Matrix\Shaders\Matrix.frag" />

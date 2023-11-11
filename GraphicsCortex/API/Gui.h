@@ -390,7 +390,7 @@ private:
 	float _current_z_index = 0;
 	float _z_index_buff = 0;
 
-	std::shared_ptr<Font> _font = std::make_shared<Font>("Fonts\\Roboto-Thin.ttf", 50);
+	std::shared_ptr<Font> _font = std::make_shared<Font>("Fonts\\Roboto-Thin.ttf", 32);
 
 	friend Box;
 };
@@ -398,6 +398,28 @@ private:
 class CustomWidget {
 public:
 	virtual void render() {}
+};
+
+// new implementation of gui system
+class Gui2 {
+public:
+
+	Gui2(Frame& frame);
+	void new_frame(Time frame_time);
+	
+	void layout(unsigned int id, vec2 position, vec2 min_size, Style style, std::u32string text, Layout::LayoutType = Layout::Vertical);
+	void layout_content(unsigned int id, vec2 min_size, Style style, std::u32string text, Layout::LayoutType = Layout::Vertical);
+	void content(unsigned int id, vec2 position, vec2 min_size, Style style, std::u32string text);
+	void layout_end();
+
+	void box(unsigned int id, vec2 position, vec2 size, Style style, std::u32string text);
+
+private:
+	Frame& frame_ref;
+	static std::shared_ptr<Program> gui_program;
+	static std::shared_ptr<Font> _font;
+	
+	Camera camera;
 };
 
 /*
