@@ -41,6 +41,7 @@ Frame::Frame(int width, int height, const std::string& name, int msaa, int swapi
 	window = glfwCreateWindow(width, height, name.c_str(), nullptr, nullptr);
 	glfwMakeContextCurrent(window);
 	glfwSwapInterval(swapinterval);
+	glfwGetWindowSize(window, &window_width, &window_height);
 	glViewport(0, 0, window_width, window_height);
 	
 	glfwSetWindowUserPointer(window, this);
