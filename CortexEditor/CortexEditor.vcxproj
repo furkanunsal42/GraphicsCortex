@@ -146,6 +146,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Editor\Editor.h" />
+    <ClInclude Include="Editor\Inspector.h" />
     <ClInclude Include="Editor\ScenePanel.h" />
     <ClInclude Include="Editor\TopBar.h" />
     <ClInclude Include="Editor\ViewPort.h" />

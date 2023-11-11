@@ -12,6 +12,8 @@ class ScenePanel : public UILayer {
 	Style searchbar_style;
 
 	vec2 position = vec2(0, 30);
+	vec2 size = vec2(400, 800);
+	int row_height = 30;
 
 	void init() {
 		layout_style.text_color = vec3(1, 1, 1);
@@ -56,15 +58,15 @@ class ScenePanel : public UILayer {
 	void on_gui_render() {
 		Editor& editor = Editor::get();
 			
-		editor.gui->layout(vec2(position.x, position.y), vec2(200, 200), layout_style, U"");
-		editor.gui->content(vec2(200, 30), layout_style, U"ScenePanel");
-		editor.gui->content(vec2(200, 30), searchbar_style, U"Search");
+		editor.gui->layout(position, size, layout_style, U"");
+		editor.gui->content(vec2(size.x, 30), layout_style, U"ScenePanel");
+		editor.gui->content(vec2(size.x, 30), searchbar_style, U"Search");
 		
 		bool clicked_on_button = false;
 
 		for (std::shared_ptr<Graphic> graphic : editor.get_current_scene()->_graphics) {
 			Style& style_to_use = (selected_pointers.find(graphic) != selected_pointers.end()) ? selected_object_style : object_style;
-			if (editor.gui->content(vec2(200, 20), style_to_use, U"Graphic").click_released()) {
+			if (editor.gui->content(vec2(size.x, row_height), style_to_use, U"Graphic").click_released()) {
 				if (!editor.frame->get_key_press(Frame::Key::LEFT_CONTROL)) selected_pointers.clear();
 				selected_pointers.insert(graphic);
 				clicked_on_button = true;
@@ -73,7 +75,7 @@ class ScenePanel : public UILayer {
 
 		for (std::shared_ptr<Light> light : editor.get_current_scene()->_lights) {
 			Style& style_to_use = (selected_pointers.find(light) != selected_pointers.end()) ? selected_object_style : object_style;
-			if (editor.gui->content(vec2(200, 20), style_to_use, U"Light").click_released()) {
+			if (editor.gui->content(vec2(size.x, row_height), style_to_use, U"Light").click_released()) {
 				if (!editor.frame->get_key_press(Frame::Key::LEFT_CONTROL)) selected_pointers.clear();
 				selected_pointers.insert(light);
 				clicked_on_button = true;
@@ -82,7 +84,7 @@ class ScenePanel : public UILayer {
 
 		for (std::shared_ptr<Object> object : editor.get_current_scene()->_objects) {
 			Style& style_to_use = (selected_pointers.find(object) != selected_pointers.end()) ? selected_object_style : object_style;
-			if (editor.gui->content(vec2(200, 20), style_to_use, U"Object").click_released()) {
+			if (editor.gui->content(vec2(size.x, row_height), style_to_use, U"Object").click_released()) {
 				if (!editor.frame->get_key_press(Frame::Key::LEFT_CONTROL)) selected_pointers.clear();
 				selected_pointers.insert(object);
 				clicked_on_button = true;
@@ -91,7 +93,7 @@ class ScenePanel : public UILayer {
 
 		for (std::shared_ptr<Vehicle> vehicle : editor.get_current_scene()->_vehicles) {
 			Style& style_to_use = (selected_pointers.find(vehicle) != selected_pointers.end()) ? selected_object_style : object_style;
-			if (editor.gui->content(vec2(200, 20), style_to_use, U"Vehicle").click_released()) {
+			if (editor.gui->content(vec2(size.x, row_height), style_to_use, U"Vehicle").click_released()) {
 				if (!editor.frame->get_key_press(Frame::Key::LEFT_CONTROL)) selected_pointers.clear();
 				selected_pointers.insert(vehicle);
 				clicked_on_button = true;
@@ -100,7 +102,7 @@ class ScenePanel : public UILayer {
 
 		for (std::shared_ptr<Text> text : editor.get_current_scene()->_texts) {
 			Style& style_to_use = (selected_pointers.find(text) != selected_pointers.end()) ? selected_object_style : object_style;
-			if (editor.gui->content(vec2(200, 20), style_to_use, U"Text").click_released()) {
+			if (editor.gui->content(vec2(size.x, row_height), style_to_use, U"Text").click_released()) {
 				if (!editor.frame->get_key_press(Frame::Key::LEFT_CONTROL)) selected_pointers.clear();
 				selected_pointers.insert(text);
 				clicked_on_button = true;

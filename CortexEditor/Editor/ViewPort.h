@@ -9,8 +9,8 @@ class ViewPort : public UILayer {
 	Style searchbar_style;
 
 
-	vec2 position = vec2(200, 30);
-	vec2 size = vec2(800, 600);
+	vec2 position = vec2(400, 30);
+	vec2 size = vec2(1100, 800);
 
 	std::shared_ptr<FrameBuffer> scene_render;
 
