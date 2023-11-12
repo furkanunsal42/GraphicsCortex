@@ -293,3 +293,61 @@ GraphicsCortex/Release/CustomRenderPipelines.obj
 GraphicsCortex/GraphicsCortex64.lib
 CortexEditor/Release/Editor.obj
 CortexEditor/Release/ApplicationMain.obj
+GraphicsCortex/Release Editor/ApplicationMain.obj
+GraphicsCortex/Release Editor/AssetImporter.obj
+GraphicsCortex/Release Editor/BinaryBuffers.obj
+GraphicsCortex/Release Editor/Buffer.obj
+GraphicsCortex/Release Editor/Camera.obj
+GraphicsCortex/Release Editor/CortexMath.obj
+GraphicsCortex/Release Editor/CubeMap.obj
+GraphicsCortex/Release Editor/CustomRenderPipelines.obj
+GraphicsCortex/Release Editor/Debuger.obj
+GraphicsCortex/Release Editor/Default_Assets.obj
+GraphicsCortex/Release Editor/Default_Gui_Widgets.obj
+GraphicsCortex/Release Editor/Default_Programs.obj
+GraphicsCortex/Release Editor/DirectoryUtils.obj
+GraphicsCortex/Release Editor/Font.obj
+GraphicsCortex/Release Editor/Frame.obj
+GraphicsCortex/Release Editor/FrameBuffer.obj
+GraphicsCortex/Release Editor/Graphic.obj
+GraphicsCortex/Release Editor/Gui.obj
+GraphicsCortex/Release Editor/Gui2.obj
+GraphicsCortex/Release Editor/Image.obj
+GraphicsCortex/Release Editor/imgui.obj
+GraphicsCortex/Release Editor/imgui_draw.obj
+GraphicsCortex/Release Editor/imgui_impl_glfw.obj
+GraphicsCortex/Release Editor/imgui_impl_opengl3.obj
+GraphicsCortex/Release Editor/imgui_tables.obj
+GraphicsCortex/Release Editor/imgui_widgets.obj
+GraphicsCortex/Release Editor/Lights.obj
+GraphicsCortex/Release Editor/Mesh.obj
+GraphicsCortex/Release Editor/Model.obj
+GraphicsCortex/Release Editor/ModelTextureTable.obj
+GraphicsCortex/Release Editor/Object.obj
+GraphicsCortex/Release Editor/PhysicsContext.obj
+GraphicsCortex/Release Editor/PhysicsGeometry.obj
+GraphicsCortex/Release Editor/PhysicsLink.obj
+GraphicsCortex/Release Editor/PhysicsObject.obj
+GraphicsCortex/Release Editor/PhysicsScene.obj
+GraphicsCortex/Release Editor/PhysicsVehicle.obj
+GraphicsCortex/Release Editor/RamCache.obj
+GraphicsCortex/Release Editor/RenderPipeline.obj
+GraphicsCortex/Release Editor/Scene.obj
+GraphicsCortex/Release Editor/ShaderCompiler.obj
+GraphicsCortex/Release Editor/SnippetVehicle4WCreate.obj
+GraphicsCortex/Release Editor/SnippetVehicleCreate.obj
+GraphicsCortex/Release Editor/SnippetVehicleFilterShader.obj
+GraphicsCortex/Release Editor/SnippetVehicleNoDriveCreate.obj
+GraphicsCortex/Release Editor/SnippetVehicleSceneQuery.obj
+GraphicsCortex/Release Editor/SnippetVehicleTankCreate.obj
+GraphicsCortex/Release Editor/SnippetVehicleTireFriction.obj
+GraphicsCortex/Release Editor/stb_image.obj
+GraphicsCortex/Release Editor/stb_image_resize.obj
+GraphicsCortex/Release Editor/stb_image_write.obj
+GraphicsCortex/Release Editor/Text.obj
+GraphicsCortex/Release Editor/Texture.obj
+GraphicsCortex/Release Editor/UniformQueue.obj
+GraphicsCortex/Release/CustomRenderPipelines.obj
+GraphicsCortex/Release/Gui2.obj
+GraphicsCortex/Release/GuiMain2.obj
+GraphicsCortex/Release/hiredis_example.obj

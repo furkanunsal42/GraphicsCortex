@@ -7,4 +7,8 @@
     <LocalDebuggerWorkingDirectory>$(SolutionDir)GraphicsCortex\</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release Editor|x64'">
+    <LocalDebuggerWorkingDirectory>$(SolutionDir)GraphicsCortex\</LocalDebuggerWorkingDirectory>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+  </PropertyGroup>
 </Project>

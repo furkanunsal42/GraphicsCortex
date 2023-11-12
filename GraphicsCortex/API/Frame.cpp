@@ -9,6 +9,7 @@
 #include "Debuger.h"
 #include <iostream>
 
+#include "Gui.h"
 
 bool is_glew_initialized = false;
 bool is_glfw_initialized = false;
@@ -92,6 +93,9 @@ Frame::Frame(int width, int height, const std::string& name, int msaa, int swapi
 }
 
 Frame::~Frame() {
+	Gui2::gui_program = nullptr;
+	Gui2::_font = nullptr;
+
 	glfwDestroyWindow(window);
 	glfwTerminate();
 	is_glew_initialized = false;

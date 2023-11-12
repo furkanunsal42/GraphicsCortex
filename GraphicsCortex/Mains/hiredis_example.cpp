@@ -1,4 +1,4 @@
-#include "API/GraphicsCortex.h"
+#include "GraphicsCortex.h"
 
 int main(int argc, char** argv) {
 

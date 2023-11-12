@@ -406,20 +406,73 @@ public:
 
 	Gui2(Frame& frame);
 	void new_frame(Time frame_time);
+	void box(unsigned int id, vec2 position, vec2 size, Style style, std::u32string text);
 	
-	void layout(unsigned int id, vec2 position, vec2 min_size, Style style, std::u32string text, Layout::LayoutType = Layout::Vertical);
-	void layout_content(unsigned int id, vec2 min_size, Style style, std::u32string text, Layout::LayoutType = Layout::Vertical);
-	void content(unsigned int id, vec2 position, vec2 min_size, Style style, std::u32string text);
+	void layout(unsigned int id, vec2 position, vec2 min_size, Style style, Layout::LayoutType layout_type = Layout::Vertical);
+	void layout_content(unsigned int id, vec2 min_size, Style style, std::u32string text, Layout::LayoutType layout_type = Layout::Vertical);
+	void layout_content_end();
+
+	void content(unsigned int id, vec2 size, Style style, std::u32string text);
 	void layout_end();
 
-	void box(unsigned int id, vec2 position, vec2 size, Style style, std::u32string text);
-
 private:
+	friend Frame;
+
 	Frame& frame_ref;
 	static std::shared_ptr<Program> gui_program;
 	static std::shared_ptr<Font> _font;
-	
 	Camera camera;
+
+	struct layout_info {
+		layout_info(unsigned int id, vec2 position, vec2 min_size, Style style, Layout::LayoutType layout_type) {	
+			this->id = id;
+			this->position = position;
+			this->min_size = min_size;
+			this->style = style;
+			this->layout_type = layout_type;
+		}
+
+		layout_info() { ; }
+
+		unsigned int id = -999;
+		vec2 position = vec2(0, 0);
+		vec2 min_size = vec2(0, 0);
+		Style style = Style();
+		Layout::LayoutType layout_type = Layout::Vertical;
+	};
+	std::unique_ptr<layout_info> current_layout;
+
+	struct content_info {
+		content_info(unsigned int id, vec2 size, Style style, std::u32string text) {
+			this->id = id;
+			this->size = size;
+			this->style = style;
+			this->text = text;
+		}
+
+		unsigned int id;
+		vec2 size;
+		Style style;
+		std::u32string text;
+	};
+	std::vector<content_info> contents;
+
+	struct layout_content_info {
+		layout_content_info(unsigned int id, vec2 min_size, Style style, std::u32string text, Layout::LayoutType layout_type) {
+			this->id = id;
+			this->min_size = min_size;
+			this->style = style;
+			this->text = text;
+			this->layout_type = layout_type;
+		}
+
+		unsigned int id;
+		vec2 min_size;
+		Style style;
+		std::u32string text;
+		Layout::LayoutType layout_type;
+	};
+	std::vector<layout_content_info> layout_contents;
 };
 
 /*
