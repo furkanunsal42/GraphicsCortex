@@ -53,6 +53,14 @@ void Gui2::content(unsigned int id, vec2 size, Style style, std::u32string text)
 	contents.push_back(content_info(id, size, style, text));
 }
 
+void Gui2::layout_content(unsigned int id, vec2 min_size, Style style, std::u32string text, Layout::LayoutType layout_type) {
+
+}
+
+void Gui2::layout_content_end() {
+
+}
+
 void Gui2::layout_end() {
 	if (current_layout->id == -999) {
 		std::cout << "[GUI Error] layout_end() is called without corresponding layout()" << std::endl;
