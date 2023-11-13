@@ -500,7 +500,15 @@ void Gui2::layout_end() {
 	{
 		std::vector<std::shared_ptr<layout_node>> temp_stack;
 
-		current_layout->self_info.layout.position = position;
+		vec2 global_padding;
+		if (widget_info_table.find(current_layout->self_info.id) != widget_info_table.end()) {
+			_widget_info& info = widget_info_table[current_layout->self_info.id];
+			StaticStyle interpolated_style = get_final_style(current_layout->self_info.override_style, current_layout->self_info.style, info);
+			vec4f margin = style_attribute_get<vec4f>(interpolated_style.margin, info);
+			vec4f padding = style_attribute_get<vec4f>(interpolated_style.padding, info);
+			global_padding = vec2(padding.y + padding.w, padding.x + padding.z);
+		}
+		current_layout->self_info.layout.position = position + global_padding;
 		temp_stack.push_back(current_layout);
 
 		while (temp_stack.size() > 0) {
@@ -548,7 +556,20 @@ void Gui2::layout_end() {
 				current_node->self_info.layout.window_size = current_node->self_info.layout.window_size + vec2(margin.y + margin.w, margin.x + margin.z) + vec2(padding.y + padding.w, padding.x + padding.z);
 			}
 		}
+
+		vec2 global_padding_size;
+		if (widget_info_table.find(current_layout->self_info.id) != widget_info_table.end()) {
+			_widget_info& info = widget_info_table[current_layout->self_info.id];
+			StaticStyle interpolated_style = get_final_style(current_layout->self_info.override_style, current_layout->self_info.style, info);
+			vec4f margin = style_attribute_get<vec4f>(interpolated_style.margin, info);
+			vec4f padding = style_attribute_get<vec4f>(interpolated_style.padding, info);
+			global_padding_size = vec2(padding.y + padding.w, padding.x + padding.z);
+		}
+		current_layout->self_info.layout.window_size = current_layout->self_info.layout.window_size + global_padding;
+
 	}
+
+
 
 	// draw root
 	box(current_layout->self_info.id, position, current_layout->self_info.layout.window_size, current_layout->self_info.style, U"", current_layout->self_info.override_style);

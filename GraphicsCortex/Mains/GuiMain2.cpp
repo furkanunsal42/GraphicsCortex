@@ -35,7 +35,9 @@ int main() {
 
 		gui.box(0, vec2(100, 100), vec2(100, 100), style1, U"Hello GUI");
 
+		gui.override_style.padding = vec4(6, 6, 6, 6);
 		gui.layout(1, vec2(400, 100), vec2(100, 100), style1);
+		gui.override_style.clear();
 		gui.content(2, vec2(130, 20), style2, U"Hello Layout");
 
 		gui.override_style.color = vec3(0, 1, 1);
