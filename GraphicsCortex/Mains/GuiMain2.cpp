@@ -6,15 +6,27 @@ int main() {
 
 	Style style1;
 	style1.color = vec3(1, 1, 1);
+	style1.border_color = vec3(0, 0, 0);
+	style1.border_thickness = vec4(1, 1, 1, 1);
 
 	Style style2;
 	style2.color = vec3(1, 0, 0);
+	style2.border_color = vec3(0, 0, 0);
+	style2.border_thickness = vec4(1, 1, 1, 1);
 
 	Style style3;
 	style3.color = vec3(1, 1, 0);
+	style3.border_color = vec3(0, 0, 0);
+	style3.border_thickness = vec4(1, 1, 1, 1);
 
 	Style style4;
 	style4.color = vec3(1, 0, 1);
+	style4.border_color = vec3(0, 0, 0);
+	style4.border_thickness = vec4(1, 1, 1, 1);
+	style4.on_hover.color = vec3(0, 0, 1);
+	style4.on_hover.border_thickness = vec4(4, 4, 4, 4);
+	style4.color_change = 0.3;
+	style4.border_thickness_change = 0.3;
 
 	while (frame.is_running()) {
 		double deltatime = frame.handle_window();
@@ -24,7 +36,10 @@ int main() {
 		gui.box(0, vec2(100, 100), vec2(100, 100), style1, U"Hello GUI");
 
 		gui.layout(1, vec2(400, 100), vec2(100, 100), style1);
+		gui.override_style.color = vec3(0, 1, 1);
 		gui.content(2, vec2(130, 20), style2, U"Hello Layout");
+		gui.override_style.clear();
+
 		gui.content(3, vec2(30, 10), style2, U"Hello Layout");
 		gui.content(4, vec2(50, 10), style2, U"Hello Layout");
 		gui.content(5, vec2(100, 10), style2, U"Hello Layout");

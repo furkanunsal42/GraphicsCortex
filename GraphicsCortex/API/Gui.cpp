@@ -605,8 +605,6 @@ void Box::render(){
 	StaticStyle default_style = merge_styles_by_priority({ overwrite_style, _style }, _info);
 	StaticStyle hover_style = merge_styles_by_priority({ overwrite_style.on_hover, _style.on_hover, default_style }, _info);
 	
-	StaticStyle style_to_use = default_style;
-
 	bool cursor_pressing_previously = _info.is_click_pressed;
 
 	_info.is_hovering = false;
@@ -624,7 +622,6 @@ void Box::render(){
 			if(cursor_pressing_previously)
 				_info.is_click_released = true;
 	}
-
 
 	Style base_style = merge_static_style_with_style(default_style, _style, _info);
 	Style target_style = merge_static_style_with_style(hover_style, _style, _info);	// append timing information of style to style_to_use, TODO: merge timing information of _style and overwrite_style here

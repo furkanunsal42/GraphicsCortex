@@ -407,7 +407,7 @@ public:
 	Gui2(Frame& frame);
 	void new_frame(Time frame_time);
 	void box(unsigned int id, vec2 position, vec2 size, Style style, std::u32string text);
-	
+
 	void layout(unsigned int id, vec2 position, vec2 min_size, Style style, Layout::LayoutType layout_type = Layout::Vertical);
 	void layout_end();
 
@@ -416,19 +416,26 @@ public:
 
 	void content(unsigned int id, vec2 size, Style style, std::u32string text);
 
+	Style override_style;
+
 private:
 	friend Frame;
+	void box(unsigned int id, vec2 position, vec2 size, Style style, std::u32string text, Style override_style);
 
 	Frame& frame_ref;
 	static std::shared_ptr<Program> gui_program;
 	static std::shared_ptr<Font> _font;
 	Camera camera;
+	
+	Time frame_time;
+	std::unordered_map<unsigned int, _widget_info> widget_info_table;
 
 	struct layout_info {
-		layout_info(unsigned int id, vec2 min_size, Style style, Layout::LayoutType layout_type) {	
+		layout_info(unsigned int id, vec2 min_size, Style style, Style override_style, Layout::LayoutType layout_type) {
 			this->id = id;
 			this->min_size = min_size;
 			this->style = style;
+			this->override_style = override_style;
 			this->layout_type = layout_type;
 			this->layout.type = layout_type;
 		}
@@ -438,29 +445,32 @@ private:
 		unsigned int id;
 		vec2 min_size;
 		Style style;
+		Style override_style;
 		Layout::LayoutType layout_type;
 		Layout layout;
 	};
 
 	struct content_info {
-		content_info(unsigned int id, vec2 size, Style style, std::u32string text) {
+		content_info(unsigned int id, vec2 size, Style style, Style override_style, std::u32string text) {
 			this->id = id;
 			this->size = size;
 			this->style = style;
+			this->override_style = override_style;
 			this->text = text;
 		}
 
 		unsigned int id;
 		vec2 size;
 		Style style;
+		Style override_style;
 		std::u32string text;
 	};
 
 	// layouts and contents are hold in a tree
 	// layout node definition
 	struct layout_node {
-		layout_node(unsigned int id, vec2 min_size, Style style, Layout::LayoutType layout_type) {
-			self_info = layout_info(id, min_size, style, layout_type);
+		layout_node(unsigned int id, vec2 min_size, Style style, Style override_style, Layout::LayoutType layout_type) {
+			self_info = layout_info(id, min_size, style, override_style, layout_type);
 		}
 		layout_info self_info;
 		std::vector<content_info> contents;
