@@ -106,6 +106,7 @@ void Frame::clear_window(float red, float green, float blue, float alpha) {
 	if (!is_glfw_initialized || !is_glew_initialized)
 		return;
 
+	
 	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
 	GLCall(glClearColor(red, green, blue, alpha));
 	if (initialize_imgui) {

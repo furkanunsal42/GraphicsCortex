@@ -36,7 +36,7 @@ std::shared_ptr<Scene> Editor::get_current_scene() {
 void Editor::render() {
 	
 	deltatime = frame->handle_window();
-	frame->clear_window(1, 1, 1, 1);
+	frame->clear_window(0, 0, 0, 1);
 	gui->new_frame(deltatime);
 	frame->display_performance(180);
 

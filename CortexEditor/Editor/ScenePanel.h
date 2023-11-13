@@ -75,7 +75,13 @@ class ScenePanel : public UILayer {
 
 		for (std::shared_ptr<Light> light : editor.get_current_scene()->_lights) {
 			Style& style_to_use = (selected_pointers.find(light) != selected_pointers.end()) ? selected_object_style : object_style;
-			if (editor.gui->content(vec2(size.x, row_height), style_to_use, U"Light").click_released()) {
+			std::u32string name = U"Light";
+			if (dynamic_cast<AmbiantLight*>(light.get())) name = U"AmbiantLight";
+			if (dynamic_cast<DirectionalLight*>(light.get())) name = U"DirectionalLight";
+			if (dynamic_cast<PointLight*>(light.get())) name = U"PointLight";
+			if (dynamic_cast<SpotLight*>(light.get())) name = U"SpotLight";
+
+			if (editor.gui->content(vec2(size.x, row_height), style_to_use, name).click_released()) {
 				if (!editor.frame->get_key_press(Frame::Key::LEFT_CONTROL)) selected_pointers.clear();
 				selected_pointers.insert(light);
 				clicked_on_button = true;

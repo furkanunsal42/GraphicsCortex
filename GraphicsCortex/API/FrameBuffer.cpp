@@ -172,7 +172,6 @@ Image FrameBuffer::save(bool vertical_flip) {
 	return Image(i_pixels, w, h, channels, vertical_flip);
 }
 
-
 FrameBuffer::~FrameBuffer() {
 	release();
 }

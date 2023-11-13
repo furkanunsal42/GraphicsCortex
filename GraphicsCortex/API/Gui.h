@@ -390,7 +390,7 @@ private:
 	float _current_z_index = 0;
 	float _z_index_buff = 0;
 
-	std::shared_ptr<Font> _font = std::make_shared<Font>("Fonts\\Roboto-Thin.ttf", 32);
+	std::shared_ptr<Font> _font = std::make_shared<Font>("Fonts\\Roboto-Regular.ttf", 32);
 
 	friend Box;
 };
@@ -409,11 +409,12 @@ public:
 	void box(unsigned int id, vec2 position, vec2 size, Style style, std::u32string text);
 	
 	void layout(unsigned int id, vec2 position, vec2 min_size, Style style, Layout::LayoutType layout_type = Layout::Vertical);
-	void layout_content(unsigned int id, vec2 min_size, Style style, std::u32string text, Layout::LayoutType layout_type = Layout::Vertical);
+	void layout_end();
+
+	void layout_content(unsigned int id, vec2 min_size, Style style, Layout::LayoutType layout_type = Layout::Vertical);
 	void layout_content_end();
 
 	void content(unsigned int id, vec2 size, Style style, std::u32string text);
-	void layout_end();
 
 private:
 	friend Frame;
@@ -424,9 +425,8 @@ private:
 	Camera camera;
 
 	struct layout_info {
-		layout_info(unsigned int id, vec2 position, vec2 min_size, Style style, Layout::LayoutType layout_type) {	
+		layout_info(unsigned int id, vec2 min_size, Style style, Layout::LayoutType layout_type) {	
 			this->id = id;
-			this->position = position;
 			this->min_size = min_size;
 			this->style = style;
 			this->layout_type = layout_type;
@@ -434,13 +434,12 @@ private:
 
 		layout_info() { ; }
 
-		unsigned int id = -999;
-		vec2 position = vec2(0, 0);
-		vec2 min_size = vec2(0, 0);
-		Style style = Style();
-		Layout::LayoutType layout_type = Layout::Vertical;
+		unsigned int id;
+		vec2 min_size;
+		Style style;
+		Layout::LayoutType layout_type;
+		Layout layout;
 	};
-	std::unique_ptr<layout_info> current_layout;
 
 	struct content_info {
 		content_info(unsigned int id, vec2 size, Style style, std::u32string text) {
@@ -455,24 +454,23 @@ private:
 		Style style;
 		std::u32string text;
 	};
-	std::vector<content_info> contents;
 
-	struct layout_content_info {
-		layout_content_info(unsigned int id, vec2 min_size, Style style, std::u32string text, Layout::LayoutType layout_type) {
-			this->id = id;
-			this->min_size = min_size;
-			this->style = style;
-			this->text = text;
-			this->layout_type = layout_type;
+	// layouts and contents are hold in a tree
+	// layout node definition
+	struct layout_node {
+		layout_node(unsigned int id, vec2 min_size, Style style, Layout::LayoutType layout_type) {
+			self_info = layout_info(id, min_size, style, layout_type);
 		}
-
-		unsigned int id;
-		vec2 min_size;
-		Style style;
-		std::u32string text;
-		Layout::LayoutType layout_type;
+		layout_info self_info;
+		std::vector<content_info> contents;
+		std::vector<std::shared_ptr<layout_node>> childs;
 	};
-	std::vector<layout_content_info> layout_contents;
+
+	vec2 position;
+	std::shared_ptr<layout_node> current_layout;
+
+	// keeps track of which layout is pushed through layout_content() call first
+	std::vector<std::weak_ptr<layout_node>> layout_stack;
 };
 
 /*

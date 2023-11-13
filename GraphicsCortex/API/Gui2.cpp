@@ -10,7 +10,7 @@ Gui2::Gui2(Frame& frame) :
 	frame_ref(frame)
 {
 	gui_program = default_program::gui_program_s().obj;
-	_font = std::make_shared<Font>("Fonts\\Roboto-Thin.ttf", 32);
+	_font = std::make_shared<Font>("Fonts\\Roboto-Regular.ttf", 32);
 }
 
 void Gui2::new_frame(Time frame_time) {
@@ -46,47 +46,85 @@ void Gui2::box(unsigned int id, vec2 position, vec2 size, Style style, std::u32s
 }
 
 void Gui2::layout(unsigned int id, vec2 position, vec2 min_size, Style style, Layout::LayoutType layout_type) {
-	current_layout = std::make_unique<layout_info>(id, position, min_size, style, layout_type);
+	if (current_layout != nullptr) {
+		std::cout << "[GUI Error] another Gui::layout() is called without calling Gui::layout_end() for previous Gui::layout() call" << std::endl;
+		return;
+	}
+	
+	this->position = position;
+	current_layout = std::make_shared<layout_node>(id, min_size, style, layout_type);
+	
+	if (layout_stack.size() > 0) {
+		std::cout << "[GUI Error] Gui::layout() is called but layout_stack is not empty " << std::endl;
+	}
+	layout_stack.clear();
+	layout_stack.push_back(current_layout);
 }
 
 void Gui2::content(unsigned int id, vec2 size, Style style, std::u32string text) {
-	contents.push_back(content_info(id, size, style, text));
+	if (std::shared_ptr<layout_node> node = layout_stack.back().lock()) {
+		node->contents.push_back(content_info(id, size, style, text));
+		node->self_info.layout.add_widget(size);
+	}
+	else {
+		std::cout << "[GUI Error] Gui::content() is called but no Gui::layout() or Gui::layout_content() was called before" << std::endl;
+		return;
+	}
 }
 
-void Gui2::layout_content(unsigned int id, vec2 min_size, Style style, std::u32string text, Layout::LayoutType layout_type) {
-
+void Gui2::layout_content(unsigned int id, vec2 min_size, Style style, Layout::LayoutType layout_type) {
+	if (std::shared_ptr<layout_node> node = layout_stack.back().lock()) {
+		node->childs.push_back(std::make_shared<layout_node>(id, min_size, style, layout_type));
+	}
+	else {
+		std::cout << "[GUI Error] Gui::layout_content() is called but no Gui::layout() or Gui::layout_content() was called before" << std::endl;
+		return;
+	}
 }
 
 void Gui2::layout_content_end() {
-
+	if (std::shared_ptr<layout_node> node = layout_stack.back().lock()){
+		layout_stack.pop_back();
+		if (std::shared_ptr<layout_node> parent = layout_stack.back().lock()) {
+			parent->self_info.layout.add_widget(node->self_info.layout.window_size);
+		}
+		else {
+			std::cout << "[GUI Error] Gui::layout_content_end() is called but no Gui::layout() was called before" << std::endl;
+			return;
+		}
+	}
+	else {
+		std::cout << "[GUI Error] Gui::layout_content_end() is called but no Gui::layout() or Gui::layout_content() was called before" << std::endl;
+		return;
+	}
 }
 
 void Gui2::layout_end() {
-	if (current_layout->id == -999) {
-		std::cout << "[GUI Error] layout_end() is called without corresponding layout()" << std::endl;
-		return;
-	}
-	Layout major_layout = Layout(current_layout->layout_type, current_layout->position, vec2(0, 0));
-	
-	// determine positions for contents
-	std::vector<vec2> content_positions;
-	for (int i = 0; i < contents.size(); i++) {
-		content_info& content = contents[i];
-		content_positions.push_back(major_layout.get_widget_position());
-		major_layout.add_widget(content.size);
-	}
-
-	// force minimum size for layout
-	major_layout.window_size.x = std::max(major_layout.window_size.x, current_layout->min_size.x);
-	major_layout.window_size.y = std::max(major_layout.window_size.y, current_layout->min_size.y);
-
-	// draw layout
-	box(current_layout->id, current_layout->position, major_layout.window_size, current_layout->style, U"");
-
-	// draw contents
-	for (int i = 0; i < contents.size(); i++) {
-		content_info& content = contents[i];
-		box(content.id, content_positions[i], content.size, content.style, content.text);
-	}
-	contents.clear();
+	//if (current_layout == nullptr) {
+	//	std::cout << "[GUI Error] Gui::layout_end() is called without corresponding Gui::layout()" << std::endl;
+	//	return;
+	//}
+	//Layout major_layout = Layout(current_layout->layout_type, current_layout->position, vec2(0, 0));
+	//
+	//// determine positions for contents
+	//std::vector<vec2> content_positions;
+	//for (int i = 0; i < contents.size(); i++) {
+	//	content_info& content = contents[i];
+	//	content_positions.push_back(major_layout.get_widget_position());
+	//	major_layout.add_widget(content.size);
+	//}
+	//
+	//// force minimum size for layout
+	//major_layout.window_size.x = std::max(major_layout.window_size.x, current_layout->min_size.x);
+	//major_layout.window_size.y = std::max(major_layout.window_size.y, current_layout->min_size.y);
+	//
+	//// draw layout
+	//box(current_layout->id, current_layout->position, major_layout.window_size, current_layout->style, U"");
+	//
+	//// draw contents
+	//for (int i = 0; i < contents.size(); i++) {
+	//	content_info& content = contents[i];
+	//	box(content.id, content_positions[i], content.size, content.style, content.text);
+	//}
+	//contents.clear();
 }

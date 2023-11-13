@@ -38,6 +38,7 @@ public:
 	void update_matrixes();
 	void update_uniforms(Program& program);
 	void handle_movements(GLFWwindow* window, double frame_time_ms = 16.6f);
+	void handle_movements(GLFWwindow* window, glm::vec2 mouse_rest_position, double frame_time_ms = 16.6f);
 
 	void update_default_uniforms(Program& program);
 };

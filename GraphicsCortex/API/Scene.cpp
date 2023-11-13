@@ -140,10 +140,10 @@ void Scene::render(bool show_warnings) {
 }
 
 void Scene::render_to_framebuffer(FrameBuffer& frame_buffer, Frame& frame, bool show_warnings) {
+
+	frame_buffer.bind(FrameBuffer::WRITE_TARGET);
+
 	frame.set_viewport(frame_buffer.width, frame_buffer.height);
-
-	frame_buffer.bind();
-
 	frame.clear_window(background_color.x, background_color.y, background_color.z, background_color.w);
 
 	render(show_warnings);
