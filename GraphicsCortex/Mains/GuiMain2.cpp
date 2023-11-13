@@ -55,10 +55,11 @@ int main() {
 		gui.content(11, vec2(30, 30), style4, U"Hello Recursion");
 		gui.override_style.clear();
 		gui.content(12, vec2(30, 30), style4, U"Hello Recursion");
-		
 		gui.content(13, vec2(60, 60), style4, U"Hello Recursion");
 		
 		gui.layout_content_end();
+
+		gui.content(14, vec2(30, 30), style3, U"Hello linked lists");
 
 		gui.layout_content_end();
 

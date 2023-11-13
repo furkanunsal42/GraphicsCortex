@@ -445,6 +445,7 @@ void Gui2::layout_end() {
 			std::shared_ptr<layout_node> node = temp_stack.back();
 			// reset the current node's layout size
 			node->self_info.layout.window_size = vec2(0, 0);
+			std::shared_ptr<layout_node> current_node = temp_stack.back();
 			temp_stack.pop_back();
 
 			// recount layout size and compute positions of child layouts
@@ -476,7 +477,12 @@ void Gui2::layout_end() {
 					layout_counter++;
 				}
 			}
-
+			if (widget_info_table.find(current_node->self_info.id) != widget_info_table.end()) {
+				_widget_info& info = widget_info_table[current_node->self_info.id];
+				StaticStyle interpolated_style = get_final_style(current_node->self_info.override_style, current_node->self_info.style, info);
+				vec4f margin = style_attribute_get<vec4f>(interpolated_style.margin, info);
+				current_node->self_info.layout.window_size = current_node->self_info.layout.window_size + vec2(margin.y + margin.w, margin.x + margin.z);
+			}
 		}
 	}
 
@@ -518,7 +524,7 @@ void Gui2::layout_end() {
 					_widget_info& info = widget_info_table[layout.id];
 					StaticStyle interpolated_style = get_final_style(layout.override_style, layout.style, info);
 					vec4f margin = style_attribute_get<vec4f>(interpolated_style.margin, info);
-					//size = size - vec2(margin.y + margin.w, margin.x + margin.z);
+					size = size - vec2(margin.y + margin.w, margin.x + margin.z);
 					position = position + vec2(margin.y, margin.x);
 				}
 				
