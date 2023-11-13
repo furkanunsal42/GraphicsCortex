@@ -10,7 +10,7 @@ Gui2::Gui2(Frame& frame) :
 	frame_ref(frame)
 {
 	gui_program = default_program::gui_program_s().obj;
-	_font = std::make_shared<Font>("Fonts\\Roboto-Regular.ttf", 32);
+	_font = std::make_shared<Font>("Fonts\\Roboto-Regular.ttf", 16);
 }
 
 void Gui2::new_frame(Time frame_time) {

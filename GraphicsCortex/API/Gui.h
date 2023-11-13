@@ -390,7 +390,7 @@ private:
 	float _current_z_index = 0;
 	float _z_index_buff = 0;
 
-	std::shared_ptr<Font> _font = std::make_shared<Font>("Fonts\\Roboto-Regular.ttf", 32);
+	std::shared_ptr<Font> _font = std::make_shared<Font>("Fonts\\Roboto-Regular.ttf", 16);
 
 	friend Box;
 };

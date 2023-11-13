@@ -10,6 +10,7 @@ class TopBar : public UILayer {
 		topbar_style.color = gui::colorcode(0x242424);
 	
 		button_style.text_color = vec3(1, 1, 1);
+		button_style.text_size = 10;
 		button_style.color = gui::colorcode(0x242424);
 		button_style.on_hover.color = gui::colorcode(0x303030);
 		button_style.on_hover.cursor_type = Frame::CursorType::Hand;
