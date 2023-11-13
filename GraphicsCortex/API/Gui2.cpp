@@ -75,8 +75,10 @@ void Gui2::content(unsigned int id, vec2 size, Style style, std::u32string text)
 
 void Gui2::layout_content(unsigned int id, vec2 min_size, Style style, Layout::LayoutType layout_type) {
 	if (std::shared_ptr<layout_node> node = layout_stack.back().lock()) {
-		node->childs.push_back(std::make_shared<layout_node>(id, min_size, style, layout_type));
+		std::shared_ptr<layout_node> new_layout = std::make_shared<layout_node>(id, min_size, style, layout_type);
+		node->childs.push_back(new_layout);
 		node->child_type_order.push_back(layout_node::layout);
+		layout_stack.push_back(new_layout);
 	}
 	else {
 		std::cout << "[GUI Error] Gui::layout_content() is called but no Gui::layout() or Gui::layout_content() was called before" << std::endl;
