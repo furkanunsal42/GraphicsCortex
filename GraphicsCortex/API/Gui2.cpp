@@ -309,29 +309,36 @@ namespace {
 
 // new implementation of gui
 std::shared_ptr<Program> Gui2::gui_program;
-std::shared_ptr<Font> Gui2::_font;
+std::shared_ptr<Font> Gui2::font;
 
 Gui2::Gui2(Frame& frame) : 
 	frame_ref(frame)
 {
 	gui_program = default_program::gui_program_s().obj;
-	_font = std::make_shared<Font>("Fonts\\Roboto-Regular.ttf", 16);
+	font = std::make_shared<Font>("Fonts\\Roboto-Regular.ttf", 16);
 }
 
 void Gui2::new_frame(Time frame_time) {
 	this->frame_time = frame_time;
+	
 	camera.perspective = false;
+	camera.screen_width = frame_ref.window_width;
+	camera.screen_height = frame_ref.window_height;
 	camera.projection_matrix = glm::ortho(0.0f, (float)frame_ref.window_width, 0.0f, (float)frame_ref.window_height, -100.0f, 100.0f);
 }
 
-void Gui2::box(unsigned int id, vec2 position, vec2 size, Style style, std::u32string text, Style override_style) {
+void Gui2::box(unsigned int id, vec2 position, vec2 size, Style style, std::u32string text_string, Style override_style) {
 	
 	AABB2 aabb(position, size);
-	Graphic graphic;
-	graphic.load_model(Mesh_s());
+	if (widget_graphic_table.find(id) == widget_graphic_table.end()) {
+		widget_graphic_table[id] = std::make_unique<Graphic>();
+		widget_graphic_table[id]->load_model(Mesh_s());
+		widget_graphic_table[id]->load_program(Gui2::gui_program);
+	}
 
-	graphic.mesh->load_model(aabb.generate_model());
-	graphic.load_program(Gui2::gui_program);
+	std::unique_ptr<Graphic>& graphic = widget_graphic_table[id];
+
+	graphic->mesh->load_model(aabb.generate_model());
 
 	if (widget_info_table.find(id) == widget_info_table.end()) {
 		_widget_info info;
@@ -373,8 +380,33 @@ void Gui2::box(unsigned int id, vec2 position, vec2 size, Style style, std::u32s
 	gui_program->update_uniform("z_index", current_z_index);
 
 	camera.update_default_uniforms(*Gui2::gui_program);
-	graphic.update_default_uniforms(*Gui2::gui_program);
-	graphic.draw(false);
+	graphic->update_default_uniforms(*Gui2::gui_program);
+	graphic->draw(false);
+
+	if (text_string != U"") {
+		if (widget_text_table.find(id) == widget_text_table.end()) {
+			widget_text_table[id] = std::make_unique<Text>(font);
+			widget_text_table[id]->set_text(text_string);
+		}
+		std::unique_ptr<Text>& text = widget_text_table[id];
+		
+		if (text->get_text32() != text_string) text->set_text(text_string);
+
+		text->set_max_width(camera.screen_width);
+		text->set_scale(0.02 * text_size);
+		float text_height = (font->glyphs[u'l'].y1 - font->glyphs[u'l'].y0) * text->get_scale();
+		text->graphic->set_position(glm::vec3((aabb.position.x) / camera.screen_width, (frame_ref.window_height - aabb.position.y - size.y / 2 - text_size / 2) / camera.screen_width, current_z_index));
+		text->set_color(vec4(text_color.x, text_color.y, text_color.z, 1.0f));
+
+		camera.projection_matrix = glm::ortho(0.0f, 1.0f, 0.0f, (float)frame_ref.window_height / frame_ref.window_width, -100.0f, 100.0f);
+		text->update_default_uniforms(*text->graphic->renderer);
+		camera.update_default_uniforms(*text->graphic->renderer);
+
+		text->render();
+		camera.projection_matrix = glm::ortho(0.0f, (float)frame_ref.window_width, 0.0f, (float)frame_ref.window_height, -100.0f, 100.0f);
+
+	}
+
 }
 
 void Gui2::box(unsigned int id, vec2 position, vec2 size, Style style, std::u32string text) {
@@ -569,14 +601,13 @@ void Gui2::layout_end() {
 
 	}
 
-
-
 	// draw root
 	box(current_layout->self_info.id, position, current_layout->self_info.layout.window_size, current_layout->self_info.style, U"", current_layout->self_info.override_style);
 
 	// draw layouts and their children from leaves to root of the tree
 	std::vector<std::shared_ptr<layout_node>> layout_nodes_d = get_layouts_in_descending_order();
 	for (std::shared_ptr<layout_node> node : layout_nodes_d) {
+		vec2 known_parent_size = node->self_info.layout.window_size;
 		node->self_info.layout.window_size = vec2(0, 0);
 		int content_counter = 0;
 		int layout_counter = 0;
@@ -609,8 +640,10 @@ void Gui2::layout_end() {
 					_widget_info& info = widget_info_table[layout.id];
 					StaticStyle interpolated_style = get_final_style(layout.override_style, layout.style, info);
 					vec4f margin = style_attribute_get<vec4f>(interpolated_style.margin, info);
+					vec4f padding= style_attribute_get<vec4f>(interpolated_style.padding, info);
 					size = size - vec2(margin.y + margin.w, margin.x + margin.z);
 					position = position + vec2(margin.y, margin.x);
+
 				}
 				
 				box(layout.id, position, size, layout.style, U"", layout.override_style);
@@ -619,6 +652,7 @@ void Gui2::layout_end() {
 				layout_counter++;
 			}
 		}
+		//std::cout << known_parent_size << " " << node->self_info.layout.window_size << std::endl;
 	}
 
 	current_layout = nullptr;

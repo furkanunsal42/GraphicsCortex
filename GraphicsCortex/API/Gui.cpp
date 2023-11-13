@@ -30,6 +30,16 @@ Vec2<float> Layout::get_widget_position() {
 	}
 }
 
+Vec2<float> Layout::get_centered_widget_position(const Vec2<float>& final_layout_size, const Vec2<float>& object_size) {
+	if (type == Layout::Horizional) {
+		return Vec2<float>(position.x + window_size.x, position.y + final_layout_size.y/2 - object_size.y / 2);
+	}
+	else if (type == Layout::Vertical) {
+		return Vec2<float>(position.x + final_layout_size.x / 2 - object_size.x / 2, position.y + window_size.y);
+	}
+}
+
+
 Vec2<float> Layout::get_position() {
 	return position;
 }

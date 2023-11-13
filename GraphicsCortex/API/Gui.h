@@ -29,6 +29,7 @@ public:
 
 	void add_widget(const Vec2<float>& size);
 	Vec2<float> get_widget_position();
+	Vec2<float> get_centered_widget_position(const Vec2<float>& final_layout_size, const Vec2<float>& object_size);
 	Vec2<float> get_position();
 	Vec2<float> get_raw_position();
 	void clear();
@@ -424,11 +425,13 @@ private:
 
 	Frame& frame_ref;
 	static std::shared_ptr<Program> gui_program;
-	static std::shared_ptr<Font> _font;
+	static std::shared_ptr<Font> font;
 	Camera camera;
 	
 	Time frame_time;
 	std::unordered_map<unsigned int, _widget_info> widget_info_table;
+	std::unordered_map<unsigned int, std::unique_ptr<Graphic>> widget_graphic_table;
+	std::unordered_map<unsigned int, std::unique_ptr<Text>> widget_text_table;
 
 	struct layout_info {
 		layout_info(unsigned int id, vec2 min_size, Style style, Style override_style, Layout::LayoutType layout_type) {
