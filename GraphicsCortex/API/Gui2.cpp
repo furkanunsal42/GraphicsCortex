@@ -442,7 +442,8 @@ void Gui2::layout_content_end() {
 				_widget_info& info = widget_info_table[node->self_info.id];
 				StaticStyle interpolated_style = get_final_style(node->self_info.override_style, node->self_info.style, info);
 				vec4f margin = style_attribute_get<vec4f>(interpolated_style.margin, info);
-				size = size + vec2(margin.y + margin.w, margin.x + margin.z);
+				vec4f padding = style_attribute_get<vec4f>(interpolated_style.padding, info);
+				size = size + vec2(margin.y + margin.w, margin.x + margin.z) + vec2(padding.y + padding.w, padding.x + padding.z);
 			}
 			
 			parent->self_info.layout.add_widget(size);
@@ -489,7 +490,6 @@ std::vector<std::shared_ptr<Gui2::layout_node>> Gui2::get_layouts_in_ascending_o
 	return layout_nodes_reversed;
 }
 
-
 void Gui2::layout_end() {
 	if (current_layout == nullptr) {
 		std::cout << "[GUI Error] Gui::layout_end() is called without corresponding Gui::layout()" << std::endl;
@@ -529,8 +529,9 @@ void Gui2::layout_end() {
 						_widget_info& info = widget_info_table[layout.id];
 						StaticStyle interpolated_style = get_final_style(layout.override_style, layout.style, info);
 						vec4f margin = style_attribute_get<vec4f>(interpolated_style.margin, info);
-						size = size + vec2(margin.y + margin.w, margin.x + margin.z);
-						position = position + vec2(margin.y, margin.x);
+						vec4f padding = style_attribute_get<vec4f>(interpolated_style.padding, info);
+						size = size + vec2(margin.y + margin.w, margin.x + margin.z) + vec2(padding.y + padding.w, padding.x + padding.z);
+						position = position + vec2(margin.y, margin.x) + vec2(padding.y, padding.x);
 					}
 
 					node->childs[layout_counter]->self_info.layout.position = position;
@@ -543,7 +544,8 @@ void Gui2::layout_end() {
 				_widget_info& info = widget_info_table[current_node->self_info.id];
 				StaticStyle interpolated_style = get_final_style(current_node->self_info.override_style, current_node->self_info.style, info);
 				vec4f margin = style_attribute_get<vec4f>(interpolated_style.margin, info);
-				current_node->self_info.layout.window_size = current_node->self_info.layout.window_size + vec2(margin.y + margin.w, margin.x + margin.z);
+				vec4f padding = style_attribute_get<vec4f>(interpolated_style.padding, info);
+				current_node->self_info.layout.window_size = current_node->self_info.layout.window_size + vec2(margin.y + margin.w, margin.x + margin.z) + vec2(padding.y + padding.w, padding.x + padding.z);
 			}
 		}
 	}

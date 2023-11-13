@@ -50,10 +50,12 @@ int main() {
 		gui.content(8, vec2(30, 30), style3, U"Hello linked lists");
 		gui.content(9, vec2(30, 30), style3, U"Hello linked lists");
 
-
+		gui.override_style.padding = vec4(10, 10, 10, 10);
 		gui.override_style.on_hover.margin = vec4(5, 5, 5, 5);
 		gui.override_style.margin_change = 1;
+		gui.override_style.margin_interpolation = Interpolation::polynomial(2);
 		gui.layout_content(10, vec2(120, 30), style1, Layout::Vertical);
+		gui.override_style.color = vec3(0, 1, 0);
 		gui.content(11, vec2(30, 30), style4, U"Hello Recursion");
 		gui.override_style.clear();
 		gui.content(12, vec2(30, 30), style4, U"Hello Recursion");
