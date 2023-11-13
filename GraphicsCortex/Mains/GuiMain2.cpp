@@ -36,11 +36,12 @@ int main() {
 		gui.box(0, vec2(100, 100), vec2(100, 100), style1, U"Hello GUI");
 
 		gui.layout(1, vec2(400, 100), vec2(100, 100), style1);
-		gui.override_style.color = vec3(0, 1, 1);
 		gui.content(2, vec2(130, 20), style2, U"Hello Layout");
-		gui.override_style.clear();
 
+		gui.override_style.color = vec3(0, 1, 1);
+		gui.override_style.margin = vec4(5, 5, 5, 5);
 		gui.content(3, vec2(30, 10), style2, U"Hello Layout");
+		gui.override_style.clear();
 		gui.content(4, vec2(50, 10), style2, U"Hello Layout");
 		gui.content(5, vec2(100, 10), style2, U"Hello Layout");
 
@@ -49,10 +50,12 @@ int main() {
 		gui.content(8, vec2(30, 30), style3, U"Hello linked lists");
 		gui.content(9, vec2(30, 30), style3, U"Hello linked lists");
 		
+		gui.override_style.margin = vec4(5, 5, 5, 5);
 		gui.layout_content(10, vec2(120, 30), style1, Layout::Vertical);
-		gui.content(11, vec2(70, 30), style4, U"Hello Recursion");
-		gui.content(12, vec2(80, 30), style4, U"Hello Recursion");
-		gui.content(13, vec2(90, 15), style4, U"Hello Recursion");
+		gui.override_style.clear();
+		gui.content(11, vec2(60, 30), style4, U"Hello Recursion");
+		gui.content(12, vec2(60, 30), style4, U"Hello Recursion");
+		gui.content(13, vec2(60, 30), style4, U"Hello Recursion");
 		gui.layout_content_end();
 
 		gui.layout_content_end();
