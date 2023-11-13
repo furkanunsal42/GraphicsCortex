@@ -2,7 +2,6 @@
 #include "Default_Programs.h"
 
 // Style system
-
 namespace {
 	template<typename T>
 	T optional_get(const std::vector<std::optional<T>>& fallback_list, T null_value = T()) {
@@ -231,12 +230,75 @@ namespace {
 		return style_copy;
 	}
 
+	Style merge_static_style_with_style(const StaticStyle& static_style, const Style& override_style, const Style& style, const _widget_info& info) {
+		StaticStyle merged_style = merge_styles_by_priority({ static_style, override_style, style }, info);
+		Style style_copy;
+
+		
+		if (override_style.text_color_change.has_value()		)	style_copy.text_color_change		= override_style.text_color_change.value();
+		else if(style.text_color_change.has_value()				)	style_copy.text_color_change		= style.text_color_change.value();
+		if (override_style.text_size_change.has_value()			)	style_copy.text_size_change			= override_style.text_size_change.value();
+		else if(style.text_size_change.has_value()				)	style_copy.text_size_change			= style.text_size_change.value();
+		if (override_style.color_change.has_value()				)	style_copy.color_change				= override_style.color_change.value();
+		else if(style.color_change.has_value()					)	style_copy.color_change				= style.color_change.value();
+		if (override_style.displacement_change.has_value()		)	style_copy.displacement_change		= override_style.displacement_change.value();
+		else if(style.displacement_change.has_value()			)	style_copy.displacement_change		= style.displacement_change.value();
+		if (override_style.rotation_change.has_value()			)	style_copy.rotation_change			= override_style.rotation_change.value();
+		else if(style.rotation_change.has_value()				)	style_copy.rotation_change			= style.rotation_change.value();
+		if (override_style.corner_rounding_change.has_value()	)	style_copy.corner_rounding_change	= override_style.corner_rounding_change.value();
+		else if(style.corner_rounding_change.has_value()		)	style_copy.corner_rounding_change	= style.corner_rounding_change.value();
+		if (override_style.padding_change.has_value()			)	style_copy.padding_change			= override_style.padding_change.value();
+		else if(style.padding_change.has_value()				)	style_copy.padding_change			= style.padding_change.value();
+		if (override_style.margin_change.has_value()			)	style_copy.margin_change			= override_style.margin_change.value();
+		else if(style.margin_change.has_value()					)	style_copy.margin_change			= style.margin_change.value();
+		if (override_style.border_thickness_change.has_value()	)	style_copy.border_thickness_change	= override_style.border_thickness_change.value();
+		else if(style.border_thickness_change.has_value()		)	style_copy.border_thickness_change	= style.border_thickness_change.value();
+		if (override_style.border_color_change.has_value()		)	style_copy.border_color_change		= override_style.border_color_change.value();
+		else if(style.border_color_change.has_value()			)	style_copy.border_color_change		= style.border_color_change.value();
+		
+		if (override_style.text_color_interpolation.has_value()			)	style_copy.text_color_interpolation = override_style.text_color_interpolation.value();
+		else if(style.text_color_interpolation.has_value()				)	style_copy.text_color_interpolation = style.text_color_interpolation.value();
+		if (override_style.text_size_interpolation.has_value()			)	style_copy.text_size_interpolation = override_style.text_size_interpolation.value();
+		else if(style.text_size_interpolation.has_value()				)	style_copy.text_size_interpolation = style.text_size_interpolation.value();
+		if (override_style.color_interpolation.has_value()				)	style_copy.color_interpolation = override_style.color_interpolation.value();
+		else if(style.color_interpolation.has_value()					)	style_copy.color_interpolation = style.color_interpolation.value();
+		if (override_style.displacement_interpolation.has_value()		)	style_copy.displacement_interpolation = override_style.displacement_interpolation.value();
+		else if(style.displacement_interpolation.has_value()			)	style_copy.displacement_interpolation = style.displacement_interpolation.value();
+		if (override_style.rotation_interpolation.has_value()			)	style_copy.rotation_interpolation = override_style.rotation_interpolation.value();
+		else if(style.rotation_interpolation.has_value()				)	style_copy.rotation_interpolation = style.rotation_interpolation.value();
+		if (override_style.corner_rounding_interpolation.has_value()	)	style_copy.corner_rounding_interpolation = override_style.corner_rounding_interpolation.value();
+		else if(style.corner_rounding_interpolation.has_value()			)	style_copy.corner_rounding_interpolation = style.corner_rounding_interpolation.value();
+		if (override_style.padding_interpolation.has_value()			)	style_copy.padding_interpolation = override_style.padding_interpolation.value();
+		else if(style.padding_interpolation.has_value()					)	style_copy.padding_interpolation = style.padding_interpolation.value();
+		if (override_style.margin_interpolation.has_value()				)	style_copy.margin_interpolation = override_style.margin_interpolation.value();
+		else if(style.margin_interpolation.has_value()					)	style_copy.margin_interpolation = style.margin_interpolation.value();
+		if (override_style.border_thickness_interpolation.has_value()	)	style_copy.border_thickness_interpolation = override_style.border_thickness_interpolation.value();
+		else if(style.border_thickness_interpolation.has_value()		)	style_copy.border_thickness_interpolation = style.border_thickness_interpolation.value();
+		if (override_style.border_color_interpolation.has_value()		)	style_copy.border_color_interpolation = override_style.border_color_interpolation.value();
+		else if(style.border_color_interpolation.has_value()			)	style_copy.border_color_interpolation = style.border_color_interpolation.value();
+		
+		StaticStyle on_hover  = merge_styles_by_priority({ override_style.on_hover, style.on_hover }, info);
+		StaticStyle on_active = merge_styles_by_priority({ override_style.on_hover, style.on_hover }, info);
+
+		style_copy.color = merged_style.color;
+		style_copy.displacement = merged_style.displacement;
+		style_copy.rotation_euler = merged_style.rotation_euler;
+		style_copy.corner_rounding = merged_style.corner_rounding;
+		style_copy.padding = merged_style.padding;
+		style_copy.margin = merged_style.margin;
+		style_copy.border_thickness = merged_style.border_thickness;
+		style_copy.border_color = merged_style.border_color;
+		style_copy.cursor_type = merged_style.cursor_type;
+
+		return style_copy;
+	}
+
 	StaticStyle get_final_style(const Style& override_style, const Style& style, _widget_info& info) {
 		StaticStyle default_style = merge_styles_by_priority({ override_style, style }, info);
 		StaticStyle hover_style = merge_styles_by_priority({ override_style.on_hover, style.on_hover, default_style }, info);
 
-		Style base_style = merge_static_style_with_style(default_style, style, info);
-		Style target_style = merge_static_style_with_style(hover_style, style, info);	// append timing information of style to style_to_use, TODO: merge timing information of _style and overwrite_style here
+		Style base_style = merge_static_style_with_style(default_style, override_style, style, info);
+		Style target_style = merge_static_style_with_style(hover_style, override_style, style, info);	// append timing information of style to style_to_use, TODO: merge timing information of _style and overwrite_style here
 		StaticStyle interpolated_style = interpolate_styles(base_style, target_style, info, info.is_hovering);
 
 		return interpolated_style;

@@ -50,7 +50,9 @@ int main() {
 		gui.content(8, vec2(30, 30), style3, U"Hello linked lists");
 		gui.content(9, vec2(30, 30), style3, U"Hello linked lists");
 
-		gui.override_style.margin = vec4(5, 5, 5, 5);
+
+		gui.override_style.on_hover.margin = vec4(5, 5, 5, 5);
+		gui.override_style.margin_change = 1;
 		gui.layout_content(10, vec2(120, 30), style1, Layout::Vertical);
 		gui.content(11, vec2(30, 30), style4, U"Hello Recursion");
 		gui.override_style.clear();
