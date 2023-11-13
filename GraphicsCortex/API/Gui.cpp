@@ -615,22 +615,22 @@ void Box::render(){
 	StaticStyle default_style = merge_styles_by_priority({ overwrite_style, _style }, _info);
 	StaticStyle hover_style = merge_styles_by_priority({ overwrite_style.on_hover, _style.on_hover, default_style }, _info);
 	
-	bool cursor_pressing_previously = _info.is_click_pressed;
+	//bool cursor_pressing_previously = _info.is_click_pressed;
 
 	_info.is_hovering = false;
-	_info.is_click_pressed = false;
-	_info.is_click_released = false;
-
+	//_info.is_click_pressed = false;
+	//_info.is_click_released = false;
+	//
 	bool hover = is_mouse_hover();
 	if (hover) {
-	//	style_to_use = hover_style;
+	////	style_to_use = hover_style;
 		_info.is_hovering = true;
 		_gui_ref._hover_happened = true;
-		if (_gui_ref._frame_ref.get_mouse_state() == Frame::CursorState::LeftPressed)
-			_info.is_click_pressed = true;
-		if (_gui_ref._frame_ref.get_mouse_state() == Frame::CursorState::LeftReleased)
-			if(cursor_pressing_previously)
-				_info.is_click_released = true;
+	//	if (_gui_ref._frame_ref.get_mouse_state() == Frame::CursorState::LeftPressed)
+	//		_info.is_click_pressed = true;
+	//	if (_gui_ref._frame_ref.get_mouse_state() == Frame::CursorState::LeftReleased)
+	//		if(cursor_pressing_previously)
+	//			_info.is_click_released = true;
 	}
 
 	Style base_style = merge_static_style_with_style(default_style, _style, _info);
@@ -723,13 +723,13 @@ bool Box::hovering(){
 	return _info.is_hovering;
 }
 bool Box::click_released(){
-	return _info.is_click_released;
+	//return _info.is_click_released;
 }
 bool Box::click_pressed(){
-	return _info.is_click_pressed;		// bug: is not a pulse
+	//return _info.is_click_pressed;		// bug: is not a pulse
 }
 bool Box::click_holding() {
-	return _info.is_click_pressed;
+	//return _info.is_click_pressed;
 }
 
 void Box::initialize_data(const std::string& key, int value) {

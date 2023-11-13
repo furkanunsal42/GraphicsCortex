@@ -1,6 +1,7 @@
 #include "Gui.h"
 #include "Default_Programs.h"
 
+
 // Style system
 namespace {
 	template<typename T>
@@ -321,13 +322,27 @@ Gui2::Gui2(Frame& frame) :
 void Gui2::new_frame(Time frame_time) {
 	this->frame_time = frame_time;
 	
+	if (hoverings.size() > 0){
+		unsigned int hover_id = hoverings[0].first;
+		float hover_z = hoverings[0].second;
+		for (std::pair<unsigned int, float> candidate : hoverings) {
+			if (candidate.second > hover_z) {
+				hover_id = candidate.first;
+				hover_z = candidate.second;
+			}
+		}
+
+		widget_info_table[hover_id].is_active_hovering = true;
+	}
+
+	z_index = 0;
 	camera.perspective = false;
 	camera.screen_width = frame_ref.window_width;
 	camera.screen_height = frame_ref.window_height;
 	camera.projection_matrix = glm::ortho(0.0f, (float)frame_ref.window_width, 0.0f, (float)frame_ref.window_height, -100.0f, 100.0f);
 }
 
-void Gui2::box(unsigned int id, vec2 position, vec2 size, Style style, std::u32string text_string, Style override_style) {
+void Gui2::box(unsigned int id, vec2 position, vec2 size, Style style, std::u32string text_string, Style override_style, float z_index) {
 	
 	AABB2 aabb(position, size);
 	if (widget_graphic_table.find(id) == widget_graphic_table.end()) {
@@ -363,13 +378,11 @@ void Gui2::box(unsigned int id, vec2 position, vec2 size, Style style, std::u32s
 	Vec3<float> border_color =		style_attribute_get<Vec3<float>>(interpolated_style.border_color,		info);
 	Frame::CursorType cursor_type = optional_get<Frame::CursorType>(interpolated_style.cursor_type);
 
-	float current_z_index = 0;
-
 	bool hover = aabb.does_contain(frame_ref.get_cursor_position());
+	if (hover) hoverings.push_back(std::pair(id, z_index));
+
+	info.is_active_hovering = false;
 	info.is_hovering = hover;
-	info.is_click_holding = false;
-	info.is_click_pressed = false;
-	info.is_click_released = false;
 
 	gui_program->update_uniform("screen_position", aabb.position.x, frame_ref.window_height - aabb.position.y);
 	gui_program->update_uniform("rect_color", color.x, color.y, color.z, 1.0f);
@@ -377,7 +390,7 @@ void Gui2::box(unsigned int id, vec2 position, vec2 size, Style style, std::u32s
 	gui_program->update_uniform("corner_rounding", corner_rounding.x, corner_rounding.y, corner_rounding.z, corner_rounding.w);
 	gui_program->update_uniform("border_color", border_color.x, border_color.y, border_color.z, 1.0f);
 	gui_program->update_uniform("border_thickness", border_thickness.x, border_thickness.y, border_thickness.z, border_thickness.w);
-	gui_program->update_uniform("z_index", current_z_index);
+	gui_program->update_uniform("z_index", z_index);
 
 	camera.update_default_uniforms(*Gui2::gui_program);
 	graphic->update_default_uniforms(*Gui2::gui_program);
@@ -395,7 +408,7 @@ void Gui2::box(unsigned int id, vec2 position, vec2 size, Style style, std::u32s
 		text->set_max_width(camera.screen_width);
 		text->set_scale(0.02 * text_size);
 		float text_height = (font->glyphs[u'l'].y1 - font->glyphs[u'l'].y0) * text->get_scale();
-		text->graphic->set_position(glm::vec3((aabb.position.x) / camera.screen_width, (frame_ref.window_height - aabb.position.y - size.y / 2 - text_size / 2) / camera.screen_width, current_z_index));
+		text->graphic->set_position(glm::vec3((aabb.position.x) / camera.screen_width, (frame_ref.window_height - aabb.position.y - size.y / 2 - text_size / 2) / camera.screen_width, z_index));
 		text->set_color(vec4(text_color.x, text_color.y, text_color.z, 1.0f));
 
 		camera.projection_matrix = glm::ortho(0.0f, 1.0f, 0.0f, (float)frame_ref.window_height / frame_ref.window_width, -100.0f, 100.0f);
@@ -410,7 +423,7 @@ void Gui2::box(unsigned int id, vec2 position, vec2 size, Style style, std::u32s
 }
 
 void Gui2::box(unsigned int id, vec2 position, vec2 size, Style style, std::u32string text) {
-	box(id, position, size, style, text, override_style);
+	box(id, position, size, style, text, override_style, z_index);
 }
 
 void Gui2::layout(unsigned int id, vec2 position, vec2 min_size, Style style, Layout::LayoutType layout_type) {
@@ -418,9 +431,11 @@ void Gui2::layout(unsigned int id, vec2 position, vec2 min_size, Style style, La
 		std::cout << "[GUI Error] another Gui::layout() is called without calling Gui::layout_end() for previous Gui::layout() call" << std::endl;
 		return;
 	}
+
+	z_index++;
 	
 	this->position = position;
-	current_layout = std::make_shared<layout_node>(id, min_size, style, override_style, layout_type);
+	current_layout = std::make_shared<layout_node>(id, min_size, style, override_style, layout_type, z_index);
 
 	if (layout_stack.size() > 0) {
 		std::cout << "[GUI Error] Gui::layout() is called but layout_stack is not empty " << std::endl;
@@ -439,7 +454,7 @@ void Gui2::content(unsigned int id, vec2 size, Style style, std::u32string text)
 			size = size + vec2(margin.y + margin.w, margin.x + margin.z);
 		}
 
-		content_info content(id, size, style, override_style, text);
+		content_info content(id, size, style, override_style, text, z_index + 1);
 		node->contents.push_back(content);
 		node->self_info.layout.add_widget(size);
 		node->child_type_order.push_back(layout_node::content);
@@ -453,7 +468,9 @@ void Gui2::content(unsigned int id, vec2 size, Style style, std::u32string text)
 void Gui2::layout_content(unsigned int id, vec2 min_size, Style style, Layout::LayoutType layout_type) {
 	if (std::shared_ptr<layout_node> node = layout_stack.back().lock()) {
 		
-		std::shared_ptr<layout_node> new_layout = std::make_shared<layout_node>(id, min_size, style, override_style, layout_type);
+		z_index++;
+
+		std::shared_ptr<layout_node> new_layout = std::make_shared<layout_node>(id, min_size, style, override_style, layout_type, z_index);
 		node->childs.push_back(new_layout);
 		node->child_type_order.push_back(layout_node::layout);
 		layout_stack.push_back(new_layout);
@@ -466,6 +483,11 @@ void Gui2::layout_content(unsigned int id, vec2 min_size, Style style, Layout::L
 
 void Gui2::layout_content_end() {
 	if (std::shared_ptr<layout_node> node = layout_stack.back().lock()){
+
+		z_index--;
+		node->self_info.layout.window_size.x = std::max(node->self_info.layout.window_size.x, node->self_info.min_size.x);
+		node->self_info.layout.window_size.y = std::max(node->self_info.layout.window_size.y, node->self_info.min_size.y);
+
 		layout_stack.pop_back();
 		if (std::shared_ptr<layout_node> parent = layout_stack.back().lock()) {
 			
@@ -527,6 +549,10 @@ void Gui2::layout_end() {
 		std::cout << "[GUI Error] Gui::layout_end() is called without corresponding Gui::layout()" << std::endl;
 		return;
 	}
+
+	current_layout->self_info.layout.window_size.x = std::max(current_layout->self_info.layout.window_size.x, current_layout->self_info.min_size.x);
+	current_layout->self_info.layout.window_size.y = std::max(current_layout->self_info.layout.window_size.y, current_layout->self_info.min_size.y);
+	z_index--;
 	
 	// compute layout positions
 	{
@@ -574,6 +600,9 @@ void Gui2::layout_end() {
 						position = position + vec2(margin.y, margin.x) + vec2(padding.y, padding.x);
 					}
 
+					size.x = std::max(layout.min_size.x, layout.layout.window_size.x);
+					size.y = std::max(layout.min_size.y, layout.layout.window_size.y);
+
 					node->childs[layout_counter]->self_info.layout.position = position;
 					node->self_info.layout.add_widget(size);
 					temp_stack.push_back(node->childs[layout_counter]);
@@ -586,6 +615,8 @@ void Gui2::layout_end() {
 				vec4f margin = style_attribute_get<vec4f>(interpolated_style.margin, info);
 				vec4f padding = style_attribute_get<vec4f>(interpolated_style.padding, info);
 				current_node->self_info.layout.window_size = current_node->self_info.layout.window_size + vec2(margin.y + margin.w, margin.x + margin.z) + vec2(padding.y + padding.w, padding.x + padding.z);
+				current_node->self_info.layout.window_size.x = std::max(current_node->self_info.layout.window_size.x, current_node->self_info.min_size.x);
+				current_node->self_info.layout.window_size.y = std::max(current_node->self_info.layout.window_size.y, current_node->self_info.min_size.y);
 			}
 		}
 
@@ -598,11 +629,12 @@ void Gui2::layout_end() {
 			global_padding_size = vec2(padding.y + padding.w, padding.x + padding.z);
 		}
 		current_layout->self_info.layout.window_size = current_layout->self_info.layout.window_size + global_padding;
-
+		current_layout->self_info.layout.window_size.x = std::max(current_layout->self_info.layout.window_size.x, current_layout->self_info.min_size.x);
+		current_layout->self_info.layout.window_size.y = std::max(current_layout->self_info.layout.window_size.y, current_layout->self_info.min_size.y);
 	}
 
 	// draw root
-	box(current_layout->self_info.id, position, current_layout->self_info.layout.window_size, current_layout->self_info.style, U"", current_layout->self_info.override_style);
+	box(current_layout->self_info.id, position, current_layout->self_info.layout.window_size, current_layout->self_info.style, U"", current_layout->self_info.override_style, current_layout->self_info.z_index);
 
 	// draw layouts and their children from leaves to root of the tree
 	std::vector<std::shared_ptr<layout_node>> layout_nodes_d = get_layouts_in_descending_order();
@@ -626,7 +658,7 @@ void Gui2::layout_end() {
 					position = position + vec2(margin.y, margin.x);
 				}
 
-				box(content.id, position, size, content.style, content.text, content.override_style);
+				box(content.id, position, size, content.style, content.text, content.override_style, content.z_index);
 				
 				node->self_info.layout.add_widget(node->contents[content_counter].size);
 				content_counter++;
@@ -643,12 +675,17 @@ void Gui2::layout_end() {
 					vec4f padding= style_attribute_get<vec4f>(interpolated_style.padding, info);
 					size = size - vec2(margin.y + margin.w, margin.x + margin.z);
 					position = position + vec2(margin.y, margin.x);
-
 				}
 				
-				box(layout.id, position, size, layout.style, U"", layout.override_style);
+				size.x = std::max(layout.min_size.x, size.x);
+				size.y = std::max(layout.min_size.y, size.y);
+				
+				box(layout.id, position, size, layout.style, U"", layout.override_style, layout.z_index);
 
-				node->self_info.layout.add_widget(node->childs[layout_counter]->self_info.layout.window_size);
+				vec2 window_size = node->childs[layout_counter]->self_info.layout.window_size;
+				window_size.x = std::max(layout.min_size.x, window_size.x);
+				window_size.y = std::max(layout.min_size.y, window_size.y);
+				node->self_info.layout.add_widget(window_size);
 				layout_counter++;
 			}
 		}

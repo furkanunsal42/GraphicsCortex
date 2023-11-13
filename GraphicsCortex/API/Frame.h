@@ -185,6 +185,7 @@ public:
 
 private:
 
+	CursorState _previous_cursor_state;
 	CursorType _current_cursor_type;
 	void _window_resize_callback(GLFWwindow* window, int width, int height);
 };

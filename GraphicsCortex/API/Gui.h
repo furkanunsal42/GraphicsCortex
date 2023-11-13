@@ -258,10 +258,9 @@ public:
 	vec2f size;
 	vec2f position;
 
+	// widget is the most relevant widget to mouse
+	bool is_active_hovering = false;
 	bool is_hovering = false;
-	bool is_click_pressed = false;		//	just pressed the click while hovering
-	bool is_click_released = false;		//	just released the click while hovering
-	bool is_click_holding = false;		//	began pressing while hovering and still hovers while pressing
 	//Time last_update;
 
 	Time _current_text_color_time = 0;
@@ -421,26 +420,31 @@ public:
 
 private:
 	friend Frame;
-	void box(unsigned int id, vec2 position, vec2 size, Style style, std::u32string text, Style override_style);
+	void box(unsigned int id, vec2 position, vec2 size, Style style, std::u32string text, Style override_style, float z_index);
 
 	Frame& frame_ref;
 	static std::shared_ptr<Program> gui_program;
 	static std::shared_ptr<Font> font;
 	Camera camera;
+	float z_index = 0; 
 	
 	Time frame_time;
 	std::unordered_map<unsigned int, _widget_info> widget_info_table;
 	std::unordered_map<unsigned int, std::unique_ptr<Graphic>> widget_graphic_table;
 	std::unordered_map<unsigned int, std::unique_ptr<Text>> widget_text_table;
 
+	// id - z_index
+	std::vector<std::pair<unsigned int, float>> hoverings;
+
 	struct layout_info {
-		layout_info(unsigned int id, vec2 min_size, Style style, Style override_style, Layout::LayoutType layout_type) {
+		layout_info(unsigned int id, vec2 min_size, Style style, Style override_style, Layout::LayoutType layout_type, float z_index) {
 			this->id = id;
 			this->min_size = min_size;
 			this->style = style;
 			this->override_style = override_style;
 			this->layout_type = layout_type;
 			this->layout.type = layout_type;
+			this->z_index = z_index;
 		}
 
 		layout_info() { ; }
@@ -451,15 +455,17 @@ private:
 		Style override_style;
 		Layout::LayoutType layout_type;
 		Layout layout;
+		float z_index;
 	};
 
 	struct content_info {
-		content_info(unsigned int id, vec2 size, Style style, Style override_style, std::u32string text) {
+		content_info(unsigned int id, vec2 size, Style style, Style override_style, std::u32string text, float z_index) {
 			this->id = id;
 			this->size = size;
 			this->style = style;
 			this->override_style = override_style;
 			this->text = text;
+			this->z_index = z_index;
 		}
 
 		unsigned int id;
@@ -467,13 +473,14 @@ private:
 		Style style;
 		Style override_style;
 		std::u32string text;
+		float z_index;
 	};
 
 	// layouts and contents are hold in a tree
 	// layout node definition
 	struct layout_node {
-		layout_node(unsigned int id, vec2 min_size, Style style, Style override_style, Layout::LayoutType layout_type) {
-			self_info = layout_info(id, min_size, style, override_style, layout_type);
+		layout_node(unsigned int id, vec2 min_size, Style style, Style override_style, Layout::LayoutType layout_type, float z_index) {
+			self_info = layout_info(id, min_size, style, override_style, layout_type, z_index);
 		}
 		layout_info self_info;
 		std::vector<content_info> contents;

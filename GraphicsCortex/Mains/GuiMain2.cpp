@@ -1,5 +1,13 @@
 #include "GraphicsCortex.h"
 
+unsigned int compute_id(std::string filename, int line) {
+	std::hash<std::string> hash;
+	return hash(filename) * 2 + 3 * line;
+}
+
+#define gui_id compute_id(__FILE__, __LINE__)
+
+
 int main() {
 	Frame frame(1920, 1080, "Cortex GUI", 0, 0, true, true, true, false);
 	Gui2 gui(frame);
@@ -33,39 +41,39 @@ int main() {
 		frame.clear_window(1, 1, 1, 1);
 		frame.display_performance(2000);
 
-		gui.box(0, vec2(100, 100), vec2(100, 100), style1, U"Hello GUI");
+		gui.box(gui_id, vec2(100, 100), vec2(100, 100), style1, U"Hello GUI");
 
 		gui.override_style.padding = vec4(6, 6, 6, 6);
-		gui.layout(1, vec2(400, 100), vec2(100, 100), style1);
+		gui.layout(gui_id, vec2(400, 100), vec2(800, 100), style1);
 		gui.override_style.clear();
-		gui.content(2, vec2(130, 20), style2, U"Hello Layout");
+		gui.content(gui_id, vec2(130, 20), style2, U"Hello Layout");
 
 		gui.override_style.color = vec3(0, 1, 1);
 		gui.override_style.margin = vec4(5, 5, 5, 5);
-		gui.content(3, vec2(30, 10), style2, U"Hello Layout");
+		gui.content(gui_id, vec2(30, 10), style2, U"Hello Layout");
 		gui.override_style.clear();
-		gui.content(4, vec2(50, 10), style2, U"Hello Layout");
-		gui.content(5, vec2(100, 10), style2, U"Hello Layout");
+		gui.content(gui_id, vec2(50, 10), style2, U"Hello Layout");
+		gui.content(gui_id, vec2(100, 10), style2, U"Hello Layout");
 
-		gui.layout_content(6, vec2(100, 30), style1, Layout::Horizional);
-		gui.content(7, vec2(30, 30), style3, U"Hello linked lists");
-		gui.content(8, vec2(30, 30), style3, U"Hello linked lists");
-		gui.content(9, vec2(30, 30), style3, U"Hello linked lists");
+		gui.layout_content(6, vec2(900, 30), style1, Layout::Horizional);
+		gui.content(gui_id, vec2(30, 30), style3, U"Hello linked lists");
+		gui.content(gui_id, vec2(30, 30), style3, U"Hello linked lists");
+		gui.content(gui_id, vec2(30, 30), style3, U"Hello linked lists");
 
 		gui.override_style.padding = vec4(10, 10, 10, 10);
 		gui.override_style.on_hover.margin = vec4(5, 5, 5, 5);
 		gui.override_style.margin_change = 1;
 		gui.override_style.margin_interpolation = Interpolation::polynomial(4);
-		gui.layout_content(10, vec2(120, 30), style1, Layout::Vertical);
+		gui.layout_content(gui_id, vec2(120, 30), style1, Layout::Vertical);
 		gui.override_style.color = vec3(0, 1, 0);
-		gui.content(11, vec2(30, 30), style4, U"Hello Recursion");
+		gui.content(gui_id, vec2(30, 30), style4, U"Hello Recursion");
 		gui.override_style.clear();
-		gui.content(12, vec2(30, 30), style4, U"Hello Recursion");
-		gui.content(13, vec2(60, 60), style4, U"Hello Recursion");
+		gui.content(gui_id, vec2(30, 30), style4, U"Hello Recursion");
+		gui.content(gui_id, vec2(60, 60), style4, U"Hello Recursion");
 		
 		gui.layout_content_end();
 
-		gui.content(14, vec2(30, 30), style3, U"Hello linked lists");
+		gui.content(gui_id, vec2(30, 30), style3, U"Hello linked lists");
 
 		gui.layout_content_end();
 
