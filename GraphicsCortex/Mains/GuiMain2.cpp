@@ -19,6 +19,13 @@ int main() {
 		gui.content(3, vec2(30, 10), style, U"Hello Layout");
 		gui.content(4, vec2(50, 10), style, U"Hello Layout");
 		gui.content(5, vec2(100, 10), style, U"Hello Layout");
+
+		//gui.layout_content(6, vec2(100, 30), style, Layout::Horizional);
+		gui.content(7, vec2(30, 30), style, U"Hello linked lists");
+		gui.content(8, vec2(30, 30), style, U"Hello linked lists");
+		gui.content(9, vec2(30, 30), style, U"Hello linked lists");
+		//gui.layout_content_end();
+
 		gui.layout_end();
 
 		gui.new_frame(deltatime);

@@ -430,6 +430,7 @@ private:
 			this->min_size = min_size;
 			this->style = style;
 			this->layout_type = layout_type;
+			this->layout.type = layout_type;
 		}
 
 		layout_info() { ; }
@@ -464,6 +465,13 @@ private:
 		layout_info self_info;
 		std::vector<content_info> contents;
 		std::vector<std::shared_ptr<layout_node>> childs;
+		
+		enum child_type {
+			content,
+			layout,
+		};
+		// type of childs in creation order, necessery to work out which vector to pop while rendering
+		std::vector<child_type> child_type_order;
 	};
 
 	vec2 position;
@@ -471,6 +479,9 @@ private:
 
 	// keeps track of which layout is pushed through layout_content() call first
 	std::vector<std::weak_ptr<layout_node>> layout_stack;
+
+	std::vector<std::shared_ptr<layout_node>> get_layouts_in_ascending_order();
+	std::vector<std::shared_ptr<layout_node>> get_layouts_in_descending_order();
 };
 
 /*
