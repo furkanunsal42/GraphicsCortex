@@ -49,13 +49,15 @@ int main() {
 		gui.content(7, vec2(30, 30), style3, U"Hello linked lists");
 		gui.content(8, vec2(30, 30), style3, U"Hello linked lists");
 		gui.content(9, vec2(30, 30), style3, U"Hello linked lists");
-		
+
 		gui.override_style.margin = vec4(5, 5, 5, 5);
 		gui.layout_content(10, vec2(120, 30), style1, Layout::Vertical);
+		gui.content(11, vec2(30, 30), style4, U"Hello Recursion");
 		gui.override_style.clear();
-		gui.content(11, vec2(60, 30), style4, U"Hello Recursion");
-		gui.content(12, vec2(60, 30), style4, U"Hello Recursion");
-		gui.content(13, vec2(60, 30), style4, U"Hello Recursion");
+		gui.content(12, vec2(30, 30), style4, U"Hello Recursion");
+		
+		gui.content(13, vec2(60, 60), style4, U"Hello Recursion");
+		
 		gui.layout_content_end();
 
 		gui.layout_content_end();
