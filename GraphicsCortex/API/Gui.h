@@ -420,6 +420,9 @@ public:
 
 private:
 	friend Frame;
+	vec4f get_padding_by_id(unsigned int id, const Style& override_style, const Style& style);
+	vec4f get_margin_by_id(unsigned int id, const Style& override_style, const Style& style);
+	
 	void box(unsigned int id, vec2 position, vec2 size, Style style, std::u32string text, Style override_style, float z_index);
 
 	Frame& frame_ref;

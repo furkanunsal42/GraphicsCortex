@@ -1,11 +1,11 @@
 #include "GraphicsCortex.h"
 
-unsigned int compute_id(std::string filename, int line) {
+unsigned int compute_gui_id(std::string filename, int line) {
 	std::hash<std::string> hash;
 	return hash(filename) * 2 + 3 * line;
 }
 
-#define gui_id compute_id(__FILE__, __LINE__)
+#define gui_id compute_gui_id(__FILE__, __LINE__)
 
 
 int main() {
@@ -46,34 +46,38 @@ int main() {
 		gui.override_style.padding = vec4(6, 6, 6, 6);
 		gui.layout(gui_id, vec2(400, 100), vec2(800, 100), style1);
 		gui.override_style.clear();
-		gui.content(gui_id, vec2(130, 20), style2, U"Hello Layout");
+		gui.content(gui_id, vec2(200, 20), style2, U"Hello Layout");
 
 		gui.override_style.color = vec3(0, 1, 1);
 		gui.override_style.margin = vec4(5, 5, 5, 5);
-		gui.content(gui_id, vec2(30, 10), style2, U"Hello Layout");
+		gui.override_style.on_hover.margin = vec4(5, 20, 5, 5);
+		gui.override_style.margin_change = 0.6;
+		gui.content(gui_id, vec2(200, 30), style2, U"Hello Layout");
 		gui.override_style.clear();
-		gui.content(gui_id, vec2(50, 10), style2, U"Hello Layout");
-		gui.content(gui_id, vec2(100, 10), style2, U"Hello Layout");
+		gui.content(gui_id, vec2(200, 40), style2, U"Hello Layout");
+		gui.content(gui_id, vec2(200, 50), style2, U"Hello Layout");
 
-		gui.layout_content(6, vec2(900, 30), style1, Layout::Horizional);
-		gui.content(gui_id, vec2(30, 30), style3, U"Hello linked lists");
-		gui.content(gui_id, vec2(30, 30), style3, U"Hello linked lists");
-		gui.content(gui_id, vec2(30, 30), style3, U"Hello linked lists");
+		gui.override_style.padding = vec4(5, 5, 5, 5);
+		gui.layout_content(6, vec2(90, 30), style1, Layout::Horizional);
+		gui.override_style.clear();
+		gui.content(gui_id, vec2(200, 30), style3, U"Hello linked lists");
+		gui.content(gui_id, vec2(200, 30), style3, U"Hello linked lists");
+		gui.content(gui_id, vec2(200, 30), style3, U"Hello linked lists");
 
 		gui.override_style.padding = vec4(10, 10, 10, 10);
-		gui.override_style.on_hover.margin = vec4(5, 5, 5, 5);
-		gui.override_style.margin_change = 1;
+		gui.override_style.on_hover.margin = vec4(20, 20, 20, 20);
+		gui.override_style.margin_change = 0.9;
 		gui.override_style.margin_interpolation = Interpolation::polynomial(4);
-		gui.layout_content(gui_id, vec2(120, 30), style1, Layout::Vertical);
+		gui.layout_content(gui_id, vec2(30, 30), style1, Layout::Vertical);
 		gui.override_style.color = vec3(0, 1, 0);
-		gui.content(gui_id, vec2(30, 30), style4, U"Hello Recursion");
+		gui.content(gui_id, vec2(200, 60), style4, U"Hello Recursion");
 		gui.override_style.clear();
-		gui.content(gui_id, vec2(30, 30), style4, U"Hello Recursion");
-		gui.content(gui_id, vec2(60, 60), style4, U"Hello Recursion");
+		gui.content(gui_id, vec2(200, 60), style4, U"Hello Recursion");
+		gui.content(gui_id, vec2(200, 120), style4, U"Hello Recursion");
 		
 		gui.layout_content_end();
 
-		gui.content(gui_id, vec2(30, 30), style3, U"Hello linked lists");
+		gui.content(gui_id, vec2(200, 60), style3, U"Hello linked lists");
 
 		gui.layout_content_end();
 

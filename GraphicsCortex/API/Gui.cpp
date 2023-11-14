@@ -724,12 +724,15 @@ bool Box::hovering(){
 }
 bool Box::click_released(){
 	//return _info.is_click_released;
+	return false;
 }
 bool Box::click_pressed(){
 	//return _info.is_click_pressed;		// bug: is not a pulse
+	return false;
 }
 bool Box::click_holding() {
 	//return _info.is_click_pressed;
+	return false;
 }
 
 void Box::initialize_data(const std::string& key, int value) {
