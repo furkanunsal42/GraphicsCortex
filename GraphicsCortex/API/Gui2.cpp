@@ -1,7 +1,6 @@
 #include "Gui.h"
 #include "Default_Programs.h"
 
-
 // Style system
 namespace {
 	template<typename T>
@@ -426,24 +425,6 @@ void Gui2::box(unsigned int id, vec2 position, vec2 size, Style style, std::u32s
 	box(id, position, size, style, text, override_style, z_index);
 }
 
-void Gui2::layout(unsigned int id, vec2 position, vec2 min_size, Style style, Layout::LayoutType layout_type) {
-	if (current_layout != nullptr) {
-		std::cout << "[GUI Error] another Gui::layout() is called without calling Gui::layout_end() for previous Gui::layout() call" << std::endl;
-		return;
-	}
-
-	z_index++;
-	
-	this->position = position;
-	current_layout = std::make_shared<layout_node>(id, min_size, style, override_style, layout_type, z_index);
-
-	if (layout_stack.size() > 0) {
-		std::cout << "[GUI Error] Gui::layout() is called but layout_stack is not empty " << std::endl;
-	}
-	layout_stack.clear();
-	layout_stack.push_back(current_layout);
-}
-
 vec4f Gui2::get_margin_by_id(unsigned int id, const Style& override_style, const Style& style) {
 	if (widget_info_table.find(id) != widget_info_table.end()) {
 		_widget_info& info = widget_info_table[id];
@@ -464,65 +445,12 @@ vec4f Gui2::get_padding_by_id(unsigned int id, const Style& override_style, cons
 	return vec4(0, 0, 0, 0);
 }
 
-void Gui2::content(unsigned int id, vec2 size, Style style, std::u32string text) {
-	if (std::shared_ptr<layout_node> node = layout_stack.back().lock()) {
-		vec4f margin = get_margin_by_id(id, override_style, style);
-		size = size + vec2(margin.y + margin.w, margin.x + margin.z);
-
-		content_info content(id, size, style, override_style, text, z_index + 1);
-		node->contents.push_back(content);
-		node->self_info.layout.add_widget(size);
-		node->child_type_order.push_back(layout_node::content);
-	}
-	else {
-		std::cout << "[GUI Error] Gui::content() is called but no Gui::layout() or Gui::layout_content() was called before" << std::endl;
-		return;
+namespace std{
+	vec2f max(const vec2f& vec_a, const vec2f& vec_b) {
+		return vec2f(std::max(vec_a.x, vec_b.x), std::max(vec_a.y, vec_b.y));
 	}
 }
 
-void Gui2::layout_content(unsigned int id, vec2 min_size, Style style, Layout::LayoutType layout_type) {
-	if (std::shared_ptr<layout_node> node = layout_stack.back().lock()) {
-		
-		z_index++;
-
-		std::shared_ptr<layout_node> new_layout = std::make_shared<layout_node>(id, min_size, style, override_style, layout_type, z_index);
-		node->childs.push_back(new_layout);
-		node->child_type_order.push_back(layout_node::layout);
-		layout_stack.push_back(new_layout);
-	}
-	else {
-		std::cout << "[GUI Error] Gui::layout_content() is called but no Gui::layout() or Gui::layout_content() was called before" << std::endl;
-		return;
-	}
-}
-
-void Gui2::layout_content_end() {
-	if (std::shared_ptr<layout_node> node = layout_stack.back().lock()){
-
-		z_index--;
-		//node->self_info.layout.window_size.x = std::max(node->self_info.layout.window_size.x, node->self_info.min_size.x);
-		//node->self_info.layout.window_size.y = std::max(node->self_info.layout.window_size.y, node->self_info.min_size.y);
-
-		layout_stack.pop_back();
-		if (std::shared_ptr<layout_node> parent = layout_stack.back().lock()) {
-			
-			vec2 size = node->self_info.layout.window_size;
-			vec4 margin = get_margin_by_id(node->self_info.id, node->self_info.override_style, node->self_info.style);
-			vec4 padding = get_padding_by_id(node->self_info.id, node->self_info.override_style, node->self_info.style);
-			size = size + vec2(margin.y + margin.w, margin.x + margin.z) + vec2(padding.y + padding.w, padding.x + padding.z);
-
-			parent->self_info.layout.add_widget(size);
-		}
-		else {
-			std::cout << "[GUI Error] Gui::layout_content_end() is called but no Gui::layout() was called before" << std::endl;
-			return;
-		}
-	}
-	else {
-		std::cout << "[GUI Error] Gui::layout_content_end() is called but no Gui::layout() or Gui::layout_content() was called before" << std::endl;
-		return;
-	}
-}
 
 std::vector<std::shared_ptr<Gui2::layout_node>> Gui2::get_layouts_in_descending_order() {
 
@@ -555,6 +483,70 @@ std::vector<std::shared_ptr<Gui2::layout_node>> Gui2::get_layouts_in_ascending_o
 	return layout_nodes_reversed;
 }
 
+void Gui2::layout(unsigned int id, vec2 position, vec2 min_size, Style style, Layout::LayoutType layout_type) {
+	if (current_layout != nullptr) {
+		std::cout << "[GUI Error] another Gui::layout() is called without calling Gui::layout_end() for previous Gui::layout() call" << std::endl;
+		return;
+	}
+
+	z_index++;
+	
+	this->position = position;
+	current_layout = std::make_shared<layout_node>(id, min_size, style, override_style, layout_type, z_index);
+
+	if (layout_stack.size() > 0) {
+		std::cout << "[GUI Error] Gui::layout() is called but layout_stack is not empty " << std::endl;
+	}
+	layout_stack.clear();
+	layout_stack.push_back(current_layout);
+}
+
+void Gui2::content(unsigned int id, vec2 size, Style style, std::u32string text) {
+	if (std::shared_ptr<layout_node> node = layout_stack.back().lock()) {
+		vec4f margin = get_margin_by_id(id, override_style, style);
+		size = size + vec2(margin.y + margin.w, margin.x + margin.z);
+
+		content_info content(id, size, style, override_style, text, z_index + 1);
+		node->contents.push_back(content);
+		node->child_type_order.push_back(layout_node::content);
+	}
+	else {
+		std::cout << "[GUI Error] Gui::content() is called but no Gui::layout() or Gui::layout_content() was called before" << std::endl;
+		return;
+	}
+}
+
+void Gui2::layout_content(unsigned int id, vec2 min_size, Style style, Layout::LayoutType layout_type) {
+	if (std::shared_ptr<layout_node> node = layout_stack.back().lock()) {
+		
+		z_index++;
+
+		std::shared_ptr<layout_node> new_layout = std::make_shared<layout_node>(id, min_size, style, override_style, layout_type, z_index);
+		node->childs.push_back(new_layout);
+		node->child_type_order.push_back(layout_node::layout);
+		layout_stack.push_back(new_layout);
+	}
+	else {
+		std::cout << "[GUI Error] Gui::layout_content() is called but no Gui::layout() or Gui::layout_content() was called before" << std::endl;
+		return;
+	}
+}
+
+void Gui2::layout_content_end() {
+	if (std::shared_ptr<layout_node> node = layout_stack.back().lock()){
+
+		z_index--;
+		//node->self_info.layout.window_size.x = std::max(node->self_info.layout.window_size.x, node->self_info.min_size.x);
+		//node->self_info.layout.window_size.y = std::max(node->self_info.layout.window_size.y, node->self_info.min_size.y);
+
+		layout_stack.pop_back();
+	}
+	else {
+		std::cout << "[GUI Error] Gui::layout_content_end() is called but no Gui::layout() or Gui::layout_content() was called before" << std::endl;
+		return;
+	}
+}
+
 void Gui2::layout_end() {
 	if (current_layout == nullptr) {
 		std::cout << "[GUI Error] Gui::layout_end() is called without corresponding Gui::layout()" << std::endl;
@@ -564,7 +556,21 @@ void Gui2::layout_end() {
 	//current_layout->self_info.layout.window_size.x = std::max(current_layout->self_info.layout.window_size.x, current_layout->self_info.min_size.x);
 	//current_layout->self_info.layout.window_size.y = std::max(current_layout->self_info.layout.window_size.y, current_layout->self_info.min_size.y);
 	z_index--;
-	
+
+	// compute all sizes
+	{
+		std::vector<std::shared_ptr<layout_node>> layout_nodes_a = get_layouts_in_ascending_order();
+		for (std::shared_ptr<layout_node> layout : layout_nodes_a) {
+			layout->self_info.layout.window_size = 0;
+			for (content_info& content : layout->contents)
+				layout->self_info.layout.add_widget(content.size);
+			for (std::shared_ptr<layout_node> child : layout->childs) {
+				vec2f size = std::max(child->self_info.layout.window_size, child->self_info.min_size);
+				layout->self_info.layout.add_widget(size);
+			}
+		}
+	}
+
 	// compute layout positions
 	{
 		std::vector<std::shared_ptr<layout_node>> temp_stack;
