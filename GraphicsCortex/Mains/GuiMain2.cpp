@@ -43,7 +43,7 @@ int main() {
 
 		gui.box(gui_id, vec2(100, 100), vec2(100, 100), style1, U"Hello GUI");
 
-		gui.override_style.padding = vec4(6, 6, 6, 6);
+		gui.override_style.padding = vec4(5, 5, 5, 5);
 		gui.layout(gui_id, vec2(300, 100), vec2(0, 0), style1);
 		gui.override_style.clear();
 		gui.content(gui_id, vec2(200, 20), style2, U"Hello Layout");
@@ -68,7 +68,7 @@ int main() {
 		gui.override_style.on_hover.margin = vec4(20, 20, 20, 20);
 		gui.override_style.margin_change = 0.9;
 		gui.override_style.margin_interpolation = Interpolation::polynomial(4);
-		gui.layout_content(gui_id, vec2(400, 600), style1, Layout::Vertical);
+		gui.layout_content(gui_id, vec2(0, 0), style1, Layout::Vertical);
 		gui.override_style.color = vec3(0, 1, 0);
 		gui.content(gui_id, vec2(200, 60), style4, U"Hello Recursion");
 		gui.override_style.clear();

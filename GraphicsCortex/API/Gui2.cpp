@@ -576,8 +576,7 @@ void Gui2::layout_end() {
 		
 					vec4 margin = get_margin_by_id(child->self_info.id, child->self_info.override_style, child->self_info.style);
 					vec4 padding = get_padding_by_id(child->self_info.id, child->self_info.override_style, child->self_info.style);
-					vec2f size = child->self_info.layout.window_size + vec2(margin.y + margin.w, margin.x + margin.z) + vec2(padding.y + padding.w, padding.x + padding.z);
-					size = std::max(size, child->self_info.min_size + vec2(margin.y + margin.w, margin.x + margin.z) + vec2(padding.y + padding.w, padding.x + padding.z));
+					vec2f size = child->self_info.layout.window_size + vec2(margin.y + margin.w, margin.x + margin.z);
 					layout->self_info.layout.add_widget(size);
 					
 					layout_counter++;
@@ -594,13 +593,7 @@ void Gui2::layout_end() {
 	{
 		std::vector<std::shared_ptr<layout_node>> temp_stack;
 
-		vec2 global_padding;
-		{
-			vec4 padding = get_padding_by_id(current_layout->self_info.id, current_layout->self_info.override_style, current_layout->self_info.style);
-			global_padding = vec2(padding.y + padding.w, padding.x + padding.z);
-		}
-		
-		current_layout->self_info.layout.position = position + global_padding;
+		current_layout->self_info.layout.position = position;
 		temp_stack.push_back(current_layout);
 
 		while (temp_stack.size() > 0) {
@@ -634,7 +627,8 @@ void Gui2::layout_end() {
 
 					vec2& self_position_of_list = node->self_info.layout.widget_positions[content_counter + layout_counter];
 					vec2& self_position_of_layout = node->childs[layout_counter]->self_info.layout.position;
-					
+					vec2& self_size = node->childs[layout_counter]->self_info.layout.window_size;
+
 					vec2 parent_position = node->self_info.layout.position;
 					
 					vec4 margin = get_margin_by_id(layout.id, layout.override_style, layout.style);
@@ -644,23 +638,13 @@ void Gui2::layout_end() {
 					self_position_of_list = parent_position + self_position_of_list + vec2(margin.y, margin.x) + vec2(parent_padding.y, parent_padding.x);
 					self_position_of_layout = self_position_of_list;
 					
+					self_size = self_size;
+
 					temp_stack.push_back(node->childs[layout_counter]);
 					layout_counter++;
 				}
 			}
-		
-			vec4 parent_padding = get_padding_by_id(node->self_info.id, node->self_info.override_style, node->self_info.style);
-			vec4 parent_margin = get_margin_by_id(node->self_info.id, node->self_info.override_style, node->self_info.style);
-			node->self_info.layout.window_size = node->self_info.layout.window_size + vec2(parent_padding.y + parent_padding.w, parent_padding.x + parent_padding.z) + vec2(parent_margin.y + parent_margin.w, parent_margin.x + parent_margin.z);
-			node->self_info.layout.window_size = std::max(node->self_info.layout.window_size, node->self_info.min_size + vec2(parent_padding.y + parent_padding.w, parent_padding.x + parent_padding.z) + vec2(parent_margin.y + parent_margin.w, parent_margin.x + parent_margin.z));
 		}
-
-		vec2 global_padding_size; {
-			vec4f padding = get_padding_by_id(current_layout->self_info.id, current_layout->self_info.override_style, current_layout->self_info.style);
-			global_padding_size = vec2(padding.y + padding.w, padding.x + padding.z);
-		}
-		
-		current_layout->self_info.layout.window_size = current_layout->self_info.layout.window_size + global_padding;
 	}
 
 	// draw root
@@ -677,7 +661,8 @@ void Gui2::layout_end() {
 				content_info& content = node->contents[content_counter];
 
 				vec2 size = content.size;
-				vec2 position = node->self_info.layout.widget_positions[content_counter + layout_counter];
+				//vec2 position = node->self_info.layout.widget_positions[content_counter + layout_counter];
+				vec2 position = node->self_info.layout.get_centered_widget_position(content_counter + layout_counter, size);
 
 				box(content.id, position, size, content.style, content.text, content.override_style, content.z_index);
 				
@@ -688,8 +673,9 @@ void Gui2::layout_end() {
 				
 				vec4 margin = get_margin_by_id(layout.id, layout.override_style, layout.style);
 
+				vec2f size = layout.layout.window_size;// -vec2(margin.y + margin.w, margin.x + margin.z);
 				vec2 position = node->self_info.layout.widget_positions[content_counter + layout_counter];
-				vec2f size = layout.layout.window_size - vec2(margin.y + margin.w, margin.x + margin.z);
+				//vec2 position = node->self_info.layout.get_centered_widget_position(content_counter + layout_counter, size);
 
 				box(layout.id, position, size, layout.style, U"", layout.override_style, layout.z_index);
 

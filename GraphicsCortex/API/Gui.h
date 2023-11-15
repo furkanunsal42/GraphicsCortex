@@ -29,7 +29,8 @@ public:
 
 	void add_widget(const Vec2<float>& size);
 	Vec2<float> get_widget_position();
-	Vec2<float> get_centered_widget_position(const Vec2<float>& final_layout_size, const Vec2<float>& object_size);
+	Vec2<float> get_centered_widget_position(unsigned int widget_index, const Vec2<float>& object_size);
+
 	Vec2<float> get_position();
 	Vec2<float> get_raw_position();
 	void clear();
