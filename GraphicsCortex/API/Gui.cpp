@@ -11,6 +11,8 @@ Layout::Layout(uint32_t type, const Vec2<float>& position, const Vec2<float>& wi
 	type((Layout::LayoutType)type), window_size(window_size), position(position) {}
 
 void Layout::add_widget(const Vec2<float>& size){
+	widget_positions.push_back(get_widget_position());
+
 	if (type == Layout::Horizional) {
 		window_size.x += size.x;
 		window_size.y = std::max(window_size.y, size.y);

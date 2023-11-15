@@ -565,15 +565,15 @@ void Gui2::layout_end() {
 			for (std::shared_ptr<layout_node> child : layout->childs) {
 				vec4 margin = get_margin_by_id(child->self_info.id, child->self_info.override_style, child->self_info.style);
 				vec4 padding = get_padding_by_id(child->self_info.id, child->self_info.override_style, child->self_info.style);
-				vec2f size = std::max(size, child->self_info.min_size);
-				size = child->self_info.layout.window_size + vec2(margin.y + margin.w, margin.x + margin.z) + vec2(padding.y + padding.w, padding.x + padding.z);
+				vec2f size = child->self_info.layout.window_size + vec2(margin.y + margin.w, margin.x + margin.z) + vec2(padding.y + padding.w, padding.x + padding.z);
+				size = std::max(size, child->self_info.min_size + vec2(margin.y + margin.w, margin.x + margin.z) + vec2(padding.y + padding.w, padding.x + padding.z));
 
 				layout->self_info.layout.add_widget(size);
 			}
 			vec4 parent_padding = get_padding_by_id(layout->self_info.id, layout->self_info.override_style, layout->self_info.style);
 			vec4 parent_margin = get_padding_by_id(layout->self_info.id, layout->self_info.override_style, layout->self_info.style);
-			layout->self_info.layout.window_size = std::max(layout->self_info.layout.window_size, layout->self_info.min_size);
 			layout->self_info.layout.window_size = layout->self_info.layout.window_size + vec2(parent_padding.y + parent_padding.w, parent_padding.x + parent_padding.z);
+			layout->self_info.layout.window_size = std::max(layout->self_info.layout.window_size, layout->self_info.min_size + vec2(parent_padding.y + parent_padding.w, parent_padding.x + parent_padding.z));
 		}
 	}
 
@@ -619,8 +619,8 @@ void Gui2::layout_end() {
 					
 					vec4 margin = get_margin_by_id(layout.id, layout.override_style, layout.style);
 					vec4 padding = get_padding_by_id(layout.id, layout.override_style, layout.style);
-					vec2f size = std::max(size, layout.min_size);
-					size = layout.layout.window_size + vec2(margin.y + margin.w, margin.x + margin.z) + vec2(padding.y + padding.w, padding.x + padding.z);
+					vec2f size = layout.layout.window_size + vec2(margin.y + margin.w, margin.x + margin.z) + vec2(padding.y + padding.w, padding.x + padding.z);
+					size = std::max(size, layout.min_size + vec2(margin.y + margin.w, margin.x + margin.z) + vec2(padding.y + padding.w, padding.x + padding.z));
 					layout.layout.add_widget(size);
 
 					position = position + vec2(margin.y, margin.x) + vec2(padding.y, padding.x);
@@ -634,8 +634,8 @@ void Gui2::layout_end() {
 		
 			vec4 parent_padding = get_padding_by_id(node->self_info.id, node->self_info.override_style, node->self_info.style);
 			vec4 parent_margin = get_margin_by_id(node->self_info.id, node->self_info.override_style, node->self_info.style);
-			node->self_info.layout.window_size = std::max(node->self_info.layout.window_size, node->self_info.min_size);
 			node->self_info.layout.window_size = node->self_info.layout.window_size + vec2(parent_padding.y + parent_padding.w, parent_padding.x + parent_padding.z) + vec2(parent_margin.y + parent_margin.w, parent_margin.x + parent_margin.z);
+			node->self_info.layout.window_size = std::max(node->self_info.layout.window_size, node->self_info.min_size + vec2(parent_padding.y + parent_padding.w, parent_padding.x + parent_padding.z) + vec2(parent_margin.y + parent_margin.w, parent_margin.x + parent_margin.z));
 		}
 
 		vec2 global_padding_size; {
@@ -680,8 +680,8 @@ void Gui2::layout_end() {
 
 				vec4 margin = get_margin_by_id(layout.id, layout.override_style, layout.style);
 				vec4 padding = get_padding_by_id(layout.id, layout.override_style, layout.style);
-				vec2f size = std::max(size, layout.min_size);
-				size = layout.layout.window_size - vec2(margin.y + margin.w, margin.x + margin.z);
+				vec2f size = layout.layout.window_size - vec2(margin.y + margin.w, margin.x + margin.z);
+				size = std::max(size, layout.min_size - vec2(margin.y + margin.w, margin.x + margin.z));
 				layout.layout.add_widget(size);
 
 				position = position + vec2(margin.y, margin.x);

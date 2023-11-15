@@ -35,6 +35,7 @@ public:
 	void clear();
 	void update_position_by_style(const Vec4<float>& margin, const Vec4<float>& padding);
 
+	std::vector<Vec2<float>> widget_positions;
 };
 
 namespace {
