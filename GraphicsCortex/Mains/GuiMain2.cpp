@@ -44,6 +44,7 @@ int main() {
 		gui.box(gui_id, vec2(100, 100), vec2(100, 100), style1, U"Hello GUI");
 
 		gui.override_style.padding = vec4(5, 5, 5, 5);
+		gui.override_style.stacking_type = Style::Center;
 		gui.layout(gui_id, vec2(300, 100), vec2(0, 0), style1);
 		gui.override_style.clear();
 		gui.content(gui_id, vec2(200, 20), style2, U"Hello Layout");

@@ -38,16 +38,18 @@ namespace {
 	StaticStyle interpolate_styles(Style style, StaticStyle target_style, _widget_info& widget_info, bool hover) {
 		// insert object to layout
 		Vec3<float> text_color = style_attribute_get<Vec3<float>>({ target_style.text_color,			style.text_color }, widget_info);
-		float text_size = style_attribute_get<float>({ target_style.text_size,			style.text_size }, widget_info, 12.0f);
-		Vec3<float> color = style_attribute_get<Vec3<float>>({ target_style.color,				style.color }, widget_info);
+		float text_size = style_attribute_get<float>({ target_style.text_size,							style.text_size }, widget_info, 12.0f);
+		Vec3<float> color = style_attribute_get<Vec3<float>>({ target_style.color,						style.color }, widget_info);
 		Vec2<float> displacement = style_attribute_get<Vec2<float>>({ target_style.displacement,		style.displacement }, widget_info);
 		Vec2<float> rotation_euler = style_attribute_get<Vec2<float>>({ target_style.rotation_euler,	style.rotation_euler }, widget_info);
 		Vec4<float> corner_rounding = style_attribute_get<Vec4<float>>({ target_style.corner_rounding,	style.corner_rounding }, widget_info);
-		Vec4<float> padding = style_attribute_get<Vec4<float>>({ target_style.padding,			style.padding }, widget_info);
-		Vec4<float> margin = style_attribute_get<Vec4<float>>({ target_style.margin,			style.margin }, widget_info);
-		Vec4<float> border_thickness = style_attribute_get<Vec4<float>>({ target_style.border_thickness,	style.border_thickness }, widget_info);
+		Vec4<float> padding = style_attribute_get<Vec4<float>>({ target_style.padding,					style.padding }, widget_info);
+		Vec4<float> margin = style_attribute_get<Vec4<float>>({ target_style.margin,					style.margin }, widget_info);
+		Vec4<float> border_thickness = style_attribute_get<Vec4<float>>({ target_style.border_thickness,style.border_thickness }, widget_info);
 		Vec3<float> border_color = style_attribute_get<Vec3<float>>({ target_style.border_color,		style.border_color }, widget_info);
 		Frame::CursorType cursor_type = optional_get<Frame::CursorType>({ target_style.cursor_type,		style.cursor_type });
+		Style::Stacking stacking_type = optional_get<Style::Stacking>({ target_style.stacking_type,		style.stacking_type});
+
 
 		Vec3<float> text_color_default = style_attribute_get<Vec3<float>>({ style.text_color }, widget_info);
 		float text_size_default = style_attribute_get<float>({ style.text_size }, widget_info, 12.0f);
@@ -60,6 +62,7 @@ namespace {
 		Vec4<float> border_thickness_default = style_attribute_get<Vec4<float>>({ style.border_thickness }, widget_info);
 		Vec3<float> border_color_default = style_attribute_get<Vec3<float>>({ style.border_color }, widget_info);
 		Frame::CursorType cursor_type_default = optional_get<Frame::CursorType>({ style.cursor_type });
+		Style::Stacking stacking_type_default = optional_get<Style::Stacking>({ style.stacking_type });
 
 		Time text_color_change = style.text_color_change.value_or(0.0);
 		Time text_size_change = style.text_size_change.value_or(0.0);
@@ -71,7 +74,6 @@ namespace {
 		Time margin_change = style.margin_change.value_or(0.0);
 		Time border_thickness_change = style.border_thickness_change.value_or(0.0);
 		Time border_color_change = style.border_color_change.value_or(0.0);
-
 
 		widget_info._current_text_color_time = std::min(text_color_change, widget_info._current_text_color_time);
 		widget_info._current_text_size_time = std::min(text_size_change, widget_info._current_text_size_time);
@@ -130,7 +132,9 @@ namespace {
 
 		if (hover)	result.cursor_type = cursor_type;
 		else		result.cursor_type = cursor_type_default;
-
+		if (hover)	result.stacking_type = stacking_type;
+		else		result.stacking_type = stacking_type_default;
+		
 		return result;
 	}
 
@@ -152,6 +156,7 @@ namespace {
 		std::vector<StyleAttribute<vec4f>> border_thicknesss;
 		std::vector<StyleAttribute<vec3f>> border_colors;
 		std::vector<std::optional<Frame::CursorType>> cursor_types;
+		std::vector<std::optional<Style::Stacking>> stacking_types;
 
 		StaticStyle merged_style;
 
@@ -209,6 +214,12 @@ namespace {
 				break;
 			}
 		}
+		for (const StaticStyle& style : styles) {
+			if (style.stacking_type) {
+				merged_style.stacking_type = style.stacking_type.value();
+				break;
+			}
+		}
 
 		return merged_style;
 	}
@@ -226,6 +237,7 @@ namespace {
 		style_copy.border_thickness = merged_style.border_thickness;
 		style_copy.border_color = merged_style.border_color;
 		style_copy.cursor_type = merged_style.cursor_type;
+		style_copy.stacking_type = merged_style.stacking_type;
 
 		return style_copy;
 	}
@@ -289,6 +301,7 @@ namespace {
 		style_copy.border_thickness = merged_style.border_thickness;
 		style_copy.border_color = merged_style.border_color;
 		style_copy.cursor_type = merged_style.cursor_type;
+		style_copy.stacking_type = merged_style.stacking_type;
 
 		return style_copy;
 	}
@@ -445,6 +458,16 @@ vec4f Gui2::get_padding_by_id(unsigned int id, const Style& override_style, cons
 	return vec4(0, 0, 0, 0);
 }
 
+Style::Stacking Gui2::get_stacking_type_by_id(unsigned int id, const Style& override_style, const Style& style) {
+	if (widget_info_table.find(id) != widget_info_table.end()) {
+		_widget_info& info = widget_info_table[id];
+		StaticStyle interpolated_style = get_final_style(override_style, style, info);
+		Style::Stacking stacking_type = optional_get<Style::Stacking>(interpolated_style.stacking_type);
+		return stacking_type;
+	}
+	return Style::Default;
+}
+
 namespace std{
 	vec2f max(const vec2f& vec_a, const vec2f& vec_b) {
 		return vec2f(std::max(vec_a.x, vec_b.x), std::max(vec_a.y, vec_b.y));
@@ -548,6 +571,9 @@ void Gui2::layout_end() {
 		return;
 	}
 
+	//bool center_widgets = true;
+	//bool inverted_direction = false;
+
 	z_index--;
 
 	// compute all sizes
@@ -609,25 +635,38 @@ void Gui2::layout_end() {
 				layout_node::child_type type = node->child_type_order[i];
 				if (type == layout_node::content) {
 					content_info& content = node->contents[content_counter];
-				
+					
 					vec2& self_position = node->self_info.layout.widget_positions[content_counter + layout_counter];
+					vec2 self_size = content.size;
 					vec2 parent_position = node->self_info.layout.position;
 
 					vec4f margin = get_margin_by_id(content.id, content.override_style, content.style);
 					vec4 padding = get_padding_by_id(content.id, content.override_style, content.style);
 					vec4 parent_padding = get_padding_by_id(node->self_info.id, node->self_info.override_style, node->self_info.style);
 
-					self_position = parent_position + self_position + vec2(margin.y, margin.x) + vec2(parent_padding.y, parent_padding.x);
+					Style::Stacking parent_stacking_type = get_stacking_type_by_id(node->self_info.id, node->self_info.override_style, node->self_info.style);
 
+					if (parent_stacking_type == Style::Center || parent_stacking_type == Style::Inverse) {
+						for (int i = 0; i < ((parent_stacking_type == Style::Inverse) ? 2 : 1); i++)
+							self_position = node->self_info.layout.get_centered_widget_position(content_counter + layout_counter, self_size);
+						if (node->self_info.layout_type == Layout::Vertical)
+							self_position = parent_position + self_position + vec2(margin.y, margin.x) + vec2(0, parent_padding.x);
+						if (node->self_info.layout_type == Layout::Horizional)
+							self_position = parent_position + self_position + vec2(margin.y, margin.x) + vec2(parent_padding.y, 0);
+					}
+					else
+						self_position = parent_position + self_position + vec2(margin.y, margin.x) + vec2(parent_padding.y, parent_padding.x);
+					
+					
 					content_counter++;
 				}
 				else if (type == layout_node::layout) {
 
 					layout_info& layout = node->childs[layout_counter]->self_info;
 
+					vec2 self_size = layout.layout.window_size;
 					vec2& self_position_of_list = node->self_info.layout.widget_positions[content_counter + layout_counter];
 					vec2& self_position_of_layout = node->childs[layout_counter]->self_info.layout.position;
-					vec2& self_size = node->childs[layout_counter]->self_info.layout.window_size;
 
 					vec2 parent_position = node->self_info.layout.position;
 					
@@ -635,10 +674,20 @@ void Gui2::layout_end() {
 					vec4 padding = get_padding_by_id(layout.id, layout.override_style, layout.style);
 					vec4 parent_padding = get_padding_by_id(node->self_info.id, node->self_info.override_style, node->self_info.style);
 
-					self_position_of_list = parent_position + self_position_of_list + vec2(margin.y, margin.x) + vec2(parent_padding.y, parent_padding.x);
-					self_position_of_layout = self_position_of_list;
+					Style::Stacking parent_stacking_type = get_stacking_type_by_id(node->self_info.id, node->self_info.override_style, node->self_info.style);
+
+					if (parent_stacking_type == Style::Center || parent_stacking_type == Style::Inverse) {
+						for (int i = 0; i < ((parent_stacking_type == Style::Inverse) ? 2 : 1); i++)
+							self_position_of_list = node->self_info.layout.get_centered_widget_position(content_counter + layout_counter, self_size);
+						if (node->self_info.layout_type == Layout::Vertical)
+							self_position_of_list = parent_position + self_position_of_list + vec2(margin.y, margin.x) + vec2(0, parent_padding.x);
+						if (node->self_info.layout_type == Layout::Horizional)
+							self_position_of_list = parent_position + self_position_of_list + vec2(margin.y, margin.x) + vec2(parent_padding.y, 0);
+					}
+					else
+						self_position_of_list = parent_position + self_position_of_list + vec2(margin.y, margin.x) + vec2(parent_padding.y, parent_padding.x);
 					
-					self_size = self_size;
+					self_position_of_layout = self_position_of_list;
 
 					temp_stack.push_back(node->childs[layout_counter]);
 					layout_counter++;
@@ -661,8 +710,7 @@ void Gui2::layout_end() {
 				content_info& content = node->contents[content_counter];
 
 				vec2 size = content.size;
-				//vec2 position = node->self_info.layout.widget_positions[content_counter + layout_counter];
-				vec2 position = node->self_info.layout.get_centered_widget_position(content_counter + layout_counter, size);
+				vec2 position = node->self_info.layout.widget_positions[content_counter + layout_counter];
 
 				box(content.id, position, size, content.style, content.text, content.override_style, content.z_index);
 				
@@ -673,9 +721,8 @@ void Gui2::layout_end() {
 				
 				vec4 margin = get_margin_by_id(layout.id, layout.override_style, layout.style);
 
-				vec2f size = layout.layout.window_size;// -vec2(margin.y + margin.w, margin.x + margin.z);
+				vec2f size = layout.layout.window_size;
 				vec2 position = node->self_info.layout.widget_positions[content_counter + layout_counter];
-				//vec2 position = node->self_info.layout.get_centered_widget_position(content_counter + layout_counter, size);
 
 				box(layout.id, position, size, layout.style, U"", layout.override_style, layout.z_index);
 

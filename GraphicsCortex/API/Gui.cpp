@@ -34,7 +34,7 @@ Vec2<float> Layout::get_widget_position() {
 
 Vec2<float> Layout::get_centered_widget_position(unsigned int widget_index, const Vec2<float>& object_size) {
 	vec2 widget_default_pos = widget_positions[widget_index];
-	return widget_default_pos;
+	//return widget_default_pos;
 	if (type == Layout::Horizional) {
 		return Vec2<float>(widget_default_pos.x, widget_default_pos.y + window_size.y/2 - object_size.y / 2);
 	}
@@ -438,6 +438,7 @@ void Style::clear() {
 	margin_interpolation = std::optional<_interpolation>();
 	border_thickness_interpolation = std::optional<_interpolation>();
 	border_color_interpolation = std::optional<_interpolation>();
+	stacking_type = Style::Default;
 
 	on_hover.clear();
 	on_active.clear();

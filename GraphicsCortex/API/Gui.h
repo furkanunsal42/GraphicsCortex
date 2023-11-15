@@ -181,7 +181,12 @@ public:
 
 class StaticStyle {
 public:
-	
+	enum Stacking {
+		Default,
+		Center,
+		Inverse,
+	};
+
 	// StyleAttribute<vec3f> color_attrib;	// work in progress
 	StyleAttribute<vec3f> text_color;
 	StyleAttribute<float> text_size;
@@ -197,6 +202,7 @@ public:
 	StyleAttribute<vec4f> border_thickness;
 	StyleAttribute<vec3f> border_color;
 	std::optional<Frame::CursorType> cursor_type;
+	std::optional<Stacking> stacking_type;
 
 	virtual void clear();
 };
@@ -424,7 +430,8 @@ private:
 	friend Frame;
 	vec4f get_padding_by_id(unsigned int id, const Style& override_style, const Style& style);
 	vec4f get_margin_by_id(unsigned int id, const Style& override_style, const Style& style);
-	
+	Style::Stacking get_stacking_type_by_id(unsigned int id, const Style& override_style, const Style& style);
+
 	void box(unsigned int id, vec2 position, vec2 size, Style style, std::u32string text, Style override_style, float z_index);
 
 	Frame& frame_ref;
