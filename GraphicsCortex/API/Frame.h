@@ -45,16 +45,17 @@ public:
 	};
 	
 	enum CursorState {
-		LeftPressed,
-		LeftReleased,
-		RightPressed,
-		RightReleased,
+		Hover = 0,
+		LeftPressed = 1,
+		LeftReleased = 2,
+		RightPressed = 4,
+		RightReleased = 8,
 	};
 
 	Vec2<int> get_cursor_position();
 	void set_cursor_type(Frame::CursorType cursor_type = Frame::CursorType::Arrow);
 	CursorType get_cursor_type();
-	CursorState get_mouse_state();
+	bool get_mouse_state(Frame::CursorState state);
 	double get_time_sec();
 
 	enum Key {
@@ -185,7 +186,7 @@ public:
 
 private:
 
-	CursorState _previous_cursor_state;
+	CursorState _cursor_state;
 	CursorType _current_cursor_type;
 	void _window_resize_callback(GLFWwindow* window, int width, int height);
 };

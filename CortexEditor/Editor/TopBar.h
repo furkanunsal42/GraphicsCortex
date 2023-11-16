@@ -14,19 +14,19 @@ class TopBar : public UILayer {
 		button_style.color = gui::colorcode(0x242424);
 		button_style.on_hover.color = gui::colorcode(0x303030);
 		button_style.on_hover.cursor_type = Frame::CursorType::Hand;
-		button_style.margin = vec4(0, 10, 0, 10);
+		button_style.margin = vec4(0, 5, 0, 5);
 	}
 
 	void on_gui_render() {
 		Editor& editor = Editor::get();
 		
 		editor.gui->layout("topbar_layout", vec2(0, 0), vec2(editor.frame->window_width, 30), topbar_style, Layout::Horizional);
-		editor.gui->content("topbar_file", vec2(100, 30), button_style, U"File");
-		editor.gui->content("topbar_edit", vec2(100, 30), button_style, U"Edit");
-		editor.gui->content("topbar_view", vec2(100, 30), button_style, U"View");
-		editor.gui->content("topbar_project", vec2(100, 30), button_style, U"Project");
-		editor.gui->content("topbar_build", vec2(100, 30), button_style, U"Build");
-		editor.gui->content("topbar_debug", vec2(100, 30), button_style, U"Debug");
+		editor.gui->content("topbar_file", vec2(50, 30), button_style, U"File");
+		editor.gui->content("topbar_edit", vec2(50, 30), button_style, U"Edit");
+		editor.gui->content("topbar_view", vec2(50, 30), button_style, U"View");
+		editor.gui->content("topbar_project", vec2(50, 30), button_style, U"Project");
+		editor.gui->content("topbar_build", vec2(50, 30), button_style, U"Build");
+		editor.gui->content("topbar_debug", vec2(50, 30), button_style, U"Debug");
 		editor.gui->layout_end();
 	}
 };

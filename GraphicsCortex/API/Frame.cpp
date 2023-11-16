@@ -164,6 +164,20 @@ double Frame::handle_window() {
 		first_handle = false;
 		get_interval_ms(); // reset it
 	}
+
+	Frame::CursorState new_cursor_state = Frame::Hover;
+	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+		new_cursor_state = (Frame::CursorState)(_cursor_state | Frame::LeftPressed);
+	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
+		new_cursor_state = (Frame::CursorState)(_cursor_state | Frame::RightPressed);
+	
+	if ((_cursor_state & Frame::LeftPressed != 0) && (new_cursor_state & Frame::LeftPressed == 0))
+		new_cursor_state = (Frame::CursorState)(_cursor_state | Frame::LeftReleased);
+	if ((_cursor_state & Frame::RightPressed != 0) && (new_cursor_state & Frame::RightPressed == 0))
+		new_cursor_state = (Frame::CursorState)(_cursor_state | Frame::RightReleased);
+
+	_cursor_state = new_cursor_state;
+
 	return get_interval_ms();
 }
 
@@ -219,15 +233,9 @@ void Frame::set_cursor_type(Frame::CursorType cursor_type) {
 	_current_cursor_type = cursor_type;
 }
 
-Frame::CursorState Frame::get_mouse_state() {
-	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
-		return Frame::LeftPressed;
-	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE)
-		return Frame::LeftReleased;
-	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
-		return Frame::RightPressed;
-	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_RELEASE)
-		return Frame::RightReleased;
+bool Frame::get_mouse_state(Frame::CursorState state) {
+	return (Frame::CursorState)(_cursor_state & state) != 0;
+
 }
 
 bool Frame::get_key_press(Frame::Key key) {

@@ -440,6 +440,7 @@ public:
 	_widget_info& content(const std::string& name, vec2 size, Style style, std::u32string text);
 
 	Style override_style;
+	float z_index = 0; 
 
 private:
 	friend Frame;
@@ -455,7 +456,6 @@ private:
 	static std::shared_ptr<Program> gui_program;
 	static std::shared_ptr<Font> font;
 	Camera camera;
-	float z_index = 0; 
 	
 	Time frame_time;
 	std::unordered_map<unsigned int, _widget_info> widget_info_table;
