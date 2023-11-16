@@ -610,7 +610,7 @@ Gui2::Gui2(Frame& frame) :
 
 void Gui2::new_frame(Time frame_time) {
 	this->frame_time = frame_time;
-	
+
 	if (hoverings.size() > 0){
 		unsigned int hover_id = hoverings[0].first;
 		float hover_z = hoverings[0].second;
@@ -735,7 +735,11 @@ _widget_info& Gui2::box(unsigned int id, vec2 position, vec2 size, Style style, 
 	return info;
 }
 
-_widget_info& Gui2::box(unsigned int id, vec2 position, vec2 size, Style style, std::u32string text) {
+_widget_info& Gui2::box(const std::string& name, vec2 position, vec2 size, Style style, std::u32string text) {
+	if (name_id_table.find(name) == name_id_table.end())
+		name_id_table[name] = name_id_table.size();
+	unsigned int id = name_id_table[name];
+
 	return box(id, position, size, style, text, override_style, z_index);
 }
 
@@ -807,7 +811,12 @@ std::vector<std::shared_ptr<Gui2::layout_node>> Gui2::get_layouts_in_ascending_o
 	return layout_nodes_reversed;
 }
 
-_widget_info& Gui2::layout(unsigned int id, vec2 position, vec2 min_size, Style style, Layout::LayoutType layout_type) {
+_widget_info& Gui2::layout(const std::string& name, vec2 position, vec2 min_size, Style style, Layout::LayoutType layout_type) {
+	
+	if (name_id_table.find(name) == name_id_table.end())
+		name_id_table[name] = name_id_table.size();
+	unsigned int id = name_id_table[name];
+
 	if (current_layout != nullptr) {
 		std::cout << "[GUI Error] another Gui::layout() is called without calling Gui::layout_end() for previous Gui::layout() call" << std::endl;
 		return widget_info_table[id];
@@ -827,7 +836,11 @@ _widget_info& Gui2::layout(unsigned int id, vec2 position, vec2 min_size, Style 
 	return widget_info_table[id];
 }
 
-_widget_info& Gui2::content(unsigned int id, vec2 size, Style style, std::u32string text) {
+_widget_info& Gui2::content(const std::string& name, vec2 size, Style style, std::u32string text) {
+	if (name_id_table.find(name) == name_id_table.end())
+		name_id_table[name] = name_id_table.size();
+	unsigned int id = name_id_table[name];
+
 	if (std::shared_ptr<layout_node> node = layout_stack.back().lock()) {
 		content_info content(id, size, style, override_style, text, z_index + 1);
 		node->contents.push_back(content);
@@ -841,7 +854,11 @@ _widget_info& Gui2::content(unsigned int id, vec2 size, Style style, std::u32str
 	return widget_info_table[id];
 }
 
-_widget_info& Gui2::layout_content(unsigned int id, vec2 min_size, Style style, Layout::LayoutType layout_type) {
+_widget_info& Gui2::layout_content(const std::string& name, vec2 min_size, Style style, Layout::LayoutType layout_type) {
+	if (name_id_table.find(name) == name_id_table.end())
+		name_id_table[name] = name_id_table.size();
+	unsigned int id = name_id_table[name];
+
 	if (std::shared_ptr<layout_node> node = layout_stack.back().lock()) {
 		
 		z_index++;

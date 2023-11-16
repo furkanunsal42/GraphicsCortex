@@ -33,43 +33,43 @@ int main() {
 		frame.clear_window(1, 1, 1, 1);
 		frame.display_performance(2000);
 
-		gui.box(gui_id, vec2(100, 100), vec2(100, 100), style1, U"Hello GUI");
+		gui.box("example_box", vec2(100, 100), vec2(100, 100), style1, U"Hello GUI");
 
 		gui.override_style.padding = vec4(5, 5, 5, 5);
-		gui.layout(gui_id, vec2(300, 100), vec2(0, 0), style1);
+		gui.layout("example1", vec2(300, 100), vec2(0, 0), style1);
 		gui.override_style.clear();
-		gui.content(gui_id, vec2(200, 20), style2, U"Hello Layout");
+		gui.content("example2", vec2(200, 20), style2, U"Hello Layout");
 
 		gui.override_style.color = vec3(0, 1, 1);
 		gui.override_style.margin = vec4(5, 5, 5, 5);
 		gui.override_style.on_hover.margin = vec4(5, 20, 5, 5);
 		gui.override_style.margin_change = 0.6;
-		gui.content(gui_id, vec2(200, 20), style2, U"Hello Layout");
+		gui.content("example3", vec2(200, 20), style2, U"Hello Layout");
 		gui.override_style.clear();
-		gui.content(gui_id, vec2(200, 40), style2, U"Hello Layout");
-		gui.content(gui_id, vec2(200, 50), style2, U"Hello Layout");
+		gui.content("example4", vec2(200, 40), style2, U"Hello Layout");
+		gui.content("example5", vec2(200, 50), style2, U"Hello Layout");
 
 		gui.override_style.padding = vec4(5, 5, 5, 5);
-		gui.layout_content(gui_id, vec2(1300, 600), style1, Layout::Horizional);
+		gui.layout_content("example6", vec2(1300, 600), style1, Layout::Horizional);
 		gui.override_style.clear();
-		gui.content(gui_id, vec2(200, 30), style3, U"Hello linked lists");
-		gui.content(gui_id, vec2(200, 30), style3, U"Hello linked lists");
-		gui.content(gui_id, vec2(200, 30), style3, U"Hello linked lists");
+		gui.content("example7", vec2(200, 30), style3, U"Hello linked lists");
+		gui.content("example8", vec2(200, 30), style3, U"Hello linked lists");
+		gui.content("example9", vec2(200, 30), style3, U"Hello linked lists");
 
 		gui.override_style.padding = vec4(10, 10, 10, 10);
 		gui.override_style.on_hover.margin = vec4(20, 20, 20, 20);
 		gui.override_style.margin_change = 0.9;
 		gui.override_style.margin_interpolation = Interpolation::polynomial(4);
-		gui.layout_content(gui_id, vec2(0, 0), style1, Layout::Vertical);
+		gui.layout_content("example10", vec2(0, 0), style1, Layout::Vertical);
 		gui.override_style.color = vec3(0, 1, 0);
-		gui.content(gui_id, vec2(200, 60), style4, U"Hello Recursion");
+		gui.content("example11", vec2(200, 60), style4, U"Hello Recursion");
 		gui.override_style.clear();
-		gui.content(gui_id, vec2(200, 60), style4, U"Hello Recursion");
-		gui.content(gui_id, vec2(200, 120), style4, U"Hello Recursion");
+		gui.content("example12", vec2(200, 60), style4, U"Hello Recursion");
+		gui.content("example13", vec2(200, 120), style4, U"Hello Recursion");
 		
 		gui.layout_content_end();
 
-		gui.content(gui_id, vec2(200, 60), style3, U"Hello linked lists");
+		gui.content("example14", vec2(200, 60), style3, U"Hello linked lists");
 
 		gui.layout_content_end();
 

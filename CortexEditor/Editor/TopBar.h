@@ -20,13 +20,13 @@ class TopBar : public UILayer {
 	void on_gui_render() {
 		Editor& editor = Editor::get();
 		
-		editor.gui->layout(gui_id, vec2(0, 0), vec2(editor.frame->window_width, 30), topbar_style, Layout::Horizional);
-		editor.gui->content(gui_id, vec2(100, 30), button_style, U"File");
-		editor.gui->content(gui_id, vec2(100, 30), button_style, U"Edit");
-		editor.gui->content(gui_id, vec2(100, 30), button_style, U"View");
-		editor.gui->content(gui_id, vec2(100, 30), button_style, U"Project");
-		editor.gui->content(gui_id, vec2(100, 30), button_style, U"Build");
-		editor.gui->content(gui_id, vec2(100, 30), button_style, U"Debug");
+		editor.gui->layout("topbar_layout", vec2(0, 0), vec2(editor.frame->window_width, 30), topbar_style, Layout::Horizional);
+		editor.gui->content("topbar_file", vec2(100, 30), button_style, U"File");
+		editor.gui->content("topbar_edit", vec2(100, 30), button_style, U"Edit");
+		editor.gui->content("topbar_view", vec2(100, 30), button_style, U"View");
+		editor.gui->content("topbar_project", vec2(100, 30), button_style, U"Project");
+		editor.gui->content("topbar_build", vec2(100, 30), button_style, U"Build");
+		editor.gui->content("topbar_debug", vec2(100, 30), button_style, U"Debug");
 		editor.gui->layout_end();
 	}
 };

@@ -12,7 +12,7 @@
 #include <iostream>
 
 unsigned int compute_gui_id(std::string filename, int line);
-#define gui_id compute_gui_id(__FILE__, __LINE__)
+#define gui_id compute_gui_id(__FILE__, __COUNTER__)
 
 class Layout {
 public:
@@ -429,15 +429,15 @@ public:
 
 	Gui2(Frame& frame);
 	void new_frame(Time frame_time);
-	_widget_info& box(unsigned int id, vec2 position, vec2 size, Style style, std::u32string text);
+	_widget_info& box(const std::string& name, vec2 position, vec2 size, Style style, std::u32string text);
 
-	_widget_info& layout(unsigned int id, vec2 position, vec2 min_size, Style style, Layout::LayoutType layout_type = Layout::Vertical);
+	_widget_info& layout(const std::string& name, vec2 position, vec2 min_size, Style style, Layout::LayoutType layout_type = Layout::Vertical);
 	void layout_end();
 
-	_widget_info& layout_content(unsigned int id, vec2 min_size, Style style, Layout::LayoutType layout_type = Layout::Vertical);
+	_widget_info& layout_content(const std::string& name, vec2 min_size, Style style, Layout::LayoutType layout_type = Layout::Vertical);
 	void layout_content_end();
 
-	_widget_info& content(unsigned int id, vec2 size, Style style, std::u32string text);
+	_widget_info& content(const std::string& name, vec2 size, Style style, std::u32string text);
 
 	Style override_style;
 
@@ -448,6 +448,8 @@ private:
 	Style::Stacking get_stacking_type_by_id(unsigned int id, const Style& override_style, const Style& style);
 
 	_widget_info& box(unsigned int id, vec2 position, vec2 size, Style style, std::u32string text, Style override_style, float z_index);
+
+	std::unordered_map<std::string, unsigned int> name_id_table;
 
 	Frame& frame_ref;
 	static std::shared_ptr<Program> gui_program;
