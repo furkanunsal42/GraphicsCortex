@@ -1,8 +1,93 @@
 #include "Gui.h"
 #include "Default_Programs.h"
 
+unsigned int compute_gui_id(std::string filename, int line) {
+	std::hash<std::string> hash;
+	return hash(filename) * 2 + 3 * line;
+}
+
+// Layout system
+
+Layout::Layout(uint32_t type, const AABB2& aabb) :
+	type((Layout::LayoutType)type), window_size(aabb.size), position(aabb.position) {}
+
+Layout::Layout(uint32_t type, const Vec2<float>& position, const Vec2<float>& window_size) :
+	type((Layout::LayoutType)type), window_size(window_size), position(position) {}
+
+void Layout::add_widget(const Vec2<float>& size) {
+	widget_positions.push_back(get_widget_position());
+
+	if (type == Layout::Horizional) {
+		window_size.x += size.x;
+		window_size.y = std::max(window_size.y, size.y);
+	}
+	else if (type == Layout::Vertical) {
+		window_size.x = std::max(window_size.x, size.x);
+		window_size.y += size.y;
+	}
+}
+
+Vec2<float> Layout::get_widget_position() {
+	if (type == Layout::Horizional) {
+		return Vec2<float>(position.x + window_size.x, position.y);
+	}
+	else if (type == Layout::Vertical) {
+		return Vec2<float>(position.x, position.y + window_size.y);
+	}
+}
+
+Vec2<float> Layout::get_centered_widget_position(unsigned int widget_index, const Vec2<float>& object_size) {
+	vec2 widget_default_pos = widget_positions[widget_index];
+	//return widget_default_pos;
+	if (type == Layout::Horizional) {
+		return Vec2<float>(widget_default_pos.x, widget_default_pos.y + window_size.y / 2 - object_size.y / 2);
+	}
+	else if (type == Layout::Vertical) {
+		return Vec2<float>(widget_default_pos.x + window_size.x / 2 - object_size.x / 2, widget_default_pos.y);
+	}
+}
+
+Vec2<float> Layout::get_position() {
+	return position;
+}
+
+Vec2<float> Layout::get_raw_position() {
+	return _raw_position;
+}
+
+void Layout::clear() {
+	position = _raw_position;
+	window_size = Vec2<float>(0, 0);
+}
+
+void Layout::update_position_by_style(const Vec4<float>& margin, const Vec4<float>& padding) {
+	position = _raw_position + Vec2<float>(margin.y, margin.x);
+	window_size = Vec2<float>(window_size.x + padding.y + padding.w, window_size.y + padding.x + padding.z);
+}
+
+_interpolation Interpolation::linear() {
+	_interpolation result;
+	result.interpolation_type = _interpolation::Linear;
+	return result;
+}
+_interpolation Interpolation::polynomial(float power) {
+	_interpolation result;
+	result.interpolation_type = _interpolation::Polynomial;
+	result.power = power;
+	return result;
+}
+
+vec3f gui::colorcode(uint32_t hexcode) {
+	color result;
+	uint8_t* bytes = (uint8_t*)&hexcode;
+	result.x = *(bytes + 2) / 255.0f;
+	result.y = *(bytes + 1) / 255.0f;
+	result.z = *(bytes + 0) / 255.0f;
+	return result;
+}
+
 // Style system
-namespace {
+namespace{
 	template<typename T>
 	T optional_get(const std::vector<std::optional<T>>& fallback_list, T null_value = T()) {
 		for (const std::optional<T>& _property : fallback_list) {
@@ -49,6 +134,7 @@ namespace {
 		Vec3<float> border_color = style_attribute_get<Vec3<float>>({ target_style.border_color,		style.border_color }, widget_info);
 		Frame::CursorType cursor_type = optional_get<Frame::CursorType>({ target_style.cursor_type,		style.cursor_type });
 		Style::Stacking stacking_type = optional_get<Style::Stacking>({ target_style.stacking_type,		style.stacking_type});
+		Style::TextAlligning text_allign_type = optional_get<Style::TextAlligning>({ target_style.text_allign_type,		style.text_allign_type});
 
 
 		Vec3<float> text_color_default = style_attribute_get<Vec3<float>>({ style.text_color }, widget_info);
@@ -63,6 +149,7 @@ namespace {
 		Vec3<float> border_color_default = style_attribute_get<Vec3<float>>({ style.border_color }, widget_info);
 		Frame::CursorType cursor_type_default = optional_get<Frame::CursorType>({ style.cursor_type });
 		Style::Stacking stacking_type_default = optional_get<Style::Stacking>({ style.stacking_type });
+		Style::TextAlligning text_allign_type_default = optional_get<Style::TextAlligning>({ style.text_allign_type });
 
 		Time text_color_change = style.text_color_change.value_or(0.0);
 		Time text_size_change = style.text_size_change.value_or(0.0);
@@ -134,7 +221,9 @@ namespace {
 		else		result.cursor_type = cursor_type_default;
 		if (hover)	result.stacking_type = stacking_type;
 		else		result.stacking_type = stacking_type_default;
-		
+		if (hover)	result.text_allign_type = text_allign_type;
+		else		result.text_allign_type = text_allign_type_default;
+
 		return result;
 	}
 
@@ -147,19 +236,20 @@ namespace {
 	}
 
 	StaticStyle merge_styles_by_priority(const std::vector<StaticStyle>& styles, const _widget_info& info) {
-		std::vector<StyleAttribute<vec3f>> colors;
-		std::vector<StyleAttribute<vec2f>> displacements;
-		std::vector<StyleAttribute<vec2f>> rotation_eulers;
-		std::vector<StyleAttribute<vec4f>> corner_roundings;
-		std::vector<StyleAttribute<vec4f>> paddings;
-		std::vector<StyleAttribute<vec4f>> margins;
-		std::vector<StyleAttribute<vec4f>> border_thicknesss;
-		std::vector<StyleAttribute<vec3f>> border_colors;
-		std::vector<std::optional<Frame::CursorType>> cursor_types;
-		std::vector<std::optional<Style::Stacking>> stacking_types;
-
 		StaticStyle merged_style;
-
+		
+		for (const StaticStyle& style : styles) {
+			if (style.text_color.exist()) {
+				merged_style.text_color = style.text_color;
+				break;
+			}
+		}
+		for (const StaticStyle& style : styles) {
+			if (style.text_size.exist()) {
+				merged_style.text_size = style.text_size;
+				break;
+			}
+		}
 		for (const StaticStyle& style : styles) {
 			if (style.color.exist()) {
 				merged_style.color = style.color;
@@ -220,6 +310,12 @@ namespace {
 				break;
 			}
 		}
+		for (const StaticStyle& style : styles) {
+			if (style.text_allign_type) {
+				merged_style.text_allign_type = style.text_allign_type.value();
+				break;
+			}
+		}
 
 		return merged_style;
 	}
@@ -227,7 +323,9 @@ namespace {
 	Style merge_static_style_with_style(const StaticStyle& static_style, const Style& style, const _widget_info& info) {
 		StaticStyle merged_style = merge_styles_by_priority({ static_style, style }, info);
 		Style style_copy = style;
-
+		
+		style_copy.text_color = merged_style.text_color;
+		style_copy.text_size = merged_style.text_size;
 		style_copy.color = merged_style.color;
 		style_copy.displacement = merged_style.displacement;
 		style_copy.rotation_euler = merged_style.rotation_euler;
@@ -238,6 +336,7 @@ namespace {
 		style_copy.border_color = merged_style.border_color;
 		style_copy.cursor_type = merged_style.cursor_type;
 		style_copy.stacking_type = merged_style.stacking_type;
+		style_copy.text_allign_type = merged_style.text_allign_type;
 
 		return style_copy;
 	}
@@ -245,7 +344,6 @@ namespace {
 	Style merge_static_style_with_style(const StaticStyle& static_style, const Style& override_style, const Style& style, const _widget_info& info) {
 		StaticStyle merged_style = merge_styles_by_priority({ static_style, override_style, style }, info);
 		Style style_copy;
-
 		
 		if (override_style.text_color_change.has_value()		)	style_copy.text_color_change		= override_style.text_color_change.value();
 		else if(style.text_color_change.has_value()				)	style_copy.text_color_change		= style.text_color_change.value();
@@ -289,9 +387,11 @@ namespace {
 		if (override_style.border_color_interpolation.has_value()		)	style_copy.border_color_interpolation = override_style.border_color_interpolation.value();
 		else if(style.border_color_interpolation.has_value()			)	style_copy.border_color_interpolation = style.border_color_interpolation.value();
 		
-		StaticStyle on_hover  = merge_styles_by_priority({ override_style.on_hover, style.on_hover }, info);
-		StaticStyle on_active = merge_styles_by_priority({ override_style.on_hover, style.on_hover }, info);
+		style_copy.on_hover  = merge_styles_by_priority({ override_style.on_hover, style.on_hover }, info);
+		style_copy.on_active = merge_styles_by_priority({ override_style.on_active, style.on_active }, info);
 
+		style_copy.text_color = merged_style.text_color;
+		style_copy.text_size = merged_style.text_size;
 		style_copy.color = merged_style.color;
 		style_copy.displacement = merged_style.displacement;
 		style_copy.rotation_euler = merged_style.rotation_euler;
@@ -302,6 +402,7 @@ namespace {
 		style_copy.border_color = merged_style.border_color;
 		style_copy.cursor_type = merged_style.cursor_type;
 		style_copy.stacking_type = merged_style.stacking_type;
+		style_copy.text_allign_type = merged_style.text_allign_type;
 
 		return style_copy;
 	}
@@ -316,6 +417,182 @@ namespace {
 
 		return interpolated_style;
 
+	}
+}
+
+void StaticStyle::clear() {
+	text_color = StyleAttribute<vec3f>();
+	text_size = StyleAttribute<float>();
+	color = StyleAttribute<vec3f>();
+	displacement = StyleAttribute<vec2f>();
+	rotation_euler = StyleAttribute<vec2f>();
+	corner_rounding = StyleAttribute<vec4f>();
+	padding = StyleAttribute<vec4f>();
+	margin = StyleAttribute<vec4f>();
+	border_thickness = StyleAttribute<vec4f>();
+	border_color = StyleAttribute<vec3f>();
+	cursor_type = std::optional<Frame::CursorType>();
+	stacking_type = std::optional<Style::Stacking>();
+	text_allign_type = std::optional<Style::TextAlligning>();
+}
+
+
+void Style::clear() {
+	StaticStyle::clear();
+
+	text_color_change = std::optional<Time>();
+	text_size_change = std::optional<Time>();
+	color_change = std::optional<Time>();
+	displacement_change = std::optional<Time>();
+	rotation_change = std::optional<Time>();
+	corner_rounding_change = std::optional<Time>();
+	padding_change = std::optional<Time>();
+	margin_change = std::optional<Time>();
+	border_thickness_change = std::optional<Time>();
+	border_color_change = std::optional<Time>();
+
+	text_color_interpolation = std::optional<_interpolation>();
+	text_size_interpolation = std::optional<_interpolation>();
+	color_interpolation = std::optional<_interpolation>();
+	displacement_interpolation = std::optional<_interpolation>();
+	rotation_interpolation = std::optional<_interpolation>();
+	corner_rounding_interpolation = std::optional<_interpolation>();
+	padding_interpolation = std::optional<_interpolation>();
+	margin_interpolation = std::optional<_interpolation>();
+	border_thickness_interpolation = std::optional<_interpolation>();
+	border_color_interpolation = std::optional<_interpolation>();
+
+	on_hover.clear();
+	on_active.clear();
+}
+
+std::string Persentage::RespectedAttribute_to_string(const RespectedAttribute& attribute) {
+	switch (attribute) {
+	case SIZE_X:
+		return "SIZE_X";
+		break;
+	case SIZE_Y:
+		return "SIZE_Y";
+		break;
+	case PADDED_SIZE_X:
+		return "PADDED_SIZE_X";
+		break;
+	case PADDED_SIZE_Y:
+		return "PADDED_SIZE_Y";
+		break;
+	case POSITION_X:
+		return "POSITION_X";
+		break;
+	case POSITION_Y:
+		return "POSITION_Y";
+		break;
+	case PADDED_POSITION_X:
+		return "PADDED_POSITION_X";
+		break;
+	case PADDED_POSITION_Y:
+		return "PADDED_POSITION_Y";
+		break;
+	case PARENT_WIDTH:
+		return "PARENT_WIDTH";
+		break;
+	case PARENT_HEIGHT:
+		return "PARENT_HEIGHT";
+		break;
+	case AVAILABLE_WIDTH:
+		return "AVAILABLE_WIDTH";
+		break;
+	case AVAILABLE_HEIGHT:
+		return "AVAILABLE_HEIGHT";
+		break;
+	}
+}
+
+Persentage::Persentage(float value, RespectedAttribute attribute_type) :
+	value(value), attribute_type(attribute_type) {}
+
+float Persentage::get_value(const _widget_info& info) const {
+	switch (attribute_type) {
+	case SIZE_X:
+		return value * info.size.x;
+		break;
+	case SIZE_Y:
+		return value * info.size.y;
+		break;
+	case PADDED_SIZE_X:
+		return 0;
+		break;
+	case PADDED_SIZE_Y:
+		return 0;
+		break;
+	case MAX_SIZE_DIM: {
+		float max_size = info.size.x;
+		if (info.size.y > max_size)
+			max_size = info.size.y;
+		return value * max_size;
+		break;
+	}
+	case MIN_SIZE_DIM: {
+		float min_size = info.size.x;
+		if (info.size.y < min_size)
+			min_size = info.size.y;
+		return value * min_size;
+		break;
+	}
+	case POSITION_X:
+		return value * info.position.x;
+		break;
+	case POSITION_Y:
+		return value * info.position.y;
+		break;
+	case PADDED_POSITION_X:
+		return 0;
+		break;
+	case PADDED_POSITION_Y:
+		return 0;
+		break;
+	case PARENT_WIDTH:
+		return 0;
+		break;
+	case PARENT_HEIGHT:
+		return 0;
+		break;
+	case AVAILABLE_WIDTH:
+		return 0;
+		break;
+	case AVAILABLE_HEIGHT:
+		return 0;
+		break;
+	}
+	return 0;
+}
+
+// object based system
+
+void _widget_info::increment_time(Time deltatime) {
+	//last_update = now;
+	if (is_hovering) {
+		_current_text_color_time += deltatime;
+		_current_text_size_time += deltatime;
+		_current_color_time += deltatime;
+		_current_displacement_time += deltatime;
+		_current_rotation_time += deltatime;
+		_current_corner_rounding_time += deltatime;
+		_current_padding_time += deltatime;
+		_current_margin_time += deltatime;
+		_current_border_thickness_time += deltatime;
+		_current_border_color_time += deltatime;
+	}
+	else {
+		_current_text_color_time -= deltatime;
+		_current_text_size_time -= deltatime;
+		_current_color_time -= deltatime;
+		_current_displacement_time -= deltatime;
+		_current_rotation_time -= deltatime;
+		_current_corner_rounding_time -= deltatime;
+		_current_padding_time -= deltatime;
+		_current_margin_time -= deltatime;
+		_current_border_thickness_time -= deltatime;
+		_current_border_color_time -= deltatime;
 	}
 }
 
@@ -337,15 +614,26 @@ void Gui2::new_frame(Time frame_time) {
 	if (hoverings.size() > 0){
 		unsigned int hover_id = hoverings[0].first;
 		float hover_z = hoverings[0].second;
+		int i = 0;
+		int hover_index = 0;
 		for (std::pair<unsigned int, float> candidate : hoverings) {
 			if (candidate.second > hover_z) {
 				hover_id = candidate.first;
 				hover_z = candidate.second;
+				hover_index = i;
 			}
+			i++;
 		}
 
 		widget_info_table[hover_id].is_active_hovering = true;
+		frame_ref.set_cursor_type(hoverings_cursortypes[hover_index]);
 	}
+	else {
+		frame_ref.set_cursor_type(Frame::Arrow);
+	}
+
+	hoverings.clear();
+	hoverings_cursortypes.clear();
 
 	z_index = 0;
 	camera.perspective = false;
@@ -354,7 +642,7 @@ void Gui2::new_frame(Time frame_time) {
 	camera.projection_matrix = glm::ortho(0.0f, (float)frame_ref.window_width, 0.0f, (float)frame_ref.window_height, -100.0f, 100.0f);
 }
 
-void Gui2::box(unsigned int id, vec2 position, vec2 size, Style style, std::u32string text_string, Style override_style, float z_index) {
+_widget_info& Gui2::box(unsigned int id, vec2 position, vec2 size, Style style, std::u32string text_string, Style override_style, float z_index) {
 	
 	AABB2 aabb(position, size);
 	if (widget_graphic_table.find(id) == widget_graphic_table.end()) {
@@ -367,10 +655,11 @@ void Gui2::box(unsigned int id, vec2 position, vec2 size, Style style, std::u32s
 
 	graphic->mesh->load_model(aabb.generate_model());
 
-	if (widget_info_table.find(id) == widget_info_table.end()) {
+	if (!widget_info_table[id].properly_initialized) {
 		_widget_info info;
 		info.size = size;
 		info.position = position;
+		info.properly_initialized = true;
 		widget_info_table[id] = info;
 	}
 	_widget_info& info = widget_info_table[id];
@@ -389,9 +678,11 @@ void Gui2::box(unsigned int id, vec2 position, vec2 size, Style style, std::u32s
 	Vec4<float> border_thickness =	style_attribute_get<Vec4<float>>(interpolated_style.border_thickness,	info);
 	Vec3<float> border_color =		style_attribute_get<Vec3<float>>(interpolated_style.border_color,		info);
 	Frame::CursorType cursor_type = optional_get<Frame::CursorType>(interpolated_style.cursor_type);
+	Style::TextAlligning text_allign_type = optional_get<Style::TextAlligning>(interpolated_style.text_allign_type);
 
 	bool hover = aabb.does_contain(frame_ref.get_cursor_position());
 	if (hover) hoverings.push_back(std::pair(id, z_index));
+	if (hover) hoverings_cursortypes.push_back(cursor_type);
 
 	info.is_active_hovering = false;
 	info.is_hovering = hover;
@@ -419,8 +710,17 @@ void Gui2::box(unsigned int id, vec2 position, vec2 size, Style style, std::u32s
 
 		text->set_max_width(camera.screen_width);
 		text->set_scale(0.02 * text_size);
-		float text_height = (font->glyphs[u'l'].y1 - font->glyphs[u'l'].y0) * text->get_scale();
-		text->graphic->set_position(glm::vec3((aabb.position.x) / camera.screen_width, (frame_ref.window_height - aabb.position.y - size.y / 2 - text_size / 2) / camera.screen_width, z_index));
+		vec2 text_dimentions = text->get_size();
+		if (text_allign_type == Style::Default)
+			text->graphic->set_position(glm::vec3((aabb.position.x) / camera.screen_width, (frame_ref.window_height - text_size) / camera.screen_width, z_index));
+		if (text_allign_type == Style::CenterX)
+			text->graphic->set_position(glm::vec3((aabb.position.x + size.x / 2) / camera.screen_width - text_dimentions.x / 2, (frame_ref.window_height - aabb.position.y - text_size) / camera.screen_width, z_index));
+		if (text_allign_type == Style::CenterY)
+			text->graphic->set_position(glm::vec3((aabb.position.x) / camera.screen_width, (frame_ref.window_height - aabb.position.y - size.y / 2 - text_size / 2) / camera.screen_width, z_index));
+		if (text_allign_type == Style::CenterXY)
+			text->graphic->set_position(glm::vec3((aabb.position.x + size.x / 2) / camera.screen_width - text_dimentions.x / 2, (frame_ref.window_height - aabb.position.y - size.y / 2 - text_size / 2) / camera.screen_width, z_index));
+
+		
 		text->set_color(vec4(text_color.x, text_color.y, text_color.z, 1.0f));
 
 		camera.projection_matrix = glm::ortho(0.0f, 1.0f, 0.0f, (float)frame_ref.window_height / frame_ref.window_width, -100.0f, 100.0f);
@@ -432,14 +732,15 @@ void Gui2::box(unsigned int id, vec2 position, vec2 size, Style style, std::u32s
 
 	}
 
+	return info;
 }
 
-void Gui2::box(unsigned int id, vec2 position, vec2 size, Style style, std::u32string text) {
-	box(id, position, size, style, text, override_style, z_index);
+_widget_info& Gui2::box(unsigned int id, vec2 position, vec2 size, Style style, std::u32string text) {
+	return box(id, position, size, style, text, override_style, z_index);
 }
 
 vec4f Gui2::get_margin_by_id(unsigned int id, const Style& override_style, const Style& style) {
-	if (widget_info_table.find(id) != widget_info_table.end()) {
+	if (widget_info_table[id].properly_initialized) {
 		_widget_info& info = widget_info_table[id];
 		StaticStyle interpolated_style = get_final_style(override_style, style, info);
 		vec4f margin = style_attribute_get<vec4f>(interpolated_style.margin, info);
@@ -449,7 +750,7 @@ vec4f Gui2::get_margin_by_id(unsigned int id, const Style& override_style, const
 }
 
 vec4f Gui2::get_padding_by_id(unsigned int id, const Style& override_style, const Style& style) {
-	if (widget_info_table.find(id) != widget_info_table.end()) {
+	if (widget_info_table[id].properly_initialized) {
 		_widget_info& info = widget_info_table[id];
 		StaticStyle interpolated_style = get_final_style(override_style, style, info);
 		vec4f padding = style_attribute_get<vec4f>(interpolated_style.padding, info);
@@ -459,13 +760,13 @@ vec4f Gui2::get_padding_by_id(unsigned int id, const Style& override_style, cons
 }
 
 Style::Stacking Gui2::get_stacking_type_by_id(unsigned int id, const Style& override_style, const Style& style) {
-	if (widget_info_table.find(id) != widget_info_table.end()) {
+	if (widget_info_table[id].properly_initialized) {
 		_widget_info& info = widget_info_table[id];
 		StaticStyle interpolated_style = get_final_style(override_style, style, info);
 		Style::Stacking stacking_type = optional_get<Style::Stacking>(interpolated_style.stacking_type);
 		return stacking_type;
 	}
-	return Style::Default;
+	return Style::Stack;
 }
 
 namespace std{
@@ -506,10 +807,10 @@ std::vector<std::shared_ptr<Gui2::layout_node>> Gui2::get_layouts_in_ascending_o
 	return layout_nodes_reversed;
 }
 
-void Gui2::layout(unsigned int id, vec2 position, vec2 min_size, Style style, Layout::LayoutType layout_type) {
+_widget_info& Gui2::layout(unsigned int id, vec2 position, vec2 min_size, Style style, Layout::LayoutType layout_type) {
 	if (current_layout != nullptr) {
 		std::cout << "[GUI Error] another Gui::layout() is called without calling Gui::layout_end() for previous Gui::layout() call" << std::endl;
-		return;
+		return widget_info_table[id];
 	}
 
 	z_index++;
@@ -522,9 +823,11 @@ void Gui2::layout(unsigned int id, vec2 position, vec2 min_size, Style style, La
 	}
 	layout_stack.clear();
 	layout_stack.push_back(current_layout);
+
+	return widget_info_table[id];
 }
 
-void Gui2::content(unsigned int id, vec2 size, Style style, std::u32string text) {
+_widget_info& Gui2::content(unsigned int id, vec2 size, Style style, std::u32string text) {
 	if (std::shared_ptr<layout_node> node = layout_stack.back().lock()) {
 		content_info content(id, size, style, override_style, text, z_index + 1);
 		node->contents.push_back(content);
@@ -532,11 +835,13 @@ void Gui2::content(unsigned int id, vec2 size, Style style, std::u32string text)
 	}
 	else {
 		std::cout << "[GUI Error] Gui::content() is called but no Gui::layout() or Gui::layout_content() was called before" << std::endl;
-		return;
+		return widget_info_table[id];
 	}
+
+	return widget_info_table[id];
 }
 
-void Gui2::layout_content(unsigned int id, vec2 min_size, Style style, Layout::LayoutType layout_type) {
+_widget_info& Gui2::layout_content(unsigned int id, vec2 min_size, Style style, Layout::LayoutType layout_type) {
 	if (std::shared_ptr<layout_node> node = layout_stack.back().lock()) {
 		
 		z_index++;
@@ -548,8 +853,11 @@ void Gui2::layout_content(unsigned int id, vec2 min_size, Style style, Layout::L
 	}
 	else {
 		std::cout << "[GUI Error] Gui::layout_content() is called but no Gui::layout() or Gui::layout_content() was called before" << std::endl;
-		return;
+		_widget_info info;
+		return widget_info_table[id];
 	}
+
+	return widget_info_table[id];
 }
 
 void Gui2::layout_content_end() {

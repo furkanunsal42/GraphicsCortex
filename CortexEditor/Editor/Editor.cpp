@@ -2,7 +2,7 @@
 
 Editor::Editor() {
 	frame = std::make_shared<Frame>(1920, 1080, "Cortex Editor", 0, 0, true, true, true, false);
-	gui = std::make_shared<Gui>(*frame);
+	gui = std::make_shared<Gui2>(*frame);
 
 	current_scene_index = 0;
 	scenes.push_back(std::make_shared<Scene>(*frame));

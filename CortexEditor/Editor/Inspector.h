@@ -23,11 +23,11 @@ class Inspector : public UILayer {
 
 		Editor& editor = Editor::get();
 
-		editor.gui->layout(position, size, background_style, U"");
-		editor.gui->content(vec2(100, 25), background_style, U"Inspector");
+		editor.gui->layout(gui_id, position, size, background_style);
+		editor.gui->content(gui_id, vec2(100, 25), background_style, U"Inspector");
 
-		editor.gui->content(vec2(1, 50), background_style);
-		editor.gui->content(vec2(100, 25), entry_style, U"position");
+		editor.gui->content(gui_id, vec2(1, 50), background_style, U"");
+		editor.gui->content(gui_id, vec2(100, 25), entry_style, U"position");
 		
 		editor.gui->layout_end();
 

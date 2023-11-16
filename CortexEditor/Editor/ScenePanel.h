@@ -58,15 +58,15 @@ class ScenePanel : public UILayer {
 	void on_gui_render() {
 		Editor& editor = Editor::get();
 			
-		editor.gui->layout(position, size, layout_style, U"");
-		editor.gui->content(vec2(size.x, 30), layout_style, U"ScenePanel");
-		editor.gui->content(vec2(size.x, 30), searchbar_style, U"Search");
+		bool clicked_on_panel = editor.gui->layout(gui_id, position, size, layout_style).is_hovering && editor.frame->get_mouse_state() == Frame::CursorState::LeftReleased;
+		editor.gui->content(gui_id, vec2(size.x, 30), layout_style, U"ScenePanel");
+		editor.gui->content(gui_id, vec2(size.x, 30), searchbar_style, U"Search");
 		
 		bool clicked_on_button = false;
 
 		for (std::shared_ptr<Graphic> graphic : editor.get_current_scene()->_graphics) {
 			Style& style_to_use = (selected_pointers.find(graphic) != selected_pointers.end()) ? selected_object_style : object_style;
-			if (editor.gui->content(vec2(size.x, row_height), style_to_use, U"Graphic").click_released()) {
+			if (editor.gui->content(gui_id, vec2(size.x, row_height), style_to_use, U"Graphic").is_hovering && editor.frame->get_mouse_state() == Frame::CursorState::LeftReleased) {
 				if (!editor.frame->get_key_press(Frame::Key::LEFT_CONTROL)) selected_pointers.clear();
 				selected_pointers.insert(graphic);
 				clicked_on_button = true;
@@ -81,7 +81,7 @@ class ScenePanel : public UILayer {
 			if (dynamic_cast<PointLight*>(light.get())) name = U"PointLight";
 			if (dynamic_cast<SpotLight*>(light.get())) name = U"SpotLight";
 
-			if (editor.gui->content(vec2(size.x, row_height), style_to_use, name).click_released()) {
+			if (editor.gui->content(gui_id, vec2(size.x, row_height), style_to_use, name).is_hovering && editor.frame->get_mouse_state() == Frame::CursorState::LeftReleased) {
 				if (!editor.frame->get_key_press(Frame::Key::LEFT_CONTROL)) selected_pointers.clear();
 				selected_pointers.insert(light);
 				clicked_on_button = true;
@@ -90,7 +90,7 @@ class ScenePanel : public UILayer {
 
 		for (std::shared_ptr<Object> object : editor.get_current_scene()->_objects) {
 			Style& style_to_use = (selected_pointers.find(object) != selected_pointers.end()) ? selected_object_style : object_style;
-			if (editor.gui->content(vec2(size.x, row_height), style_to_use, U"Object").click_released()) {
+			if (editor.gui->content(gui_id, vec2(size.x, row_height), style_to_use, U"Object").is_hovering && editor.frame->get_mouse_state() == Frame::CursorState::LeftReleased) {
 				if (!editor.frame->get_key_press(Frame::Key::LEFT_CONTROL)) selected_pointers.clear();
 				selected_pointers.insert(object);
 				clicked_on_button = true;
@@ -99,7 +99,7 @@ class ScenePanel : public UILayer {
 
 		for (std::shared_ptr<Vehicle> vehicle : editor.get_current_scene()->_vehicles) {
 			Style& style_to_use = (selected_pointers.find(vehicle) != selected_pointers.end()) ? selected_object_style : object_style;
-			if (editor.gui->content(vec2(size.x, row_height), style_to_use, U"Vehicle").click_released()) {
+			if (editor.gui->content(gui_id, vec2(size.x, row_height), style_to_use, U"Vehicle").is_hovering && editor.frame->get_mouse_state() == Frame::CursorState::LeftReleased) {
 				if (!editor.frame->get_key_press(Frame::Key::LEFT_CONTROL)) selected_pointers.clear();
 				selected_pointers.insert(vehicle);
 				clicked_on_button = true;
@@ -108,14 +108,14 @@ class ScenePanel : public UILayer {
 
 		for (std::shared_ptr<Text> text : editor.get_current_scene()->_texts) {
 			Style& style_to_use = (selected_pointers.find(text) != selected_pointers.end()) ? selected_object_style : object_style;
-			if (editor.gui->content(vec2(size.x, row_height), style_to_use, U"Text").click_released()) {
+			if (editor.gui->content(gui_id, vec2(size.x, row_height), style_to_use, U"Text").is_hovering && editor.frame->get_mouse_state() == Frame::CursorState::LeftReleased) {
 				if (!editor.frame->get_key_press(Frame::Key::LEFT_CONTROL)) selected_pointers.clear();
 				selected_pointers.insert(text);
 				clicked_on_button = true;
 			}
 		}
 
-		bool clicked_on_panel = editor.gui->layout_end().click_released();
+		editor.gui->layout_end();
 
 		if (clicked_on_panel && !clicked_on_button)
 			selected_pointers.clear();

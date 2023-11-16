@@ -9,9 +9,9 @@
 int main() {
 
 	Editor::get().push_layer(std::make_shared<TopBar>());
-	Editor::get().push_layer(std::make_shared<ScenePanel>());
-	Editor::get().push_layer(std::make_shared<ViewPort>());
-	Editor::get().push_layer(std::make_shared<Inspector>());
+	//Editor::get().push_layer(std::make_shared<ScenePanel>());
+	//Editor::get().push_layer(std::make_shared<ViewPort>());
+	//Editor::get().push_layer(std::make_shared<Inspector>());
 
 	std::shared_ptr<Scene> scene = Editor::get().get_current_scene();
 	

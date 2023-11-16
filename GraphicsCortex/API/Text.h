@@ -40,7 +40,7 @@ public:
 	bool get_wait_for_words();
 	void set_color(const vec4& color);
 	vec4 get_color();
-
+	vec2 get_size();
 	void render();
 
 	void update_default_uniforms(Program& program);
@@ -48,6 +48,9 @@ public:
 	Graphic_s graphic;
 
 private:
+
+	float width;
+	float height;
 
 	bool _graphic_needs_update = true;
 	void _update_graphic();

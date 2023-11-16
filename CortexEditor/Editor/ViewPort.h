@@ -59,9 +59,9 @@ class ViewPort : public UILayer {
 
 		current_scene->render_to_framebuffer(*scene_render, *editor.frame);
 		
-		scene_render->blit_section_to_screen(glm::vec4(0, 0, size.x, size.y), glm::vec4(position.x, editor.gui->window_size.y - position.y - size.y, position.x + size.x, editor.gui->window_size.y - position.y));
+		scene_render->blit_section_to_screen(glm::vec4(0, 0, size.x, size.y), glm::vec4(position.x, editor.frame->window_height - position.y - size.y, position.x + size.x, editor.frame->window_height - position.y));
 
-		glm::vec2 viewport_area_midpoint = glm::vec2(editor.gui->window_size.y - position.y - size.y, position.x + size.x);
+		glm::vec2 viewport_area_midpoint = glm::vec2(editor.frame->window_height - position.y - size.y, position.x + size.x);
 		viewport_area_midpoint = glm::vec2(position.x + size.x / 2, position.y + size.y / 2);
 
 		if(AABB2(position, size).does_contain(editor.frame->get_cursor_position()))

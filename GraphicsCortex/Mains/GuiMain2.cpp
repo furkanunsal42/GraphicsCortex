@@ -1,13 +1,5 @@
 #include "GraphicsCortex.h"
 
-unsigned int compute_gui_id(std::string filename, int line) {
-	std::hash<std::string> hash;
-	return hash(filename) * 2 + 3 * line;
-}
-
-#define gui_id compute_gui_id(__FILE__, __LINE__)
-
-
 int main() {
 	Frame frame(1920, 1080, "Cortex GUI", 0, 0, true, true, true, false);
 	Gui2 gui(frame);
@@ -35,7 +27,7 @@ int main() {
 	style4.on_hover.border_thickness = vec4(4, 4, 4, 4);
 	style4.color_change = 0.3;
 	style4.border_thickness_change = 0.3;
-
+	
 	while (frame.is_running()) {
 		double deltatime = frame.handle_window();
 		frame.clear_window(1, 1, 1, 1);
@@ -44,7 +36,6 @@ int main() {
 		gui.box(gui_id, vec2(100, 100), vec2(100, 100), style1, U"Hello GUI");
 
 		gui.override_style.padding = vec4(5, 5, 5, 5);
-		gui.override_style.stacking_type = Style::Center;
 		gui.layout(gui_id, vec2(300, 100), vec2(0, 0), style1);
 		gui.override_style.clear();
 		gui.content(gui_id, vec2(200, 20), style2, U"Hello Layout");

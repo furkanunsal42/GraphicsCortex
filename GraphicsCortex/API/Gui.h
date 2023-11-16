@@ -11,6 +11,9 @@
 #include <optional>
 #include <iostream>
 
+unsigned int compute_gui_id(std::string filename, int line);
+#define gui_id compute_gui_id(__FILE__, __LINE__)
+
 class Layout {
 public:
 	Layout(uint32_t type, const AABB2& aabb);
@@ -182,9 +185,16 @@ public:
 class StaticStyle {
 public:
 	enum Stacking {
-		Default,
+		Stack,
 		Center,
 		Inverse,
+	};
+
+	enum TextAlligning {
+		CenterXY,
+		Default,
+		CenterX,
+		CenterY,
 	};
 
 	// StyleAttribute<vec3f> color_attrib;	// work in progress
@@ -203,6 +213,7 @@ public:
 	StyleAttribute<vec3f> border_color;
 	std::optional<Frame::CursorType> cursor_type;
 	std::optional<Stacking> stacking_type;
+	std::optional<TextAlligning> text_allign_type;
 
 	virtual void clear();
 };
@@ -283,8 +294,11 @@ public:
 	Time _current_border_color_time = 0;
 
 	void increment_time(Time deltatime);
+
+	bool properly_initialized = false;
 };
 
+/*
 class Gui;
 
 class Box {
@@ -407,6 +421,7 @@ class CustomWidget {
 public:
 	virtual void render() {}
 };
+*/
 
 // new implementation of gui system
 class Gui2 {
@@ -414,15 +429,15 @@ public:
 
 	Gui2(Frame& frame);
 	void new_frame(Time frame_time);
-	void box(unsigned int id, vec2 position, vec2 size, Style style, std::u32string text);
+	_widget_info& box(unsigned int id, vec2 position, vec2 size, Style style, std::u32string text);
 
-	void layout(unsigned int id, vec2 position, vec2 min_size, Style style, Layout::LayoutType layout_type = Layout::Vertical);
+	_widget_info& layout(unsigned int id, vec2 position, vec2 min_size, Style style, Layout::LayoutType layout_type = Layout::Vertical);
 	void layout_end();
 
-	void layout_content(unsigned int id, vec2 min_size, Style style, Layout::LayoutType layout_type = Layout::Vertical);
+	_widget_info& layout_content(unsigned int id, vec2 min_size, Style style, Layout::LayoutType layout_type = Layout::Vertical);
 	void layout_content_end();
 
-	void content(unsigned int id, vec2 size, Style style, std::u32string text);
+	_widget_info& content(unsigned int id, vec2 size, Style style, std::u32string text);
 
 	Style override_style;
 
@@ -432,7 +447,7 @@ private:
 	vec4f get_margin_by_id(unsigned int id, const Style& override_style, const Style& style);
 	Style::Stacking get_stacking_type_by_id(unsigned int id, const Style& override_style, const Style& style);
 
-	void box(unsigned int id, vec2 position, vec2 size, Style style, std::u32string text, Style override_style, float z_index);
+	_widget_info& box(unsigned int id, vec2 position, vec2 size, Style style, std::u32string text, Style override_style, float z_index);
 
 	Frame& frame_ref;
 	static std::shared_ptr<Program> gui_program;
@@ -447,6 +462,7 @@ private:
 
 	// id - z_index
 	std::vector<std::pair<unsigned int, float>> hoverings;
+	std::vector<Frame::CursorType> hoverings_cursortypes;
 
 	struct layout_info {
 		layout_info(unsigned int id, vec2 min_size, Style style, Style override_style, Layout::LayoutType layout_type, float z_index) {

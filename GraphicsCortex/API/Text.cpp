@@ -164,6 +164,10 @@ vec4 Text::get_color(){
 	return _color;
 }
 
+vec2 Text::get_size() {
+	return vec2(width, height);
+}
+
 void Text::_update_graphic() {
 	std::vector<float> verticies;
 	std::vector<unsigned int> indicies;
@@ -346,6 +350,9 @@ void Text::_update_graphic() {
 			char_count++;
 		}
 	}
+
+	width = pen_x;
+	height = pen_y;
 
 	ArrayBuffer_s arraybuffer;
 	arraybuffer->load_buffer(verticies);
