@@ -1,7 +1,7 @@
 #include "Default_Assets.h"
-#include "SharedPtr_Mesh.h"
-#include "SharedPtr_Materials.h"
-#include "SharedPtr_Program.h"
+#include "Mesh.h"
+#include "Texture.h"
+#include "ShaderCompiler.h"
 
 namespace default_geometry {
 
@@ -14,7 +14,7 @@ namespace default_geometry {
 			-0.5f * scale.x,  0.5f * scale.y,  0,	0.0f, 1.0f,		0.0f, 0.0f, 1.0f,
 		};
 
-		ArrayBuffer_s array_buffer(custom_verticies);
+		std::shared_ptr<ArrayBuffer> array_buffer = std::make_shared<ArrayBuffer>(custom_verticies);
 		array_buffer->push_attribute(3);
 		array_buffer->push_attribute(2);
 		array_buffer->push_attribute(3);
@@ -23,23 +23,23 @@ namespace default_geometry {
 			0, 1, 2, 0, 2, 3,
 
 		};
-		IndexBuffer_s index_buffer(triangles, 3);
+		std::shared_ptr<IndexBuffer> index_buffer = std::make_shared<IndexBuffer>(triangles, 3);
 
 		Graphic g;
-		g.load_model(Mesh_s(array_buffer, index_buffer));
+		g.load_model(std::make_shared<Mesh>(array_buffer, index_buffer));
 		//g.model.array_buffer= array_buffer;
 		//g.model.index_buffer = index_buffer;
 		return g;
 	}
 
-	Graphic rectangle(Material_s material, Program_s renderer, glm::vec2 scale) {
+	Graphic rectangle(std::shared_ptr<Material> material, std::shared_ptr<Program> renderer, glm::vec2 scale) {
 		Graphic g = rectangle(scale);
 		g.load_material(material);
 		g.load_program(renderer);
 		return g;
 	}
 
-	Graphic rectangle(Material_s material, glm::ivec2 texture_atlas_dim, const std::vector<unsigned int>& face_texture_locations, Program_s renderer, glm::vec2 scale) {
+	Graphic rectangle(std::shared_ptr<Material> material, glm::ivec2 texture_atlas_dim, const std::vector<unsigned int>& face_texture_locations, std::shared_ptr<Program> renderer, glm::vec2 scale) {
 		float unit_width = 1.0f / texture_atlas_dim.x;
 		float unit_height = 1.0f / texture_atlas_dim.y;
 		std::vector<glm::vec2> texture_locations;
@@ -81,17 +81,17 @@ namespace default_geometry {
 
 
 
-		ArrayBuffer array_buffer(custom_verticies);
-		array_buffer.push_attribute(3);
-		array_buffer.push_attribute(2);
-		array_buffer.push_attribute(3);
+		std::shared_ptr<ArrayBuffer> array_buffer = std::make_shared<ArrayBuffer>(custom_verticies);
+		array_buffer->push_attribute(3);
+		array_buffer->push_attribute(2);
+		array_buffer->push_attribute(3);
 
 		std::vector<unsigned int> triangles{
 			0, 1, 2, 0, 2, 3,
 		};
-		IndexBuffer index_buffer(triangles, 3);
+		std::shared_ptr<IndexBuffer> index_buffer = std::make_shared<IndexBuffer>(triangles, 3);
 
-		return Graphic(Mesh_s(Mesh(array_buffer, index_buffer)), material, renderer);
+		return Graphic(std::make_shared<Mesh>(array_buffer, index_buffer), material, renderer);
 	}
 
 	Graphic cube(glm::vec3 scale) {
@@ -128,7 +128,7 @@ namespace default_geometry {
 			 0.5f * scale.x,  -0.5f * scale.y, -0.5f * scale.z,	1.0f, 0.0f,		0.0f, -1.0f, 0.0f,
 		};
 
-		ArrayBuffer_s array_buffer(custom_verticies);
+		std::shared_ptr<ArrayBuffer> array_buffer = std::make_shared<ArrayBuffer>(custom_verticies);
 		array_buffer->push_attribute(3);
 		array_buffer->push_attribute(2);
 		array_buffer->push_attribute(3);
@@ -142,21 +142,21 @@ namespace default_geometry {
 			20, 21, 22, 20, 22, 23,
 
 		};
-		IndexBuffer_s index_buffer(triangles, 3);
+		std::shared_ptr<IndexBuffer> index_buffer = std::make_shared<IndexBuffer>(triangles, 3);
 
 		Graphic g;
-		g.load_model(Mesh_s(array_buffer, index_buffer));
+		g.load_model(std::make_shared<Mesh>(array_buffer, index_buffer));
 		return g;
 	}
 
-	Graphic cube(Material_s material, Program_s renderer, glm::vec3 scale){
+	Graphic cube(std::shared_ptr<Material> material, std::shared_ptr<Program> renderer, glm::vec3 scale){
 		Graphic g = cube(scale);
 		g.load_material(material);
 		g.load_program(renderer);
 		return g;
 	}
 
-	Graphic cube(Material_s material, glm::ivec2 texture_atlas_dim, const std::vector<unsigned int>& face_texture_locations, Program_s renderer, glm::vec3 scale) {
+	Graphic cube(std::shared_ptr<Material> material, glm::ivec2 texture_atlas_dim, const std::vector<unsigned int>& face_texture_locations, std::shared_ptr<Program> renderer, glm::vec3 scale) {
 		float unit_width = 1.0f / texture_atlas_dim.x;
 		float unit_height = 1.0f / texture_atlas_dim.y;
 		std::vector<glm::vec2> texture_locations;
@@ -221,10 +221,10 @@ namespace default_geometry {
 			 0.5f * scale.x,  -0.5f * scale.y, -0.5f * scale.z,	unit_width * (texture_locations[5].x + 1), unit_height * (texture_locations[5].y - 1),		0.0f, -1.0f, 0.0f,
 		};
 
-		ArrayBuffer array_buffer(custom_verticies);
-		array_buffer.push_attribute(3);
-		array_buffer.push_attribute(2);
-		array_buffer.push_attribute(3);
+		std::shared_ptr<ArrayBuffer> array_buffer = std::make_shared<ArrayBuffer>(custom_verticies);
+		array_buffer->push_attribute(3);
+		array_buffer->push_attribute(2);
+		array_buffer->push_attribute(3);
 
 		std::vector<unsigned int> triangles{
 			0, 1, 2, 0, 2, 3,
@@ -235,8 +235,8 @@ namespace default_geometry {
 			20, 21, 22, 20, 22, 23,
 
 		};
-		IndexBuffer index_buffer(triangles, 3);
+		std::shared_ptr<IndexBuffer> index_buffer = std::make_shared<IndexBuffer>(triangles, 3);
 		
-		return Graphic(Mesh_s(Mesh(array_buffer, index_buffer)), material, renderer);
+		return Graphic(std::make_shared<Mesh>(array_buffer, index_buffer), material, renderer);
 	}
 }

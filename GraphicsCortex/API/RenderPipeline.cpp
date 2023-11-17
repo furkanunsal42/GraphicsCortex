@@ -56,8 +56,8 @@ void RenderPipeline::bind_active_objects() {
 		ASSERT(false);
 	}
 
-	Camera_s active_camera = (*camera_iterator).second;
-	Program_s active_program = (*program_iterator).second;
+	std::shared_ptr<Camera> active_camera = (*camera_iterator).second;
+	std::shared_ptr<Program> active_program = (*program_iterator).second;
 
 	active_program->bind();
 	active_camera->update_matrixes();
@@ -96,7 +96,7 @@ void RenderPipeline::render() {
 
 	int object_index = 0;
 	for (auto& name_graphic_pair : graphics) {
-		Graphic_s graphic = name_graphic_pair.second;
+		std::shared_ptr<Graphic> graphic = name_graphic_pair.second;
 		graphic->update_matrix();
 		graphic_uniforms[_active_uniform_updater_name_graphic](graphic, programs[_active_name_program], cameras[_active_name_camera], object_index++);
 		graphic->draw(false);
@@ -126,7 +126,7 @@ void RenderPipeline::render_single_graphic(const std::string& graphic_name){
 	{
 		auto graphic_iterator_attached = graphics.find(graphic_name);
 		if (graphic_iterator_attached != graphics.end()) {
-			Graphic_s& graphic = graphic_iterator_attached->second;
+			std::shared_ptr<Graphic>& graphic = graphic_iterator_attached->second;
 			graphic->update_matrix();
 			graphic_uniforms[_active_uniform_updater_name_graphic](graphic, programs[_active_name_program], cameras[_active_name_camera], 0);
 			graphic->draw(false);
@@ -136,7 +136,7 @@ void RenderPipeline::render_single_graphic(const std::string& graphic_name){
 	{
 		auto graphic_iterator_deattached = deattached_graphics.find(graphic_name);
 		if (graphic_iterator_deattached != deattached_graphics.end()) {
-			Graphic_s& graphic = graphic_iterator_deattached->second;
+			std::shared_ptr<Graphic>& graphic = graphic_iterator_deattached->second;
 			graphic->update_matrix();
 			graphic_uniforms[_active_uniform_updater_name_graphic](graphic, programs[_active_name_program], cameras[_active_name_camera], 0);
 			graphic->draw(false);

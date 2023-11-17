@@ -22,14 +22,14 @@ namespace default_program {
 	Program text_program();
 	Program depth_program();
 
-	Program_s solid_program_s();
-	Program_s solid_program_multitexture_s();
-	Program_s flatcolor_program_s();
-	Program_s framebuffer_program_s();
-	Program_s cubemap_program_s();
-	Program_s gui_program_s();
-	Program_s text_program_s();
-	Program_s depth_program_s();
+	std::shared_ptr<Program> solid_program_s();
+	std::shared_ptr<Program> solid_program_multitexture_s();
+	std::shared_ptr<Program> flatcolor_program_s();
+	std::shared_ptr<Program> framebuffer_program_s();
+	std::shared_ptr<Program> cubemap_program_s();
+	std::shared_ptr<Program> gui_program_s();
+	std::shared_ptr<Program> text_program_s();
+	std::shared_ptr<Program> depth_program_s();
 
 	RenderPipeline default_pipeline(Frame& frame);
 	RenderPipeline_MultiTextured multitextured_pipeline(Frame& frame);

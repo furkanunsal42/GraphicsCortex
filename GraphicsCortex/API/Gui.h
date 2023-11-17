@@ -4,7 +4,7 @@
 #include "Frame.h"
 #include "ShaderCompiler.h"
 #include "Text.h"
-#include "SharedPtr_Graphic.h"
+#include "Graphic.h"
 
 #include <functional>
 #include <chrono>
@@ -442,6 +442,7 @@ public:
 	Style override_style;
 	float z_index = 0; 
 
+	static std::shared_ptr<Font> font;
 private:
 	friend Frame;
 	vec4f get_padding_by_id(unsigned int id, const Style& override_style, const Style& style);
@@ -454,13 +455,12 @@ private:
 
 	Frame& frame_ref;
 	static std::shared_ptr<Program> gui_program;
-	static std::shared_ptr<Font> font;
 	Camera camera;
 	
 	Time frame_time;
 	std::unordered_map<unsigned int, _widget_info> widget_info_table;
-	std::unordered_map<unsigned int, std::unique_ptr<Graphic>> widget_graphic_table;
-	std::unordered_map<unsigned int, std::unique_ptr<Text>> widget_text_table;
+	std::unordered_map<unsigned int, std::shared_ptr<Graphic>> widget_graphic_table;
+	std::unordered_map<unsigned int, std::shared_ptr<Text>> widget_text_table;
 
 	// id - z_index
 	std::vector<std::pair<unsigned int, float>> hoverings;

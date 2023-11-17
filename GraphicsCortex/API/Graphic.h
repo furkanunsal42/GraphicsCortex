@@ -19,9 +19,9 @@
 #include "PhysicsObject.h"
 #include "Mesh.h"
 
-#include "SharedPtr_Mesh.h"
-#include "SharedPtr_Materials.h"
-#include "SharedPtr_Program.h"
+#include "Mesh.h"
+#include "Texture.h"
+#include "ShaderCompiler.h"
 
 class Graphic : public UpdatesDefaultUniforms {
 private:
@@ -48,22 +48,22 @@ public:
 	unsigned int mode = GL_TRIANGLES;
 
 	Graphic();
-	Graphic(Mesh_s mesh, Material_s material, Program_s renderer);
-	Graphic(Mesh_s mesh, UnorderedMaterial_s material, Program_s renderer);
+	Graphic(std::shared_ptr<Mesh> mesh, std::shared_ptr<Material> material, std::shared_ptr<Program> renderer);
+	Graphic(std::shared_ptr<Mesh> mesh, std::shared_ptr<UnorderedMaterial> material, std::shared_ptr<Program> renderer);
 	Graphic(const std::vector<float>& verticies, int data_dim); // legacy
-	Graphic(Material_s material, Program_s renderer);
-	Graphic(UnorderedMaterial_s material, Program_s renderer);
+	Graphic(std::shared_ptr<Material> material, std::shared_ptr<Program> renderer);
+	Graphic(std::shared_ptr<UnorderedMaterial> material, std::shared_ptr<Program> renderer);
 
 	void draw(bool show_warnings = true);
 	void update_matrix();
 
-	void load_model(Mesh_s mesh);
+	void load_model(std::shared_ptr<Mesh> mesh);
 	void clear_mesh();
 
-	void load_material(UnorderedMaterial_s material);
-	void load_material(Material_s material);
+	void load_material(std::shared_ptr<UnorderedMaterial> material);
+	void load_material(std::shared_ptr<Material> material);
 
-	void load_program(Program_s program);
+	void load_program(std::shared_ptr<Program> program);
 
 	bool is_uniform_queue_loaded();
 	bool is_program_loaded();

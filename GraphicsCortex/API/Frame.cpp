@@ -167,14 +167,14 @@ double Frame::handle_window() {
 
 	Frame::CursorState new_cursor_state = Frame::Hover;
 	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
-		new_cursor_state = (Frame::CursorState)(_cursor_state | Frame::LeftPressed);
+		new_cursor_state = (Frame::CursorState)(new_cursor_state | Frame::LeftPressed);
 	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
-		new_cursor_state = (Frame::CursorState)(_cursor_state | Frame::RightPressed);
+		new_cursor_state = (Frame::CursorState)(new_cursor_state | Frame::RightPressed);
 	
-	if ((_cursor_state & Frame::LeftPressed != 0) && (new_cursor_state & Frame::LeftPressed == 0))
-		new_cursor_state = (Frame::CursorState)(_cursor_state | Frame::LeftReleased);
-	if ((_cursor_state & Frame::RightPressed != 0) && (new_cursor_state & Frame::RightPressed == 0))
-		new_cursor_state = (Frame::CursorState)(_cursor_state | Frame::RightReleased);
+	if (((_cursor_state & Frame::LeftPressed) != 0) && ((new_cursor_state & Frame::LeftPressed) == 0))
+		new_cursor_state = (Frame::CursorState)(new_cursor_state | Frame::LeftReleased);
+	if (((_cursor_state & Frame::RightPressed) != 0) && ((new_cursor_state & Frame::RightPressed) == 0))
+		new_cursor_state = (Frame::CursorState)(new_cursor_state | Frame::RightReleased);
 
 	_cursor_state = new_cursor_state;
 

@@ -9,6 +9,7 @@
 #include "Graphic.h"
 
 #include <type_traits>
+#include <memory>
 
 class FrameBuffer {
 public:
@@ -27,7 +28,7 @@ public:
 	RenderBuffer depth_stencil_renderbuffer;
 	bool readable_depth_stencil_buffer;
 
-	Program_s program;
+	std::shared_ptr<Program> program;
 
 	FrameBuffer(int width = 1024, int height = 1024, int anti_alliasing = 0, bool readable_depth_stencil_buffer = false);
 	~FrameBuffer();
@@ -47,7 +48,7 @@ public:
 	void render(unsigned int source_texture = FrameBuffer::COLOR_TEXTURE);
 	Image save(bool vertical_flip = true);
 
-	void load_program(Program_s program);
+	void load_program(std::shared_ptr<Program> program);
 
 	enum {
 		COLOR_CHANNEL = 1,

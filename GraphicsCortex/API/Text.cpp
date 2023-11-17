@@ -1,10 +1,10 @@
 #include "Text.h" 
 #include "Default_Programs.h"
 
-Program_s Text::_default_text_renderer;
+std::shared_ptr<Program> Text::_default_text_renderer;
 bool Text::_default_renderer_initialized = false;
 
-Text::Text(Font_s font, const std::string& text) :
+Text::Text(std::shared_ptr<Font> font, const std::string& text) :
 	_font(font) 
 {
 	if (!_custom_renderer_loaded && !_default_renderer_initialized)
@@ -14,7 +14,7 @@ Text::Text(Font_s font, const std::string& text) :
 	set_text(text);
 }
 
-Text::Text(Font_s font, const std::u16string& text) :
+Text::Text(std::shared_ptr<Font> font, const std::u16string& text) :
 	_font(font)
 {
 	if (!_custom_renderer_loaded && !_default_renderer_initialized)
@@ -24,7 +24,7 @@ Text::Text(Font_s font, const std::u16string& text) :
 	set_text(text);
 }
 
-Text::Text(Font_s font, const std::u32string& text) :
+Text::Text(std::shared_ptr<Font> font, const std::u32string& text) :
 	_font(font)
 {
 	if (!_custom_renderer_loaded && !_default_renderer_initialized)
@@ -34,7 +34,7 @@ Text::Text(Font_s font, const std::u32string& text) :
 	set_text(text);
 }
 
-Text::Text(Font_s font, Program_s custom_renderer, const std::string& text) :
+Text::Text(std::shared_ptr<Font> font, std::shared_ptr<Program> custom_renderer, const std::string& text) :
 	_font(font)
 {
 	if (!_custom_renderer_loaded && !_default_renderer_initialized)
@@ -46,7 +46,7 @@ Text::Text(Font_s font, Program_s custom_renderer, const std::string& text) :
 	_custom_renderer_loaded = true;
 }
 
-Text::Text(Font_s font, Program_s custom_renderer, const std::u16string& text) :
+Text::Text(std::shared_ptr<Font> font, std::shared_ptr<Program> custom_renderer, const std::u16string& text) :
 	_font(font)
 {
 	if (!_custom_renderer_loaded && !_default_renderer_initialized)
@@ -58,7 +58,7 @@ Text::Text(Font_s font, Program_s custom_renderer, const std::u16string& text) :
 	_custom_renderer_loaded = true;
 }
 
-Text::Text(Font_s font, Program_s custom_renderer, const std::u32string& text) :
+Text::Text(std::shared_ptr<Font> font, std::shared_ptr<Program> custom_renderer, const std::u32string& text) :
 	_font(font)
 {
 	if (!_custom_renderer_loaded && !_default_renderer_initialized)
@@ -354,15 +354,15 @@ void Text::_update_graphic() {
 	width = pen_x;
 	height = pen_y;
 
-	ArrayBuffer_s arraybuffer;
+	std::shared_ptr<ArrayBuffer> arraybuffer = std::make_shared<ArrayBuffer>();
 	arraybuffer->load_buffer(verticies);
 	arraybuffer->push_attribute(3);
 	arraybuffer->push_attribute(2);
 
-	IndexBuffer_s indexbuffer;
+	std::shared_ptr<IndexBuffer> indexbuffer = std::make_shared<IndexBuffer>();
 	indexbuffer->load_buffer(indicies, 3);
 
-	Mesh_s text_mesh(arraybuffer, indexbuffer);
+	std::shared_ptr<Mesh> text_mesh = std::make_shared<Mesh>(arraybuffer, indexbuffer);
 	graphic->load_model(text_mesh);
 	_graphic_needs_update = false;
 }

@@ -604,7 +604,7 @@ std::shared_ptr<Font> Gui2::font;
 Gui2::Gui2(Frame& frame) : 
 	frame_ref(frame)
 {
-	gui_program = default_program::gui_program_s().obj;
+	gui_program = default_program::gui_program_s();
 	font = std::make_shared<Font>("Fonts\\Roboto-Regular.ttf", 16);
 }
 
@@ -646,12 +646,12 @@ _widget_info& Gui2::box(unsigned int id, vec2 position, vec2 size, Style style, 
 	
 	AABB2 aabb(position, size);
 	if (widget_graphic_table.find(id) == widget_graphic_table.end()) {
-		widget_graphic_table[id] = std::make_unique<Graphic>();
-		widget_graphic_table[id]->load_model(Mesh_s());
+		widget_graphic_table[id] = std::make_shared<Graphic>();
+		widget_graphic_table[id]->load_model(std::make_shared<Mesh>());
 		widget_graphic_table[id]->load_program(Gui2::gui_program);
 	}
 
-	std::unique_ptr<Graphic>& graphic = widget_graphic_table[id];
+	std::shared_ptr<Graphic>& graphic = widget_graphic_table[id];
 
 	graphic->mesh->load_model(aabb.generate_model());
 
@@ -701,10 +701,10 @@ _widget_info& Gui2::box(unsigned int id, vec2 position, vec2 size, Style style, 
 
 	if (text_string != U"") {
 		if (widget_text_table.find(id) == widget_text_table.end()) {
-			widget_text_table[id] = std::make_unique<Text>(font);
+			widget_text_table[id] = std::make_shared<Text>(font);
 			widget_text_table[id]->set_text(text_string);
 		}
-		std::unique_ptr<Text>& text = widget_text_table[id];
+		std::shared_ptr<Text>& text = widget_text_table[id];
 		
 		if (text->get_text32() != text_string) text->set_text(text_string);
 

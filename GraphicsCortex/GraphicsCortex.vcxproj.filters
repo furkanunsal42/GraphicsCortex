@@ -177,9 +177,6 @@
     <ClCompile Include="API\Gui2.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
-    <ClCompile Include="Mains\GuiMain2.cpp">
-      <Filter>Kaynak Dosyalar</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\FlatColor.vert" />
@@ -572,9 +569,6 @@
     <ClInclude Include="API\Mesh.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
-    <ClInclude Include="API\SharedPtr.h">
-      <Filter>Üst Bilgi Dosyaları</Filter>
-    </ClInclude>
     <ClInclude Include="Dependencies\physx\snippetcommon\SnippetVehicleWheelQueryResult.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
@@ -641,30 +635,6 @@
     <ClInclude Include="API\CortexMath.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
-    <ClInclude Include="API\SharedPtr_Materials.h">
-      <Filter>Üst Bilgi Dosyaları</Filter>
-    </ClInclude>
-    <ClInclude Include="API\SharedPtr_Program.h">
-      <Filter>Üst Bilgi Dosyaları</Filter>
-    </ClInclude>
-    <ClInclude Include="API\SharedPtr_Buffers.h">
-      <Filter>Üst Bilgi Dosyaları</Filter>
-    </ClInclude>
-    <ClInclude Include="API\SharedPtr_Lights.h">
-      <Filter>Üst Bilgi Dosyaları</Filter>
-    </ClInclude>
-    <ClInclude Include="API\SharedPtr_Mesh.h">
-      <Filter>Üst Bilgi Dosyaları</Filter>
-    </ClInclude>
-    <ClInclude Include="API\SharedPtr_Graphic.h">
-      <Filter>Üst Bilgi Dosyaları</Filter>
-    </ClInclude>
-    <ClInclude Include="API\SharedPtr_Object.h">
-      <Filter>Üst Bilgi Dosyaları</Filter>
-    </ClInclude>
-    <ClInclude Include="API\SharedPtr_PhysicsObject.h">
-      <Filter>Üst Bilgi Dosyaları</Filter>
-    </ClInclude>
     <ClInclude Include="API\_templated_overloads.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
@@ -674,16 +644,7 @@
     <ClInclude Include="API\Font.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
-    <ClInclude Include="API\SharedPtr_Font.h">
-      <Filter>Üst Bilgi Dosyaları</Filter>
-    </ClInclude>
     <ClInclude Include="API\Text.h">
-      <Filter>Üst Bilgi Dosyaları</Filter>
-    </ClInclude>
-    <ClInclude Include="API\SharedPtr_FrameBuffer.h">
-      <Filter>Üst Bilgi Dosyaları</Filter>
-    </ClInclude>
-    <ClInclude Include="API\SharedPtr_Camera.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
     <ClInclude Include="API\UniformUpdater.h">

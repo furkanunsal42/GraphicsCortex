@@ -7,22 +7,22 @@
 
 class RenderPipeline {
 public:
-	std::unordered_map<std::string, FrameBuffer_s> framebuffers;
-	std::unordered_map<std::string, Graphic_s> graphics;
-	std::unordered_map<std::string, Program_s> programs;
-	std::unordered_map<std::string, AmbiantLight_s> ambiant_ligths;
-	std::unordered_map<std::string, DirectionalLight_s> directional_ligths;
-	std::unordered_map<std::string, PointLight_s> point_ligths;
-	std::unordered_map<std::string, SpotLight_s> spot_ligths;
-	std::unordered_map<std::string, Camera_s> cameras;
-	std::unordered_map<std::string, Graphic_s> deattached_graphics;
+	std::unordered_map<std::string, std::shared_ptr<FrameBuffer>> framebuffers;
+	std::unordered_map<std::string, std::shared_ptr<Graphic>> graphics;
+	std::unordered_map<std::string, std::shared_ptr<Program>> programs;
+	std::unordered_map<std::string, std::shared_ptr<AmbiantLight>> ambiant_ligths;
+	std::unordered_map<std::string, std::shared_ptr<DirectionalLight>> directional_ligths;
+	std::unordered_map<std::string, std::shared_ptr<PointLight>> point_ligths;
+	std::unordered_map<std::string, std::shared_ptr<SpotLight>> spot_ligths;
+	std::unordered_map<std::string, std::shared_ptr<Camera>> cameras;
+	std::unordered_map<std::string, std::shared_ptr<Graphic>> deattached_graphics;
 
-	std::unordered_map<std::string, UniformUpdater<Graphic_s>> graphic_uniforms;
-	std::unordered_map<std::string, UniformUpdater<AmbiantLight_s>> ambiantlight_uniforms;
-	std::unordered_map<std::string, UniformUpdater<DirectionalLight_s>> directionallight_uniforms;
-	std::unordered_map<std::string, UniformUpdater<PointLight_s>> pointlight_uniforms;
-	std::unordered_map<std::string, UniformUpdater<SpotLight_s>> spotlight_uniforms;
-	std::unordered_map<std::string, UniformUpdater<FrameBuffer_s>> framebuffer_uniforms;
+	std::unordered_map<std::string, UniformUpdater<std::shared_ptr<Graphic>>> graphic_uniforms;
+	std::unordered_map<std::string, UniformUpdater<std::shared_ptr<AmbiantLight>>> ambiantlight_uniforms;
+	std::unordered_map<std::string, UniformUpdater<std::shared_ptr<DirectionalLight>>> directionallight_uniforms;
+	std::unordered_map<std::string, UniformUpdater<std::shared_ptr<PointLight>>> pointlight_uniforms;
+	std::unordered_map<std::string, UniformUpdater<std::shared_ptr<SpotLight>>> spotlight_uniforms;
+	std::unordered_map<std::string, UniformUpdater<std::shared_ptr<FrameBuffer>>> framebuffer_uniforms;
 
 	// uniform updating
 	void activate_uniforms_graphic(const std::string& uniform_updater_name);

@@ -1,10 +1,10 @@
 #include "Mesh.h"
 
 Mesh::Mesh() : 
-	array_buffer(ArrayBuffer_s().obj), index_buffer(IndexBuffer_s().obj) { }
+	array_buffer(std::make_shared<ArrayBuffer>()), index_buffer(std::make_shared<IndexBuffer>()) { }
 
-Mesh::Mesh(ArrayBuffer_s array_buffer, IndexBuffer_s index_buffer) :
-	array_buffer(array_buffer.obj), index_buffer(index_buffer.obj) {}
+Mesh::Mesh(std::shared_ptr<ArrayBuffer> array_buffer, std::shared_ptr<IndexBuffer> index_buffer) :
+	array_buffer(array_buffer), index_buffer(index_buffer) {}
 
 Mesh::Mesh(const Model& model) :
 	Mesh()

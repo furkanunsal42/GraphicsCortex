@@ -85,14 +85,25 @@ class ScenePanel : public UILayer {
 
 	}
 
-	std::unordered_set<std::shared_ptr<void>> selected_pointers;
+	enum selectable_object_type {
+		graphic,
+		ambiant_light,
+		directional_light,
+		point_light,
+		spot_light,
+		object,
+		vehicle,
+		text,
+	};
+
+	std::unordered_map<std::shared_ptr<void>, selectable_object_type> selected_pointers;
 
 	void on_gui_render() {
 		Editor& editor = Editor::get();
 			
 		_widget_info& layout_info = editor.gui->layout("layout_panel_layout", position, size-vec2(20, 50), layout_style);
-		bool clicked_on_panel = layout_info.is_hovering && editor.frame->get_mouse_state(Frame::CursorState::LeftPressed);
-		bool right_clicked_on_panel = layout_info.is_hovering && editor.frame->get_mouse_state(Frame::CursorState::RightPressed);
+		bool clicked_on_panel = layout_info.is_hovering && editor.frame->get_mouse_state(Frame::CursorState::LeftReleased);
+		bool right_clicked_on_panel = layout_info.is_hovering && editor.frame->get_mouse_state(Frame::CursorState::RightReleased);
 
 		editor.gui->content("layout_panel_name", vec2(size.x-20, 35), header_style, U"Scene Panel");
 		editor.gui->layout_content("layout_panel_body", size-vec2(20, 50) - vec2(10, 10), body_style);
@@ -102,25 +113,27 @@ class ScenePanel : public UILayer {
 		int i = 0;
 		for (std::shared_ptr<Graphic> graphic : editor.get_current_scene()->_graphics) {
 			Style& style_to_use = (selected_pointers.find(graphic) != selected_pointers.end()) ? selected_entry_style : entry_style;
-			if (editor.gui->content("scene_panel_graphic_button" + i++, vec2(body_size.x, row_height), style_to_use, U"Graphic").is_hovering && editor.frame->get_mouse_state(Frame::CursorState::LeftPressed)) {
+			if (editor.gui->content("scene_panel_graphic_button" + i++, vec2(body_size.x, row_height), style_to_use, U"Graphic").is_hovering && editor.frame->get_mouse_state(Frame::CursorState::LeftReleased)) {
 				if (!editor.frame->get_key_press(Frame::Key::LEFT_CONTROL)) selected_pointers.clear();
-				selected_pointers.insert(graphic);
+				selected_pointers.insert(std::pair(graphic, selectable_object_type::graphic));
 				clicked_on_button = true;
 			}
 		}
 
 		i = 0;
 		for (std::shared_ptr<Light> light : editor.get_current_scene()->_lights) {
-			Style& style_to_use = (selected_pointers.find(light) != selected_pointers.end()) ? selected_entry_style : entry_style;
 			std::u32string name = U"Light";
-			if (dynamic_cast<AmbiantLight*>(light.get())) name = U"AmbiantLight";
-			if (dynamic_cast<DirectionalLight*>(light.get())) name = U"DirectionalLight";
-			if (dynamic_cast<PointLight*>(light.get())) name = U"PointLight";
-			if (dynamic_cast<SpotLight*>(light.get())) name = U"SpotLight";
+			selectable_object_type object_type;
+			if (dynamic_cast<AmbiantLight*>(light.get())) { name = U"AmbiantLight"; object_type = selectable_object_type::ambiant_light; }
+			if (dynamic_cast<DirectionalLight*>(light.get())) { name = U"DirectionalLight"; object_type = selectable_object_type::directional_light; };
+			if (dynamic_cast<PointLight*>(light.get())) { name = U"PointLight"; object_type = selectable_object_type::point_light; };
+			if (dynamic_cast<SpotLight*>(light.get())) { name = U"SpotLight"; object_type = selectable_object_type::spot_light; };
+			
+			Style& style_to_use = (selected_pointers.find(light) != selected_pointers.end()) ? selected_entry_style : entry_style;
 
-			if (editor.gui->content("scene_panel_light_button" + i++, vec2(body_size.x, row_height), style_to_use, name).is_hovering && editor.frame->get_mouse_state(Frame::CursorState::LeftPressed)) {
+			if (editor.gui->content("scene_panel_light_button" + i++, vec2(body_size.x, row_height), style_to_use, name).is_hovering && editor.frame->get_mouse_state(Frame::CursorState::LeftReleased)) {
 				if (!editor.frame->get_key_press(Frame::Key::LEFT_CONTROL)) selected_pointers.clear();
-				selected_pointers.insert(light);
+				selected_pointers.insert(std::pair(light, object_type));
 				clicked_on_button = true;
 			}
 		}
@@ -128,9 +141,9 @@ class ScenePanel : public UILayer {
 		i = 0;
 		for (std::shared_ptr<Object> object : editor.get_current_scene()->_objects) {
 			Style& style_to_use = (selected_pointers.find(object) != selected_pointers.end()) ? selected_entry_style : entry_style;
-			if (editor.gui->content("scene_panel_object_button" + i++, vec2(body_size.x, row_height), style_to_use, U"Object").is_hovering && editor.frame->get_mouse_state(Frame::CursorState::LeftPressed)) {
+			if (editor.gui->content("scene_panel_object_button" + i++, vec2(body_size.x, row_height), style_to_use, U"Object").is_hovering && editor.frame->get_mouse_state(Frame::CursorState::LeftReleased)) {
 				if (!editor.frame->get_key_press(Frame::Key::LEFT_CONTROL)) selected_pointers.clear();
-				selected_pointers.insert(object);
+				selected_pointers.insert(std::pair(object, selectable_object_type::object));
 				clicked_on_button = true;
 			}
 		}
@@ -138,9 +151,9 @@ class ScenePanel : public UILayer {
 		i = 0;
 		for (std::shared_ptr<Vehicle> vehicle : editor.get_current_scene()->_vehicles) {
 			Style& style_to_use = (selected_pointers.find(vehicle) != selected_pointers.end()) ? selected_entry_style : entry_style;
-			if (editor.gui->content("scene_panel_vehicle" + i++, vec2(body_size.x, row_height), style_to_use, U"Vehicle").is_hovering && editor.frame->get_mouse_state(Frame::CursorState::LeftPressed)) {
+			if (editor.gui->content("scene_panel_vehicle" + i++, vec2(body_size.x, row_height), style_to_use, U"Vehicle").is_hovering && editor.frame->get_mouse_state(Frame::CursorState::LeftReleased)) {
 				if (!editor.frame->get_key_press(Frame::Key::LEFT_CONTROL)) selected_pointers.clear();
-				selected_pointers.insert(vehicle);
+				selected_pointers.insert(std::pair(vehicle, selectable_object_type::vehicle));
 				clicked_on_button = true;
 			}
 		}
@@ -148,9 +161,9 @@ class ScenePanel : public UILayer {
 		i = 0;
 		for (std::shared_ptr<Text> text : editor.get_current_scene()->_texts) {
 			Style& style_to_use = (selected_pointers.find(text) != selected_pointers.end()) ? selected_entry_style : entry_style;
-			if (editor.gui->content("scene_panel_text_button" + i++, vec2(body_size.x, row_height), style_to_use, U"Text").is_hovering && editor.frame->get_mouse_state(Frame::CursorState::LeftPressed)) {
+			if (editor.gui->content("scene_panel_text_button" + i++, vec2(body_size.x, row_height), style_to_use, U"Text").is_hovering && editor.frame->get_mouse_state(Frame::CursorState::LeftReleased)) {
 				if (!editor.frame->get_key_press(Frame::Key::LEFT_CONTROL)) selected_pointers.clear();
-				selected_pointers.insert(text);
+				selected_pointers.insert(std::pair(text, selectable_object_type::text));
 				clicked_on_button = true;
 			}
 		}
@@ -172,25 +185,62 @@ class ScenePanel : public UILayer {
 			editor.gui->content("scene_panel_add_menu_header_name", vec2(100, 25), add_menu_header_style, U"Create New");
 			editor.gui->layout_content_end();
 
-			editor.gui->layout_content("scene_panel_add_menu_body", add_menu_size, add_menu_body_style, Layout::Horizional);
+			editor.gui->layout_content("scene_panel_add_menu_body", add_menu_size, add_menu_body_style, Layout::Vertical);
 			vec2 body_size = add_menu_size;
 
 			_widget_info info = editor.gui->content("scene_panel_add_menu_graphic", vec2(body_size.x, row_height), add_menu_entry_style, U"Graphic");
-			if (info.is_hovering && editor.frame->get_mouse_state(Frame::LeftPressed)) {
-				Program_s program = default_program::solid_program_s();
-				UnorderedMaterial_s material(2);
+			if (info.is_hovering && editor.frame->get_mouse_state(Frame::LeftReleased)) {
+				std::shared_ptr<Program> program = default_program::solid_program_s();
+				std::shared_ptr<UnorderedMaterial> material = std::make_shared<UnorderedMaterial>(2);
 				material->set_texture("Images/GoldBlock.png", 4, 0, UnorderedMaterial::COLOR);
 				material->set_texture("Images/full_white.png", 4, 1, UnorderedMaterial::SPECULAR);
 
-				Graphic_s graphic(default_geometry::cube());
+				std::shared_ptr<Graphic> graphic = std::make_shared<Graphic>(default_geometry::cube());
 				graphic->load_program(program);
 				graphic->load_material(material);
-				editor.get_current_scene()->add_graphic(graphic);
+				editor.get_current_scene()->add(graphic);
+			}
+
+			info = editor.gui->content("scene_panel_add_menu_ambiant_ligth", vec2(body_size.x, row_height), add_menu_entry_style, U"AmbiantLight");
+			if (info.is_hovering && editor.frame->get_mouse_state(Frame::LeftReleased)) {
+				std::shared_ptr<AmbiantLight> ambiant_light = std::make_shared<AmbiantLight>(glm::vec3(0.1f));
+				editor.get_current_scene()->add(ambiant_light);
+			}
+
+			info = editor.gui->content("scene_panel_add_menu_directional_ligth", vec2(body_size.x, row_height), add_menu_entry_style, U"DirectionalLight");
+			if (info.is_hovering && editor.frame->get_mouse_state(Frame::LeftReleased)) {
+				std::shared_ptr<DirectionalLight> directional_light = std::make_shared<DirectionalLight>(glm::vec3(0, 0, 0), glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(0.8f));
+				editor.get_current_scene()->add(directional_light);
+			}
+
+			info = editor.gui->content("scene_panel_add_menu_point_ligth", vec2(body_size.x, row_height), add_menu_entry_style, U"PointLight");
+			if (info.is_hovering && editor.frame->get_mouse_state(Frame::LeftReleased)) {
+				std::shared_ptr<PointLight> point_light = std::make_shared<PointLight>(glm::vec3(0, 0, 0), glm::vec3(1.0f, 1.0f, 1.0f), 0.3f, 0.2f, 0.0f);
+				editor.get_current_scene()->add(point_light);
+			}
+
+			info = editor.gui->content("scene_panel_add_menu_spot_ligth", vec2(body_size.x, row_height), add_menu_entry_style, U"SpotLight");
+			if (info.is_hovering && editor.frame->get_mouse_state(Frame::LeftReleased)) {
+				std::shared_ptr<SpotLight> spot = std::make_shared<SpotLight>(glm::vec3(-2.0f, -1.0f, -2.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1.0f, 1.0f, 1.0f), 0.3f, 0.2f, 0.0f, 30);
+				editor.get_current_scene()->add(spot);
 			}
 
 			editor.gui->layout_end();
 		}
 		
+		if (editor.frame->get_key_press(Frame::DELETE)) {
+			for (std::pair<std::shared_ptr<void>, selectable_object_type> selected_pointer : selected_pointers) {
+				if (selected_pointer.second == graphic)				editor.get_current_scene()->remove(std::static_pointer_cast<Graphic>(selected_pointer.first));
+				if (selected_pointer.second == ambiant_light)		editor.get_current_scene()->remove(std::static_pointer_cast<AmbiantLight>(selected_pointer.first));
+				if (selected_pointer.second == directional_light)	editor.get_current_scene()->remove(std::static_pointer_cast<DirectionalLight>(selected_pointer.first));
+				if (selected_pointer.second == point_light)			editor.get_current_scene()->remove(std::static_pointer_cast<PointLight>(selected_pointer.first));
+				if (selected_pointer.second == spot_light)			editor.get_current_scene()->remove(std::static_pointer_cast<SpotLight>(selected_pointer.first));
+				if (selected_pointer.second == object)				editor.get_current_scene()->remove(std::static_pointer_cast<Object>(selected_pointer.first));
+				if (selected_pointer.second == vehicle)				editor.get_current_scene()->remove(std::static_pointer_cast<Vehicle>(selected_pointer.first));
+				if (selected_pointer.second == text)				editor.get_current_scene()->remove(std::static_pointer_cast<Text>(selected_pointer.first));
+			}
+		}
+
 		if (clicked_on_panel)
 			add_menu_enabled = false;
 		if (clicked_on_panel && !clicked_on_button)

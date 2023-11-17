@@ -47,7 +47,7 @@ public:
 	void bind();
 	void unbind();
 
-	void set_program(Program_s renderer);
+	void set_program(std::shared_ptr<Program> renderer);
 	void set_update_queue(uniform_update_queue& update_queue);
 	void set_update_queue(uniform_update_queue&& update_queue);
 

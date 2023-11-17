@@ -1,17 +1,17 @@
 #pragma once
 
-#include "SharedPtr_Program.h"
-#include "SharedPtr_Font.h"
+#include "ShaderCompiler.h"
+#include "Font.h"
 
 class Text : public UpdatesDefaultUniforms {
 public:
-	Text(Font_s font, const std::string& text = u8"");
-	Text(Font_s font, const std::u16string& text);
-	Text(Font_s font, const std::u32string& text);
+	Text(std::shared_ptr<Font> font, const std::string& text = u8"");
+	Text(std::shared_ptr<Font> font, const std::u16string& text);
+	Text(std::shared_ptr<Font> font, const std::u32string& text);
 
-	Text(Font_s font, Program_s custom_renderer, const std::string& text = u8"");
-	Text(Font_s font, Program_s custom_renderer, const std::u16string& text);
-	Text(Font_s font, Program_s custom_renderer, const std::u32string& text);
+	Text(std::shared_ptr<Font> font, std::shared_ptr<Program> custom_renderer, const std::string& text = u8"");
+	Text(std::shared_ptr<Font> font, std::shared_ptr<Program> custom_renderer, const std::u16string& text);
+	Text(std::shared_ptr<Font> font, std::shared_ptr<Program> custom_renderer, const std::u32string& text);
 
 	~Text();
 
@@ -45,7 +45,7 @@ public:
 
 	void update_default_uniforms(Program& program);
 
-	Graphic_s graphic;
+	std::shared_ptr<Graphic> graphic = std::make_shared<Graphic>();
 
 private:
 
@@ -68,12 +68,12 @@ private:
 	float _text_max_width = 0;
 	bool _wait_for_words = true;
 	
-	Font_s _font;
+	std::shared_ptr<Font> _font;
 	vec4 _color = vec4(0.5, 0.5, 0.5, 1);
 
 	bool _custom_renderer_loaded = false;
 
-	static Program_s _default_text_renderer;
+	static std::shared_ptr<Program> _default_text_renderer;
 	static bool _default_renderer_initialized;
 	static void _initialize_default_renderer();
 

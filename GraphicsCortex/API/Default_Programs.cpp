@@ -1,6 +1,5 @@
 #include "Default_Programs.h"
 
-
 namespace default_program {
 
 	Program solid_program() {
@@ -44,44 +43,44 @@ namespace default_program {
 		return renderer;
 	}
 
-	Program_s solid_program_s() {
+	std::shared_ptr<Program> solid_program_s() {
 		Shader default_shader("Shaders/Solid.vert", "Shaders/Solid.geom", "Shaders/Solid.frag");
-		Program_s renderer(default_shader);
+		std::shared_ptr<Program> renderer = std::make_shared<Program>(default_shader);
 		return renderer;
 	}
-	Program_s solid_program_multitexture_s() {
+	std::shared_ptr<Program> solid_program_multitexture_s() {
 		Shader default_shader("Shaders/Solid_multitexture.vert", "Shaders/Solid_multitexture.geom", "Shaders/Solid_multitexture.frag");
-		Program_s renderer(default_shader);
+		std::shared_ptr<Program> renderer = std::make_shared<Program>(default_shader);
 		return renderer;
 	}
-	Program_s flatcolor_program_s() {
+	std::shared_ptr<Program> flatcolor_program_s() {
 		Shader default_shader("Shaders/FlatColor.vert", "Shaders/FlatColor.frag");
-		Program_s renderer(default_shader);
+		std::shared_ptr<Program> renderer = std::make_shared<Program>(default_shader);
 		return renderer;
 	}
-	Program_s framebuffer_program_s() {
+	std::shared_ptr<Program> framebuffer_program_s() {
 		Shader default_shader("Shaders/FrameBuffer.vert", "Shaders/FrameBuffer.frag");
-		Program_s renderer(default_shader);
+		std::shared_ptr<Program> renderer = std::make_shared<Program>(default_shader);
 		return renderer;
 	}
-	Program_s cubemap_program_s() {
+	std::shared_ptr<Program> cubemap_program_s() {
 		Shader default_shader("Shaders/CubeMap.vert", "Shaders/CubeMap.frag");
-		Program_s renderer(default_shader);
+		std::shared_ptr<Program> renderer = std::make_shared<Program>(default_shader);
 		return renderer;
 	}
-	Program_s gui_program_s() {
+	std::shared_ptr<Program> gui_program_s() {
 		Shader default_shader("Shaders/Gui.vert", "Shaders/Gui.frag");
-		Program_s renderer(default_shader);
+		std::shared_ptr<Program> renderer = std::make_shared<Program>(default_shader);
 		return renderer;
 	}
-	Program_s text_program_s() {
+	std::shared_ptr<Program> text_program_s() {
 		Shader default_shader("Shaders/Text.vert", "Shaders/Text.frag");
-		Program_s renderer(default_shader);
+		std::shared_ptr<Program> renderer = std::make_shared<Program>(default_shader);
 		return renderer;
 	}
-	Program_s depth_program_s() {
+	std::shared_ptr<Program> depth_program_s() {
 		Shader default_shader("Shaders/Depth.vert", "Shaders/Depth.frag");
-		Program_s renderer(default_shader);
+		std::shared_ptr<Program> renderer = std::make_shared<Program>(default_shader);
 		return renderer;
 	}
 
@@ -91,11 +90,11 @@ namespace default_program {
 		pipeline.programs["depth"] = depth_program_s();
 		pipeline.programs["framebuffer"] = framebuffer_program_s();
 
-		FrameBuffer_s shadowmap(frame.window_width * 8, frame.window_height * 8);
+		std::shared_ptr<FrameBuffer> shadowmap = std::make_shared<FrameBuffer>(frame.window_width * 8, frame.window_height * 8);
 
 		pipeline.framebuffers["shadowmap"] = shadowmap;
 
-		pipeline.graphic_uniforms["solid"] = [](UniformFunction_Graphic_s) {
+		pipeline.graphic_uniforms["solid"] = [](UniformFunction_Graphic) {
 			program->update_uniform("model", graphic->model_matrix);
 			program->update_uniform("view", camera->view_matrix);
 			program->update_uniform("projection", camera->projection_matrix);
@@ -107,12 +106,12 @@ namespace default_program {
 			program->update_uniform("shadow_map", 2);
 		};
 
-		pipeline.ambiantlight_uniforms["solid"] = [](UniformFunction_AmbiantLight_s) {
+		pipeline.ambiantlight_uniforms["solid"] = [](UniformFunction_AmbiantLight) {
 			program->update_uniform("a_lights[" + std::to_string(object_index) + "].color", ambiant_light->color);
 			program->update_uniform("a_lights_count", object_index + 1);
 		};
 
-		pipeline.directionallight_uniforms["solid"] = [](UniformFunction_DirectionalLight_s) {
+		pipeline.directionallight_uniforms["solid"] = [](UniformFunction_DirectionalLight) {
 			program->update_uniform("d_lights[" + std::to_string(object_index) + "].color", directional_light->color);
 			program->update_uniform("d_lights[" + std::to_string(object_index) + "].direction", directional_light->direction);
 			program->update_uniform("d_lights[" + std::to_string(object_index) + "].view_matrix", directional_light->light_view_matrix);
@@ -120,10 +119,10 @@ namespace default_program {
 			program->update_uniform("d_lights_count", object_index + 1);
 		};
 
-		pipeline.graphic_uniforms["shadowmap"] = [](UniformFunction_Graphic_s) {
+		pipeline.graphic_uniforms["shadowmap"] = [](UniformFunction_Graphic) {
 			program->update_uniform("model", graphic->model_matrix);
 		};
-		pipeline.directionallight_uniforms["shadowmap"] = [](UniformFunction_DirectionalLight_s) {
+		pipeline.directionallight_uniforms["shadowmap"] = [](UniformFunction_DirectionalLight) {
 			program->update_uniform("view", directional_light->light_view_matrix);
 			program->update_uniform("projection", directional_light->light_projection_matrix);
 		};
@@ -163,11 +162,11 @@ namespace default_program {
 		pipeline.programs["depth"] = depth_program_s();
 		pipeline.programs["framebuffer"] = framebuffer_program_s();
 
-		FrameBuffer_s shadowmap(frame.window_width * 8, frame.window_height * 8);
+		std::shared_ptr<FrameBuffer> shadowmap = std::make_shared<FrameBuffer>(frame.window_width * 8, frame.window_height * 8);
 
 		pipeline.framebuffers["shadowmap"] = shadowmap;
 
-		pipeline.graphic_uniforms["solid"] = [](UniformFunction_Graphic_s) {
+		pipeline.graphic_uniforms["solid"] = [](UniformFunction_Graphic) {
 			program->update_uniform("model", graphic->model_matrix);
 			program->update_uniform("view", camera->view_matrix);
 			program->update_uniform("projection", camera->projection_matrix);
@@ -178,12 +177,12 @@ namespace default_program {
 			program->update_uniform("shadow_map", 2);
 		};
 
-		pipeline.ambiantlight_uniforms["solid"] = [](UniformFunction_AmbiantLight_s) {
+		pipeline.ambiantlight_uniforms["solid"] = [](UniformFunction_AmbiantLight) {
 			program->update_uniform("a_lights[" + std::to_string(object_index) + "].color", ambiant_light->color);
 			program->update_uniform("a_lights_count", object_index + 1);
 		};
 
-		pipeline.directionallight_uniforms["solid"] = [](UniformFunction_DirectionalLight_s) {
+		pipeline.directionallight_uniforms["solid"] = [](UniformFunction_DirectionalLight) {
 			program->update_uniform("d_lights[" + std::to_string(object_index) + "].color", directional_light->color);
 			program->update_uniform("d_lights[" + std::to_string(object_index) + "].direction", directional_light->direction);
 			program->update_uniform("d_lights[" + std::to_string(object_index) + "].view_matrix", directional_light->light_view_matrix);
@@ -191,10 +190,10 @@ namespace default_program {
 			program->update_uniform("d_lights_count", object_index + 1);
 		};
 
-		pipeline.graphic_uniforms["shadowmap"] = [](UniformFunction_Graphic_s) {
+		pipeline.graphic_uniforms["shadowmap"] = [](UniformFunction_Graphic) {
 			program->update_uniform("model", graphic->model_matrix);
 		};
-		pipeline.directionallight_uniforms["shadowmap"] = [](UniformFunction_DirectionalLight_s) {
+		pipeline.directionallight_uniforms["shadowmap"] = [](UniformFunction_DirectionalLight) {
 			program->update_uniform("view", directional_light->light_view_matrix);
 			program->update_uniform("projection", directional_light->light_projection_matrix);
 		};
@@ -205,7 +204,7 @@ namespace default_program {
 			pipeline->reset_active_objects();
 
 			for (auto& d_light_pair : pipeline->directional_ligths) {
-				DirectionalLight_s& d_light = d_light_pair.second;
+				std::shared_ptr<DirectionalLight>& d_light = d_light_pair.second;
 				//d_light->position = pipeline->cameras[pipeline->get_active_camera_name()]->position;
 				//d_light->update_matricies();
 			}

@@ -4,7 +4,7 @@
 
 class RenderPipeline_MultiTextured : public RenderPipeline {
 public:
-	std::unordered_map<std::string, Graphic_s> multitextued_graphics;
+	std::unordered_map<std::string, std::shared_ptr<Graphic>> multitextued_graphics;
 	
 	void deattach_graphic(const std::string& graphic_name) {
 		auto graphic = graphics.find(graphic_name);
@@ -43,7 +43,7 @@ public:
 		{
 			auto graphic_iterator_attached = graphics.find(graphic_name);
 			if (graphic_iterator_attached != graphics.end()) {
-				Graphic_s& graphic = graphic_iterator_attached->second;
+				std::shared_ptr<Graphic>& graphic = graphic_iterator_attached->second;
 				graphic->update_matrix();
 				graphic_uniforms[_active_uniform_updater_name_graphic](graphic, programs[_active_name_program], cameras[_active_name_camera], 0);
 				graphic->draw(false);
@@ -53,7 +53,7 @@ public:
 		{
 			auto graphic_iterator_deattached = deattached_graphics.find(graphic_name);
 			if (graphic_iterator_deattached != deattached_graphics.end()) {
-				Graphic_s& graphic = graphic_iterator_deattached->second;
+				std::shared_ptr<Graphic>& graphic = graphic_iterator_deattached->second;
 				graphic->update_matrix();
 				graphic_uniforms[_active_uniform_updater_name_graphic](graphic, programs[_active_name_program], cameras[_active_name_camera], 0);
 				graphic->draw(false);
@@ -63,7 +63,7 @@ public:
 		{
 			auto graphic_iterator_multitextured = multitextued_graphics.find(graphic_name);
 			if (graphic_iterator_multitextured != multitextued_graphics.end()) {
-				Graphic_s& graphic = graphic_iterator_multitextured->second;
+				std::shared_ptr<Graphic>& graphic = graphic_iterator_multitextured->second;
 				graphic->update_matrix();
 				graphic_uniforms[_active_uniform_updater_name_graphic](graphic, programs[_active_name_program], cameras[_active_name_camera], 0);
 				graphic->draw(false);
@@ -77,7 +77,7 @@ public:
 
 		int object_index = 0;
 		for (auto& name_graphic_pair : multitextued_graphics) {
-			Graphic_s graphic = name_graphic_pair.second;
+			std::shared_ptr<Graphic> graphic = name_graphic_pair.second;
 			graphic->update_matrix();
 			graphic_uniforms[_active_uniform_updater_name_graphic](graphic, programs[_active_name_program], cameras[_active_name_camera], object_index++);
 			graphic->draw(false);

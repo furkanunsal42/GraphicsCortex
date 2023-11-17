@@ -14,10 +14,6 @@
 #include <vector>
 #include <type_traits>
 
-#include "SharedPtr_Lights.h"
-#include "SharedPtr_Object.h"
-#include "SharedPtr_Camera.h"
-
 class Text;
 class CubeMapTexture;
 
@@ -26,24 +22,34 @@ public:
 
 	Scene(const Frame& frame);
 
-	Camera_s camera;
+	std::shared_ptr<Camera> camera = std::make_shared<Camera>();
 	std::string model_uniform_name = "model";
 	std::string view_uniform_name = "view";
 	std::string projection_uniform_name = "projection";
 	glm::vec4 background_color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 
 	template<typename T>
-	std::enable_if_t<std::is_same<T, AmbiantLight_s>::value || std::is_same<T, DirectionalLight_s>::value || std::is_same<T, PointLight_s>::value || std::is_same<T, SpotLight_s>::value, void> 
-		add_light(T light)
+	std::enable_if_t<std::is_same<T, std::shared_ptr<AmbiantLight>>::value || std::is_same<T, std::shared_ptr<DirectionalLight>>::value || std::is_same<T, std::shared_ptr<PointLight>>::value || std::is_same<T, std::shared_ptr<SpotLight>>::value, void> 
+		add(T light)
 	{
-		_lights.push_back(light.obj);
+		_lights.push_back(light);
 	}
+	void add(std::shared_ptr<Graphic> graphic);
+	void add(std::shared_ptr<Object> object);
+	void add(std::shared_ptr<Vehicle> vehicle);
+	void add(std::shared_ptr<Text> text);
 
-	
-	void add_graphic(Graphic_s graphic);
-	void add_object(Object_s object);
-	void add_object(Vehicle_s vehicle);
-	void add_text(std::shared_ptr<Text> text);
+	template<typename T>
+	std::enable_if_t<std::is_same<T, std::shared_ptr<AmbiantLight>>::value || std::is_same<T, std::shared_ptr<DirectionalLight>>::value || std::is_same<T, std::shared_ptr<PointLight>>::value || std::is_same<T, std::shared_ptr<SpotLight>>::value, void>
+		remove(T light)
+	{
+		_lights.erase(std::find(_lights.begin(), _lights.end(), light));
+	}
+	void remove(std::shared_ptr<Graphic> graphic);
+	void remove(std::shared_ptr<Object> object);
+	void remove(std::shared_ptr<Vehicle> vehicle);
+	void remove(std::shared_ptr<Text> text);
+
 	void set_skybox(std::shared_ptr<CubeMapTexture> cubemap);
 
 	template<typename T>

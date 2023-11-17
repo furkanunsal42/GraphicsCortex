@@ -176,7 +176,7 @@ FrameBuffer::~FrameBuffer() {
 	release();
 }
 
-void FrameBuffer::load_program(Program_s program) {
+void FrameBuffer::load_program(std::shared_ptr<Program> program) {
 	this->program = program;
 	_is_program_loaded = true;
 }

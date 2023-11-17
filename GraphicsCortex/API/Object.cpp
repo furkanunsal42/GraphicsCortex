@@ -7,18 +7,18 @@ Object::Object(Graphic& graphic_representation, PhysicsObject& physics_represent
 
 void Object::sync_with_physics() {
 	physx::PxQuat physx_quat = physics.get_rotation();
-	graphics->rotation = glm::quat(physx_quat.w, physx_quat.x, physx_quat.y, physx_quat.z);
-	graphics->position.x = physics.get_position().x;
-	graphics->position.y = physics.get_position().y;
-	graphics->position.z = physics.get_position().z;
+	graphics.rotation = glm::quat(physx_quat.w, physx_quat.x, physx_quat.y, physx_quat.z);
+	graphics.position.x = physics.get_position().x;
+	graphics.position.y = physics.get_position().y;
+	graphics.position.z = physics.get_position().z;
 }
 
 void Object::set_position(glm::vec3 position){
-	graphics->set_position(position);
+	graphics.set_position(position);
 	physics.set_position(position);
 }
 void Object::set_rotation(glm::vec3 rotation){
-	graphics->set_rotation(rotation);
+	graphics.set_rotation(rotation);
 	physics.set_rotation(rotation);
 }
 
@@ -26,24 +26,24 @@ Vehicle::Vehicle() :
 	physics_representation(PhysicsVehicle()) {
 }
  
-void Vehicle::load_mesh_chassis_graphics(Mesh_s chassis) {
+void Vehicle::load_mesh_chassis_graphics(std::shared_ptr<Mesh> chassis) {
 	this->chassis->load_model(chassis);
 	chassis_graphic_initialized = true;
 }
 
-void Vehicle::load_mesh_left_wheel_graphics(Mesh_s left_wheel) {
+void Vehicle::load_mesh_left_wheel_graphics(std::shared_ptr<Mesh> left_wheel) {
 	this->wheels[FRONT_LEFT]->load_model(left_wheel);
 	this->wheels[REAR_LEFT]->load_model(left_wheel);
 	wheel_graphic_initialized = true;
 }
 
-void Vehicle::load_mesh_right_wheel_graphics(Mesh_s right_wheel) {
+void Vehicle::load_mesh_right_wheel_graphics(std::shared_ptr<Mesh> right_wheel) {
 	this->wheels[FRONT_RIGHT]->load_model(right_wheel);
 	this->wheels[REAR_RIGHT]->load_model(right_wheel);
 	wheel_graphic_initialized = true;
 }
 
-void Vehicle::load_mesh_all_graphics(Mesh_s chassis, Mesh_s left_wheel, Mesh_s right_wheel) {
+void Vehicle::load_mesh_all_graphics(std::shared_ptr<Mesh> chassis, std::shared_ptr<Mesh> left_wheel, std::shared_ptr<Mesh> right_wheel) {
 	load_mesh_chassis_graphics(chassis);
 	load_mesh_left_wheel_graphics(left_wheel);
 	load_mesh_right_wheel_graphics(right_wheel);
@@ -81,63 +81,63 @@ void Vehicle::load_model_all_physics(Model&& chassis, Model&& left_wheel, Model&
 	load_model_all_physics(chassis, left_wheel, right_wheel);
 }
 
-void Vehicle::load_material_chassis(Material_s chassis) {
+void Vehicle::load_material_chassis(std::shared_ptr<Material> chassis) {
 	this->chassis->load_material(chassis);
 }
-void Vehicle::load_material_left_wheel(Material_s left_wheel) {
+void Vehicle::load_material_left_wheel(std::shared_ptr<Material> left_wheel) {
 	this->wheels[FRONT_LEFT]->load_material(left_wheel);
 	this->wheels[REAR_LEFT]->load_material(left_wheel);
 }
-void Vehicle::load_material_right_wheel(Material_s right_wheel) {
+void Vehicle::load_material_right_wheel(std::shared_ptr<Material> right_wheel) {
 	this->wheels[FRONT_RIGHT]->load_material(right_wheel);
 	this->wheels[REAR_RIGHT]->load_material(right_wheel);
 }
-void Vehicle::load_material_all(Material_s chassis, Material_s left_wheel, Material_s right_wheel) {
+void Vehicle::load_material_all(std::shared_ptr<Material> chassis, std::shared_ptr<Material> left_wheel, std::shared_ptr<Material> right_wheel) {
 	load_material_chassis(chassis);
 	load_material_left_wheel(left_wheel);
 	load_material_right_wheel(right_wheel);
 }
-void Vehicle::load_material_all(Material_s all) {
+void Vehicle::load_material_all(std::shared_ptr<Material> all) {
 	load_material_all(all, all, all);
 }
 
-void Vehicle::load_material_chassis(UnorderedMaterial_s chassis) {
+void Vehicle::load_material_chassis(std::shared_ptr<UnorderedMaterial> chassis) {
 	this->chassis->load_material(chassis);
 }
-void Vehicle::load_material_left_wheel(UnorderedMaterial_s left_wheel) {
+void Vehicle::load_material_left_wheel(std::shared_ptr<UnorderedMaterial> left_wheel) {
 	this->wheels[FRONT_LEFT]->load_material(left_wheel);
 	this->wheels[REAR_LEFT]->load_material(left_wheel);
 }
-void Vehicle::load_material_right_wheel(UnorderedMaterial_s right_wheel) {
+void Vehicle::load_material_right_wheel(std::shared_ptr<UnorderedMaterial> right_wheel) {
 	this->wheels[FRONT_RIGHT]->load_material(right_wheel);
 	this->wheels[REAR_RIGHT]->load_material(right_wheel);
 }
-void Vehicle::load_material_all(UnorderedMaterial_s chassis, UnorderedMaterial_s left_wheel, UnorderedMaterial_s right_wheel) {
+void Vehicle::load_material_all(std::shared_ptr<UnorderedMaterial> chassis, std::shared_ptr<UnorderedMaterial> left_wheel, std::shared_ptr<UnorderedMaterial> right_wheel) {
 	load_material_chassis(chassis);
 	load_material_left_wheel(left_wheel);
 	load_material_right_wheel(right_wheel);
 }
-void Vehicle::load_material_all(UnorderedMaterial_s all) {
+void Vehicle::load_material_all(std::shared_ptr<UnorderedMaterial> all) {
 	load_material_all(all, all, all);
 }
 
-void Vehicle::load_program_chassis(Program_s chassis) {
+void Vehicle::load_program_chassis(std::shared_ptr<Program> chassis) {
 	this->chassis->load_program(chassis);
 }
-void Vehicle::load_program_left_wheel(Program_s left_wheel) {
+void Vehicle::load_program_left_wheel(std::shared_ptr<Program> left_wheel) {
 	this->wheels[FRONT_LEFT]->load_program(left_wheel);
 	this->wheels[REAR_LEFT]->load_program(left_wheel);
 }
-void Vehicle::load_program_right_wheel(Program_s right_wheel) {
+void Vehicle::load_program_right_wheel(std::shared_ptr<Program> right_wheel) {
 	this->wheels[FRONT_RIGHT]->load_program(right_wheel);
 	this->wheels[REAR_RIGHT]->load_program(right_wheel);
 }
-void Vehicle::load_program_all(Program_s chassis, Program_s left_wheel, Program_s right_wheel) {
+void Vehicle::load_program_all(std::shared_ptr<Program> chassis, std::shared_ptr<Program> left_wheel, std::shared_ptr<Program> right_wheel) {
 	load_program_chassis(chassis);
 	load_program_left_wheel(left_wheel);
 	load_program_right_wheel(right_wheel);
 }
-void Vehicle::load_program_all(Program_s all) {
+void Vehicle::load_program_all(std::shared_ptr<Program> all) {
 	load_program_chassis(all);
 	load_program_left_wheel(all);
 	load_program_right_wheel(all);
@@ -198,7 +198,7 @@ void Vehicle::sync_with_physics() {
 	chassis->position.y = global_position.y;
 	chassis->position.z = global_position.z;
 	
-	for (Graphic_s& wheel : wheels) {
+	for (std::shared_ptr<Graphic>& wheel : wheels) {
 		wheel->set_rotation(glm::quat(global_rotation.w, global_rotation.x, global_rotation.y, global_rotation.z));
 		wheel->set_position(glm::vec3(global_position.x, global_position.y, global_position.z));
 	}

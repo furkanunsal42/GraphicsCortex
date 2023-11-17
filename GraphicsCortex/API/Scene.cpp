@@ -21,26 +21,39 @@ Scene::Scene(const Frame& frame) {
 	camera->screen_height = frame.window_height;
 }
 
-void Scene::add_graphic(Graphic_s graphic) {
-	_graphics.push_back(graphic.obj);
+void Scene::add(std::shared_ptr<Graphic> graphic) {
+	_graphics.push_back(graphic);
 }
 
-void Scene::add_object(Object_s object) {
-	_objects.push_back(object.obj);
+void Scene::add(std::shared_ptr<Object> object) {
+	_objects.push_back(object);
 	PhysicsScene::get().add_actor(object->physics);
 }
 
-void Scene::add_object(Vehicle_s vehicle) {
-	_vehicles.push_back(vehicle.obj);
+void Scene::add(std::shared_ptr<Vehicle> vehicle) {
+	_vehicles.push_back(vehicle);
 	PhysicsScene::get().add_actor(vehicle->physics_representation);
 }
 
-void Scene::add_text(std::shared_ptr<Text> text) {
+void Scene::add(std::shared_ptr<Text> text) {
 	_texts.push_back(text);
 }
 
 void Scene::set_skybox(std::shared_ptr<CubeMapTexture> cubemap) {
 	skybox = cubemap;
+}
+
+void Scene::remove(std::shared_ptr<Graphic> graphic) {
+	_graphics.erase(std::find(_graphics.begin(), _graphics.end(), graphic));
+}
+void Scene::remove(std::shared_ptr<Object> object) {
+	_objects.erase(std::find(_objects.begin(), _objects.end(), object));
+}
+void Scene::remove(std::shared_ptr<Vehicle> vehicle) {
+	_vehicles.erase(std::find(_vehicles.begin(), _vehicles.end(), vehicle));
+}
+void Scene::remove(std::shared_ptr<Text> text) {
+	_texts.erase(std::find(_texts.begin(), _texts.end(), text));
 }
 
 void Scene::render(bool show_warnings) {
@@ -67,21 +80,21 @@ void Scene::render(bool show_warnings) {
 		graphic->draw(show_warnings);
 	}
 	for (std::shared_ptr<Object> object : _objects) {
-		object->graphics->update_matrix();
+		object->graphics.update_matrix();
 
-		object->graphics->update_default_uniforms(*object->graphics->renderer);
-		camera->update_default_uniforms(*object->graphics->renderer);
+		object->graphics.update_default_uniforms(*object->graphics.renderer);
+		camera->update_default_uniforms(*object->graphics.renderer);
 
-		object->graphics->update_uniforms();
+		object->graphics.update_uniforms();
 
 		AmbiantLight::temp_light_index = 0;
 		DirectionalLight::temp_light_index = 0;
 		PointLight::temp_light_index = 0;
 		SpotLight::temp_light_index = 0;
 		for (std::shared_ptr<Light> light : _lights)
-			light->update_default_uniforms(*object->graphics->renderer);
+			light->update_default_uniforms(*object->graphics.renderer);
 
-		object->graphics->draw(show_warnings);
+		object->graphics.draw(show_warnings);
 	}
 
 	for (std::shared_ptr<Vehicle> vehicle : _vehicles) {
@@ -104,7 +117,7 @@ void Scene::render(bool show_warnings) {
 		}
 		
 		if (vehicle->wheel_graphic_initialized) {
-			for (Graphic_s wheel : vehicle->wheels) {
+			for (std::shared_ptr<Graphic> wheel : vehicle->wheels) {
 				wheel->update_matrix();
 
 				wheel->update_default_uniforms(*wheel->renderer);

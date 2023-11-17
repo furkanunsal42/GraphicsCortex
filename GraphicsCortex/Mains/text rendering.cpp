@@ -4,9 +4,9 @@ int main() {
 
 	Frame frame(1920, 1080, "GraphicsCortex", 0, 0, true, true, false, false);
 	Scene scene(frame);
-	Gui gui(frame);
+	Gui2 gui(frame);
 
-	Font_s font("Fonts\\Roboto-Regular.ttf", 24);
+	std::shared_ptr<Font> font = std::make_shared<Font>("Fonts\\Roboto-Regular.ttf", 24);
 	std::shared_ptr<Text> text = std::make_shared<Text>(font);
 
 	text->set_text(U"\
@@ -21,7 +21,7 @@ int main() {
 
 	text->set_max_width(1);
 	text->set_scale(1);
-	scene.add_text(text);
+	scene.add(text);
 	text->graphic->set_position(glm::vec3(0, 0, -1));
 	text->set_color(vec4(242.0f / 255, 166.0f / 255, 0.0f / 255, 1.0f));
 	

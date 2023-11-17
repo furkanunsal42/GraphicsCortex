@@ -9,11 +9,11 @@
 Graphic::Graphic() :
 	model_matrix(glm::mat4(1.0f)) {}
 
-Graphic::Graphic(Mesh_s mesh, Material_s mat, Program_s program) : 
-	model_matrix(glm::mat4(1.0f)), material(mat.obj), renderer(program.obj), mesh(mesh.obj), use_unordered_material(false) {}
+Graphic::Graphic(std::shared_ptr<Mesh> mesh, std::shared_ptr<Material> mat, std::shared_ptr<Program> program) : 
+	model_matrix(glm::mat4(1.0f)), material(mat), renderer(program), mesh(mesh), use_unordered_material(false) {}
 
-Graphic::Graphic(Mesh_s mesh, UnorderedMaterial_s mat, Program_s program) :
-	model_matrix(glm::mat4(1.0f)), unordered_material(mat.obj), renderer(program.obj), mesh(mesh.obj), use_unordered_material(true) {}
+Graphic::Graphic(std::shared_ptr<Mesh> mesh, std::shared_ptr<UnorderedMaterial> mat, std::shared_ptr<Program> program) :
+	model_matrix(glm::mat4(1.0f)), unordered_material(mat), renderer(program), mesh(mesh), use_unordered_material(true) {}
 
 Graphic::Graphic(const std::vector<float>& verticies, int data_dim = 2)
 {	
@@ -32,18 +32,18 @@ Graphic::Graphic(const std::vector<float>& verticies, int data_dim = 2)
 		std::cout << data << " ";
 
 	// data dim is no longer passed in constructer
-	ArrayBuffer_s array_buffer(verticies/*, data dim*/);
-	IndexBuffer_s index_buffer(triangles, 3);
+	std::shared_ptr<ArrayBuffer> array_buffer = std::make_shared<ArrayBuffer>(verticies/*, data dim*/);
+	std::shared_ptr<IndexBuffer> index_buffer = std::make_shared<IndexBuffer>(triangles, 3);
 
-	this->mesh->array_buffer = array_buffer.obj;
-	this->mesh->index_buffer = index_buffer.obj;
+	this->mesh->array_buffer = array_buffer;
+	this->mesh->index_buffer = index_buffer;
 }
 
-Graphic::Graphic(Material_s material, Program_s renderer):
-	renderer(renderer.obj), material(material.obj), model_matrix(glm::mat4(1.0f)), use_unordered_material(false) {}
+Graphic::Graphic(std::shared_ptr<Material> material, std::shared_ptr<Program> renderer):
+	renderer(renderer), material(material), model_matrix(glm::mat4(1.0f)), use_unordered_material(false) {}
 
-Graphic::Graphic(UnorderedMaterial_s material, Program_s renderer) :
-	renderer(renderer.obj), unordered_material(material.obj), model_matrix(glm::mat4(1.0f)), use_unordered_material(true) {}
+Graphic::Graphic(std::shared_ptr<UnorderedMaterial> material, std::shared_ptr<Program> renderer) :
+	renderer(renderer), unordered_material(material), model_matrix(glm::mat4(1.0f)), use_unordered_material(true) {}
 
 void Graphic::draw(bool show_warnings) {
 	if (!_is_material_loaded) {
@@ -78,8 +78,8 @@ void Graphic::draw(bool show_warnings) {
 	}
 }
 
-void Graphic::load_model(Mesh_s mesh) {
-	this->mesh = mesh.obj;
+void Graphic::load_model(std::shared_ptr<Mesh> mesh) {
+	this->mesh = mesh;
 	_is_mesh_loaded = true;
 }
 
@@ -97,22 +97,22 @@ void Graphic::clear_mesh() {
 	_is_mesh_loaded = false;
 }
 
-void Graphic::load_material(UnorderedMaterial_s material) {
-	this->unordered_material = material.obj;
+void Graphic::load_material(std::shared_ptr<UnorderedMaterial> material) {
+	this->unordered_material = material;
 	this->material = nullptr;
 	use_unordered_material = true;
 	_is_material_loaded = true;
 }
 
-void Graphic::load_material(Material_s material) {
-	this->material = material.obj;
+void Graphic::load_material(std::shared_ptr<Material> material) {
+	this->material = material;
 	this->unordered_material = nullptr;
 	use_unordered_material = false;
 	_is_material_loaded = true;
 }
 
-void Graphic::load_program(Program_s program) {
-	this->renderer = program.obj;
+void Graphic::load_program(std::shared_ptr<Program> program) {
+	this->renderer = program;
 	_is_program_loaded = true;
 	_uniform_update_queue.link_program(renderer);
 	_uniform_update_queue.update_uniform_ids();

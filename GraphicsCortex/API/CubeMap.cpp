@@ -133,7 +133,7 @@ void CubeMapTexture::unbind() {
 	GLCall(glBindTexture(GL_TEXTURE_CUBE_MAP, 0));
 }
 
-void CubeMapTexture::set_program(Program_s renderer) {
+void CubeMapTexture::set_program(std::shared_ptr<Program> renderer) {
 	cube.load_program(renderer);
 }
 void CubeMapTexture::set_update_queue(uniform_update_queue& update_queue) {

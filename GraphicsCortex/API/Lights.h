@@ -7,7 +7,6 @@
 
 #include "ShaderCompiler.h"
 #include "UnifromQueue.h"
-#include "SharedPtr_Program.h"
 
 class Scene;
 

@@ -4,6 +4,9 @@ int main() {
 	Frame frame(1920, 1080, "Cortex GUI", 0, 0, true, true, true, false);
 	Gui2 gui(frame);
 
+
+	std::shared_ptr<Text> text = std::make_shared<Text>(Gui2::font, "Haha");
+
 	Style style1;
 	style1.color = vec3(1, 1, 1);
 	style1.border_color = vec3(0, 0, 0);
