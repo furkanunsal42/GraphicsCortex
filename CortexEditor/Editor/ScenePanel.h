@@ -85,17 +85,6 @@ class ScenePanel : public UILayer {
 
 	}
 
-	enum selectable_object_type {
-		graphic,
-		ambiant_light,
-		directional_light,
-		point_light,
-		spot_light,
-		object,
-		vehicle,
-		text,
-	};
-
 	std::vector<std::shared_ptr<Graphic>>			selected_graphics;
 	std::vector<std::shared_ptr<AmbiantLight>>		selected_ambiant_lights;
 	std::vector<std::shared_ptr<DirectionalLight>>	selected_directional_lights;
@@ -142,7 +131,6 @@ class ScenePanel : public UILayer {
 		for (std::shared_ptr<Light> light : editor.get_current_scene()->_lights) {
 			std::u32string name = U"Light";
 			Style style_to_use;
-			selectable_object_type object_type;
 			if (dynamic_cast<AmbiantLight*>(light.get())) { name = U"AmbiantLight"; style_to_use = (std::find(selected_ambiant_lights.begin(), selected_ambiant_lights.end(), light) != selected_ambiant_lights.end()) ? selected_entry_style : entry_style; }
 			if (dynamic_cast<DirectionalLight*>(light.get())) { name = U"DirectionalLight"; style_to_use = (std::find(selected_directional_lights.begin(), selected_directional_lights.end(), light) != selected_directional_lights.end()) ? selected_entry_style : entry_style; };
 			if (dynamic_cast<PointLight*>(light.get())) { name = U"PointLight"; style_to_use = (std::find(selected_point_lights.begin(), selected_point_lights.end(), light) != selected_point_lights.end()) ? selected_entry_style : entry_style; };
