@@ -41,10 +41,10 @@ int load_vehicle_scene() {
 		scene->add(map);
 
 		std::shared_ptr<DirectionalLight> sunlight = std::make_shared<DirectionalLight>(glm::vec3(0.0f, 20.0f, 0.0f), glm::vec3(1.0f, -1.0f, 1.0f), glm::vec3(0.4, 0.4, 0.4));
-		//scene->add(sunlight);
+		scene->add(sunlight);
 
 		std::shared_ptr<AmbiantLight> ambinace = std::make_shared<AmbiantLight>(glm::vec3(0.3f, 0.3f, 0.3f));
-		//scene->add(ambinace);
+		scene->add(ambinace);
 	}
 
 
