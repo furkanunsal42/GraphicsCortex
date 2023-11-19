@@ -101,7 +101,7 @@ PhysicsVehicle::PhysicsVehicle(InitValues init_type, int num_wheels) :
 }
 
 PhysicsVehicle::~PhysicsVehicle() {
-	if (chassisMaterial != nullptr) if(chassisMaterial->isReleasable()) chassisMaterial->release();
+	//if (chassisMaterial != nullptr) if(chassisMaterial->isReleasable()) chassisMaterial->release();
 	if (wheelMaterial != nullptr) if(wheelMaterial->isReleasable()) wheelMaterial->release();
 	return;
 	if (vehicle_actor != nullptr) if(vehicle_actor->isReleasable()) vehicle_actor->release();

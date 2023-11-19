@@ -74,6 +74,10 @@ void Scene::render(bool show_warnings) {
 		DirectionalLight::temp_light_index = 0;
 		PointLight::temp_light_index = 0;
 		SpotLight::temp_light_index = 0;
+		graphic->renderer->update_uniform("a_lights_count", 0);
+		graphic->renderer->update_uniform("d_lights_count", 0);
+		graphic->renderer->update_uniform("p_lights_count", 0);
+		graphic->renderer->update_uniform("s_lights_count", 0);
 		for (std::shared_ptr<Light> light : _lights)
 			light->update_default_uniforms(*graphic->renderer);
 
@@ -91,6 +95,10 @@ void Scene::render(bool show_warnings) {
 		DirectionalLight::temp_light_index = 0;
 		PointLight::temp_light_index = 0;
 		SpotLight::temp_light_index = 0;
+		object->graphics.renderer->update_uniform("a_lights_count", 0);
+		object->graphics.renderer->update_uniform("d_lights_count", 0);
+		object->graphics.renderer->update_uniform("p_lights_count", 0);
+		object->graphics.renderer->update_uniform("s_lights_count", 0);
 		for (std::shared_ptr<Light> light : _lights)
 			light->update_default_uniforms(*object->graphics.renderer);
 
@@ -110,6 +118,10 @@ void Scene::render(bool show_warnings) {
 			DirectionalLight::temp_light_index = 0;
 			PointLight::temp_light_index = 0;
 			SpotLight::temp_light_index = 0;
+			vehicle->chassis->renderer->update_uniform("a_lights_count", 0);
+			vehicle->chassis->renderer->update_uniform("d_lights_count", 0);
+			vehicle->chassis->renderer->update_uniform("p_lights_count", 0);
+			vehicle->chassis->renderer->update_uniform("s_lights_count", 0);
 			for (std::shared_ptr<Light> light : _lights)
 				light->update_default_uniforms(*vehicle->chassis->renderer);
 
@@ -129,6 +141,10 @@ void Scene::render(bool show_warnings) {
 				DirectionalLight::temp_light_index = 0;
 				PointLight::temp_light_index = 0;
 				SpotLight::temp_light_index = 0;
+				wheel->renderer->update_uniform("a_lights_count", 0);
+				wheel->renderer->update_uniform("d_lights_count", 0);
+				wheel->renderer->update_uniform("p_lights_count", 0);
+				wheel->renderer->update_uniform("s_lights_count", 0);
 				for (std::shared_ptr<Light> light : _lights)
 					light->update_default_uniforms(*wheel->renderer);
 				
