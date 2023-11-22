@@ -37,39 +37,50 @@ GraphicsCortex is a custom OpenGL and Physx based 3D graphics API to be used in 
 |   **redis**   |In-Memory Communication Between Other Languages|
 |  **FreeType** |Font File Loading|
 
-### graphical api (work in progress): 
-- simple, consistant and powerful structure for graphics
-- fast graphics
-- lighting
-- shadows
-- reflections
-- refractions
-- physically based rendering
-- user controls
-- user interface elements
-- anti-alliasing
-- textures
-- texture compression
-- mesh import
-- performance monitoring
-- physics
-- animations
-- post processing
-- particle system
-- vehicles
-  
-### future plans for game engine:
-- gui based map design tools
-- easier mesh creation
-- mesh editor
-- texture editor
-- animation editor
-- viewport for world generation
-- project compilation
-- high level shader system
-- networking
-- high level performance monitoring
-- audio editor
-- high level audio player
+## GraphicsCortex Roadmap for 2024
 
+### Utils
+Splines\
+Python API\
+CUDA/OpenCL connection?
 
+### UI/UX
+Editor\
+Docking\
+Object Hierarchy\
+Prefabs\
+Component System\
+Mouse Controls\
+Serialization\
+Deserialization\
+Hot code reloading
+
+### Rendering
+Shader Attribute and Layout detection\
+Mesh Configuration\
+PBR and BRDF\
+RenderPasses and Shadows\
+Implementing Vulkan\
+Vulkan RTX Path Tracing\
+Skeletal Animations\
+Compute Shaders
+
+### Physics
+Transition to PhysX 5.1\
+Scene Queries\
+Collusion Detection\
+Physics Visualization
+
+### Advanced
+Liquid Simulations\
+Smoke Sİmulations\
+Volumetric Rendering\
+Cloth Simulations
+
+## AlecTED simulation requirements
+### Step 1:
+A scene with anolog controllable vehicle from python, obsticles, target area.\ 
+(missing: analog control, standarized python api, collusion detection)
+
+### Step 2:
+A scene in city with traffic and pedestrians
