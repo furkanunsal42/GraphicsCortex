@@ -79,7 +79,7 @@ Cloth Simulations
 
 ## AlecTED simulation requirements
 ### Step 1:
-A scene with anolog controllable vehicle from python, obstacles, target area.\ 
+A scene with anolog controllable vehicle from python, obstacles, target area.\
 (missing: analog control, standarized python api, collusion detection)
 
 ### Step 2:
