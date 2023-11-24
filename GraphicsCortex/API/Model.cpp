@@ -18,8 +18,12 @@ Model::Model(const aiScene* scene, float scale, unsigned int vertex_property_bit
 	_load_model(scene, scale, vertex_property_bits);
 }
 
-Model::Model(std::vector<float> verticies, std::vector<unsigned int> indicies, std::vector<unsigned int> vertex_attribute_structure) : 
-	vertex_data(verticies), index_data(indicies), vertex_attribute_structure(vertex_attribute_structure) {}
+Model::Model(std::vector<float> verticies, std::vector<unsigned int> indicies, std::vector<std::pair<Model::VertexAttribute, unsigned int>> vertex_attribute_structure){
+	submodels.push_back(SingleModel());
+	submodels.back().vertex_data = verticies; 
+	submodels.back().index_data = indicies;
+	submodels.back().vertex_attribute_structure = vertex_attribute_structure;
+}
 
 
 namespace {
@@ -95,88 +99,90 @@ void Model::_load_model(const aiScene* scene, float scale, unsigned int vertex_p
 
 
 		// -- Generating  Model -- 
+		submodels.push_back(SingleModel());
 		for (int j = 0; j < scene->mMeshes[i]->mNumVertices; j++) {
 
 			aiVector3D vertex = scene->mMeshes[i]->mVertices[j];
 			if (enabled_bits[0])
-				vertex_data.push_back((float)vertex.x * scale);
+				submodels.back().vertex_data.push_back((float)vertex.x * scale);
 			if (enabled_bits[1])
-				vertex_data.push_back((float)vertex.y * scale);
+				submodels.back().vertex_data.push_back((float)vertex.y * scale);
 			if (enabled_bits[2])
-				vertex_data.push_back((float)vertex.z * scale);
+				submodels.back().vertex_data.push_back((float)vertex.z * scale);
 
 			aiVector3D texcoords = scene->mMeshes[i]->mTextureCoords[0][j];
 			if (enabled_bits[3])
-				vertex_data.push_back(texcoords.x);
+				submodels.back().vertex_data.push_back(texcoords.x);
 			if (enabled_bits[4])
-				vertex_data.push_back(texcoords.y);
+				submodels.back().vertex_data.push_back(texcoords.y);
 
 			if (enabled_bits[5])
-				vertex_data.push_back(map_indicies[0]);
+				submodels.back().vertex_data.push_back(map_indicies[0]);
 			if (enabled_bits[6])
-				vertex_data.push_back(map_indicies[1]);
+				submodels.back().vertex_data.push_back(map_indicies[1]);
 			if (enabled_bits[7])
-				vertex_data.push_back(map_indicies[2]);
+				submodels.back().vertex_data.push_back(map_indicies[2]);
 
 			aiVector3D normal = scene->mMeshes[i]->mNormals[j];
 			normal.Normalize();
 			if (enabled_bits[8])
-				vertex_data.push_back((float)normal.x);
+				submodels.back().vertex_data.push_back((float)normal.x);
 			if (enabled_bits[9])
-				vertex_data.push_back((float)normal.y);
+				submodels.back().vertex_data.push_back((float)normal.y);
 			if (enabled_bits[10])
-				vertex_data.push_back((float)normal.z);
+				submodels.back().vertex_data.push_back((float)normal.z);
 		}
 		for (int j = 0; j < scene->mMeshes[i]->mNumFaces; j++) {
 			const aiFace& Face = scene->mMeshes[i]->mFaces[j];
 
-			index_data.push_back(prefix_indicies_sum + (unsigned int)Face.mIndices[0]);
-			index_data.push_back(prefix_indicies_sum + (unsigned int)Face.mIndices[1]);
-			index_data.push_back(prefix_indicies_sum + (unsigned int)Face.mIndices[2]);
+			submodels.back().index_data.push_back(/*prefix_indicies_sum + */(unsigned int)Face.mIndices[0]);
+			submodels.back().index_data.push_back(/*prefix_indicies_sum + */(unsigned int)Face.mIndices[1]);
+			submodels.back().index_data.push_back(/*prefix_indicies_sum + */(unsigned int)Face.mIndices[2]);
 
 		}
-		prefix_indicies_sum += scene->mMeshes[i]->mNumVertices;
+		/*prefix_indicies_sum += scene->mMeshes[i]->mNumVertices;*/
+
+
+		int coord_dim = 0;
+		int bit = 0;
+		for (int i = COORD_X; i <= COORD_Z; i *= 2) {
+			if (enabled_bits[bit])
+				coord_dim++;
+			bit++;
+		}
+		bit = 3;
+		int tex_coord_dim = 0;
+		for (int i = TEX_COORD_X; i <= TEX_COORD_Y; i *= 2) {
+			if (enabled_bits[bit])
+				tex_coord_dim++;
+			bit++;
+		}
+		bit = 5;
+		int map_index_dim = 0;
+		for (int i = TEX_COORD_Z_DIFFUSE; i <= TEX_COORD_Z_NORMAL; i *= 2) {
+			if (enabled_bits[bit])
+				map_index_dim++;
+			bit++;
+		}
+		bit = 8;
+		int normals_dim = 0;
+		for (int i = NORMAL_X; i <= NORMAL_Z; i *= 2) {
+			if (enabled_bits[bit])
+				normals_dim++;
+			bit++;
+		}
+
+		submodels.back().vertex_attribute_structure.push_back(std::pair(Model::Position, coord_dim));		// position
+		submodels.back().vertex_attribute_structure.push_back(std::pair(Model::TexCoord, tex_coord_dim));	// texture uv
+		for (int i = 0; i < map_index_dim; i++)
+			submodels.back().vertex_attribute_structure.push_back(std::pair(Model::Custom, 1));				// map index
+		submodels.back().vertex_attribute_structure.push_back(std::pair(Model::Normal, normals_dim));		// normals
+
 	}
 
-	int coord_dim = 0;
-	int bit = 0;
-	for (int i = COORD_X; i <= COORD_Z; i *= 2) {
-		if (enabled_bits[bit])
-			coord_dim++;
-		bit++;
-	}
-	bit = 3;
-	int tex_coord_dim = 0;
-	for (int i = TEX_COORD_X; i <= TEX_COORD_Y; i *= 2) {
-		if (enabled_bits[bit])
-			tex_coord_dim++;
-		bit++;
-	}
-	bit = 5;
-	int map_index_dim = 0;
-	for (int i = TEX_COORD_Z_DIFFUSE; i <= TEX_COORD_Z_NORMAL; i *= 2) {
-		if (enabled_bits[bit])
-			map_index_dim++;
-		bit++;
-	}
-	bit = 8;
-	int normals_dim = 0;
-	for (int i = NORMAL_X; i <= NORMAL_Z; i *= 2) {
-		if (enabled_bits[bit])
-			normals_dim++;
-		bit++;
-	}
 	
-	vertex_attribute_structure.push_back(coord_dim);		// position
-	vertex_attribute_structure.push_back(tex_coord_dim);	// texture uv
-	for (int i = 0; i < map_index_dim; i++)
-		vertex_attribute_structure.push_back(1);			// map index
-	vertex_attribute_structure.push_back(normals_dim);		// normals
 }
 
 void Model::clear_ram() {
-	vertex_data.clear();
-	index_data.clear();
-	//_model_texture_table.clear();
-	vertex_attribute_structure.clear();
+	submodels.clear();
 }

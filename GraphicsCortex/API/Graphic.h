@@ -50,7 +50,6 @@ public:
 	Graphic();
 	Graphic(std::shared_ptr<Mesh> mesh, std::shared_ptr<Material> material, std::shared_ptr<Program> renderer);
 	Graphic(std::shared_ptr<Mesh> mesh, std::shared_ptr<UnorderedMaterial> material, std::shared_ptr<Program> renderer);
-	Graphic(const std::vector<float>& verticies, int data_dim); // legacy
 	Graphic(std::shared_ptr<Material> material, std::shared_ptr<Program> renderer);
 	Graphic(std::shared_ptr<UnorderedMaterial> material, std::shared_ptr<Program> renderer);
 

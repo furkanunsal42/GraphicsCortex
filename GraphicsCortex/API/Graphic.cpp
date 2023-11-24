@@ -15,30 +15,6 @@ Graphic::Graphic(std::shared_ptr<Mesh> mesh, std::shared_ptr<Material> mat, std:
 Graphic::Graphic(std::shared_ptr<Mesh> mesh, std::shared_ptr<UnorderedMaterial> mat, std::shared_ptr<Program> program) :
 	model_matrix(glm::mat4(1.0f)), unordered_material(mat), renderer(program), mesh(mesh), use_unordered_material(true) {}
 
-Graphic::Graphic(const std::vector<float>& verticies, int data_dim = 2)
-{	
-	// legacy
-	std::vector<unsigned int> triangles;
-	for (unsigned int i = 1; i < verticies.size() / data_dim - 1; i++) {
-
-		triangles.push_back(0);
-		triangles.push_back(i);
-		triangles.push_back(i + 1);
-	}
-	for (auto data : verticies)
-		std::cout << data << " ";
-	std::cout << "\n";
-	for (auto data : triangles)
-		std::cout << data << " ";
-
-	// data dim is no longer passed in constructer
-	std::shared_ptr<ArrayBuffer> array_buffer = std::make_shared<ArrayBuffer>(verticies/*, data dim*/);
-	std::shared_ptr<IndexBuffer> index_buffer = std::make_shared<IndexBuffer>(triangles, 3);
-
-	this->mesh->array_buffer = array_buffer;
-	this->mesh->index_buffer = index_buffer;
-}
-
 Graphic::Graphic(std::shared_ptr<Material> material, std::shared_ptr<Program> renderer):
 	renderer(renderer), material(material), model_matrix(glm::mat4(1.0f)), use_unordered_material(false) {}
 
@@ -60,9 +36,6 @@ void Graphic::draw(bool show_warnings) {
 
 	if (_is_program_loaded)
 		renderer->bind();
-
-	if (_is_mesh_loaded)
-		mesh->bind();
 	
 	if (_is_material_loaded) {
 		if (use_unordered_material) {
@@ -74,7 +47,10 @@ void Graphic::draw(bool show_warnings) {
 	}
 
 	if (_is_mesh_loaded) {
-		GLCall(glDrawElements(mode, mesh->index_buffer->data_count, GL_UNSIGNED_INT, nullptr));
+		for (int i = 0; i < mesh->submeshes.size(); i++) {
+			mesh->bind(i);
+			GLCall(glDrawElements(mode, mesh->submeshes[i].index_buffer->data_count, GL_UNSIGNED_INT, nullptr));
+		}
 	}
 }
 

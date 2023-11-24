@@ -22,14 +22,25 @@ class AssetImporter;
 
 class Model {
 public:
-	std::vector<float> vertex_data;
-	std::vector<unsigned int> index_data;
-	std::vector<unsigned int> vertex_attribute_structure;
+	enum VertexAttribute {
+		Position = 0,
+		TexCoord = 1,
+		Normal   = 2,
+		Color    = 3,
+		Custom   = 4,
+	};
+
+	struct SingleModel {
+		std::vector<float> vertex_data;
+		std::vector<unsigned int> index_data;
+		std::vector<std::pair<VertexAttribute, unsigned int>> vertex_attribute_structure;
+	};
+	std::vector<SingleModel> submodels;
 
 	Model(const std::string& file_path, float scale = 1.0f, unsigned int vertex_property_bits = COORD_XYZ | TEX_COORD_XY | NORMAL_XYZ);
 	Model(const aiScene* scene, float scale = 1.0f, unsigned int vertex_property_bits = COORD_XYZ | TEX_COORD_XY | NORMAL_XYZ);
 
-	Model(std::vector<float> verticies, std::vector<unsigned int> indicies, std::vector<unsigned int> vertex_attribute_structure = {3});
+	Model(std::vector<float> verticies, std::vector<unsigned int> indicies, std::vector<std::pair<Model::VertexAttribute, unsigned int>> vertex_attribute_structure = {std::pair(Model::Position, 3)});
 
 	Model(Model&& other) = default;
 	Model& operator=(Model&& other) = default;
@@ -57,13 +68,13 @@ public:
 		PROPERTY_COUNT = 11,
 	};
 
-	void load_model(const std::string& file_path, float scale = 1.0f, unsigned int vertex_property_bits = COORD_XYZ | TEX_COORD_XY | NORMAL_XYZ);
+	//void load_model(const std::string& file_path, float scale = 1.0f, unsigned int vertex_property_bits = COORD_XYZ | TEX_COORD_XY | NORMAL_XYZ);
 
 	template<typename T>
 	std::enable_if_t<std::is_same<T, float>::value, std::vector<T>>
 		const get_partial_data(const std::string& mask = "11100000") {
 		unsigned int total_entry_per_vertex = 0;
-		for (unsigned int structure_size : vertex_attribute_structure) {
+		for (unsigned int structure_size : submodels[0].vertex_attribute_structure) {
 			total_entry_per_vertex += structure_size;
 		}
 
@@ -88,14 +99,14 @@ public:
 			}
 		}
 
-		unsigned int partial_data_size = vertex_data.size() / total_entry_per_vertex * selected_structure.size();
+		unsigned int partial_data_size = submodels[0].vertex_data.size() / total_entry_per_vertex * selected_structure.size();
 
 		std::vector<T> partial_data;
 		partial_data.reserve(partial_data_size);
 
-		for (unsigned int i = 0; i < vertex_data.size(); i += total_entry_per_vertex) {
+		for (unsigned int i = 0; i < submodels[0].vertex_data.size(); i += total_entry_per_vertex) {
 			for (const unsigned int& selected_index : selected_structure) {
-				partial_data.push_back(vertex_data[i + selected_index]);
+				partial_data.push_back(submodels[0].vertex_data[i + selected_index]);
 			}
 		}
 
@@ -106,8 +117,8 @@ public:
 	std::enable_if_t<std::is_same<T, glm::vec3>::value || std::is_same<T, physx::PxVec3>::value, std::vector<T>>
 		get_partial_data(const std::string& mask = "11100000") {
 		unsigned int total_entry_per_vertex = 0;
-		for (unsigned int structure_size : vertex_attribute_structure) {
-			total_entry_per_vertex += structure_size;
+		for (std::pair structure_size : submodels[0].vertex_attribute_structure) {
+			total_entry_per_vertex += structure_size.second;
 		}
 
 		if (total_entry_per_vertex < 1) {
@@ -136,13 +147,13 @@ public:
 			ASSERT(false);
 		}
 
-		unsigned int partial_data_size = vertex_data.size() / total_entry_per_vertex * selected_structure.size();
+		unsigned int partial_data_size = submodels[0].vertex_data.size() / total_entry_per_vertex * selected_structure.size();
 
 		std::vector<T> partial_data;
 		partial_data.reserve(partial_data_size);
 
-		for (unsigned int i = 0; i < vertex_data.size(); i += total_entry_per_vertex) {
-			T vector(vertex_data[i + selected_structure[0]], vertex_data[i + selected_structure[1]], vertex_data[i + selected_structure[2]]);
+		for (unsigned int i = 0; i < submodels[0].vertex_data.size(); i += total_entry_per_vertex) {
+			T vector(submodels[0].vertex_data[i + selected_structure[0]], submodels[0].vertex_data[i + selected_structure[1]], submodels[0].vertex_data[i + selected_structure[2]]);
 			partial_data.push_back(vector);
 		}
 

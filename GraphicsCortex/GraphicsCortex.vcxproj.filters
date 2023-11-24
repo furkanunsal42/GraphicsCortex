@@ -177,6 +177,9 @@
     <ClCompile Include="API\Gui2.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
+    <ClCompile Include="Mains\ApplicationMain.cpp">
+      <Filter>Kaynak Dosyalar</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\FlatColor.vert" />

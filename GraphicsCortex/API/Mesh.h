@@ -7,8 +7,11 @@
 
 class Mesh {
 public:
-	std::shared_ptr<ArrayBuffer> array_buffer;
-	std::shared_ptr<IndexBuffer> index_buffer;
+	struct SingleMesh {
+		std::shared_ptr<ArrayBuffer> array_buffer = nullptr;
+		std::shared_ptr<IndexBuffer> index_buffer = nullptr;
+	};
+	std::vector<SingleMesh> submeshes;
 
 	Mesh();
 	Mesh(std::shared_ptr<ArrayBuffer> array_buffer, std::shared_ptr<IndexBuffer> index_buffer);
@@ -17,6 +20,6 @@ public:
 
 	void load_model(const Model& model);
 
-	void bind();
+	void bind(int submesh_index);
 	void unbind();
 };
