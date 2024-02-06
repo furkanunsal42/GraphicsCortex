@@ -3,83 +3,83 @@
 namespace default_program {
 
 	Program solid_program() {
-		Shader default_shader("Shaders/Solid.vert", "Shaders/Solid.geom", "Shaders/Solid.frag");
+		Shader default_shader("Source/GLSL/Solid.vert", "Source/GLSL/Solid.geom", "Source/GLSL/Solid.frag");
 		Program solid_program(default_shader);
 		return solid_program;
 	}
 	Program solid_program_multitexture() {
-		Shader default_shader("Shaders/Solid_multitexture.vert", "Shaders/Solid_multitexture.geom", "Shaders/Solid_multitexture.frag");
+		Shader default_shader("Source/GLSL/Solid_multitexture.vert", "Source/GLSL/Solid_multitexture.geom", "Source/GLSL/Solid_multitexture.frag");
 		Program renderer(default_shader);
 		return renderer;
 	}
 	Program flatcolor_program() {
-		Shader default_shader("Shaders/FlatColor.vert", "Shaders/FlatColor.frag");
+		Shader default_shader("Source/GLSL/FlatColor.vert", "Source/GLSL/FlatColor.frag");
 		Program renderer(default_shader);
 		return renderer;
 	}
 	Program framebuffer_program() {
-		Shader default_shader("Shaders/FrameBuffer.vert", "Shaders/FrameBuffer.frag");
+		Shader default_shader("Source/GLSL/FrameBuffer.vert", "Source/GLSL/FrameBuffer.frag");
 		Program renderer(default_shader);
 		return renderer;
 	}
 	Program cubemap_program() {
-		Shader default_shader("Shaders/CubeMap.vert", "Shaders/CubeMap.frag");
+		Shader default_shader("Source/GLSL/CubeMap.vert", "Source/GLSL/CubeMap.frag");
 		Program renderer(default_shader);
 		return renderer;
 	}
 	Program gui_program() {
-		Shader default_shader("Shaders/Gui.vert", "Shaders/Gui.frag");
+		Shader default_shader("Source/GLSL/Gui.vert", "Source/GLSL/Gui.frag");
 		Program renderer(default_shader);
 		return renderer;
 	}
 	Program text_program() {
-		Shader default_shader("Shaders/Text.vert", "Shaders/Text.frag");
+		Shader default_shader("Source/GLSL/Text.vert", "Source/GLSL/Text.frag");
 		Program renderer(default_shader);
 		return renderer;
 	}
 	Program depth_program() {
-		Shader default_shader("Shaders/Depth.vert", "Shaders/Depth.frag");
+		Shader default_shader("Source/GLSL/Depth.vert", "Source/GLSL/Depth.frag");
 		Program renderer(default_shader);
 		return renderer;
 	}
 
 	std::shared_ptr<Program> solid_program_s() {
-		Shader default_shader("Shaders/Solid.vert", "Shaders/Solid.geom", "Shaders/Solid.frag");
+		Shader default_shader("Source/GLSL/Solid.vert", "Source/GLSL/Solid.geom", "Source/GLSL/Solid.frag");
 		std::shared_ptr<Program> renderer = std::make_shared<Program>(default_shader);
 		return renderer;
 	}
 	std::shared_ptr<Program> solid_program_multitexture_s() {
-		Shader default_shader("Shaders/Solid_multitexture.vert", "Shaders/Solid_multitexture.geom", "Shaders/Solid_multitexture.frag");
+		Shader default_shader("Source/GLSL/Solid_multitexture.vert", "Source/GLSL/Solid_multitexture.geom", "Source/GLSL/Solid_multitexture.frag");
 		std::shared_ptr<Program> renderer = std::make_shared<Program>(default_shader);
 		return renderer;
 	}
 	std::shared_ptr<Program> flatcolor_program_s() {
-		Shader default_shader("Shaders/FlatColor.vert", "Shaders/FlatColor.frag");
+		Shader default_shader("Source/GLSL/FlatColor.vert", "Source/GLSL/FlatColor.frag");
 		std::shared_ptr<Program> renderer = std::make_shared<Program>(default_shader);
 		return renderer;
 	}
 	std::shared_ptr<Program> framebuffer_program_s() {
-		Shader default_shader("Shaders/FrameBuffer.vert", "Shaders/FrameBuffer.frag");
+		Shader default_shader("Source/GLSL/FrameBuffer.vert", "Source/GLSL/FrameBuffer.frag");
 		std::shared_ptr<Program> renderer = std::make_shared<Program>(default_shader);
 		return renderer;
 	}
 	std::shared_ptr<Program> cubemap_program_s() {
-		Shader default_shader("Shaders/CubeMap.vert", "Shaders/CubeMap.frag");
+		Shader default_shader("Source/GLSL/CubeMap.vert", "Source/GLSL/CubeMap.frag");
 		std::shared_ptr<Program> renderer = std::make_shared<Program>(default_shader);
 		return renderer;
 	}
 	std::shared_ptr<Program> gui_program_s() {
-		Shader default_shader("Shaders/Gui.vert", "Shaders/Gui.frag");
+		Shader default_shader("Source/GLSL/Gui.vert", "Source/GLSL/Gui.frag");
 		std::shared_ptr<Program> renderer = std::make_shared<Program>(default_shader);
 		return renderer;
 	}
 	std::shared_ptr<Program> text_program_s() {
-		Shader default_shader("Shaders/Text.vert", "Shaders/Text.frag");
+		Shader default_shader("Source/GLSL/Text.vert", "Source/GLSL/Text.frag");
 		std::shared_ptr<Program> renderer = std::make_shared<Program>(default_shader);
 		return renderer;
 	}
 	std::shared_ptr<Program> depth_program_s() {
-		Shader default_shader("Shaders/Depth.vert", "Shaders/Depth.frag");
+		Shader default_shader("Source/GLSL/Depth.vert", "Source/GLSL/Depth.frag");
 		std::shared_ptr<Program> renderer = std::make_shared<Program>(default_shader);
 		return renderer;
 	}

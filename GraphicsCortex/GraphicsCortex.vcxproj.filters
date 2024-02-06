@@ -18,94 +18,94 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="API\Debuger.cpp">
+    <ClCompile Include="Source\Graphics\Rendering\Debuger.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
-    <ClCompile Include="API\ShaderCompiler.cpp">
+    <ClCompile Include="Source\Graphics\Shaders\ShaderCompiler.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
-    <ClCompile Include="API\Buffer.cpp">
+    <ClCompile Include="Source\Graphics\Buffers\Buffer.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
-    <ClCompile Include="API\Frame.cpp">
+    <ClCompile Include="Source\Graphics\Windowing\Frame.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
-    <ClCompile Include="API\Graphic.cpp">
+    <ClCompile Include="Source\Graphics\Rendering\Graphic.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
     <ClCompile Include="Dependencies\stb_image\stb_image.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
-    <ClCompile Include="API\Texture.cpp">
+    <ClCompile Include="Source\Graphics\Textures\Texture.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
-    <ClCompile Include="API\Camera.cpp">
+    <ClCompile Include="Source\Graphics\Rendering\Camera.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
-    <ClCompile Include="API\Scene.cpp">
+    <ClCompile Include="Source\Graphics\Rendering\Scene.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
-    <ClCompile Include="API\Lights.cpp">
+    <ClCompile Include="Source\Graphics\Lights\Lights.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
-    <ClCompile Include="API\Default_Assets.cpp">
+    <ClCompile Include="Source\Graphics\Defaults\Default_Assets.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
-    <ClCompile Include="API\FrameBuffer.cpp">
+    <ClCompile Include="Source\Graphics\Rendering\FrameBuffer.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
-    <ClCompile Include="API\CubeMap.cpp">
+    <ClCompile Include="Source\Graphics\Textures\CubeMap.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
-    <ClCompile Include="API\UniformQueue.cpp">
+    <ClCompile Include="Source\Graphics\Shaders\UniformQueue.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
-    <ClCompile Include="API\PhysicsContext.cpp">
+    <ClCompile Include="Source\Physics\PhysicsContext.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
-    <ClCompile Include="API\PhysicsGeometry.cpp">
+    <ClCompile Include="Source\Physics\PhysicsGeometry.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
-    <ClCompile Include="API\PhysicsObject.cpp">
+    <ClCompile Include="Source\Physics\PhysicsObject.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
-    <ClCompile Include="API\PhysicsScene.cpp">
+    <ClCompile Include="Source\Physics\PhysicsScene.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
-    <ClCompile Include="API\PhysicsLink.cpp">
+    <ClCompile Include="Source\Physics\PhysicsLink.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
-    <ClCompile Include="API\PhysicsVehicle.cpp">
+    <ClCompile Include="Source\Physics\PhysicsVehicle.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
-    <ClCompile Include="API\Object.cpp">
+    <ClCompile Include="Source\Physics\Object.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
-    <ClCompile Include="API\Model.cpp">
+    <ClCompile Include="Source\Graphics\Meshes\Model.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
-    <ClCompile Include="API\Default_Programs.cpp">
+    <ClCompile Include="Source\Graphics\Defaults\Default_Programs.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
-    <ClCompile Include="API\Image.cpp">
+    <ClCompile Include="Source\Graphics\Textures\Image.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
     <ClCompile Include="Dependencies\stb_image\stb_image_write.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
-    <ClCompile Include="API\RamCache.cpp">
+    <ClCompile Include="Source\System\RamCache.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
     <ClCompile Include="Dependencies\stb_image\stb_image_resize.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
-    <ClCompile Include="API\ModelTextureTable.cpp">
+    <ClCompile Include="Source\Graphics\Meshes\ModelTextureTable.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
-    <ClCompile Include="API\AssetImporter.cpp">
+    <ClCompile Include="Source\Graphics\Meshes\AssetImporter.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
-    <ClCompile Include="API\Mesh.cpp">
+    <ClCompile Include="Source\Graphics\Meshes\Mesh.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
     <ClCompile Include="Dependencies\physx\snippetcommon\SnippetVehicle4WCreate.cpp">
@@ -129,12 +129,6 @@
     <ClCompile Include="Dependencies\physx\snippetcommon\SnippetVehicleTireFriction.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
-    <ClCompile Include="API\BinaryBuffers.cpp">
-      <Filter>Kaynak Dosyalar</Filter>
-    </ClCompile>
-    <ClCompile Include="API\DirectoryUtils.cpp">
-      <Filter>Kaynak Dosyalar</Filter>
-    </ClCompile>
     <ClCompile Include="Dependencies\imgui\imgui.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
@@ -153,42 +147,48 @@
     <ClCompile Include="Dependencies\imgui\imgui_widgets.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
-    <ClCompile Include="API\Gui.cpp">
+    <ClCompile Include="Source\Graphics\GUI\Gui.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
-    <ClCompile Include="API\CortexMath.cpp">
+    <ClCompile Include="Source\Graphics\Math\CortexMath.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
-    <ClCompile Include="API\Default_Gui_Widgets.cpp">
+    <ClCompile Include="Source\Graphics\GUI\Default_Gui_Widgets.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
-    <ClCompile Include="API\Font.cpp">
+    <ClCompile Include="Source\Graphics\Text\Font.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
-    <ClCompile Include="API\Text.cpp">
+    <ClCompile Include="Source\Graphics\Text\Text.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
-    <ClCompile Include="API\RenderPipeline.cpp">
+    <ClCompile Include="Source\Graphics\Rendering\RenderPipeline.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
-    <ClCompile Include="API\CustomRenderPipelines.h">
+    <ClCompile Include="Source\Graphics\Rendering\CustomRenderPipelines.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClCompile>
-    <ClCompile Include="API\Gui2.cpp">
+    <ClCompile Include="Source\Graphics\GUI\Gui2.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
     <ClCompile Include="Mains\ApplicationMain.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
+    <ClCompile Include="Source\System\BinaryBuffers.cpp">
+      <Filter>Kaynak Dosyalar</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\DirectoryUtils.cpp">
+      <Filter>Kaynak Dosyalar</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\FlatColor.vert" />
-    <None Include="Shaders\FlatColor.frag" />
-    <None Include="Shaders\FrameBuffer.vert" />
-    <None Include="Shaders\FrameBuffer.frag" />
-    <None Include="Shaders\CubeMap.vert" />
-    <None Include="Shaders\CubeMap.frag" />
-    <None Include="Shaders\NormalTest.frag" />
+    <None Include="Source\GLSL\FlatColor.vert" />
+    <None Include="Source\GLSL\FlatColor.frag" />
+    <None Include="Source\GLSL\FrameBuffer.vert" />
+    <None Include="Source\GLSL\FrameBuffer.frag" />
+    <None Include="Source\GLSL\CubeMap.vert" />
+    <None Include="Source\GLSL\CubeMap.frag" />
+    <None Include="Source\GLSL\NormalTest.frag" />
     <None Include="Dependencies\assimp\include\assimp\color4.inl">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </None>
@@ -214,38 +214,37 @@
       <Filter>Üst Bilgi Dosyaları</Filter>
     </None>
     <None Include="Dependencies\assimp\bin\assimp-vc143-mtd.dll" />
-    <None Include="Shaders\TextureArray.frag" />
-    <None Include="Shaders\TextureArray.vert" />
-    <None Include="Shaders\Gui.vert" />
-    <None Include="Shaders\Gui.frag" />
-    <None Include="Shaders\Depth.frag" />
-    <None Include="Shaders\Depth.vert" />
+    <None Include="Source\GLSL\TextureArray.frag" />
+    <None Include="Source\GLSL\TextureArray.vert" />
+    <None Include="Source\GLSL\Gui.vert" />
+    <None Include="Source\GLSL\Gui.frag" />
+    <None Include="Source\GLSL\Depth.frag" />
+    <None Include="Source\GLSL\Depth.vert" />
     <None Include="Custom Shaders\Texture.vert" />
     <None Include="Custom Shaders\Texture.frag" />
-    <None Include="Shaders\Text.frag" />
-    <None Include="Shaders\Text.vert" />
-    <None Include="Shaders\Solid_multitexture.vert" />
-    <None Include="Shaders\Solid.frag" />
-    <None Include="Shaders\Solid.geom" />
-    <None Include="Shaders\Solid.vert" />
-    <None Include="Shaders\Solid_multitexture.frag" />
-    <None Include="Shaders\Solid_multitexture.geom" />
-    <None Include="Matrix\Shaders\Matrix.frag" />
+    <None Include="Source\GLSL\Text.frag" />
+    <None Include="Source\GLSL\Text.vert" />
+    <None Include="Source\GLSL\Solid_multitexture.vert" />
+    <None Include="Source\GLSL\Solid.frag" />
+    <None Include="Source\GLSL\Solid.geom" />
+    <None Include="Source\GLSL\Solid.vert" />
+    <None Include="Source\GLSL\Solid_multitexture.frag" />
+    <None Include="Source\GLSL\Solid_multitexture.geom" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="API\Debuger.h">
+    <ClInclude Include="Source\Graphics\Rendering\Debuger.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
-    <ClInclude Include="API\ShaderCompiler.h">
+    <ClInclude Include="Source\Graphics\Shaders\ShaderCompiler.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
-    <ClInclude Include="API\Buffer.h">
+    <ClInclude Include="Source\Graphics\Buffers\Buffer.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
-    <ClInclude Include="API\Graphic.h">
+    <ClInclude Include="Source\Graphics\Rendering\Graphic.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
-    <ClInclude Include="API\Frame.h">
+    <ClInclude Include="Source\Graphics\Windowing\Frame.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
     <ClInclude Include="Dependencies\stb_image\stb_image.h">
@@ -263,25 +262,25 @@
     <ClInclude Include="Dependencies\GLEW\include\GL\wglew.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
-    <ClInclude Include="API\Texture.h">
+    <ClInclude Include="Source\Graphics\Textures\Texture.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
-    <ClInclude Include="API\Camera.h">
+    <ClInclude Include="Source\Graphics\Rendering\Camera.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
-    <ClInclude Include="API\Scene.h">
+    <ClInclude Include="Source\Graphics\Rendering\Scene.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
-    <ClInclude Include="API\Default_Assets.h">
+    <ClInclude Include="Source\Graphics\Defaults\Default_Assets.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
-    <ClInclude Include="API\Lights.h">
+    <ClInclude Include="Source\Graphics\Lights\Lights.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
-    <ClInclude Include="API\FrameBuffer.h">
+    <ClInclude Include="Source\Graphics\Rendering\FrameBuffer.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
-    <ClInclude Include="API\CubeMap.h">
+    <ClInclude Include="Source\Graphics\Textures\CubeMap.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
     <ClInclude Include="Dependencies\assimp\include\assimp\Compiler\poppack1.h">
@@ -515,61 +514,61 @@
     <ClInclude Include="Dependencies\assimp\include\assimp\ZipArchiveIOSystem.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
-    <ClInclude Include="API\Config.h">
+    <ClInclude Include="Source\Config.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
-    <ClInclude Include="API\GraphicsCortex.h">
+    <ClInclude Include="Source\GraphicsCortex.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
-    <ClInclude Include="API\UnifromQueue.h">
+    <ClInclude Include="Source\Graphics\Shaders\UnifromQueue.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
-    <ClInclude Include="API\PhysicsContext.h">
+    <ClInclude Include="Source\Physics\PhysicsContext.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
-    <ClInclude Include="API\PhysicsGeometry.h">
+    <ClInclude Include="Source\Physics\PhysicsGeometry.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
-    <ClInclude Include="API\PhysicsObject.h">
+    <ClInclude Include="Source\Physics\PhysicsObject.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
-    <ClInclude Include="API\PhysicsScene.h">
+    <ClInclude Include="Source\Physics\PhysicsScene.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
-    <ClInclude Include="API\PhysicsLink.h">
+    <ClInclude Include="Source\Physics\PhysicsLink.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
-    <ClInclude Include="API\PhysicsVehicle.h">
+    <ClInclude Include="Source\Physics\PhysicsVehicle.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
-    <ClInclude Include="API\Object.h">
+    <ClInclude Include="Source\Physics\Object.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
-    <ClInclude Include="API\Model.h">
+    <ClInclude Include="Source\Graphics\Meshes\Model.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
-    <ClInclude Include="API\Default_Programs.h">
+    <ClInclude Include="Source\Graphics\Defaults\Default_Programs.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
-    <ClInclude Include="API\Image.h">
+    <ClInclude Include="Source\Graphics\Textures\Image.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
     <ClInclude Include="Dependencies\stb_image\stb_image_write.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
-    <ClInclude Include="API\RamCache.h">
+    <ClInclude Include="Source\System\RamCache.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
     <ClInclude Include="Dependencies\stb_image\stb_image_resize.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
-    <ClInclude Include="API\ModelTextureTable.h">
+    <ClInclude Include="Source\Graphics\Meshes\ModelTextureTable.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
-    <ClInclude Include="API\AssetImporter.h">
+    <ClInclude Include="Source\Graphics\Meshes\AssetImporter.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
-    <ClInclude Include="API\Mesh.h">
+    <ClInclude Include="Source\Graphics\Meshes\Mesh.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
     <ClInclude Include="Dependencies\physx\snippetcommon\SnippetVehicleWheelQueryResult.h">
@@ -594,12 +593,6 @@
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
     <ClInclude Include="Dependencies\physx\snippetcommon\SnippetVehicleTireFriction.h">
-      <Filter>Üst Bilgi Dosyaları</Filter>
-    </ClInclude>
-    <ClInclude Include="API\BinaryBuffers.h">
-      <Filter>Üst Bilgi Dosyaları</Filter>
-    </ClInclude>
-    <ClInclude Include="API\DirectoryUtils.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
     <ClInclude Include="Dependencies\imgui\imconfig.h">
@@ -632,28 +625,34 @@
     <ClInclude Include="Application\GUI_SceneViewer.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
-    <ClInclude Include="API\Gui.h">
+    <ClInclude Include="Source\Graphics\GUI\Gui.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
-    <ClInclude Include="API\CortexMath.h">
+    <ClInclude Include="Source\Graphics\Math\CortexMath.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
-    <ClInclude Include="API\_templated_overloads.h">
+    <ClInclude Include="Source\Graphics\GUI\_templated_overloads.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
-    <ClInclude Include="API\Default_Gui_Widgets.h">
+    <ClInclude Include="Source\Graphics\GUI\Default_Gui_Widgets.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
-    <ClInclude Include="API\Font.h">
+    <ClInclude Include="Source\Graphics\Text\Font.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
-    <ClInclude Include="API\Text.h">
+    <ClInclude Include="Source\Graphics\Text\Text.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
-    <ClInclude Include="API\UniformUpdater.h">
+    <ClInclude Include="Source\Graphics\Shaders\UniformUpdater.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
-    <ClInclude Include="API\RenderPipeline.h">
+    <ClInclude Include="Source\Graphics\Rendering\RenderPipeline.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\System\BinaryBuffers.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\System\DirectoryUtils.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
   </ItemGroup>

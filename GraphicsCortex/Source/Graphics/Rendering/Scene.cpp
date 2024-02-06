@@ -62,6 +62,12 @@ void Scene::render(bool show_warnings) {
 
 	camera->update_matrixes();
 
+	if (skybox != nullptr) {
+		skybox->texture_slot = 11;
+		skybox->update_default_uniforms(*skybox->cube.renderer);
+		skybox->draw();
+	}
+
 	for(std::shared_ptr<Graphic> graphic : _graphics){
 		graphic->update_matrix();
 
@@ -159,13 +165,6 @@ void Scene::render(bool show_warnings) {
 		text->graphic->update_uniforms();
 		text->render();
 	}
-
-	if (skybox != nullptr) {
-		skybox->texture_slot = 11;
-		skybox->update_default_uniforms(*skybox->cube.renderer);
-		skybox->draw();
-	}
-	
 }
 
 void Scene::render_to_framebuffer(FrameBuffer& frame_buffer, Frame& frame, bool show_warnings) {

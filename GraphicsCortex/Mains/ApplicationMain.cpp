@@ -8,7 +8,7 @@ int main() {
 	scene.camera->screen_height = frame.window_height;
 	scene.camera->max_distance = 1000;
 
-	std::shared_ptr<Program> program = std::make_shared<Program>(Shader("Shaders/TextureArray.vert", "Shaders/TextureArray.frag"));
+	std::shared_ptr<Program> program = std::make_shared<Program>(Shader("Source/GLSL/TextureArray.vert", "Source/GLSL/TextureArray.frag"));
 	std::shared_ptr<Program> solid_program = default_program::solid_program_s();
 
 	{

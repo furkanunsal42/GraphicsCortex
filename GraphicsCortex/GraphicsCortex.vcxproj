@@ -217,7 +217,7 @@
       <PreprocessorDefinitions>GLEW_STATIC;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <AdditionalIncludeDirectories>$(SolutionDir)GraphicsCortex\API;$(SolutionDir)GraphicsCortex\Dependencies\assimp\include;$(SolutionDir)GraphicsCortex\Dependencies\stb_image;$(SolutionDir)GraphicsCortex\Dependencies\GLEW\include;$(SolutionDir)GraphicsCortex\Dependencies\imgui;$(SolutionDir)GraphicsCortex\Dependencies\glm;$(SolutionDir)GraphicsCortex\Dependencies\GLFWx64\include;$(SolutionDir)GraphicsCortex\Dependencies\physx\include;$(SolutionDir)GraphicsCortex\Dependencies\physx\snippetutils;$(SolutionDir)GraphicsCortex\Dependencies\physx\snippetcommon;$(SolutionDir)GraphicsCortex\Dependencies\hiredis\include;$(SolutionDir)GraphicsCortex\Dependencies\freetype\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)GraphicsCortex\Source\System;$(SolutionDir)GraphicsCortex\Source\Physics;$(SolutionDir)GraphicsCortex\Source\Graphics\Windowing;$(SolutionDir)GraphicsCortex\Source\Graphics\Textures;$(SolutionDir)GraphicsCortex\Source\Graphics\Text;$(SolutionDir)GraphicsCortex\Source\Graphics\Shaders;$(SolutionDir)GraphicsCortex\Source\Graphics\Rendering;$(SolutionDir)GraphicsCortex\Source\Graphics\Meshes;$(SolutionDir)GraphicsCortex\Source\Graphics\Math;$(SolutionDir)GraphicsCortex\Source\Graphics\Lights;$(SolutionDir)GraphicsCortex\Source\Graphics\GUI;$(SolutionDir)GraphicsCortex\Source\Graphics\Defaults;$(SolutionDir)GraphicsCortex\Source\Graphics\Buffers;$(SolutionDir)GraphicsCortex\Source\Graphics;$(SolutionDir)GraphicsCortex\Source;$(SolutionDir)GraphicsCortex\Dependencies\assimp\include;$(SolutionDir)GraphicsCortex\Dependencies\stb_image;$(SolutionDir)GraphicsCortex\Dependencies\GLEW\include;$(SolutionDir)GraphicsCortex\Dependencies\imgui;$(SolutionDir)GraphicsCortex\Dependencies\glm;$(SolutionDir)GraphicsCortex\Dependencies\GLFWx64\include;$(SolutionDir)GraphicsCortex\Dependencies\physx\include;$(SolutionDir)GraphicsCortex\Dependencies\physx\snippetutils;$(SolutionDir)GraphicsCortex\Dependencies\physx\snippetcommon;$(SolutionDir)GraphicsCortex\Dependencies\hiredis\include;$(SolutionDir)GraphicsCortex\Dependencies\freetype\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <LanguageStandard_C>stdc11</LanguageStandard_C>
@@ -244,7 +244,7 @@
       <PreprocessorDefinitions>GLEW_STATIC;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <AdditionalIncludeDirectories>$(SolutionDir)GraphicsCortex\API;$(SolutionDir)GraphicsCortex\Dependencies\assimp\include;$(SolutionDir)GraphicsCortex\Dependencies\stb_image;$(SolutionDir)GraphicsCortex\Dependencies\GLEW\include;$(SolutionDir)GraphicsCortex\Dependencies\imgui;$(SolutionDir)GraphicsCortex\Dependencies\glm;$(SolutionDir)GraphicsCortex\Dependencies\GLFWx64\include;$(SolutionDir)GraphicsCortex\Dependencies\physx\include;$(SolutionDir)GraphicsCortex\Dependencies\physx\snippetutils;$(SolutionDir)GraphicsCortex\Dependencies\physx\snippetcommon;$(SolutionDir)GraphicsCortex\Dependencies\hiredis\include;$(SolutionDir)GraphicsCortex\Dependencies\freetype\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)GraphicsCortex\Source\System;$(SolutionDir)GraphicsCortex\Source\Physics;$(SolutionDir)GraphicsCortex\Source\Graphics\Windowing;$(SolutionDir)GraphicsCortex\Source\Graphics\Textures;$(SolutionDir)GraphicsCortex\Source\Graphics\Text;$(SolutionDir)GraphicsCortex\Source\Graphics\Shaders;$(SolutionDir)GraphicsCortex\Source\Graphics\Rendering;$(SolutionDir)GraphicsCortex\Source\Graphics\Meshes;$(SolutionDir)GraphicsCortex\Source\Graphics\Math;$(SolutionDir)GraphicsCortex\Source\Graphics\Lights;$(SolutionDir)GraphicsCortex\Source\Graphics\GUI;$(SolutionDir)GraphicsCortex\Source\Graphics\Defaults;$(SolutionDir)GraphicsCortex\Source\Graphics\Buffers;$(SolutionDir)GraphicsCortex\Source\Graphics;$(SolutionDir)GraphicsCortex\Source;$(SolutionDir)GraphicsCortex\Dependencies\assimp\include;$(SolutionDir)GraphicsCortex\Dependencies\stb_image;$(SolutionDir)GraphicsCortex\Dependencies\GLEW\include;$(SolutionDir)GraphicsCortex\Dependencies\imgui;$(SolutionDir)GraphicsCortex\Dependencies\glm;$(SolutionDir)GraphicsCortex\Dependencies\GLFWx64\include;$(SolutionDir)GraphicsCortex\Dependencies\physx\include;$(SolutionDir)GraphicsCortex\Dependencies\physx\snippetutils;$(SolutionDir)GraphicsCortex\Dependencies\physx\snippetcommon;$(SolutionDir)GraphicsCortex\Dependencies\hiredis\include;$(SolutionDir)GraphicsCortex\Dependencies\freetype\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <LanguageStandard_C>stdc11</LanguageStandard_C>
@@ -263,39 +263,39 @@
     </ProjectReference>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="API\AssetImporter.cpp" />
-    <ClCompile Include="API\BinaryBuffers.cpp" />
-    <ClCompile Include="API\Camera.cpp" />
-    <ClCompile Include="API\CubeMap.cpp" />
-    <ClCompile Include="API\CustomRenderPipelines.h" />
-    <ClCompile Include="API\Default_Assets.cpp" />
-    <ClCompile Include="API\Default_Gui_Widgets.cpp" />
-    <ClCompile Include="API\Default_Programs.cpp" />
-    <ClCompile Include="API\DirectoryUtils.cpp" />
-    <ClCompile Include="API\Font.cpp" />
-    <ClCompile Include="API\FrameBuffer.cpp" />
-    <ClCompile Include="API\Gui2.cpp" />
-    <ClCompile Include="API\Image.cpp" />
-    <ClCompile Include="API\Lights.cpp" />
-    <ClCompile Include="API\CortexMath.cpp" />
-    <ClCompile Include="API\Mesh.cpp" />
-    <ClCompile Include="API\Model.cpp" />
-    <ClCompile Include="API\ModelTextureTable.cpp" />
-    <ClCompile Include="API\PhysicsContext.cpp" />
-    <ClCompile Include="API\PhysicsGeometry.cpp" />
-    <ClCompile Include="API\PhysicsLink.cpp" />
-    <ClCompile Include="API\PhysicsObject.cpp" />
-    <ClCompile Include="API\PhysicsScene.cpp" />
-    <ClCompile Include="API\PhysicsVehicle.cpp" />
-    <ClCompile Include="API\RamCache.cpp" />
-    <ClCompile Include="API\RenderPipeline.cpp" />
-    <ClCompile Include="API\Scene.cpp" />
-    <ClCompile Include="API\Gui.cpp" />
-    <ClCompile Include="API\Text.cpp" />
-    <ClCompile Include="API\Texture.cpp" />
-    <ClCompile Include="API\Buffer.cpp" />
-    <ClCompile Include="API\UniformQueue.cpp" />
-    <ClCompile Include="API\Object.cpp" />
+    <ClCompile Include="Source\Graphics\Meshes\AssetImporter.cpp" />
+    <ClCompile Include="Source\Graphics\Rendering\Camera.cpp" />
+    <ClCompile Include="Source\Graphics\Textures\CubeMap.cpp" />
+    <ClCompile Include="Source\Graphics\Rendering\CustomRenderPipelines.h" />
+    <ClCompile Include="Source\Graphics\Defaults\Default_Assets.cpp" />
+    <ClCompile Include="Source\Graphics\GUI\Default_Gui_Widgets.cpp" />
+    <ClCompile Include="Source\Graphics\Defaults\Default_Programs.cpp" />
+    <ClCompile Include="Source\Graphics\Text\Font.cpp" />
+    <ClCompile Include="Source\Graphics\Rendering\FrameBuffer.cpp" />
+    <ClCompile Include="Source\Graphics\GUI\Gui2.cpp" />
+    <ClCompile Include="Source\Graphics\Textures\Image.cpp" />
+    <ClCompile Include="Source\Graphics\Lights\Lights.cpp" />
+    <ClCompile Include="Source\Graphics\Math\CortexMath.cpp" />
+    <ClCompile Include="Source\Graphics\Meshes\Mesh.cpp" />
+    <ClCompile Include="Source\Graphics\Meshes\Model.cpp" />
+    <ClCompile Include="Source\Graphics\Meshes\ModelTextureTable.cpp" />
+    <ClCompile Include="Source\Physics\PhysicsContext.cpp" />
+    <ClCompile Include="Source\Physics\PhysicsGeometry.cpp" />
+    <ClCompile Include="Source\Physics\PhysicsLink.cpp" />
+    <ClCompile Include="Source\Physics\PhysicsObject.cpp" />
+    <ClCompile Include="Source\Physics\PhysicsScene.cpp" />
+    <ClCompile Include="Source\Physics\PhysicsVehicle.cpp" />
+    <ClCompile Include="Source\System\BinaryBuffers.cpp" />
+    <ClCompile Include="Source\System\DirectoryUtils.cpp" />
+    <ClCompile Include="Source\System\RamCache.cpp" />
+    <ClCompile Include="Source\Graphics\Rendering\RenderPipeline.cpp" />
+    <ClCompile Include="Source\Graphics\Rendering\Scene.cpp" />
+    <ClCompile Include="Source\Graphics\GUI\Gui.cpp" />
+    <ClCompile Include="Source\Graphics\Text\Text.cpp" />
+    <ClCompile Include="Source\Graphics\Textures\Texture.cpp" />
+    <ClCompile Include="Source\Graphics\Buffers\Buffer.cpp" />
+    <ClCompile Include="Source\Graphics\Shaders\UniformQueue.cpp" />
+    <ClCompile Include="Source\Physics\Object.cpp" />
     <ClCompile Include="Dependencies\imgui\imgui.cpp" />
     <ClCompile Include="Dependencies\imgui\imgui_draw.cpp" />
     <ClCompile Include="Dependencies\imgui\imgui_impl_glfw.cpp" />
@@ -303,10 +303,10 @@
     <ClCompile Include="Dependencies\imgui\imgui_tables.cpp" />
     <ClCompile Include="Dependencies\imgui\imgui_widgets.cpp" />
     <ClCompile Include="Dependencies\stb_image\stb_image.cpp" />
-    <ClCompile Include="API\Frame.cpp" />
-    <ClCompile Include="API\Graphic.cpp" />
-    <ClCompile Include="API\Debuger.cpp" />
-    <ClCompile Include="API\ShaderCompiler.cpp" />
+    <ClCompile Include="Source\Graphics\Windowing\Frame.cpp" />
+    <ClCompile Include="Source\Graphics\Rendering\Graphic.cpp" />
+    <ClCompile Include="Source\Graphics\Rendering\Debuger.cpp" />
+    <ClCompile Include="Source\Graphics\Shaders\ShaderCompiler.cpp" />
     <ClCompile Include="Dependencies\stb_image\stb_image_resize.cpp" />
     <ClCompile Include="Dependencies\stb_image\stb_image_write.cpp" />
     <ClCompile Include="Dependencies\physx\snippetcommon\SnippetVehicle4WCreate.cpp" />
@@ -319,9 +319,8 @@
     <ClCompile Include="Mains\ApplicationMain.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Matrix\Shaders\Matrix.frag" />
-    <None Include="Shaders\Depth.frag" />
-    <None Include="Shaders\Depth.vert" />
+    <None Include="Source\GLSL\Depth.frag" />
+    <None Include="Source\GLSL\Depth.vert" />
     <None Include="Custom Shaders\Texture.frag" />
     <None Include="Custom Shaders\Texture.vert" />
     <None Include="Dependencies\assimp\bin\assimp-vc143-mtd.dll" />
@@ -333,63 +332,63 @@
     <None Include="Dependencies\assimp\include\assimp\SmoothingGroups.inl" />
     <None Include="Dependencies\assimp\include\assimp\vector2.inl" />
     <None Include="Dependencies\assimp\include\assimp\vector3.inl" />
-    <None Include="Shaders\CubeMap.frag" />
-    <None Include="Shaders\CubeMap.vert" />
-    <None Include="Shaders\FlatColor.frag" />
-    <None Include="Shaders\FlatColor.vert" />
-    <None Include="Shaders\FrameBuffer.frag" />
-    <None Include="Shaders\FrameBuffer.vert" />
-    <None Include="Shaders\Gui.frag" />
-    <None Include="Shaders\Gui.vert" />
-    <None Include="Shaders\NormalTest.frag" />
-    <None Include="Shaders\Solid.frag" />
-    <None Include="Shaders\Solid.geom" />
-    <None Include="Shaders\Solid.vert" />
-    <None Include="Shaders\Solid_multitexture.frag" />
-    <None Include="Shaders\Solid_multitexture.geom" />
-    <None Include="Shaders\Solid_multitexture.vert" />
-    <None Include="Shaders\Text.frag" />
-    <None Include="Shaders\Text.vert" />
-    <None Include="Shaders\TextureArray.frag" />
-    <None Include="Shaders\TextureArray.vert" />
+    <None Include="Source\GLSL\CubeMap.frag" />
+    <None Include="Source\GLSL\CubeMap.vert" />
+    <None Include="Source\GLSL\FlatColor.frag" />
+    <None Include="Source\GLSL\FlatColor.vert" />
+    <None Include="Source\GLSL\FrameBuffer.frag" />
+    <None Include="Source\GLSL\FrameBuffer.vert" />
+    <None Include="Source\GLSL\Gui.frag" />
+    <None Include="Source\GLSL\Gui.vert" />
+    <None Include="Source\GLSL\NormalTest.frag" />
+    <None Include="Source\GLSL\Solid.frag" />
+    <None Include="Source\GLSL\Solid.geom" />
+    <None Include="Source\GLSL\Solid.vert" />
+    <None Include="Source\GLSL\Solid_multitexture.frag" />
+    <None Include="Source\GLSL\Solid_multitexture.geom" />
+    <None Include="Source\GLSL\Solid_multitexture.vert" />
+    <None Include="Source\GLSL\Text.frag" />
+    <None Include="Source\GLSL\Text.vert" />
+    <None Include="Source\GLSL\TextureArray.frag" />
+    <None Include="Source\GLSL\TextureArray.vert" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="API\AssetImporter.h" />
-    <ClInclude Include="API\BinaryBuffers.h" />
-    <ClInclude Include="API\Buffer.h" />
-    <ClInclude Include="API\Camera.h" />
-    <ClInclude Include="API\Config.h" />
-    <ClInclude Include="API\CubeMap.h" />
-    <ClInclude Include="API\Debuger.h" />
-    <ClInclude Include="API\Default_Assets.h" />
-    <ClInclude Include="API\Default_Gui_Widgets.h" />
-    <ClInclude Include="API\DirectoryUtils.h" />
-    <ClInclude Include="API\Font.h" />
-    <ClInclude Include="API\FrameBuffer.h" />
-    <ClInclude Include="API\GraphicsCortex.h" />
-    <ClInclude Include="API\Default_Programs.h" />
-    <ClInclude Include="API\Gui.h" />
-    <ClInclude Include="API\Image.h" />
-    <ClInclude Include="API\Lights.h" />
-    <ClInclude Include="API\CortexMath.h" />
-    <ClInclude Include="API\Mesh.h" />
-    <ClInclude Include="API\Model.h" />
-    <ClInclude Include="API\ModelTextureTable.h" />
-    <ClInclude Include="API\PhysicsContext.h" />
-    <ClInclude Include="API\PhysicsGeometry.h" />
-    <ClInclude Include="API\PhysicsLink.h" />
-    <ClInclude Include="API\PhysicsObject.h" />
-    <ClInclude Include="API\PhysicsScene.h" />
-    <ClInclude Include="API\PhysicsVehicle.h" />
-    <ClInclude Include="API\RamCache.h" />
-    <ClInclude Include="API\RenderPipeline.h" />
-    <ClInclude Include="API\Scene.h" />
-    <ClInclude Include="API\Text.h" />
-    <ClInclude Include="API\Texture.h" />
-    <ClInclude Include="API\UniformUpdater.h" />
-    <ClInclude Include="API\UnifromQueue.h" />
-    <ClInclude Include="API\Object.h" />
-    <ClInclude Include="API\_templated_overloads.h" />
+    <ClInclude Include="Source\Graphics\Meshes\AssetImporter.h" />
+    <ClInclude Include="Source\Graphics\Buffers\Buffer.h" />
+    <ClInclude Include="Source\Graphics\Rendering\Camera.h" />
+    <ClInclude Include="Source\Config.h" />
+    <ClInclude Include="Source\Graphics\Textures\CubeMap.h" />
+    <ClInclude Include="Source\Graphics\Rendering\Debuger.h" />
+    <ClInclude Include="Source\Graphics\Defaults\Default_Assets.h" />
+    <ClInclude Include="Source\Graphics\GUI\Default_Gui_Widgets.h" />
+    <ClInclude Include="Source\Graphics\Text\Font.h" />
+    <ClInclude Include="Source\Graphics\Rendering\FrameBuffer.h" />
+    <ClInclude Include="Source\GraphicsCortex.h" />
+    <ClInclude Include="Source\Graphics\Defaults\Default_Programs.h" />
+    <ClInclude Include="Source\Graphics\GUI\Gui.h" />
+    <ClInclude Include="Source\Graphics\Textures\Image.h" />
+    <ClInclude Include="Source\Graphics\Lights\Lights.h" />
+    <ClInclude Include="Source\Graphics\Math\CortexMath.h" />
+    <ClInclude Include="Source\Graphics\Meshes\Mesh.h" />
+    <ClInclude Include="Source\Graphics\Meshes\Model.h" />
+    <ClInclude Include="Source\Graphics\Meshes\ModelTextureTable.h" />
+    <ClInclude Include="Source\Physics\PhysicsContext.h" />
+    <ClInclude Include="Source\Physics\PhysicsGeometry.h" />
+    <ClInclude Include="Source\Physics\PhysicsLink.h" />
+    <ClInclude Include="Source\Physics\PhysicsObject.h" />
+    <ClInclude Include="Source\Physics\PhysicsScene.h" />
+    <ClInclude Include="Source\Physics\PhysicsVehicle.h" />
+    <ClInclude Include="Source\System\BinaryBuffers.h" />
+    <ClInclude Include="Source\System\DirectoryUtils.h" />
+    <ClInclude Include="Source\System\RamCache.h" />
+    <ClInclude Include="Source\Graphics\Rendering\RenderPipeline.h" />
+    <ClInclude Include="Source\Graphics\Rendering\Scene.h" />
+    <ClInclude Include="Source\Graphics\Text\Text.h" />
+    <ClInclude Include="Source\Graphics\Textures\Texture.h" />
+    <ClInclude Include="Source\Graphics\Shaders\UniformUpdater.h" />
+    <ClInclude Include="Source\Graphics\Shaders\UnifromQueue.h" />
+    <ClInclude Include="Source\Physics\Object.h" />
+    <ClInclude Include="Source\Graphics\GUI\_templated_overloads.h" />
     <ClInclude Include="Application\GUI_SceneViewer.h" />
     <ClInclude Include="Dependencies\assimp\include\assimp\aabb.h" />
     <ClInclude Include="Dependencies\assimp\include\assimp\ai_assert.h" />
@@ -482,9 +481,9 @@
     <ClInclude Include="Dependencies\imgui\imstb_textedit.h" />
     <ClInclude Include="Dependencies\imgui\imstb_truetype.h" />
     <ClInclude Include="Dependencies\stb_image\stb_image.h" />
-    <ClInclude Include="API\Frame.h" />
-    <ClInclude Include="API\Graphic.h" />
-    <ClInclude Include="API\ShaderCompiler.h" />
+    <ClInclude Include="Source\Graphics\Windowing\Frame.h" />
+    <ClInclude Include="Source\Graphics\Rendering\Graphic.h" />
+    <ClInclude Include="Source\Graphics\Shaders\ShaderCompiler.h" />
     <ClInclude Include="Dependencies\stb_image\stb_image_resize.h" />
     <ClInclude Include="Dependencies\stb_image\stb_image_write.h" />
     <ClInclude Include="Dependencies\physx\snippetcommon\SnippetPrint.h" />

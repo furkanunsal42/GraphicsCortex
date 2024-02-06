@@ -39,6 +39,7 @@ void Editor::render() {
 	frame->clear_window(0, 0, 0, 1);
 	gui->new_frame(deltatime);
 	frame->display_performance(180);
+	PhysicsScene::get().simulate_step(deltatime / 1000.0f);
 
 	for (std::shared_ptr<UILayer> layer : layers)
 		layer->on_gui_render();

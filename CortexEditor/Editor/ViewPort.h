@@ -53,6 +53,7 @@ class ViewPort : public UILayer {
 	void on_gui_render() {
 		Editor& editor = Editor::get();
 		std::shared_ptr<Scene> current_scene = editor.scenes[editor.current_scene_index];
+
 		current_scene->camera->screen_width = size.x;
 		current_scene->camera->screen_height = size.y;
 		current_scene->background_color = glm::vec4(1, 1, 1, 1);

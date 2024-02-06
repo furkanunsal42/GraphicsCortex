@@ -12,7 +12,7 @@ int load_vehicle_scene() {
 	std::shared_ptr<Scene> scene = Editor::get().get_current_scene();
 	scene->camera->max_distance = 1000;
 
-	std::shared_ptr<Program> program = std::make_shared<Program>(Shader("Shaders/TextureArray.vert", "Shaders/TextureArray.frag"));
+	std::shared_ptr<Program> program = std::make_shared<Program>(Shader("Source/GLSL/TextureArray.vert", "Source/GLSL/TextureArray.frag"));
 	std::shared_ptr<Program> solid_program = default_program::solid_program_s();
 
 	{
@@ -21,11 +21,11 @@ int load_vehicle_scene() {
 		Model city_model_ground("Models/circuit/ground_physics.obj", 1.0f, Model::COORD_XYZ);
 		std::shared_ptr<Mesh> city = std::make_shared<Mesh>(city_model);
 
-		PhysicsObject map_physics(create_geometry::triangle_mesh(city_model_collision.get_partial_data<physx::PxVec3>("111"), city_model_collision.index_data), PhysicsObject::STATIC, true);
+		PhysicsObject map_physics(create_geometry::triangle_mesh(city_model_collision.get_partial_data<physx::PxVec3>("111"), city_model_collision.submodels[0].index_data), PhysicsObject::STATIC, true);
 		map_physics.make_drivable();
 		scene->add_physics(map_physics);
 
-		PhysicsObject map_ground(create_geometry::triangle_mesh(city_model_ground.get_partial_data<physx::PxVec3>("111"), city_model_ground.index_data), PhysicsObject::STATIC, true);
+		PhysicsObject map_ground(create_geometry::triangle_mesh(city_model_ground.get_partial_data<physx::PxVec3>("111"), city_model_ground.submodels[0].index_data), PhysicsObject::STATIC, true);
 		map_ground.make_drivable();
 		scene->add_physics(map_ground);
 
