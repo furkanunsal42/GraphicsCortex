@@ -12,11 +12,10 @@ public:
 	SamplingFilter min_filter = SamplingFilter::LINEAR;
 	SamplingFilter mag_filter = SamplingFilter::LINEAR;
 	
-	bool is_color_texture;
 	
 	union {
 		ColorTextureFormat color_texture_format;
-		DepthStencilTextureFormats depth_stencil_texture_format;
+		DepthStencilTextureFormat depth_stencil_texture_format;
 	};
 	
 	union {
@@ -28,16 +27,27 @@ public:
 
 	Texture2D() = delete;
 	//Texture2D(int width, int height, WellDefinedColorFormat texture_format, bool generate_mipmap = false, float mipmap_bias = 0.0f);
-	Texture2D(int width, int height, ColorFormat format, ColorTextureFormat InternalFormat, Type type, bool generate_mipmap = false, float mipmap_bias = 0.0f);
-	Texture2D(int width, int height, DepthStencilFormat format, DepthStencilTextureFormats InternalFormat, Type type, bool generate_mipmap = false, float mipmap_bias = 0.0f);
+	Texture2D(int width, int height, ColorFormat format, ColorTextureFormat InternalFormat, Type type, int mipmap_levels = 0, float mipmap_bias = 0.0f);
+	Texture2D(int width, int height, DepthStencilFormat format, DepthStencilTextureFormat InternalFormat, Type type, int mipmap_levels = 0, float mipmap_bias = 0.0f);
 	~Texture2D();
-	void initialize_now();
 	void release();
+	void bind();
 	void bind(int texture_slot);
 	void unbind();
 
+	void load_data(const void* image, int mipmap_target = 0);
+	void load_data(const void* image, int x, int y, int width, int height, int mipmap_target = 0);
+	void load_data(const Image& image, int mipmap_target = 0);
+	void load_data(const Image& image, int x, int y, int width, int height, int mipmap_target = 0);
+
 	void generate_mipmap(float bias);
-	
+
+	void copy_to_texture(Texture2D* target_texture, int self_mipmap, int target_mipmap);
+	void copy_to_texture(Texture2D* target_texture, int self_mipmap, int target_mipmap, int self_x, int self_y, int width, int height, int target_x, int target_y);
+
+	Image get_image(int mipmap_level);
+	Image get_image(int mipmap_level, int x, int y, int width, int height);
+
 	void clear(int clear_data);
 	void clear(float clear_data);
 	void clear(glm::vec2 clear_data);
@@ -48,17 +58,6 @@ public:
 	void clear(glm::vec2 clear_data, int x, int y, int width, int height);
 	void clear(glm::vec3 clear_data, int x, int y, int width, int height);
 	void clear(glm::vec4 clear_data, int x, int y, int width, int height);
-
-	void load_data(const char* image);
-	void load_data(const char* image, int x, int y, int width, int height);
-	void load_data(const Image& image);
-	void load_data(const Image& image, int x, int y, int width, int height);
-
-	void copy_to_texture(Texture2D* target_texture, int self_mipmap, int target_mipmap);
-	void copy_to_texture(Texture2D* target_texture, int self_mipmap, int target_mipmap, int self_x, int self_y, int width, int height, int target_x, int target_y);
-
-	Image get_image(int mipmap_level);
-	Image get_image(int mipmap_level, int x, int y, int width, int height);
 
 	SamplingFilter query_mag_filter();
 	SamplingFilter query_min_filter();
@@ -95,7 +94,21 @@ public:
 
 private:
 	int target = GL_TEXTURE_2D;
-	bool generate_mipmap = false;
+	int mipmap_levels = 0;
 	float mipmap_bias = 0.0f;
+
+	bool is_color_texture;
+
+	bool _texture_generated = false;
+	bool _texture_allocated = false;
+	bool _user_data_loaded = false;
+	bool _mipmap_generated = false;
+
+	void _generate_texture();
+	void _allocate_texture();
+
+	int _get_gl_type();
+	int _get_gl_format();
+	int _get_gl_internal_format();
 };
 

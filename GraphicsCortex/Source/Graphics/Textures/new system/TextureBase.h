@@ -107,7 +107,7 @@ public:
 		COMPRESSED_RGB_BPTC_UNSIGNED_FLOAT,
 	};
 
-	enum class DepthStencilTextureFormats {
+	enum class DepthStencilTextureFormat {
 		// Base Internal Formats
 		STENCIL_INDEX,
 		DEPTH_COMPONENT,
@@ -210,7 +210,16 @@ public:
 		RGBA32UI 		,	//	GL_RGBA 		ui32 	ui32 	ui32 	ui32
 	};
 
-	int id = 0;
+	static int SamplingFilter_to_OpenGL(SamplingFilter filter);
+	static int WrapMode_to_OpenGL(WrapMode wrap_mode);
+	static int ColorTextureFormat_to_OpenGL(ColorTextureFormat color_texture_format);
+	static int DepthStencilTextureFormat_to_OpenGL(DepthStencilTextureFormat depth_stencil_texture_format);
+	static int Type_to_OpenGL(Type type);
+	static int ColorFormat_to_OpenGL(ColorFormat color_format);
+	static int DepthStencilFormat_to_OpenGL(DepthStencilFormat depth_stencil_format);
+	//static int WellDefinedFormat_to_OpenGL(WellDefinedColorFormat well_defined_color_format);
+
+	unsigned int id = 0;
 
 	TextureBase();
 	~TextureBase();
