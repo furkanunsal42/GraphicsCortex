@@ -63,6 +63,10 @@ int main() {
 		gui.override_style.on_hover.margin = vec4(20, 20, 20, 20);
 		gui.override_style.margin_change = 0.9;
 		gui.override_style.margin_interpolation = Interpolation::polynomial(4);
+		gui.override_style.on_hover.corner_rounding = vec4(20, 20, 20, 20);
+		gui.override_style.corner_rounding_change = 0.9;
+		gui.override_style.corner_rounding_interpolation = Interpolation::polynomial(4);
+		gui.override_style.cursor_type = Frame::Hand;
 		gui.layout_content("example10", vec2(0, 0), style1, Layout::Vertical);
 		gui.override_style.color = vec3(0, 1, 0);
 		gui.content("example11", vec2(200, 60), style4, U"Hello Recursion");

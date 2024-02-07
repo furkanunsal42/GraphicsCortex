@@ -263,6 +263,7 @@
     </ProjectReference>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Mains\ApplicationMain.cpp" />
     <ClCompile Include="Source\Graphics\Meshes\AssetImporter.cpp" />
     <ClCompile Include="Source\Graphics\Rendering\Camera.cpp" />
     <ClCompile Include="Source\Graphics\Textures\CubeMap.cpp" />
@@ -272,7 +273,7 @@
     <ClCompile Include="Source\Graphics\Defaults\Default_Programs.cpp" />
     <ClCompile Include="Source\Graphics\Text\Font.cpp" />
     <ClCompile Include="Source\Graphics\Rendering\FrameBuffer.cpp" />
-    <ClCompile Include="Source\Graphics\GUI\Gui2.cpp" />
+    <ClCompile Include="Source\Graphics\GUI\Gui.cpp" />
     <ClCompile Include="Source\Graphics\Textures\Image.cpp" />
     <ClCompile Include="Source\Graphics\Lights\Lights.cpp" />
     <ClCompile Include="Source\Graphics\Math\CortexMath.cpp" />
@@ -290,7 +291,6 @@
     <ClCompile Include="Source\System\RamCache.cpp" />
     <ClCompile Include="Source\Graphics\Rendering\RenderPipeline.cpp" />
     <ClCompile Include="Source\Graphics\Rendering\Scene.cpp" />
-    <ClCompile Include="Source\Graphics\GUI\Gui.cpp" />
     <ClCompile Include="Source\Graphics\Text\Text.cpp" />
     <ClCompile Include="Source\Graphics\Textures\Texture.cpp" />
     <ClCompile Include="Source\Graphics\Buffers\Buffer.cpp" />
@@ -316,7 +316,6 @@
     <ClCompile Include="Dependencies\physx\snippetcommon\SnippetVehicleSceneQuery.cpp" />
     <ClCompile Include="Dependencies\physx\snippetcommon\SnippetVehicleTankCreate.cpp" />
     <ClCompile Include="Dependencies\physx\snippetcommon\SnippetVehicleTireFriction.cpp" />
-    <ClCompile Include="Mains\ApplicationMain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\GLSL\Depth.frag" />

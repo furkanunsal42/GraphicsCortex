@@ -34,7 +34,8 @@ Frame::Frame(int width, int height, const std::string& name, int msaa, int swapi
 	if (!is_glfw_initialized) {
 		glfwInit();
 		is_glfw_initialized = true;
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 	}
 	if(multisample)
 		glfwWindowHint(GLFW_SAMPLES, multisample);

@@ -147,9 +147,6 @@
     <ClCompile Include="Dependencies\imgui\imgui_widgets.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Graphics\GUI\Gui.cpp">
-      <Filter>Kaynak Dosyalar</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Graphics\Math\CortexMath.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
@@ -168,16 +165,16 @@
     <ClCompile Include="Source\Graphics\Rendering\CustomRenderPipelines.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Graphics\GUI\Gui2.cpp">
-      <Filter>Kaynak Dosyalar</Filter>
-    </ClCompile>
-    <ClCompile Include="Mains\ApplicationMain.cpp">
+    <ClCompile Include="Source\Graphics\GUI\Gui.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
     <ClCompile Include="Source\System\BinaryBuffers.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
     <ClCompile Include="Source\System\DirectoryUtils.cpp">
+      <Filter>Kaynak Dosyalar</Filter>
+    </ClCompile>
+    <ClCompile Include="Mains\ApplicationMain.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
   </ItemGroup>

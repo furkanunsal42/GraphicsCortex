@@ -6,9 +6,10 @@
 #include "Buffer.h";
 
 ArrayBuffer::ArrayBuffer()
-	: id(0), data_count(0) {};
+	: id(0), vao(0), data_count(0) {};
 
 ArrayBuffer::ArrayBuffer(const ArrayBuffer& a){
+	vao = a.vao;
 	id = a.id;
 	data_count = a.data_count;
 	vertex_attribute_structure = a.vertex_attribute_structure;
@@ -33,6 +34,7 @@ ArrayBuffer::~ArrayBuffer() {
 void ArrayBuffer::_deallocate() {
 	if (!initialized)
 		return;
+	GLCall(glDeleteVertexArrays(1, &vao));
 	GLCall(glDeleteBuffers(1, &id));
 	initialized = false;
 	vertex_attribute_structure.clear();
@@ -48,6 +50,9 @@ void ArrayBuffer::_initialize_buffer(float verticies[], int data_count) {
 	if (initialized) {
 		_deallocate();
 	}
+	glGenVertexArrays(1, &vao);
+	glBindVertexArray(vao);
+	
 	GLCall(glGenBuffers(1, &id));
 	GLCall(glBindBuffer(GL_ARRAY_BUFFER, id));
 	GLCall(glBufferData(GL_ARRAY_BUFFER, data_count * sizeof(float), verticies, GL_STATIC_DRAW));
@@ -75,17 +80,18 @@ void ArrayBuffer::push_attribute(unsigned int count) {
 }
 
 void ArrayBuffer::bind() {
-		GLCall(glBindBuffer(GL_ARRAY_BUFFER, id));
-		int sum = 0;
-		for (int attrib : vertex_attribute_structure) {
-			sum += attrib;
-		}
-		int prefix_sum = 0;
-		for (int i = 0; i < this->vertex_attribute_structure.size(); i++) {
-			GLCall(glEnableVertexAttribArray(i));
-			GLCall(glVertexAttribPointer(i, vertex_attribute_structure[i], GL_FLOAT, GL_FALSE, sum*sizeof(float), (void*)(prefix_sum*sizeof(float))));
-			prefix_sum += vertex_attribute_structure[i];
-		}
+	glBindVertexArray(vao);
+	GLCall(glBindBuffer(GL_ARRAY_BUFFER, id));
+	int sum = 0;
+	for (int attrib : vertex_attribute_structure) {
+		sum += attrib;
+	}
+	int prefix_sum = 0;
+	for (int i = 0; i < this->vertex_attribute_structure.size(); i++) {
+		GLCall(glEnableVertexAttribArray(i));
+		GLCall(glVertexAttribPointer(i, vertex_attribute_structure[i], GL_FLOAT, GL_FALSE, sum*sizeof(float), (void*)(prefix_sum*sizeof(float))));
+		prefix_sum += vertex_attribute_structure[i];
+	}
 }
 
 void ArrayBuffer::unbind() {

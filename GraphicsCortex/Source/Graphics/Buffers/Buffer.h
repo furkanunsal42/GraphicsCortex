@@ -9,6 +9,7 @@
 class ArrayBuffer {
 public:
 	unsigned int id;
+	unsigned int vao;
 	int data_count;
 	std::vector<unsigned int> vertex_attribute_structure;
 	ArrayBuffer();
