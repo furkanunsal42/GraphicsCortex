@@ -271,8 +271,6 @@
     <ClCompile Include="Source\Graphics\Defaults\Default_Assets.cpp" />
     <ClCompile Include="Source\Graphics\GUI\Default_Gui_Widgets.cpp" />
     <ClCompile Include="Source\Graphics\Defaults\Default_Programs.cpp" />
-    <ClCompile Include="Source\Graphics\Textures\new system\Texture2D.cpp" />
-    <ClCompile Include="Source\Graphics\Textures\new system\TextureBase.cpp" />
     <ClCompile Include="Source\Graphics\Text\Font.cpp" />
     <ClCompile Include="Source\Graphics\Rendering\FrameBuffer.cpp" />
     <ClCompile Include="Source\Graphics\GUI\Gui.cpp" />
@@ -362,13 +360,6 @@
     <ClInclude Include="Source\Graphics\Rendering\Debuger.h" />
     <ClInclude Include="Source\Graphics\Defaults\Default_Assets.h" />
     <ClInclude Include="Source\Graphics\GUI\Default_Gui_Widgets.h" />
-    <ClInclude Include="Source\Graphics\Textures\new system\BufferTexture.h" />
-    <ClInclude Include="Source\Graphics\Textures\new system\Texture1D.h" />
-    <ClInclude Include="Source\Graphics\Textures\new system\Texture2D.h" />
-    <ClInclude Include="Source\Graphics\Textures\new system\Texture3D.h" />
-    <ClInclude Include="Source\Graphics\Textures\new system\TextureArray.h" />
-    <ClInclude Include="Source\Graphics\Textures\new system\TextureBase.h" />
-    <ClInclude Include="Source\Graphics\Textures\new system\TextureCubeMap.h" />
     <ClInclude Include="Source\Graphics\Text\Font.h" />
     <ClInclude Include="Source\Graphics\Rendering\FrameBuffer.h" />
     <ClInclude Include="Source\GraphicsCortex.h" />

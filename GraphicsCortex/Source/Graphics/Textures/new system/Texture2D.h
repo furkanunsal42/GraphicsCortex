@@ -5,25 +5,14 @@
 
 class Texture2D : public TextureBase{
 public:
-	int width;
-	int height;
+	int mipmap_begin_level = 0;
+	float mipmap_bias = 0.0f;
+
 	WrapMode wrap_x = WrapMode::CLAMP;
 	WrapMode wrap_y = WrapMode::CLAMP;
+	//SamplingFilter mipmap_min_filter = SamplingFilter::LINEAR;
 	SamplingFilter min_filter = SamplingFilter::LINEAR;
 	SamplingFilter mag_filter = SamplingFilter::LINEAR;
-	
-	
-	union {
-		ColorTextureFormat color_texture_format;
-		DepthStencilTextureFormat depth_stencil_texture_format;
-	};
-	
-	union {
-		ColorFormat color_format;
-		DepthStencilFormat depth_stencil_format;
-	};
-	
-	Type type;
 
 	Texture2D() = delete;
 	//Texture2D(int width, int height, WellDefinedColorFormat texture_format, bool generate_mipmap = false, float mipmap_bias = 0.0f);
@@ -40,10 +29,8 @@ public:
 	void load_data(const Image& image, int mipmap_target = 0);
 	void load_data(const Image& image, int x, int y, int width, int height, int mipmap_target = 0);
 
-	void generate_mipmap(float bias);
-
-	void copy_to_texture(Texture2D* target_texture, int self_mipmap, int target_mipmap);
-	void copy_to_texture(Texture2D* target_texture, int self_mipmap, int target_mipmap, int self_x, int self_y, int width, int height, int target_x, int target_y);
+	void copy_to_texture(Texture2D& target_texture, int self_mipmap, int target_mipmap);
+	void copy_to_texture(Texture2D& target_texture, int self_mipmap, int target_mipmap, int self_x, int self_y, int width, int height, int target_x, int target_y);
 
 	Image get_image(int mipmap_level);
 	Image get_image(int mipmap_level, int x, int y, int width, int height);
@@ -94,8 +81,23 @@ public:
 
 private:
 	int target = GL_TEXTURE_2D;
+	
+	int width;
+	int height;
+
+	union {
+		ColorTextureFormat color_texture_format;
+		DepthStencilTextureFormat depth_stencil_texture_format;
+	};
+	
+	union {
+		ColorFormat color_format;
+		DepthStencilFormat depth_stencil_format;
+	};
+	
+	Type type;
+	
 	int mipmap_levels = 0;
-	float mipmap_bias = 0.0f;
 
 	bool is_color_texture;
 
@@ -104,8 +106,11 @@ private:
 	bool _user_data_loaded = false;
 	bool _mipmap_generated = false;
 
+	void _set_texture_parameters();
+
 	void _generate_texture();
 	void _allocate_texture();
+	void _generate_mipmap();
 
 	int _get_gl_type();
 	int _get_gl_format();
