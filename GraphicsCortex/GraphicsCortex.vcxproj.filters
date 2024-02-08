@@ -183,6 +183,9 @@
     <ClCompile Include="Source\Graphics\Rendering\new system\FrameBuffer2.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
+    <ClCompile Include="Mains\TextureSystemTest.cpp">
+      <Filter>Kaynak Dosyalar</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\GLSL\FlatColor.vert" />

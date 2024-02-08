@@ -263,6 +263,7 @@
     </ProjectReference>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Mains\TextureSystemTest.cpp" />
     <ClCompile Include="Source\Graphics\Meshes\AssetImporter.cpp" />
     <ClCompile Include="Source\Graphics\Rendering\Camera.cpp" />
     <ClCompile Include="Source\Graphics\Rendering\new system\FrameBuffer2.cpp" />

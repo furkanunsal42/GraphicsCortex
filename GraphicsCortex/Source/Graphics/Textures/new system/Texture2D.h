@@ -17,7 +17,6 @@ public:
 	Texture2D() = delete;
 	Texture2D(const Texture2D& other) = delete;
 	
-	//Texture2D(int width, int height, WellDefinedColorFormat texture_format, bool generate_mipmap = false, float mipmap_bias = 0.0f);
 	Texture2D(const Image& image, ColorTextureFormat internal_format, ColorFormat format, Type type, int mipmap_levels = 1, float mipmap_bias = 0.0f);
 	Texture2D(int width, int height, ColorTextureFormat internal_format, int mipmap_levels = 1, float mipmap_bias = 0.0f);
 	Texture2D(int width, int height, DepthStencilTextureFormat internal_format, int mipmap_levels = 1, float mipmap_bias = 0.0f);
@@ -49,18 +48,18 @@ public:
 
 	Image get_image(int mipmap_level);
 	Image get_image(int mipmap_level, int x, int y, int width, int height);
-
-	void clear(int clear_data);
-	void clear(float clear_data);
-	void clear(glm::vec2 clear_data);
-	void clear(glm::vec3 clear_data);
-	void clear(glm::vec4 clear_data);
-	void clear(int clear_data,		 int x, int y, int width, int height);
-	void clear(float clear_data,	 int x, int y, int width, int height);
-	void clear(glm::vec2 clear_data, int x, int y, int width, int height);
-	void clear(glm::vec3 clear_data, int x, int y, int width, int height);
-	void clear(glm::vec4 clear_data, int x, int y, int width, int height);
 	*/
+
+	void clear(unsigned char clear_data, int mipmap_target = 0);
+	void clear(float clear_data, int mipmap_target = 0);
+	void clear(glm::vec2 clear_data, int mipmap_target = 0);
+	void clear(glm::vec3 clear_data, int mipmap_target = 0);
+	void clear(glm::vec4 clear_data, int mipmap_target = 0);
+	void clear(unsigned char clear_data,	int x, int y, int width, int height, int mipmap_target = 0);
+	void clear(float clear_data,	 int x, int y, int width, int height, int mipmap_target = 0);
+	void clear(glm::vec2 clear_data, int x, int y, int width, int height, int mipmap_target = 0);
+	void clear(glm::vec3 clear_data, int x, int y, int width, int height, int mipmap_target = 0);
+	void clear(glm::vec4 clear_data, int x, int y, int width, int height, int mipmap_target = 0);
 
 	SamplingFilter query_mag_filter();
 	SamplingFilter query_min_filter();

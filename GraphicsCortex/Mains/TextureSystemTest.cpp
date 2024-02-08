@@ -1,7 +1,7 @@
 #include "GraphicsCortex.h"
 
 int main(){
-	Frame frame(1920, 1080, "GraphicsCortex", 0, 0, true, true, false, false);
+	Frame frame(800, 600, "GraphicsCortex", 0, 0, true, true, false, false);
 	Scene scene(frame);
 	scene.camera->max_distance = 1000;
 	scene.camera->fov = 70;

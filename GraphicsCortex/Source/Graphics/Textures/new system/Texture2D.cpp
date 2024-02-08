@@ -552,3 +552,83 @@ int Texture2D::query_compressed_image_size(int mipmap_level)
 	glGetTexLevelParameteriv(target, mipmap_level, GL_TEXTURE_COMPRESSED_IMAGE_SIZE, &size);
 	return size;
 }
+
+void Texture2D::clear(unsigned char clear_data, int mipmap_target)
+{
+	clear(clear_data, 0, 0, width, height, mipmap_target);
+}
+
+void Texture2D::clear(float clear_data, int mipmap_target)
+{
+	clear(clear_data, 0, 0, width, height, mipmap_target);
+}
+
+void Texture2D::clear(glm::vec2 clear_data, int mipmap_target)
+{
+	clear(clear_data, 0, 0, width, height, mipmap_target);
+}
+
+void Texture2D::clear(glm::vec3 clear_data, int mipmap_target)
+{
+	clear(clear_data, 0, 0, width, height, mipmap_target);
+}
+
+void Texture2D::clear(glm::vec4 clear_data, int mipmap_target)
+{
+	clear(clear_data, 0, 0, width, height, mipmap_target);
+}
+
+void Texture2D::clear(unsigned char clear_data, int x, int y, int width, int height, int mipmap_target)
+{
+	bind();
+	if (!_texture_allocated || !_user_data_loaded) {
+		std::cout << "[OpenGL Error] Texture tried to clear() but either not allocated any ram or didn't loaded any user data yet" << std::endl;
+		ASSERT(false);
+	}
+
+	GLCall(glClearTexSubImage(id, mipmap_target, x, y, 0, width, height, 1, GL_RED, GL_UNSIGNED_BYTE, &clear_data));
+}
+
+void Texture2D::clear(float clear_data, int x, int y, int width, int height, int mipmap_target)
+{
+	bind();
+	if (!_texture_allocated || !_user_data_loaded) {
+		std::cout << "[OpenGL Error] Texture tried to clear() but either not allocated any ram or didn't loaded any user data yet" << std::endl;
+		ASSERT(false);
+	}
+
+	GLCall(glClearTexSubImage(id, mipmap_target, x, y, 0, width, height, 1, GL_RED, GL_FLOAT, &clear_data));
+}
+
+void Texture2D::clear(glm::vec2 clear_data, int x, int y, int width, int height, int mipmap_target)
+{
+	bind();
+	if (!_texture_allocated || !_user_data_loaded) {
+		std::cout << "[OpenGL Error] Texture tried to clear() but either not allocated any ram or didn't loaded any user data yet" << std::endl;
+		ASSERT(false);
+	}
+
+	GLCall(glClearTexSubImage(id, mipmap_target, x, y, 0, width, height, 1, GL_RG, GL_FLOAT, &clear_data));
+}
+
+void Texture2D::clear(glm::vec3 clear_data, int x, int y, int width, int height, int mipmap_target)
+{
+	bind();
+	if (!_texture_allocated || !_user_data_loaded) {
+		std::cout << "[OpenGL Error] Texture tried to clear() but either not allocated any ram or didn't loaded any user data yet" << std::endl;
+		ASSERT(false);
+	}
+
+	GLCall(glClearTexSubImage(id, mipmap_target, x, y, 0, width, height, 1, GL_RGB, GL_FLOAT, &clear_data));
+}
+
+void Texture2D::clear(glm::vec4 clear_data, int x, int y, int width, int height, int mipmap_target)
+{
+	bind();
+	if (!_texture_allocated || !_user_data_loaded) {
+		std::cout << "[OpenGL Error] Texture tried to clear() but either not allocated any ram or didn't loaded any user data yet" << std::endl;
+		ASSERT(false);
+	}
+
+	GLCall(glClearTexSubImage(id, mipmap_target, x, y, 0, width, height, 1, GL_RGBA, GL_FLOAT, &clear_data));
+}
