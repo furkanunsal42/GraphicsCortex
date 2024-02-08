@@ -2,21 +2,21 @@
 #include <iostream>
 #include "Debuger.h"
 
-Texture2D::Texture2D(const Image& image, ColorFormat format, ColorTextureFormat internal_format, Type type, int mipmap_levels, float mipmap_bias) :
-	width(image.get_width()), height(image.get_height()), is_color_texture(true), color_format(format), color_texture_format(internal_format), type(type), mipmap_levels(mipmap_levels), mipmap_bias(mipmap_bias)
+Texture2D::Texture2D(const Image& image, ColorTextureFormat internal_format, ColorFormat format, Type type, int mipmap_levels, float mipmap_bias) :
+	width(image.get_width()), height(image.get_height()), is_color_texture(true), color_texture_format(internal_format), mipmap_levels(mipmap_levels), mipmap_bias(mipmap_bias)
 {
 	_generate_texture();
-	load_data_with_mipmaps(image);
+	load_data_with_mipmaps(image, format, type);
 }
 
-Texture2D::Texture2D(int width, int height, ColorFormat format, ColorTextureFormat internal_format, Type type, int mipmap_levels, float mipmap_bias) :
-	width(width), height(height), is_color_texture(true), color_format(format), color_texture_format(internal_format), type(type), mipmap_levels(mipmap_levels), mipmap_bias(mipmap_bias)
+Texture2D::Texture2D(int width, int height, ColorTextureFormat internal_format, int mipmap_levels, float mipmap_bias) :
+	width(width), height(height), is_color_texture(true), color_texture_format(internal_format), mipmap_levels(mipmap_levels), mipmap_bias(mipmap_bias)
 {
 	_generate_texture();
 }
 
-Texture2D::Texture2D(int width, int height, DepthStencilFormat format, DepthStencilTextureFormat internal_format, Type type, int mipmap_levels, float mipmap_bias) :
-	width(width), height(height), is_color_texture(false), depth_stencil_format(format), depth_stencil_texture_format(internal_format), type(type), mipmap_levels(mipmap_levels), mipmap_bias(mipmap_bias)
+Texture2D::Texture2D(int width, int height, DepthStencilTextureFormat internal_format, int mipmap_levels, float mipmap_bias) :
+	width(width), height(height), is_color_texture(false), depth_stencil_texture_format(internal_format), mipmap_levels(mipmap_levels), mipmap_bias(mipmap_bias)
 {
 	_generate_texture();
 }
@@ -56,7 +56,7 @@ void Texture2D::unbind()
 	GLCall(glBindTexture(target, 0));
 }
 
-void Texture2D::load_data(const void* image, int mipmap_target)
+void Texture2D::load_data(const void* image, ColorFormat format, Type type, int mipmap_target)
 {
 	if (!_texture_generated) {
 		std::cout << "[OpenGL Error] released texture tried to load_data()" << std::endl;
@@ -65,12 +65,12 @@ void Texture2D::load_data(const void* image, int mipmap_target)
 	_allocate_texture();
 
 	bind();
-	GLCall(glTexSubImage2D(target, mipmap_target, 0, 0, this->width >> mipmap_target, this->height >> mipmap_target, _get_gl_format(), _get_gl_type(), image));
+	GLCall(glTexSubImage2D(target, mipmap_target, 0, 0, this->width >> mipmap_target, this->height >> mipmap_target, TextureBase2::ColorFormat_to_OpenGL(format), TextureBase2::Type_to_OpenGL(type), image));
 
 	_user_data_loaded = true;
 }
 
-void Texture2D::load_data(const void* image, int x, int y, int write_width, int write_height, int mipmap_target)
+void Texture2D::load_data(const void* image, ColorFormat format, Type type, int x, int y, int custom_width, int custom_height, int mipmap_target)
 {
 	if (!_texture_generated) {
 		std::cout << "[OpenGL Error] released texture tried to load_data()" << std::endl;
@@ -79,13 +79,12 @@ void Texture2D::load_data(const void* image, int x, int y, int write_width, int 
 	_allocate_texture();
 
 	bind();
-	GLCall(glTexSubImage2D(target, mipmap_target, x, y, write_width, write_height, _get_gl_format(), _get_gl_type(), image));
+	GLCall(glTexSubImage2D(target, mipmap_target, x, y, custom_width, custom_height, TextureBase2::ColorFormat_to_OpenGL(format), TextureBase2::Type_to_OpenGL(type), image));
 
 	_user_data_loaded = true;
 }
 
-
-void Texture2D::load_data(const Image& image, int mipmap_target)
+void Texture2D::load_data(const Image& image, ColorFormat format, Type type, int mipmap_target)
 {
 	int mipmap_width = this->width >> mipmap_target;
 	int mipmap_height = this->height >> mipmap_target;
@@ -94,13 +93,12 @@ void Texture2D::load_data(const Image& image, int mipmap_target)
 		std::cout << "[OpenGL Error] Texture2D.load_data() image size mismatch. " << " texture size : (" << width << ", " << height << "), " << " image size : (" << image.get_width() << ", " << image.get_height() << ")" << std::endl;
 		ASSERT(false);
 	}
-	
-	load_data(image._image_data, mipmap_target);
+
+	load_data(image._image_data, format, type, mipmap_target);
 }
 
-void Texture2D::load_data(const Image& image, int x, int y, int width, int height, int mipmap_target)
+void Texture2D::load_data(const Image& image, ColorFormat format, Type type, int x, int y, int width, int height, int mipmap_target)
 {
-
 	int mipmap_width = this->width >> mipmap_target;
 	int mipmap_height = this->height >> mipmap_target;
 
@@ -114,8 +112,68 @@ void Texture2D::load_data(const Image& image, int x, int y, int width, int heigh
 		ASSERT(false);
 	}
 
-	load_data(image._image_data, x, y, width, height, mipmap_target);
+	load_data(image._image_data, format, type, x, y, width, height, mipmap_target);
 }
+
+void Texture2D::load_data(const void* image, DepthStencilFormat format, Type type, int mipmap_target)
+{
+	if (!_texture_generated) {
+		std::cout << "[OpenGL Error] released texture tried to load_data()" << std::endl;
+		ASSERT(false);
+	}
+	_allocate_texture();
+
+	bind();
+	GLCall(glTexSubImage2D(target, mipmap_target, 0, 0, this->width >> mipmap_target, this->height >> mipmap_target, TextureBase2::DepthStencilFormat_to_OpenGL(format), TextureBase2::Type_to_OpenGL(type), image));
+
+	_user_data_loaded = true;
+}
+
+void Texture2D::load_data(const void* image, DepthStencilFormat format, Type type, int x, int y, int custom_width, int custom_height, int mipmap_target)
+{
+	if (!_texture_generated) {
+		std::cout << "[OpenGL Error] released texture tried to load_data()" << std::endl;
+		ASSERT(false);
+	}
+	_allocate_texture();
+
+	bind();
+	GLCall(glTexSubImage2D(target, mipmap_target, x, y, custom_width, custom_height, TextureBase2::DepthStencilFormat_to_OpenGL(format), TextureBase2::Type_to_OpenGL(type), image));
+
+	_user_data_loaded = true;
+}
+
+void Texture2D::load_data(const Image& image, DepthStencilFormat format, Type type, int mipmap_target)
+{
+	int mipmap_width = this->width >> mipmap_target;
+	int mipmap_height = this->height >> mipmap_target;
+
+	if (mipmap_width != image.get_width() || mipmap_height != image.get_height()) {
+		std::cout << "[OpenGL Error] Texture2D.load_data() image size mismatch. " << " texture size : (" << width << ", " << height << "), " << " image size : (" << image.get_width() << ", " << image.get_height() << ")" << std::endl;
+		ASSERT(false);
+	}
+
+	load_data(image._image_data, format, type, mipmap_target);
+}
+
+void Texture2D::load_data(const Image& image, DepthStencilFormat format, Type type, int x, int y, int width, int height, int mipmap_target)
+{
+	int mipmap_width = this->width >> mipmap_target;
+	int mipmap_height = this->height >> mipmap_target;
+
+	if (width > image.get_width() || height > image.get_height()) {
+		std::cout << "[OpenGL Error] Texture2D.load_data() image size mismatch. " << " load_data() size : (" << width << ", " << height << "), " << " image size : (" << image.get_width() << ", " << image.get_height() << ")" << std::endl;
+		ASSERT(false);
+	}
+
+	if (mipmap_width < width || mipmap_height < height) {
+		std::cout << "[OpenGL Error] Texture2D.load_data() image size mismatch. " << " texture size : (" << width << ", " << height << "), " << " load_data() size : (" << image.get_width() << ", " << image.get_height() << ")" << std::endl;
+		ASSERT(false);
+	}
+
+	load_data(image._image_data, format, type, x, y, width, height, mipmap_target);
+}
+
 
 void Texture2D::generate_mipmap()
 {
@@ -131,21 +189,37 @@ void Texture2D::generate_mipmap()
 	_mipmap_generated = true;
 }
 
-void Texture2D::load_data_with_mipmaps(const void* image)
+void Texture2D::load_data_with_mipmaps(const void* image, ColorFormat format, Type type)
 {
-	load_data(image, 0);
+	load_data(image, format, type, 0);
 	generate_mipmap();
 }
 
-
-void Texture2D::load_data_with_mipmaps(const Image& image)
+void Texture2D::load_data_with_mipmaps(const Image& image, ColorFormat format, Type type)
 {
 	if (this->width != image.get_width() || this->height != image.get_height()) {
 		std::cout << "[OpenGL Error] Texture2D.load_data_with_mipmaps() image size mismatch. " << " texture size : (" << width << ", " << height << "), " << " image size : (" << image.get_width() << ", " << image.get_height() << ")" << std::endl;
 		ASSERT(false);
 	}
 
-	load_data(image, 0);
+	load_data(image, format, type, 0);
+	generate_mipmap();
+}
+
+void Texture2D::load_data_with_mipmaps(const void* image, DepthStencilFormat format, Type type)
+{
+	load_data(image, format, type, 0);
+	generate_mipmap();
+}
+
+void Texture2D::load_data_with_mipmaps(const Image& image, DepthStencilFormat format, Type type)
+{
+	if (this->width != image.get_width() || this->height != image.get_height()) {
+		std::cout << "[OpenGL Error] Texture2D.load_data_with_mipmaps() image size mismatch. " << " texture size : (" << width << ", " << height << "), " << " image size : (" << image.get_width() << ", " << image.get_height() << ")" << std::endl;
+		ASSERT(false);
+	}
+
+	load_data(image, format, type, 0);
 	generate_mipmap();
 }
 
@@ -186,16 +260,6 @@ void Texture2D::_allocate_texture()
 	GLCall(glTexStorage2D(target, mipmap_levels, _get_gl_internal_format(), width, height));
 
 	_texture_allocated = true;
-}
-
-int Texture2D::_get_gl_type()
-{
-	return Type_to_OpenGL(type);
-}
-
-int Texture2D::_get_gl_format()
-{
-	return is_color_texture ? ColorFormat_to_OpenGL(color_format) : DepthStencilFormat_to_OpenGL(depth_stencil_format);
 }
 
 int Texture2D::_get_gl_internal_format()

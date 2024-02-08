@@ -13,7 +13,7 @@ int TextureBase2::SamplingFilter_to_OpenGL(SamplingFilter filter)
 int TextureBase2::WrapMode_to_OpenGL(WrapMode wrap_mode)
 {
 	switch (wrap_mode) {
-	case WrapMode::CLAMP			: return GL_CLAMP;
+	case WrapMode::CLAMP			: return GL_CLAMP_TO_EDGE;
 	case WrapMode::REPEAT			: return GL_REPEAT;
 	case WrapMode::MIRRORED_REPEAT	: return GL_MIRRORED_REPEAT;
 	}

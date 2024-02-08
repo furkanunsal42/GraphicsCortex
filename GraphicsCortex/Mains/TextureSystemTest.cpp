@@ -25,9 +25,8 @@ int main(){
 	//my_texture.texture_slot = 0;
 	//my_texture.bind();
 
-	Texture2D my_texture(image1, TextureBase2::ColorFormat::RGBA, TextureBase2::ColorTextureFormat::RGBA8, TextureBase2::Type::UNSIGNED_BYTE, 1, 0);
+	Texture2D my_texture(image1, TextureBase2::ColorTextureFormat::RGBA8, TextureBase2::ColorFormat::RGBA, TextureBase2::Type::UNSIGNED_BYTE, 1, 0);
 
-	bool once = true;
 	while (frame.is_running()) {
 		double deltatime = frame.handle_window();
 		frame.clear_window();

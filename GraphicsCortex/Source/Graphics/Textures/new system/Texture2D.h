@@ -8,33 +8,39 @@ public:
 	int mipmap_begin_level = 0;
 	float mipmap_bias = 0.0f;
 
-	WrapMode wrap_u = WrapMode::REPEAT;
-	WrapMode wrap_v = WrapMode::REPEAT;
+	WrapMode wrap_u = WrapMode::CLAMP;
+	WrapMode wrap_v = WrapMode::CLAMP;
 	SamplingFilter mipmap_min_filter = SamplingFilter::LINEAR;
 	SamplingFilter min_filter = SamplingFilter::LINEAR;
 	SamplingFilter mag_filter = SamplingFilter::LINEAR;
 
 	Texture2D() = delete;
 	//Texture2D(int width, int height, WellDefinedColorFormat texture_format, bool generate_mipmap = false, float mipmap_bias = 0.0f);
-	Texture2D(const Image& image, ColorFormat format, ColorTextureFormat InternalFormat, Type type, int mipmap_levels = 1, float mipmap_bias = 0.0f);
-	Texture2D(int width, int height, ColorFormat format, ColorTextureFormat InternalFormat, Type type, int mipmap_levels = 1, float mipmap_bias = 0.0f);
-	Texture2D(int width, int height, DepthStencilFormat format, DepthStencilTextureFormat InternalFormat, Type type, int mipmap_levels = 1, float mipmap_bias = 0.0f);
+	Texture2D(const Image& image, ColorTextureFormat internal_format, ColorFormat format, Type type, int mipmap_levels = 1, float mipmap_bias = 0.0f);
+	Texture2D(int width, int height, ColorTextureFormat internal_format, int mipmap_levels = 1, float mipmap_bias = 0.0f);
+	Texture2D(int width, int height, DepthStencilTextureFormat internal_format, int mipmap_levels = 1, float mipmap_bias = 0.0f);
 	~Texture2D();
 	void release();
 	void bind();
 	void bind(int texture_slot);
 	void unbind();
 
-	void load_data(const void* image, int mipmap_target = 0);
-	void load_data(const void* image, int x, int y, int width, int height, int mipmap_target = 0);
-	void load_data(const Image& image, int mipmap_target = 0);
-	void load_data(const Image& image, int x, int y, int width, int height, int mipmap_target = 0);
+	void load_data(const void* image, ColorFormat format, Type type, int mipmap_target = 0);
+	void load_data(const void* image, ColorFormat format, Type type, int x, int y, int width, int height, int mipmap_target = 0);
+	void load_data(const Image& image, ColorFormat format, Type type, int mipmap_target = 0);
+	void load_data(const Image& image, ColorFormat format, Type type, int x, int y, int width, int height, int mipmap_target = 0);
+
+	void load_data(const void* image, DepthStencilFormat format, Type type, int mipmap_target = 0);
+	void load_data(const void* image, DepthStencilFormat format, Type type, int x, int y, int width, int height, int mipmap_target = 0);
+	void load_data(const Image& image, DepthStencilFormat format, Type type, int mipmap_target = 0);
+	void load_data(const Image& image, DepthStencilFormat format, Type type, int x, int y, int width, int height, int mipmap_target = 0);
 	
 	void generate_mipmap();
 
-	void load_data_with_mipmaps(const void* image);
-	void load_data_with_mipmaps(const Image& image);
-
+	void load_data_with_mipmaps(const void* image, ColorFormat format, Type type);
+	void load_data_with_mipmaps(const Image& image, ColorFormat format, Type type);
+	void load_data_with_mipmaps(const void* image, DepthStencilFormat format, Type type);
+	void load_data_with_mipmaps(const Image& image, DepthStencilFormat format, Type type);
 	/*
 	void copy_to_texture(Texture2D& target_texture, int self_mipmap, int target_mipmap);
 	void copy_to_texture(Texture2D& target_texture, int self_mipmap, int target_mipmap, int self_x, int self_y, int width, int height, int target_x, int target_y);
@@ -99,13 +105,6 @@ private:
 		DepthStencilTextureFormat depth_stencil_texture_format;
 	};
 	
-	union {
-		ColorFormat color_format;
-		DepthStencilFormat depth_stencil_format;
-	};
-	
-	Type type;
-	
 	int mipmap_levels = 0;
 
 	bool is_color_texture;
@@ -120,8 +119,6 @@ private:
 	void _generate_texture();
 	void _allocate_texture();
 
-	int _get_gl_type();
-	int _get_gl_format();
 	int _get_gl_internal_format();
 };
 
