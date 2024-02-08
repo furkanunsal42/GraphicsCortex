@@ -15,17 +15,17 @@ public:
 
 	//void flip_verticaly();
 	unsigned char* get_image_data();
-	int get_width();
-	int get_height();
-	int get_channels();
-	bool get_vertical_flip();
-	size_t get_size();
+	int get_width() const;
+	int get_height() const;
+	int get_channels() const;
+	bool get_vertical_flip() const;
+	size_t get_size() const;
 
 	friend Texture;
 	friend FrameBuffer;
 
 	void resize(int target_width, int target_height);
-	void save_to_disc(const std::string& target_filename);
+	void save_to_disc(const std::string& target_filename) const;
 
 	Image(unsigned char* image_data, int width, int height, int channels, bool vertical_flip);
 	unsigned char* _image_data = nullptr;

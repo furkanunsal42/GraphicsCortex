@@ -3,7 +3,7 @@
 #include "Image.h"
 #include "glm.hpp"
 
-class TextureBase{
+class TextureBase2{
 public:
 	enum class SamplingFilter {
 		NEAREST,
@@ -13,6 +13,7 @@ public:
 	enum class WrapMode {
 		CLAMP,
 		REPEAT,
+		MIRRORED_REPEAT,
 	};
 
 	enum class ColorTextureFormat {
@@ -221,47 +222,48 @@ public:
 
 	unsigned int id = 0;
 
-	TextureBase();
-	~TextureBase();
-	virtual void release();
-	virtual void bind(int texture_slot);
-	virtual void unbind();
+	TextureBase2() {};
+	~TextureBase2() {};
+	virtual void release() = 0;
+	virtual void bind(int texture_slot) = 0;
+	virtual void unbind() = 0;
 
+	virtual SamplingFilter query_mag_filter() = 0;
+	virtual SamplingFilter query_min_filter() = 0;
+	virtual SamplingFilter query_mipmap_min_filter() = 0;
+	virtual WrapMode query_wrap_u() = 0;
+	virtual WrapMode query_wrap_v() = 0;
+	virtual WrapMode query_wrap_w() = 0;
+	virtual int query_base_level() = 0;
+	//virtual int query_compare_mode() = 0;
+	//virtual query_compare_function() = 0;
+	virtual float query_lod_bias() = 0;
+	virtual int query_max_level() = 0;
+	virtual int query_max_lod() = 0;
+	virtual int query_min_lod() = 0;
+	virtual int query_swizzle_r() = 0;
+	virtual int query_swizzle_g() = 0;
+	virtual int query_swizzle_b() = 0;
+	virtual int query_swizzle_a() = 0;
+	virtual int query_swizzle_rgba() = 0;
 
-	virtual SamplingFilter query_mag_filter();
-	virtual SamplingFilter query_min_filter();
-	virtual WrapMode query_wrap_x();
-	virtual WrapMode query_wrap_y();
-	virtual WrapMode query_wrap_z();
-	virtual int query_base_level();
-	//virtual int query_compare_mode();
-	//virtual query_compare_function();
-	virtual float query_lod_bias();
-	virtual int query_max_level();
-	virtual int query_max_lod();
-	virtual int query_min_lod();
-	virtual int query_swizzle_r();
-	virtual int query_swizzle_g();
-	virtual int query_swizzle_b();
-	virtual int query_swizzle_a();
-	virtual void query_swizzle_rgba(int& r_out, int& g_out, int& b_out, int& a_out);
-	
-	virtual int query_width(int mipmap_level);
-	virtual int query_height(int mipmap_level);
-	virtual int query_depth(int mipmap_level);
-	virtual int query_internal_format(int mipmap_level);
-	virtual int query_red_type(int mipmap_level);
-	virtual int query_green_type(int mipmap_level);
-	virtual int query_blue_type(int mipmap_level);
-	virtual int query_alpha_type(int mipmap_level);
-	virtual int query_depth_type(int mipmap_level);
-	virtual int query_red_size(int mipmap_level);
-	virtual int query_green_size(int mipmap_level);
-	virtual int query_blue_size(int mipmap_level);
-	virtual int query_alpha_size(int mipmap_level);
-	virtual int query_depth_size(int mipmap_level);
-	virtual bool query_is_compressed(int mipmap_level);
-	virtual int query_compressed_image_size(int mipmap_level);
+	virtual int query_width(int mipmap_level) = 0;
+	virtual int query_height(int mipmap_level) = 0;
+	virtual int query_depth(int mipmap_level) = 0;
+	virtual int query_internal_format(int mipmap_level) = 0;
+	virtual int query_red_type(int mipmap_level) = 0;
+	virtual int query_green_type(int mipmap_level) = 0;
+	virtual int query_blue_type(int mipmap_level) = 0;
+	virtual int query_alpha_type(int mipmap_level) = 0;
+	virtual int query_depth_type(int mipmap_level) = 0;
+	virtual int query_red_size(int mipmap_level) = 0;
+	virtual int query_green_size(int mipmap_level) = 0;
+	virtual int query_blue_size(int mipmap_level) = 0;
+	virtual int query_alpha_size(int mipmap_level) = 0;
+	virtual int query_depth_size(int mipmap_level) = 0;
+	virtual bool query_is_compressed(int mipmap_level) = 0;
+	virtual int query_compressed_image_size(int mipmap_level) = 0;
+
 private:
 	int target = NULL;
 };

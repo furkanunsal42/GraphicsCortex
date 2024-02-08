@@ -1,7 +1,7 @@
 #include "GraphicsCortex.h"
 
 int main(){
-	Frame frame(800, 600, "GraphicsCortex", 0, 0, true, true, true, false);
+	Frame frame(800, 600, "GraphicsCortex", 0, 0, true, true, false, false);
 	Scene scene(frame);
 	Gui2 gui(frame);
 	scene.camera->max_distance = 1000;

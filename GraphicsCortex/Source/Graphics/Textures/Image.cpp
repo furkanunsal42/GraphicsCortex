@@ -93,21 +93,21 @@ void Image::_clear_ram() {
 unsigned char* Image::get_image_data() {
 	return _image_data;
 }
-int Image::get_width(){
+int Image::get_width() const{
 	return _width;
 }
-int Image::get_height(){
+int Image::get_height() const {
 	return _height;
 }
-int Image::get_channels() {
+int Image::get_channels() const {
 	return _channels;
 }
 
-size_t Image::get_size() {
+size_t Image::get_size() const {
 	return _width * _height * _channels;
 }
 
-bool Image::get_vertical_flip() {
+bool Image::get_vertical_flip() const {
 	return _vertical_flip;
 }
 
@@ -130,8 +130,7 @@ Image::Image(unsigned char* image_data, int width, int height, int channels, boo
 	}
 }
 
-
-void Image::save_to_disc(const std::string& target_filename) {
+void Image::save_to_disc(const std::string& target_filename) const{
 	stbi_flip_vertically_on_write(_vertical_flip);
 	int result_flag = stbi_write_png(target_filename.c_str(), _width, _height, _channels, _image_data, _width * _channels);
 }

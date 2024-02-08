@@ -21,6 +21,10 @@
 #include "ShaderCompiler.h"
 #include "Image.h"
 #include "Texture.h"
+
+#include "TextureBase.h"
+#include "Texture2D.h"
+
 #include "Graphic.h"
 #include "Camera.h"
 #include "Scene.h"

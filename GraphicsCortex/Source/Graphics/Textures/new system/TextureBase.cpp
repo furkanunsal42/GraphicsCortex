@@ -1,7 +1,7 @@
 #include "TextureBase.h"
 #include "GL/glew.h"
 
-int TextureBase::SamplingFilter_to_OpenGL(SamplingFilter filter)
+int TextureBase2::SamplingFilter_to_OpenGL(SamplingFilter filter)
 {
 	switch (filter) {
 	case SamplingFilter::NEAREST: return GL_NEAREST;
@@ -10,16 +10,17 @@ int TextureBase::SamplingFilter_to_OpenGL(SamplingFilter filter)
 	return 0;
 }
 
-int TextureBase::WrapMode_to_OpenGL(WrapMode wrap_mode)
+int TextureBase2::WrapMode_to_OpenGL(WrapMode wrap_mode)
 {
 	switch (wrap_mode) {
-	case WrapMode::CLAMP	: return GL_CLAMP;
-	case WrapMode::REPEAT	: return GL_REPEAT;
+	case WrapMode::CLAMP			: return GL_CLAMP;
+	case WrapMode::REPEAT			: return GL_REPEAT;
+	case WrapMode::MIRRORED_REPEAT	: return GL_MIRRORED_REPEAT;
 	}
 	return 0;
 }
 
-int TextureBase::ColorTextureFormat_to_OpenGL(ColorTextureFormat color_texture_format)
+int TextureBase2::ColorTextureFormat_to_OpenGL(ColorTextureFormat color_texture_format)
 {
 	switch (color_texture_format) {
 	case ColorTextureFormat::RED								:	return GL_RED;
@@ -107,7 +108,7 @@ int TextureBase::ColorTextureFormat_to_OpenGL(ColorTextureFormat color_texture_f
 	return 0;
 }
 
-int TextureBase::DepthStencilTextureFormat_to_OpenGL(DepthStencilTextureFormat depth_stencil_texture_format)
+int TextureBase2::DepthStencilTextureFormat_to_OpenGL(DepthStencilTextureFormat depth_stencil_texture_format)
 {
 	switch (depth_stencil_texture_format) {
 		case DepthStencilTextureFormat::STENCIL_INDEX		:	return GL_STENCIL_INDEX;
@@ -122,7 +123,7 @@ int TextureBase::DepthStencilTextureFormat_to_OpenGL(DepthStencilTextureFormat d
 	return 0;
 }
 
-int TextureBase::Type_to_OpenGL(Type type)
+int TextureBase2::Type_to_OpenGL(Type type)
 {
 	switch (type) {
 	case Type::UNSIGNED_BYTE				:	return GL_UNSIGNED_BYTE;
@@ -149,7 +150,7 @@ int TextureBase::Type_to_OpenGL(Type type)
 	return 0;
 }
 
-int TextureBase::ColorFormat_to_OpenGL(ColorFormat color_format)
+int TextureBase2::ColorFormat_to_OpenGL(ColorFormat color_format)
 {
 	switch (color_format) {
 	case ColorFormat::RED			:	return GL_RED;
@@ -168,7 +169,7 @@ int TextureBase::ColorFormat_to_OpenGL(ColorFormat color_format)
 	return 0;
 }
 
-int TextureBase::DepthStencilFormat_to_OpenGL(DepthStencilFormat depth_stencil_format)
+int TextureBase2::DepthStencilFormat_to_OpenGL(DepthStencilFormat depth_stencil_format)
 {
 	switch (depth_stencil_format) {
 	case DepthStencilFormat::STENCIL		: return GL_STENCIL;
