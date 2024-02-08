@@ -1,6 +1,6 @@
 #pragma once
 #include "TextureBase.h"
 
-class Texture1D : public TextureBase {
+class Texture1D : public TextureBase2 {
 
 };

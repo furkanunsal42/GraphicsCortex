@@ -353,3 +353,14 @@ GraphicsCortex/Release/GuiMain2.obj
 GraphicsCortex/Release/hiredis_example.obj
 .vs/GraphicsCortex/v17/.suo
 GraphicsCortex/atlas.png
+CortexEditor/Release Editor/ApplicationMain.obj
+CortexEditor/Release Editor/CortexEditor.vcxproj.FileListAbsolute.txt
+CortexEditor/Release Editor/Editor.obj
+GraphicsCortex/Release Editor/FrameBuffer2.obj
+GraphicsCortex/Release Editor/GraphicsCortex.vcxproj.FileListAbsolute.txt
+GraphicsCortex/Release Editor/Texture2D.obj
+GraphicsCortex/Release Editor/TextureBase.obj
+GraphicsCortex/Release/FrameBuffer2.obj
+GraphicsCortex/Release/Texture2D.obj
+GraphicsCortex/Release/TextureBase.obj
+GraphicsCortex/Release/TextureSystemTest.obj

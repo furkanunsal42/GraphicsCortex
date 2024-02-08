@@ -15,6 +15,8 @@ public:
 	SamplingFilter mag_filter = SamplingFilter::LINEAR;
 
 	Texture2D() = delete;
+	Texture2D(const Texture2D& other) = delete;
+	
 	//Texture2D(int width, int height, WellDefinedColorFormat texture_format, bool generate_mipmap = false, float mipmap_bias = 0.0f);
 	Texture2D(const Image& image, ColorTextureFormat internal_format, ColorFormat format, Type type, int mipmap_levels = 1, float mipmap_bias = 0.0f);
 	Texture2D(int width, int height, ColorTextureFormat internal_format, int mipmap_levels = 1, float mipmap_bias = 0.0f);

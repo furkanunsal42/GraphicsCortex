@@ -217,7 +217,7 @@
       <PreprocessorDefinitions>GLEW_STATIC;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <AdditionalIncludeDirectories>$(SolutionDir)GraphicsCortex\Source\Graphics\Textures\new system;$(SolutionDir)GraphicsCortex\Source\System;$(SolutionDir)GraphicsCortex\Source\Physics;$(SolutionDir)GraphicsCortex\Source\Graphics\Windowing;$(SolutionDir)GraphicsCortex\Source\Graphics\Textures;$(SolutionDir)GraphicsCortex\Source\Graphics\Text;$(SolutionDir)GraphicsCortex\Source\Graphics\Shaders;$(SolutionDir)GraphicsCortex\Source\Graphics\Rendering;$(SolutionDir)GraphicsCortex\Source\Graphics\Meshes;$(SolutionDir)GraphicsCortex\Source\Graphics\Math;$(SolutionDir)GraphicsCortex\Source\Graphics\Lights;$(SolutionDir)GraphicsCortex\Source\Graphics\GUI;$(SolutionDir)GraphicsCortex\Source\Graphics\Defaults;$(SolutionDir)GraphicsCortex\Source\Graphics\Buffers;$(SolutionDir)GraphicsCortex\Source\Graphics;$(SolutionDir)GraphicsCortex\Source;$(SolutionDir)GraphicsCortex\Dependencies\assimp\include;$(SolutionDir)GraphicsCortex\Dependencies\stb_image;$(SolutionDir)GraphicsCortex\Dependencies\GLEW\include;$(SolutionDir)GraphicsCortex\Dependencies\imgui;$(SolutionDir)GraphicsCortex\Dependencies\glm;$(SolutionDir)GraphicsCortex\Dependencies\GLFWx64\include;$(SolutionDir)GraphicsCortex\Dependencies\physx\include;$(SolutionDir)GraphicsCortex\Dependencies\physx\snippetutils;$(SolutionDir)GraphicsCortex\Dependencies\physx\snippetcommon;$(SolutionDir)GraphicsCortex\Dependencies\hiredis\include;$(SolutionDir)GraphicsCortex\Dependencies\freetype\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)GraphicsCortex\Source\Graphics\Rendering\new system;$(SolutionDir)GraphicsCortex\Source\Graphics\Textures\new system;$(SolutionDir)GraphicsCortex\Source\System;$(SolutionDir)GraphicsCortex\Source\Physics;$(SolutionDir)GraphicsCortex\Source\Graphics\Windowing;$(SolutionDir)GraphicsCortex\Source\Graphics\Textures;$(SolutionDir)GraphicsCortex\Source\Graphics\Text;$(SolutionDir)GraphicsCortex\Source\Graphics\Shaders;$(SolutionDir)GraphicsCortex\Source\Graphics\Rendering;$(SolutionDir)GraphicsCortex\Source\Graphics\Meshes;$(SolutionDir)GraphicsCortex\Source\Graphics\Math;$(SolutionDir)GraphicsCortex\Source\Graphics\Lights;$(SolutionDir)GraphicsCortex\Source\Graphics\GUI;$(SolutionDir)GraphicsCortex\Source\Graphics\Defaults;$(SolutionDir)GraphicsCortex\Source\Graphics\Buffers;$(SolutionDir)GraphicsCortex\Source\Graphics;$(SolutionDir)GraphicsCortex\Source;$(SolutionDir)GraphicsCortex\Dependencies\assimp\include;$(SolutionDir)GraphicsCortex\Dependencies\stb_image;$(SolutionDir)GraphicsCortex\Dependencies\GLEW\include;$(SolutionDir)GraphicsCortex\Dependencies\imgui;$(SolutionDir)GraphicsCortex\Dependencies\glm;$(SolutionDir)GraphicsCortex\Dependencies\GLFWx64\include;$(SolutionDir)GraphicsCortex\Dependencies\physx\include;$(SolutionDir)GraphicsCortex\Dependencies\physx\snippetutils;$(SolutionDir)GraphicsCortex\Dependencies\physx\snippetcommon;$(SolutionDir)GraphicsCortex\Dependencies\hiredis\include;$(SolutionDir)GraphicsCortex\Dependencies\freetype\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <LanguageStandard_C>stdc11</LanguageStandard_C>
@@ -244,7 +244,7 @@
       <PreprocessorDefinitions>GLEW_STATIC;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <AdditionalIncludeDirectories>$(SolutionDir)GraphicsCortex\Source\System;$(SolutionDir)GraphicsCortex\Source\Physics;$(SolutionDir)GraphicsCortex\Source\Graphics\Windowing;$(SolutionDir)GraphicsCortex\Source\Graphics\Textures;$(SolutionDir)GraphicsCortex\Source\Graphics\Text;$(SolutionDir)GraphicsCortex\Source\Graphics\Shaders;$(SolutionDir)GraphicsCortex\Source\Graphics\Rendering;$(SolutionDir)GraphicsCortex\Source\Graphics\Meshes;$(SolutionDir)GraphicsCortex\Source\Graphics\Math;$(SolutionDir)GraphicsCortex\Source\Graphics\Lights;$(SolutionDir)GraphicsCortex\Source\Graphics\GUI;$(SolutionDir)GraphicsCortex\Source\Graphics\Defaults;$(SolutionDir)GraphicsCortex\Source\Graphics\Buffers;$(SolutionDir)GraphicsCortex\Source\Graphics;$(SolutionDir)GraphicsCortex\Source;$(SolutionDir)GraphicsCortex\Dependencies\assimp\include;$(SolutionDir)GraphicsCortex\Dependencies\stb_image;$(SolutionDir)GraphicsCortex\Dependencies\GLEW\include;$(SolutionDir)GraphicsCortex\Dependencies\imgui;$(SolutionDir)GraphicsCortex\Dependencies\glm;$(SolutionDir)GraphicsCortex\Dependencies\GLFWx64\include;$(SolutionDir)GraphicsCortex\Dependencies\physx\include;$(SolutionDir)GraphicsCortex\Dependencies\physx\snippetutils;$(SolutionDir)GraphicsCortex\Dependencies\physx\snippetcommon;$(SolutionDir)GraphicsCortex\Dependencies\hiredis\include;$(SolutionDir)GraphicsCortex\Dependencies\freetype\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)GraphicsCortex\Source\Graphics\Rendering\new system;$(SolutionDir)GraphicsCortex\Source\Graphics\Textures\new system;$(SolutionDir)GraphicsCortex\Source\System;$(SolutionDir)GraphicsCortex\Source\Physics;$(SolutionDir)GraphicsCortex\Source\Graphics\Windowing;$(SolutionDir)GraphicsCortex\Source\Graphics\Textures;$(SolutionDir)GraphicsCortex\Source\Graphics\Text;$(SolutionDir)GraphicsCortex\Source\Graphics\Shaders;$(SolutionDir)GraphicsCortex\Source\Graphics\Rendering;$(SolutionDir)GraphicsCortex\Source\Graphics\Meshes;$(SolutionDir)GraphicsCortex\Source\Graphics\Math;$(SolutionDir)GraphicsCortex\Source\Graphics\Lights;$(SolutionDir)GraphicsCortex\Source\Graphics\GUI;$(SolutionDir)GraphicsCortex\Source\Graphics\Defaults;$(SolutionDir)GraphicsCortex\Source\Graphics\Buffers;$(SolutionDir)GraphicsCortex\Source\Graphics;$(SolutionDir)GraphicsCortex\Source;$(SolutionDir)GraphicsCortex\Dependencies\assimp\include;$(SolutionDir)GraphicsCortex\Dependencies\stb_image;$(SolutionDir)GraphicsCortex\Dependencies\GLEW\include;$(SolutionDir)GraphicsCortex\Dependencies\imgui;$(SolutionDir)GraphicsCortex\Dependencies\glm;$(SolutionDir)GraphicsCortex\Dependencies\GLFWx64\include;$(SolutionDir)GraphicsCortex\Dependencies\physx\include;$(SolutionDir)GraphicsCortex\Dependencies\physx\snippetutils;$(SolutionDir)GraphicsCortex\Dependencies\physx\snippetcommon;$(SolutionDir)GraphicsCortex\Dependencies\hiredis\include;$(SolutionDir)GraphicsCortex\Dependencies\freetype\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <LanguageStandard_C>stdc11</LanguageStandard_C>
@@ -263,9 +263,9 @@
     </ProjectReference>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Mains\TextureSystemTest.cpp" />
     <ClCompile Include="Source\Graphics\Meshes\AssetImporter.cpp" />
     <ClCompile Include="Source\Graphics\Rendering\Camera.cpp" />
+    <ClCompile Include="Source\Graphics\Rendering\new system\FrameBuffer2.cpp" />
     <ClCompile Include="Source\Graphics\Textures\CubeMap.cpp" />
     <ClCompile Include="Source\Graphics\Rendering\CustomRenderPipelines.h" />
     <ClCompile Include="Source\Graphics\Defaults\Default_Assets.cpp" />
@@ -358,12 +358,19 @@
     <ClInclude Include="Source\Graphics\Buffers\Buffer.h" />
     <ClInclude Include="Source\Graphics\Rendering\Camera.h" />
     <ClInclude Include="Source\Config.h" />
+    <ClInclude Include="Source\Graphics\Rendering\new system\FrameBuffer2.h" />
     <ClInclude Include="Source\Graphics\Textures\CubeMap.h" />
     <ClInclude Include="Source\Graphics\Rendering\Debuger.h" />
     <ClInclude Include="Source\Graphics\Defaults\Default_Assets.h" />
     <ClInclude Include="Source\Graphics\GUI\Default_Gui_Widgets.h" />
+    <ClInclude Include="Source\Graphics\Textures\new system\BufferTexture.h" />
+    <ClInclude Include="Source\Graphics\Textures\new system\RenderBuffer.h" />
+    <ClInclude Include="Source\Graphics\Textures\new system\Texture1D.h" />
     <ClInclude Include="Source\Graphics\Textures\new system\Texture2D.h" />
+    <ClInclude Include="Source\Graphics\Textures\new system\Texture3D.h" />
+    <ClInclude Include="Source\Graphics\Textures\new system\TextureArray.h" />
     <ClInclude Include="Source\Graphics\Textures\new system\TextureBase.h" />
+    <ClInclude Include="Source\Graphics\Textures\new system\TextureCubeMap.h" />
     <ClInclude Include="Source\Graphics\Text\Font.h" />
     <ClInclude Include="Source\Graphics\Rendering\FrameBuffer.h" />
     <ClInclude Include="Source\GraphicsCortex.h" />

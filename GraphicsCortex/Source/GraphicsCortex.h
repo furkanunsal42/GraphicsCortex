@@ -23,7 +23,13 @@
 #include "Texture.h"
 
 #include "TextureBase.h"
+#include "Texture1D.h"
 #include "Texture2D.h"
+#include "TextureArray.h"
+#include "TextureCubeMap.h"
+#include "Texture3D.h"
+#include "BufferTexture.h"
+#include "RenderBuffer.h"
 
 #include "Graphic.h"
 #include "Camera.h"
@@ -31,6 +37,9 @@
 #include "Default_Assets.h"
 #include "Default_Programs.h"
 #include "FrameBuffer.h"
+
+#include "FrameBuffer2.h"
+
 #include "CubeMap.h"
 #include "UnifromQueue.h"
 #include "UniformUpdater.h"

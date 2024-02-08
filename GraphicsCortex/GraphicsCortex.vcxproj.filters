@@ -180,7 +180,7 @@
     <ClCompile Include="Source\Graphics\Textures\new system\TextureBase.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
-    <ClCompile Include="Mains\TextureSystemTest.cpp">
+    <ClCompile Include="Source\Graphics\Rendering\new system\FrameBuffer2.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
   </ItemGroup>
@@ -662,6 +662,27 @@
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
     <ClInclude Include="Source\Graphics\Textures\new system\TextureBase.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Graphics\Rendering\new system\FrameBuffer2.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Graphics\Textures\new system\Texture1D.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Graphics\Textures\new system\Texture3D.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Graphics\Textures\new system\TextureArray.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Graphics\Textures\new system\TextureCubeMap.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Graphics\Textures\new system\BufferTexture.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Graphics\Textures\new system\RenderBuffer.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
   </ItemGroup>
