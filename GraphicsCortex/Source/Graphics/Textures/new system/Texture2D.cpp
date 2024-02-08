@@ -553,6 +553,82 @@ int Texture2D::query_compressed_image_size(int mipmap_level)
 	return size;
 }
 
+Image Texture2D::get_image(ColorFormat format, Type type, int mipmap_level)
+{
+	return get_image(format, type, mipmap_level, 0, 0, query_width(mipmap_level), query_height(mipmap_level));
+}
+
+Image Texture2D::get_image(ColorFormat format, Type type, int mipmap_level, int x, int y, int width, int height)
+{
+	bind();
+	if (!_texture_allocated || !_user_data_loaded) {
+		std::cout << "[OpenGL Error] Texture tried to get_image() but either not allocated any ram or didn't loaded any user data yet" << std::endl;
+		ASSERT(false);
+	}
+
+	int r_channel = query_red_size(mipmap_level);
+	int g_channel = query_green_size(mipmap_level);
+	int b_channel = query_blue_size(mipmap_level);
+	int a_channel = query_alpha_size(mipmap_level);
+
+	int is_r = r_channel != 0;
+	int is_g = g_channel != 0;
+	int is_b = b_channel != 0;
+	int is_a = a_channel != 0;
+
+	int mipmap_channels = is_r + is_g + is_b + is_a;
+	int mipmap_pixel_size = r_channel + g_channel + b_channel + a_channel;
+
+	int mipmap_width = query_width(mipmap_level);
+	int mipmap_height = query_height(mipmap_level);
+
+	int format_channels = ColorFormat_channels(format);
+	int image_size = width * height * mipmap_pixel_size;
+	unsigned char* image = new unsigned char[width * height * mipmap_pixel_size];
+
+	GLCall(glGetTextureSubImage(id, mipmap_level, x, y, 0, width, height, 1, ColorFormat_to_OpenGL(format), Type_to_OpenGL(type), image_size, image));
+
+	return Image(image, width, height, format_channels, true);
+}
+
+Image Texture2D::get_image(DepthStencilFormat format, Type type, int mipmap_level)
+{
+	return get_image(format, type, mipmap_level, 0, 0, query_width(mipmap_level), query_height(mipmap_level));
+}
+
+Image Texture2D::get_image(DepthStencilFormat format, Type type, int mipmap_level, int x, int y, int width, int height)
+{
+	bind();
+	if (!_texture_allocated || !_user_data_loaded) {
+		std::cout << "[OpenGL Error] Texture tried to get_image() but either not allocated any ram or didn't loaded any user data yet" << std::endl;
+		ASSERT(false);
+	}
+
+	int d_channel = query_depth_size(mipmap_level);
+
+	int mipmap_channels = 1;
+	int mipmap_pixel_size = d_channel;
+
+	int mipmap_width = query_width(mipmap_level);
+	int mipmap_height = query_height(mipmap_level);
+
+	int format_channels = 1;
+	int image_size = width * height * mipmap_pixel_size;
+	unsigned char* image = new unsigned char[width * height * mipmap_pixel_size];
+
+	int gl_format;
+	if (format == DepthStencilFormat::DEPTH) gl_format = GL_DEPTH_COMPONENT;
+	else if (format == DepthStencilFormat::STENCIL) gl_format = GL_STENCIL_INDEX;
+	else {
+		std::cout << "[OpenGL Error] Texture tried to get_image() with unsuppoerted format" << std::endl;
+		ASSERT(false);
+	}
+
+	GLCall(glGetTextureSubImage(id, mipmap_level, x, y, 0, width, height, 1, gl_format, Type_to_OpenGL(type), image_size, image));
+
+	return Image(image, width, height, format_channels, true);
+}
+
 void Texture2D::clear(unsigned char clear_data, int mipmap_target)
 {
 	clear(clear_data, 0, 0, width, height, mipmap_target);

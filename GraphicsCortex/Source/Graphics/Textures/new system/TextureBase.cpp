@@ -178,3 +178,22 @@ int TextureBase2::DepthStencilFormat_to_OpenGL(DepthStencilFormat depth_stencil_
 	}
 	return 0;
 }
+
+int TextureBase2::ColorFormat_channels(ColorFormat color_format)
+{
+	switch (color_format) {
+	case ColorFormat::RED:	return 1;
+	case ColorFormat::RG:	return 2;
+	case ColorFormat::RGB:	return 3;
+	case ColorFormat::BGR:	return 3;
+	case ColorFormat::RGBA:	return 4;
+	case ColorFormat::BGRA:	return 4;
+	case ColorFormat::RED_INTEGER:	return 1;
+	case ColorFormat::RG_INTEGER:	return 2;
+	case ColorFormat::RGB_INTEGER:	return 3;
+	case ColorFormat::BGR_INTEGER:	return 3;
+	case ColorFormat::RGBA_INTEGER:	return 4;
+	case ColorFormat::BGRA_INTEGER:	return 4;
+	}
+	return 0;
+}

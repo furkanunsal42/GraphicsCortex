@@ -218,6 +218,7 @@ public:
 	static int Type_to_OpenGL(Type type);
 	static int ColorFormat_to_OpenGL(ColorFormat color_format);
 	static int DepthStencilFormat_to_OpenGL(DepthStencilFormat depth_stencil_format);
+	static int ColorFormat_channels(ColorFormat color_format);
 	//static int WellDefinedFormat_to_OpenGL(WellDefinedColorFormat well_defined_color_format);
 
 	unsigned int id = 0;

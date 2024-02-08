@@ -25,7 +25,9 @@ int main(){
 	//my_texture.texture_slot = 0;
 	//my_texture.bind();
 
-	Texture2D my_texture(image1, TextureBase2::ColorTextureFormat::RGBA8, TextureBase2::ColorFormat::RGBA, TextureBase2::Type::UNSIGNED_BYTE, 1, 0);
+	Texture2D my_texture(image1.get_width(), image1.get_height(), TextureBase2::DepthStencilTextureFormat::DEPTH24_STENCIL8, 2, 0);
+	my_texture.load_data_with_mipmaps(image1, TextureBase2::ColorFormat::RGBA, TextureBase2::Type::UNSIGNED_BYTE);
+	my_texture.get_image(TextureBase2::DepthStencilFormat::DEPTH, TextureBase2::Type::UNSIGNED_BYTE, 0).save_to_disc("test.png");
 
 	while (frame.is_running()) {
 		double deltatime = frame.handle_window();
