@@ -1,7 +1,7 @@
 #include "GraphicsCortex.h"
 
 int main(){
-	Frame frame(800, 600, "GraphicsCortex", 0, 0, true, true, false, false);
+	Frame frame(800, 600, "GraphicsCortex", 0, 0, true, true, false, 3, false);
 	Scene scene(frame);
 	scene.camera->max_distance = 1000;
 	scene.camera->fov = 70;
@@ -26,7 +26,7 @@ int main(){
 	//my_texture.bind();
 
 	Texture2D my_texture(image1.get_width(), image1.get_height(), TextureBase2::DepthStencilTextureFormat::DEPTH24_STENCIL8, 2, 0);
-	my_texture.load_data_with_mipmaps(image1, TextureBase2::ColorFormat::RGBA, TextureBase2::Type::UNSIGNED_BYTE);
+	my_texture.load_data_with_mipmaps(image1, TextureBase2::DepthStencilFormat::DEPTH_STENCIL, TextureBase2::Type::UNSIGNED_BYTE);
 	my_texture.get_image(TextureBase2::DepthStencilFormat::DEPTH, TextureBase2::Type::UNSIGNED_BYTE, 0).save_to_disc("test.png");
 
 	while (frame.is_running()) {

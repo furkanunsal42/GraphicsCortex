@@ -643,7 +643,6 @@ void Gui2::new_frame(Time frame_time) {
 }
 
 _widget_info& Gui2::box(unsigned int id, vec2 position, vec2 size, Style style, std::u32string text_string, Style override_style, float z_index) {
-	
 	AABB2 aabb(position, size);
 	if (widget_graphic_table.find(id) == widget_graphic_table.end()) {
 		widget_graphic_table[id] = std::make_shared<Graphic>();

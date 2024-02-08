@@ -26,3 +26,6 @@
 bool log_errors(const char* function, int line, const char* file);
 
 void clear_errors(const char* function, int line, const char* file);
+
+void opengl_debug_callback(unsigned int source, unsigned int type, unsigned int id, unsigned int severity, int length, char const* message, void const* user_param);
+

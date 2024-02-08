@@ -37,7 +37,7 @@ public:
 	void load_data(const Image& image, DepthStencilFormat format, Type type, int x, int y, int width, int height, int mipmap_target = 0);
 	
 	void generate_mipmap();
-
+	
 	void load_data_with_mipmaps(const void* image, ColorFormat format, Type type);
 	void load_data_with_mipmaps(const Image& image, ColorFormat format, Type type);
 	void load_data_with_mipmaps(const void* image, DepthStencilFormat format, Type type);
