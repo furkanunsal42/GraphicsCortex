@@ -13,7 +13,7 @@ project "GraphicsCortex"
 	kind "StaticLib"
 	language "C++"
 
-	out_dir = "%{cfg.buildcfg}-%{cfg.architecture}";
+	out_dir = "%{cfg.system}-%{cfg.buildcfg}-%{cfg.architecture}";
 
 	targetdir("build/" .. out_dir .. "%{prj.name}")
 	objdir("build-obj/" .. out_dir .. "%{prj.name}")
