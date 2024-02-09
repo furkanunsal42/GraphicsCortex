@@ -1,487 +1,65 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
-    <ProjectConfiguration Include="Debug|Win32">
-      <Configuration>Debug</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release Editor|Win32">
-      <Configuration>Release Editor</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release Editor|x64">
-      <Configuration>Release Editor</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|Win32">
-      <Configuration>Release</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Debug|x64">
-      <Configuration>Debug</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
     <ProjectConfiguration Include="Release|x64">
       <Configuration>Release</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <VCProjectVersion>16.0</VCProjectVersion>
+    <ProjectGuid>{CB8BE4B9-B759-D8BF-A0ED-48E68C5AB424}</ProjectGuid>
+    <IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{cc050ea6-ac45-4dab-bae2-73551effaaed}</ProjectGuid>
     <RootNamespace>GraphicsCortex</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>GraphicsCortex</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>Unicode</CharacterSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release Editor|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>Unicode</CharacterSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>Unicode</CharacterSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release Editor|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
-  <ImportGroup Label="Shared">
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release Editor|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release Editor|x64'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <LinkIncremental>true</LinkIncremental>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(SolutionDir)$(ProjectName)</OutDir>
-    <TargetName>$(ProjectName)32</TargetName>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release Editor|Win32'">
-    <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(SolutionDir)$(ProjectName)</OutDir>
-    <TargetName>$(ProjectName)32</TargetName>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
-    <IntDir>$(Configuration)\</IntDir>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(SolutionDir)$(ProjectName)</OutDir>
-    <IntDir>$(Configuration)\</IntDir>
-    <TargetName>$(ProjectName)64</TargetName>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <OutDir>..\build\Release-x86_64GraphicsCortex\</OutDir>
+    <IntDir>..\build-obj\Release-x86_64GraphicsCortex\</IntDir>
+    <TargetName>GraphicsCortex</TargetName>
+    <TargetExt>.lib</TargetExt>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release Editor|x64'">
-    <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(SolutionDir)$(ProjectName)</OutDir>
-    <IntDir>$(Configuration)\</IntDir>
-    <TargetName>$(ProjectName)64</TargetName>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
-  </PropertyGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>GLEW_STATIC;WIN32;</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)OpenGl\Dependencies\assimp\include;$(SolutionDir)OpenGl\Dependencies\stb_image;$(SolutionDir)OpenGl\Dependencies\GLEW\include;$(SolutionDir)OpenGl\Dependencies\glm;$(SolutionDir)OpenGl\Dependencies\GLFW\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <Optimization>Disabled</Optimization>
-      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-    </ClCompile>
-    <Link>
-      <SubSystem>Console</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)OpenGl\Dependencies\assimp\lib;$(SolutionDir)OpenGl\Dependencies\stb_image;$(SolutionDir)OpenGl\Dependencies\glm;$(SolutionDir)OpenGl\Dependencies\GLEW\lib\Release\Win32;$(SolutionDir)OpenGl\Dependencies\GLFW\lib-vc2022;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>assimp-vc143-mtd.lib;opengl32.lib;glew32s.lib;glfw3.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-    </Link>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>GLEW_STATIC;WIN32;GLEW_STATIC;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)OpenGl\Dependencies\assimp\include;$(SolutionDir)OpenGl\Dependencies\stb_image;$(SolutionDir)OpenGl\Dependencies\GLEW\include;$(SolutionDir)OpenGl\Dependencies\glm;$(SolutionDir)OpenGl\Dependencies\GLFW\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-    </ClCompile>
-    <Link>
-      <SubSystem>Console</SubSystem>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)OpenGl\Dependencies\assimp\lib;$(SolutionDir)OpenGl\Dependencies\stb_image;$(SolutionDir)OpenGl\Dependencies\glm;$(SolutionDir)OpenGl\Dependencies\GLEW\lib\Release\Win32;$(SolutionDir)OpenGl\Dependencies\GLFW\lib-vc2022;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>assimp-vc143-mtd.lib;opengl32.lib;glew32s.lib;glfw3.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-    </Link>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release Editor|Win32'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>GLEW_STATIC;WIN32;GLEW_STATIC;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)OpenGl\Dependencies\assimp\include;$(SolutionDir)OpenGl\Dependencies\stb_image;$(SolutionDir)OpenGl\Dependencies\GLEW\include;$(SolutionDir)OpenGl\Dependencies\glm;$(SolutionDir)OpenGl\Dependencies\GLFW\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-    </ClCompile>
-    <Link>
-      <SubSystem>Console</SubSystem>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)OpenGl\Dependencies\assimp\lib;$(SolutionDir)OpenGl\Dependencies\stb_image;$(SolutionDir)OpenGl\Dependencies\glm;$(SolutionDir)OpenGl\Dependencies\GLEW\lib\Release\Win32;$(SolutionDir)OpenGl\Dependencies\GLFW\lib-vc2022;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>assimp-vc143-mtd.lib;opengl32.lib;glew32s.lib;glfw3.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-    </Link>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>GLEW_STATIC;WIN32;</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
-      <Optimization>Disabled</Optimization>
-      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <AdditionalIncludeDirectories>$(SolutionDir)OpenGl\Dependencies\assimp\include;$(SolutionDir)OpenGl\Dependencies\stb_image;$(SolutionDir)OpenGl\Dependencies\GLEW\include;$(SolutionDir)OpenGl\Dependencies\glm;$(SolutionDir)OpenGl\Dependencies\GLFWx64\include;$(SolutionDir)OpenGl\Dependencies\physx\include;$(SolutionDir)OpenGl\snippetcommon;$(SolutionDir)OpenGl\Dependencies\hiredis\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-    </ClCompile>
-    <Link>
-      <SubSystem>Console</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)OpenGl\Dependencies\assimp\lib_debug;$(SolutionDir)OpenGl\Dependencies\stb_image;$(SolutionDir)OpenGl\Dependencies\glm;$(SolutionDir)OpenGl\Dependencies\GLEW\lib\Release\x64;$(SolutionDir)OpenGl\Dependencies\GLFWx64\lib-vc2022;$(SolutionDir)OpenGl\Dependencies\physx\lib_debug;$(SolutionDir)OpenGl\Dependencies\hiredis;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SnippetUtils_static_64.lib;SnippetRender_static_64.lib;SimulationController_static_64.lib;SceneQuery_static_64.lib;PhysXVehicle_static_64.lib;PhysXTask_static_64.lib;PhysXPvdSDK_static_64.lib;PhysXFoundation_64.lib;PhysXExtensions_static_64.lib;PhysXCooking_64.lib;PhysXCommon_64.lib;PhysXCharacterKinematic_static_64.lib;PhysX_64.lib;LowLevelDynamics_static_64.lib;LowLevelAABB_static_64.lib;LowLevel_static_64.lib;assimp-vc143-mtd.lib;zlibstaticd.lib;IrrXMLd.lib;opengl32.lib;glew32s.lib;glfw3.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <IgnoreSpecificDefaultLibraries>
-      </IgnoreSpecificDefaultLibraries>
-    </Link>
-  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>GLEW_STATIC;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>Source\Graphics\Rendering\new system;Source\Graphics\Textures\new system;Source\System;Source\Physics;Source\Graphics\Windowing;Source\Graphics\Textures;Source\Graphics\Text;Source\Graphics\Shaders;Source\Graphics\Rendering;Source\Graphics\Meshes;Source\Graphics\Math;Source\Graphics\Lights;Source\Graphics\GUI;Source\Graphics\Defaults;Source\Graphics\Buffers;Source\Graphics;Source;Dependencies\assimp\include;Dependencies\stb_image;Dependencies\GLEW\include;Dependencies\imgui;Dependencies\glm;Dependencies\GLFWx64\include;Dependencies\physx\include;Dependencies\physx\snippetutils;Dependencies\physx\snippetcommon;Dependencies\hiredis\include;Dependencies\freetype\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>GLEW_STATIC;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
-      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <AdditionalIncludeDirectories>$(SolutionDir)GraphicsCortex\Source\Graphics\Rendering\new system;$(SolutionDir)GraphicsCortex\Source\Graphics\Textures\new system;$(SolutionDir)GraphicsCortex\Source\System;$(SolutionDir)GraphicsCortex\Source\Physics;$(SolutionDir)GraphicsCortex\Source\Graphics\Windowing;$(SolutionDir)GraphicsCortex\Source\Graphics\Textures;$(SolutionDir)GraphicsCortex\Source\Graphics\Text;$(SolutionDir)GraphicsCortex\Source\Graphics\Shaders;$(SolutionDir)GraphicsCortex\Source\Graphics\Rendering;$(SolutionDir)GraphicsCortex\Source\Graphics\Meshes;$(SolutionDir)GraphicsCortex\Source\Graphics\Math;$(SolutionDir)GraphicsCortex\Source\Graphics\Lights;$(SolutionDir)GraphicsCortex\Source\Graphics\GUI;$(SolutionDir)GraphicsCortex\Source\Graphics\Defaults;$(SolutionDir)GraphicsCortex\Source\Graphics\Buffers;$(SolutionDir)GraphicsCortex\Source\Graphics;$(SolutionDir)GraphicsCortex\Source;$(SolutionDir)GraphicsCortex\Dependencies\assimp\include;$(SolutionDir)GraphicsCortex\Dependencies\stb_image;$(SolutionDir)GraphicsCortex\Dependencies\GLEW\include;$(SolutionDir)GraphicsCortex\Dependencies\imgui;$(SolutionDir)GraphicsCortex\Dependencies\glm;$(SolutionDir)GraphicsCortex\Dependencies\GLFWx64\include;$(SolutionDir)GraphicsCortex\Dependencies\physx\include;$(SolutionDir)GraphicsCortex\Dependencies\physx\snippetutils;$(SolutionDir)GraphicsCortex\Dependencies\physx\snippetcommon;$(SolutionDir)GraphicsCortex\Dependencies\hiredis\include;$(SolutionDir)GraphicsCortex\Dependencies\freetype\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <MinimalRebuild>false</MinimalRebuild>
+      <StringPooling>true</StringPooling>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <AdditionalOptions>/sdl /MD %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-      <LanguageStandard_C>stdc11</LanguageStandard_C>
+      <ExternalWarningLevel>Level3</ExternalWarningLevel>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)GraphicsCortex\Dependencies\assimp\lib;$(SolutionDir)GraphicsCortex\Dependencies\stb_image;$(SolutionDir)GraphicsCortex\Dependencies\glm;$(SolutionDir)GraphicsCortex\Dependencies\GLEW\lib\Release\x64;$(SolutionDir)GraphicsCortex\Dependencies\GLFWx64\lib-vc2022;$(SolutionDir)GraphicsCortex\Dependencies\physx\lib_checked;$(SolutionDir)GraphicsCortex\Dependencies\hiredis\libx64;$(SolutionDir)GraphicsCortex\Dependencies\freetype;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>freetype.lib;hiredis.lib;SnippetUtils_static_64.lib;SnippetRender_static_64.lib;SimulationController_static_64.lib;SceneQuery_static_64.lib;PhysXVehicle_static_64.lib;PhysXTask_static_64.lib;PhysXPvdSDK_static_64.lib;PhysXFoundation_64.lib;PhysXExtensions_static_64.lib;PhysXCooking_64.lib;PhysXCommon_64.lib;PhysXCharacterKinematic_static_64.lib;PhysX_64.lib;LowLevelDynamics_static_64.lib;LowLevelAABB_static_64.lib;LowLevel_static_64.lib;assimp-vc143-mt.lib;zlibstatic.lib;IrrXML.lib;opengl32.lib;glew32s.lib;glfw3.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <IgnoreSpecificDefaultLibraries>libcmt.lib; libcmtd.lib; msvcrtd.lib</IgnoreSpecificDefaultLibraries>
     </Link>
-    <ProjectReference>
-      <LinkLibraryDependencies>true</LinkLibraryDependencies>
-    </ProjectReference>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release Editor|x64'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>GLEW_STATIC;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
-      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <AdditionalIncludeDirectories>$(SolutionDir)GraphicsCortex\Source\Graphics\Rendering\new system;$(SolutionDir)GraphicsCortex\Source\Graphics\Textures\new system;$(SolutionDir)GraphicsCortex\Source\System;$(SolutionDir)GraphicsCortex\Source\Physics;$(SolutionDir)GraphicsCortex\Source\Graphics\Windowing;$(SolutionDir)GraphicsCortex\Source\Graphics\Textures;$(SolutionDir)GraphicsCortex\Source\Graphics\Text;$(SolutionDir)GraphicsCortex\Source\Graphics\Shaders;$(SolutionDir)GraphicsCortex\Source\Graphics\Rendering;$(SolutionDir)GraphicsCortex\Source\Graphics\Meshes;$(SolutionDir)GraphicsCortex\Source\Graphics\Math;$(SolutionDir)GraphicsCortex\Source\Graphics\Lights;$(SolutionDir)GraphicsCortex\Source\Graphics\GUI;$(SolutionDir)GraphicsCortex\Source\Graphics\Defaults;$(SolutionDir)GraphicsCortex\Source\Graphics\Buffers;$(SolutionDir)GraphicsCortex\Source\Graphics;$(SolutionDir)GraphicsCortex\Source;$(SolutionDir)GraphicsCortex\Dependencies\assimp\include;$(SolutionDir)GraphicsCortex\Dependencies\stb_image;$(SolutionDir)GraphicsCortex\Dependencies\GLEW\include;$(SolutionDir)GraphicsCortex\Dependencies\imgui;$(SolutionDir)GraphicsCortex\Dependencies\glm;$(SolutionDir)GraphicsCortex\Dependencies\GLFWx64\include;$(SolutionDir)GraphicsCortex\Dependencies\physx\include;$(SolutionDir)GraphicsCortex\Dependencies\physx\snippetutils;$(SolutionDir)GraphicsCortex\Dependencies\physx\snippetcommon;$(SolutionDir)GraphicsCortex\Dependencies\hiredis\include;$(SolutionDir)GraphicsCortex\Dependencies\freetype\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpp17</LanguageStandard>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-      <LanguageStandard_C>stdc11</LanguageStandard_C>
-    </ClCompile>
-    <Link>
-      <SubSystem>Console</SubSystem>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)GraphicsCortex\Dependencies\assimp\lib;$(SolutionDir)GraphicsCortex\Dependencies\stb_image;$(SolutionDir)GraphicsCortex\Dependencies\glm;$(SolutionDir)GraphicsCortex\Dependencies\GLEW\lib\Release\x64;$(SolutionDir)GraphicsCortex\Dependencies\GLFWx64\lib-vc2022;$(SolutionDir)GraphicsCortex\Dependencies\physx\lib_checked;$(SolutionDir)GraphicsCortex\Dependencies\hiredis\libx64;$(SolutionDir)GraphicsCortex\Dependencies\freetype;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    <Lib>
       <AdditionalDependencies>freetype.lib;hiredis.lib;SnippetUtils_static_64.lib;SnippetRender_static_64.lib;SimulationController_static_64.lib;SceneQuery_static_64.lib;PhysXVehicle_static_64.lib;PhysXTask_static_64.lib;PhysXPvdSDK_static_64.lib;PhysXFoundation_64.lib;PhysXExtensions_static_64.lib;PhysXCooking_64.lib;PhysXCommon_64.lib;PhysXCharacterKinematic_static_64.lib;PhysX_64.lib;LowLevelDynamics_static_64.lib;LowLevelAABB_static_64.lib;LowLevel_static_64.lib;assimp-vc143-mt.lib;zlibstatic.lib;IrrXML.lib;opengl32.lib;glew32s.lib;glfw3.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <IgnoreSpecificDefaultLibraries>libcmt.lib; libcmtd.lib; msvcrtd.lib</IgnoreSpecificDefaultLibraries>
-    </Link>
-    <ProjectReference>
-      <LinkLibraryDependencies>true</LinkLibraryDependencies>
-    </ProjectReference>
+      <AdditionalLibraryDirectories>Dependencies\assimp\lib;Dependencies\stb_image;Dependencies\glm;Dependencies\GLEW\lib\Release\x64;Dependencies\GLFWx64\lib-vc2022;Dependencies\physx\lib_checked;Dependencies\hiredis\libx64;Dependencies\freetype;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Mains\TextureSystemTest.cpp" />
-    <ClCompile Include="Source\Graphics\Meshes\AssetImporter.cpp" />
-    <ClCompile Include="Source\Graphics\Rendering\Camera.cpp" />
-    <ClCompile Include="Source\Graphics\Rendering\new system\FrameBuffer2.cpp" />
-    <ClCompile Include="Source\Graphics\Textures\CubeMap.cpp" />
-    <ClCompile Include="Source\Graphics\Rendering\CustomRenderPipelines.h" />
-    <ClCompile Include="Source\Graphics\Defaults\Default_Assets.cpp" />
-    <ClCompile Include="Source\Graphics\GUI\Default_Gui_Widgets.cpp" />
-    <ClCompile Include="Source\Graphics\Defaults\Default_Programs.cpp" />
-    <ClCompile Include="Source\Graphics\Textures\new system\Texture2D.cpp" />
-    <ClCompile Include="Source\Graphics\Textures\new system\TextureBase.cpp" />
-    <ClCompile Include="Source\Graphics\Text\Font.cpp" />
-    <ClCompile Include="Source\Graphics\Rendering\FrameBuffer.cpp" />
-    <ClCompile Include="Source\Graphics\GUI\Gui.cpp" />
-    <ClCompile Include="Source\Graphics\Textures\Image.cpp" />
-    <ClCompile Include="Source\Graphics\Lights\Lights.cpp" />
-    <ClCompile Include="Source\Graphics\Math\CortexMath.cpp" />
-    <ClCompile Include="Source\Graphics\Meshes\Mesh.cpp" />
-    <ClCompile Include="Source\Graphics\Meshes\Model.cpp" />
-    <ClCompile Include="Source\Graphics\Meshes\ModelTextureTable.cpp" />
-    <ClCompile Include="Source\Physics\PhysicsContext.cpp" />
-    <ClCompile Include="Source\Physics\PhysicsGeometry.cpp" />
-    <ClCompile Include="Source\Physics\PhysicsLink.cpp" />
-    <ClCompile Include="Source\Physics\PhysicsObject.cpp" />
-    <ClCompile Include="Source\Physics\PhysicsScene.cpp" />
-    <ClCompile Include="Source\Physics\PhysicsVehicle.cpp" />
-    <ClCompile Include="Source\System\BinaryBuffers.cpp" />
-    <ClCompile Include="Source\System\DirectoryUtils.cpp" />
-    <ClCompile Include="Source\System\RamCache.cpp" />
-    <ClCompile Include="Source\Graphics\Rendering\RenderPipeline.cpp" />
-    <ClCompile Include="Source\Graphics\Rendering\Scene.cpp" />
-    <ClCompile Include="Source\Graphics\Text\Text.cpp" />
-    <ClCompile Include="Source\Graphics\Textures\Texture.cpp" />
-    <ClCompile Include="Source\Graphics\Buffers\Buffer.cpp" />
-    <ClCompile Include="Source\Graphics\Shaders\UniformQueue.cpp" />
-    <ClCompile Include="Source\Physics\Object.cpp" />
-    <ClCompile Include="Dependencies\imgui\imgui.cpp" />
-    <ClCompile Include="Dependencies\imgui\imgui_draw.cpp" />
-    <ClCompile Include="Dependencies\imgui\imgui_impl_glfw.cpp" />
-    <ClCompile Include="Dependencies\imgui\imgui_impl_opengl3.cpp" />
-    <ClCompile Include="Dependencies\imgui\imgui_tables.cpp" />
-    <ClCompile Include="Dependencies\imgui\imgui_widgets.cpp" />
-    <ClCompile Include="Dependencies\stb_image\stb_image.cpp" />
-    <ClCompile Include="Source\Graphics\Windowing\Frame.cpp" />
-    <ClCompile Include="Source\Graphics\Rendering\Graphic.cpp" />
-    <ClCompile Include="Source\Graphics\Rendering\Debuger.cpp" />
-    <ClCompile Include="Source\Graphics\Shaders\ShaderCompiler.cpp" />
-    <ClCompile Include="Dependencies\stb_image\stb_image_resize.cpp" />
-    <ClCompile Include="Dependencies\stb_image\stb_image_write.cpp" />
-    <ClCompile Include="Dependencies\physx\snippetcommon\SnippetVehicle4WCreate.cpp" />
-    <ClCompile Include="Dependencies\physx\snippetcommon\SnippetVehicleCreate.cpp" />
-    <ClCompile Include="Dependencies\physx\snippetcommon\SnippetVehicleFilterShader.cpp" />
-    <ClCompile Include="Dependencies\physx\snippetcommon\SnippetVehicleNoDriveCreate.cpp" />
-    <ClCompile Include="Dependencies\physx\snippetcommon\SnippetVehicleSceneQuery.cpp" />
-    <ClCompile Include="Dependencies\physx\snippetcommon\SnippetVehicleTankCreate.cpp" />
-    <ClCompile Include="Dependencies\physx\snippetcommon\SnippetVehicleTireFriction.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Source\GLSL\Depth.frag" />
-    <None Include="Source\GLSL\Depth.vert" />
-    <None Include="Custom Shaders\Texture.frag" />
-    <None Include="Custom Shaders\Texture.vert" />
-    <None Include="Dependencies\assimp\bin\assimp-vc143-mtd.dll" />
-    <None Include="Dependencies\assimp\include\assimp\color4.inl" />
-    <None Include="Dependencies\assimp\include\assimp\material.inl" />
-    <None Include="Dependencies\assimp\include\assimp\matrix3x3.inl" />
-    <None Include="Dependencies\assimp\include\assimp\matrix4x4.inl" />
-    <None Include="Dependencies\assimp\include\assimp\quaternion.inl" />
-    <None Include="Dependencies\assimp\include\assimp\SmoothingGroups.inl" />
-    <None Include="Dependencies\assimp\include\assimp\vector2.inl" />
-    <None Include="Dependencies\assimp\include\assimp\vector3.inl" />
-    <None Include="Source\GLSL\CubeMap.frag" />
-    <None Include="Source\GLSL\CubeMap.vert" />
-    <None Include="Source\GLSL\FlatColor.frag" />
-    <None Include="Source\GLSL\FlatColor.vert" />
-    <None Include="Source\GLSL\FrameBuffer.frag" />
-    <None Include="Source\GLSL\FrameBuffer.vert" />
-    <None Include="Source\GLSL\Gui.frag" />
-    <None Include="Source\GLSL\Gui.vert" />
-    <None Include="Source\GLSL\NormalTest.frag" />
-    <None Include="Source\GLSL\Solid.frag" />
-    <None Include="Source\GLSL\Solid.geom" />
-    <None Include="Source\GLSL\Solid.vert" />
-    <None Include="Source\GLSL\Solid_multitexture.frag" />
-    <None Include="Source\GLSL\Solid_multitexture.geom" />
-    <None Include="Source\GLSL\Solid_multitexture.vert" />
-    <None Include="Source\GLSL\Text.frag" />
-    <None Include="Source\GLSL\Text.vert" />
-    <None Include="Source\GLSL\TextureArray.frag" />
-    <None Include="Source\GLSL\TextureArray.vert" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Source\Graphics\Meshes\AssetImporter.h" />
-    <ClInclude Include="Source\Graphics\Buffers\Buffer.h" />
-    <ClInclude Include="Source\Graphics\Rendering\Camera.h" />
-    <ClInclude Include="Source\Config.h" />
-    <ClInclude Include="Source\Graphics\Rendering\new system\FrameBuffer2.h" />
-    <ClInclude Include="Source\Graphics\Textures\CubeMap.h" />
-    <ClInclude Include="Source\Graphics\Rendering\Debuger.h" />
-    <ClInclude Include="Source\Graphics\Defaults\Default_Assets.h" />
-    <ClInclude Include="Source\Graphics\GUI\Default_Gui_Widgets.h" />
-    <ClInclude Include="Source\Graphics\Textures\new system\BufferTexture.h" />
-    <ClInclude Include="Source\Graphics\Textures\new system\RenderBuffer.h" />
-    <ClInclude Include="Source\Graphics\Textures\new system\Texture1D.h" />
-    <ClInclude Include="Source\Graphics\Textures\new system\Texture2D.h" />
-    <ClInclude Include="Source\Graphics\Textures\new system\Texture3D.h" />
-    <ClInclude Include="Source\Graphics\Textures\new system\TextureArray.h" />
-    <ClInclude Include="Source\Graphics\Textures\new system\TextureBase.h" />
-    <ClInclude Include="Source\Graphics\Textures\new system\TextureCubeMap.h" />
-    <ClInclude Include="Source\Graphics\Text\Font.h" />
-    <ClInclude Include="Source\Graphics\Rendering\FrameBuffer.h" />
-    <ClInclude Include="Source\GraphicsCortex.h" />
-    <ClInclude Include="Source\Graphics\Defaults\Default_Programs.h" />
-    <ClInclude Include="Source\Graphics\GUI\Gui.h" />
-    <ClInclude Include="Source\Graphics\Textures\Image.h" />
-    <ClInclude Include="Source\Graphics\Lights\Lights.h" />
-    <ClInclude Include="Source\Graphics\Math\CortexMath.h" />
-    <ClInclude Include="Source\Graphics\Meshes\Mesh.h" />
-    <ClInclude Include="Source\Graphics\Meshes\Model.h" />
-    <ClInclude Include="Source\Graphics\Meshes\ModelTextureTable.h" />
-    <ClInclude Include="Source\Physics\PhysicsContext.h" />
-    <ClInclude Include="Source\Physics\PhysicsGeometry.h" />
-    <ClInclude Include="Source\Physics\PhysicsLink.h" />
-    <ClInclude Include="Source\Physics\PhysicsObject.h" />
-    <ClInclude Include="Source\Physics\PhysicsScene.h" />
-    <ClInclude Include="Source\Physics\PhysicsVehicle.h" />
-    <ClInclude Include="Source\System\BinaryBuffers.h" />
-    <ClInclude Include="Source\System\DirectoryUtils.h" />
-    <ClInclude Include="Source\System\RamCache.h" />
-    <ClInclude Include="Source\Graphics\Rendering\RenderPipeline.h" />
-    <ClInclude Include="Source\Graphics\Rendering\Scene.h" />
-    <ClInclude Include="Source\Graphics\Text\Text.h" />
-    <ClInclude Include="Source\Graphics\Textures\Texture.h" />
-    <ClInclude Include="Source\Graphics\Shaders\UniformUpdater.h" />
-    <ClInclude Include="Source\Graphics\Shaders\UnifromQueue.h" />
-    <ClInclude Include="Source\Physics\Object.h" />
-    <ClInclude Include="Source\Graphics\GUI\_templated_overloads.h" />
-    <ClInclude Include="Application\GUI_SceneViewer.h" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\aabb.h" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\ai_assert.h" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\anim.h" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\BaseImporter.h" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\Bitmap.h" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\BlobIOSystem.h" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\ByteSwapper.h" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\camera.h" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\cexport.h" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\cfileio.h" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\cimport.h" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\color4.h" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\Compiler\poppack1.h" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\Compiler\pstdint.h" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\Compiler\pushpack1.h" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\config.h" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\CreateAnimMesh.h" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\DefaultIOStream.h" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\DefaultIOSystem.h" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\DefaultLogger.hpp" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\Defines.h" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\defs.h" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\Exceptional.h" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\Exporter.hpp" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\fast_atof.h" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\GenericProperty.h" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\Hash.h" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\Importer.hpp" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\importerdesc.h" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\IOStream.hpp" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\IOStreamBuffer.h" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\IOSystem.hpp" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\irrXMLWrapper.h" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\light.h" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\LineSplitter.h" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\LogAux.h" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\Logger.hpp" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\LogStream.hpp" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\Macros.h" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\material.h" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\MathFunctions.h" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\matrix3x3.h" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\matrix4x4.h" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\MemoryIOWrapper.h" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\mesh.h" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\metadata.h" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\NullLogger.hpp" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\ParsingUtils.h" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\pbrmaterial.h" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\port\AndroidJNI\AndroidJNIIOSystem.h" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\postprocess.h" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\Profiler.h" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\ProgressHandler.hpp" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\qnan.h" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\quaternion.h" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\RemoveComments.h" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\scene.h" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\SceneCombiner.h" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\SGSpatialSort.h" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\SkeletonMeshBuilder.h" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\SmoothingGroups.h" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\SpatialSort.h" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\StandardShapes.h" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\StreamReader.h" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\StreamWriter.h" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\StringComparison.h" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\StringUtils.h" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\Subdivision.h" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\texture.h" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\TinyFormatter.h" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\types.h" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\vector2.h" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\vector3.h" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\version.h" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\Vertex.h" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\XMLTools.h" />
-    <ClInclude Include="Dependencies\assimp\include\assimp\ZipArchiveIOSystem.h" />
-    <ClInclude Include="Dependencies\GLEW\include\GL\eglew.h" />
-    <ClInclude Include="Dependencies\GLEW\include\GL\glew.h" />
-    <ClInclude Include="Dependencies\GLEW\include\GL\glxew.h" />
-    <ClInclude Include="Dependencies\GLEW\include\GL\wglew.h" />
     <ClInclude Include="Dependencies\imgui\imconfig.h" />
     <ClInclude Include="Dependencies\imgui\imgui.h" />
     <ClInclude Include="Dependencies\imgui\imgui_impl_glfw.h" />
@@ -491,53 +69,122 @@
     <ClInclude Include="Dependencies\imgui\imstb_rectpack.h" />
     <ClInclude Include="Dependencies\imgui\imstb_textedit.h" />
     <ClInclude Include="Dependencies\imgui\imstb_truetype.h" />
-    <ClInclude Include="Dependencies\stb_image\stb_image.h" />
-    <ClInclude Include="Source\Graphics\Windowing\Frame.h" />
-    <ClInclude Include="Source\Graphics\Rendering\Graphic.h" />
-    <ClInclude Include="Source\Graphics\Shaders\ShaderCompiler.h" />
-    <ClInclude Include="Dependencies\stb_image\stb_image_resize.h" />
-    <ClInclude Include="Dependencies\stb_image\stb_image_write.h" />
-    <ClInclude Include="Dependencies\physx\snippetcommon\SnippetPrint.h" />
     <ClInclude Include="Dependencies\physx\snippetcommon\SnippetPVD.h" />
+    <ClInclude Include="Dependencies\physx\snippetcommon\SnippetPrint.h" />
     <ClInclude Include="Dependencies\physx\snippetcommon\SnippetVehicleConcurrency.h" />
     <ClInclude Include="Dependencies\physx\snippetcommon\SnippetVehicleCreate.h" />
     <ClInclude Include="Dependencies\physx\snippetcommon\SnippetVehicleFilterShader.h" />
     <ClInclude Include="Dependencies\physx\snippetcommon\SnippetVehicleSceneQuery.h" />
     <ClInclude Include="Dependencies\physx\snippetcommon\SnippetVehicleTireFriction.h" />
     <ClInclude Include="Dependencies\physx\snippetcommon\SnippetVehicleWheelQueryResult.h" />
+    <ClInclude Include="Dependencies\stb_image\stb_image.h" />
+    <ClInclude Include="Dependencies\stb_image\stb_image_resize.h" />
+    <ClInclude Include="Dependencies\stb_image\stb_image_write.h" />
+    <ClInclude Include="Source\Config.h" />
+    <ClInclude Include="Source\Graphics\Buffers\Buffer.h" />
+    <ClInclude Include="Source\Graphics\Defaults\Default_Assets.h" />
+    <ClInclude Include="Source\Graphics\Defaults\Default_Programs.h" />
+    <ClInclude Include="Source\Graphics\GUI\Default_Gui_Widgets.h" />
+    <ClInclude Include="Source\Graphics\GUI\Gui.h" />
+    <ClInclude Include="Source\Graphics\GUI\_templated_overloads.h" />
+    <ClInclude Include="Source\Graphics\Lights\Lights.h" />
+    <ClInclude Include="Source\Graphics\Math\CortexMath.h" />
+    <ClInclude Include="Source\Graphics\Meshes\AssetImporter.h" />
+    <ClInclude Include="Source\Graphics\Meshes\Mesh.h" />
+    <ClInclude Include="Source\Graphics\Meshes\Model.h" />
+    <ClInclude Include="Source\Graphics\Meshes\ModelTextureTable.h" />
+    <ClInclude Include="Source\Graphics\Rendering\Camera.h" />
+    <ClInclude Include="Source\Graphics\Rendering\CustomRenderPipelines.h" />
+    <ClInclude Include="Source\Graphics\Rendering\Debuger.h" />
+    <ClInclude Include="Source\Graphics\Rendering\FrameBuffer.h" />
+    <ClInclude Include="Source\Graphics\Rendering\Graphic.h" />
+    <ClInclude Include="Source\Graphics\Rendering\RenderPipeline.h" />
+    <ClInclude Include="Source\Graphics\Rendering\Scene.h" />
+    <ClInclude Include="Source\Graphics\Rendering\new system\FrameBuffer2.h" />
+    <ClInclude Include="Source\Graphics\Shaders\ShaderCompiler.h" />
+    <ClInclude Include="Source\Graphics\Shaders\UniformUpdater.h" />
+    <ClInclude Include="Source\Graphics\Shaders\UnifromQueue.h" />
+    <ClInclude Include="Source\Graphics\Text\Font.h" />
+    <ClInclude Include="Source\Graphics\Text\Text.h" />
+    <ClInclude Include="Source\Graphics\Textures\CubeMap.h" />
+    <ClInclude Include="Source\Graphics\Textures\Image.h" />
+    <ClInclude Include="Source\Graphics\Textures\Texture.h" />
+    <ClInclude Include="Source\Graphics\Textures\new system\BufferTexture.h" />
+    <ClInclude Include="Source\Graphics\Textures\new system\RenderBuffer.h" />
+    <ClInclude Include="Source\Graphics\Textures\new system\Texture1D.h" />
+    <ClInclude Include="Source\Graphics\Textures\new system\Texture2D.h" />
+    <ClInclude Include="Source\Graphics\Textures\new system\Texture3D.h" />
+    <ClInclude Include="Source\Graphics\Textures\new system\TextureArray.h" />
+    <ClInclude Include="Source\Graphics\Textures\new system\TextureBase.h" />
+    <ClInclude Include="Source\Graphics\Textures\new system\TextureCubeMap.h" />
+    <ClInclude Include="Source\Graphics\Windowing\Frame.h" />
+    <ClInclude Include="Source\GraphicsCortex.h" />
+    <ClInclude Include="Source\Physics\Object.h" />
+    <ClInclude Include="Source\Physics\PhysicsContext.h" />
+    <ClInclude Include="Source\Physics\PhysicsGeometry.h" />
+    <ClInclude Include="Source\Physics\PhysicsLink.h" />
+    <ClInclude Include="Source\Physics\PhysicsObject.h" />
+    <ClInclude Include="Source\Physics\PhysicsScene.h" />
+    <ClInclude Include="Source\Physics\PhysicsVehicle.h" />
+    <ClInclude Include="Source\System\BinaryBuffers.h" />
+    <ClInclude Include="Source\System\DirectoryUtils.h" />
+    <ClInclude Include="Source\System\RamCache.h" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="Images\Bricks\brickcolor.jpg" />
-    <Image Include="Images\Bricks\bricknormal.png" />
-    <Image Include="Images\Bricks\brickreflection.jpg" />
-    <Image Include="Images\Bricks\BricksFlemishRed001_cube.jpg" />
-    <Image Include="Images\Bricks\BricksFlemishRed001_sphere.jpg" />
-    <Image Include="Images\cobble.png" />
-    <Image Include="Images\CubeMap\Sky\nz.jpg" />
-    <Image Include="Images\CubeMap\Sky\ny.jpg" />
-    <Image Include="Images\CubeMap\Sky\pz.jpg" />
-    <Image Include="Images\CubeMap\Sky\nx.jpg" />
-    <Image Include="Images\CubeMap\Sky\px.jpg" />
-    <Image Include="Images\CubeMap\Sky\py.jpg" />
-    <Image Include="Images\CubeMap\Street\nx.png" />
-    <Image Include="Images\CubeMap\Street\ny.png" />
-    <Image Include="Images\CubeMap\Street\nz.png" />
-    <Image Include="Images\CubeMap\Street\px.png" />
-    <Image Include="Images\CubeMap\Street\py.png" />
-    <Image Include="Images\CubeMap\Street\pz.png" />
-    <Image Include="Images\full_black.png" />
-    <Image Include="Images\full_white.png" />
-    <Image Include="Images\GoldBlock.png" />
-    <Image Include="Images\grass.png" />
-    <Image Include="Images\orange.png" />
-    <Image Include="Images\Stones\brickcolor.jpg" />
-    <Image Include="Images\Stones\bricknormal.png" />
-    <Image Include="Images\Stones\brickreflection.jpg" />
-    <Image Include="Images\Stones\BricksFlemishRed001_cube.jpg" />
-    <Image Include="Images\Stones\BricksFlemishRed001_sphere.jpg" />
-    <Image Include="Images\StoneTiles\tiles_color.jpg" />
-    <Image Include="Images\StoneTiles\tiles_normal.jpg" />
-    <Image Include="Images\StoneTiles\tiles_specular.jpg" />
+    <ClCompile Include="Dependencies\imgui\imgui.cpp" />
+    <ClCompile Include="Dependencies\imgui\imgui_draw.cpp" />
+    <ClCompile Include="Dependencies\imgui\imgui_impl_glfw.cpp" />
+    <ClCompile Include="Dependencies\imgui\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="Dependencies\imgui\imgui_tables.cpp" />
+    <ClCompile Include="Dependencies\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="Dependencies\physx\snippetcommon\SnippetVehicle4WCreate.cpp" />
+    <ClCompile Include="Dependencies\physx\snippetcommon\SnippetVehicleCreate.cpp" />
+    <ClCompile Include="Dependencies\physx\snippetcommon\SnippetVehicleFilterShader.cpp" />
+    <ClCompile Include="Dependencies\physx\snippetcommon\SnippetVehicleNoDriveCreate.cpp" />
+    <ClCompile Include="Dependencies\physx\snippetcommon\SnippetVehicleSceneQuery.cpp" />
+    <ClCompile Include="Dependencies\physx\snippetcommon\SnippetVehicleTankCreate.cpp" />
+    <ClCompile Include="Dependencies\physx\snippetcommon\SnippetVehicleTireFriction.cpp" />
+    <ClCompile Include="Dependencies\stb_image\stb_image.cpp" />
+    <ClCompile Include="Dependencies\stb_image\stb_image_resize.cpp" />
+    <ClCompile Include="Dependencies\stb_image\stb_image_write.cpp" />
+    <ClCompile Include="Source\Graphics\Buffers\Buffer.cpp" />
+    <ClCompile Include="Source\Graphics\Defaults\Default_Assets.cpp" />
+    <ClCompile Include="Source\Graphics\Defaults\Default_Programs.cpp" />
+    <ClCompile Include="Source\Graphics\GUI\Default_Gui_Widgets.cpp" />
+    <ClCompile Include="Source\Graphics\GUI\Gui.cpp" />
+    <ClCompile Include="Source\Graphics\Lights\Lights.cpp" />
+    <ClCompile Include="Source\Graphics\Math\CortexMath.cpp" />
+    <ClCompile Include="Source\Graphics\Meshes\AssetImporter.cpp" />
+    <ClCompile Include="Source\Graphics\Meshes\Mesh.cpp" />
+    <ClCompile Include="Source\Graphics\Meshes\Model.cpp" />
+    <ClCompile Include="Source\Graphics\Meshes\ModelTextureTable.cpp" />
+    <ClCompile Include="Source\Graphics\Rendering\Camera.cpp" />
+    <ClCompile Include="Source\Graphics\Rendering\Debuger.cpp" />
+    <ClCompile Include="Source\Graphics\Rendering\FrameBuffer.cpp" />
+    <ClCompile Include="Source\Graphics\Rendering\Graphic.cpp" />
+    <ClCompile Include="Source\Graphics\Rendering\RenderPipeline.cpp" />
+    <ClCompile Include="Source\Graphics\Rendering\Scene.cpp" />
+    <ClCompile Include="Source\Graphics\Rendering\new system\FrameBuffer2.cpp" />
+    <ClCompile Include="Source\Graphics\Shaders\ShaderCompiler.cpp" />
+    <ClCompile Include="Source\Graphics\Shaders\UniformQueue.cpp" />
+    <ClCompile Include="Source\Graphics\Text\Font.cpp" />
+    <ClCompile Include="Source\Graphics\Text\Text.cpp" />
+    <ClCompile Include="Source\Graphics\Textures\CubeMap.cpp" />
+    <ClCompile Include="Source\Graphics\Textures\Image.cpp" />
+    <ClCompile Include="Source\Graphics\Textures\Texture.cpp" />
+    <ClCompile Include="Source\Graphics\Textures\new system\Texture2D.cpp" />
+    <ClCompile Include="Source\Graphics\Textures\new system\TextureBase.cpp" />
+    <ClCompile Include="Source\Graphics\Windowing\Frame.cpp" />
+    <ClCompile Include="Source\Physics\Object.cpp" />
+    <ClCompile Include="Source\Physics\PhysicsContext.cpp" />
+    <ClCompile Include="Source\Physics\PhysicsGeometry.cpp" />
+    <ClCompile Include="Source\Physics\PhysicsLink.cpp" />
+    <ClCompile Include="Source\Physics\PhysicsObject.cpp" />
+    <ClCompile Include="Source\Physics\PhysicsScene.cpp" />
+    <ClCompile Include="Source\Physics\PhysicsVehicle.cpp" />
+    <ClCompile Include="Source\System\BinaryBuffers.cpp" />
+    <ClCompile Include="Source\System\DirectoryUtils.cpp" />
+    <ClCompile Include="Source\System\RamCache.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

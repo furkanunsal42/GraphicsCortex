@@ -12,13 +12,13 @@ int load_vehicle_scene() {
 	std::shared_ptr<Scene> scene = Editor::get().get_current_scene();
 	scene->camera->max_distance = 1000;
 
-	std::shared_ptr<Program> program = std::make_shared<Program>(Shader("Source/GLSL/TextureArray.vert", "Source/GLSL/TextureArray.frag"));
+	std::shared_ptr<Program> program = std::make_shared<Program>(Shader("../GraphicsCortex/Source/GLSL/TextureArray.vert", "../GraphicsCortex/Source/GLSL/TextureArray.frag"));
 	std::shared_ptr<Program> solid_program = default_program::solid_program_s();
 
 	{
-		Model city_model("Models/circuit/nogaro.obj", 1.0f, Model::ALL);
-		Model city_model_collision("Models/circuit/collision.obj", 1.0f, Model::COORD_XYZ);
-		Model city_model_ground("Models/circuit/ground_physics.obj", 1.0f, Model::COORD_XYZ);
+		Model city_model("../GraphicsCortex/Models/circuit/nogaro.obj", 1.0f, Model::ALL);
+		Model city_model_collision("../GraphicsCortex/Models/circuit/collision.obj", 1.0f, Model::COORD_XYZ);
+		Model city_model_ground("../GraphicsCortex/Models/circuit/ground_physics.obj", 1.0f, Model::COORD_XYZ);
 		std::shared_ptr<Mesh> city = std::make_shared<Mesh>(city_model);
 
 		PhysicsObject map_physics(create_geometry::triangle_mesh(city_model_collision.get_partial_data<physx::PxVec3>("111"), city_model_collision.submodels[0].index_data), PhysicsObject::STATIC, true);
@@ -29,7 +29,7 @@ int load_vehicle_scene() {
 		map_ground.make_drivable();
 		scene->add_physics(map_ground);
 
-		std::shared_ptr<UnorderedMaterial> city_mat = std::make_shared<UnorderedMaterial>("Models/circuit/nogaro.obj");
+		std::shared_ptr<UnorderedMaterial> city_mat = std::make_shared<UnorderedMaterial>("../GraphicsCortex/Models/circuit/nogaro.obj");
 		city_mat->texture_array.mipmap_bias = 0;
 		city_mat->texture_array.generate_mipmap = false;
 		city_mat->set_texture_size(512, 512);
@@ -52,19 +52,19 @@ int load_vehicle_scene() {
 	std::shared_ptr<Vehicle> vehicle = std::make_shared<Vehicle>(vehicle_raw);
 
 	{
-		Model chassis_model("Models/teducar/teduCar.fbx", 0.006f, Model::COORD_XYZ | Model::TEX_COORD_XY | Model::NORMAL_XYZ);
-		Model chassis_model_physics("Models/test2.obj", 1.0f, Model::COORD_XYZ | Model::TEX_COORD_XY | Model::NORMAL_XYZ);
-		Model chassis_left_wheel_model("Models/porsche_wheel_left.obj", 1, Model::COORD_XYZ | Model::TEX_COORD_XY | Model::NORMAL_XYZ);
-		Model chassis_right_wheel_model("Models/porsche_wheel_right.obj", 1, Model::COORD_XYZ | Model::TEX_COORD_XY | Model::NORMAL_XYZ);
+		Model chassis_model("../GraphicsCortex/Models/teducar/teduCar.fbx", 0.006f, Model::COORD_XYZ | Model::TEX_COORD_XY | Model::NORMAL_XYZ);
+		Model chassis_model_physics("../GraphicsCortex/Models/test2.obj", 1.0f, Model::COORD_XYZ | Model::TEX_COORD_XY | Model::NORMAL_XYZ);
+		Model chassis_left_wheel_model("../GraphicsCortex/Models/porsche_wheel_left.obj", 1, Model::COORD_XYZ | Model::TEX_COORD_XY | Model::NORMAL_XYZ);
+		Model chassis_right_wheel_model("../GraphicsCortex/Models/porsche_wheel_right.obj", 1, Model::COORD_XYZ | Model::TEX_COORD_XY | Model::NORMAL_XYZ);
 
 		std::shared_ptr<Mesh> chassis = std::make_shared<Mesh>(chassis_model);
 		std::shared_ptr<Mesh> left_wheel = std::make_shared<Mesh>(chassis_left_wheel_model);
 		std::shared_ptr<Mesh> right_wheel = std::make_shared<Mesh>(chassis_right_wheel_model);
 
 		std::shared_ptr<UnorderedMaterial> tire_material_s = std::make_shared<UnorderedMaterial>(1);
-		tire_material_s->set_texture("Images/cartextures/911_22_930_tire_BaseColor.png", 4, 0, UnorderedMaterial::COLOR);
+		tire_material_s->set_texture("../GraphicsCortex/Images/cartextures/911_22_930_tire_BaseColor.png", 4, 0, UnorderedMaterial::COLOR);
 
-		std::shared_ptr<UnorderedMaterial> chassis_material_s = std::make_shared<UnorderedMaterial>("Models/teducar/teduCar.fbx");
+		std::shared_ptr<UnorderedMaterial> chassis_material_s = std::make_shared<UnorderedMaterial>("../GraphicsCortex/Models/teducar/teduCar.fbx");
 
 		vehicle->load_mesh_chassis_graphics(chassis);
 		vehicle->load_model_chassis_physics(chassis_model);
@@ -92,12 +92,12 @@ int load_vehicle_scene() {
 	std::shared_ptr<CubeMapTexture> cube_map = std::make_shared<CubeMapTexture>();
 	cube_map->set_program(cubemap_program);
 	cube_map->camera = scene->camera.get();
-	cube_map->face_texture_filepaths[RIGHT] = "Images/CubeMap/Sky/px.jpg";
-	cube_map->face_texture_filepaths[LEFT] = "Images/CubeMap/Sky/nx.jpg";
-	cube_map->face_texture_filepaths[TOP] = "Images/CubeMap/Sky/py.jpg";
-	cube_map->face_texture_filepaths[BOTTOM] = "Images/CubeMap/Sky/ny.jpg";
-	cube_map->face_texture_filepaths[FRONT] = "Images/CubeMap/Sky/pz.jpg";
-	cube_map->face_texture_filepaths[BACK] = "Images/CubeMap/Sky/nz.jpg";
+	cube_map->face_texture_filepaths[RIGHT] = "../GraphicsCortex/Images/CubeMap/Sky/px.jpg";
+	cube_map->face_texture_filepaths[LEFT] = "../GraphicsCortex/Images/CubeMap/Sky/nx.jpg";
+	cube_map->face_texture_filepaths[TOP] = "../GraphicsCortex/Images/CubeMap/Sky/py.jpg";
+	cube_map->face_texture_filepaths[BOTTOM] = "../GraphicsCortex/Images/CubeMap/Sky/ny.jpg";
+	cube_map->face_texture_filepaths[FRONT] = "../GraphicsCortex/Images/CubeMap/Sky/pz.jpg";
+	cube_map->face_texture_filepaths[BACK] = "../GraphicsCortex/Images/CubeMap/Sky/nz.jpg";
 
 	cube_map->read_queue(3);
 	cube_map->load_queue(true);
