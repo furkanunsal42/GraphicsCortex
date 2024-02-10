@@ -5,6 +5,7 @@
 
 class Texture2D : public TextureBase2{
 public:
+
 	int mipmap_begin_level = 0;
 	float mipmap_bias = 0.0f;
 
@@ -22,8 +23,10 @@ public:
 	Texture2D(int width, int height, DepthStencilTextureFormat internal_format, int mipmap_levels = 1, float mipmap_bias = 0.0f);
 	~Texture2D();
 	void release();
-	void bind();
+
 	void bind(int texture_slot);
+
+	void bind();
 	void unbind();
 
 	void load_data(const void* image, ColorFormat format, Type type, int mipmap_target = 0);
@@ -115,6 +118,7 @@ private:
 
 	bool _texture_generated = false;
 	bool _texture_allocated = false;
+	bool _texture_handle_created = false;
 	bool _user_data_loaded = false;
 	bool _mipmap_generated = false;
 
@@ -122,6 +126,8 @@ private:
 
 	void _generate_texture();
 	void _allocate_texture();
+	void _create_handle();
+
 
 	int _get_gl_internal_format();
 };

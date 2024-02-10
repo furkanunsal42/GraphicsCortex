@@ -40,20 +40,25 @@ void Texture2D::bind()
 		std::cout << "[OpenGL Error] released texture tried to bind()" << std::endl;
 		ASSERT(false);
 	}
-	GLCall(glBindTexture(target, id));
+	std::cout << "[OpenGL Warning] Bindless Texture tried to bind" << std::endl;
+	//GLCall(glBindTexture(target, id));
 }
 
 void Texture2D::bind(int texture_slot)
 {
-	GLCall(glActiveTexture(GL_TEXTURE0 + texture_slot));
-	bind();
-	generate_mipmap();
-	_set_texture_parameters();
+	GLCall(glBindTextureUnit(texture_slot, id));
+
+	if (!_texture_allocated) {
+		std::cout << "[OpenGL Warning] Texture2D tried to bind(int) but no user data was loaded yet" << std::endl;
+		_allocate_texture();
+	}
 }
 
 void Texture2D::unbind()
 {
-	GLCall(glBindTexture(target, 0));
+	std::cout << "[OpenGL Warning] Bindless Texture tried to unbind" << std::endl;
+
+	//GLCall(glBindTexture(target, 0));
 }
 
 void Texture2D::load_data(const void* image, ColorFormat format, Type type, int mipmap_target)
@@ -64,8 +69,7 @@ void Texture2D::load_data(const void* image, ColorFormat format, Type type, int 
 	}
 	_allocate_texture();
 
-	bind();
-	GLCall(glTexSubImage2D(target, mipmap_target, 0, 0, this->width >> mipmap_target, this->height >> mipmap_target, TextureBase2::ColorFormat_to_OpenGL(format), TextureBase2::Type_to_OpenGL(type), image));
+	GLCall(glTextureSubImage2D(id, mipmap_target, 0, 0, this->width >> mipmap_target, this->height >> mipmap_target, TextureBase2::ColorFormat_to_OpenGL(format), TextureBase2::Type_to_OpenGL(type), image));
 
 	_user_data_loaded = true;
 }
@@ -78,8 +82,7 @@ void Texture2D::load_data(const void* image, ColorFormat format, Type type, int 
 	}
 	_allocate_texture();
 
-	bind();
-	GLCall(glTexSubImage2D(target, mipmap_target, x, y, custom_width, custom_height, TextureBase2::ColorFormat_to_OpenGL(format), TextureBase2::Type_to_OpenGL(type), image));
+	GLCall(glTextureSubImage2D(id, mipmap_target, x, y, custom_width, custom_height, TextureBase2::ColorFormat_to_OpenGL(format), TextureBase2::Type_to_OpenGL(type), image));
 
 	_user_data_loaded = true;
 }
@@ -123,8 +126,7 @@ void Texture2D::load_data(const void* image, DepthStencilFormat format, Type typ
 	}
 	_allocate_texture();
 
-	bind();
-	GLCall(glTexSubImage2D(target, mipmap_target, 0, 0, this->width >> mipmap_target, this->height >> mipmap_target, TextureBase2::DepthStencilFormat_to_OpenGL(format), TextureBase2::Type_to_OpenGL(type), image));
+	GLCall(glTextureSubImage2D(id, mipmap_target, 0, 0, this->width >> mipmap_target, this->height >> mipmap_target, TextureBase2::DepthStencilFormat_to_OpenGL(format), TextureBase2::Type_to_OpenGL(type), image));
 
 	_user_data_loaded = true;
 }
@@ -137,8 +139,7 @@ void Texture2D::load_data(const void* image, DepthStencilFormat format, Type typ
 	}
 	_allocate_texture();
 
-	bind();
-	GLCall(glTexSubImage2D(target, mipmap_target, x, y, custom_width, custom_height, TextureBase2::DepthStencilFormat_to_OpenGL(format), TextureBase2::Type_to_OpenGL(type), image));
+	GLCall(glTextureSubImage2D(id, mipmap_target, x, y, custom_width, custom_height, TextureBase2::DepthStencilFormat_to_OpenGL(format), TextureBase2::Type_to_OpenGL(type), image));
 
 	_user_data_loaded = true;
 }
@@ -183,8 +184,7 @@ void Texture2D::generate_mipmap()
 
 	if (_mipmap_generated) return;
 
-	bind();
-	GLCall(glGenerateMipmap(target));
+	GLCall(glGenerateTextureMipmap(id));
 
 	_mipmap_generated = true;
 }
@@ -225,8 +225,13 @@ void Texture2D::load_data_with_mipmaps(const Image& image, DepthStencilFormat fo
 
 void Texture2D::_set_texture_parameters()
 {
-	GLCall(glTexParameteri(target, GL_TEXTURE_BASE_LEVEL, mipmap_begin_level));
-	GLCall(glTexParameterf(target, GL_TEXTURE_LOD_BIAS, mipmap_bias));
+	if (_texture_handle_created) {
+		std::cout << "[OpenGL Error] texture tried to _set_texture_parameters() but texture handle was already created" << std::endl;
+		ASSERT(false);
+	}
+
+	GLCall(glTextureParameteri(id, GL_TEXTURE_BASE_LEVEL, mipmap_begin_level));
+	GLCall(glTextureParameterf(id, GL_TEXTURE_LOD_BIAS, mipmap_bias));
 	
 	int gl_min_filter = SamplingFilter_to_OpenGL(min_filter);
 	int gl_mipmap_min_filter = SamplingFilter_to_OpenGL(mipmap_min_filter);
@@ -236,18 +241,17 @@ void Texture2D::_set_texture_parameters()
 	if (gl_min_filter == GL_LINEAR  && gl_mipmap_min_filter == GL_NEAREST)	combined_min_filter = GL_LINEAR_MIPMAP_NEAREST;
 	if (gl_min_filter == GL_LINEAR && gl_mipmap_min_filter == GL_LINEAR)	combined_min_filter = GL_LINEAR_MIPMAP_LINEAR;
 
-	GLCall(glTexParameteri(target, GL_TEXTURE_MIN_FILTER, combined_min_filter));	// add mipmap support
-	GLCall(glTexParameteri(target, GL_TEXTURE_MAG_FILTER, SamplingFilter_to_OpenGL(mag_filter)));
-	GLCall(glTexParameteri(target, GL_TEXTURE_MAX_LEVEL, mipmap_levels));
-	GLCall(glTexParameteri(target, GL_TEXTURE_WRAP_S, WrapMode_to_OpenGL(wrap_u)));
-	GLCall(glTexParameteri(target, GL_TEXTURE_WRAP_T, WrapMode_to_OpenGL(wrap_v)));
+	GLCall(glTextureParameteri(id, GL_TEXTURE_MIN_FILTER, combined_min_filter));	// add mipmap support
+	GLCall(glTextureParameteri(id, GL_TEXTURE_MAG_FILTER, SamplingFilter_to_OpenGL(mag_filter)));
+	GLCall(glTextureParameteri(id, GL_TEXTURE_MAX_LEVEL, mipmap_levels));
+	GLCall(glTextureParameteri(id, GL_TEXTURE_WRAP_S, WrapMode_to_OpenGL(wrap_u)));
+	GLCall(glTextureParameteri(id, GL_TEXTURE_WRAP_T, WrapMode_to_OpenGL(wrap_v)));
 }
 
 void Texture2D::_generate_texture()
 {
 	if (_texture_generated) return;
-	GLCall(glGenTextures(1, &id));
-
+	GLCall(glCreateTextures(target, 1, &id));
 	_texture_generated = true;
 }
 
@@ -256,10 +260,21 @@ void Texture2D::_allocate_texture()
 	if (!_texture_generated) return;
 	if (_texture_allocated) return;
 
-	bind();
-	GLCall(glTexStorage2D(target, mipmap_levels, _get_gl_internal_format(), width, height));
-
+	GLCall(glTextureStorage2D(id, mipmap_levels, _get_gl_internal_format(), width, height));
+	_create_handle();
 	_texture_allocated = true;
+}
+
+void Texture2D::_create_handle()
+{
+	if (_texture_handle_created) return;
+
+	_set_texture_parameters();
+
+	GLCall(texture_handle = glGetTextureHandleARB(id));
+	GLCall(glMakeTextureHandleResidentARB(texture_handle))
+
+	_texture_handle_created = true;
 }
 
 int Texture2D::_get_gl_internal_format()
@@ -270,11 +285,10 @@ int Texture2D::_get_gl_internal_format()
 TextureBase2::SamplingFilter Texture2D::query_mag_filter()
 {
 	int gl_filter;
-	bind();
-	glGetTexParameteriv(target, GL_TEXTURE_MAG_FILTER, &gl_filter);
+	GLCall(glGetTextureParameteriv(id, GL_TEXTURE_MAG_FILTER, &gl_filter));
 	if (gl_filter == GL_NEAREST) return SamplingFilter::NEAREST;
 	if (gl_filter == GL_LINEAR) return SamplingFilter::LINEAR;
-	
+
 	ASSERT(false);
 	return SamplingFilter();
 }
@@ -282,10 +296,9 @@ TextureBase2::SamplingFilter Texture2D::query_mag_filter()
 TextureBase2::SamplingFilter Texture2D::query_min_filter()
 {
 	int gl_filter;
-	bind();
-	glGetTexParameteriv(target, GL_TEXTURE_MIN_FILTER, &gl_filter);
+	GLCall(glGetTextureParameteriv(id, GL_TEXTURE_MIN_FILTER, &gl_filter));
 	if (gl_filter == GL_NEAREST || gl_filter == GL_NEAREST_MIPMAP_LINEAR || gl_filter == GL_NEAREST_MIPMAP_NEAREST) return SamplingFilter::NEAREST;
-	if (gl_filter == GL_LINEAR  || gl_filter == GL_LINEAR_MIPMAP_LINEAR  || gl_filter == GL_LINEAR_MIPMAP_NEAREST)	return SamplingFilter::LINEAR;
+	if (gl_filter == GL_LINEAR || gl_filter == GL_LINEAR_MIPMAP_LINEAR || gl_filter == GL_LINEAR_MIPMAP_NEAREST)	return SamplingFilter::LINEAR;
 
 	ASSERT(false);
 	return SamplingFilter();
@@ -294,10 +307,9 @@ TextureBase2::SamplingFilter Texture2D::query_min_filter()
 TextureBase2::SamplingFilter Texture2D::query_mipmap_min_filter()
 {
 	int gl_filter;
-	bind();
-	glGetTexParameteriv(target, GL_TEXTURE_MIN_FILTER, &gl_filter);
+	GLCall(glGetTextureParameteriv(id, GL_TEXTURE_MIN_FILTER, &gl_filter));
 	if (gl_filter == GL_LINEAR_MIPMAP_NEAREST || gl_filter == GL_NEAREST_MIPMAP_NEAREST) return SamplingFilter::NEAREST;
-	if (gl_filter == GL_LINEAR_MIPMAP_LINEAR  || gl_filter == GL_NEAREST_MIPMAP_LINEAR)	return SamplingFilter::LINEAR;
+	if (gl_filter == GL_LINEAR_MIPMAP_LINEAR || gl_filter == GL_NEAREST_MIPMAP_LINEAR)	return SamplingFilter::LINEAR;
 
 	return SamplingFilter::NEAREST;
 }
@@ -305,8 +317,7 @@ TextureBase2::SamplingFilter Texture2D::query_mipmap_min_filter()
 TextureBase2::WrapMode Texture2D::query_wrap_u()
 {
 	int gl_wrap;
-	bind();
-	glGetTexParameteriv(target, GL_TEXTURE_WRAP_S, &gl_wrap);
+	GLCall(glGetTextureParameteriv(id, GL_TEXTURE_WRAP_S, &gl_wrap));
 	if (gl_wrap == GL_CLAMP)  return WrapMode::CLAMP;
 	if (gl_wrap == GL_REPEAT) return WrapMode::REPEAT;
 	if (gl_wrap == GL_MIRRORED_REPEAT) return WrapMode::MIRRORED_REPEAT;
@@ -318,8 +329,7 @@ TextureBase2::WrapMode Texture2D::query_wrap_u()
 TextureBase2::WrapMode Texture2D::query_wrap_v()
 {
 	int gl_wrap;
-	bind();
-	glGetTexParameteriv(target, GL_TEXTURE_WRAP_R, &gl_wrap);
+	GLCall(glGetTextureParameteriv(id, GL_TEXTURE_WRAP_R, &gl_wrap));
 	if (gl_wrap == GL_CLAMP)  return WrapMode::CLAMP;
 	if (gl_wrap == GL_REPEAT) return WrapMode::REPEAT;
 	if (gl_wrap == GL_MIRRORED_REPEAT) return WrapMode::MIRRORED_REPEAT;
@@ -332,7 +342,7 @@ TextureBase2::WrapMode Texture2D::query_wrap_w()
 {
 	int gl_wrap;
 	bind();
-	glGetTexParameteriv(target, GL_TEXTURE_WRAP_T, &gl_wrap);
+	GLCall(glGetTextureParameteriv(id, GL_TEXTURE_WRAP_T, &gl_wrap));
 	if (gl_wrap == GL_CLAMP)  return WrapMode::CLAMP;
 	if (gl_wrap == GL_REPEAT) return WrapMode::REPEAT;
 	if (gl_wrap == GL_MIRRORED_REPEAT) return WrapMode::MIRRORED_REPEAT;
@@ -344,203 +354,178 @@ TextureBase2::WrapMode Texture2D::query_wrap_w()
 int Texture2D::query_base_level()
 {
 	int base_level;
-	bind();
-	glGetTexParameteriv(target, GL_TEXTURE_BASE_LEVEL, &base_level);
+	GLCall(glGetTextureParameteriv(id, GL_TEXTURE_BASE_LEVEL, &base_level));
 	return base_level;
 }
 
 float Texture2D::query_lod_bias()
 {
 	float lod_bias;
-	bind();
-	glGetTexParameterfv(target, GL_TEXTURE_LOD_BIAS, &lod_bias);
+	GLCall(glGetTextureParameterfv(id, GL_TEXTURE_LOD_BIAS, &lod_bias));
 	return lod_bias;
 }
 
 int Texture2D::query_max_level()
 {
 	int max_level;
-	bind();
-	glGetTexParameteriv(target, GL_TEXTURE_MAX_LEVEL, &max_level);
+	GLCall(glGetTextureParameteriv(id, GL_TEXTURE_MAX_LEVEL, &max_level));
 	return max_level;
 }
 
 int Texture2D::query_max_lod()
 {
 	float max_lod;
-	bind();
-	glGetTexParameterfv(target, GL_TEXTURE_MAX_LOD, &max_lod);
+	GLCall(glGetTextureParameterfv(id, GL_TEXTURE_MAX_LOD, &max_lod));
 	return max_lod;
 }
 
 int Texture2D::query_min_lod()
 {
 	float min_lod;
-	bind();
-	glGetTexParameterfv(target, GL_TEXTURE_MIN_LOD, &min_lod);
+	GLCall(glGetTextureParameterfv(id, GL_TEXTURE_MIN_LOD, &min_lod));
 	return min_lod;
 }
 
 int Texture2D::query_swizzle_r()
 {
 	int swizzle_red;
-	bind();
-	glGetTexParameteriv(target, GL_TEXTURE_SWIZZLE_R, &swizzle_red);
+	GLCall(glGetTextureParameteriv(id, GL_TEXTURE_SWIZZLE_R, &swizzle_red));
 	return swizzle_red;	// returns GL enum
 }
 
 int Texture2D::query_swizzle_g()
 {
 	int swizzle_green;
-	bind();
-	glGetTexParameteriv(target, GL_TEXTURE_SWIZZLE_G, &swizzle_green);
+	GLCall(glGetTextureParameteriv(id, GL_TEXTURE_SWIZZLE_G, &swizzle_green));
 	return swizzle_green;	// returns GL enum
 }
 
 int Texture2D::query_swizzle_b()
 {
 	int swizzle_blue;
-	bind();
-	glGetTexParameteriv(target, GL_TEXTURE_SWIZZLE_B, &swizzle_blue);
+	GLCall(glGetTextureParameteriv(id, GL_TEXTURE_SWIZZLE_B, &swizzle_blue));
 	return swizzle_blue;	// returns GL enum
 }
 
 int Texture2D::query_swizzle_a()
 {
 	int swizzle_alpha;
-	bind();
-	glGetTexParameteriv(target, GL_TEXTURE_SWIZZLE_A, &swizzle_alpha);
+	GLCall(glGetTextureParameteriv(id, GL_TEXTURE_SWIZZLE_A, &swizzle_alpha));
 	return swizzle_alpha;	// returns GL enum
 }
 
 int Texture2D::query_swizzle_rgba()
 {
 	int swizzle_rgba;
-	bind();
-	glGetTexParameteriv(target, GL_TEXTURE_SWIZZLE_RGBA, &swizzle_rgba);
+	GLCall(glGetTextureParameteriv(id, GL_TEXTURE_SWIZZLE_RGBA, &swizzle_rgba));
 	return swizzle_rgba;	// returns GL enum
 }
 
 int Texture2D::query_width(int mipmap_level)
 {
 	int texture_width;
-	bind();
-	glGetTexLevelParameteriv(target, mipmap_level, GL_TEXTURE_WIDTH, &texture_width);
+	GLCall(glGetTextureLevelParameteriv(id, mipmap_level, GL_TEXTURE_WIDTH, &texture_width));
 	return texture_width;
 }
 
 int Texture2D::query_height(int mipmap_level)
 {
 	int texture_height;
-	bind();
-	glGetTexLevelParameteriv(target, mipmap_level, GL_TEXTURE_HEIGHT, &texture_height);
+	GLCall(glGetTextureLevelParameteriv(id, mipmap_level, GL_TEXTURE_HEIGHT, &texture_height));
 	return texture_height;
 }
 
 int Texture2D::query_depth(int mipmap_level)
 {
 	int texture_depth;
-	bind();
-	glGetTexLevelParameteriv(target, mipmap_level, GL_TEXTURE_DEPTH, &texture_depth);
+	GLCall(glGetTextureLevelParameteriv(id, mipmap_level, GL_TEXTURE_DEPTH, &texture_depth));
 	return texture_depth;
 }
 
 int Texture2D::query_internal_format(int mipmap_level)
 {
 	int internal_format;
-	bind();
-	glGetTexLevelParameteriv(target, mipmap_level, GL_TEXTURE_INTERNAL_FORMAT, &internal_format);
+	GLCall(glGetTextureLevelParameteriv(id, mipmap_level, GL_TEXTURE_INTERNAL_FORMAT, &internal_format));
 	return internal_format;	// returns gl enum
 }
 
 int Texture2D::query_red_type(int mipmap_level)
 {
 	int type;
-	bind();
-	glGetTexLevelParameteriv(target, mipmap_level, GL_TEXTURE_RED_TYPE, &type);
+	GLCall(glGetTextureLevelParameteriv(id, mipmap_level, GL_TEXTURE_RED_TYPE, &type));
 	return type;	// returns gl enum
 }
 
 int Texture2D::query_green_type(int mipmap_level)
 {
 	int type;
-	bind();
-	glGetTexLevelParameteriv(target, mipmap_level, GL_TEXTURE_GREEN_TYPE, &type);
+	GLCall(glGetTextureLevelParameteriv(id, mipmap_level, GL_TEXTURE_GREEN_TYPE, &type));
 	return type;	// returns gl enum
 }
 
 int Texture2D::query_blue_type(int mipmap_level)
 {
 	int type;
-	bind();
-	glGetTexLevelParameteriv(target, mipmap_level, GL_TEXTURE_BLUE_TYPE, &type);
+	GLCall(glGetTextureLevelParameteriv(id, mipmap_level, GL_TEXTURE_BLUE_TYPE, &type));
 	return type;	// returns gl enum
 }
 
 int Texture2D::query_alpha_type(int mipmap_level)
 {
 	int type;
-	bind();
-	glGetTexLevelParameteriv(target, mipmap_level, GL_TEXTURE_ALPHA_TYPE, &type);
+	GLCall(glGetTextureLevelParameteriv(id, mipmap_level, GL_TEXTURE_ALPHA_TYPE, &type));
 	return type;	// returns gl enum
 }
 
 int Texture2D::query_depth_type(int mipmap_level)
 {
 	int type;
-	bind();
-	glGetTexLevelParameteriv(target, mipmap_level, GL_TEXTURE_DEPTH_TYPE, &type);
+	GLCall(glGetTextureLevelParameteriv(id, mipmap_level, GL_TEXTURE_DEPTH_TYPE, &type));
 	return type;	// returns gl enum
 }
 
 int Texture2D::query_red_size(int mipmap_level)
 {
 	int size;
-	bind();
-	glGetTexLevelParameteriv(target, mipmap_level, GL_TEXTURE_RED_SIZE, &size);
+	GLCall(glGetTextureLevelParameteriv(id, mipmap_level, GL_TEXTURE_RED_SIZE, &size));
 	return size;
 }
 
 int Texture2D::query_green_size(int mipmap_level)
 {
 	int size;
-	bind();
-	glGetTexLevelParameteriv(target, mipmap_level, GL_TEXTURE_GREEN_SIZE, &size);
+	GLCall(glGetTextureLevelParameteriv(id, mipmap_level, GL_TEXTURE_GREEN_SIZE, &size));
 	return size;
 }
 
 int Texture2D::query_blue_size(int mipmap_level)
 {
 	int size;
-	bind();
-	glGetTexLevelParameteriv(target, mipmap_level, GL_TEXTURE_BLUE_SIZE, &size);
+	GLCall(glGetTextureLevelParameteriv(id, mipmap_level, GL_TEXTURE_BLUE_SIZE, &size));
 	return size;
 }
 
 int Texture2D::query_alpha_size(int mipmap_level)
 {
 	int size;
-	bind();
-	glGetTexLevelParameteriv(target, mipmap_level, GL_TEXTURE_ALPHA_SIZE, &size);
+	GLCall(glGetTextureLevelParameteriv(id, mipmap_level, GL_TEXTURE_ALPHA_SIZE, &size));
 	return size;
 }
 
 int Texture2D::query_depth_size(int mipmap_level)
 {
 	int size;
-	bind();
-	glGetTexLevelParameteriv(target, mipmap_level, GL_TEXTURE_DEPTH_SIZE, &size);
+	GLCall(glGetTextureLevelParameteriv(id, mipmap_level, GL_TEXTURE_DEPTH_SIZE, &size));
 	return size;
 }
 
 bool Texture2D::query_is_compressed(int mipmap_level)
 {
 	int is_compressed;
-	bind();
-	glGetTexLevelParameteriv(target, mipmap_level, GL_TEXTURE_COMPRESSED, &is_compressed);
+	GLCall(glGetTextureLevelParameteriv(id, mipmap_level, GL_TEXTURE_COMPRESSED, &is_compressed));
 	if (is_compressed == GL_FALSE) return false;
 	if (is_compressed == GL_TRUE) return true;
-	
+
 	ASSERT(false);
 	return false;
 }
@@ -548,8 +533,7 @@ bool Texture2D::query_is_compressed(int mipmap_level)
 int Texture2D::query_compressed_image_size(int mipmap_level)
 {
 	int size;
-	bind();
-	glGetTexLevelParameteriv(target, mipmap_level, GL_TEXTURE_COMPRESSED_IMAGE_SIZE, &size);
+	GLCall(glGetTextureLevelParameteriv(id, mipmap_level, GL_TEXTURE_COMPRESSED_IMAGE_SIZE, &size));
 	return size;
 }
 
@@ -560,7 +544,6 @@ Image Texture2D::get_image(ColorFormat format, Type type, int mipmap_level)
 
 Image Texture2D::get_image(ColorFormat format, Type type, int mipmap_level, int x, int y, int width, int height)
 {
-	bind();
 	if (!_texture_allocated || !_user_data_loaded) {
 		std::cout << "[OpenGL Error] Texture tried to get_image() but either not allocated any ram or didn't loaded any user data yet" << std::endl;
 		ASSERT(false);
@@ -598,7 +581,6 @@ Image Texture2D::get_image(DepthStencilFormat format, Type type, int mipmap_leve
 
 Image Texture2D::get_image(DepthStencilFormat format, Type type, int mipmap_level, int x, int y, int width, int height)
 {
-	bind();
 	if (!_texture_allocated || !_user_data_loaded) {
 		std::cout << "[OpenGL Error] Texture tried to get_image() but either not allocated any ram or didn't loaded any user data yet" << std::endl;
 		ASSERT(false);
@@ -656,7 +638,6 @@ void Texture2D::clear(glm::vec4 clear_data, int mipmap_target)
 
 void Texture2D::clear(unsigned char clear_data, int x, int y, int width, int height, int mipmap_target)
 {
-	bind();
 	if (!_texture_allocated || !_user_data_loaded) {
 		std::cout << "[OpenGL Error] Texture tried to clear() but either not allocated any ram or didn't loaded any user data yet" << std::endl;
 		ASSERT(false);
@@ -667,7 +648,6 @@ void Texture2D::clear(unsigned char clear_data, int x, int y, int width, int hei
 
 void Texture2D::clear(float clear_data, int x, int y, int width, int height, int mipmap_target)
 {
-	bind();
 	if (!_texture_allocated || !_user_data_loaded) {
 		std::cout << "[OpenGL Error] Texture tried to clear() but either not allocated any ram or didn't loaded any user data yet" << std::endl;
 		ASSERT(false);
@@ -678,7 +658,6 @@ void Texture2D::clear(float clear_data, int x, int y, int width, int height, int
 
 void Texture2D::clear(glm::vec2 clear_data, int x, int y, int width, int height, int mipmap_target)
 {
-	bind();
 	if (!_texture_allocated || !_user_data_loaded) {
 		std::cout << "[OpenGL Error] Texture tried to clear() but either not allocated any ram or didn't loaded any user data yet" << std::endl;
 		ASSERT(false);
@@ -689,7 +668,6 @@ void Texture2D::clear(glm::vec2 clear_data, int x, int y, int width, int height,
 
 void Texture2D::clear(glm::vec3 clear_data, int x, int y, int width, int height, int mipmap_target)
 {
-	bind();
 	if (!_texture_allocated || !_user_data_loaded) {
 		std::cout << "[OpenGL Error] Texture tried to clear() but either not allocated any ram or didn't loaded any user data yet" << std::endl;
 		ASSERT(false);
@@ -700,7 +678,6 @@ void Texture2D::clear(glm::vec3 clear_data, int x, int y, int width, int height,
 
 void Texture2D::clear(glm::vec4 clear_data, int x, int y, int width, int height, int mipmap_target)
 {
-	bind();
 	if (!_texture_allocated || !_user_data_loaded) {
 		std::cout << "[OpenGL Error] Texture tried to clear() but either not allocated any ram or didn't loaded any user data yet" << std::endl;
 		ASSERT(false);

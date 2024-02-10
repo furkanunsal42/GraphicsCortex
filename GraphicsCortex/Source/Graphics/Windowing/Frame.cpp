@@ -56,6 +56,10 @@ Frame::Frame(int width, int height, const std::string& name, int msaa, int swapi
 
 	if (!is_glew_initialized) {
 		glewInit();
+		if (!GL_ARB_bindless_texture) {
+			std::cout << "[OpenGL Extension Error] Bindless Textures isn't supported in this hardware, unable to initialize GraphicsCortex" << std::endl;
+			ASSERT(false)
+		}
 		is_glew_initialized = true;
 	}
 
@@ -102,7 +106,7 @@ Frame::Frame(int width, int height, const std::string& name, int msaa, int swapi
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
 		ImGui_ImplGlfw_InitForOpenGL(window, true);
-		ImGui_ImplOpenGL3_Init("#version 330");
+		ImGui_ImplOpenGL3_Init("#version 460");
 	}
 
 	set_cursor_type(Arrow);
@@ -143,7 +147,7 @@ void Frame::display_performance(int batch_size) {
 		frame_rate_fps = 1 / ((seconds_total_batch / fps_counter_batch));
 		std::string ms = std::to_string(frame_time_ms);
 		std::string fps = std::to_string(frame_rate_fps);
-		std::cout << "[Opengl Info] ms:" + ms.substr(0, ms.find(".") + 3) + " fps: " + fps.substr(0, fps.find(".") + 3) << std::endl;
+		std::cout << "[OpenGL Info] ms:" + ms.substr(0, ms.find(".") + 3) + " fps: " + fps.substr(0, fps.find(".") + 3) << std::endl;
 		fps_counter_index = 0;
 		seconds_total_batch = 0;
 	}

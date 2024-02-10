@@ -16,18 +16,20 @@ int main(){
 	graphic->load_material(material);
 	scene.add(graphic);
 
-	Image image("../GraphicsCortex/Images/orange.png", 4, true);
-	Image image1 = image;
-	image1.resize(image1.get_width(), image1.get_height());
+	Image image1("../GraphicsCortex/Images/orange.png", 4, true);
+	Image image2("../GraphicsCortex/Images/cobble.png", 4, true);
 
 	//Texture my_texture(0);
 	//my_texture.load_image(image);
 	//my_texture.texture_slot = 0;
 	//my_texture.bind();
 
-	Texture2D my_texture(image1.get_width(), image1.get_height(), TextureBase2::ColorTextureFormat::RGBA8, 2, 0);
-	my_texture.load_data_with_mipmaps(image1, TextureBase2::ColorFormat::RGBA, TextureBase2::Type::UNSIGNED_BYTE);
-	my_texture.get_image(TextureBase2::ColorFormat::RGBA, TextureBase2::Type::UNSIGNED_BYTE, 0).save_to_disc("test.png");
+	Texture2D my_texture(image1.get_width(), image1.get_height(), TextureBase2::ColorTextureFormat::RGBA8, 2, -1);
+	my_texture.load_data(image1, TextureBase2::ColorFormat::RGBA, TextureBase2::Type::UNSIGNED_BYTE, 0);
+
+	image2.resize(my_texture.query_width(1), my_texture.query_height(1));
+	//my_texture.load_data(image2, TextureBase2::ColorFormat::RGBA, TextureBase2::Type::UNSIGNED_BYTE, 1);
+	//my_texture.get_image(TextureBase2::ColorFormat::RGBA, TextureBase2::Type::UNSIGNED_BYTE, 0).save_to_disc("test.png");
 
 	while (frame.is_running()) {
 		double deltatime = frame.handle_window();
@@ -36,8 +38,12 @@ int main(){
 
 		scene.render();
 
-		my_texture.bind(0);
-		custom_program->update_uniform("texture_slot", 0);
+		//my_texture.bind(0);
+		//custom_program->update_uniform("texture_slot", 0);
+		custom_program->bind();
+		GLCall(int location = glGetUniformLocation(custom_program->id, "texture_slot"));
+		//GLCall(glUniformHandleui64ARB(location, my_texture.texture_handle));
+		glProgramUniformHandleui64ARB(custom_program->id, 0, my_texture.texture_handle);
 		graphic->update_matrix();
 		graphic->update_default_uniforms(*graphic->renderer);
 		graphic->draw();

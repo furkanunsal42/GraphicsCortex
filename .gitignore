@@ -525,3 +525,6 @@ build/windows-Release-x86_64GraphicsCortex/GraphicsCortex.lib
 build/windows-Release-x86_64GraphicsCortexApp/GraphicsCortexApp.exe
 build/windows-Release-x86_64GraphicsCortexApp/GraphicsCortexApp.exp
 build/windows-Release-x86_64GraphicsCortexApp/GraphicsCortexApp.lib
+build-obj/windows-Release-x86_64GraphicsCortexApp/TextureSystemTest.obj
+.vs/GraphicsCortex/v16/.suo
+GraphicsCortexApp/test.png

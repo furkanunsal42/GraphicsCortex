@@ -222,6 +222,7 @@ public:
 	//static int WellDefinedFormat_to_OpenGL(WellDefinedColorFormat well_defined_color_format);
 
 	unsigned int id = 0;
+	uint64_t texture_handle = 0;
 
 	TextureBase2() {};
 	~TextureBase2() {};
