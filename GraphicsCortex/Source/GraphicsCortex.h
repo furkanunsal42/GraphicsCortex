@@ -30,6 +30,7 @@
 #include "Texture3D.h"
 #include "BufferTexture.h"
 #include "RenderBuffer.h"
+#include "BindlessMaterial.h"
 
 #include "Graphic.h"
 #include "Camera.h"

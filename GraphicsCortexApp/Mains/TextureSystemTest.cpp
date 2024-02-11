@@ -24,12 +24,11 @@ int main(){
 	//my_texture.texture_slot = 0;
 	//my_texture.bind();
 
-	Texture2D my_texture(image1.get_width(), image1.get_height(), TextureBase2::ColorTextureFormat::RGBA8, 2, -1);
-	my_texture.load_data(image1, TextureBase2::ColorFormat::RGBA, TextureBase2::Type::UNSIGNED_BYTE, 0);
+	BindlessMaterial bindless_material(custom_program);
+	std::shared_ptr<Texture2D> my_texture = std::make_shared<Texture2D>(image1.get_width(), image1.get_height(), TextureBase2::ColorTextureFormat::RGBA8, 2, -1);
+	bindless_material.add_texture("color_texture", my_texture);
 
-	image2.resize(my_texture.query_width(1), my_texture.query_height(1));
-	//my_texture.load_data(image2, TextureBase2::ColorFormat::RGBA, TextureBase2::Type::UNSIGNED_BYTE, 1);
-	//my_texture.get_image(TextureBase2::ColorFormat::RGBA, TextureBase2::Type::UNSIGNED_BYTE, 0).save_to_disc("test.png");
+	my_texture->load_data_with_mipmaps(image1, TextureBase2::ColorFormat::RGBA, TextureBase2::Type::UNSIGNED_BYTE);
 
 	while (frame.is_running()) {
 		double deltatime = frame.handle_window();
@@ -38,12 +37,7 @@ int main(){
 
 		scene.render();
 
-		//my_texture.bind(0);
-		//custom_program->update_uniform("texture_slot", 0);
-		custom_program->bind();
-		GLCall(int location = glGetUniformLocation(custom_program->id, "texture_slot"));
-		//GLCall(glUniformHandleui64ARB(location, my_texture.texture_handle));
-		glProgramUniformHandleui64ARB(custom_program->id, 0, my_texture.texture_handle);
+		bindless_material.update_uniforms();
 		graphic->update_matrix();
 		graphic->update_default_uniforms(*graphic->renderer);
 		graphic->draw();

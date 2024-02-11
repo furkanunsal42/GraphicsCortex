@@ -528,3 +528,4 @@ build/windows-Release-x86_64GraphicsCortexApp/GraphicsCortexApp.lib
 build-obj/windows-Release-x86_64GraphicsCortexApp/TextureSystemTest.obj
 .vs/GraphicsCortex/v16/.suo
 GraphicsCortexApp/test.png
+build-obj/windows-Release-x86_64GraphicsCortex/BindlessMaterial.obj
