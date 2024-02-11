@@ -9,7 +9,7 @@ public:
 
 	BindlessMaterial();
 	BindlessMaterial(const std::shared_ptr<Program>& program);
-
+	
 	void set_program(const std::shared_ptr<Program>& program);
 	
 	void add_texture(const std::string& name, const std::shared_ptr<Texture2D>& texture);

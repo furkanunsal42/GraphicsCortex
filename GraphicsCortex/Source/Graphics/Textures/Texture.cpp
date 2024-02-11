@@ -609,7 +609,7 @@ namespace {
 		}
 		else { // file doesn't exist
 			std::cout << "[ERROR] Image path not found : " << filename << std::endl;
-			output_image = new Image("Images/missing_texture.png", desired_channels);
+			output_image = new Image("../GraphicsCortex/Images/missing_texture.png", desired_channels);
 			//Image&& image = AssetImporter::read_image_cached("Images/missing_texture.png", desired_channels);
 			//output_image = &image;
 		}
@@ -617,7 +617,7 @@ namespace {
 		if (output_image->get_width() == 0 || output_image->get_height() == 0 || output_image->get_channels() == 0) {
 			std::cout << "[ERROR] Image couldn't be properly imported : " << filename << std::endl;
 			delete output_image;
-			output_image = new Image("Images/missing_texture.png", desired_channels);
+			output_image = new Image("../GraphicsCortex/Images/missing_texture.png", desired_channels);
 		}
 		output_image->resize(texture_width, texture_height);
 	}

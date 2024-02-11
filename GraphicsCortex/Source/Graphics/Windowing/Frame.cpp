@@ -23,7 +23,7 @@ double old_time_accurate = 0;
 int fps_counter_index = 0;
 double seconds_total_batch = 0;
 
-Frame::Frame(int width, int height, const std::string& name, int msaa, int swapinterval, bool depth_test, bool blend, bool face_culling, int debug_callback_level, bool initialize_gui) :
+Frame::Frame(int width, int height, const std::string& name, int msaa, int swapinterval, bool depth_test, bool blend, bool face_culling, CallbackLevel debug_callback_level, bool initialize_gui) :
 	window_width(width), window_height(height), window_name(name), multisample(msaa), swapinterval(swapinterval), depth_test(depth_test), blend(blend), face_culling(face_culling), initialize_imgui(initialize_gui)
 {
 	multisample = msaa;
@@ -87,14 +87,14 @@ Frame::Frame(int width, int height, const std::string& name, int msaa, int swapi
 	else
 		glDisable(GL_MULTISAMPLE);
 
-	if (debug_callback_level != 0) {
+	if (debug_callback_level != CallbackLevel::DISABLED) {
 		glEnable(GL_DEBUG_OUTPUT);
 		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 		glDebugMessageCallback(opengl_debug_callback, nullptr);
-		int notification = debug_callback_level >= 4 ? GL_TRUE : GL_FALSE;
-		int low			 = debug_callback_level >= 3 ? GL_TRUE : GL_FALSE;
-		int medium		 = debug_callback_level >= 2 ? GL_TRUE : GL_FALSE;
-		int high		 = debug_callback_level >= 1 ? GL_TRUE : GL_FALSE;
+		int notification = debug_callback_level >= CallbackLevel::NOTIFICATION  ? GL_TRUE : GL_FALSE;
+		int low			 = debug_callback_level >= CallbackLevel::LOW			? GL_TRUE : GL_FALSE;
+		int medium		 = debug_callback_level >= CallbackLevel::MEDIUM		? GL_TRUE : GL_FALSE;
+		int high		 = debug_callback_level >= CallbackLevel::HIGH			? GL_TRUE : GL_FALSE;
 
 		glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, nullptr, notification);
 		glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_LOW,		  0, nullptr, low);

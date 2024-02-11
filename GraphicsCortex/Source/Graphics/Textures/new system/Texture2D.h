@@ -2,6 +2,8 @@
 #include "Config.h"
 #include "TextureBase.h"
 #include "gl/glew.h"
+#include <functional>
+#include <thread>
 
 class BindlessMaterial;
 
@@ -22,6 +24,7 @@ public:
 	Texture2D(const Texture2D& other) = delete;
 	
 	Texture2D(const Image& image, ColorTextureFormat internal_format, ColorFormat format, Type type, int mipmap_levels = 1, float mipmap_bias = 0.0f);
+	Texture2D(const std::string& image_filepath, ColorTextureFormat internal_format, ColorFormat format, Type type, int mipmap_levels = 1, float mipmap_bias = 0.0f);
 	Texture2D(int width, int height, ColorTextureFormat internal_format, int mipmap_levels = 1, float mipmap_bias = 0.0f);
 	Texture2D(int width, int height, DepthStencilTextureFormat internal_format, int mipmap_levels = 1, float mipmap_bias = 0.0f);
 	~Texture2D();
@@ -36,19 +39,28 @@ public:
 	void load_data(const void* image, ColorFormat format, Type type, int x, int y, int width, int height, int mipmap_target = 0);
 	void load_data(const Image& image, ColorFormat format, Type type, int mipmap_target = 0);
 	void load_data(const Image& image, ColorFormat format, Type type, int x, int y, int width, int height, int mipmap_target = 0);
+	void load_data_async(const std::string& image_filepath, ColorFormat format, Type type, int mipmap_target = 0);
+	void load_data_async(const std::string& image_filepath, ColorFormat format, Type type, int x, int y, int width, int height, int mipmap_target = 0);
 
 	void load_data(const void* image, DepthStencilFormat format, Type type, int mipmap_target = 0);
 	void load_data(const void* image, DepthStencilFormat format, Type type, int x, int y, int width, int height, int mipmap_target = 0);
 	void load_data(const Image& image, DepthStencilFormat format, Type type, int mipmap_target = 0);
 	void load_data(const Image& image, DepthStencilFormat format, Type type, int x, int y, int width, int height, int mipmap_target = 0);
-	
+	void load_data_async(const std::string& image_filepath, DepthStencilFormat format, Type type, int mipmap_target = 0);
+	void load_data_async(const std::string& image_filepath, DepthStencilFormat format, Type type, int x, int y, int width, int height, int mipmap_target = 0);
+
 	void generate_mipmap();
 	
 	void load_data_with_mipmaps(const void* image, ColorFormat format, Type type);
 	void load_data_with_mipmaps(const Image& image, ColorFormat format, Type type);
 	void load_data_with_mipmaps(const void* image, DepthStencilFormat format, Type type);
 	void load_data_with_mipmaps(const Image& image, DepthStencilFormat format, Type type);
-	
+
+	void load_data_width_mipmaps_async(const std::string& image_filepath, ColorFormat format, Type type);
+	void load_data_width_mipmaps_async(const std::string& image_filepath, DepthStencilFormat format, Type type);
+
+	void wait_async_load();
+
 	/*
 	void copy_to_texture(Texture2D& target_texture, int self_mipmap, int target_mipmap);
 	void copy_to_texture(Texture2D& target_texture, int self_mipmap, int target_mipmap, int self_x, int self_y, int width, int height, int target_x, int target_y);
@@ -131,6 +143,10 @@ private:
 	void _allocate_texture();
 	void _create_handle();
 
+	bool async_load_happening = false;
+	std::function<void()> post_async_load_function;
+	std::thread* async_loading_thread = nullptr;
+	Image* async_image = nullptr;
 
 	int _get_gl_internal_format();
 };

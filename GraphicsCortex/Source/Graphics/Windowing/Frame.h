@@ -14,6 +14,14 @@ struct GLFWwindow;
 
 class Frame {
 public:
+	enum CallbackLevel {
+		NOTIFICATION = 4, 
+		LOW			 = 3,
+		MEDIUM		 = 2,
+		HIGH		 = 1,
+		DISABLED     = 0,
+	};
+
 	int multisample;
 	int window_width;
 	int window_height;
@@ -22,7 +30,7 @@ public:
 	bool depth_test, blend, face_culling, initialize_imgui;
 	GLFWwindow* window;
 
-	Frame(int width, int height, const std::string& name = "GraphicsCortex", int msaa = 0, int swapinterval = 1, bool depth_test = true, bool blend = false, bool face_culling = true, int debug_callback_level = 3, bool initialize_gui = true);
+	Frame(int width, int height, const std::string& name = "GraphicsCortex", int msaa = 0, int swapinterval = 1, bool depth_test = true, bool blend = false, bool face_culling = true, CallbackLevel min_debug_callback_level = CallbackLevel::LOW, bool initialize_gui = true);
 	~Frame();
 
 	//GLFWwindow* create_window(int width, int height, std::string name, int msaa = 0, int swapinterval = 1, bool depth_test = true, bool blend = false, bool face_culling = true);
