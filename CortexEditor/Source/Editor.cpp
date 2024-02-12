@@ -1,7 +1,7 @@
 #include "Editor.h"
 
 Editor::Editor() {
-	frame = std::make_shared<Frame>(1920, 1080, "Cortex Editor", 0, 0, true, true, true, 2, false);
+	frame = std::make_shared<Frame>(1920, 1080, "Cortex Editor", 0, 0, true, true, true, Frame::CallbackLevel::MEDIUM, false);
 	gui = std::make_shared<Gui2>(*frame);
 
 	current_scene_index = 0;

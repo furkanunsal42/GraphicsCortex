@@ -595,8 +595,8 @@ UnorderedMaterial::~UnorderedMaterial() {
 	texture_array.~TextureArray();
 }
 
-UnorderedMaterial::UnorderedMaterial(const std::string& filename) :
-	UnorderedMaterial(std::move(AssetImporter::generate_material(filename))) { }
+//UnorderedMaterial::UnorderedMaterial(const std::string& filename) :
+//	UnorderedMaterial(std::move(AssetImporter::generate_material(filename))) { }
 
 namespace {
 	void read_image(std::string& filename, int desired_channels, Image*& output_image, unsigned int texture_width, unsigned int texture_height) {

@@ -26,20 +26,19 @@ namespace default_geometry {
 		std::shared_ptr<IndexBuffer> index_buffer = std::make_shared<IndexBuffer>(triangles, 3);
 
 		Graphic g;
-		g.load_model(std::make_shared<Mesh>(array_buffer, index_buffer));
+		g.set_mesh(Mesh(array_buffer, index_buffer));
 		//g.model.array_buffer= array_buffer;
 		//g.model.index_buffer = index_buffer;
 		return g;
 	}
 
-	Graphic rectangle(std::shared_ptr<Material> material, std::shared_ptr<Program> renderer, glm::vec2 scale) {
+	Graphic rectangle(BindlessMaterial material, glm::vec2 scale) {
 		Graphic g = rectangle(scale);
-		g.load_material(material);
-		g.load_program(renderer);
+		g.set_material(material);
 		return g;
 	}
 
-	Graphic rectangle(std::shared_ptr<Material> material, glm::ivec2 texture_atlas_dim, const std::vector<unsigned int>& face_texture_locations, std::shared_ptr<Program> renderer, glm::vec2 scale) {
+	Graphic rectangle(BindlessMaterial material, glm::ivec2 texture_atlas_dim, const std::vector<unsigned int>& face_texture_locations, glm::vec2 scale) {
 		float unit_width = 1.0f / texture_atlas_dim.x;
 		float unit_height = 1.0f / texture_atlas_dim.y;
 		std::vector<glm::vec2> texture_locations;
@@ -79,8 +78,6 @@ namespace default_geometry {
 			-0.5f * scale.x,  0.5f * scale.y,  0,	unit_width * texture_locations[0].x,	   unit_height * (texture_locations[0].y),		0.0f, 0.0f, 1.0f,
 		};
 
-
-
 		std::shared_ptr<ArrayBuffer> array_buffer = std::make_shared<ArrayBuffer>(custom_verticies);
 		array_buffer->push_attribute(3);
 		array_buffer->push_attribute(2);
@@ -91,7 +88,7 @@ namespace default_geometry {
 		};
 		std::shared_ptr<IndexBuffer> index_buffer = std::make_shared<IndexBuffer>(triangles, 3);
 
-		return Graphic(std::make_shared<Mesh>(array_buffer, index_buffer), material, renderer);
+		return Graphic(Mesh(array_buffer, index_buffer), material);
 	}
 
 	Graphic cube(glm::vec3 scale) {
@@ -145,18 +142,17 @@ namespace default_geometry {
 		std::shared_ptr<IndexBuffer> index_buffer = std::make_shared<IndexBuffer>(triangles, 3);
 
 		Graphic g;
-		g.load_model(std::make_shared<Mesh>(array_buffer, index_buffer));
+		g.set_mesh(Mesh(array_buffer, index_buffer));
 		return g;
 	}
 
-	Graphic cube(std::shared_ptr<Material> material, std::shared_ptr<Program> renderer, glm::vec3 scale){
+	Graphic cube(BindlessMaterial material, glm::vec3 scale){
 		Graphic g = cube(scale);
-		g.load_material(material);
-		g.load_program(renderer);
+		g.set_material(material);
 		return g;
 	}
 
-	Graphic cube(std::shared_ptr<Material> material, glm::ivec2 texture_atlas_dim, const std::vector<unsigned int>& face_texture_locations, std::shared_ptr<Program> renderer, glm::vec3 scale) {
+	Graphic cube(BindlessMaterial material, glm::ivec2 texture_atlas_dim, const std::vector<unsigned int>& face_texture_locations, glm::vec3 scale) {
 		float unit_width = 1.0f / texture_atlas_dim.x;
 		float unit_height = 1.0f / texture_atlas_dim.y;
 		std::vector<glm::vec2> texture_locations;
@@ -237,6 +233,6 @@ namespace default_geometry {
 		};
 		std::shared_ptr<IndexBuffer> index_buffer = std::make_shared<IndexBuffer>(triangles, 3);
 		
-		return Graphic(std::make_shared<Mesh>(array_buffer, index_buffer), material, renderer);
+		return Graphic(Mesh(array_buffer, index_buffer), material);
 	}
 }

@@ -34,7 +34,7 @@ public:
 	{
 		_lights.push_back(light);
 	}
-	void add(std::shared_ptr<Graphic> graphic);
+	void add(Graphic graphic);
 	void add(std::shared_ptr<Object> object);
 	void add(std::shared_ptr<Vehicle> vehicle);
 	void add(std::shared_ptr<Text> text);
@@ -45,7 +45,7 @@ public:
 	{
 		_lights.erase(std::find(_lights.begin(), _lights.end(), light));
 	}
-	void remove(std::shared_ptr<Graphic> graphic);
+	void remove(Graphic graphic);
 	void remove(std::shared_ptr<Object> object);
 	void remove(std::shared_ptr<Vehicle> vehicle);
 	void remove(std::shared_ptr<Text> text);
@@ -63,7 +63,7 @@ public:
 
 	void sync_with_physics();
 
-	std::vector<std::shared_ptr<Graphic>> _graphics;
+	std::vector<Graphic> _graphics;
 	std::vector<std::shared_ptr<Light>> _lights;
 	
 	std::vector<std::shared_ptr<Object>> _objects;

@@ -48,8 +48,6 @@ public:
 	void unbind();
 
 	void set_program(std::shared_ptr<Program> renderer);
-	void set_update_queue(uniform_update_queue& update_queue);
-	void set_update_queue(uniform_update_queue&& update_queue);
 
 	void update_default_uniforms(Program& program);
 

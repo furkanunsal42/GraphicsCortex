@@ -85,7 +85,7 @@ class ScenePanel : public UILayer {
 
 	}
 
-	std::vector<std::shared_ptr<Graphic>>			selected_graphics;
+	std::vector<Graphic>							selected_graphics;
 	std::vector<std::shared_ptr<AmbiantLight>>		selected_ambiant_lights;
 	std::vector<std::shared_ptr<DirectionalLight>>	selected_directional_lights;
 	std::vector<std::shared_ptr<PointLight>>		selected_point_lights;
@@ -118,7 +118,7 @@ class ScenePanel : public UILayer {
 
 		bool clicked_on_button = false;
 		int i = 0;
-		for (std::shared_ptr<Graphic> graphic : editor.get_current_scene()->_graphics) {
+		for (Graphic& graphic : editor.get_current_scene()->_graphics) {
 			Style& style_to_use = (std::find(selected_graphics.begin(), selected_graphics.end(), graphic) != selected_graphics.end()) ? selected_entry_style : entry_style;
 			if (editor.gui->content("scene_panel_graphic_button" + i++, vec2(body_size.x, row_height), style_to_use, U"Graphic").is_hovering && editor.frame->get_mouse_state(Frame::CursorState::LeftReleased)) {
 				if (!editor.frame->get_key_press(Frame::Key::LEFT_CONTROL)) clear_selection();
@@ -199,15 +199,7 @@ class ScenePanel : public UILayer {
 
 			_widget_info info = editor.gui->content("scene_panel_add_menu_graphic", vec2(body_size.x, row_height), add_menu_entry_style, U"Graphic");
 			if (info.is_hovering && editor.frame->get_mouse_state(Frame::LeftReleased)) {
-				std::shared_ptr<Program> program = default_program::solid_program_s();
-				std::shared_ptr<UnorderedMaterial> material = std::make_shared<UnorderedMaterial>(2);
-				material->set_texture("Images/GoldBlock.png", 4, 0, UnorderedMaterial::COLOR);
-				material->set_texture("Images/full_white.png", 4, 1, UnorderedMaterial::SPECULAR);
-
-				std::shared_ptr<Graphic> graphic = std::make_shared<Graphic>(default_geometry::cube());
-				graphic->load_program(program);
-				graphic->load_material(material);
-				editor.get_current_scene()->add(graphic);
+			
 			}
 
 			info = editor.gui->content("scene_panel_add_menu_ambiant_ligth", vec2(body_size.x, row_height), add_menu_entry_style, U"AmbiantLight");

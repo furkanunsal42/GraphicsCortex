@@ -531,7 +531,7 @@ void Program::update_uniform(const std::string& name, const float& a) {
 }
 void Program::update_uniform(const std::string& name, const glm::mat4& a) {
 	bind();
-	GLCall(glUniformMatrix4fv(uniforms[name].index, 1, GL_FALSE, glm::value_ptr(a)));
+	GLCall(glUniformMatrix4fv(glGetUniformLocation(id, name.c_str()), 1, GL_FALSE, glm::value_ptr(a)));
 }
 void Program::update_uniform(const std::string& name, const glm::mat3& a) {
 	bind();

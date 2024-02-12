@@ -2,7 +2,7 @@
 
 int main() {
 
-	Frame frame(1920, 1080, "GraphicsCortex", 0, 0, true, false, true);
+	Frame frame(1920, 1080, "GraphicsCortex", 0, 0, true, false, true, Frame::CallbackLevel::MEDIUM, false);
 	Scene scene(frame);
 	scene.camera->screen_width = frame.window_width;
 	scene.camera->screen_height = frame.window_height;
@@ -15,7 +15,7 @@ int main() {
 		Model city_model("../GraphicsCortex/Models/circuit/nogaro.obj", 1.0f, Model::ALL);
 		Model city_model_collision("../GraphicsCortex/Models/circuit/collision.obj", 1.0f, Model::COORD_XYZ);
 		Model city_model_ground("../GraphicsCortex/Models/circuit/ground_physics.obj", 1.0f, Model::COORD_XYZ);
-		std::shared_ptr<Mesh> city = std::make_shared<Mesh>(city_model);
+		Mesh city = Mesh(city_model);
 
 		PhysicsObject map_physics(create_geometry::triangle_mesh(city_model_collision.get_partial_data<physx::PxVec3>("111"), city_model_collision.submodels[0].index_data), PhysicsObject::STATIC, true);
 		map_physics.make_drivable();
@@ -25,15 +25,17 @@ int main() {
 		map_ground.make_drivable();
 		scene.add_physics(map_ground);
 
-		std::shared_ptr<UnorderedMaterial> city_mat = std::make_shared<UnorderedMaterial>("../GraphicsCortex/Models/circuit/nogaro.obj");
-		city_mat->texture_array.mipmap_bias = 0;
-		city_mat->texture_array.generate_mipmap = false;
-		city_mat->set_texture_size(512, 512);
-		std::shared_ptr<Graphic> map = std::make_shared<Graphic>();
-		map->load_model(city);
-		map->load_material(city_mat);
-		map->load_program(program);
-		map->set_position(glm::vec3(0, 0, 0));
+		std::shared_ptr<Texture2D> default_texture = std::make_shared<Texture2D>("../GraphicsCortex/Images/orange.png", Texture2D::ColorTextureFormat::RGBA8, Texture2D::ColorFormat::RGBA, Texture2D::Type::UNSIGNED_BYTE);
+		BindlessMaterial city_mat = AssetImporter::generate_material("../GraphicsCortex/Models/circuit/nogaro.obj", program);
+		city_mat.add_texture("default_texture", default_texture);
+
+		//city_mat->mipmap_bias = 0;
+		//city_mat->texture_array.generate_mipmap = false;
+		//city_mat->set_texture_size(512, 512);
+		Graphic map;
+		map.set_mesh(city);
+		map.set_material(city_mat);
+		*map.position = (glm::vec3(0, 0, 0));
 		scene.add(map);
 
 		std::shared_ptr<DirectionalLight> sunlight = std::make_shared<DirectionalLight>(glm::vec3(0.0f, 20.0f, 0.0f), glm::vec3(1.0f, -1.0f, 1.0f), glm::vec3(0.4, 0.4, 0.4));
@@ -53,22 +55,22 @@ int main() {
 		Model chassis_left_wheel_model("../GraphicsCortex/Models/porsche_wheel_left.obj", 1, Model::COORD_XYZ | Model::TEX_COORD_XY | Model::NORMAL_XYZ);
 		Model chassis_right_wheel_model("../GraphicsCortex/Models/porsche_wheel_right.obj", 1, Model::COORD_XYZ | Model::TEX_COORD_XY | Model::NORMAL_XYZ);
 
-		std::shared_ptr<Mesh> chassis = std::make_shared<Mesh>(chassis_model);
-		std::shared_ptr<Mesh> left_wheel = std::make_shared<Mesh>(chassis_left_wheel_model);
-		std::shared_ptr<Mesh> right_wheel = std::make_shared<Mesh>(chassis_right_wheel_model);
+		Mesh chassis = Mesh(chassis_model);
+		Mesh left_wheel = Mesh(chassis_left_wheel_model);
+		Mesh right_wheel = Mesh(chassis_right_wheel_model);
 
-		std::shared_ptr<UnorderedMaterial> tire_material_s = std::make_shared<UnorderedMaterial>(1);
-		tire_material_s->set_texture("../GraphicsCortex/Images/cartextures/911_22_930_tire_BaseColor.png", 4, 0, UnorderedMaterial::COLOR);
+		BindlessMaterial tire_material_s(program);
+		tire_material_s.add_texture("color_texture", std::make_shared<Texture2D>("../GraphicsCortex/Images/cartextures/911_22_930_tire_BaseColor.png", Texture2D::ColorTextureFormat::RGBA8, Texture2D::ColorFormat::RGBA, Texture2D::Type::UNSIGNED_BYTE));
 
-		std::shared_ptr<UnorderedMaterial> chassis_material_s = std::make_shared<UnorderedMaterial>("../GraphicsCortex/Models/teducar/teduCar.fbx");
+		BindlessMaterial chassis_material_s = AssetImporter::generate_material("../GraphicsCortex/Models/teducar/teduCar.fbx", program);
 
-		vehicle->load_mesh_chassis_graphics(chassis);
-		vehicle->load_model_chassis_physics(chassis_model);
-		vehicle->load_material_chassis(chassis_material_s);
-		vehicle->load_program_chassis(solid_program);
 
-		vehicle->chassis->set_uniform("use_cube_map_reflection", 1);
-		vehicle->chassis->set_uniform("cube_map_reflection_strength", 0.3f);
+		vehicle->set_mesh_chassis_graphics(chassis);
+		vehicle->set_model_chassis_physics(chassis_model);
+		vehicle->set_material_chassis(chassis_material_s);
+
+		vehicle->chassis.material.program->update_uniform("use_cube_map_reflection", 1);
+		vehicle->chassis.material.program->update_uniform("cube_map_reflection_strength", 0.3f);
 
 		vehicle->physics_representation.set_wheel_layout(2.6f, -3.4f, 3.8, -0.0f);
 		//vehicle->physics_representation.chassisDims = physx::PxVec3(1.2f, 1.3f, 2.6f);
@@ -111,8 +113,8 @@ int main() {
 		vehicle->sync_with_physics();
 
 		// let camera follow the car
-		glm::quat camera_rotation = vehicle->chassis->get_rotation();
-		glm::vec3 camera_position = vehicle->chassis->get_position();
+		glm::quat camera_rotation = *vehicle->chassis.rotation;
+		glm::vec3 camera_position = *vehicle->chassis.position;
 		camera_rotation = camera_rotation * glm::quat(glm::vec3(0, 3.14f, 0));
 		camera_position += glm::vec3(0.0f, 0.7f, 0.0f);
 		camera_position += camera_rotation * glm::vec3(0.0f, 0.5f, 1.0f);

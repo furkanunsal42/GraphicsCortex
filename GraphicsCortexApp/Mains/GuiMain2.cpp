@@ -1,9 +1,8 @@
 #include "GraphicsCortex.h"
 
 int main() {
-	Frame frame(1920, 1080, "Cortex GUI", 0, 0, true, true, true, false);
+	Frame frame(1920, 1080, "Cortex GUI", 0, 0, true, true, true, Frame::CallbackLevel::LOW, false);
 	Gui2 gui(frame);
-
 
 	std::shared_ptr<Text> text = std::make_shared<Text>(Gui2::font, "Haha");
 

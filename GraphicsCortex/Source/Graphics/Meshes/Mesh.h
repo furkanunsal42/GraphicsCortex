@@ -16,6 +16,8 @@ public:
 	Mesh();
 	Mesh(std::shared_ptr<ArrayBuffer> array_buffer, std::shared_ptr<IndexBuffer> index_buffer);
 
+	bool operator==(const Mesh& other);
+
 	explicit Mesh(const Model& model);
 
 	void load_model(const Model& model);
