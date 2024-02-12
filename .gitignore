@@ -531,3 +531,4 @@ GraphicsCortexApp/test.png
 build-obj/windows-Release-x86_64GraphicsCortex/BindlessMaterial.obj
 build-obj/windows-Release-x86_64GraphicsCortex/GraphicsCortex.vcxproj.FileListAbsolute.txt
 build-obj/windows-Release-x86_64GraphicsCortexApp/GraphicsCortexApp.vcxproj.FileListAbsolute.txt
+build-obj/windows-Release-x86_64GraphicsCortexApp/GuiMain2.obj
