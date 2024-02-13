@@ -5,6 +5,7 @@
 #include "ShaderCompiler.h"
 #include "Text.h"
 #include "Graphic.h"
+#include "GuiWidget.h"
 
 #include <functional>
 #include <chrono>
@@ -181,6 +182,25 @@ public:
 	}
 };
 
+// StyleAttribute
+template<typename T>
+std::ostream& operator<<(std::ostream& stream, const StyleAttribute<T>& self) {
+	if (self.use_persentage) {
+		if (!self.persentage) {
+			std::cout << "[Style Attribute Error] StyleAttribute::use_persentage is true but persentage value doesn't exist." << std::endl;
+			assert(false);
+		}
+		stream << self.persentage.value().value << "% of " << Persentage::RespectedAttribute_to_string(self.persentage.value().attribute_type);
+	}
+	else {
+		if (!self.value) {
+			std::cout << "StyleAttribute value: NaN" << std::endl;
+		}
+		stream << self.value.value();
+	}
+	return stream;
+}
+
 
 class StaticStyle {
 public:
@@ -251,27 +271,7 @@ public:
 private:
 };
 
-class FunctionalStyle : public StaticStyle {
-
-	void on_hover(std::function<Style(Time)> hover_function);
-	void on_active(std::function<Style(Time)> active_function);
-	void on_passive(std::function<Style(Time)> passive_function);
-
-	void clear_hover();
-	void clear_active();
-	void clear_passive();
-
-	
-
-private:
-	std::function<Style(Time)> _on_hover;
-	std::function<Style(Time)> _on_active;
-	std::function<Style(Time)> _on_passive;
-};
-
-
 // object based structure
-
 struct _widget_info {
 public:
 	vec2f size;
@@ -298,132 +298,6 @@ public:
 	bool properly_initialized = false;
 };
 
-/*
-class Gui;
-
-class Box {
-public:
-
-	Box(Gui& gui, Style style, AABB2 aabb, uint32_t id = 0);
-	Box(Gui& gui, Style style, AABB2 aabb, Program_s custom_renderer, uint32_t id = 0);
-	
-	void set_position(Vec2<float> position);
-	void set_size(Vec2<float> size);
-
-	bool is_mouse_hover();
-
-	void render();
-
-	Style overwrite_style;
-
-	vec2f get_original_size();
-	vec2f get_original_position();
-
-	bool hovering();
-	bool click_released();
-	bool click_pressed();
-	bool click_holding();
-
-	vec2 get_current_size();
-	vec2 get_current_position();
-	StaticStyle get_current_style();
-
-	std::unordered_map<std::string, float> data;
-
-	void initialize_data(const std::string& key, int value);
-
-	void set_text(std::u32string& string);
-	std::u32string& get_text();
-
-	uint32_t _id = 0;
-private:
-
-	Style _style;
-	Gui& _gui_ref;
-	AABB2 _aabb;				//aabb size will be padded and displaced
-	vec2 _original_size;		//original size will not be padded		
-	vec2 _original_position;	//original size will not be displaced
-	Graphic_s _graphic_representation;
-
-	vec2 _current_position;			// after interpolation
-	vec2 _current_size;				// after interpolation
-	StaticStyle _current_style;		// after interpolation
-
-	std::u32string _text_string = U"";
-	std::shared_ptr<Text> _text;
-
-	_widget_info _info;
-
-	friend Gui;
-};
-
-class Gui {	// similiar function with UI class, new implementation 
-public:
-	Gui(Frame& frame);
-	void new_frame(Time frame_time);
-	Camera camera;
-	Vec2<int> window_size;
-	bool _hover_happened;
-	Frame::CursorType _dominant_cursor_style = Frame::Arrow;
-
-	void render(Time delatime);
-	
-	Box& box(AABB2 aabb, Style style, std::u32string text = U"", bool draw = true);
-	Box& box(vec2 position, vec2 size, Style style, std::u32string text = U"", bool draw = true);
-
-	void layout(vec2 position, vec2 min_size, Style style, std::u32string text = U"", Layout::LayoutType layout_type = Layout::Vertical, bool draw = true);
-	Box& layout_end();
-
-	Box& content(vec2 size, Style style, std::u32string text = U"", bool draw = true, bool force_insert = false);
-
-	Frame& get_frame_referance();
-
-	void change_layout_z(float z_displacement);
-private:
-
-	Time _frame_time_ms;
-
-	std::vector<Box> widget_table;
-	//std::vector<Text> font_table;
-	std::vector<std::function<void(Time)>> render_queue;
-
-	std::vector<Layout> layout_table;
-	std::vector<vec2> layout_min_size_table;
-	std::vector<Style> layout_styles_table;
-	std::vector<std::u32string> layout_strings_table;
-	std::vector<uint8_t> layout_draw_flags_table;
-
-	uint32_t _widget_next_id;
-	Frame& _frame_ref;
-
-	static void _initialize();
-	static bool _initialized;
-
-	static Program_s default_gui_renderer;
-	static unsigned int _default_gui_uniform_screen_position;
-	static unsigned int _default_gui_uniform_projection;
-	static unsigned int _default_gui_uniform_rect_color;
-	static unsigned int _default_gui_uniform_rect_size;
-	static unsigned int _default_gui_uniform_corner_rounding;
-	static unsigned int _default_gui_uniform_border_color;
-	static unsigned int _default_gui_uniform_border_thickness;
-	static unsigned int _default_gui_uniform_z_index;
-
-	float _current_z_index = 0;
-	float _z_index_buff = 0;
-
-	std::shared_ptr<Font> _font = std::make_shared<Font>("Fonts\\Roboto-Regular.ttf", 16);
-
-	friend Box;
-};
-
-class CustomWidget {
-public:
-	virtual void render() {}
-};
-*/
-
-// new implementation of gui system
 class Gui {
 public:
 
@@ -439,6 +313,66 @@ public:
 
 	_widget_info& content(const std::string& name, vec2 size, Style style, std::u32string text);
 
+	template<typename T>
+	void custom_widget(T& custom_widget) {
+		GuiWidget* gui_widget = dynamic_cast<GuiWidget*>(&custom_widget);
+		ASSERT(gui_widget != nullptr);
+
+		_widget_info& info = layout_content("TEMP", vec2(0, 0), Style());
+		gui_widget->on_render(*this);
+		layout_content_end();
+		
+		if (name_interact_events_table.find(gui_widget->name) == name_interact_events_table.end())
+			name_interact_events_table[gui_widget->name] = *static_cast<InteractEvents*>(gui_widget);
+
+		InteractEvents& interact_events = name_interact_events_table[gui_widget->name];
+
+		if (info.is_hovering && !interact_events.was_hovering_last_frame)
+			interact_events.on_hover_begin();
+		if (!info.is_hovering && interact_events.was_hovering_last_frame)
+			interact_events.on_hover_end();
+		
+		bool is_clicking = info.is_hovering && frame_ref.get_mouse_state(Frame::CursorState::LeftPressed);
+
+		if (is_clicking && !interact_events.was_pressing_last_frame)
+			interact_events.on_press();
+		if (!is_clicking && interact_events.was_pressing_last_frame && !frame_ref.get_mouse_state(Frame::CursorState::LeftPressed))
+			interact_events.on_release();
+		
+		interact_events.was_hovering_last_frame = info.is_hovering;
+		interact_events.was_pressing_last_frame = is_clicking;
+	}
+
+	template<typename T>
+	void custom_widget(T&& custom_widget) {
+		GuiWidget* gui_widget = dynamic_cast<GuiWidget*>(&custom_widget);
+		ASSERT(gui_widget != nullptr);
+
+		_widget_info& info = layout_content("TEMP", vec2(0, 0), Style());
+		gui_widget->on_render(*this);
+		layout_content_end();
+
+		if (name_interact_events_table.find(gui_widget->name) == name_interact_events_table.end())
+			name_interact_events_table[gui_widget->name] = *static_cast<InteractEvents*>(gui_widget);
+
+		InteractEvents& interact_events = name_interact_events_table[gui_widget->name];
+
+		if (info.is_hovering && !interact_events.was_hovering_last_frame)
+			interact_events.on_hover_begin();
+		if (!info.is_hovering && interact_events.was_hovering_last_frame)
+			interact_events.on_hover_end();
+
+		bool is_clicking = info.is_hovering && frame_ref.get_mouse_state(Frame::CursorState::LeftPressed);
+
+		if (is_clicking && !interact_events.was_pressing_last_frame)
+			interact_events.on_press();
+		if (!is_clicking && interact_events.was_pressing_last_frame)
+			interact_events.on_release();
+
+		interact_events.was_hovering_last_frame = info.is_hovering;
+		interact_events.was_pressing_last_frame = is_clicking;
+	}
+
 	Style override_style;
 	float z_index = 0; 
 
@@ -451,6 +385,7 @@ private:
 
 	_widget_info& box(unsigned int id, vec2 position, vec2 size, Style style, std::u32string text, Style override_style, float z_index);
 
+	std::unordered_map<std::string, InteractEvents> name_interact_events_table;
 	std::unordered_map<std::string, unsigned int> name_id_table;
 
 	Frame& frame_ref;
@@ -533,52 +468,3 @@ private:
 	std::vector<std::shared_ptr<layout_node>> get_layouts_in_ascending_order();
 	std::vector<std::shared_ptr<layout_node>> get_layouts_in_descending_order();
 };
-
-/*
-// css-like layout structure
-
-struct WidgetInfo {
-public:
-	WidgetInfo(bool was_hovered = false, bool was_active = false, Time hover_duration = 0, Time active_duration = 0, Time last_update = -1) : 
-		was_hovered(was_hovered), was_active(was_active), hover_duration(hover_duration), active_duration(active_duration), last_update(last_update) {}
-
-	bool was_hovered;
-	bool was_active;
-	Time hover_duration;
-	Time active_duration;
-	Time last_update;
-};
-
-class Ui {	// legacy
-public:
-	Ui(Frame& frame);
-	void new_frame();
-	void begin(Layout::LayoutType type = Layout::Horizional);
-	bool box(const std::string& id, const Vec2<float>& size, const Style& style);
-	void end(const Style& style);
-
-private:
-	
-	Time last_update_ms;
-	Time frame_time;
-	
-	//std::unordered_map<std::string, Time> animation_state;
-	std::vector<std::function<void(bool& hover_out, AABB2& aabb_out, StaticStyle& style_to_use_out)>> _position_calculation_calls;
-	std::vector<std::function<void(bool hover, AABB2 aabb, StaticStyle style_to_use)>> _render_calls;
-	std::string _focused_id;
-	std::string _hovered_id;
-	std::vector<Layout> layouts;
-	glm::mat4 projection_matrix;
-	Program program;
-	Frame& frame;
-
-	Vec2<int> window_size;
-
-	std::unordered_map<std::string, WidgetInfo> widget_info_table;
-
-	void _update_matrix(int screen_width, int screen_height);
-	Frame::CursorState _cursor_state;
-	bool _cursor_state_just_changed = false;
-	bool _hovered = false;
-};
-*/

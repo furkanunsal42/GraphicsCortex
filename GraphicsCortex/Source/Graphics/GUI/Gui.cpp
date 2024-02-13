@@ -869,7 +869,6 @@ _widget_info& Gui::layout_content(const std::string& name, vec2 min_size, Style 
 	}
 	else {
 		std::cout << "[GUI Error] Gui::layout_content() is called but no Gui::layout() or Gui::layout_content() was called before" << std::endl;
-		_widget_info info;
 		return widget_info_table[id];
 	}
 

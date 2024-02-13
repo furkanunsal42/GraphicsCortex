@@ -533,3 +533,6 @@ build-obj/windows-Release-x86_64GraphicsCortex/GraphicsCortex.vcxproj.FileListAb
 build-obj/windows-Release-x86_64GraphicsCortexApp/GraphicsCortexApp.vcxproj.FileListAbsolute.txt
 build-obj/windows-Release-x86_64GraphicsCortexApp/GuiMain2.obj
 GraphicsCortexApp/atlas.png
+build-obj/windows-Release-x86_64GraphicsCortexApp/GuiMainWidgets.obj
+build-obj/windows-Release-x86_64GraphicsCortex/GuiWidget.obj
+build-obj/windows-Release-x86_64GraphicsCortex/DefaultWidgets.obj

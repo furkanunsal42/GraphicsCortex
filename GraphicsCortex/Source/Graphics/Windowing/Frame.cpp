@@ -136,6 +136,11 @@ void Frame::clear_window(float red, float green, float blue, float alpha) {
 	}
 }
 
+void Frame::close_frame() {
+	glfwSetWindowShouldClose(window, true);
+}
+
+
 void Frame::display_performance(int batch_size) {
 	if (batch_size != NULL && fps_counter_batch != batch_size)
 		fps_counter_batch = batch_size;
