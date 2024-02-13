@@ -24,7 +24,7 @@ private:
 public:
 	double deltatime = 0;
 	std::shared_ptr<Frame> frame;
-	std::shared_ptr<Gui2> gui;
+	std::shared_ptr<Gui> gui;
 
 	void push_layer(std::shared_ptr<UILayer> layer);
 

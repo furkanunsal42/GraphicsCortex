@@ -113,8 +113,8 @@ Frame::Frame(int width, int height, const std::string& name, int msaa, int swapi
 }
 
 Frame::~Frame() {
-	Gui2::gui_program = nullptr;
-	Gui2::font = nullptr;
+	Gui::gui_program = nullptr;
+	Gui::font = nullptr;
 
 	glfwDestroyWindow(window);
 	glfwTerminate();

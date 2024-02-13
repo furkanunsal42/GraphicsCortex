@@ -598,17 +598,17 @@ void _widget_info::increment_time(Time deltatime) {
 
 
 // new implementation of gui
-std::shared_ptr<Program> Gui2::gui_program;
-std::shared_ptr<Font> Gui2::font;
+std::shared_ptr<Program> Gui::gui_program;
+std::shared_ptr<Font> Gui::font;
 
-Gui2::Gui2(Frame& frame) : 
+Gui::Gui(Frame& frame) : 
 	frame_ref(frame)
 {
 	gui_program = default_program::gui_program_s();
 	font = std::make_shared<Font>("..\\GraphicsCortex\\Fonts\\Roboto-Regular.ttf", 16);
 }
 
-void Gui2::new_frame(Time frame_time) {
+void Gui::new_frame(Time frame_time) {
 	this->frame_time = frame_time;
 
 	if (hoverings.size() > 0){
@@ -642,12 +642,12 @@ void Gui2::new_frame(Time frame_time) {
 	camera.projection_matrix = glm::ortho(0.0f, (float)frame_ref.window_width, 0.0f, (float)frame_ref.window_height, -100.0f, 100.0f);
 }
 
-_widget_info& Gui2::box(unsigned int id, vec2 position, vec2 size, Style style, std::u32string text_string, Style override_style, float z_index) {
+_widget_info& Gui::box(unsigned int id, vec2 position, vec2 size, Style style, std::u32string text_string, Style override_style, float z_index) {
 	AABB2 aabb(position, size);
 	if (widget_graphic_table.find(id) == widget_graphic_table.end()) {
 		widget_graphic_table[id] = std::make_shared<Graphic>();
 		widget_graphic_table[id]->load_model(std::make_shared<Mesh>());
-		widget_graphic_table[id]->load_program(Gui2::gui_program);
+		widget_graphic_table[id]->load_program(Gui::gui_program);
 	}
 
 	std::shared_ptr<Graphic>& graphic = widget_graphic_table[id];
@@ -694,8 +694,8 @@ _widget_info& Gui2::box(unsigned int id, vec2 position, vec2 size, Style style, 
 	gui_program->update_uniform("border_thickness", border_thickness.x, border_thickness.y, border_thickness.z, border_thickness.w);
 	gui_program->update_uniform("z_index", z_index);
 
-	camera.update_default_uniforms(*Gui2::gui_program);
-	graphic->update_default_uniforms(*Gui2::gui_program);
+	camera.update_default_uniforms(*Gui::gui_program);
+	graphic->update_default_uniforms(*Gui::gui_program);
 	graphic->draw(false);
 
 	if (text_string != U"") {
@@ -734,7 +734,7 @@ _widget_info& Gui2::box(unsigned int id, vec2 position, vec2 size, Style style, 
 	return info;
 }
 
-_widget_info& Gui2::box(const std::string& name, vec2 position, vec2 size, Style style, std::u32string text) {
+_widget_info& Gui::box(const std::string& name, vec2 position, vec2 size, Style style, std::u32string text) {
 	if (name_id_table.find(name) == name_id_table.end())
 		name_id_table[name] = name_id_table.size();
 	unsigned int id = name_id_table[name];
@@ -742,7 +742,7 @@ _widget_info& Gui2::box(const std::string& name, vec2 position, vec2 size, Style
 	return box(id, position, size, style, text, override_style, z_index);
 }
 
-vec4f Gui2::get_margin_by_id(unsigned int id, const Style& override_style, const Style& style) {
+vec4f Gui::get_margin_by_id(unsigned int id, const Style& override_style, const Style& style) {
 	if (widget_info_table[id].properly_initialized) {
 		_widget_info& info = widget_info_table[id];
 		StaticStyle interpolated_style = get_final_style(override_style, style, info);
@@ -752,7 +752,7 @@ vec4f Gui2::get_margin_by_id(unsigned int id, const Style& override_style, const
 	return vec4(0, 0, 0, 0);
 }
 
-vec4f Gui2::get_padding_by_id(unsigned int id, const Style& override_style, const Style& style) {
+vec4f Gui::get_padding_by_id(unsigned int id, const Style& override_style, const Style& style) {
 	if (widget_info_table[id].properly_initialized) {
 		_widget_info& info = widget_info_table[id];
 		StaticStyle interpolated_style = get_final_style(override_style, style, info);
@@ -762,7 +762,7 @@ vec4f Gui2::get_padding_by_id(unsigned int id, const Style& override_style, cons
 	return vec4(0, 0, 0, 0);
 }
 
-Style::Stacking Gui2::get_stacking_type_by_id(unsigned int id, const Style& override_style, const Style& style) {
+Style::Stacking Gui::get_stacking_type_by_id(unsigned int id, const Style& override_style, const Style& style) {
 	if (widget_info_table[id].properly_initialized) {
 		_widget_info& info = widget_info_table[id];
 		StaticStyle interpolated_style = get_final_style(override_style, style, info);
@@ -779,7 +779,7 @@ namespace std{
 }
 
 
-std::vector<std::shared_ptr<Gui2::layout_node>> Gui2::get_layouts_in_descending_order() {
+std::vector<std::shared_ptr<Gui::layout_node>> Gui::get_layouts_in_descending_order() {
 
 	std::vector<std::shared_ptr<layout_node>> layout_nodes;
 	std::vector<std::shared_ptr<layout_node>> temp_stack;
@@ -797,7 +797,7 @@ std::vector<std::shared_ptr<Gui2::layout_node>> Gui2::get_layouts_in_descending_
 	return layout_nodes;
 }
 
-std::vector<std::shared_ptr<Gui2::layout_node>> Gui2::get_layouts_in_ascending_order() {
+std::vector<std::shared_ptr<Gui::layout_node>> Gui::get_layouts_in_ascending_order() {
 
 	std::vector<std::shared_ptr<layout_node>> layout_nodes = get_layouts_in_descending_order();
 
@@ -810,7 +810,7 @@ std::vector<std::shared_ptr<Gui2::layout_node>> Gui2::get_layouts_in_ascending_o
 	return layout_nodes_reversed;
 }
 
-_widget_info& Gui2::layout(const std::string& name, vec2 position, vec2 min_size, Style style, Layout::LayoutType layout_type) {
+_widget_info& Gui::layout(const std::string& name, vec2 position, vec2 min_size, Style style, Layout::LayoutType layout_type) {
 	
 	if (name_id_table.find(name) == name_id_table.end())
 		name_id_table[name] = name_id_table.size();
@@ -835,7 +835,7 @@ _widget_info& Gui2::layout(const std::string& name, vec2 position, vec2 min_size
 	return widget_info_table[id];
 }
 
-_widget_info& Gui2::content(const std::string& name, vec2 size, Style style, std::u32string text) {
+_widget_info& Gui::content(const std::string& name, vec2 size, Style style, std::u32string text) {
 	if (name_id_table.find(name) == name_id_table.end())
 		name_id_table[name] = name_id_table.size();
 	unsigned int id = name_id_table[name];
@@ -853,7 +853,7 @@ _widget_info& Gui2::content(const std::string& name, vec2 size, Style style, std
 	return widget_info_table[id];
 }
 
-_widget_info& Gui2::layout_content(const std::string& name, vec2 min_size, Style style, Layout::LayoutType layout_type) {
+_widget_info& Gui::layout_content(const std::string& name, vec2 min_size, Style style, Layout::LayoutType layout_type) {
 	if (name_id_table.find(name) == name_id_table.end())
 		name_id_table[name] = name_id_table.size();
 	unsigned int id = name_id_table[name];
@@ -876,7 +876,7 @@ _widget_info& Gui2::layout_content(const std::string& name, vec2 min_size, Style
 	return widget_info_table[id];
 }
 
-void Gui2::layout_content_end() {
+void Gui::layout_content_end() {
 	if (std::shared_ptr<layout_node> node = layout_stack.back().lock()){
 
 		z_index--;
@@ -889,7 +889,7 @@ void Gui2::layout_content_end() {
 	}
 }
 
-void Gui2::layout_end() {
+void Gui::layout_end() {
 	if (current_layout == nullptr) {
 		std::cout << "[GUI Error] Gui::layout_end() is called without corresponding Gui::layout()" << std::endl;
 		return;

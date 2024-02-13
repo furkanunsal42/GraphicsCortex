@@ -424,10 +424,10 @@ public:
 */
 
 // new implementation of gui system
-class Gui2 {
+class Gui {
 public:
 
-	Gui2(Frame& frame);
+	Gui(Frame& frame);
 	void new_frame(Time frame_time);
 	_widget_info& box(const std::string& name, vec2 position, vec2 size, Style style, std::u32string text);
 
