@@ -16,7 +16,7 @@ enum cube_map {
 
 class CubeMapTexture : public UpdatesDefaultUniforms{
 public:
-	Graphic cube = default_geometry::cube(glm::vec3(2, 2, 2));
+	std::shared_ptr<Graphic> cube = default_geometry::cube(glm::vec3(2, 2, 2));
 	Camera* camera = nullptr;
 
 	unsigned int id = 0;

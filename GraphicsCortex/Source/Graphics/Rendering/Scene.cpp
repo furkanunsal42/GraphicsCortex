@@ -21,7 +21,7 @@ Scene::Scene(const Frame& frame) {
 	camera->screen_height = frame.window_height;
 }
 
-void Scene::add(Graphic graphic) {
+void Scene::add(std::shared_ptr<Graphic> graphic) {
 	_graphics.push_back(graphic);
 }
 
@@ -43,7 +43,7 @@ void Scene::set_skybox(std::shared_ptr<CubeMapTexture> cubemap) {
 	skybox = cubemap;
 }
 
-void Scene::remove(Graphic graphic) {
+void Scene::remove(std::shared_ptr<Graphic> graphic) {
 	_graphics.erase(std::find(_graphics.begin(), _graphics.end(), graphic));
 }
 void Scene::remove(std::shared_ptr<Object> object) {
@@ -64,96 +64,96 @@ void Scene::render(bool show_warnings) {
 
 	if (skybox != nullptr) {
 		skybox->texture_slot = 11;
-		skybox->update_default_uniforms(*skybox->cube.material.program);
+		skybox->update_default_uniforms(*skybox->cube->material->program);
 		skybox->draw();
 	}
 
-	for(Graphic& graphic : _graphics){
-		graphic.update_matrix();
+	for(std::shared_ptr<Graphic> graphic : _graphics){
+		graphic->update_matrix();
 
-		graphic.update_default_uniforms(*graphic.material.program);
-		camera->update_default_uniforms(*graphic.material.program);
+		graphic->update_default_uniforms(*graphic->material->program);
+		camera->update_default_uniforms(*graphic->material->program);
 		
 		AmbiantLight::temp_light_index = 0;
 		DirectionalLight::temp_light_index = 0;
 		PointLight::temp_light_index = 0;
 		SpotLight::temp_light_index = 0;
-		graphic.material.program->update_uniform("a_lights_count", 0);
-		graphic.material.program->update_uniform("d_lights_count", 0);
-		graphic.material.program->update_uniform("p_lights_count", 0);
-		graphic.material.program->update_uniform("s_lights_count", 0);
+		graphic->material->program->update_uniform("a_lights_count", 0);
+		graphic->material->program->update_uniform("d_lights_count", 0);
+		graphic->material->program->update_uniform("p_lights_count", 0);
+		graphic->material->program->update_uniform("s_lights_count", 0);
 		for (std::shared_ptr<Light> light : _lights)
-			light->update_default_uniforms(*graphic.material.program);
+			light->update_default_uniforms(*graphic->material->program);
 
-		graphic.draw(show_warnings);
+		graphic->draw(show_warnings);
 	}
 	for (std::shared_ptr<Object> object : _objects) {
 		object->graphics.update_matrix();
 
-		object->graphics.update_default_uniforms(*object->graphics.material.program);
-		camera->update_default_uniforms(*object->graphics.material.program);
+		object->graphics.update_default_uniforms(*object->graphics.material->program);
+		camera->update_default_uniforms(*object->graphics.material->program);
 
 		AmbiantLight::temp_light_index = 0;
 		DirectionalLight::temp_light_index = 0;
 		PointLight::temp_light_index = 0;
 		SpotLight::temp_light_index = 0;
-		object->graphics.material.program->update_uniform("a_lights_count", 0);
-		object->graphics.material.program->update_uniform("d_lights_count", 0);
-		object->graphics.material.program->update_uniform("p_lights_count", 0);
-		object->graphics.material.program->update_uniform("s_lights_count", 0);
+		object->graphics.material->program->update_uniform("a_lights_count", 0);
+		object->graphics.material->program->update_uniform("d_lights_count", 0);
+		object->graphics.material->program->update_uniform("p_lights_count", 0);
+		object->graphics.material->program->update_uniform("s_lights_count", 0);
 		for (std::shared_ptr<Light> light : _lights)
-			light->update_default_uniforms(*object->graphics.material.program);
+			light->update_default_uniforms(*object->graphics.material->program);
 
 		object->graphics.draw(show_warnings);
 	}
 
 	for (std::shared_ptr<Vehicle> vehicle : _vehicles) {
 		if (vehicle->chassis_graphic_initialized) {
-			vehicle->chassis.update_matrix();
+			vehicle->chassis->update_matrix();
 		
-			vehicle->chassis.update_default_uniforms(*vehicle->chassis.material.program);
-			camera->update_default_uniforms(*vehicle->chassis.material.program);
+			vehicle->chassis->update_default_uniforms(*vehicle->chassis->material->program);
+			camera->update_default_uniforms(*vehicle->chassis->material->program);
 			
 			AmbiantLight::temp_light_index = 0;
 			DirectionalLight::temp_light_index = 0;
 			PointLight::temp_light_index = 0;
 			SpotLight::temp_light_index = 0;
-			vehicle->chassis.material.program->update_uniform("a_lights_count", 0);
-			vehicle->chassis.material.program->update_uniform("d_lights_count", 0);
-			vehicle->chassis.material.program->update_uniform("p_lights_count", 0);
-			vehicle->chassis.material.program->update_uniform("s_lights_count", 0);
+			vehicle->chassis->material->program->update_uniform("a_lights_count", 0);
+			vehicle->chassis->material->program->update_uniform("d_lights_count", 0);
+			vehicle->chassis->material->program->update_uniform("p_lights_count", 0);
+			vehicle->chassis->material->program->update_uniform("s_lights_count", 0);
 			for (std::shared_ptr<Light> light : _lights)
-				light->update_default_uniforms(*vehicle->chassis.material.program);
+				light->update_default_uniforms(*vehicle->chassis->material->program);
 
-			vehicle->chassis.draw(show_warnings);
+			vehicle->chassis->draw(show_warnings);
 		}
 		
 		if (vehicle->wheel_graphic_initialized) {
-			for (Graphic& wheel : vehicle->wheels) {
-				wheel.update_matrix();
+			for (std::shared_ptr<Graphic> wheel : vehicle->wheels) {
+				wheel->update_matrix();
 
-				wheel.update_default_uniforms(*wheel.material.program);
-				camera->update_default_uniforms(*wheel.material.program);
+				wheel->update_default_uniforms(*wheel->material->program);
+				camera->update_default_uniforms(*wheel->material->program);
 
 				AmbiantLight::temp_light_index = 0;
 				DirectionalLight::temp_light_index = 0;
 				PointLight::temp_light_index = 0;
 				SpotLight::temp_light_index = 0;
-				wheel.material.program->update_uniform("a_lights_count", 0);
-				wheel.material.program->update_uniform("d_lights_count", 0);
-				wheel.material.program->update_uniform("p_lights_count", 0);
-				wheel.material.program->update_uniform("s_lights_count", 0);
+				wheel->material->program->update_uniform("a_lights_count", 0);
+				wheel->material->program->update_uniform("d_lights_count", 0);
+				wheel->material->program->update_uniform("p_lights_count", 0);
+				wheel->material->program->update_uniform("s_lights_count", 0);
 				for (std::shared_ptr<Light> light : _lights)
-					light->update_default_uniforms(*wheel.material.program);
+					light->update_default_uniforms(*wheel->material->program);
 				
-				wheel.draw(show_warnings);
+				wheel->draw(show_warnings);
 			}
 		}
 	}
 
 	for (std::shared_ptr<Text> text : _texts) {
-		text->update_default_uniforms(*text->graphic->material.program);
-		camera->update_default_uniforms(*text->graphic->material.program);
+		text->update_default_uniforms(*text->graphic->material->program);
+		camera->update_default_uniforms(*text->graphic->material->program);
 		text->render();
 	}
 }

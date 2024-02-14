@@ -21,7 +21,7 @@ void BindlessMaterial::add_texture(const std::string& name, const std::shared_pt
 		ASSERT(false);
 	}
 	GLCall(unsigned int location = glGetUniformLocation(program->id, name.c_str()));
-	(*_textures)[location] = texture;
+	_textures[location] = texture;
 	
 }
 
@@ -32,13 +32,13 @@ void BindlessMaterial::remove_texture(const std::string& name)
 		ASSERT(false);
 	}
 	GLCall(unsigned int location = glGetUniformLocation(program->id, name.c_str()));
-	_textures->erase(location);
+	_textures.erase(location);
 }
 
 void BindlessMaterial::set_program(const std::shared_ptr<Program>& new_program)
 {
 	set_program_without_texture_reset(new_program);
-	_textures->clear();
+	_textures.clear();
 }
 
 void BindlessMaterial::set_program_without_texture_reset(const std::shared_ptr<Program>& new_program)
@@ -54,7 +54,7 @@ void BindlessMaterial::update_uniforms()
 	}
 
 	program->bind();
-	for (auto iterator = _textures->begin(); iterator != _textures->end(); iterator++) {
+	for (auto iterator = _textures.begin(); iterator != _textures.end(); iterator++) {
 		unsigned int location = iterator->first;
 		std::shared_ptr<Texture2D>& texture = iterator->second;
 

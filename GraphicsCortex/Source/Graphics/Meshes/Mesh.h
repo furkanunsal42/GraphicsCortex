@@ -14,6 +14,7 @@ public:
 	std::vector<SingleMesh> submeshes;
 
 	Mesh();
+	Mesh(const Mesh& other) = delete;
 	Mesh(std::shared_ptr<ArrayBuffer> array_buffer, std::shared_ptr<IndexBuffer> index_buffer);
 
 	bool operator==(const Mesh& other);

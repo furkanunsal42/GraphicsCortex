@@ -36,7 +36,7 @@ namespace {
 }
 
 #define MAP_TYPE_COUNT 3
-BindlessMaterial AssetImporter::generate_material(const std::string& filename, std::shared_ptr<Program> program) {
+std::shared_ptr<BindlessMaterial> AssetImporter::generate_material(const std::string& filename, std::shared_ptr<Program> program) {
 	const aiScene* imported_scene;
 
 	if (_imported_assets.find(filename) == _imported_assets.end()) {
@@ -81,9 +81,9 @@ BindlessMaterial AssetImporter::generate_material(const std::string& filename, s
 		}
 	}
 
-	BindlessMaterial material(program);
+	std::shared_ptr<BindlessMaterial> material = std::make_shared<BindlessMaterial>(program);
 	for (int i = 0; i < image_paths.size(); i++) {
-		material.add_texture("textures[" + std::to_string(i) + "]", std::make_shared<Texture2D>(image_paths[i], Texture2D::ColorTextureFormat::RGBA8, Texture2D::ColorFormat::RGBA, Texture2D::Type::UNSIGNED_BYTE, 1, 0));
+		material->add_texture("textures[" + std::to_string(i) + "]", std::make_shared<Texture2D>(image_paths[i], Texture2D::ColorTextureFormat::RGBA8, Texture2D::ColorFormat::RGBA, Texture2D::Type::UNSIGNED_BYTE, 1, 0));
 	}
 	return material;
 }

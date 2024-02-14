@@ -117,7 +117,7 @@ void FrameBuffer::render(unsigned int source_texture) {
 		GLCall(glDisable(GL_DEPTH_TEST));
 		if (!screen_initialized) {
 			screen = default_geometry::rectangle(glm::vec2(2.0f));
-			screen.material.set_program(program);
+			screen->material->set_program(program);
 			screen_initialized = true;
 		}
 
@@ -136,7 +136,7 @@ void FrameBuffer::render(unsigned int source_texture) {
 			GLCall(glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_STENCIL_TEXTURE_MODE, GL_STENCIL_INDEX));
 		}
 		program->update_uniform("texture_slot", 9);
-		screen.draw(false);
+		screen->draw(false);
 		GLCall(glEnable(GL_DEPTH_TEST));
 	}
 	else {

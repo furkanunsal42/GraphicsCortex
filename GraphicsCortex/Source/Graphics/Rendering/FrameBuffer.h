@@ -68,7 +68,7 @@ public:
 private:
 
 	void generate_framebuffer_object();
-	Graphic screen;
+	std::shared_ptr<Graphic> screen;
 	
 	bool _is_initialized = false;
 	bool _is_program_loaded = false;

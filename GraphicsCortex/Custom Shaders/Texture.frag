@@ -6,8 +6,8 @@
 layout (location = 0) out vec4 frag_color;
 in vec2 frag_uv;
 
-layout(bindless_sampler) uniform sampler2D color_texture;
+layout(bindless_sampler) uniform sampler2D textures[1];
 
 void main(){
-    frag_color = texture(color_texture, frag_uv);
+    frag_color = texture(textures[0], frag_uv);
 }

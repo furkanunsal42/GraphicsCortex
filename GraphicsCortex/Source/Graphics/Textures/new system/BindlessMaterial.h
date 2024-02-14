@@ -8,7 +8,8 @@ public:
 	std::shared_ptr<Program> program = nullptr;
 
 	BindlessMaterial();
-	BindlessMaterial(const BindlessMaterial& other) = default;
+	BindlessMaterial(const BindlessMaterial& other) = delete;
+
 	BindlessMaterial(const std::shared_ptr<Program>& program);
 	bool operator==(const BindlessMaterial& other);
 
@@ -21,5 +22,5 @@ public:
 	void update_uniforms();
 private:
 
-	std::shared_ptr<std::unordered_map<unsigned int, std::shared_ptr<Texture2D>>> _textures = std::make_shared<std::unordered_map<unsigned int, std::shared_ptr<Texture2D>>>();
+	std::unordered_map<unsigned int, std::shared_ptr<Texture2D>> _textures;
 };

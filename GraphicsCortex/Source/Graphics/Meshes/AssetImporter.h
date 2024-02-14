@@ -23,7 +23,7 @@ public:
 																						aiProcess_SortByPType |
 																						aiProcess_GenSmoothNormals);
 	
-	static BindlessMaterial generate_material(const std::string& filename, std::shared_ptr<Program> program);
+	static std::shared_ptr<BindlessMaterial> generate_material(const std::string& filename, std::shared_ptr<Program> program);
 	static Model generate_model(const std::string& filename, float scale = 1.0f, unsigned int vertex_property_bits = Model::ALL);
 
 	static Image read_image_cached(const std::string& filename, int desired_channels = 4, bool vertical_flip = true);
