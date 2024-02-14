@@ -30,6 +30,7 @@ void UniformBuffer::bind(int bind_target)
 
 	GLCall(glBindBufferBase(_target, bind_target, id));
 	bound_slot = bind_target;
+	ever_bound = true;
 }
 
 void UniformBuffer::bind(int bind_target, int offset, int size)
@@ -51,6 +52,7 @@ void UniformBuffer::bind(int bind_target, int offset, int size)
 
 	GLCall(glBindBufferRange(_target, bind_target, id, offset, offset + size));
 	bound_slot = bind_target;
+	ever_bound = true;
 }
 
 void UniformBuffer::bind()
@@ -97,6 +99,11 @@ void UniformBuffer::set_data(int managed_buffer_offset_in_bytes, int uploading_d
 	memcpy(managed_buffer_offset_in_bytes + (char*)cpu_data, (void*)((char*)data + uploading_data_offset_in_bytes), size_in_bytes);
 }
 
+void UniformBuffer::set_data(int varible_index, void* const data)
+{
+	set_data(_pushed_variable_offsets[varible_index], 0, _pushed_variable_sizes[varible_index], data);
+}
+
 void UniformBuffer::upload_data()
 {
 	if (!_buffer_generated) {
@@ -121,7 +128,10 @@ void UniformBuffer::_push_varible_size(int size) {
 		ASSERT(false);
 	}
 
+	_pushed_variable_offsets.push_back(_buffer_size);
+	_pushed_variable_sizes.push_back(size);
 	_buffer_size += size;
+
 }
 
 UniformBuffer::_range UniformBuffer::_compute_bounding_range() {

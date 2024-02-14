@@ -630,6 +630,9 @@ void Program::update_uniform_buffer_slots(){
 		const std::shared_ptr<UniformBuffer> uniform_buffer = iterator->second;
 		uniform_buffer->upload_data();
 
+		if (!uniform_buffer->ever_bound)
+			uniform_buffer->bind(slot_iterator);
+
 		GLCall(unsigned int location = glGetUniformBlockIndex(id, name.c_str()));
 		
 		if (used_buffer_slots.find(uniform_buffer->bound_slot) == used_buffer_slots.end()) {	// uniform buffer's currently bound position is free
@@ -639,6 +642,7 @@ void Program::update_uniform_buffer_slots(){
 		else {	// if not, search for a free spot and bind both buffer and uniform to that spot
 			for (slot_iterator; used_buffer_slots.find(uniform_buffer->bound_slot) == used_buffer_slots.end(); slot_iterator++){}
 			uniform_buffer->bind(slot_iterator);
+			slot_iterator++;
 			GLCall(glUniformBlockBinding(id, location, uniform_buffer->bound_slot));
 		}
 	}

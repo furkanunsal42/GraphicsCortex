@@ -11,6 +11,7 @@ class UniformBuffer {
 public:
 	unsigned int id;
 	unsigned int bound_slot;
+	bool ever_bound = false;
 
 	UniformBuffer();
 	UniformBuffer(const UniformBuffer& other) = delete;
@@ -39,9 +40,11 @@ public:
 	}
 	void push_variable_array(int array_size);
 
-	void set_data(int managed_buffer_offset_in_bytes, int uploading_data_offset_in_bytes, int size_in_bytes, void* data);
+	void set_data(int managed_buffer_offset_in_bytes, int uploading_data_offset_in_bytes, int size_in_bytes, void* const data);
+	void set_data(int varible_index, void* const data);
+
 	template<typename T>
-	void set_data(int managed_buffer_offset_in_bytes, int uploading_data_offset_in_bytes, int size_in_bytes, std::vector<T> data) {
+	void set_data(int managed_buffer_offset_in_bytes, int uploading_data_offset_in_bytes, int size_in_bytes, const std::vector<T>& data) {
 		if (size_in_bytes == 0) return;
 		if (managed_buffer_offset_in_bytes < 0 || uploading_data_offset_in_bytes < 0 || size_in_bytes < 0) {
 			std::cout << "[OpenGL Error] UniformBuffer tried to set_data() but offset and size was out of bound" << std::endl;
@@ -66,7 +69,7 @@ public:
 
 private:
 
-	int _buffer_size;
+	int _buffer_size = 0;
 	
 	struct _range {
 		_range(int begin, int end) {
@@ -109,6 +112,9 @@ private:
 	}
 
 	void _push_varible_size(int size);
+	std::vector<int> _pushed_variable_sizes;
+	std::vector<int> _pushed_variable_offsets;
+
 
 	bool _buffer_generated = false;
 	bool _buffer_allocated = false;
