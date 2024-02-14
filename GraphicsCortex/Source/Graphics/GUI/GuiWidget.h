@@ -8,6 +8,7 @@ class InteractEvents {
 public:
 	bool was_hovering_last_frame = false;
 	bool was_pressing_last_frame = false;
+	bool is_focusing = false;
 
 	std::string name;
 

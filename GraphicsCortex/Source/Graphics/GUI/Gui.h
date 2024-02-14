@@ -318,7 +318,7 @@ public:
 		GuiWidget* gui_widget = dynamic_cast<GuiWidget*>(&custom_widget);
 		ASSERT(gui_widget != nullptr);
 
-		_widget_info& info = layout_content("TEMP", vec2(0, 0), Style());
+		_widget_info& info = layout_content("TEMP" + gui_widget->name, vec2(0, 0), Style());
 		gui_widget->on_render(*this);
 		layout_content_end();
 		
@@ -333,14 +333,20 @@ public:
 			interact_events.on_hover_end();
 		
 		bool is_clicking = info.is_hovering && frame_ref.get_mouse_state(Frame::CursorState::LeftPressed);
+		bool is_clicking_somewhere_esle = !info.is_hovering && frame_ref.get_mouse_state(Frame::CursorState::LeftPressed);
 
-		if (is_clicking && !interact_events.was_pressing_last_frame)
+		if (is_clicking && !interact_events.was_pressing_last_frame) {
 			interact_events.on_press();
+		}
 		if (!is_clicking && interact_events.was_pressing_last_frame && !frame_ref.get_mouse_state(Frame::CursorState::LeftPressed))
 			interact_events.on_release();
 		
+		if (is_clicking) interact_events.is_focusing = true;
+		if (is_clicking_somewhere_esle) interact_events.is_focusing = false;
+
 		interact_events.was_hovering_last_frame = info.is_hovering;
 		interact_events.was_pressing_last_frame = is_clicking;
+
 	}
 
 	template<typename T>
@@ -348,7 +354,7 @@ public:
 		GuiWidget* gui_widget = dynamic_cast<GuiWidget*>(&custom_widget);
 		ASSERT(gui_widget != nullptr);
 
-		_widget_info& info = layout_content("TEMP", vec2(0, 0), Style());
+		_widget_info& info = layout_content("TEMP" + gui_widget->name, vec2(0, 0), Style());
 		gui_widget->on_render(*this);
 		layout_content_end();
 
@@ -363,11 +369,16 @@ public:
 			interact_events.on_hover_end();
 
 		bool is_clicking = info.is_hovering && frame_ref.get_mouse_state(Frame::CursorState::LeftPressed);
+		bool is_clicking_somewhere_esle = !info.is_hovering && frame_ref.get_mouse_state(Frame::CursorState::LeftPressed);
 
-		if (is_clicking && !interact_events.was_pressing_last_frame)
+		if (is_clicking && !interact_events.was_pressing_last_frame) {
 			interact_events.on_press();
-		if (!is_clicking && interact_events.was_pressing_last_frame)
+		}
+		if (!is_clicking && interact_events.was_pressing_last_frame && !frame_ref.get_mouse_state(Frame::CursorState::LeftPressed))
 			interact_events.on_release();
+
+		if (is_clicking) interact_events.is_focusing = true;
+		if (!is_clicking) interact_events.is_focusing = false;
 
 		interact_events.was_hovering_last_frame = info.is_hovering;
 		interact_events.was_pressing_last_frame = is_clicking;
