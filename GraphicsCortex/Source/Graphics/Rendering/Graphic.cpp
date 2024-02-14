@@ -39,6 +39,7 @@ void Graphic::draw(bool show_warnings) {
 
 	if (_is_material_loaded) {
 		material->update_uniforms();
+		material->program->update_uniform_buffer_slots();
 	}
 
 	if (_is_mesh_loaded) {

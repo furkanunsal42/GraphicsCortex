@@ -176,6 +176,7 @@ void AssetImporter::clear_ram(const std::string& filename) {
 }
 
 void AssetImporter::clear_ram_all() {
+	_assimp_asset_loader.FreeScene();
 	for (std::pair<std::string, const aiScene*> pair : _imported_assets) {
 		delete pair.second;
 	}

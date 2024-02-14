@@ -9,6 +9,7 @@
 #include "Debuger.h"
 
 #include "DirectoryUtils.h"
+#include <unordered_set>
 
 Shader::Shader() { ; }
 
@@ -611,5 +612,35 @@ void Program::update_uniform(unsigned int uniform_id, glm::vec3& a) {
 void Program::update_uniform(unsigned int uniform_id, glm::vec2& a) {
 	bind();
 	GLCall(glUniform2fv(uniform_id, 1, glm::value_ptr(a)));
+}
+
+void Program::attach_uniform_buffer(const std::string& name, std::shared_ptr<UniformBuffer> uniform_buffer){
+	_uniform_buffers[name] = uniform_buffer;
+}
+
+void Program::deattach_uniform_buffer(const std::string& name){
+	_uniform_buffers.erase(name);
+}
+
+void Program::update_uniform_buffer_slots(){
+	std::unordered_set<int> used_buffer_slots;
+	int slot_iterator = 0;
+	for (auto iterator = _uniform_buffers.begin(); iterator != _uniform_buffers.end(); iterator++) {
+		const std::string& name = iterator->first;
+		const std::shared_ptr<UniformBuffer> uniform_buffer = iterator->second;
+		uniform_buffer->upload_data();
+
+		GLCall(unsigned int location = glGetUniformBlockIndex(id, name.c_str()));
+		
+		if (used_buffer_slots.find(uniform_buffer->bound_slot) == used_buffer_slots.end()) {	// uniform buffer's currently bound position is free
+			used_buffer_slots.insert(uniform_buffer->bound_slot);
+			GLCall(glUniformBlockBinding(id, location, uniform_buffer->bound_slot));
+		}
+		else {	// if not, search for a free spot and bind both buffer and uniform to that spot
+			for (slot_iterator; used_buffer_slots.find(uniform_buffer->bound_slot) == used_buffer_slots.end(); slot_iterator++){}
+			uniform_buffer->bind(slot_iterator);
+			GLCall(glUniformBlockBinding(id, location, uniform_buffer->bound_slot));
+		}
+	}
 }
 

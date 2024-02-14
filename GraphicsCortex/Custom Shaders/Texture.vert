@@ -8,8 +8,11 @@ layout(location = 1) in vec2 uv;
 out vec2 frag_uv;
 
 uniform mat4 model;
-uniform mat4 view;
-uniform mat4 projection;
+
+layout(std140) uniform camera_matricies{
+	mat4 view;
+	mat4 projection;
+};
 
 void main(){
 	frag_uv = uv;

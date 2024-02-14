@@ -85,6 +85,7 @@ int main() {
 		ground_plane.make_drivable();
 		scene.add_physics(ground_plane);
 	}
+	AssetImporter::clear_ram_all();
 
 	std::shared_ptr<Program> cubemap_program = std::make_shared<Program>(default_program::cubemap_program());
 	std::shared_ptr<CubeMapTexture> cube_map = std::make_shared<CubeMapTexture>();
