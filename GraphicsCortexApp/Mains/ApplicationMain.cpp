@@ -27,7 +27,7 @@ int main() {
 
 		std::shared_ptr<Texture2D> default_texture = std::make_shared<Texture2D>("../GraphicsCortex/Images/orange.png", Texture2D::ColorTextureFormat::RGBA8, Texture2D::ColorFormat::RGBA, Texture2D::Type::UNSIGNED_BYTE);
 		std::shared_ptr<BindlessMaterial> city_mat = AssetImporter::generate_material("../GraphicsCortex/Models/circuit/nogaro.obj", program);
-		city_mat->add_texture("default_texture", default_texture);
+		//city_mat->add_texture("default_texture", default_texture);
 
 		//city_mat->mipmap_bias = 0;
 		//city_mat->texture_array.generate_mipmap = false;

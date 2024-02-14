@@ -631,18 +631,20 @@ void Program::update_uniform_buffer_slots(){
 		uniform_buffer->upload_data();
 
 		if (!uniform_buffer->ever_bound)
-			uniform_buffer->bind(slot_iterator);
+			uniform_buffer->bind(slot_iterator++);
 
 		GLCall(unsigned int location = glGetUniformBlockIndex(id, name.c_str()));
-		
+		if (location == GL_INVALID_INDEX) {
+			std::cout << "[OpenGL Error] Program tried to update_uniform_buffer_slots() but uniform block named: \"" + name + "\" wasn't found in the shader" << std::endl;
+			ASSERT(false);
+		}
 		if (used_buffer_slots.find(uniform_buffer->bound_slot) == used_buffer_slots.end()) {	// uniform buffer's currently bound position is free
 			used_buffer_slots.insert(uniform_buffer->bound_slot);
 			GLCall(glUniformBlockBinding(id, location, uniform_buffer->bound_slot));
 		}
 		else {	// if not, search for a free spot and bind both buffer and uniform to that spot
 			for (slot_iterator; used_buffer_slots.find(uniform_buffer->bound_slot) == used_buffer_slots.end(); slot_iterator++){}
-			uniform_buffer->bind(slot_iterator);
-			slot_iterator++;
+			uniform_buffer->bind(slot_iterator++);
 			GLCall(glUniformBlockBinding(id, location, uniform_buffer->bound_slot));
 		}
 	}

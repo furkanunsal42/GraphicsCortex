@@ -62,6 +62,8 @@ public:
 
 		set_data(managed_buffer_offset_in_bytes, uploading_data_offset_in_bytes, size_in_bytes, (void*)((char*)data.data + custom_data_offset_in_bytes));
 	}
+	
+	void clear();
 
 	void upload_data();
 
@@ -114,7 +116,6 @@ private:
 	void _push_varible_size(int size);
 	std::vector<int> _pushed_variable_sizes;
 	std::vector<int> _pushed_variable_offsets;
-
 
 	bool _buffer_generated = false;
 	bool _buffer_allocated = false;

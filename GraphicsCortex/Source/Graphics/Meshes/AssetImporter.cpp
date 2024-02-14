@@ -83,7 +83,7 @@ std::shared_ptr<BindlessMaterial> AssetImporter::generate_material(const std::st
 
 	std::shared_ptr<BindlessMaterial> material = std::make_shared<BindlessMaterial>(program);
 	for (int i = 0; i < image_paths.size(); i++) {
-		material->add_texture("textures[" + std::to_string(i) + "]", std::make_shared<Texture2D>(image_paths[i], Texture2D::ColorTextureFormat::RGBA8, Texture2D::ColorFormat::RGBA, Texture2D::Type::UNSIGNED_BYTE, 1, 0));
+		material->add_texture(i, std::make_shared<Texture2D>(image_paths[i], Texture2D::ColorTextureFormat::RGBA8, Texture2D::ColorFormat::RGBA, Texture2D::Type::UNSIGNED_BYTE, 1, 0));
 	}
 	return material;
 }

@@ -104,6 +104,13 @@ void UniformBuffer::set_data(int varible_index, void* const data)
 	set_data(_pushed_variable_offsets[varible_index], 0, _pushed_variable_sizes[varible_index], data);
 }
 
+void UniformBuffer::clear()
+{
+	for (int i = 0; i < _buffer_size; i++)
+		((char*)cpu_data)[i] = 0;
+	_updated_ranges.push_back(_range(0, _buffer_size));
+}
+
 void UniformBuffer::upload_data()
 {
 	if (!_buffer_generated) {
