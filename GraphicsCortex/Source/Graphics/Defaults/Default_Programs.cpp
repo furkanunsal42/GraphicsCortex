@@ -102,7 +102,7 @@ namespace default_program {
 			program->update_uniform("use_cube_map_reflection", 0);
 			program->update_uniform("cube_map_reflection_strength", 0.85f);
 			program->update_uniform("camera_coords", camera->position);
-			program->update_uniform("active_texture_indicies", graphic->unordered_material->get_active_textures_by_type());
+			//program->update_uniform("active_texture_indicies", graphic->unordered_material->get_active_textures_by_type());
 			program->update_uniform("shadow_map", 2);
 		};
 
@@ -171,8 +171,8 @@ namespace default_program {
 			program->update_uniform("view", camera->view_matrix);
 			program->update_uniform("projection", camera->projection_matrix);
 			program->update_uniform("cube_map", 13);
-			program->update_uniform("use_cube_map_reflection", (int)(graphic->get_reflection_strength() > 0.001));
-			program->update_uniform("cube_map_reflection_strength", graphic->get_reflection_strength());
+			//program->update_uniform("use_cube_map_reflection", (int)(graphic->get_reflection_strength() > 0.001));
+			//program->update_uniform("cube_map_reflection_strength", graphic->get_reflection_strength());
 			program->update_uniform("camera_coords", camera->position);
 			program->update_uniform("shadow_map", 2);
 		};

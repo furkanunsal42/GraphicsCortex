@@ -11,6 +11,7 @@
 #include <map>
 #include <unordered_map>
 #include "Debuger.h"
+#include <UniformBuffer.h>
 
 #include <iostream>
 
@@ -276,6 +277,14 @@ public:
 	void update_uniform(unsigned int uniform_id, glm::vec4& a);
 	void update_uniform(unsigned int uniform_id, glm::vec3& a);
 	void update_uniform(unsigned int uniform_id, glm::vec2& a);
+
+	void attach_uniform_buffer(const std::string& name, std::shared_ptr<UniformBuffer> uniform_buffer);
+	void deattach_uniform_buffer(const std::string& name);
+		
+	void update_uniform_buffer_slots();
+
+private:
+	std::unordered_map<std::string, std::shared_ptr<UniformBuffer>> _uniform_buffers;
 };
 
  class UpdatesDefaultUniforms {

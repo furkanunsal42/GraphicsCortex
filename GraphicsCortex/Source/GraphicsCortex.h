@@ -18,6 +18,7 @@
 #include "Frame.h"
 #include "Model.h"
 #include "Buffer.h"
+#include "UniformBuffer.h"
 #include "ShaderCompiler.h"
 #include "Image.h"
 #include "Texture.h"
@@ -28,7 +29,6 @@
 #include "TextureArray.h"
 #include "TextureCubeMap.h"
 #include "Texture3D.h"
-#include "BufferTexture.h"
 #include "RenderBuffer.h"
 #include "BindlessMaterial.h"
 

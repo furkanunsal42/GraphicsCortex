@@ -36,7 +36,7 @@ namespace {
 }
 
 #define MAP_TYPE_COUNT 3
-UnorderedMaterial AssetImporter::generate_material(const std::string& filename) {
+std::shared_ptr<BindlessMaterial> AssetImporter::generate_material(const std::string& filename, std::shared_ptr<Program> program) {
 	const aiScene* imported_scene;
 
 	if (_imported_assets.find(filename) == _imported_assets.end()) {
@@ -81,9 +81,15 @@ UnorderedMaterial AssetImporter::generate_material(const std::string& filename) 
 		}
 	}
 
-	UnorderedMaterial material(image_paths.size());
+	std::shared_ptr<BindlessMaterial> material = std::make_shared<BindlessMaterial>(program);
 	for (int i = 0; i < image_paths.size(); i++) {
-		material.set_texture(image_paths[i], 4, i);
+		std::shared_ptr<Texture2D> texture = std::make_shared<Texture2D>(image_paths[i], Texture2D::ColorTextureFormat::RGBA8, Texture2D::ColorFormat::RGBA, Texture2D::Type::UNSIGNED_BYTE, 32, 0);
+		texture->wrap_u = Texture2D::WrapMode::REPEAT;
+		texture->wrap_v = Texture2D::WrapMode::REPEAT;
+		texture->mag_filter = Texture2D::SamplingFilter::LINEAR;
+		texture->min_filter = Texture2D::SamplingFilter::LINEAR;
+		texture->mipmap_min_filter = Texture2D::SamplingFilter::LINEAR;
+		material->add_texture(i, texture);
 	}
 	return material;
 }
@@ -176,6 +182,7 @@ void AssetImporter::clear_ram(const std::string& filename) {
 }
 
 void AssetImporter::clear_ram_all() {
+	_assimp_asset_loader.FreeScene();
 	for (std::pair<std::string, const aiScene*> pair : _imported_assets) {
 		delete pair.second;
 	}

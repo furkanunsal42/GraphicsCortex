@@ -12,6 +12,16 @@ Mesh::Mesh(std::shared_ptr<ArrayBuffer> array_buffer, std::shared_ptr<IndexBuffe
 	submeshes.back().index_buffer = index_buffer;
 }
 
+bool Mesh::operator==(const Mesh& other)
+{
+	if (submeshes.size() != other.submeshes.size()) return false;
+	for (int i = 0; i < submeshes.size(); i++) {
+		if (submeshes[i].array_buffer != other.submeshes[i].array_buffer) return false;
+		if (submeshes[i].index_buffer != other.submeshes[i].index_buffer) return false;
+	}
+	return true;
+}
+
 Mesh::Mesh(const Model& model) :
 	Mesh()
 {

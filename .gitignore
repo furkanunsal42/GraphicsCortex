@@ -532,7 +532,9 @@ build-obj/windows-Release-x86_64GraphicsCortex/BindlessMaterial.obj
 build-obj/windows-Release-x86_64GraphicsCortex/GraphicsCortex.vcxproj.FileListAbsolute.txt
 build-obj/windows-Release-x86_64GraphicsCortexApp/GraphicsCortexApp.vcxproj.FileListAbsolute.txt
 build-obj/windows-Release-x86_64GraphicsCortexApp/GuiMain2.obj
-GraphicsCortexApp/atlas.png
-build-obj/windows-Release-x86_64GraphicsCortexApp/GuiMainWidgets.obj
-build-obj/windows-Release-x86_64GraphicsCortex/GuiWidget.obj
 build-obj/windows-Release-x86_64GraphicsCortex/DefaultWidgets.obj
+build-obj/windows-Release-x86_64GraphicsCortex/GuiWidget.obj
+build-obj/windows-Release-x86_64GraphicsCortexApp/GuiMainWidgets.obj
+GraphicsCortexApp/atlas.png
+build-obj/windows-Release-x86_64GraphicsCortexApp/BindlessMaterialMain.obj
+build-obj/windows-Release-x86_64GraphicsCortex/UniformBuffer.obj

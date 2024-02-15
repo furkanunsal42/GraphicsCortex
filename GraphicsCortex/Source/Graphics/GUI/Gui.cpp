@@ -711,20 +711,20 @@ _widget_info& Gui::box(unsigned int id, vec2 position, vec2 size, Style style, s
 		text->set_scale(0.02 * text_size);
 		vec2 text_dimentions = text->get_size();
 		if (text_allign_type == Style::Default)
-			text->graphic->set_position(glm::vec3((aabb.position.x) / camera.screen_width, (frame_ref.window_height - text_size) / camera.screen_width, z_index));
+			text->graphic->position = glm::vec3((aabb.position.x) / camera.screen_width, (frame_ref.window_height - text_size) / camera.screen_width, z_index);
 		if (text_allign_type == Style::CenterX)
-			text->graphic->set_position(glm::vec3((aabb.position.x + size.x / 2) / camera.screen_width - text_dimentions.x / 2, (frame_ref.window_height - aabb.position.y - text_size) / camera.screen_width, z_index));
+			text->graphic->position = glm::vec3((aabb.position.x + size.x / 2) / camera.screen_width - text_dimentions.x / 2, (frame_ref.window_height - aabb.position.y - text_size) / camera.screen_width, z_index);
 		if (text_allign_type == Style::CenterY)
-			text->graphic->set_position(glm::vec3((aabb.position.x) / camera.screen_width, (frame_ref.window_height - aabb.position.y - size.y / 2 - text_size / 2) / camera.screen_width, z_index));
+			text->graphic->position = glm::vec3((aabb.position.x) / camera.screen_width, (frame_ref.window_height - aabb.position.y - size.y / 2 - text_size / 2) / camera.screen_width, z_index);
 		if (text_allign_type == Style::CenterXY)
-			text->graphic->set_position(glm::vec3((aabb.position.x + size.x / 2) / camera.screen_width - text_dimentions.x / 2, (frame_ref.window_height - aabb.position.y - size.y / 2 - text_size / 2) / camera.screen_width, z_index));
+			text->graphic->position = glm::vec3((aabb.position.x + size.x / 2) / camera.screen_width - text_dimentions.x / 2, (frame_ref.window_height - aabb.position.y - size.y / 2 - text_size / 2) / camera.screen_width, z_index);
 
 		
 		text->set_color(vec4(text_color.x, text_color.y, text_color.z, 1.0f));
 
 		camera.projection_matrix = glm::ortho(0.0f, 1.0f, 0.0f, (float)frame_ref.window_height / frame_ref.window_width, -100.0f, 100.0f);
-		text->update_default_uniforms(*text->graphic->renderer);
-		camera.update_default_uniforms(*text->graphic->renderer);
+		text->update_default_uniforms(*text->graphic->material->program);
+		camera.update_default_uniforms(*text->graphic->material->program);
 
 		text->render();
 		camera.projection_matrix = glm::ortho(0.0f, (float)frame_ref.window_width, 0.0f, (float)frame_ref.window_height, -100.0f, 100.0f);

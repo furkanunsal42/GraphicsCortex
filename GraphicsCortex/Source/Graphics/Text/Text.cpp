@@ -9,7 +9,7 @@ Text::Text(std::shared_ptr<Font> font, const std::string& text) :
 {
 	if (!_custom_renderer_loaded && !_default_renderer_initialized)
 		_initialize_default_renderer();
-	graphic->load_program(_default_text_renderer);
+	graphic->material->set_program(_default_text_renderer);
 
 	set_text(text);
 }
@@ -19,7 +19,7 @@ Text::Text(std::shared_ptr<Font> font, const std::u16string& text) :
 {
 	if (!_custom_renderer_loaded && !_default_renderer_initialized)
 		_initialize_default_renderer();
-	graphic->load_program(_default_text_renderer);
+	graphic->material->set_program(_default_text_renderer);
 
 	set_text(text);
 }
@@ -29,7 +29,7 @@ Text::Text(std::shared_ptr<Font> font, const std::u32string& text) :
 {
 	if (!_custom_renderer_loaded && !_default_renderer_initialized)
 		_initialize_default_renderer();
-	graphic->load_program(_default_text_renderer);
+	graphic->material->set_program(_default_text_renderer);
 
 	set_text(text);
 }
@@ -42,7 +42,7 @@ Text::Text(std::shared_ptr<Font> font, std::shared_ptr<Program> custom_renderer,
 
 	set_text(text);
 
-	graphic->load_program(custom_renderer);
+	graphic->material->set_program(custom_renderer);
 	_custom_renderer_loaded = true;
 }
 
@@ -54,7 +54,7 @@ Text::Text(std::shared_ptr<Font> font, std::shared_ptr<Program> custom_renderer,
 
 	set_text(text);
 
-	graphic->load_program(custom_renderer);
+	graphic->material->set_program(custom_renderer);
 	_custom_renderer_loaded = true;
 }
 
@@ -66,7 +66,7 @@ Text::Text(std::shared_ptr<Font> font, std::shared_ptr<Program> custom_renderer,
 
 	set_text(text);
 
-	graphic->load_program(custom_renderer);
+	graphic->material->set_program(custom_renderer);
 	_custom_renderer_loaded = true;
 }
 
@@ -363,7 +363,7 @@ void Text::_update_graphic() {
 	indexbuffer->load_buffer(indicies, 3);
 
 	std::shared_ptr<Mesh> text_mesh = std::make_shared<Mesh>(arraybuffer, indexbuffer);
-	graphic->load_model(text_mesh);
+	graphic->set_mesh(text_mesh);
 	_graphic_needs_update = false;
 }
 
@@ -381,11 +381,10 @@ void Text::render(){
 	_font->_font_atlas.texture_slot = 0;
 	_font->_font_atlas.bind();
 
-	update_default_uniforms(*graphic->renderer);
+	update_default_uniforms(*graphic->material->program);
 
 	graphic->update_matrix();
-	graphic->update_uniforms();
-	graphic->update_default_uniforms(*graphic->renderer);
+	graphic->update_default_uniforms(*graphic->material->program);
 	graphic->draw(false);
 }
 

@@ -6,6 +6,28 @@
 #include <memory>
 #include <functional>
 
+namespace {
+	void read_image(const std::string& filename, Image** output_image, unsigned int texture_width, unsigned int texture_height, int desired_channels) {
+		std::ifstream file;
+		file.open(filename);
+		if (file) {
+			*output_image = new Image(filename, desired_channels);
+		}
+		else { // file doesn't exist
+			std::cout << "[ERROR] Image path not found : " << filename << std::endl;
+			*output_image = new Image("../GraphicsCortex/Images/missing_texture.png", desired_channels);
+		}
+
+		if ((*output_image)->get_width() == 0 || (*output_image)->get_height() == 0 || (*output_image)->get_channels() == 0) {
+			std::cout << "[ERROR] Image couldn't be properly imported : " << filename << std::endl;
+			if (*output_image != nullptr) delete* output_image;
+			*output_image = new Image("../GraphicsCortex/Images/missing_texture.png", desired_channels);
+		}
+		if (texture_width != 0 && texture_height != 0)
+			(*output_image)->resize(texture_width, texture_height);
+	}
+}
+
 Texture2D::Texture2D(const Image& image, ColorTextureFormat internal_format, ColorFormat format, Type type, int mipmap_levels, float mipmap_bias) :
 	width(image.get_width()), height(image.get_height()), is_color_texture(true), color_texture_format(internal_format), mipmap_levels(mipmap_levels), mipmap_bias(mipmap_bias)
 {
@@ -13,8 +35,24 @@ Texture2D::Texture2D(const Image& image, ColorTextureFormat internal_format, Col
 	load_data_with_mipmaps(image, format, type);
 }
 
-Texture2D::Texture2D(const std::string& image_filepath, ColorTextureFormat internal_format, ColorFormat format, Type type, int mipmap_levels, float mipmap_bias)
+Texture2D::Texture2D(const std::string& image_filepath, ColorTextureFormat internal_format, ColorFormat format, Type type, int mipmap_levels, float mipmap_bias) :
+	width(0), height(0), is_color_texture(true), color_texture_format(internal_format), mipmap_levels(mipmap_levels), mipmap_bias(mipmap_bias), async_image(nullptr)
 {
+	_generate_texture();
+
+	async_load_happening = true;
+
+	async_image = nullptr;
+	ASSERT(async_image == nullptr);
+	ASSERT(async_loading_thread == nullptr);
+	async_loading_thread = new std::thread(&read_image, image_filepath, &async_image, this->width, this->height, ColorFormat_channels(format));
+
+	post_async_load_function = [this, format, type]() {
+		width = async_image->get_width();
+		height = async_image->get_height();
+		this->load_data_with_mipmaps(*async_image, format, type);
+		};
+
 }
 
 Texture2D::Texture2D(int width, int height, ColorTextureFormat internal_format, int mipmap_levels, float mipmap_bias) :
@@ -125,27 +163,6 @@ void Texture2D::load_data(const Image& image, ColorFormat format, Type type, int
 
 	load_data(image._image_data, format, type, x, y, width, height, mipmap_target);
 }
-namespace {
-	void read_image(const std::string& filename, Image** output_image, unsigned int texture_width, unsigned int texture_height, int desired_channels) {
-		std::ifstream file;
-		file.open(filename);
-		ASSERT(*output_image == nullptr)
-		if (file) {
-			*output_image = new Image(filename, desired_channels);
-		}
-		else { // file doesn't exist
-			std::cout << "[ERROR] Image path not found : " << filename << std::endl;
-			*output_image = new Image("../GraphicsCortex/Images/missing_texture.png", desired_channels);
-		}
-
-		if ((*output_image)->get_width() == 0 || (*output_image)->get_height() == 0 || (*output_image)->get_channels() == 0) {
-			std::cout << "[ERROR] Image couldn't be properly imported : " << filename << std::endl;
-			if (*output_image != nullptr) delete* output_image;
-			*output_image = new Image("../GraphicsCortex/Images/missing_texture.png", desired_channels);
-		}
-		(*output_image)->resize(texture_width, texture_height);
-	}
-}
 
 void Texture2D::load_data_async(const std::string& image_filepath, ColorFormat format, Type type, int mipmap_target)
 {
@@ -160,6 +177,7 @@ void Texture2D::load_data_async(const std::string& image_filepath, ColorFormat f
 	}
 	async_load_happening = true;
 
+	ASSERT(async_image == nullptr);
 	ASSERT(async_loading_thread == nullptr);
 	async_loading_thread = new std::thread(&read_image, image_filepath, &async_image, this->width, this->height, ColorFormat_channels(format));
 	
@@ -225,15 +243,6 @@ void Texture2D::load_data(const Image& image, DepthStencilFormat format, Type ty
 	load_data(image._image_data, format, type, x, y, width, height, mipmap_target);
 }
 
-void Texture2D::load_data_async(const std::string& image_filepath, DepthStencilFormat format, Type type, int mipmap_target)
-{
-}
-
-void Texture2D::load_data_async(const std::string& image_filepath, DepthStencilFormat format, Type type, int x, int y, int width, int height, int mipmap_target)
-{
-}
-
-
 void Texture2D::generate_mipmap()
 {
 	if (!_texture_generated) return;
@@ -283,10 +292,19 @@ void Texture2D::load_data_with_mipmaps(const Image& image, DepthStencilFormat fo
 
 void Texture2D::load_data_width_mipmaps_async(const std::string& image_filepath, ColorFormat format, Type type)
 {
-}
+	if (async_load_happening) {
+		std::cout << "[Thread Error] Texture2D tried to load_data_width_mipmaps_async() while another async load wasn't terminated" << std::endl;
+		ASSERT(false);
+	}
+	async_load_happening = true;
 
-void Texture2D::load_data_width_mipmaps_async(const std::string& image_filepath, DepthStencilFormat format, Type type)
-{
+	ASSERT(async_image == nullptr);
+	ASSERT(async_loading_thread == nullptr);
+	async_loading_thread = new std::thread(&read_image, image_filepath, &async_image, this->width, this->height, ColorFormat_channels(format));
+
+	post_async_load_function = [this, format, type]() {
+		this->load_data_with_mipmaps(*async_image, format, type);
+		};
 }
 
 void Texture2D::wait_async_load()
@@ -294,13 +312,13 @@ void Texture2D::wait_async_load()
 	if (async_load_happening == false) return;
 	ASSERT(async_loading_thread != nullptr);
 	ASSERT(post_async_load_function != nullptr);
-	ASSERT(async_image == nullptr);
 	
 	async_loading_thread->join();
 	post_async_load_function();
 	post_async_load_function = nullptr;
 	delete async_loading_thread;
 	delete async_image;
+	async_image = nullptr;
 	async_load_happening = false;
 }
 
@@ -341,6 +359,13 @@ void Texture2D::_allocate_texture()
 	if (!_texture_generated) return;
 	if (_texture_allocated) return;
 
+	if (width >> mipmap_levels == 0 || height >> mipmap_levels == 0 || mipmap_levels >= sizeof(int) * 8) {
+		int old_mipmap_levels = mipmap_levels;
+		if (width >> mipmap_levels == 0 || mipmap_levels >= sizeof(int) * 8) mipmap_levels = std::log2(width);
+		if (height >> mipmap_levels == 0 || mipmap_levels >= sizeof(int) * 8) mipmap_levels = std::log2(height);
+		std::cout << "[OpenGL Warning] Texture2D with size (" << width << ", " << height << ") treid to load " << old_mipmap_levels << " mipmap levels, mipmap levels reducing to " << mipmap_levels << std::endl;;
+ 	}
+	
 	GLCall(glTextureStorage2D(id, mipmap_levels, _get_gl_internal_format(), width, height));
 	_create_handle();
 	_texture_allocated = true;
