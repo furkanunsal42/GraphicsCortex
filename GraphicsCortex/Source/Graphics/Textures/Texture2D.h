@@ -25,10 +25,10 @@ public:
 	Texture2D() = delete;
 	Texture2D(const Texture2D& other) = delete;
 	
-	Texture2D(const Image& image, ColorTextureFormat internal_format, ColorFormat format, Type type, int mipmap_levels = 1, float mipmap_bias = 0.0f);
-	Texture2D(const std::string& image_filepath, ColorTextureFormat internal_format, ColorFormat format, Type type, int mipmap_levels = 1, float mipmap_bias = 0.0f);
-	Texture2D(int width, int height, ColorTextureFormat internal_format, int mipmap_levels = 1, float mipmap_bias = 0.0f);
-	Texture2D(int width, int height, DepthStencilTextureFormat internal_format, int mipmap_levels = 1, float mipmap_bias = 0.0f);
+	Texture2D(const Image& image, ColorTextureFormat internal_format, ColorFormat format, Type type, int mipmap_levels = 1, float mipmap_bias = 0.0f, int multisample = 0);
+	Texture2D(const std::string& image_filepath, ColorTextureFormat internal_format, ColorFormat format, Type type, int mipmap_levels = 1, float mipmap_bias = 0.0f, int multisample = 0);
+	Texture2D(int width, int height, ColorTextureFormat internal_format, int mipmap_levels = 1, float mipmap_bias = 0.0f, int multisample = 0);
+	Texture2D(int width, int height, DepthStencilTextureFormat internal_format, int mipmap_levels = 1, float mipmap_bias = 0.0f, int multisample = 0);
 	~Texture2D();
 	void release();
 
@@ -116,7 +116,8 @@ public:
 	int query_compressed_image_size(int mipmap_level);
 
 private:
-	int target = GL_TEXTURE_2D;
+	unsigned int target = GL_TEXTURE_2D;
+	unsigned int multisample_amount = 0;
 	
 	int width;
 	int height;

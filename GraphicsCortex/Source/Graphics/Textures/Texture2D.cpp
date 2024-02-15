@@ -28,15 +28,15 @@ namespace {
 	}
 }
 
-Texture2D::Texture2D(const Image& image, ColorTextureFormat internal_format, ColorFormat format, Type type, int mipmap_levels, float mipmap_bias) :
-	width(image.get_width()), height(image.get_height()), is_color_texture(true), color_texture_format(internal_format), mipmap_levels(mipmap_levels), mipmap_bias(mipmap_bias)
+Texture2D::Texture2D(const Image& image, ColorTextureFormat internal_format, ColorFormat format, Type type, int mipmap_levels, float mipmap_bias, int multisample) :
+	width(image.get_width()), height(image.get_height()), is_color_texture(true), color_texture_format(internal_format), mipmap_levels(mipmap_levels), mipmap_bias(mipmap_bias), multisample_amount(multisample)
 {
 	_generate_texture();
 	load_data_with_mipmaps(image, format, type);
 }
 
-Texture2D::Texture2D(const std::string& image_filepath, ColorTextureFormat internal_format, ColorFormat format, Type type, int mipmap_levels, float mipmap_bias) :
-	width(0), height(0), is_color_texture(true), color_texture_format(internal_format), mipmap_levels(mipmap_levels), mipmap_bias(mipmap_bias), async_image(nullptr)
+Texture2D::Texture2D(const std::string& image_filepath, ColorTextureFormat internal_format, ColorFormat format, Type type, int mipmap_levels, float mipmap_bias, int multisample) :
+	width(0), height(0), is_color_texture(true), color_texture_format(internal_format), mipmap_levels(mipmap_levels), mipmap_bias(mipmap_bias), async_image(nullptr), multisample_amount(multisample)
 {
 	_generate_texture();
 
@@ -55,14 +55,14 @@ Texture2D::Texture2D(const std::string& image_filepath, ColorTextureFormat inter
 
 }
 
-Texture2D::Texture2D(int width, int height, ColorTextureFormat internal_format, int mipmap_levels, float mipmap_bias) :
-	width(width), height(height), is_color_texture(true), color_texture_format(internal_format), mipmap_levels(mipmap_levels), mipmap_bias(mipmap_bias)
+Texture2D::Texture2D(int width, int height, ColorTextureFormat internal_format, int mipmap_levels, float mipmap_bias, int multisample) :
+	width(width), height(height), is_color_texture(true), color_texture_format(internal_format), mipmap_levels(mipmap_levels), mipmap_bias(mipmap_bias), multisample_amount(multisample)
 {
 	_generate_texture();
 }
 
-Texture2D::Texture2D(int width, int height, DepthStencilTextureFormat internal_format, int mipmap_levels, float mipmap_bias) :
-	width(width), height(height), is_color_texture(false), depth_stencil_texture_format(internal_format), mipmap_levels(mipmap_levels), mipmap_bias(mipmap_bias)
+Texture2D::Texture2D(int width, int height, DepthStencilTextureFormat internal_format, int mipmap_levels, float mipmap_bias, int multisample) :
+	width(width), height(height), is_color_texture(false), depth_stencil_texture_format(internal_format), mipmap_levels(mipmap_levels), mipmap_bias(mipmap_bias), multisample_amount(multisample)
 {
 	_generate_texture();
 }
@@ -329,6 +329,8 @@ void Texture2D::_set_texture_parameters()
 		ASSERT(false);
 	}
 
+	if (multisample_amount != 0) return;
+
 	GLCall(glTextureParameteri(id, GL_TEXTURE_BASE_LEVEL, mipmap_begin_level));
 	GLCall(glTextureParameterf(id, GL_TEXTURE_LOD_BIAS, mipmap_bias));
 	
@@ -350,6 +352,7 @@ void Texture2D::_set_texture_parameters()
 void Texture2D::_generate_texture()
 {
 	if (_texture_generated) return;
+	if (multisample_amount != 0) target = GL_TEXTURE_2D_MULTISAMPLE;
 	GLCall(glCreateTextures(target, 1, &id));
 	_texture_generated = true;
 }
@@ -366,7 +369,18 @@ void Texture2D::_allocate_texture()
 		std::cout << "[OpenGL Warning] Texture2D with size (" << width << ", " << height << ") treid to load " << old_mipmap_levels << " mipmap levels, mipmap levels reducing to " << mipmap_levels << std::endl;;
  	}
 	
-	GLCall(glTextureStorage2D(id, mipmap_levels, _get_gl_internal_format(), width, height));
+	if (multisample_amount != 0 && mipmap_levels != 1) {
+		std::cout << "[OpenGL Warning] Texture2D tried to _allocate_texture() with multisample_amount = " << multisample_amount << ", mipmap_levels = " << mipmap_levels << " but multismapled textures cannot have mipmaps, mipmaps_levels set to 1" << std::endl;
+		mipmap_levels = 1;
+	}
+
+	if (multisample_amount == 0) {
+		GLCall(glTextureStorage2D(id, mipmap_levels, _get_gl_internal_format(), width, height));
+	}
+	else {
+		GLCall(glTextureStorage2DMultisample(id, multisample_amount, _get_gl_internal_format(), width, height, GL_TRUE));
+	}
+	
 	_create_handle();
 	_texture_allocated = true;
 }

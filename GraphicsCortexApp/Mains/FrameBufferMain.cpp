@@ -1,7 +1,7 @@
 #include "GraphicsCortex.h"
 
 int main() {
-	Frame frame(1920, 1080, "FrameBuffer App", 0, 0, true, true, true, Frame::CallbackLevel::LOW, false);
+	Frame frame(1920, 1080, "FrameBuffer App", 4, 0, true, true, true, Frame::CallbackLevel::LOW, false);
 	Scene scene(frame);
 	scene.camera->fov = 110;
 	scene.camera->max_distance = 1000;
@@ -20,8 +20,8 @@ int main() {
 
 	scene.add(dragon);
 
-	std::shared_ptr<Texture2D> texture = std::make_shared<Texture2D>(1920, 1080, Texture2D::ColorTextureFormat::RGBA8, 1, 0);
-	std::shared_ptr<Texture2D> depth_stencil_texture = std::make_shared<Texture2D>(1920, 1080, Texture2D::DepthStencilTextureFormat::DEPTH24_STENCIL8, 1, 0);
+	std::shared_ptr<Texture2D> texture = std::make_shared<Texture2D>(1920, 1080, Texture2D::ColorTextureFormat::RGBA8, 1, 0, 4);
+	std::shared_ptr<Texture2D> depth_stencil_texture = std::make_shared<Texture2D>(1920, 1080, Texture2D::DepthStencilTextureFormat::DEPTH24_STENCIL8, 1, 0, 4);
 	Framebuffer2 framebuffer;
 	framebuffer.attach_color(0, texture, 0);
 	framebuffer.attach_depth_stencil(depth_stencil_texture, 0);
