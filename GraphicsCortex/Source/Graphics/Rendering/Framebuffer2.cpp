@@ -41,7 +41,7 @@ unsigned int Framebuffer2::Filter_to_OpenGL(Filter filter)
 
 Framebuffer2::Framebuffer2()
 {
-	GLCall(glGenFramebuffers(1, &id));
+	GLCall(glCreateFramebuffers(1, &id));
 	_framebuffer_generated = true;
 }
 
@@ -107,8 +107,7 @@ void Framebuffer2::attach_color(int slot, std::shared_ptr<Texture2D> texture2d, 
 
 	_color_attachments[slot] = texture2d;
 	texture2d->_allocate_texture();
-	bind_draw();
-	GLCall(glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + slot, texture2d->target, texture2d->id, mipmap_level));
+	GLCall(glNamedFramebufferTexture(id, GL_COLOR_ATTACHMENT0 + slot, texture2d->id, mipmap_level));
 	_draw_buffers_are_updated = false;
 }
 
@@ -125,8 +124,7 @@ void Framebuffer2::attach_depth(std::shared_ptr<Texture2D> texture2d, int mipmap
 
 	_depth_attachment = texture2d;
 	texture2d->_allocate_texture();
-	bind_draw();
-	GLCall(glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, texture2d->target, texture2d->id, mipmap_level));
+	GLCall(glNamedFramebufferTexture(id, GL_DEPTH_ATTACHMENT, texture2d->id, mipmap_level));
 }
 
 void Framebuffer2::attach_stencil(std::shared_ptr<Texture2D> texture2d, int mipmap_level)
@@ -142,8 +140,7 @@ void Framebuffer2::attach_stencil(std::shared_ptr<Texture2D> texture2d, int mipm
 
 	_stencil_attachment = texture2d;
 	texture2d->_allocate_texture();
-	bind_draw(); 
-	GLCall(glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, texture2d->target, texture2d->id, mipmap_level));
+	GLCall(glNamedFramebufferTexture(id, GL_STENCIL_ATTACHMENT, texture2d->id, mipmap_level));
 }
 
 void Framebuffer2::attach_depth_stencil(std::shared_ptr<Texture2D> texture2d, int mipmap_level)
@@ -159,8 +156,7 @@ void Framebuffer2::attach_depth_stencil(std::shared_ptr<Texture2D> texture2d, in
 
 	_stencil_attachment = texture2d;
 	texture2d->_allocate_texture();
-	bind_draw();
-	GLCall(glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, texture2d->target, texture2d->id, mipmap_level));
+	GLCall(glNamedFramebufferTexture(id, GL_DEPTH_STENCIL_ATTACHMENT, texture2d->id, mipmap_level));
 }
 
 void Framebuffer2::set_read_buffer(int slot)
@@ -175,8 +171,7 @@ void Framebuffer2::set_read_buffer(int slot)
 	}
 
 	_active_read_buffer = slot;
-	bind_read();
-	GLCall(glReadBuffer(GL_COLOR_ATTACHMENT0 + slot));
+	GLCall(glNamedFramebufferReadBuffer(id, GL_COLOR_ATTACHMENT0 + slot););
 	_active_read_buffer_ever_set = true;
 }
 
@@ -223,9 +218,7 @@ void Framebuffer2::update_activated_draw_buffers()
 		buffer_enums[i] = GL_COLOR_ATTACHMENT0 + slot;
 		i++;
 	}
-
-	bind_draw();
-	GLCall(glDrawBuffers(count, (unsigned int*)buffer_enums));
+	GLCall(glNamedFramebufferDrawBuffers(id, count, (unsigned int*)buffer_enums));
 	_draw_buffers_are_updated = true;
 }
 
@@ -240,16 +233,12 @@ void Framebuffer2::blit(Framebuffer2& target, int self_x0, int self_y0, int self
 	update_activated_draw_buffers();
 	target.update_activated_draw_buffers();
 
-	bind_read();
-	target.bind_draw();
-	GLCall(glBlitFramebuffer(self_x0, self_y0, self_x1, self_y1, target_x0, target_y0, target_x1, target_y1, Channel_to_OpenGL(channel), Filter_to_OpenGL(filter)));
+	GLCall(glBlitNamedFramebuffer(id, target.id, self_x0, self_y0, self_x1, self_y1, target_x0, target_y0, target_x1, target_y1, Channel_to_OpenGL(channel), Filter_to_OpenGL(filter)));
 }
 
 void Framebuffer2::blit_to_screen(int self_x0, int self_y0, int self_x1, int self_y1, int target_x0, int target_y0, int target_x1, int target_y1, Channel channel, Filter filter)
 {
 	update_activated_draw_buffers();
-	bind_read();
-	bind_screen_draw();
-	GLCall(glBlitFramebuffer(self_x0, self_y0, self_x1, self_y1, target_x0, target_y0, target_x1, target_y1, Channel_to_OpenGL(channel), Filter_to_OpenGL(filter)));
+	GLCall(glBlitNamedFramebuffer(id, 0, self_x0, self_y0, self_x1, self_y1, target_x0, target_y0, target_x1, target_y1, Channel_to_OpenGL(channel), Filter_to_OpenGL(filter)));
 }
 
