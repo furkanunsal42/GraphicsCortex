@@ -10,7 +10,6 @@ namespace {
 	void read_image(const std::string& filename, Image** output_image, unsigned int texture_width, unsigned int texture_height, int desired_channels) {
 		std::ifstream file;
 		file.open(filename);
-		ASSERT(*output_image == nullptr);
 		if (file) {
 			*output_image = new Image(filename, desired_channels);
 		}
@@ -37,14 +36,15 @@ Texture2D::Texture2D(const Image& image, ColorTextureFormat internal_format, Col
 }
 
 Texture2D::Texture2D(const std::string& image_filepath, ColorTextureFormat internal_format, ColorFormat format, Type type, int mipmap_levels, float mipmap_bias) :
-	width(0), height(0), is_color_texture(true), color_texture_format(internal_format), mipmap_levels(mipmap_levels), mipmap_bias(mipmap_bias)
+	width(0), height(0), is_color_texture(true), color_texture_format(internal_format), mipmap_levels(mipmap_levels), mipmap_bias(mipmap_bias), async_image(nullptr)
 {
 	_generate_texture();
 
 	async_load_happening = true;
 
-	ASSERT(async_loading_thread == nullptr);
 	async_image = nullptr;
+	ASSERT(async_image == nullptr);
+	ASSERT(async_loading_thread == nullptr);
 	async_loading_thread = new std::thread(&read_image, image_filepath, &async_image, this->width, this->height, ColorFormat_channels(format));
 
 	post_async_load_function = [this, format, type]() {
@@ -177,6 +177,7 @@ void Texture2D::load_data_async(const std::string& image_filepath, ColorFormat f
 	}
 	async_load_happening = true;
 
+	ASSERT(async_image == nullptr);
 	ASSERT(async_loading_thread == nullptr);
 	async_loading_thread = new std::thread(&read_image, image_filepath, &async_image, this->width, this->height, ColorFormat_channels(format));
 	
@@ -297,6 +298,7 @@ void Texture2D::load_data_width_mipmaps_async(const std::string& image_filepath,
 	}
 	async_load_happening = true;
 
+	ASSERT(async_image == nullptr);
 	ASSERT(async_loading_thread == nullptr);
 	async_loading_thread = new std::thread(&read_image, image_filepath, &async_image, this->width, this->height, ColorFormat_channels(format));
 
@@ -310,7 +312,6 @@ void Texture2D::wait_async_load()
 	if (async_load_happening == false) return;
 	ASSERT(async_loading_thread != nullptr);
 	ASSERT(post_async_load_function != nullptr);
-	//ASSERT(async_image == nullptr);
 	
 	async_loading_thread->join();
 	post_async_load_function();
