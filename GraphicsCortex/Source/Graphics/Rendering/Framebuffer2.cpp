@@ -61,6 +61,8 @@ void Framebuffer2::release()
 
 void Framebuffer2::bind_read_draw()
 {
+	_check_framebuffer_status(GL_FRAMEBUFFER);
+
 	if (!_framebuffer_generated) {
 		std::cout << "[OpenGL Error] Framebuffer treid to bind_read_draw() but resource was released" << std::endl;
 		ASSERT(false);
@@ -71,6 +73,8 @@ void Framebuffer2::bind_read_draw()
 
 void Framebuffer2::bind_read()
 {
+	_check_framebuffer_status(GL_READ_FRAMEBUFFER);
+
 	if (!_framebuffer_generated) {
 		std::cout << "[OpenGL Error] Framebuffer treid to bind_read() but resource was released" << std::endl;
 		ASSERT(false);
@@ -81,6 +85,8 @@ void Framebuffer2::bind_read()
 
 void Framebuffer2::bind_draw()
 {
+	_check_framebuffer_status(GL_DRAW_FRAMEBUFFER);
+
 	if (!_framebuffer_generated) {
 		std::cout << "[OpenGL Error] Framebuffer treid to bind_draw() but resource was released" << std::endl;
 		ASSERT(false);
@@ -111,6 +117,27 @@ void Framebuffer2::attach_color(int slot, std::shared_ptr<Texture2D> texture2d, 
 	_draw_buffers_are_updated = false;
 }
 
+void Framebuffer2::attach_color(int slot, std::shared_ptr<Renderbuffer2> render_buffer)
+{
+	if (slot < 0 || slot >= _color_attachments.size()) {
+		std::cout << "[OpenGL Error] Framebuffer tried to attach() to slot " << slot << " but there are maximum of " << _color_attachments.size() << " attacment slots in a Framebuffer" << std::endl;
+		ASSERT(false);
+	}
+	if (render_buffer == nullptr) {
+		std::cout << "[OpenGL Error] Framebuffer treid to attach() but render_buffer was nullptr" << std::endl;
+		ASSERT(false);
+	}
+	if (!render_buffer->_texture_generated) {
+		std::cout << "[OpenGL Error] Framebuffer treid to attach() but render_buffer was released" << std::endl;
+		ASSERT(false);
+	}
+
+	_color_attachments[slot] = render_buffer;
+	render_buffer->_allocate_texture();
+	GLCall(glNamedFramebufferRenderbuffer(id, GL_COLOR_ATTACHMENT0 + slot, render_buffer->target, render_buffer->id));
+	_draw_buffers_are_updated = false;
+}
+
 void Framebuffer2::attach_depth(std::shared_ptr<Texture2D> texture2d, int mipmap_level)
 {
 	if (texture2d == nullptr) {
@@ -125,6 +152,22 @@ void Framebuffer2::attach_depth(std::shared_ptr<Texture2D> texture2d, int mipmap
 	_depth_attachment = texture2d;
 	texture2d->_allocate_texture();
 	GLCall(glNamedFramebufferTexture(id, GL_DEPTH_ATTACHMENT, texture2d->id, mipmap_level));
+}
+
+void Framebuffer2::attach_depth(std::shared_ptr<Renderbuffer2> render_buffer)
+{
+	if (render_buffer == nullptr) {
+		std::cout << "[OpenGL Error] Framebuffer treid to attach_depth() but render_buffer was nullptr" << std::endl;
+		ASSERT(false);
+	}
+	if (!render_buffer->_texture_generated) {
+		std::cout << "[OpenGL Error] Framebuffer treid to attach_depth() but render_buffer was released" << std::endl;
+		ASSERT(false);
+	}
+
+	_depth_attachment = render_buffer;
+	render_buffer->_allocate_texture();
+	GLCall(glNamedFramebufferRenderbuffer(id, GL_DEPTH_ATTACHMENT, render_buffer->target, render_buffer->id));
 }
 
 void Framebuffer2::attach_stencil(std::shared_ptr<Texture2D> texture2d, int mipmap_level)
@@ -143,6 +186,22 @@ void Framebuffer2::attach_stencil(std::shared_ptr<Texture2D> texture2d, int mipm
 	GLCall(glNamedFramebufferTexture(id, GL_STENCIL_ATTACHMENT, texture2d->id, mipmap_level));
 }
 
+void Framebuffer2::attach_stencil(std::shared_ptr<Renderbuffer2> render_buffer)
+{
+	if (render_buffer == nullptr) {
+		std::cout << "[OpenGL Error] Framebuffer treid to attach_stencil() but render_buffer was nullptr" << std::endl;
+		ASSERT(false);
+	}
+	if (!render_buffer->_texture_generated) {
+		std::cout << "[OpenGL Error] Framebuffer treid to attach_stencil() but render_buffer was released" << std::endl;
+		ASSERT(false);
+	}
+
+	_depth_attachment = render_buffer;
+	render_buffer->_allocate_texture();
+	GLCall(glNamedFramebufferRenderbuffer(id, GL_STENCIL_ATTACHMENT, render_buffer->target, render_buffer->id));
+}
+
 void Framebuffer2::attach_depth_stencil(std::shared_ptr<Texture2D> texture2d, int mipmap_level)
 {
 	if (texture2d == nullptr) {
@@ -159,6 +218,22 @@ void Framebuffer2::attach_depth_stencil(std::shared_ptr<Texture2D> texture2d, in
 	GLCall(glNamedFramebufferTexture(id, GL_DEPTH_STENCIL_ATTACHMENT, texture2d->id, mipmap_level));
 }
 
+void Framebuffer2::attach_depth_stencil(std::shared_ptr<Renderbuffer2> render_buffer)
+{
+	if (render_buffer == nullptr) {
+		std::cout << "[OpenGL Error] Framebuffer treid to attach_depth_stencil() but render_buffer was nullptr" << std::endl;
+		ASSERT(false);
+	}
+	if (!render_buffer->_texture_generated) {
+		std::cout << "[OpenGL Error] Framebuffer treid to attach_depth_stencil() but render_buffer was released" << std::endl;
+		ASSERT(false);
+	}
+
+	_depth_attachment = render_buffer;
+	render_buffer->_allocate_texture();
+	GLCall(glNamedFramebufferRenderbuffer(id, GL_DEPTH_STENCIL_ATTACHMENT, render_buffer->target, render_buffer->id));
+}
+
 void Framebuffer2::set_read_buffer(int slot)
 {
 	if (slot < 0 || slot >= _color_attachments.size()) {
@@ -171,7 +246,7 @@ void Framebuffer2::set_read_buffer(int slot)
 	}
 
 	_active_read_buffer = slot;
-	GLCall(glNamedFramebufferReadBuffer(id, GL_COLOR_ATTACHMENT0 + slot););
+	GLCall(glNamedFramebufferReadBuffer(id, GL_COLOR_ATTACHMENT0 + slot));
 	_active_read_buffer_ever_set = true;
 }
 
@@ -242,3 +317,20 @@ void Framebuffer2::blit_to_screen(int self_x0, int self_y0, int self_x1, int sel
 	GLCall(glBlitNamedFramebuffer(id, 0, self_x0, self_y0, self_x1, self_y1, target_x0, target_y0, target_x1, target_y1, Channel_to_OpenGL(channel), Filter_to_OpenGL(filter)));
 }
 
+void Framebuffer2::_check_framebuffer_status(unsigned int gl_bind_target)
+{
+	ASSERT(_framebuffer_generated);
+
+	GLCall(unsigned int error_status = glCheckFramebufferStatus(gl_bind_target));
+	switch (error_status) {
+	case GL_FRAMEBUFFER_COMPLETE: return;
+	case GL_FRAMEBUFFER_UNDEFINED:						{std::cout << "[OpenGL Error] Framebuffer failed to create : GL_FRAMEBUFFER_UNDEFINED" << std::endl;						return;}
+	case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:			{std::cout << "[OpenGL Error] Framebuffer failed to create : GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT" << std::endl;			return;}
+	case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:	{std::cout << "[OpenGL Error] Framebuffer failed to create : GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT" << std::endl;	return;}
+	case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER:			{std::cout << "[OpenGL Error] Framebuffer failed to create : GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER" << std::endl;			return;}
+	case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER:			{std::cout << "[OpenGL Error] Framebuffer failed to create : GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER" << std::endl;			return;}
+	case GL_FRAMEBUFFER_UNSUPPORTED:					{std::cout << "[OpenGL Error] Framebuffer failed to create : GL_FRAMEBUFFER_UNSUPPORTED" << std::endl;						return;}
+	case GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE:			{std::cout << "[OpenGL Error] Framebuffer failed to create : GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE" << std::endl;			return;}
+	case GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS:		{std::cout << "[OpenGL Error] Framebuffer failed to create : GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS" << std::endl;			return;}
+	}
+}

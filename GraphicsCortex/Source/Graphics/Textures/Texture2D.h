@@ -12,7 +12,7 @@ class Texture2D : public TextureBase2{
 	friend BindlessMaterial;
 	friend Framebuffer2;
 public:
-
+	int64_t texture_handle = 0;
 	int mipmap_begin_level = 0;
 	float mipmap_bias = 0.0f;
 

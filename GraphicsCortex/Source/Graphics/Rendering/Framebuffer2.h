@@ -5,7 +5,7 @@
 #include "TextureArray.h"
 #include "TextureCubeMap.h"
 #include "Texture3D.h"
-#include "RenderBuffer.h"
+#include "Renderbuffer.h"
 #include <array>
 #include <unordered_set>
 
@@ -41,21 +41,21 @@ public:
 	void bind_read();
 	void bind_draw();
 
-	//void attach(int slot, std::shared_ptr<1D> texture1d);
+	//void attach_color(int slot, std::shared_ptr<1D> texture1d);
 	void attach_color(int slot, std::shared_ptr<Texture2D> texture2d, int mipmap_level = 0);
-	//void attach(int slot, std::shared_ptr<TextureArray2> texture_array);
-	//void attach(int slot, std::shared_ptr<TextureCubeMap> texture_cube_map);
-	//void attach(int slot, std::shared_ptr<Texture3D> texture3d);
-	//void attach(int slot, std::shared_ptr<RenderBuffer2> render_buffer);
+	//void attach_color(int slot, std::shared_ptr<TextureArray2> texture_array);
+	//void attach_color(int slot, std::shared_ptr<TextureCubeMap> texture_cube_map);
+	//void attach_color(int slot, std::shared_ptr<Texture3D> texture3d);
+	void attach_color(int slot, std::shared_ptr<Renderbuffer2> render_buffer);
 
 	void attach_depth(std::shared_ptr<Texture2D> texture2d, int mipmap_level = 0);
-	//void attach_depth(RenderBuffer2 render_buffer);
+	void attach_depth(std::shared_ptr<Renderbuffer2> render_buffer);
 
 	void attach_stencil(std::shared_ptr<Texture2D> texture2d, int mipmap_level = 0);
-	//void attach_stencil(RenderBuffer2 render_buffer);
+	void attach_stencil(std::shared_ptr<Renderbuffer2> render_buffer);
 
 	void attach_depth_stencil(std::shared_ptr<Texture2D> texture2d, int mipmap_level = 0);
-	//void attach_depth_stencil(RenderBuffer2 render_buffer);
+	void attach_depth_stencil(std::shared_ptr<Renderbuffer2> render_buffer);
 
 	void set_read_buffer(int slot);
 
@@ -83,4 +83,6 @@ private:
 	std::shared_ptr<TextureBase2> _depth_attachment;
 	std::shared_ptr<TextureBase2> _stencil_attachment;
 	std::shared_ptr<TextureBase2> _depth_stencil_attachment;
+
+	void _check_framebuffer_status(unsigned int gl_bind_target);
 };

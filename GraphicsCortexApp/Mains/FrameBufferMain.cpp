@@ -20,11 +20,13 @@ int main() {
 
 	scene.add(dragon);
 
-	std::shared_ptr<Texture2D> texture = std::make_shared<Texture2D>(1920, 1080, Texture2D::ColorTextureFormat::RGBA8, 1, 0, 4);
-	std::shared_ptr<Texture2D> depth_stencil_texture = std::make_shared<Texture2D>(1920, 1080, Texture2D::DepthStencilTextureFormat::DEPTH24_STENCIL8, 1, 0, 4);
+	//std::shared_ptr<Texture2D> color_texture = std::make_shared<Texture2D>(1920, 1080, Texture2D::ColorTextureFormat::RGBA8, 1, 0, 4);
+	//std::shared_ptr<Texture2D> depth_stencil_texture = std::make_shared<Texture2D>(1920, 1080, Texture2D::DepthStencilTextureFormat::DEPTH24_STENCIL8, 1, 0, 4);
+	std::shared_ptr<Renderbuffer2> color_texture = std::make_shared<Renderbuffer2>(1920, 1080, Renderbuffer2::ColorTextureFormat::RGBA8, 0);
+	std::shared_ptr<Renderbuffer2> depth_stencil_texture = std::make_shared<Renderbuffer2>(1920, 1080, Renderbuffer2::DepthStencilTextureFormat::DEPTH24_STENCIL8, 0);
 	Framebuffer2 framebuffer;
-	framebuffer.attach_color(0, texture, 0);
-	framebuffer.attach_depth_stencil(depth_stencil_texture, 0);
+	framebuffer.attach_color(0, color_texture);
+	framebuffer.attach_depth_stencil(depth_stencil_texture);
 	framebuffer.activate_draw_buffer(0);
 
 	while (frame.is_running()) {
@@ -36,6 +38,6 @@ int main() {
 		scene.camera->handle_movements(frame.window, deltatime);
 		scene.render();
 
-		framebuffer.blit_to_screen(0, 0, 1920, 1080, 0, 0, 1920, 1080, Framebuffer2::Channel::COLOR_DEPTH_STENCIL, Framebuffer2::Filter::NEAREST);
+		framebuffer.blit_to_screen(0, 0, 1920, 1080, 0, 0, 1920, 1080, Framebuffer2::Channel::COLOR, Framebuffer2::Filter::NEAREST);
 	}
 }

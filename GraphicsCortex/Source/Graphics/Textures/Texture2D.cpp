@@ -83,11 +83,11 @@ void Texture2D::release()
 void Texture2D::bind()
 {
 	if (!_texture_generated) {
-		std::cout << "[OpenGL Error] released texture tried to bind()" << std::endl;
+		std::cout << "[OpenGL Error] released Texture2D tried to bind()" << std::endl;
 		ASSERT(false);
 	}
-	std::cout << "[OpenGL Warning] Bindless Texture tried to bind" << std::endl;
-	//GLCall(glBindTexture(target, id));
+	std::cout << "[OpenGL Warning] Bindless Texture2D tried to bind" << std::endl;
+	GLCall(glBindTexture(target, id));
 }
 
 void Texture2D::bind(int texture_slot)
@@ -102,15 +102,15 @@ void Texture2D::bind(int texture_slot)
 
 void Texture2D::unbind()
 {
-	std::cout << "[OpenGL Warning] Bindless Texture tried to unbind" << std::endl;
+	std::cout << "[OpenGL Warning] Bindless Texture2D tried to unbind" << std::endl;
 
-	//GLCall(glBindTexture(target, 0));
+	GLCall(glBindTexture(target, 0));
 }
 
 void Texture2D::load_data(const void* image, ColorFormat format, Type type, int mipmap_target)
 {
 	if (!_texture_generated) {
-		std::cout << "[OpenGL Error] released texture tried to load_data()" << std::endl;
+		std::cout << "[OpenGL Error] released Texture2D tried to load_data()" << std::endl;
 		ASSERT(false);
 	}
 	_allocate_texture();
@@ -123,7 +123,7 @@ void Texture2D::load_data(const void* image, ColorFormat format, Type type, int 
 void Texture2D::load_data(const void* image, ColorFormat format, Type type, int x, int y, int custom_width, int custom_height, int mipmap_target)
 {
 	if (!_texture_generated) {
-		std::cout << "[OpenGL Error] released texture tried to load_data()" << std::endl;
+		std::cout << "[OpenGL Error] released Texture2D tried to load_data()" << std::endl;
 		ASSERT(false);
 	}
 	_allocate_texture();
