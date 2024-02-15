@@ -6,9 +6,11 @@
 #include <thread>
 
 class BindlessMaterial;
+class Framebuffer2;
 
 class Texture2D : public TextureBase2{
 	friend BindlessMaterial;
+	friend Framebuffer2;
 public:
 
 	int mipmap_begin_level = 0;

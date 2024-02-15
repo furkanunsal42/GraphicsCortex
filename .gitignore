@@ -538,3 +538,4 @@ build-obj/windows-Release-x86_64GraphicsCortexApp/GuiMainWidgets.obj
 GraphicsCortexApp/atlas.png
 build-obj/windows-Release-x86_64GraphicsCortexApp/BindlessMaterialMain.obj
 build-obj/windows-Release-x86_64GraphicsCortex/UniformBuffer.obj
+build-obj/windows-Release-x86_64GraphicsCortexApp/FrameBufferMain.obj

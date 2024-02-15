@@ -646,8 +646,8 @@ _widget_info& Gui::box(unsigned int id, vec2 position, vec2 size, Style style, s
 	AABB2 aabb(position, size);
 	if (widget_graphic_table.find(id) == widget_graphic_table.end()) {
 		widget_graphic_table[id] = std::make_shared<Graphic>();
-		widget_graphic_table[id]->load_model(std::make_shared<Mesh>());
-		widget_graphic_table[id]->load_program(Gui::gui_program);
+		widget_graphic_table[id]->set_mesh(std::make_shared<Mesh>());
+		widget_graphic_table[id]->material->set_program(Gui::gui_program);
 	}
 
 	std::shared_ptr<Graphic>& graphic = widget_graphic_table[id];
