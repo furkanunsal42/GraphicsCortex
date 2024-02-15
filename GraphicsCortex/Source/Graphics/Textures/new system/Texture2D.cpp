@@ -53,7 +53,6 @@ Texture2D::Texture2D(const std::string& image_filepath, ColorTextureFormat inter
 		this->load_data_with_mipmaps(*async_image, format, type);
 		};
 
-	wait_async_load();
 }
 
 Texture2D::Texture2D(int width, int height, ColorTextureFormat internal_format, int mipmap_levels, float mipmap_bias) :
@@ -311,7 +310,7 @@ void Texture2D::wait_async_load()
 	if (async_load_happening == false) return;
 	ASSERT(async_loading_thread != nullptr);
 	ASSERT(post_async_load_function != nullptr);
-	ASSERT(async_image == nullptr);
+	//ASSERT(async_image == nullptr);
 	
 	async_loading_thread->join();
 	post_async_load_function();
@@ -359,6 +358,13 @@ void Texture2D::_allocate_texture()
 	if (!_texture_generated) return;
 	if (_texture_allocated) return;
 
+	if (width >> mipmap_levels == 0 || height >> mipmap_levels == 0 || mipmap_levels >= sizeof(int) * 8) {
+		int old_mipmap_levels = mipmap_levels;
+		if (width >> mipmap_levels == 0 || mipmap_levels >= sizeof(int) * 8) mipmap_levels = std::log2(width);
+		if (height >> mipmap_levels == 0 || mipmap_levels >= sizeof(int) * 8) mipmap_levels = std::log2(height);
+		std::cout << "[OpenGL Warning] Texture2D with size (" << width << ", " << height << ") treid to load " << old_mipmap_levels << " mipmap levels, mipmap levels reducing to " << mipmap_levels << std::endl;;
+ 	}
+	
 	GLCall(glTextureStorage2D(id, mipmap_levels, _get_gl_internal_format(), width, height));
 	_create_handle();
 	_texture_allocated = true;

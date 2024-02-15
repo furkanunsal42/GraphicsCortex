@@ -13,6 +13,6 @@ layout(std140) uniform textures{
 
 void main(){
 	vec4 color = texture(bindless_textures[int(round(tex_index_color))], tex_coords);
-
+	if (color.a < 0.05) discard;
 	frag_color = color;
- }
+}

@@ -60,7 +60,7 @@ int main() {
 		std::shared_ptr<Mesh> right_wheel = std::make_shared<Mesh>(chassis_right_wheel_model);
 
 		std::shared_ptr<BindlessMaterial> tire_material_s = std::make_shared<BindlessMaterial>(program);
-		tire_material_s->add_texture("color_texture", std::make_shared<Texture2D>("../GraphicsCortex/Images/cartextures/911_22_930_tire_BaseColor.png", Texture2D::ColorTextureFormat::RGBA8, Texture2D::ColorFormat::RGBA, Texture2D::Type::UNSIGNED_BYTE));
+		//tire_material_s->add_texture("color_texture", std::make_shared<Texture2D>("../GraphicsCortex/Images/cartextures/911_22_930_tire_BaseColor.png", Texture2D::ColorTextureFormat::RGBA8, Texture2D::ColorFormat::RGBA, Texture2D::Type::UNSIGNED_BYTE));
 
 		std::shared_ptr<BindlessMaterial> chassis_material_s = AssetImporter::generate_material("../GraphicsCortex/Models/teducar/teduCar.fbx", program);
 

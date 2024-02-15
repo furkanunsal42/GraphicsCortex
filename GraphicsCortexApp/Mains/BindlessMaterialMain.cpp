@@ -18,14 +18,15 @@ int main() {
 	std::shared_ptr<Mesh> mesh;
 	std::shared_ptr<BindlessMaterial> material;
 	{
-		Model dragon_model = AssetImporter::generate_model("../GraphicsCortex/Models/circuit/nogaro.obj", 1, Model::ALL);
+		//Model dragon_model = AssetImporter::generate_model("../GraphicsCortex/Models/City/edited_city.obj", 1, Model::ALL);
+		Model dragon_model("../GraphicsCortex/Models/circuit/nogaro.obj", 1, Model::ALL);
 		mesh = std::make_shared<Mesh>(dragon_model);
 		material = AssetImporter::generate_material("../GraphicsCortex/Models/circuit/nogaro.obj", bindless_program);
 	}
 	
 	AssetImporter::clear_ram_all();
 	std::shared_ptr<Graphic> graphic = std::make_shared<Graphic>(mesh, material);
-	//graphic->rotation = glm::vec3(-glm::pi<float>() / 2, 0, 0);
+	//graphic->rotation = glm::vec3(-glm::pi<float>() / 2, 0, 0);d
 	scene.add(graphic);
 
 	while (frame.is_running()) {
