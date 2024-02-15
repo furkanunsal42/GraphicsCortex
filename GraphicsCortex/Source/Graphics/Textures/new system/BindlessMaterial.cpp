@@ -57,12 +57,14 @@ void BindlessMaterial::update_uniforms()
 		ASSERT(false);
 	}
 	
+	program->attach_uniform_buffer(texture_buffer_name, _texture_uniform_buffer);
+
 	for (auto iterator = _textures.begin(); iterator != _textures.end(); iterator++) {
 		int location = iterator->first;
 		std::shared_ptr<Texture2D>& texture = iterator->second;
 
 		if (texture->async_load_happening) texture->wait_async_load();
-		if (!texture->_texture_handle_created) texture->_allocate_texture();
+		if (!texture->_texture_handle_created) texture->_create_handle();
 		
 		char* handle = new char[4*4];
 		for (int i = 0; i < 4 * 4; i++)

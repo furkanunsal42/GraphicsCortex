@@ -27,7 +27,6 @@ void UniformBuffer::bind(int bind_target)
 		ASSERT(false);
 	}
 	upload_data();
-
 	GLCall(glBindBufferBase(_target, bind_target, id));
 	bound_slot = bind_target;
 	ever_bound = true;
@@ -49,7 +48,6 @@ void UniformBuffer::bind(int bind_target, int offset, int size)
 	}
 	
 	upload_data();
-
 	GLCall(glBindBufferRange(_target, bind_target, id, offset, offset + size));
 	bound_slot = bind_target;
 	ever_bound = true;

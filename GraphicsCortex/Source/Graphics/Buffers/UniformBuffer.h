@@ -10,7 +10,7 @@
 class UniformBuffer {
 public:
 	unsigned int id;
-	unsigned int bound_slot;
+	unsigned int bound_slot = 0;
 	bool ever_bound = false;
 
 	UniformBuffer();

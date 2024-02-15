@@ -10,24 +10,36 @@ int main() {
 	uniform_buffer->push_variable<glm::mat4>();
 	uniform_buffer->push_variable<glm::mat4>();
 
-	//std::shared_ptr<Program> bindless_program = std::make_shared<Program>(Shader("../GraphicsCortex/Custom Shaders/Texture.vert", "../GraphicsCortex/Custom Shaders/Texture.frag"));
 	std::shared_ptr<Program> bindless_program = std::make_shared<Program>(Shader("../GraphicsCortex/Source/GLSL/TextureArray.vert", "../GraphicsCortex/Source/GLSL/TextureArray.frag"));
 
 	//bindless_program->attach_uniform_buffer("camera_matricies", uniform_buffer);
 
-	std::shared_ptr<Mesh> mesh;
-	std::shared_ptr<BindlessMaterial> material;
+	std::shared_ptr<Mesh> circuit_mesh;
+	std::shared_ptr<BindlessMaterial> circuit_material;
 	{
-		//Model dragon_model = AssetImporter::generate_model("../GraphicsCortex/Models/City/edited_city.obj", 1, Model::ALL);
-		Model dragon_model("../GraphicsCortex/Models/circuit/nogaro.obj", 1, Model::ALL);
-		mesh = std::make_shared<Mesh>(dragon_model);
-		material = AssetImporter::generate_material("../GraphicsCortex/Models/circuit/nogaro.obj", bindless_program);
+		Model circuit_model("../GraphicsCortex/Models/circuit/nogaro.obj", 1, Model::ALL);
+		circuit_mesh = std::make_shared<Mesh>(circuit_model);
+		circuit_material = AssetImporter::generate_material("../GraphicsCortex/Models/circuit/nogaro.obj", bindless_program);
 	}
 	
 	AssetImporter::clear_ram_all();
-	std::shared_ptr<Graphic> graphic = std::make_shared<Graphic>(mesh, material);
+	std::shared_ptr<Graphic> circuit = std::make_shared<Graphic>(circuit_mesh, circuit_material);
 	//graphic->rotation = glm::vec3(-glm::pi<float>() / 2, 0, 0);d
-	scene.add(graphic);
+
+	std::shared_ptr<Mesh> dragon_mesh;
+	std::shared_ptr<BindlessMaterial> dragon_material;
+	{
+		Model dragon_model("../GraphicsCortex/Models/dragon_new/dragon_new.fbx", 1, Model::ALL);
+		dragon_mesh = std::make_shared<Mesh>(dragon_model);
+		dragon_material = AssetImporter::generate_material("../GraphicsCortex/Models/dragon_new/dragon_new.fbx", bindless_program);
+	}
+
+	AssetImporter::clear_ram_all();
+	std::shared_ptr<Graphic> dragon = std::make_shared<Graphic>(dragon_mesh, dragon_material);
+	dragon->rotation = glm::vec3(-glm::pi<float>() / 2, 0, 0);
+
+	scene.add(dragon);
+	scene.add(circuit);
 
 	while (frame.is_running()) {
 		double deltatime = frame.handle_window();
