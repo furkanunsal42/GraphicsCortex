@@ -185,6 +185,9 @@ struct AttributeData {
 	int layout_index;
 };
 
+class Texture2D;
+class TextureCubeMap;
+
 class Program {
 private:
 	unsigned int compile_shader(unsigned int type, const std::string& shader_source);
@@ -248,6 +251,10 @@ public:
 		return;
 	}
 
+
+	void update_uniform(const std::string& name, Texture2D& texture2d);
+	void update_uniform(const std::string& name, TextureCubeMap& texturecubemap);
+
 	void update_uniform(const std::string& name, const int& a, const int& b, const int& c, const int& d);
 	void update_uniform(const std::string& name, const float& a, const float& b, const float& c, const float& d);
 	void update_uniform(const std::string& name, const int& a, const int& b, const int& c);
@@ -262,6 +269,9 @@ public:
 	void update_uniform(const std::string& name, const glm::vec4& a);
 	void update_uniform(const std::string& name, const glm::vec3& a);
 	void update_uniform(const std::string& name, const glm::vec2& a);
+
+	void update_uniform(unsigned int uniform_id, Texture2D& texture2d);
+	void update_uniform(unsigned int uniform_id, TextureCubeMap& texturecubemap);
 
 	void update_uniform(unsigned int uniform_id, const int& a, const int& b, const int& c, const int& d);
 	void update_uniform(unsigned int uniform_id, const float& a, const float& b, const float& c, const float& d);

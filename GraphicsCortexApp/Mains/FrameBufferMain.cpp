@@ -29,7 +29,7 @@ int main() {
 	cubemap->load_data_async(TextureCubeMap::Face::BACK,    "../GraphicsCortex/Images/CubeMap/Sky/nz.jpg", TextureCubeMap::ColorFormat::RGBA, TextureCubeMap::Type::UNSIGNED_BYTE, 0);
 	cubemap->wait_async_load();
 
-	//glProgramUniformHandleui64ARB(bindless_program->id, glGetUniformLocation(bindless_program->id, "cubemap"), cubemap->texture_handle);
+	//bindless_program->update_uniform("cubemap", *cubemap);
 
 	//std::shared_ptr<Texture2D> color_texture = std::make_shared<Texture2D>(1920, 1080, Texture2D::ColorTextureFormat::RGBA8, 1, 0, 4);
 	//std::shared_ptr<Texture2D> depth_stencil_texture = std::make_shared<Texture2D>(1920, 1080, Texture2D::DepthStencilTextureFormat::DEPTH24_STENCIL8, 1, 0, 4);

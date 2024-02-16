@@ -349,13 +349,14 @@ void TextureCubeMap::_allocate_texture()
 
 	GLCall(glTextureStorage2D(id, mipmap_levels, gl_internal_format, width, height));
 
-	_create_handle();
 	_texture_allocated = true;
+	_create_handle();
 }
 
 void TextureCubeMap::_create_handle()
 {
 	if (_texture_handle_created) return;
+	if (!_texture_allocated) _allocate_texture();
 
 	_set_texture_parameters();
 

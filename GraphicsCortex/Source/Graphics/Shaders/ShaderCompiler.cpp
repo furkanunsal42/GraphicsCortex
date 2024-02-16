@@ -11,6 +11,9 @@
 #include "DirectoryUtils.h"
 #include <unordered_set>
 
+#include "Texture2D.h"
+#include "TextureCubeMap.h"
+
 Shader::Shader() { ; }
 
 Shader::Shader(const std::string& target_file)
@@ -498,6 +501,20 @@ void Program::unbind() {
 	GLCall(glUseProgram(0));
 }
 
+void Program::update_uniform(const std::string& name, Texture2D& texture2d)
+{
+	if (!texture2d._texture_handle_created) texture2d._allocate_texture();
+	GLCall(unsigned int location = glGetUniformLocation(id, name.c_str()));
+	GLCall(glProgramUniformHandleui64ARB(id, location, texture2d.texture_handle));
+}
+
+void Program::update_uniform(const std::string& name, TextureCubeMap& texturecubemap)
+{
+	if (!texturecubemap._texture_handle_created) texturecubemap._allocate_texture();
+	GLCall(unsigned int location = glGetUniformLocation(id, name.c_str()));
+	GLCall(glProgramUniformHandleui64ARB(id, location, texturecubemap.texture_handle));
+}
+
 void Program::update_uniform(const std::string& name, const int& a, const int& b, const int& c, const int& d) {
 	bind();
 	GLCall(glUniform4i(uniforms[name].index, a, b, c, d));
@@ -556,6 +573,18 @@ void Program::update_uniform(const std::string& name, const glm::vec2& a) {
 }
 
 // ------------------------------------
+
+void Program::update_uniform(unsigned int uniform_id, Texture2D& texture2d)
+{
+	if (!texture2d._texture_handle_created) texture2d._allocate_texture();
+	GLCall(glProgramUniformHandleui64ARB(id, uniform_id, texture2d.texture_handle));
+}
+
+void Program::update_uniform(unsigned int uniform_id, TextureCubeMap& texturecubemap)
+{
+	if (!texturecubemap._texture_handle_created) texturecubemap._allocate_texture();
+	GLCall(glProgramUniformHandleui64ARB(id, uniform_id, texturecubemap.texture_handle));
+}
 
 void Program::update_uniform(unsigned int uniform_id, const int& a, const int& b, const int& c, const int& d) {
 	bind();

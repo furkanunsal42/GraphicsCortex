@@ -6,9 +6,11 @@
 #include <thread>
 #include <array>
 
+class Program;
 class Framebuffer2;
 
 class TextureCubeMap : public TextureBase2 {
+	friend Program;
 	friend Framebuffer2;
 public:
 	enum Face {

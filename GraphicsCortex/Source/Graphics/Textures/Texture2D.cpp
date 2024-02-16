@@ -381,13 +381,14 @@ void Texture2D::_allocate_texture()
 		GLCall(glTextureStorage2DMultisample(id, multisample_amount, _get_gl_internal_format(), width, height, GL_TRUE));
 	}
 	
-	_create_handle();
 	_texture_allocated = true;
+	_create_handle();
 }
 
 void Texture2D::_create_handle()
 {
 	if (_texture_handle_created) return;
+	if (!_texture_allocated) _allocate_texture();
 
 	_set_texture_parameters();
 
