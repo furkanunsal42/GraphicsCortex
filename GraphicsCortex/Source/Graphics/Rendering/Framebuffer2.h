@@ -41,10 +41,10 @@ public:
 	void bind_read();
 	void bind_draw();
 
-	//void attach_color(int slot, std::shared_ptr<1D> texture1d);
+	//void attach_color(int slot, std::shared_ptr<Texture1D> texture1d);
 	void attach_color(int slot, std::shared_ptr<Texture2D> texture2d, int mipmap_level = 0);
 	//void attach_color(int slot, std::shared_ptr<TextureArray2> texture_array);
-	//void attach_color(int slot, std::shared_ptr<TextureCubeMap> texture_cube_map);
+	void attach_color(int slot, std::shared_ptr<TextureCubeMap> texture_cube_map, TextureCubeMap::Face face, int mipmap = 0);
 	//void attach_color(int slot, std::shared_ptr<Texture3D> texture3d);
 	void attach_color(int slot, std::shared_ptr<Renderbuffer2> render_buffer);
 

@@ -39,6 +39,7 @@
 #include "Default_Programs.h"
 #include "FrameBuffer.h"
 
+#include "SkyBox.h"
 #include "Framebuffer2.h"
 
 #include "CubeMap.h"

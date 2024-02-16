@@ -20,14 +20,13 @@ int main() {
 
 	scene.add(dragon);
 
-	std::shared_ptr<TextureCubeMap> cubemap = std::make_shared<TextureCubeMap>(2048, 2048, TextureCubeMap::ColorTextureFormat::RGBA8, 1, 0);
-	cubemap->load_data_async(TextureCubeMap::Face::RIGHT,   "../GraphicsCortex/Images/CubeMap/Sky/px.jpg", TextureCubeMap::ColorFormat::RGBA, TextureCubeMap::Type::UNSIGNED_BYTE, 0);
-	cubemap->load_data_async(TextureCubeMap::Face::LEFT,    "../GraphicsCortex/Images/CubeMap/Sky/nx.jpg", TextureCubeMap::ColorFormat::RGBA, TextureCubeMap::Type::UNSIGNED_BYTE, 0);
-	cubemap->load_data_async(TextureCubeMap::Face::UP,      "../GraphicsCortex/Images/CubeMap/Sky/py.jpg", TextureCubeMap::ColorFormat::RGBA, TextureCubeMap::Type::UNSIGNED_BYTE, 0);
-	cubemap->load_data_async(TextureCubeMap::Face::DOWN,    "../GraphicsCortex/Images/CubeMap/Sky/ny.jpg", TextureCubeMap::ColorFormat::RGBA, TextureCubeMap::Type::UNSIGNED_BYTE, 0);
-	cubemap->load_data_async(TextureCubeMap::Face::FRONT,   "../GraphicsCortex/Images/CubeMap/Sky/pz.jpg", TextureCubeMap::ColorFormat::RGBA, TextureCubeMap::Type::UNSIGNED_BYTE, 0);
-	cubemap->load_data_async(TextureCubeMap::Face::BACK,    "../GraphicsCortex/Images/CubeMap/Sky/nz.jpg", TextureCubeMap::ColorFormat::RGBA, TextureCubeMap::Type::UNSIGNED_BYTE, 0);
-	cubemap->wait_async_load();
+	std::shared_ptr<SkyBox> skybox = std::make_shared<SkyBox>();
+	skybox->cubemap->load_data_async(TextureCubeMap::Face::RIGHT,   "../GraphicsCortex/Images/CubeMap/Sky/px.jpg", TextureCubeMap::ColorFormat::RGBA, TextureCubeMap::Type::UNSIGNED_BYTE, 0);
+	skybox->cubemap->load_data_async(TextureCubeMap::Face::LEFT,    "../GraphicsCortex/Images/CubeMap/Sky/nx.jpg", TextureCubeMap::ColorFormat::RGBA, TextureCubeMap::Type::UNSIGNED_BYTE, 0);
+	skybox->cubemap->load_data_async(TextureCubeMap::Face::UP,      "../GraphicsCortex/Images/CubeMap/Sky/py.jpg", TextureCubeMap::ColorFormat::RGBA, TextureCubeMap::Type::UNSIGNED_BYTE, 0);
+	skybox->cubemap->load_data_async(TextureCubeMap::Face::DOWN,    "../GraphicsCortex/Images/CubeMap/Sky/ny.jpg", TextureCubeMap::ColorFormat::RGBA, TextureCubeMap::Type::UNSIGNED_BYTE, 0);
+	skybox->cubemap->load_data_async(TextureCubeMap::Face::FRONT,   "../GraphicsCortex/Images/CubeMap/Sky/pz.jpg", TextureCubeMap::ColorFormat::RGBA, TextureCubeMap::Type::UNSIGNED_BYTE, 0);
+	skybox->cubemap->load_data_async(TextureCubeMap::Face::BACK,    "../GraphicsCortex/Images/CubeMap/Sky/nz.jpg", TextureCubeMap::ColorFormat::RGBA, TextureCubeMap::Type::UNSIGNED_BYTE, 0);
 
 	//bindless_program->update_uniform("cubemap", *cubemap);
 
@@ -48,6 +47,8 @@ int main() {
 
 		scene.camera->handle_movements(frame.window, deltatime);
 		scene.render();
+
+		skybox->render(*scene.camera);
 
 		framebuffer.blit_to_screen(0, 0, 1920, 1080, 0, 0, 1920, 1080, Framebuffer2::Channel::COLOR, Framebuffer2::Filter::NEAREST);
 	}

@@ -11,31 +11,31 @@ namespace {
 		std::ifstream file;
 		file.open(filename);
 		if (file) {
-			*output_image = new Image(filename, desired_channels);
+			*output_image = new Image(filename, desired_channels, false);
 		}
 		else { // file doesn't exist
 			std::cout << "[ERROR] Image path not found : " << filename << std::endl;
-			*output_image = new Image("../GraphicsCortex/Images/missing_texture.png", desired_channels);
+			*output_image = new Image("../GraphicsCortex/Images/missing_texture.png", desired_channels, false);
 		}
 
 		if ((*output_image)->get_width() == 0 || (*output_image)->get_height() == 0 || (*output_image)->get_channels() == 0) {
 			std::cout << "[ERROR] Image couldn't be properly imported : " << filename << std::endl;
 			if (*output_image != nullptr) delete* output_image;
-			*output_image = new Image("../GraphicsCortex/Images/missing_texture.png", desired_channels);
+			*output_image = new Image("../GraphicsCortex/Images/missing_texture.png", desired_channels, false);
 		}
 		if (texture_width != 0 && texture_height != 0)
 			(*output_image)->resize(texture_width, texture_height);
 	}
 }
 
-TextureCubeMap::TextureCubeMap(int width, int height, ColorTextureFormat internal_format, int mipmap_levels, float mipmap_bias) :
-	width(width), height(height), color_texture_format(internal_format), is_color_texture(true), mipmap_levels(mipmap_levels), mipmap_bias(mipmap_bias)
+TextureCubeMap::TextureCubeMap(int size, ColorTextureFormat internal_format, int mipmap_levels, float mipmap_bias) :
+	width(size), height(size), color_texture_format(internal_format), is_color_texture(true), mipmap_levels(mipmap_levels), mipmap_bias(mipmap_bias)
 {
 	_generate_texture();
 }
 
-TextureCubeMap::TextureCubeMap(int width, int height, DepthStencilTextureFormat internal_format, int mipmap_levels, float mipmap_bias) : 
-	width(width), height(height), depth_stencil_texture_format(internal_format), is_color_texture(false), mipmap_levels(mipmap_levels), mipmap_bias(mipmap_bias)
+TextureCubeMap::TextureCubeMap(int size, DepthStencilTextureFormat internal_format, int mipmap_levels, float mipmap_bias) : 
+	width(size), height(size), depth_stencil_texture_format(internal_format), is_color_texture(false), mipmap_levels(mipmap_levels), mipmap_bias(mipmap_bias)
 {
 	_generate_texture();
 }

@@ -117,6 +117,10 @@ void Framebuffer2::attach_color(int slot, std::shared_ptr<Texture2D> texture2d, 
 	_draw_buffers_are_updated = false;
 }
 
+void Framebuffer2::attach_color(int slot, std::shared_ptr<TextureCubeMap> texturecubemap, TextureCubeMap::Face face, int mipmap) {
+
+}
+
 void Framebuffer2::attach_color(int slot, std::shared_ptr<Renderbuffer2> render_buffer)
 {
 	if (slot < 0 || slot >= _color_attachments.size()) {

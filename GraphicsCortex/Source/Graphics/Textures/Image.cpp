@@ -38,8 +38,9 @@ void Image::_read_image(const std::string& file_path, int desired_channels) {
 		ASSERT(false);
 	}
 
-	stbi_set_flip_vertically_on_load(_vertical_flip);
-
+	//stbi_set_flip_vertically_on_load(_vertical_flip);	// causes wrong flags to be used while running in multithreaded mode
+	stbi_set_flip_vertically_on_load_thread(_vertical_flip);	// may not link if thread-local variables aren't supported by compiler
+	
 	_image_data = stbi_load(file_path.c_str(), &_width, &_height, &_channels, desired_channels);
 	
 	int w;
