@@ -20,6 +20,17 @@ int main() {
 
 	scene.add(dragon);
 
+	std::shared_ptr<TextureCubeMap> cubemap = std::make_shared<TextureCubeMap>(2048, 2048, TextureCubeMap::ColorTextureFormat::RGBA8, 1, 0);
+	cubemap->load_data_async(TextureCubeMap::Face::RIGHT,   "../GraphicsCortex/Images/CubeMap/Sky/px.jpg", TextureCubeMap::ColorFormat::RGBA, TextureCubeMap::Type::UNSIGNED_BYTE, 0);
+	cubemap->load_data_async(TextureCubeMap::Face::LEFT,    "../GraphicsCortex/Images/CubeMap/Sky/nx.jpg", TextureCubeMap::ColorFormat::RGBA, TextureCubeMap::Type::UNSIGNED_BYTE, 0);
+	cubemap->load_data_async(TextureCubeMap::Face::UP,      "../GraphicsCortex/Images/CubeMap/Sky/py.jpg", TextureCubeMap::ColorFormat::RGBA, TextureCubeMap::Type::UNSIGNED_BYTE, 0);
+	cubemap->load_data_async(TextureCubeMap::Face::DOWN,    "../GraphicsCortex/Images/CubeMap/Sky/ny.jpg", TextureCubeMap::ColorFormat::RGBA, TextureCubeMap::Type::UNSIGNED_BYTE, 0);
+	cubemap->load_data_async(TextureCubeMap::Face::FRONT,   "../GraphicsCortex/Images/CubeMap/Sky/pz.jpg", TextureCubeMap::ColorFormat::RGBA, TextureCubeMap::Type::UNSIGNED_BYTE, 0);
+	cubemap->load_data_async(TextureCubeMap::Face::BACK,    "../GraphicsCortex/Images/CubeMap/Sky/nz.jpg", TextureCubeMap::ColorFormat::RGBA, TextureCubeMap::Type::UNSIGNED_BYTE, 0);
+	cubemap->wait_async_load();
+
+	//glProgramUniformHandleui64ARB(bindless_program->id, glGetUniformLocation(bindless_program->id, "cubemap"), cubemap->texture_handle);
+
 	//std::shared_ptr<Texture2D> color_texture = std::make_shared<Texture2D>(1920, 1080, Texture2D::ColorTextureFormat::RGBA8, 1, 0, 4);
 	//std::shared_ptr<Texture2D> depth_stencil_texture = std::make_shared<Texture2D>(1920, 1080, Texture2D::DepthStencilTextureFormat::DEPTH24_STENCIL8, 1, 0, 4);
 	std::shared_ptr<Renderbuffer2> color_texture = std::make_shared<Renderbuffer2>(1920, 1080, Renderbuffer2::ColorTextureFormat::RGBA8, 0);

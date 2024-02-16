@@ -16,7 +16,7 @@ public:
 		DOWN	= 1,
 		RIGHT	= 2,
 		LEFT	= 3,
-		FORWARD	= 4,
+		FRONT	= 4,
 		BACK	= 5,
 	};
 

@@ -372,8 +372,8 @@ int TextureCubeMap::get_gl_face_index(Face face)
 	case Face::LEFT:	return 1;
 	case Face::UP:		return 2;
 	case Face::DOWN:	return 3;
-	case Face::BACK:	return 4;
-	case Face::FORWARD:	return 5;
+	case Face::FRONT:	return 4;
+	case Face::BACK:	return 5;
 	}
 	ASSERT(false);
 	return -1;
