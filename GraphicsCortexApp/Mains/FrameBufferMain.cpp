@@ -21,6 +21,7 @@ int main() {
 	scene.add(dragon);
 
 	std::shared_ptr<SkyBox> skybox = std::make_shared<SkyBox>();
+	skybox->cubemap = std::make_shared<TextureCubeMap>(2048, TextureCubeMap::ColorTextureFormat::RGBA8, 1, 0);
 	skybox->cubemap->load_data_async(TextureCubeMap::Face::RIGHT,   "../GraphicsCortex/Images/CubeMap/Sky/px.jpg", TextureCubeMap::ColorFormat::RGBA, TextureCubeMap::Type::UNSIGNED_BYTE, 0);
 	skybox->cubemap->load_data_async(TextureCubeMap::Face::LEFT,    "../GraphicsCortex/Images/CubeMap/Sky/nx.jpg", TextureCubeMap::ColorFormat::RGBA, TextureCubeMap::Type::UNSIGNED_BYTE, 0);
 	skybox->cubemap->load_data_async(TextureCubeMap::Face::UP,      "../GraphicsCortex/Images/CubeMap/Sky/py.jpg", TextureCubeMap::ColorFormat::RGBA, TextureCubeMap::Type::UNSIGNED_BYTE, 0);
@@ -35,11 +36,13 @@ int main() {
 	std::shared_ptr<Renderbuffer2> color_texture = std::make_shared<Renderbuffer2>(1920, 1080, Renderbuffer2::ColorTextureFormat::RGBA8, 0);
 	std::shared_ptr<Renderbuffer2> depth_stencil_texture = std::make_shared<Renderbuffer2>(1920, 1080, Renderbuffer2::DepthStencilTextureFormat::DEPTH24_STENCIL8, 0);
 	Framebuffer2 framebuffer;
-	framebuffer.attach_color(0, color_texture);
+	//framebuffer.attach_color(0, color_texture);
+	framebuffer.attach_color(1, skybox->cubemap, TextureCubeMap::Face::FRONT, 0);
 	framebuffer.attach_depth_stencil(depth_stencil_texture);
-	framebuffer.activate_draw_buffer(0);
 
 	while (frame.is_running()) {
+		framebuffer.deactivate_all_draw_buffers();
+		framebuffer.activate_draw_buffer(1);
 		framebuffer.bind_draw();
 		double deltatime = frame.handle_window();
 		frame.clear_window();
@@ -49,7 +52,8 @@ int main() {
 		scene.render();
 
 		skybox->render(*scene.camera);
-
+		
+		framebuffer.set_read_buffer(1);
 		framebuffer.blit_to_screen(0, 0, 1920, 1080, 0, 0, 1920, 1080, Framebuffer2::Channel::COLOR, Framebuffer2::Filter::NEAREST);
 	}
 }

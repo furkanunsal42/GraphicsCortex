@@ -61,6 +61,8 @@ void Framebuffer2::release()
 
 void Framebuffer2::bind_read_draw()
 {
+	update_activated_draw_buffers();
+
 	_check_framebuffer_status(GL_FRAMEBUFFER);
 
 	if (!_framebuffer_generated) {
@@ -85,6 +87,8 @@ void Framebuffer2::bind_read()
 
 void Framebuffer2::bind_draw()
 {
+	update_activated_draw_buffers();
+
 	_check_framebuffer_status(GL_DRAW_FRAMEBUFFER);
 
 	if (!_framebuffer_generated) {
@@ -99,15 +103,15 @@ void Framebuffer2::bind_draw()
 void Framebuffer2::attach_color(int slot, std::shared_ptr<Texture2D> texture2d, int mipmap_level)
 {
 	if (slot < 0 || slot >= _color_attachments.size()) {
-		std::cout << "[OpenGL Error] Framebuffer tried to attach() to slot " << slot << " but there are maximum of " << _color_attachments.size() << " attacment slots in a Framebuffer" << std::endl;
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_color() to slot " << slot << " but there are maximum of " << _color_attachments.size() << " attacment slots in a Framebuffer" << std::endl;
 		ASSERT(false);
 	}
 	if (texture2d == nullptr) {
-		std::cout << "[OpenGL Error] Framebuffer treid to attach() but texture was nullptr" << std::endl;
+		std::cout << "[OpenGL Error] Framebuffer treid to attach_color() but texture was nullptr" << std::endl;
 		ASSERT(false);
 	}
 	if (!texture2d->_texture_generated) {
-		std::cout << "[OpenGL Error] Framebuffer treid to attach() but texture was released" << std::endl;
+		std::cout << "[OpenGL Error] Framebuffer treid to attach_color() but texture was released" << std::endl;
 		ASSERT(false);
 	}
 
@@ -118,21 +122,38 @@ void Framebuffer2::attach_color(int slot, std::shared_ptr<Texture2D> texture2d, 
 }
 
 void Framebuffer2::attach_color(int slot, std::shared_ptr<TextureCubeMap> texturecubemap, TextureCubeMap::Face face, int mipmap) {
+	if (slot < 0 || slot >= _color_attachments.size()) {
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_color() to slot " << slot << " but there are maximum of " << _color_attachments.size() << " attacment slots in a Framebuffer" << std::endl;
+		ASSERT(false);
+	}
+	if (texturecubemap == nullptr) {
+		std::cout << "[OpenGL Error] Framebuffer treid to attach_color() but TextureCubeMap was nullptr" << std::endl;
+		ASSERT(false);
+	}
+	if (!texturecubemap->_texture_generated) {
+		std::cout << "[OpenGL Error] Framebuffer treid to attach_color() but TextureCubeMap was released" << std::endl;
+		ASSERT(false);
+	}
 
+	_color_attachments[slot] = texturecubemap;
+	texturecubemap->_allocate_texture();
+	
+	GLCall(glNamedFramebufferTextureLayer(id, GL_COLOR_ATTACHMENT0 + slot, texturecubemap->id, mipmap, TextureCubeMap::get_gl_face_index(face)));
+	_draw_buffers_are_updated = false;
 }
 
 void Framebuffer2::attach_color(int slot, std::shared_ptr<Renderbuffer2> render_buffer)
 {
 	if (slot < 0 || slot >= _color_attachments.size()) {
-		std::cout << "[OpenGL Error] Framebuffer tried to attach() to slot " << slot << " but there are maximum of " << _color_attachments.size() << " attacment slots in a Framebuffer" << std::endl;
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_color() to slot " << slot << " but there are maximum of " << _color_attachments.size() << " attacment slots in a Framebuffer" << std::endl;
 		ASSERT(false);
 	}
 	if (render_buffer == nullptr) {
-		std::cout << "[OpenGL Error] Framebuffer treid to attach() but render_buffer was nullptr" << std::endl;
+		std::cout << "[OpenGL Error] Framebuffer treid to attach_color() but render_buffer was nullptr" << std::endl;
 		ASSERT(false);
 	}
 	if (!render_buffer->_texture_generated) {
-		std::cout << "[OpenGL Error] Framebuffer treid to attach() but render_buffer was released" << std::endl;
+		std::cout << "[OpenGL Error] Framebuffer treid to attach_color() but render_buffer was released" << std::endl;
 		ASSERT(false);
 	}
 
@@ -289,19 +310,19 @@ void Framebuffer2::update_activated_draw_buffers()
 	if (_draw_buffers_are_updated) return;
 
 	int count = _active_draw_buffers.size();
-	int* buffer_enums = new int[count];
+	unsigned int* buffer_enums = new unsigned int[count];
 	int i = 0;
 	for (auto iterator = _active_draw_buffers.begin(); iterator != _active_draw_buffers.end(); iterator++) {
 		int slot = *iterator;
 		ASSERT(i < count);
-		buffer_enums[i] = GL_COLOR_ATTACHMENT0 + slot;
+		buffer_enums[i] = GL_COLOR_ATTACHMENT0 + (unsigned int)slot;
 		i++;
 	}
-	GLCall(glNamedFramebufferDrawBuffers(id, count, (unsigned int*)buffer_enums));
+	GLCall(glNamedFramebufferDrawBuffers(id, count, buffer_enums));
 	_draw_buffers_are_updated = true;
 }
 
-void Framebuffer2::clear_draw_buffer()
+void Framebuffer2::deactivate_all_draw_buffers()
 {
 	_active_draw_buffers.clear();
 	_draw_buffers_are_updated = false;

@@ -62,7 +62,7 @@ public:
 	void activate_draw_buffer(int slot);
 	void deactivate_draw_buffer(int slot);
 	void update_activated_draw_buffers();
-	void clear_draw_buffer();
+	void deactivate_all_draw_buffers();
 
 	void blit(Framebuffer2& target, int self_x0, int self_y0, int self_x1, int self_y1, int target_x0, int target_y0, int target_x1, int target_y1, Channel channel, Filter filter);
 	void blit_to_screen(int self_x0, int self_y0, int self_x1, int self_y1, int target_x0, int target_y0, int target_x1, int target_y1, Channel channel, Filter filter);
