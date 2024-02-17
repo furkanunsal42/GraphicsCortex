@@ -123,6 +123,7 @@ public:
 	bool query_is_compressed(int mipmap_level);
 	int query_compressed_image_size(int mipmap_level);
 
+	int static get_gl_face_index(Face face);
 private:
 	unsigned int target = GL_TEXTURE_CUBE_MAP;
 
@@ -155,7 +156,5 @@ private:
 	std::array<std::function<void()>, 6> post_async_load_functions = { [](){},[](){},[](){},[](){},[](){},[](){} };
 	std::array<std::thread*, 6> async_loading_threads = { nullptr,nullptr,nullptr,nullptr,nullptr,nullptr };
 	std::array<Image*, 6> async_images = { nullptr,nullptr,nullptr,nullptr,nullptr,nullptr };
-
-	int static get_gl_face_index(Face face);
 };
 

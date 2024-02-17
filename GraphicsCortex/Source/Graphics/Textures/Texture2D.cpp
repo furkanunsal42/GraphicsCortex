@@ -92,12 +92,17 @@ void Texture2D::bind()
 
 void Texture2D::bind(int texture_slot)
 {
-	GLCall(glBindTextureUnit(texture_slot, id));
+	if (!_texture_generated) {
+		std::cout << "[OpenGL Error] released Texture2D tried to bind()" << std::endl;
+		ASSERT(false);
+	}
 
 	if (!_texture_allocated) {
 		std::cout << "[OpenGL Warning] Texture2D tried to bind(int) but no user data was loaded yet" << std::endl;
 		_allocate_texture();
 	}
+
+	GLCall(glBindTextureUnit(texture_slot, id));
 }
 
 void Texture2D::unbind()
@@ -325,7 +330,7 @@ void Texture2D::wait_async_load()
 void Texture2D::_set_texture_parameters()
 {
 	if (_texture_handle_created) {
-		std::cout << "[OpenGL Error] texture tried to _set_texture_parameters() but texture handle was already created" << std::endl;
+		std::cout << "[OpenGL Error] Texture2D tried to _set_texture_parameters() but texture handle was already created" << std::endl;
 		ASSERT(false);
 	}
 
@@ -366,7 +371,7 @@ void Texture2D::_allocate_texture()
 		int old_mipmap_levels = mipmap_levels;
 		if (width >> mipmap_levels == 0 || mipmap_levels >= sizeof(int) * 8) mipmap_levels = std::log2(width);
 		if (height >> mipmap_levels == 0 || mipmap_levels >= sizeof(int) * 8) mipmap_levels = std::log2(height);
-		std::cout << "[OpenGL Warning] Texture2D with size (" << width << ", " << height << ") treid to load " << old_mipmap_levels << " mipmap levels, mipmap levels reducing to " << mipmap_levels << std::endl;;
+		std::cout << "[OpenGL Warning] Texture2D with size (" << width << ", " << height << ") tried to load " << old_mipmap_levels << " mipmap levels, mipmap levels reducing to " << mipmap_levels << std::endl;;
  	}
 	
 	if (multisample_amount != 0 && mipmap_levels != 1) {
@@ -450,7 +455,7 @@ TextureBase2::WrapMode Texture2D::query_wrap_u()
 TextureBase2::WrapMode Texture2D::query_wrap_v()
 {
 	int gl_wrap;
-	GLCall(glGetTextureParameteriv(id, GL_TEXTURE_WRAP_R, &gl_wrap));
+	GLCall(glGetTextureParameteriv(id, GL_TEXTURE_WRAP_T, &gl_wrap));
 	if (gl_wrap == GL_CLAMP)  return WrapMode::CLAMP;
 	if (gl_wrap == GL_REPEAT) return WrapMode::REPEAT;
 	if (gl_wrap == GL_MIRRORED_REPEAT) return WrapMode::MIRRORED_REPEAT;
@@ -463,7 +468,7 @@ TextureBase2::WrapMode Texture2D::query_wrap_w()
 {
 	int gl_wrap;
 	bind();
-	GLCall(glGetTextureParameteriv(id, GL_TEXTURE_WRAP_T, &gl_wrap));
+	GLCall(glGetTextureParameteriv(id, GL_TEXTURE_WRAP_R, &gl_wrap));
 	if (gl_wrap == GL_CLAMP)  return WrapMode::CLAMP;
 	if (gl_wrap == GL_REPEAT) return WrapMode::REPEAT;
 	if (gl_wrap == GL_MIRRORED_REPEAT) return WrapMode::MIRRORED_REPEAT;

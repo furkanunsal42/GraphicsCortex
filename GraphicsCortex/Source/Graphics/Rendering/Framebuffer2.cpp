@@ -99,6 +99,26 @@ void Framebuffer2::bind_draw()
 	GLCall(glBindFramebuffer(GL_DRAW_FRAMEBUFFER, id));
 }
 
+void Framebuffer2::attach_color(int slot, std::shared_ptr<Texture1D> texture1d, int mipmap_level)
+{
+	if (slot < 0 || slot >= _color_attachments.size()) {
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_color() to slot " << slot << " but there are maximum of " << _color_attachments.size() << " attacment slots in a Framebuffer" << std::endl;
+		ASSERT(false);
+	}
+	if (texture1d == nullptr) {
+		std::cout << "[OpenGL Error] Framebuffer treid to attach_color() but texture was nullptr" << std::endl;
+		ASSERT(false);
+	}
+	if (!texture1d->_texture_generated) {
+		std::cout << "[OpenGL Error] Framebuffer treid to attach_color() but texture was released" << std::endl;
+		ASSERT(false);
+	}
+
+	_color_attachments[slot] = texture1d;
+	texture1d->_allocate_texture();
+	GLCall(glNamedFramebufferTexture(id, GL_COLOR_ATTACHMENT0 + slot, texture1d->id, mipmap_level));
+	_draw_buffers_are_updated = false;
+}
 
 void Framebuffer2::attach_color(int slot, std::shared_ptr<Texture2D> texture2d, int mipmap_level)
 {

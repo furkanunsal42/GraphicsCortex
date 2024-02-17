@@ -55,12 +55,17 @@ void TextureCubeMap::release()
 
 void TextureCubeMap::bind(int texture_slot)
 {
-	GLCall(glBindTextureUnit(texture_slot, id));
+	if (!_texture_generated) {
+		std::cout << "[OpenGL Error] released TextureCubeMap tried to bind()" << std::endl;
+		ASSERT(false);
+	}
 
 	if (!_texture_allocated) {
 		std::cout << "[OpenGL Warning] TextureCubeMap tried to bind(int) but no user data was loaded yet" << std::endl;
 		_allocate_texture();
 	}
+
+	GLCall(glBindTextureUnit(texture_slot, id));
 }
 
 void TextureCubeMap::bind()
@@ -342,7 +347,7 @@ void TextureCubeMap::_allocate_texture()
 		int old_mipmap_levels = mipmap_levels;
 		if (width >> mipmap_levels == 0 || mipmap_levels >= sizeof(int) * 8) mipmap_levels = std::log2(width);
 		if (height >> mipmap_levels == 0 || mipmap_levels >= sizeof(int) * 8) mipmap_levels = std::log2(height);
-		std::cout << "[OpenGL Warning] TextureCubeMap with size (" << width << ", " << height << ") treid to load " << old_mipmap_levels << " mipmap levels, mipmap levels reducing to " << mipmap_levels << std::endl;;
+		std::cout << "[OpenGL Warning] TextureCubeMap with size (" << width << ", " << height << ") tried to load " << old_mipmap_levels << " mipmap levels, mipmap levels reducing to " << mipmap_levels << std::endl;;
 	}
 
 	unsigned int gl_internal_format = is_color_texture ? ColorTextureFormat_to_OpenGL(color_texture_format) : DepthStencilTextureFormat_to_OpenGL(depth_stencil_texture_format);
@@ -578,7 +583,7 @@ TextureBase2::WrapMode TextureCubeMap::query_wrap_u()
 TextureBase2::WrapMode TextureCubeMap::query_wrap_v()
 {
 	int gl_wrap;
-	GLCall(glGetTextureParameteriv(id, GL_TEXTURE_WRAP_R, &gl_wrap));
+	GLCall(glGetTextureParameteriv(id, GL_TEXTURE_WRAP_T, &gl_wrap));
 	if (gl_wrap == GL_CLAMP)  return WrapMode::CLAMP;
 	if (gl_wrap == GL_REPEAT) return WrapMode::REPEAT;
 	if (gl_wrap == GL_MIRRORED_REPEAT) return WrapMode::MIRRORED_REPEAT;
@@ -591,7 +596,7 @@ TextureBase2::WrapMode TextureCubeMap::query_wrap_w()
 {
 	int gl_wrap;
 	bind();
-	GLCall(glGetTextureParameteriv(id, GL_TEXTURE_WRAP_T, &gl_wrap));
+	GLCall(glGetTextureParameteriv(id, GL_TEXTURE_WRAP_R, &gl_wrap));
 	if (gl_wrap == GL_CLAMP)  return WrapMode::CLAMP;
 	if (gl_wrap == GL_REPEAT) return WrapMode::REPEAT;
 	if (gl_wrap == GL_MIRRORED_REPEAT) return WrapMode::MIRRORED_REPEAT;
