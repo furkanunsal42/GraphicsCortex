@@ -21,8 +21,9 @@ Renderbuffer2::~Renderbuffer2()
 
 void Renderbuffer2::release()
 {
-	if (_texture_generated)
+	if (_texture_generated) {
 		GLCall(glDeleteTextures(1, &id));
+	}
 	_texture_generated = false;
 	_texture_allocated = false;
 }

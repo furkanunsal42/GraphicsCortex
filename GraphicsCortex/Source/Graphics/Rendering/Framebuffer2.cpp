@@ -141,6 +141,27 @@ void Framebuffer2::attach_color(int slot, std::shared_ptr<Texture2D> texture2d, 
 	_draw_buffers_are_updated = false;
 }
 
+void Framebuffer2::attach_color(int slot, std::shared_ptr<TextureArray2> texture_array, int z, int mipmap) {
+	if (slot < 0 || slot >= _color_attachments.size()) {
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_color() to slot " << slot << " but there are maximum of " << _color_attachments.size() << " attacment slots in a Framebuffer" << std::endl;
+		ASSERT(false);
+	}
+	if (texture_array == nullptr) {
+		std::cout << "[OpenGL Error] Framebuffer treid to attach_color() but TextureArray was nullptr" << std::endl;
+		ASSERT(false);
+	}
+	if (!texture_array->_texture_generated) {
+		std::cout << "[OpenGL Error] Framebuffer treid to attach_color() but TextureArray was released" << std::endl;
+		ASSERT(false);
+	}
+
+	_color_attachments[slot] = texture_array;
+	texture_array->_allocate_texture();
+
+	GLCall(glNamedFramebufferTextureLayer(id, GL_COLOR_ATTACHMENT0 + slot, texture_array->id, mipmap, z));
+	_draw_buffers_are_updated = false;
+}
+
 void Framebuffer2::attach_color(int slot, std::shared_ptr<TextureCubeMap> texturecubemap, TextureCubeMap::Face face, int mipmap) {
 	if (slot < 0 || slot >= _color_attachments.size()) {
 		std::cout << "[OpenGL Error] Framebuffer tried to attach_color() to slot " << slot << " but there are maximum of " << _color_attachments.size() << " attacment slots in a Framebuffer" << std::endl;

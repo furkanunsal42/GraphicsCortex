@@ -30,24 +30,28 @@ int main() {
 	skybox->cubemap->load_data_async(TextureCubeMap::Face::BACK,    "../GraphicsCortex/Images/CubeMap/Sky/nz.jpg", TextureCubeMap::ColorFormat::RGBA, TextureCubeMap::Type::UNSIGNED_BYTE, 0);
 
 	std::shared_ptr<Texture1D> texture1d = std::make_shared<Texture1D>(1920, Texture1D::ColorTextureFormat::RGBA8, 1, 0);
-	std::shared_ptr<Texture3D> texture3d = std::make_shared<Texture3D>(1024, 1024, 1024, Texture3D::ColorTextureFormat::R8, 1, 0);
+	std::shared_ptr<Texture3D> texture3d = std::make_shared<Texture3D>(1024 * 2, 1024 * 2, 1024 * 2, Texture3D::ColorTextureFormat::R16, 1, 0);
+	std::shared_ptr<TextureArray2> texture_array = std::make_shared<TextureArray2>(1920, 1080, 16, TextureArray2::ColorTextureFormat::RGBA8, 1, 0, 4);
+
+	//std::shared_ptr<Texture3D> texture3d2 = std::make_shared<Texture3D>(1024 * 2, 1024 * 2, 1024 * 2, Texture3D::ColorTextureFormat::R16, 1, 0);
 	//bindless_program->update_uniform("cubemap", *cubemap);
 
 	//std::shared_ptr<Texture2D> color_texture = std::make_shared<Texture2D>(1920, 1080, Texture2D::ColorTextureFormat::RGBA8, 1, 0, 4);
-	//std::shared_ptr<Texture2D> depth_stencil_texture = std::make_shared<Texture2D>(1920, 1080, Texture2D::DepthStencilTextureFormat::DEPTH24_STENCIL8, 1, 0, 4);
+	std::shared_ptr<Texture2D> depth_stencil_texture = std::make_shared<Texture2D>(1920, 1080, Texture2D::DepthStencilTextureFormat::DEPTH24_STENCIL8, 1, 0, 4);
 	std::shared_ptr<Renderbuffer2> color_texture = std::make_shared<Renderbuffer2>(1920, 1080, Renderbuffer2::ColorTextureFormat::RGBA8, 0);
-	std::shared_ptr<Renderbuffer2> depth_stencil_texture = std::make_shared<Renderbuffer2>(1920, 1080, Renderbuffer2::DepthStencilTextureFormat::DEPTH24_STENCIL8, 0);
+	//std::shared_ptr<Renderbuffer2> depth_stencil_texture = std::make_shared<Renderbuffer2>(1920, 1080, Renderbuffer2::DepthStencilTextureFormat::DEPTH24_STENCIL8, 0);
 	
 	
 	Framebuffer2 framebuffer;
 	//framebuffer.attach_color(0, texture1d);
-	framebuffer.attach_color(0, texture3d, 0, 0);
+	framebuffer.attach_color(0, texture_array, 0, 0);
 	framebuffer.attach_depth_stencil(depth_stencil_texture);
 
 	while (frame.is_running()) {
 		framebuffer.deactivate_all_draw_buffers();
 		framebuffer.activate_draw_buffer(0);
 		framebuffer.bind_draw();
+
 		double deltatime = frame.handle_window();
 		frame.clear_window();
 		frame.display_performance(180);

@@ -48,8 +48,9 @@ Texture3D::~Texture3D()
 
 void Texture3D::release()
 {
-	if (_texture_generated)
+	if (_texture_generated) {
 		GLCall(glDeleteTextures(1, &id));
+	}
 	_texture_generated = false;
 	_texture_allocated = false;
 }

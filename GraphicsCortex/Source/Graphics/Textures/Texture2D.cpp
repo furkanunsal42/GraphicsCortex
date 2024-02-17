@@ -74,8 +74,9 @@ Texture2D::~Texture2D()
 
 void Texture2D::release()
 {
-	if (_texture_generated)
+	if (_texture_generated) {
 		GLCall(glDeleteTextures(1, &id));
+	}
 	_texture_generated = false;
 	_texture_allocated = false;
 }

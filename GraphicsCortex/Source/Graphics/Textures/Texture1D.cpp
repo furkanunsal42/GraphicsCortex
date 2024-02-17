@@ -47,8 +47,9 @@ Texture1D::~Texture1D()
 
 void Texture1D::release()
 {
-    if (_texture_generated)
-        GLCall(glDeleteTextures(1, &id));
+	if (_texture_generated) {
+		GLCall(glDeleteTextures(1, &id));
+	}
     _texture_generated = false;
     _texture_allocated = false;
 }
