@@ -21,7 +21,7 @@ int main() {
 	scene.add(dragon);
 
 	std::shared_ptr<SkyBox> skybox = std::make_shared<SkyBox>();
-	skybox->cubemap = std::make_shared<TextureCubeMap>(2048, TextureCubeMap::ColorTextureFormat::RGBA8, 1, 0);
+	skybox->cubemap = std::make_shared<TextureCubeMap>(1024, TextureCubeMap::ColorTextureFormat::RGBA8, 1, 0);
 	skybox->cubemap->load_data_async(TextureCubeMap::Face::RIGHT,   "../GraphicsCortex/Images/CubeMap/Sky/px.jpg", TextureCubeMap::ColorFormat::RGBA, TextureCubeMap::Type::UNSIGNED_BYTE, 0);
 	skybox->cubemap->load_data_async(TextureCubeMap::Face::LEFT,    "../GraphicsCortex/Images/CubeMap/Sky/nx.jpg", TextureCubeMap::ColorFormat::RGBA, TextureCubeMap::Type::UNSIGNED_BYTE, 0);
 	skybox->cubemap->load_data_async(TextureCubeMap::Face::UP,      "../GraphicsCortex/Images/CubeMap/Sky/py.jpg", TextureCubeMap::ColorFormat::RGBA, TextureCubeMap::Type::UNSIGNED_BYTE, 0);
@@ -30,7 +30,7 @@ int main() {
 	skybox->cubemap->load_data_async(TextureCubeMap::Face::BACK,    "../GraphicsCortex/Images/CubeMap/Sky/nz.jpg", TextureCubeMap::ColorFormat::RGBA, TextureCubeMap::Type::UNSIGNED_BYTE, 0);
 
 	std::shared_ptr<Texture1D> texture1d = std::make_shared<Texture1D>(1920, Texture1D::ColorTextureFormat::RGBA8, 1, 0);
-
+	std::shared_ptr<Texture3D> texture3d = std::make_shared<Texture3D>(1024, 1024, 1024, Texture3D::ColorTextureFormat::R8, 1, 0);
 	//bindless_program->update_uniform("cubemap", *cubemap);
 
 	//std::shared_ptr<Texture2D> color_texture = std::make_shared<Texture2D>(1920, 1080, Texture2D::ColorTextureFormat::RGBA8, 1, 0, 4);
@@ -40,8 +40,8 @@ int main() {
 	
 	
 	Framebuffer2 framebuffer;
-	framebuffer.attach_color(0, texture1d);
-	//framebuffer.attach_color(1, skybox->cubemap, TextureCubeMap::Face::FRONT, 0);
+	//framebuffer.attach_color(0, texture1d);
+	framebuffer.attach_color(0, texture3d, 0, 0);
 	framebuffer.attach_depth_stencil(depth_stencil_texture);
 
 	while (frame.is_running()) {
@@ -58,7 +58,6 @@ int main() {
 		skybox->render(*scene.camera);
 		
 		framebuffer.set_read_buffer(0);
-		for ( int i = 0; i < 1080 - 1; i++)
-			framebuffer.blit_to_screen(0, 0, 1920, 1, 0, i, 1920, i+1, Framebuffer2::Channel::COLOR, Framebuffer2::Filter::LINEAR);
+		framebuffer.blit_to_screen(0, 0, 1920, 1080, 0, 0, 1920, 1080, Framebuffer2::Channel::COLOR, Framebuffer2::Filter::LINEAR);
 	}
 }

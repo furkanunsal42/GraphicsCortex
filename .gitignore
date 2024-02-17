@@ -543,3 +543,4 @@ build-obj/windows-Release-x86_64GraphicsCortex/Renderbuffer.obj
 build-obj/windows-Release-x86_64GraphicsCortex/TextureCubeMap.obj
 build-obj/windows-Release-x86_64GraphicsCortex/SkyBox.obj
 build-obj/windows-Release-x86_64GraphicsCortex/Texture1D.obj
+build-obj/windows-Release-x86_64GraphicsCortex/Texture3D.obj

@@ -224,7 +224,7 @@ void Texture3D::_allocate_texture()
 	if (!_texture_generated) return;
 	if (_texture_allocated) return;
 
-	if (width >> mipmap_levels == 0 || height >> mipmap_levels == 0 || depth >> mipmap_levels == 0 || mipmap_levels >= sizeof(int) * 8) {
+	if ((width >> mipmap_levels == 0 || height >> mipmap_levels == 0 || depth >> mipmap_levels == 0 || mipmap_levels >= sizeof(int) * 8) && mipmap_levels != 1) {
 		int old_mipmap_levels = mipmap_levels;
 		if (width >> mipmap_levels == 0 || mipmap_levels >= sizeof(int) * 8) mipmap_levels = std::log2(width);
 		if (height >> mipmap_levels == 0 || mipmap_levels >= sizeof(int) * 8) mipmap_levels = std::log2(height);
