@@ -31,18 +31,18 @@ int main() {
 
 	std::shared_ptr<Texture1D> texture1d = std::make_shared<Texture1D>(1920, Texture1D::ColorTextureFormat::RGBA8, 1, 0);
 	std::shared_ptr<Texture3D> texture3d = std::make_shared<Texture3D>(1024 * 2, 1024 * 2, 1024 * 2, Texture3D::ColorTextureFormat::R16, 1, 0);
-	std::shared_ptr<TextureArray2> texture_array = std::make_shared<TextureArray2>(1920, 1080, 16, TextureArray2::ColorTextureFormat::RGBA8, 1, 0, 4);
+	std::shared_ptr<Texture2DArray> texture_array = std::make_shared<Texture2DArray>(1920, 1080, 16, Texture2DArray::ColorTextureFormat::RGBA8, 1, 0, 4);
 
 	//std::shared_ptr<Texture3D> texture3d2 = std::make_shared<Texture3D>(1024 * 2, 1024 * 2, 1024 * 2, Texture3D::ColorTextureFormat::R16, 1, 0);
 	//bindless_program->update_uniform("cubemap", *cubemap);
 
 	//std::shared_ptr<Texture2D> color_texture = std::make_shared<Texture2D>(1920, 1080, Texture2D::ColorTextureFormat::RGBA8, 1, 0, 4);
 	std::shared_ptr<Texture2D> depth_stencil_texture = std::make_shared<Texture2D>(1920, 1080, Texture2D::DepthStencilTextureFormat::DEPTH24_STENCIL8, 1, 0, 4);
-	std::shared_ptr<Renderbuffer2> color_texture = std::make_shared<Renderbuffer2>(1920, 1080, Renderbuffer2::ColorTextureFormat::RGBA8, 0);
-	//std::shared_ptr<Renderbuffer2> depth_stencil_texture = std::make_shared<Renderbuffer2>(1920, 1080, Renderbuffer2::DepthStencilTextureFormat::DEPTH24_STENCIL8, 0);
+	std::shared_ptr<Renderbuffer> color_texture = std::make_shared<Renderbuffer>(1920, 1080, Renderbuffer::ColorTextureFormat::RGBA8, 0);
+	//std::shared_ptr<Renderbuffer> depth_stencil_texture = std::make_shared<Renderbuffer>(1920, 1080, Renderbuffer::DepthStencilTextureFormat::DEPTH24_STENCIL8, 0);
 	
 	
-	Framebuffer2 framebuffer;
+	Framebuffer framebuffer;
 	//framebuffer.attach_color(0, texture1d);
 	framebuffer.attach_color(0, texture_array, 0, 0);
 	framebuffer.attach_depth_stencil(depth_stencil_texture);
@@ -62,6 +62,6 @@ int main() {
 		skybox->render(*scene.camera);
 		
 		framebuffer.set_read_buffer(0);
-		framebuffer.blit_to_screen(0, 0, 1920, 1080, 0, 0, 1920, 1080, Framebuffer2::Channel::COLOR, Framebuffer2::Filter::LINEAR);
+		framebuffer.blit_to_screen(0, 0, 1920, 1080, 0, 0, 1920, 1080, Framebuffer::Channel::COLOR, Framebuffer::Filter::LINEAR);
 	}
 }

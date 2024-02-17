@@ -7,12 +7,12 @@
 
 class Program;
 class BindlessMaterial;
-class Framebuffer2;
+class Framebuffer;
 
 class Texture1D : public TextureBase2 {
 	friend Program;
 	friend BindlessMaterial;
-	friend Framebuffer2;
+	friend Framebuffer;
 public:
 	int64_t texture_handle = 0;
 	int mipmap_begin_level = 0;

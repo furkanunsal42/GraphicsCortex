@@ -7,12 +7,12 @@
 
 class Program;
 class BindlessMaterial;
-class Framebuffer2;
+class Framebuffer;
 
-class TextureArray2 : public TextureBase2 {
+class Texture2DArray : public TextureBase2 {
 	friend Program;
 	friend BindlessMaterial;
-	friend Framebuffer2;
+	friend Framebuffer;
 public:
 	int64_t texture_handle = 0;
 	int mipmap_begin_level = 0;
@@ -24,12 +24,12 @@ public:
 	SamplingFilter min_filter = SamplingFilter::LINEAR;
 	SamplingFilter mag_filter = SamplingFilter::LINEAR;
 
-	TextureArray2() = delete;
-	TextureArray2(const TextureArray2& other) = delete;
+	Texture2DArray() = delete;
+	Texture2DArray(const Texture2DArray& other) = delete;
 
-	TextureArray2(int width, int height, int texture_count, ColorTextureFormat internal_format, int mipmap_levels = 1, float mipmap_bias = 0.0f, int multisample = 0);
-	TextureArray2(int width, int height, int texture_count, DepthStencilTextureFormat internal_format, int mipmap_levels = 1, float mipmap_bias = 0.0f, int multisample = 0);
-	~TextureArray2();
+	Texture2DArray(int width, int height, int texture_count, ColorTextureFormat internal_format, int mipmap_levels = 1, float mipmap_bias = 0.0f, int multisample = 0);
+	Texture2DArray(int width, int height, int texture_count, DepthStencilTextureFormat internal_format, int mipmap_levels = 1, float mipmap_bias = 0.0f, int multisample = 0);
+	~Texture2DArray();
 	void release();
 
 	void bind(int texture_slot);

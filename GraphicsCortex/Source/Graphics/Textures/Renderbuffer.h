@@ -5,18 +5,18 @@
 #include <functional>
 #include <thread>
 
-class Framebuffer2;
+class Framebuffer;
 
-class Renderbuffer2 : public TextureBase2 {
-	friend Framebuffer2;
+class Renderbuffer : public TextureBase2 {
+	friend Framebuffer;
 public:
 
-	Renderbuffer2() = delete;
-	Renderbuffer2(const Renderbuffer2& other) = delete;
+	Renderbuffer() = delete;
+	Renderbuffer(const Renderbuffer& other) = delete;
 
-	Renderbuffer2(int width, int height, ColorTextureFormat internal_format, int multisample = 0);
-	Renderbuffer2(int width, int height, DepthStencilTextureFormat internal_format, int multisample = 0);
-	~Renderbuffer2();
+	Renderbuffer(int width, int height, ColorTextureFormat internal_format, int multisample = 0);
+	Renderbuffer(int width, int height, DepthStencilTextureFormat internal_format, int multisample = 0);
+	~Renderbuffer();
 	void release();
 
 	void bind();

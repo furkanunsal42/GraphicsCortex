@@ -22,12 +22,12 @@
 #include "ShaderCompiler.h"
 #include "Image.h"
 
-#include "Texture.h"
+//#include "Texture.h"
 
 #include "TextureBase.h"
 #include "Texture1D.h"
 #include "Texture2D.h"
-#include "TextureArray.h"
+#include "Texture2DArray.h"
 #include "TextureCubeMap.h"
 #include "Texture3D.h"
 #include "Renderbuffer.h"

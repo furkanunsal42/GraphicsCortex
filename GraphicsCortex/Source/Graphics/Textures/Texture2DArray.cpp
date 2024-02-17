@@ -1,4 +1,4 @@
-#include "TextureArray.h"
+#include "Texture2DArray.h"
 #include <iostream>
 #include "Debuger.h"
 #include <fstream>
@@ -29,24 +29,24 @@ namespace {
 }
 
 
-TextureArray2::TextureArray2(int width, int height, int texture_count, ColorTextureFormat internal_format, int mipmap_levels, float mipmap_bias, int multisample) :
+Texture2DArray::Texture2DArray(int width, int height, int texture_count, ColorTextureFormat internal_format, int mipmap_levels, float mipmap_bias, int multisample) :
 	width(width), height(height), texture_count(texture_count), is_color_texture(true), color_texture_format(internal_format), mipmap_levels(mipmap_levels), mipmap_bias(mipmap_bias), multisample_amount(multisample)
 {
 	_generate_texture();
 }
 
-TextureArray2::TextureArray2(int width, int height, int texture_count, DepthStencilTextureFormat internal_format, int mipmap_levels, float mipmap_bias, int multisample) : 
+Texture2DArray::Texture2DArray(int width, int height, int texture_count, DepthStencilTextureFormat internal_format, int mipmap_levels, float mipmap_bias, int multisample) :
 	width(width), height(height), texture_count(texture_count), is_color_texture(false), depth_stencil_texture_format(internal_format), mipmap_levels(mipmap_levels), mipmap_bias(mipmap_bias), multisample_amount(multisample)
 {
 	_generate_texture();
 }
 
-TextureArray2::~TextureArray2()
+Texture2DArray::~Texture2DArray()
 {
 	release();
 }
 
-void TextureArray2::release()
+void Texture2DArray::release()
 {
 	if (_texture_generated) {
 		GLCall(glDeleteTextures(1, &id));
@@ -55,42 +55,42 @@ void TextureArray2::release()
 	_texture_allocated = false;
 }
 
-void TextureArray2::bind(int texture_slot)
+void Texture2DArray::bind(int texture_slot)
 {
 	if (!_texture_generated) {
-		std::cout << "[OpenGL Error] released TextureArray tried to bind()" << std::endl;
+		std::cout << "[OpenGL Error] released Texture2DArray tried to bind()" << std::endl;
 		ASSERT(false);
 	}
 
 	if (!_texture_allocated) {
-		std::cout << "[OpenGL Warning] TextureArray tried to bind(int) but no user data was loaded yet" << std::endl;
+		std::cout << "[OpenGL Warning] Texture2DArray tried to bind(int) but no user data was loaded yet" << std::endl;
 		_allocate_texture();
 	}
 
 	GLCall(glBindTextureUnit(texture_slot, id));
 }
 
-void TextureArray2::bind()
+void Texture2DArray::bind()
 {
 	if (!_texture_generated) {
-		std::cout << "[OpenGL Error] released TextureArray tried to bind()" << std::endl;
+		std::cout << "[OpenGL Error] released Texture2DArray tried to bind()" << std::endl;
 		ASSERT(false);
 	}
-	std::cout << "[OpenGL Warning] Bindless TextureArray tried to bind" << std::endl;
+	std::cout << "[OpenGL Warning] Bindless Texture2DArray tried to bind" << std::endl;
 	GLCall(glBindTexture(target, id));
 }
 
-void TextureArray2::unbind()
+void Texture2DArray::unbind()
 {
-	std::cout << "[OpenGL Warning] Bindless TextureArray tried to unbind" << std::endl;
+	std::cout << "[OpenGL Warning] Bindless Texture2DArray tried to unbind" << std::endl;
 
 	GLCall(glBindTexture(target, 0));
 }
 
-void TextureArray2::load_data(int texture_index, const void* image, ColorFormat format, Type type, int mipmap_target)
+void Texture2DArray::load_data(int texture_index, const void* image, ColorFormat format, Type type, int mipmap_target)
 {
 	if (!_texture_generated) {
-		std::cout << "[OpenGL Error] released TextureArray tried to load_data()" << std::endl;
+		std::cout << "[OpenGL Error] released Texture2DArray tried to load_data()" << std::endl;
 		ASSERT(false);
 	}
 	_allocate_texture();
@@ -100,10 +100,10 @@ void TextureArray2::load_data(int texture_index, const void* image, ColorFormat 
 	_user_data_loaded = true;
 }
 
-void TextureArray2::load_data(int texture_index, const void* image, ColorFormat format, Type type, int x, int y, int custom_width, int custom_height, int mipmap_target)
+void Texture2DArray::load_data(int texture_index, const void* image, ColorFormat format, Type type, int x, int y, int custom_width, int custom_height, int mipmap_target)
 {
 	if (!_texture_generated) {
-		std::cout << "[OpenGL Error] released TextureArray tried to load_data()" << std::endl;
+		std::cout << "[OpenGL Error] released Texture2DArray tried to load_data()" << std::endl;
 		ASSERT(false);
 	}
 	_allocate_texture();
@@ -113,46 +113,46 @@ void TextureArray2::load_data(int texture_index, const void* image, ColorFormat 
 	_user_data_loaded = true;
 }
 
-void TextureArray2::load_data(int texture_index, const Image& image, ColorFormat format, Type type, int mipmap_target)
+void Texture2DArray::load_data(int texture_index, const Image& image, ColorFormat format, Type type, int mipmap_target)
 {
 	int mipmap_width = this->width >> mipmap_target;
 	int mipmap_height = this->height >> mipmap_target;
 
 	if (mipmap_width != image.get_width() || mipmap_height != image.get_height()) {
-		std::cout << "[OpenGL Error] TextureArray.load_data() image size mismatch. " << " texture size : (" << width << ", " << height << "), " << " image size : (" << image.get_width() << ", " << image.get_height() << ")" << std::endl;
+		std::cout << "[OpenGL Error] Texture2DArray.load_data() image size mismatch. " << " texture size : (" << width << ", " << height << "), " << " image size : (" << image.get_width() << ", " << image.get_height() << ")" << std::endl;
 		ASSERT(false);
 	}
 
 	load_data(texture_index, image._image_data, format, type, mipmap_target);
 }
 
-void TextureArray2::load_data(int texture_index, const Image& image, ColorFormat format, Type type, int x, int y, int width, int height, int mipmap_target)
+void Texture2DArray::load_data(int texture_index, const Image& image, ColorFormat format, Type type, int x, int y, int width, int height, int mipmap_target)
 {
 	int mipmap_width = this->width >> mipmap_target;
 	int mipmap_height = this->height >> mipmap_target;
 
 	if (width > image.get_width() || height > image.get_height()) {
-		std::cout << "[OpenGL Error] TextureArray.load_data() image size mismatch. " << " load_data() size : (" << width << ", " << height << "), " << " image size : (" << image.get_width() << ", " << image.get_height() << ")" << std::endl;
+		std::cout << "[OpenGL Error] Texture2DArray.load_data() image size mismatch. " << " load_data() size : (" << width << ", " << height << "), " << " image size : (" << image.get_width() << ", " << image.get_height() << ")" << std::endl;
 		ASSERT(false);
 	}
 
 	if (mipmap_width < width || mipmap_height < height) {
-		std::cout << "[OpenGL Error] TextureArray.load_data() image size mismatch. " << " texture size : (" << width << ", " << height << "), " << " load_data() size : (" << image.get_width() << ", " << image.get_height() << ")" << std::endl;
+		std::cout << "[OpenGL Error] Texture2DArray.load_data() image size mismatch. " << " texture size : (" << width << ", " << height << "), " << " load_data() size : (" << image.get_width() << ", " << image.get_height() << ")" << std::endl;
 		ASSERT(false);
 	}
 
 	load_data(texture_index, image._image_data, format, type, x, y, width, height, mipmap_target);
 }
 
-void TextureArray2::load_data_async(int texture_index, const std::string& image_filepath, ColorFormat format, Type type, int mipmap_target)
+void Texture2DArray::load_data_async(int texture_index, const std::string& image_filepath, ColorFormat format, Type type, int mipmap_target)
 {
 	load_data_async(texture_index, image_filepath, format, type, 0, 0, width, height, mipmap_target);
 }
 
-void TextureArray2::load_data_async(int texture_index, const std::string& image_filepath, ColorFormat format, Type type, int x, int y, int width, int height, int mipmap_target)
+void Texture2DArray::load_data_async(int texture_index, const std::string& image_filepath, ColorFormat format, Type type, int x, int y, int width, int height, int mipmap_target)
 {
 	if (async_load_happening_per_face[texture_index]) {
-		std::cout << "[Thread Error] TextureArray tried to load_data_async() while another async load wasn't terminated" << std::endl;
+		std::cout << "[Thread Error] Texture2DArray tried to load_data_async() while another async load wasn't terminated" << std::endl;
 		ASSERT(false);
 	}
 	async_load_happening = true;
@@ -166,14 +166,14 @@ void TextureArray2::load_data_async(int texture_index, const std::string& image_
 	async_loading_threads[texture_index] = new std::thread(&read_image, image_filepath, &async_images[texture_index], this->width, this->height, ColorFormat_channels(format));
 
 	post_async_load_functions[texture_index] = [this, texture_index, format, type, x, y, width, height, mipmap_target]() {
-		this->load_data(texture_index , *async_images[texture_index], format, type, x, y, width, height, mipmap_target);
+		this->load_data(texture_index, *async_images[texture_index], format, type, x, y, width, height, mipmap_target);
 		};
 }
 
-void TextureArray2::load_data(int texture_index, const void* image, DepthStencilFormat format, Type type, int mipmap_target)
+void Texture2DArray::load_data(int texture_index, const void* image, DepthStencilFormat format, Type type, int mipmap_target)
 {
 	if (!_texture_generated) {
-		std::cout << "[OpenGL Error] released TextureArray tried to load_data()" << std::endl;
+		std::cout << "[OpenGL Error] released Texture2DArray tried to load_data()" << std::endl;
 		ASSERT(false);
 	}
 	_allocate_texture();
@@ -183,10 +183,10 @@ void TextureArray2::load_data(int texture_index, const void* image, DepthStencil
 	_user_data_loaded = true;
 }
 
-void TextureArray2::load_data(int texture_index, const void* image, DepthStencilFormat format, Type type, int x, int y, int custom_width, int custom_height, int mipmap_target)
+void Texture2DArray::load_data(int texture_index, const void* image, DepthStencilFormat format, Type type, int x, int y, int custom_width, int custom_height, int mipmap_target)
 {
 	if (!_texture_generated) {
-		std::cout << "[OpenGL Error] released TextureArray tried to load_data()" << std::endl;
+		std::cout << "[OpenGL Error] released Texture2DArray tried to load_data()" << std::endl;
 		ASSERT(false);
 	}
 	_allocate_texture();
@@ -196,38 +196,38 @@ void TextureArray2::load_data(int texture_index, const void* image, DepthStencil
 	_user_data_loaded = true;
 }
 
-void TextureArray2::load_data(int texture_index, const Image& image, DepthStencilFormat format, Type type, int mipmap_target)
+void Texture2DArray::load_data(int texture_index, const Image& image, DepthStencilFormat format, Type type, int mipmap_target)
 {
 	int mipmap_width = this->width >> mipmap_target;
 	int mipmap_height = this->height >> mipmap_target;
 
 	if (mipmap_width != image.get_width() || mipmap_height != image.get_height()) {
-		std::cout << "[OpenGL Error] TextureArray.load_data() image size mismatch. " << " texture size : (" << width << ", " << height << "), " << " image size : (" << image.get_width() << ", " << image.get_height() << ")" << std::endl;
+		std::cout << "[OpenGL Error] Texture2DArray.load_data() image size mismatch. " << " texture size : (" << width << ", " << height << "), " << " image size : (" << image.get_width() << ", " << image.get_height() << ")" << std::endl;
 		ASSERT(false);
 	}
 
 	load_data(texture_index, image._image_data, format, type, mipmap_target);
 }
 
-void TextureArray2::load_data(int texture_index, const Image& image, DepthStencilFormat format, Type type, int x, int y, int width, int height, int mipmap_target)
+void Texture2DArray::load_data(int texture_index, const Image& image, DepthStencilFormat format, Type type, int x, int y, int width, int height, int mipmap_target)
 {
 	int mipmap_width = this->width >> mipmap_target;
 	int mipmap_height = this->height >> mipmap_target;
 
 	if (width > image.get_width() || height > image.get_height()) {
-		std::cout << "[OpenGL Error] TextureArray.load_data() image size mismatch. " << " load_data() size : (" << width << ", " << height << "), " << " image size : (" << image.get_width() << ", " << image.get_height() << ")" << std::endl;
+		std::cout << "[OpenGL Error] Texture2DArray.load_data() image size mismatch. " << " load_data() size : (" << width << ", " << height << "), " << " image size : (" << image.get_width() << ", " << image.get_height() << ")" << std::endl;
 		ASSERT(false);
 	}
 
 	if (mipmap_width < width || mipmap_height < height) {
-		std::cout << "[OpenGL Error] TextureArray.load_data() image size mismatch. " << " texture size : (" << width << ", " << height << "), " << " load_data() size : (" << image.get_width() << ", " << image.get_height() << ")" << std::endl;
+		std::cout << "[OpenGL Error] Texture2DArray.load_data() image size mismatch. " << " texture size : (" << width << ", " << height << "), " << " load_data() size : (" << image.get_width() << ", " << image.get_height() << ")" << std::endl;
 		ASSERT(false);
 	}
 
 	load_data(texture_index, image._image_data, format, type, x, y, width, height, mipmap_target);
 }
 
-void TextureArray2::generate_mipmap()
+void Texture2DArray::generate_mipmap()
 {
 	if (!_texture_generated) return;
 	if (!_texture_allocated) return;
@@ -240,16 +240,16 @@ void TextureArray2::generate_mipmap()
 	_mipmap_generated = true;
 }
 
-void TextureArray2::load_data_with_mipmaps(int texture_index, const void* image, ColorFormat format, Type type)
+void Texture2DArray::load_data_with_mipmaps(int texture_index, const void* image, ColorFormat format, Type type)
 {
 	load_data(texture_index, image, format, type, 0);
 	generate_mipmap();
 }
 
-void TextureArray2::load_data_with_mipmaps(int texture_index, const Image& image, ColorFormat format, Type type)
+void Texture2DArray::load_data_with_mipmaps(int texture_index, const Image& image, ColorFormat format, Type type)
 {
 	if (this->width != image.get_width() || this->height != image.get_height()) {
-		std::cout << "[OpenGL Error] TextureArray.load_data_with_mipmaps() image size mismatch. " << " texture size : (" << width << ", " << height << "), " << " image size : (" << image.get_width() << ", " << image.get_height() << ")" << std::endl;
+		std::cout << "[OpenGL Error] Texture2DArray.load_data_with_mipmaps() image size mismatch. " << " texture size : (" << width << ", " << height << "), " << " image size : (" << image.get_width() << ", " << image.get_height() << ")" << std::endl;
 		ASSERT(false);
 	}
 
@@ -257,16 +257,16 @@ void TextureArray2::load_data_with_mipmaps(int texture_index, const Image& image
 	generate_mipmap();
 }
 
-void TextureArray2::load_data_with_mipmaps(int texture_index, const void* image, DepthStencilFormat format, Type type)
+void Texture2DArray::load_data_with_mipmaps(int texture_index, const void* image, DepthStencilFormat format, Type type)
 {
 	load_data(texture_index, image, format, type, 0);
 	generate_mipmap();
 }
 
-void TextureArray2::load_data_with_mipmaps(int texture_index, const Image& image, DepthStencilFormat format, Type type)
+void Texture2DArray::load_data_with_mipmaps(int texture_index, const Image& image, DepthStencilFormat format, Type type)
 {
 	if (this->width != image.get_width() || this->height != image.get_height()) {
-		std::cout << "[OpenGL Error] TextureArray.load_data_with_mipmaps() image size mismatch. " << " texture size : (" << width << ", " << height << "), " << " image size : (" << image.get_width() << ", " << image.get_height() << ")" << std::endl;
+		std::cout << "[OpenGL Error] Texture2DArray.load_data_with_mipmaps() image size mismatch. " << " texture size : (" << width << ", " << height << "), " << " image size : (" << image.get_width() << ", " << image.get_height() << ")" << std::endl;
 		ASSERT(false);
 	}
 
@@ -274,13 +274,13 @@ void TextureArray2::load_data_with_mipmaps(int texture_index, const Image& image
 	generate_mipmap();
 }
 
-void TextureArray2::load_data_width_mipmaps_async(int texture_index, const std::string& image_filepath, ColorFormat format, Type type)
+void Texture2DArray::load_data_width_mipmaps_async(int texture_index, const std::string& image_filepath, ColorFormat format, Type type)
 {
 	if (async_load_happening_per_face[texture_index]) {
-		std::cout << "[Thread Error] TextureArray tried to load_data_width_mipmaps_async() while another async load wasn't terminated" << std::endl;
+		std::cout << "[Thread Error] Texture2DArray tried to load_data_width_mipmaps_async() while another async load wasn't terminated" << std::endl;
 		ASSERT(false);
 	}
-	
+
 	async_load_happening = true;
 	async_load_happening_per_face[texture_index] = true;
 
@@ -296,7 +296,7 @@ void TextureArray2::load_data_width_mipmaps_async(int texture_index, const std::
 		};
 }
 
-void TextureArray2::wait_async_load()
+void Texture2DArray::wait_async_load()
 {
 	if (async_load_happening == false) return;
 
@@ -322,7 +322,7 @@ void TextureArray2::wait_async_load()
 }
 
 
-TextureArray2::SamplingFilter TextureArray2::query_mag_filter()
+Texture2DArray::SamplingFilter Texture2DArray::query_mag_filter()
 {
 	int gl_filter;
 	GLCall(glGetTextureParameteriv(id, GL_TEXTURE_MAG_FILTER, &gl_filter));
@@ -333,7 +333,7 @@ TextureArray2::SamplingFilter TextureArray2::query_mag_filter()
 	return SamplingFilter();
 }
 
-TextureArray2::SamplingFilter TextureArray2::query_min_filter()
+Texture2DArray::SamplingFilter Texture2DArray::query_min_filter()
 {
 	int gl_filter;
 	GLCall(glGetTextureParameteriv(id, GL_TEXTURE_MIN_FILTER, &gl_filter));
@@ -344,7 +344,7 @@ TextureArray2::SamplingFilter TextureArray2::query_min_filter()
 	return SamplingFilter();
 }
 
-TextureArray2::SamplingFilter TextureArray2::query_mipmap_min_filter()
+Texture2DArray::SamplingFilter Texture2DArray::query_mipmap_min_filter()
 {
 	int gl_filter;
 	GLCall(glGetTextureParameteriv(id, GL_TEXTURE_MIN_FILTER, &gl_filter));
@@ -354,7 +354,7 @@ TextureArray2::SamplingFilter TextureArray2::query_mipmap_min_filter()
 	return SamplingFilter::NEAREST;
 }
 
-TextureArray2::WrapMode TextureArray2::query_wrap_u()
+Texture2DArray::WrapMode Texture2DArray::query_wrap_u()
 {
 	int gl_wrap;
 	GLCall(glGetTextureParameteriv(id, GL_TEXTURE_WRAP_S, &gl_wrap));
@@ -366,7 +366,7 @@ TextureArray2::WrapMode TextureArray2::query_wrap_u()
 	return WrapMode();
 }
 
-TextureArray2::WrapMode TextureArray2::query_wrap_v()
+Texture2DArray::WrapMode Texture2DArray::query_wrap_v()
 {
 	int gl_wrap;
 	GLCall(glGetTextureParameteriv(id, GL_TEXTURE_WRAP_T, &gl_wrap));
@@ -378,7 +378,7 @@ TextureArray2::WrapMode TextureArray2::query_wrap_v()
 	return WrapMode();
 }
 
-TextureArray2::WrapMode TextureArray2::query_wrap_w()
+Texture2DArray::WrapMode Texture2DArray::query_wrap_w()
 {
 	int gl_wrap;
 	bind();
@@ -391,175 +391,175 @@ TextureArray2::WrapMode TextureArray2::query_wrap_w()
 	return WrapMode();
 }
 
-int TextureArray2::query_base_level()
+int Texture2DArray::query_base_level()
 {
 	int base_level;
 	GLCall(glGetTextureParameteriv(id, GL_TEXTURE_BASE_LEVEL, &base_level));
 	return base_level;
 }
 
-float TextureArray2::query_lod_bias()
+float Texture2DArray::query_lod_bias()
 {
 	float lod_bias;
 	GLCall(glGetTextureParameterfv(id, GL_TEXTURE_LOD_BIAS, &lod_bias));
 	return lod_bias;
 }
 
-int TextureArray2::query_max_level()
+int Texture2DArray::query_max_level()
 {
 	int max_level;
 	GLCall(glGetTextureParameteriv(id, GL_TEXTURE_MAX_LEVEL, &max_level));
 	return max_level;
 }
 
-int TextureArray2::query_max_lod()
+int Texture2DArray::query_max_lod()
 {
 	float max_lod;
 	GLCall(glGetTextureParameterfv(id, GL_TEXTURE_MAX_LOD, &max_lod));
 	return max_lod;
 }
 
-int TextureArray2::query_min_lod()
+int Texture2DArray::query_min_lod()
 {
 	float min_lod;
 	GLCall(glGetTextureParameterfv(id, GL_TEXTURE_MIN_LOD, &min_lod));
 	return min_lod;
 }
 
-int TextureArray2::query_swizzle_r()
+int Texture2DArray::query_swizzle_r()
 {
 	int swizzle_red;
 	GLCall(glGetTextureParameteriv(id, GL_TEXTURE_SWIZZLE_R, &swizzle_red));
 	return swizzle_red;	// returns GL enum
 }
 
-int TextureArray2::query_swizzle_g()
+int Texture2DArray::query_swizzle_g()
 {
 	int swizzle_green;
 	GLCall(glGetTextureParameteriv(id, GL_TEXTURE_SWIZZLE_G, &swizzle_green));
 	return swizzle_green;	// returns GL enum
 }
 
-int TextureArray2::query_swizzle_b()
+int Texture2DArray::query_swizzle_b()
 {
 	int swizzle_blue;
 	GLCall(glGetTextureParameteriv(id, GL_TEXTURE_SWIZZLE_B, &swizzle_blue));
 	return swizzle_blue;	// returns GL enum
 }
 
-int TextureArray2::query_swizzle_a()
+int Texture2DArray::query_swizzle_a()
 {
 	int swizzle_alpha;
 	GLCall(glGetTextureParameteriv(id, GL_TEXTURE_SWIZZLE_A, &swizzle_alpha));
 	return swizzle_alpha;	// returns GL enum
 }
 
-int TextureArray2::query_swizzle_rgba()
+int Texture2DArray::query_swizzle_rgba()
 {
 	int swizzle_rgba;
 	GLCall(glGetTextureParameteriv(id, GL_TEXTURE_SWIZZLE_RGBA, &swizzle_rgba));
 	return swizzle_rgba;	// returns GL enum
 }
 
-int TextureArray2::query_width(int mipmap_level)
+int Texture2DArray::query_width(int mipmap_level)
 {
 	int texture_width;
 	GLCall(glGetTextureLevelParameteriv(id, mipmap_level, GL_TEXTURE_WIDTH, &texture_width));
 	return texture_width;
 }
 
-int TextureArray2::query_height(int mipmap_level)
+int Texture2DArray::query_height(int mipmap_level)
 {
 	int texture_height;
 	GLCall(glGetTextureLevelParameteriv(id, mipmap_level, GL_TEXTURE_HEIGHT, &texture_height));
 	return texture_height;
 }
 
-int TextureArray2::query_depth(int mipmap_level)
+int Texture2DArray::query_depth(int mipmap_level)
 {
 	int texture_depth;
 	GLCall(glGetTextureLevelParameteriv(id, mipmap_level, GL_TEXTURE_DEPTH, &texture_depth));
 	return texture_depth;
 }
 
-int TextureArray2::query_internal_format(int mipmap_level)
+int Texture2DArray::query_internal_format(int mipmap_level)
 {
 	int internal_format;
 	GLCall(glGetTextureLevelParameteriv(id, mipmap_level, GL_TEXTURE_INTERNAL_FORMAT, &internal_format));
 	return internal_format;	// returns gl enum
 }
 
-int TextureArray2::query_red_type(int mipmap_level)
+int Texture2DArray::query_red_type(int mipmap_level)
 {
 	int type;
 	GLCall(glGetTextureLevelParameteriv(id, mipmap_level, GL_TEXTURE_RED_TYPE, &type));
 	return type;	// returns gl enum
 }
 
-int TextureArray2::query_green_type(int mipmap_level)
+int Texture2DArray::query_green_type(int mipmap_level)
 {
 	int type;
 	GLCall(glGetTextureLevelParameteriv(id, mipmap_level, GL_TEXTURE_GREEN_TYPE, &type));
 	return type;	// returns gl enum
 }
 
-int TextureArray2::query_blue_type(int mipmap_level)
+int Texture2DArray::query_blue_type(int mipmap_level)
 {
 	int type;
 	GLCall(glGetTextureLevelParameteriv(id, mipmap_level, GL_TEXTURE_BLUE_TYPE, &type));
 	return type;	// returns gl enum
 }
 
-int TextureArray2::query_alpha_type(int mipmap_level)
+int Texture2DArray::query_alpha_type(int mipmap_level)
 {
 	int type;
 	GLCall(glGetTextureLevelParameteriv(id, mipmap_level, GL_TEXTURE_ALPHA_TYPE, &type));
 	return type;	// returns gl enum
 }
 
-int TextureArray2::query_depth_type(int mipmap_level)
+int Texture2DArray::query_depth_type(int mipmap_level)
 {
 	int type;
 	GLCall(glGetTextureLevelParameteriv(id, mipmap_level, GL_TEXTURE_DEPTH_TYPE, &type));
 	return type;	// returns gl enum
 }
 
-int TextureArray2::query_red_size(int mipmap_level)
+int Texture2DArray::query_red_size(int mipmap_level)
 {
 	int size;
 	GLCall(glGetTextureLevelParameteriv(id, mipmap_level, GL_TEXTURE_RED_SIZE, &size));
 	return size;
 }
 
-int TextureArray2::query_green_size(int mipmap_level)
+int Texture2DArray::query_green_size(int mipmap_level)
 {
 	int size;
 	GLCall(glGetTextureLevelParameteriv(id, mipmap_level, GL_TEXTURE_GREEN_SIZE, &size));
 	return size;
 }
 
-int TextureArray2::query_blue_size(int mipmap_level)
+int Texture2DArray::query_blue_size(int mipmap_level)
 {
 	int size;
 	GLCall(glGetTextureLevelParameteriv(id, mipmap_level, GL_TEXTURE_BLUE_SIZE, &size));
 	return size;
 }
 
-int TextureArray2::query_alpha_size(int mipmap_level)
+int Texture2DArray::query_alpha_size(int mipmap_level)
 {
 	int size;
 	GLCall(glGetTextureLevelParameteriv(id, mipmap_level, GL_TEXTURE_ALPHA_SIZE, &size));
 	return size;
 }
 
-int TextureArray2::query_depth_size(int mipmap_level)
+int Texture2DArray::query_depth_size(int mipmap_level)
 {
 	int size;
 	GLCall(glGetTextureLevelParameteriv(id, mipmap_level, GL_TEXTURE_DEPTH_SIZE, &size));
 	return size;
 }
 
-bool TextureArray2::query_is_compressed(int mipmap_level)
+bool Texture2DArray::query_is_compressed(int mipmap_level)
 {
 	int is_compressed;
 	GLCall(glGetTextureLevelParameteriv(id, mipmap_level, GL_TEXTURE_COMPRESSED, &is_compressed));
@@ -570,7 +570,7 @@ bool TextureArray2::query_is_compressed(int mipmap_level)
 	return false;
 }
 
-int TextureArray2::query_compressed_image_size(int mipmap_level)
+int Texture2DArray::query_compressed_image_size(int mipmap_level)
 {
 	int size;
 	GLCall(glGetTextureLevelParameteriv(id, mipmap_level, GL_TEXTURE_COMPRESSED_IMAGE_SIZE, &size));
@@ -578,10 +578,10 @@ int TextureArray2::query_compressed_image_size(int mipmap_level)
 }
 
 
-void TextureArray2::_set_texture_parameters()
+void Texture2DArray::_set_texture_parameters()
 {
 	if (_texture_handle_created) {
-		std::cout << "[OpenGL Error] TextureArray tried to _set_texture_parameters() but texture handle was already created" << std::endl;
+		std::cout << "[OpenGL Error] Texture2DArray tried to _set_texture_parameters() but texture handle was already created" << std::endl;
 		ASSERT(false);
 	}
 
@@ -605,7 +605,7 @@ void TextureArray2::_set_texture_parameters()
 	GLCall(glTextureParameteri(id, GL_TEXTURE_WRAP_T, WrapMode_to_OpenGL(wrap_v)));
 }
 
-void TextureArray2::_generate_texture()
+void Texture2DArray::_generate_texture()
 {
 	if (_texture_generated) return;
 	if (multisample_amount != 0) target = GL_TEXTURE_2D_MULTISAMPLE_ARRAY;
@@ -613,7 +613,7 @@ void TextureArray2::_generate_texture()
 	_texture_generated = true;
 }
 
-void TextureArray2::_allocate_texture()
+void Texture2DArray::_allocate_texture()
 {
 	if (!_texture_generated) return;
 	if (_texture_allocated) return;
@@ -622,11 +622,11 @@ void TextureArray2::_allocate_texture()
 		int old_mipmap_levels = mipmap_levels;
 		if (width >> mipmap_levels == 0 || mipmap_levels >= sizeof(int) * 8) mipmap_levels = std::log2(width);
 		if (height >> mipmap_levels == 0 || mipmap_levels >= sizeof(int) * 8) mipmap_levels = std::log2(height);
-		std::cout << "[OpenGL Warning] TextureArray with size (" << width << ", " << height << ") tried to load " << old_mipmap_levels << " mipmap levels, mipmap levels reducing to " << mipmap_levels << std::endl;;
+		std::cout << "[OpenGL Warning] Texture2DArray with size (" << width << ", " << height << ") tried to load " << old_mipmap_levels << " mipmap levels, mipmap levels reducing to " << mipmap_levels << std::endl;;
 	}
 
 	if (multisample_amount != 0 && mipmap_levels != 1) {
-		std::cout << "[OpenGL Warning] TextureArray tried to _allocate_texture() with multisample_amount = " << multisample_amount << ", mipmap_levels = " << mipmap_levels << " but multismapled textures cannot have mipmaps, mipmaps_levels set to 1" << std::endl;
+		std::cout << "[OpenGL Warning] Texture2DArray tried to _allocate_texture() with multisample_amount = " << multisample_amount << ", mipmap_levels = " << mipmap_levels << " but multismapled textures cannot have mipmaps, mipmaps_levels set to 1" << std::endl;
 		mipmap_levels = 1;
 	}
 
@@ -642,7 +642,7 @@ void TextureArray2::_allocate_texture()
 	_create_handle();
 }
 
-void TextureArray2::_create_handle()
+void Texture2DArray::_create_handle()
 {
 	if (_texture_handle_created) return;
 	if (!_texture_allocated) _allocate_texture();
@@ -655,21 +655,21 @@ void TextureArray2::_create_handle()
 	_texture_handle_created = true;
 }
 
-int TextureArray2::_get_gl_internal_format()
+int Texture2DArray::_get_gl_internal_format()
 {
 	return is_color_texture ? ColorTextureFormat_to_OpenGL(color_texture_format) : DepthStencilTextureFormat_to_OpenGL(depth_stencil_texture_format);
 
 }
 
-Image TextureArray2::get_image(int texture_index, ColorFormat format, Type type, int mipmap_level)
+Image Texture2DArray::get_image(int texture_index, ColorFormat format, Type type, int mipmap_level)
 {
 	return get_image(texture_index, format, type, mipmap_level, 0, 0, query_width(mipmap_level), query_height(mipmap_level));
 }
 
-Image TextureArray2::get_image(int texture_index, ColorFormat format, Type type, int mipmap_level, int x, int y, int width, int height)
+Image Texture2DArray::get_image(int texture_index, ColorFormat format, Type type, int mipmap_level, int x, int y, int width, int height)
 {
 	if (!_texture_allocated || !_user_data_loaded) {
-		std::cout << "[OpenGL Error] TextureArray tried to get_image() but either not allocated any ram or didn't loaded any user data yet" << std::endl;
+		std::cout << "[OpenGL Error] Texture2DArray tried to get_image() but either not allocated any ram or didn't loaded any user data yet" << std::endl;
 		ASSERT(false);
 	}
 
@@ -698,15 +698,15 @@ Image TextureArray2::get_image(int texture_index, ColorFormat format, Type type,
 	return Image(image, width, height, format_channels, true);
 }
 
-Image TextureArray2::get_image(int texture_index, DepthStencilFormat format, Type type, int mipmap_level)
+Image Texture2DArray::get_image(int texture_index, DepthStencilFormat format, Type type, int mipmap_level)
 {
 	return get_image(texture_index, format, type, mipmap_level, 0, 0, query_width(mipmap_level), query_height(mipmap_level));
 }
 
-Image TextureArray2::get_image(int texture_index, DepthStencilFormat format, Type type, int mipmap_level, int x, int y, int width, int height)
+Image Texture2DArray::get_image(int texture_index, DepthStencilFormat format, Type type, int mipmap_level, int x, int y, int width, int height)
 {
 	if (!_texture_allocated || !_user_data_loaded) {
-		std::cout << "[OpenGL Error] TextureArray tried to get_image() but either not allocated any ram or didn't loaded any user data yet" << std::endl;
+		std::cout << "[OpenGL Error] Texture2DArray tried to get_image() but either not allocated any ram or didn't loaded any user data yet" << std::endl;
 		ASSERT(false);
 	}
 
@@ -726,7 +726,7 @@ Image TextureArray2::get_image(int texture_index, DepthStencilFormat format, Typ
 	if (format == DepthStencilFormat::DEPTH) gl_format = GL_DEPTH_COMPONENT;
 	else if (format == DepthStencilFormat::STENCIL) gl_format = GL_STENCIL_INDEX;
 	else {
-		std::cout << "[OpenGL Error] TextureArray tried to get_image() with unsuppoerted format" << std::endl;
+		std::cout << "[OpenGL Error] Texture2DArray tried to get_image() with unsuppoerted format" << std::endl;
 		ASSERT(false);
 	}
 
@@ -735,75 +735,75 @@ Image TextureArray2::get_image(int texture_index, DepthStencilFormat format, Typ
 	return Image(image, width, height, format_channels, true);
 }
 
-void TextureArray2::clear(int texture_index, unsigned char clear_data, int mipmap_target)
+void Texture2DArray::clear(int texture_index, unsigned char clear_data, int mipmap_target)
 {
 	clear(texture_index, clear_data, 0, 0, width, height, mipmap_target);
 }
 
-void TextureArray2::clear(int texture_index, float clear_data, int mipmap_target)
+void Texture2DArray::clear(int texture_index, float clear_data, int mipmap_target)
 {
 	clear(texture_index, clear_data, 0, 0, width, height, mipmap_target);
 }
 
-void TextureArray2::clear(int texture_index, glm::vec2 clear_data, int mipmap_target)
+void Texture2DArray::clear(int texture_index, glm::vec2 clear_data, int mipmap_target)
 {
 	clear(texture_index, clear_data, 0, 0, width, height, mipmap_target);
 }
 
-void TextureArray2::clear(int texture_index, glm::vec3 clear_data, int mipmap_target)
+void Texture2DArray::clear(int texture_index, glm::vec3 clear_data, int mipmap_target)
 {
 	clear(texture_index, clear_data, 0, 0, width, height, mipmap_target);
 }
 
-void TextureArray2::clear(int texture_index, glm::vec4 clear_data, int mipmap_target)
+void Texture2DArray::clear(int texture_index, glm::vec4 clear_data, int mipmap_target)
 {
 	clear(texture_index, clear_data, 0, 0, width, height, mipmap_target);
 }
 
-void TextureArray2::clear(int texture_index, unsigned char clear_data, int x, int y, int width, int height, int mipmap_target)
+void Texture2DArray::clear(int texture_index, unsigned char clear_data, int x, int y, int width, int height, int mipmap_target)
 {
 	if (!_texture_allocated || !_user_data_loaded) {
-		std::cout << "[OpenGL Error] TextureArray tried to clear() but either not allocated any ram or didn't loaded any user data yet" << std::endl;
+		std::cout << "[OpenGL Error] Texture2DArray tried to clear() but either not allocated any ram or didn't loaded any user data yet" << std::endl;
 		ASSERT(false);
 	}
 
 	GLCall(glClearTexSubImage(id, mipmap_target, x, y, texture_index, width, height, 1, GL_RED, GL_UNSIGNED_BYTE, &clear_data));
 }
 
-void TextureArray2::clear(int texture_index, float clear_data, int x, int y, int width, int height, int mipmap_target)
+void Texture2DArray::clear(int texture_index, float clear_data, int x, int y, int width, int height, int mipmap_target)
 {
 	if (!_texture_allocated || !_user_data_loaded) {
-		std::cout << "[OpenGL Error] TextureArray tried to clear() but either not allocated any ram or didn't loaded any user data yet" << std::endl;
+		std::cout << "[OpenGL Error] Texture2DArray tried to clear() but either not allocated any ram or didn't loaded any user data yet" << std::endl;
 		ASSERT(false);
 	}
 
 	GLCall(glClearTexSubImage(id, mipmap_target, x, y, texture_index, width, height, 1, GL_RED, GL_FLOAT, &clear_data));
 }
 
-void TextureArray2::clear(int texture_index, glm::vec2 clear_data, int x, int y, int width, int height, int mipmap_target)
+void Texture2DArray::clear(int texture_index, glm::vec2 clear_data, int x, int y, int width, int height, int mipmap_target)
 {
 	if (!_texture_allocated || !_user_data_loaded) {
-		std::cout << "[OpenGL Error] TextureArray tried to clear() but either not allocated any ram or didn't loaded any user data yet" << std::endl;
+		std::cout << "[OpenGL Error] Texture2DArray tried to clear() but either not allocated any ram or didn't loaded any user data yet" << std::endl;
 		ASSERT(false);
 	}
 
 	GLCall(glClearTexSubImage(id, mipmap_target, x, y, texture_index, width, height, 1, GL_RG, GL_FLOAT, &clear_data));
 }
 
-void TextureArray2::clear(int texture_index, glm::vec3 clear_data, int x, int y, int width, int height, int mipmap_target)
+void Texture2DArray::clear(int texture_index, glm::vec3 clear_data, int x, int y, int width, int height, int mipmap_target)
 {
 	if (!_texture_allocated || !_user_data_loaded) {
-		std::cout << "[OpenGL Error] TextureArray tried to clear() but either not allocated any ram or didn't loaded any user data yet" << std::endl;
+		std::cout << "[OpenGL Error] Texture2DArray tried to clear() but either not allocated any ram or didn't loaded any user data yet" << std::endl;
 		ASSERT(false);
 	}
 
 	GLCall(glClearTexSubImage(id, mipmap_target, x, y, texture_index, width, height, 1, GL_RGB, GL_FLOAT, &clear_data));
 }
 
-void TextureArray2::clear(int texture_index, glm::vec4 clear_data, int x, int y, int width, int height, int mipmap_target)
+void Texture2DArray::clear(int texture_index, glm::vec4 clear_data, int x, int y, int width, int height, int mipmap_target)
 {
 	if (!_texture_allocated || !_user_data_loaded) {
-		std::cout << "[OpenGL Error] TextureArray tried to clear() but either not allocated any ram or didn't loaded any user data yet" << std::endl;
+		std::cout << "[OpenGL Error] Texture2DArray tried to clear() but either not allocated any ram or didn't loaded any user data yet" << std::endl;
 		ASSERT(false);
 	}
 

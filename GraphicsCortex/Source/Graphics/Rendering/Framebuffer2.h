@@ -2,14 +2,14 @@
 #include "TextureBase.h"
 #include "Texture1D.h"
 #include "Texture2D.h"
-#include "TextureArray.h"
+#include "Texture2DArray.h"
 #include "TextureCubeMap.h"
 #include "Texture3D.h"
 #include "Renderbuffer.h"
 #include <array>
 #include <unordered_set>
 
-class Framebuffer2 {
+class Framebuffer {
 public:
 	enum class Channel {
 		COLOR,
@@ -28,9 +28,9 @@ public:
 	
 	unsigned int id;
 
-	Framebuffer2();
-	Framebuffer2(const Framebuffer2& other) = delete;
-	~Framebuffer2();
+	Framebuffer();
+	Framebuffer(const Framebuffer& other) = delete;
+	~Framebuffer();
 	void release();
 
 	static void bind_screen_read_draw();
@@ -43,19 +43,19 @@ public:
 
 	void attach_color(int slot, std::shared_ptr<Texture1D> texture1d, int mipmap_level = 0);
 	void attach_color(int slot, std::shared_ptr<Texture2D> texture2d, int mipmap_level = 0);
-	void attach_color(int slot, std::shared_ptr<TextureArray2> texture_array, int z, int mipmap = 0);
+	void attach_color(int slot, std::shared_ptr<Texture2DArray> texture_array, int z, int mipmap = 0);
 	void attach_color(int slot, std::shared_ptr<TextureCubeMap> texture_cube_map, TextureCubeMap::Face face, int mipmap = 0);
 	void attach_color(int slot, std::shared_ptr<Texture3D> texture3d, int z, int mipmap = 0);
-	void attach_color(int slot, std::shared_ptr<Renderbuffer2> render_buffer);
+	void attach_color(int slot, std::shared_ptr<Renderbuffer> render_buffer);
 
 	void attach_depth(std::shared_ptr<Texture2D> texture2d, int mipmap_level = 0);
-	void attach_depth(std::shared_ptr<Renderbuffer2> render_buffer);
+	void attach_depth(std::shared_ptr<Renderbuffer> render_buffer);
 
 	void attach_stencil(std::shared_ptr<Texture2D> texture2d, int mipmap_level = 0);
-	void attach_stencil(std::shared_ptr<Renderbuffer2> render_buffer);
+	void attach_stencil(std::shared_ptr<Renderbuffer> render_buffer);
 
 	void attach_depth_stencil(std::shared_ptr<Texture2D> texture2d, int mipmap_level = 0);
-	void attach_depth_stencil(std::shared_ptr<Renderbuffer2> render_buffer);
+	void attach_depth_stencil(std::shared_ptr<Renderbuffer> render_buffer);
 
 	void set_read_buffer(int slot);
 
@@ -64,7 +64,7 @@ public:
 	void update_activated_draw_buffers();
 	void deactivate_all_draw_buffers();
 
-	void blit(Framebuffer2& target, int self_x0, int self_y0, int self_x1, int self_y1, int target_x0, int target_y0, int target_x1, int target_y1, Channel channel, Filter filter);
+	void blit(Framebuffer& target, int self_x0, int self_y0, int self_x1, int self_y1, int target_x0, int target_y0, int target_x1, int target_y1, Channel channel, Filter filter);
 	void blit_to_screen(int self_x0, int self_y0, int self_x1, int self_y1, int target_x0, int target_y0, int target_x1, int target_y1, Channel channel, Filter filter);
 
 private:
