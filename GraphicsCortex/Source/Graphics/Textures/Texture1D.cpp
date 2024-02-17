@@ -157,7 +157,7 @@ void Texture1D::load_data_async(const std::string& image_filepath, ColorFormat f
 
 	ASSERT(async_image == nullptr);
 	ASSERT(async_loading_thread == nullptr);
-	async_loading_thread = new std::thread(&read_image, image_filepath, &async_image, this->width, ColorFormat_channels(format));
+	async_loading_thread = new std::thread(&read_image, image_filepath, &async_image, this->width, 1, ColorFormat_channels(format));
 
 	post_async_load_function = [this, format, type, x, width, mipmap_target]() {
 		this->load_data(*async_image, format, type, x, width, mipmap_target);
@@ -278,7 +278,7 @@ void Texture1D::load_data_width_mipmaps_async(const std::string& image_filepath,
 
 	ASSERT(async_image == nullptr);
 	ASSERT(async_loading_thread == nullptr);
-	async_loading_thread = new std::thread(&read_image, image_filepath, &async_image, this->width, ColorFormat_channels(format));
+	async_loading_thread = new std::thread(&read_image, image_filepath, &async_image, this->width, 1, ColorFormat_channels(format));
 
 	post_async_load_function = [this, format, type]() {
 		this->load_data_with_mipmaps(*async_image, format, type);
@@ -739,7 +739,6 @@ void Texture1D::clear(float clear_data, int x, int width, int mipmap_target)
 	}
 
 	GLCall(glClearTexSubImage(id, mipmap_target, x, 0, 0, width, 1, 1, GL_RED, GL_FLOAT, &clear_data));
-}
 }
 
 void Texture1D::clear(glm::vec2 clear_data, int x, int width, int mipmap_target)

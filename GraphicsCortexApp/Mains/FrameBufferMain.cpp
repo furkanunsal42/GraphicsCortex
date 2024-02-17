@@ -29,20 +29,24 @@ int main() {
 	skybox->cubemap->load_data_async(TextureCubeMap::Face::FRONT,   "../GraphicsCortex/Images/CubeMap/Sky/pz.jpg", TextureCubeMap::ColorFormat::RGBA, TextureCubeMap::Type::UNSIGNED_BYTE, 0);
 	skybox->cubemap->load_data_async(TextureCubeMap::Face::BACK,    "../GraphicsCortex/Images/CubeMap/Sky/nz.jpg", TextureCubeMap::ColorFormat::RGBA, TextureCubeMap::Type::UNSIGNED_BYTE, 0);
 
+	std::shared_ptr<Texture1D> texture1d = std::make_shared<Texture1D>(1920, Texture1D::ColorTextureFormat::RGBA8, 1, 0);
+
 	//bindless_program->update_uniform("cubemap", *cubemap);
 
 	//std::shared_ptr<Texture2D> color_texture = std::make_shared<Texture2D>(1920, 1080, Texture2D::ColorTextureFormat::RGBA8, 1, 0, 4);
 	//std::shared_ptr<Texture2D> depth_stencil_texture = std::make_shared<Texture2D>(1920, 1080, Texture2D::DepthStencilTextureFormat::DEPTH24_STENCIL8, 1, 0, 4);
 	std::shared_ptr<Renderbuffer2> color_texture = std::make_shared<Renderbuffer2>(1920, 1080, Renderbuffer2::ColorTextureFormat::RGBA8, 0);
 	std::shared_ptr<Renderbuffer2> depth_stencil_texture = std::make_shared<Renderbuffer2>(1920, 1080, Renderbuffer2::DepthStencilTextureFormat::DEPTH24_STENCIL8, 0);
+	
+	
 	Framebuffer2 framebuffer;
-	//framebuffer.attach_color(0, color_texture);
-	framebuffer.attach_color(1, skybox->cubemap, TextureCubeMap::Face::FRONT, 0);
+	framebuffer.attach_color(0, texture1d);
+	//framebuffer.attach_color(1, skybox->cubemap, TextureCubeMap::Face::FRONT, 0);
 	framebuffer.attach_depth_stencil(depth_stencil_texture);
 
 	while (frame.is_running()) {
 		framebuffer.deactivate_all_draw_buffers();
-		framebuffer.activate_draw_buffer(1);
+		framebuffer.activate_draw_buffer(0);
 		framebuffer.bind_draw();
 		double deltatime = frame.handle_window();
 		frame.clear_window();
@@ -53,7 +57,8 @@ int main() {
 
 		skybox->render(*scene.camera);
 		
-		framebuffer.set_read_buffer(1);
-		framebuffer.blit_to_screen(0, 0, 1920, 1080, 0, 0, 1920, 1080, Framebuffer2::Channel::COLOR, Framebuffer2::Filter::NEAREST);
+		framebuffer.set_read_buffer(0);
+		for ( int i = 0; i < 1080 - 1; i++)
+			framebuffer.blit_to_screen(0, 0, 1920, 1, 0, i, 1920, i+1, Framebuffer2::Channel::COLOR, Framebuffer2::Filter::LINEAR);
 	}
 }
