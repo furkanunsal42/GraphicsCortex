@@ -6,7 +6,7 @@ int main() {
 	scene.camera->fov = 110;
 	scene.camera->max_distance = 1000;
 
-	std::shared_ptr<Program> bindless_program = std::make_shared<Program>(Shader("../GraphicsCortex/Source/GLSL/Debug/basic.vert", "../GraphicsCortex/Source/GLSL/Debug/flatcolor.frag"));
+	std::shared_ptr<Program> bindless_program = std::make_shared<Program>(Shader("../GraphicsCortex/Source/GLSL/Debug/basic.vert", "../GraphicsCortex/Source/GLSL/Debug/texcoord.frag"));
 	std::shared_ptr<Mesh> dragon_mesh;
 	std::shared_ptr<BindlessMaterial> dragon_material;
 	{
