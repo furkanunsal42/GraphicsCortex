@@ -2,7 +2,7 @@
 #include "Framebuffer.h"
 
 int main() {
-	Frame frame(1920, 1080, "FrameBuffer App", 4, 0, true, true, true, Frame::CallbackLevel::LOW, false);
+	Frame frame(1920, 1080, "FrameBuffer App", 0, 0, true, true, true, Frame::CallbackLevel::LOW, false);
 	Scene scene(frame);
 	scene.camera->fov = 110;
 	scene.camera->max_distance = 1000;
@@ -21,32 +21,17 @@ int main() {
 
 	scene.add(dragon);
 
-	std::shared_ptr<Renderbuffer> position_texture = std::make_shared<Renderbuffer>(1920, 1080, Renderbuffer::ColorTextureFormat::RGBA8, 0);
-	std::shared_ptr<Renderbuffer> texcoord_texture = std::make_shared<Renderbuffer>(1920, 1080, Renderbuffer::ColorTextureFormat::RGBA8, 0);
-	std::shared_ptr<Renderbuffer> normal_texture = std::make_shared<Renderbuffer>(1920, 1080, Renderbuffer::ColorTextureFormat::RGBA8, 0);
-	std::shared_ptr<Renderbuffer> depth_stencil_texture = std::make_shared<Renderbuffer>(1920, 1080, Renderbuffer::DepthStencilTextureFormat::DEPTH24_STENCIL8, 0);
+	std::shared_ptr<RenderPipeline> pipeline = std::make_shared<RenderPipeline>(1920, 1080, TextureBase2::ColorTextureFormat::RGBA8, 0);
+	pipeline->push_render_pass(std::make_shared<RenderPass_GBuffer>());
 
-	std::shared_ptr<Framebuffer> gbuffer = std::make_shared<Framebuffer>();
-	gbuffer->attach_color(0, position_texture);
-	gbuffer->attach_color(1, texcoord_texture);
-	gbuffer->attach_color(2, normal_texture);
-	gbuffer->attach_depth_stencil(depth_stencil_texture);
+	scene.pipeline = pipeline;
 
 	while (frame.is_running()) {
-		gbuffer->deactivate_all_draw_buffers();
-		gbuffer->activate_draw_buffer(0);
-		gbuffer->activate_draw_buffer(1);
-		gbuffer->activate_draw_buffer(2);
-		gbuffer->bind_draw();
-
 		double deltatime = frame.handle_window();
 		frame.clear_window();
 		frame.display_performance(180);
 
 		scene.camera->handle_movements(frame.window, deltatime);
-		scene.render();
-
-		gbuffer->set_read_buffer(2);
-		gbuffer->blit_to_screen(0, 0, 1920, 1080, 0, 0, 1920, 1080, Framebuffer::Channel::COLOR, Framebuffer::Filter::LINEAR);
+		scene.render_pipeline();
 	}
 }

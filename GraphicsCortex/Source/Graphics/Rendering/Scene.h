@@ -11,13 +11,18 @@
 
 #include "PhysicsScene.h"
 
+#include "RenderPipeline.h"
+
 #include <vector>
 #include <type_traits>
 
 class Text;
 class CubeMapTexture;
+class RenderPass;
 
 class Scene {
+	friend RenderPipeline;
+	friend RenderPass;
 public:
 
 	Scene(const Frame& frame);
@@ -33,6 +38,7 @@ public:
 		add(T light)
 	{
 		_lights.push_back(light);
+		_new_graphic_added = true;
 	}
 	void add(std::shared_ptr<Graphic> graphic);
 	void add(std::shared_ptr<Object> object);
@@ -60,18 +66,21 @@ public:
 
 	void render(bool show_warnings = true);
 	void render_to_framebuffer(FrameBuffer& framebuffer, Frame& frame, bool show_warnings = true);
+	void render_pipeline();
 
 	void sync_with_physics();
 
+
 	std::vector<std::shared_ptr<Graphic>> _graphics;
 	std::vector<std::shared_ptr<Light>> _lights;
-	
 	std::vector<std::shared_ptr<Object>> _objects;
 	std::vector<std::shared_ptr<Vehicle>> _vehicles;
-
 	std::vector<std::shared_ptr<Text>> _texts;
-
 	std::shared_ptr<CubeMapTexture> skybox;
 
+	std::shared_ptr<RenderPipeline> pipeline;
 private:
+	bool _new_graphic_added = true;
+	std::vector<std::reference_wrapper<Graphic>> pipeline_rendering_list;
+	void _update_pipeline_rendering_list();
 };

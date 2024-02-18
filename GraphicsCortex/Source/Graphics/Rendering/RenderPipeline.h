@@ -2,8 +2,11 @@
 #include <vector>
 #include <memory>
 
-#include "Scene.h"
 #include "Framebuffer.h"
+
+class Scene;
+class Graphic;
+class RenderPipeline;
 
 class RenderPass {
 public:
@@ -11,14 +14,13 @@ public:
 	RenderPass() = default;
 	~RenderPass() = default;
 
-	virtual void on_render(int pass_index, RenderPipeline& pipeline, Scene& scene) = 0;
+	virtual void on_render(int pass_index, RenderPipeline& pipeline, Scene& scene, const std::vector<std::reference_wrapper<Graphic>>& graphics) = 0;
 };
 
 class RenderPipeline {
 public:
 	
 	std::shared_ptr<Framebuffer> framebuffer = std::make_shared<Framebuffer>();
-
 	RenderPipeline(const RenderPipeline& other) = delete;
 	RenderPipeline(int width, int height, TextureBase2::ColorTextureFormat internal_format, int multisample);
 	~RenderPipeline() = default;
@@ -27,4 +29,10 @@ public:
 	void render(Scene& scene);
 
 	std::vector<std::shared_ptr<RenderPass>> passes;
+	int width;
+	int height;
+	TextureBase2::ColorTextureFormat internal_format;
+	int multisample;
+
+	std::vector<std::shared_ptr<TextureBase2>> texture_stack;
 };

@@ -24,20 +24,24 @@ Scene::Scene(const Frame& frame) {
 
 void Scene::add(std::shared_ptr<Graphic> graphic) {
 	_graphics.push_back(graphic);
+	_new_graphic_added = true;
 }
 
 void Scene::add(std::shared_ptr<Object> object) {
 	_objects.push_back(object);
 	PhysicsScene::get().add_actor(object->physics);
+	_new_graphic_added = true;
 }
 
 void Scene::add(std::shared_ptr<Vehicle> vehicle) {
 	_vehicles.push_back(vehicle);
 	PhysicsScene::get().add_actor(vehicle->physics_representation);
+	_new_graphic_added = true;
 }
 
 void Scene::add(std::shared_ptr<Text> text) {
 	_texts.push_back(text);
+	// NOT PIPELINE SOURCE
 }
 
 void Scene::set_skybox(std::shared_ptr<CubeMapTexture> cubemap) {
@@ -173,11 +177,47 @@ void Scene::render_to_framebuffer(FrameBuffer& frame_buffer, Frame& frame, bool 
 	frame.set_viewport(frame.window_width, frame.window_height);
 }
 
+void Scene::render_pipeline()
+{
+	ASSERT(pipeline != nullptr);
+
+	sync_with_physics();
+	camera->update_matrixes();
+
+	_update_pipeline_rendering_list();
+	if (pipeline_rendering_list.size() == 0) return;
+	
+	pipeline->render(*this);
+}
+
 void Scene::sync_with_physics() {
 	for (std::shared_ptr<Object> object : _objects) {
 		object->sync_with_physics();
 	}
 	for (std::shared_ptr<Vehicle> vehicle : _vehicles) {
 		vehicle->sync_with_physics();
+	}
+}
+
+void Scene::_update_pipeline_rendering_list()
+{
+	if (_new_graphic_added) {
+		for (std::shared_ptr<Graphic> graphic : _graphics) {
+			pipeline_rendering_list.push_back(*graphic);
+		}
+		for (std::shared_ptr<Object> object : _objects) {
+			pipeline_rendering_list.push_back(object->graphics);
+		}
+
+		for (std::shared_ptr<Vehicle> vehicle : _vehicles) {
+			if (vehicle->chassis_graphic_initialized)
+				pipeline_rendering_list.push_back(*vehicle->chassis);
+
+			if (vehicle->wheel_graphic_initialized) {
+				for (std::shared_ptr<Graphic> wheel : vehicle->wheels)
+					pipeline_rendering_list.push_back(*wheel);
+			}
+		}
+		_new_graphic_added = false;
 	}
 }

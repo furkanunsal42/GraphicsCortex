@@ -25,6 +25,8 @@ Graphic::Graphic(std::shared_ptr<Mesh> mesh, std::shared_ptr<BindlessMaterial> m
 }
 
 void Graphic::draw(bool show_warnings) {
+	update_matrix();
+
 	if (!_is_material_loaded) {
 		if (show_warnings)
 			std::cout << "[Opengl Warning] Material is not specified before Graphic::draw()" << std::endl;
@@ -45,10 +47,22 @@ void Graphic::draw(bool show_warnings) {
 	}
 
 	if (_is_mesh_loaded) {
-		for (int i = 0; i < mesh->submeshes.size(); i++) {
-			mesh->bind(i);
-			GLCall(glDrawElements(mode, mesh->submeshes[i].index_buffer->data_count, GL_UNSIGNED_INT, nullptr));
-		}
+		draw_without_bind();
+	}
+}
+
+void Graphic::draw_without_bind()
+{
+	update_matrix();
+
+	if (!_is_mesh_loaded) {
+		std::cout << "[Opengl Error] Mesh is not specified before Graphic::draw_without_bind()" << std::endl;
+		ASSERT(false);
+	}
+
+	for (int i = 0; i < mesh->submeshes.size(); i++) {
+		mesh->bind(i);
+		GLCall(glDrawElements(mode, mesh->submeshes[i].index_buffer->data_count, GL_UNSIGNED_INT, nullptr));
 	}
 }
 

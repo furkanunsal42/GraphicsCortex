@@ -32,6 +32,7 @@ public:
 
 	void update_matrix();
 	void draw(bool show_warnings = true);
+	void draw_without_bind();
 
 	bool is_material_loaded();
 	bool is_mesh_loaded();

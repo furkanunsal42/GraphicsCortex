@@ -36,8 +36,10 @@
 #include "Scene.h"
 #include "Default_Assets.h"
 #include "Default_Programs.h"
-
 #include "SkyBox.h"
+
+#include "RenderPipeline.h"
+#include "RenderPass_GBuffer.h"
 
 #include "AssetImporter.h"
 #include "DirectoryUtils.h"
@@ -58,7 +60,6 @@
 #include "PhysicsObject.h"
 #include "PhysicsLink.h"
 #include "PhysicsVehicle.h"
-
 #include "Object.h"
 
 

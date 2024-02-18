@@ -550,3 +550,5 @@ build-obj/windows-Release-x86_64GraphicsCortex/_FrameBuffer.obj
 build-obj/windows-Release-x86_64GraphicsCortex/RenderPass.obj
 build-obj/windows-Release-x86_64GraphicsCortex/Texture2DArray.obj
 build-obj/windows-Release-x86_64GraphicsCortex/Texture2DArray.obj
+build-obj/windows-Release-x86_64GraphicsCortex/RenderPass_GBuffer.obj
+build-obj/windows-Release-x86_64GraphicsCortex/DeferredRenderPass.obj
