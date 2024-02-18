@@ -24,7 +24,6 @@ void Camera::update_matrixes() {
 	else {
 		projection_matrix = glm::ortho(-screen_width / screen_height * ortho_size, screen_width / screen_height * ortho_size, -1.0f * ortho_size, 1.0f * ortho_size, min_distance, max_distance);
 	}
-
 }
 
 void Camera::handle_movements(GLFWwindow* window, double frame_time_ms) {

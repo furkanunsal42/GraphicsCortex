@@ -38,8 +38,21 @@ int main() {
 	std::shared_ptr<Graphic> dragon = std::make_shared<Graphic>(dragon_mesh, dragon_material);
 	dragon->rotation = glm::vec3(-glm::pi<float>() / 2, 0, 0);
 
+	//std::shared_ptr<Mesh> sponza_mesh;
+	//std::shared_ptr<BindlessMaterial> sponza_material;
+	//{
+	//	Model sponza_model("../GraphicsCortex/Models/sponza2/NewSponza_Main_glTF_002.gltf", 1, Model::ALL);
+	//	sponza_mesh = std::make_shared<Mesh>(sponza_model);
+	//	sponza_material = AssetImporter::generate_material("../GraphicsCortex/Models/sponza2/NewSponza_Main_glTF_002.gltf", bindless_program);
+	//}
+	//
+	//AssetImporter::clear_ram_all();
+	//std::shared_ptr<Graphic> sponza = std::make_shared<Graphic>(sponza_mesh, sponza_material);
+	//sponza->rotation = glm::vec3(-glm::pi<float>() / 2, 0, 0);
+
 	scene.add(dragon);
 	scene.add(circuit);
+	//scene.add(sponza);
 
 	while (frame.is_running()) {
 		double deltatime = frame.handle_window();

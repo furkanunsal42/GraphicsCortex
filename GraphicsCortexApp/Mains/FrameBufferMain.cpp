@@ -6,11 +6,11 @@ int main() {
 	scene.camera->fov = 110;
 	scene.camera->max_distance = 1000;
 
-	std::shared_ptr<Program> bindless_program = std::make_shared<Program>(Shader("../GraphicsCortex/Source/GLSL/TextureArray.vert", "../GraphicsCortex/Source/GLSL/TextureArray.frag"));
+	std::shared_ptr<Program> bindless_program = std::make_shared<Program>(Shader("../GraphicsCortex/Source/GLSL/Debug/basic.vert", "../GraphicsCortex/Source/GLSL/Debug/flatcolor.frag"));
 	std::shared_ptr<Mesh> dragon_mesh;
 	std::shared_ptr<BindlessMaterial> dragon_material;
 	{
-		Model dragon_model("../GraphicsCortex/Models/dragon_new/dragon_new.fbx", 1, Model::ALL);
+		Model dragon_model("../GraphicsCortex/Models/dragon_new/dragon_new.fbx", 1, Model::COORD_XYZ | Model::NORMAL_XYZ | Model::TEX_COORD_XY);
 		dragon_mesh = std::make_shared<Mesh>(dragon_model);
 		dragon_material = AssetImporter::generate_material("../GraphicsCortex/Models/dragon_new/dragon_new.fbx", bindless_program);
 	}
@@ -42,15 +42,15 @@ int main() {
 	//std::shared_ptr<Renderbuffer> depth_stencil_texture = std::make_shared<Renderbuffer>(1920, 1080, Renderbuffer::DepthStencilTextureFormat::DEPTH24_STENCIL8, 0);
 	
 	
-	Framebuffer framebuffer;
+	std::shared_ptr<Framebuffer> framebuffer = std::make_shared<Framebuffer>();
 	//framebuffer.attach_color(0, texture1d);
-	framebuffer.attach_color(0, texture_array, 0, 0);
-	framebuffer.attach_depth_stencil(depth_stencil_texture);
+	framebuffer->attach_color(0, texture_array, 0, 0);
+	framebuffer->attach_depth_stencil(depth_stencil_texture);
 
 	while (frame.is_running()) {
-		framebuffer.deactivate_all_draw_buffers();
-		framebuffer.activate_draw_buffer(0);
-		framebuffer.bind_draw();
+		framebuffer->deactivate_all_draw_buffers();
+		framebuffer->activate_draw_buffer(0);
+		framebuffer->bind_draw();
 
 		double deltatime = frame.handle_window();
 		frame.clear_window();
@@ -61,7 +61,7 @@ int main() {
 
 		skybox->render(*scene.camera);
 		
-		framebuffer.set_read_buffer(0);
-		framebuffer.blit_to_screen(0, 0, 1920, 1080, 0, 0, 1920, 1080, Framebuffer::Channel::COLOR, Framebuffer::Filter::LINEAR);
+		framebuffer->set_read_buffer(0);
+		framebuffer->blit_to_screen(0, 0, 1920, 1080, 0, 0, 1920, 1080, Framebuffer::Channel::COLOR, Framebuffer::Filter::LINEAR);
 	}
 }
