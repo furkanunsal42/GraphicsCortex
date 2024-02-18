@@ -1,5 +1,5 @@
 
-#include "CubeMap.h"
+#include "old/CubeMap.h"
 
 #include "stb_image.h"
 

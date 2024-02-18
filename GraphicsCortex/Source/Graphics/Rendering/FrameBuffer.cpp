@@ -1,243 +1,428 @@
-#include "FrameBuffer.h"
-#include "GL\glew.h"
-
-#include <glm.hpp>
-
+#include "Framebuffer.h"
 #include "Debuger.h"
-#include "Graphic.h"
-#include "Default_Assets.h"
-#include "Frame.h"
-
 #include <iostream>
 
-FrameBuffer::FrameBuffer(int width, int height, int anti_alliasing, bool readable_depth_stencil) :
-	width(width), height(height), multisample(anti_alliasing), color_texture(Texture(anti_alliasing)), depth_stencil_texture(Texture(anti_alliasing)), depth_stencil_renderbuffer(RenderBuffer(anti_alliasing)), readable_depth_stencil_buffer(readable_depth_stencil)
-{	
-	// setup color texture
-	color_texture.internal_format = GL_RGB;
-	color_texture.format = GL_RGB;
-	color_texture.data_type = GL_UNSIGNED_BYTE;
-	color_texture.min_filter = GL_NEAREST;
-	color_texture.mag_filter = GL_NEAREST;
-	color_texture.wrap_s = GL_CLAMP_TO_EDGE;
-	color_texture.wrap_t = GL_CLAMP_TO_EDGE;
-	color_texture.width = width;
-	color_texture.height = height;
-	
-
-	if (readable_depth_stencil_buffer) {
-		depth_stencil_texture.internal_format = GL_DEPTH24_STENCIL8;
-		depth_stencil_texture.format = GL_DEPTH_STENCIL;
-		depth_stencil_texture.data_type = GL_UNSIGNED_INT_24_8;
-		depth_stencil_texture.min_filter = GL_NEAREST;
-		depth_stencil_texture.mag_filter = GL_NEAREST;
-		depth_stencil_texture.wrap_s = GL_CLAMP_TO_EDGE;
-		depth_stencil_texture.wrap_t = GL_CLAMP_TO_EDGE;
-		depth_stencil_texture.width = width;
-		depth_stencil_texture.height = height;
-		depth_stencil_texture.channels = 4; // 2?
-	}
-	else {
-		depth_stencil_renderbuffer.internal_format = GL_DEPTH24_STENCIL8;
-		depth_stencil_renderbuffer.format = GL_DEPTH_STENCIL;
-		depth_stencil_renderbuffer.data_type = GL_UNSIGNED_INT_24_8;
-		depth_stencil_renderbuffer.min_filter = GL_NEAREST;
-		depth_stencil_renderbuffer.mag_filter = GL_NEAREST;
-		depth_stencil_renderbuffer.wrap_s = GL_CLAMP_TO_EDGE;
-		depth_stencil_renderbuffer.wrap_t = GL_CLAMP_TO_EDGE;
-		depth_stencil_renderbuffer.width = width;
-		depth_stencil_renderbuffer.height = height;
-		depth_stencil_renderbuffer.channels = 4; // 2?
-	}
-}
-
-void FrameBuffer::generate_framebuffer_object() {
-	if (is_initialized())
-		return;
-
-	GLCall(glGenFramebuffers(1, &id));
-	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, id));
-	color_texture.texture_slot = texture_slot;
-
-	color_texture.initialize_blank_image(width, height);
-	GLCall(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, color_texture.target, color_texture.id, 0));
-
-	if (readable_depth_stencil_buffer) {
-		depth_stencil_texture.initialize_blank_image(width, height);
-		GLCall(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, depth_stencil_texture.target, depth_stencil_texture.id, 0));
-	}
-	else {
-		depth_stencil_renderbuffer.initialize_blank_image(width, height);
-		GLCall(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, depth_stencil_renderbuffer.target, depth_stencil_renderbuffer.id));
-	}
-
-	unsigned int error_status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-	if (error_status != GL_FRAMEBUFFER_COMPLETE) {
-		std::cout << "[OPENGL ERROR] Framebuffer Error: " << error_status;
-		ASSERT(false);
-	}
-	unbind();
-
-	_is_initialized = true;
-}
-
-bool FrameBuffer::is_initialized() {
-	return _is_initialized;
-}
-
-void FrameBuffer::bind(unsigned int bind_target) {
-	
-	int read_buffer_id, write_buffer_id = 0;
-	GLCall(glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING, &read_buffer_id));
-	GLCall(glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &write_buffer_id));
-	
-	generate_framebuffer_object();
-
-	if (bind_target == READ_TARGET) {
-		GLCall(glBindFramebuffer(GL_READ_FRAMEBUFFER, id));
-		GLCall(glBindFramebuffer(GL_DRAW_FRAMEBUFFER, write_buffer_id));
-	}
-	else if (bind_target == WRITE_TARGET) {
-		GLCall(glBindFramebuffer(GL_READ_FRAMEBUFFER, read_buffer_id));
-		GLCall(glBindFramebuffer(GL_DRAW_FRAMEBUFFER, id));
-	}
-	else if (bind_target == WRITE_READ_TARGET) {
-		GLCall(glBindFramebuffer(GL_FRAMEBUFFER, id));
-	}
-}
-
-void FrameBuffer::unbind() {
+void Framebuffer::bind_screen_read_draw()
+{
 	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 }
 
-void FrameBuffer::render(unsigned int source_texture) {
-	generate_framebuffer_object();
-
-	if (multisample == 0){
-		GLCall(glDisable(GL_DEPTH_TEST));
-		if (!screen_initialized) {
-			screen = default_geometry::rectangle(glm::vec2(2.0f));
-			screen->material->set_program(program);
-			screen_initialized = true;
-		}
-
-		if (source_texture == COLOR_TEXTURE) {
-			color_texture.texture_slot = 9; // make it dynamic
-			color_texture.bind();
-		}
-		if (source_texture == DEPTH_TEXTURE) {
-			depth_stencil_texture.texture_slot = 9;
-			depth_stencil_texture.bind();
-			GLCall(glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_STENCIL_TEXTURE_MODE, GL_DEPTH_COMPONENT));
-		}
-		if (source_texture == STENCIL_TEXTURE) {
-			depth_stencil_texture.texture_slot = 9;
-			depth_stencil_texture.bind();
-			GLCall(glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_STENCIL_TEXTURE_MODE, GL_STENCIL_INDEX));
-		}
-		program->update_uniform("texture_slot", 9);
-		screen->draw(false);
-		GLCall(glEnable(GL_DEPTH_TEST));
-	}
-	else {
-		GLCall(glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0));
-		GLCall(glBindFramebuffer(GL_READ_FRAMEBUFFER, id));
-		GLCall(glDrawBuffer(GL_BACK));
-		GLCall(glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT , GL_LINEAR));
-	}
+void Framebuffer::bind_screen_read()
+{
+	GLCall(glBindFramebuffer(GL_READ_FRAMEBUFFER, 0));
 }
 
-Image FrameBuffer::save(bool vertical_flip) {
-	generate_framebuffer_object();
-
-	int w = width;
-	int h = height;
-	int image_internal_format = color_texture.internal_format;
-	int channels;
-
-	if (image_internal_format == GL_RGB)
-		channels = 3;
-	else if (image_internal_format == GL_RGBA)
-		channels = 4;
-
-	int image_size = w * h * channels * sizeof(unsigned char);
-
-	bind();
-	unsigned char* i_pixels = new unsigned char[image_size / sizeof(unsigned char)];
-	GLCall(glBindFramebuffer(GL_READ_FRAMEBUFFER, id));
-	GLCall(glReadBuffer(GL_COLOR_ATTACHMENT0));
-	GLCall(glReadPixels(0, 0, w, h, color_texture.format, color_texture.data_type, i_pixels));
-	unbind();
-
-	return Image(i_pixels, w, h, channels, vertical_flip);
+void Framebuffer::bind_screen_draw()
+{
+	GLCall(glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0));
 }
 
-FrameBuffer::~FrameBuffer() {
+unsigned int Framebuffer::Channel_to_OpenGL(Channel channel)
+{
+	switch (channel) {
+	case Framebuffer::Channel::COLOR:					return GL_COLOR_BUFFER_BIT;
+	case Framebuffer::Channel::DEPTH:					return GL_DEPTH_BUFFER_BIT;
+	case Framebuffer::Channel::STENCIL:				return GL_STENCIL_BUFFER_BIT;
+	case Framebuffer::Channel::COLOR_DEPTH:			return GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT;
+	case Framebuffer::Channel::COLOR_STENCIL:			return GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT;
+	case Framebuffer::Channel::COLOR_DEPTH_STENCIL:	return GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT;
+	}
+	return 0;
+}
+
+unsigned int Framebuffer::Filter_to_OpenGL(Filter filter)
+{
+	switch (filter) {
+	case Framebuffer::Filter::NEAREST: return GL_NEAREST;
+	case Framebuffer::Filter::LINEAR: return GL_LINEAR;
+	}
+	return 0;
+}
+
+Framebuffer::Framebuffer()
+{
+	GLCall(glCreateFramebuffers(1, &id));
+	_framebuffer_generated = true;
+}
+
+Framebuffer::~Framebuffer()
+{
 	release();
 }
 
-void FrameBuffer::load_program(std::shared_ptr<Program> program) {
-	this->program = program;
-	_is_program_loaded = true;
-}
+void Framebuffer::release()
+{
+	if (!_framebuffer_generated) return;
 
-void FrameBuffer::release() {
-	color_texture.release();
-	depth_stencil_renderbuffer.release();
-	depth_stencil_texture.release();
 	GLCall(glDeleteFramebuffers(1, &id));
-	
-	_is_initialized = false;
+
+	_framebuffer_generated = false;
 }
 
-// rect format -> xy = low_left, zw-> high_right
-// x -> x0, y -> y0, z -> x1, w -> y1
-void FrameBuffer::blit_section(FrameBuffer& target_buffer, const glm::vec4& source_rect, const glm::vec4& target_rect, unsigned int mask_bits, unsigned int interpolation){
-	
-	bind(READ_TARGET);
-	target_buffer.bind(WRITE_TARGET);
-	
-	unsigned int gl_interpolation;
-	if (interpolation == BLIT_NEAREST_INTERPOLATION)
-		gl_interpolation = GL_NEAREST;
-	else if (interpolation == BLIT_LINEAR_INTERPOLATION)
-		gl_interpolation = GL_LINEAR;
+void Framebuffer::bind_read_draw()
+{
+	update_activated_draw_buffers();
 
-	unsigned int gl_mask = 0;
-	if (mask_bits ^ COLOR_CHANNEL)
-		gl_mask |= GL_COLOR_BUFFER_BIT;
-	if (mask_bits ^ DEPTH_CHANNEL)
-		gl_mask |= GL_DEPTH_BUFFER_BIT;
-	if (mask_bits ^ STENCIL_CHANNEL)
-		gl_mask |= GL_STENCIL_BUFFER_BIT;
+	_check_framebuffer_status(GL_FRAMEBUFFER);
 
-	GLCall(glBlitFramebuffer(source_rect.x, source_rect.y, source_rect.z, source_rect.w,
-		target_rect.x, target_rect.y, target_rect.z, target_rect.w,
-		gl_mask, gl_interpolation));
+	if (!_framebuffer_generated) {
+		std::cout << "[OpenGL Error] Framebuffer treid to bind_read_draw() but resource was released" << std::endl;
+		ASSERT(false);
+	}
 
+	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, id));
 }
 
-void FrameBuffer::blit_section_to_screen(const glm::vec4& source_rect, const glm::vec4& target_rect, unsigned int mask_bits, unsigned int interpolation){
-		
-	bind(READ_TARGET);
-	GLCall(glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0));
+void Framebuffer::bind_read()
+{
+	_check_framebuffer_status(GL_READ_FRAMEBUFFER);
 
-	unsigned int gl_interpolation;
-	if (interpolation == BLIT_NEAREST_INTERPOLATION)
-		gl_interpolation = GL_NEAREST;
-	else if (interpolation == BLIT_LINEAR_INTERPOLATION)
-		gl_interpolation = GL_LINEAR;
+	if (!_framebuffer_generated) {
+		std::cout << "[OpenGL Error] Framebuffer treid to bind_read() but resource was released" << std::endl;
+		ASSERT(false);
+	}
 
-	unsigned int gl_mask = 0;
-	if (mask_bits ^ COLOR_CHANNEL)
-		gl_mask |= GL_COLOR_BUFFER_BIT;
-	if (mask_bits ^ DEPTH_CHANNEL)
-		gl_mask |= GL_DEPTH_BUFFER_BIT;
-	if (mask_bits ^ STENCIL_CHANNEL)
-		gl_mask |= GL_STENCIL_BUFFER_BIT;
+	GLCall(glBindFramebuffer(GL_READ_FRAMEBUFFER, id));
+}
 
-	GLCall(glBlitFramebuffer(source_rect.x, source_rect.y, source_rect.z, source_rect.w,
-		target_rect.x, target_rect.y, target_rect.z, target_rect.w,
-		gl_mask, gl_interpolation));
+void Framebuffer::bind_draw()
+{
+	update_activated_draw_buffers();
 
+	_check_framebuffer_status(GL_DRAW_FRAMEBUFFER);
+
+	if (!_framebuffer_generated) {
+		std::cout << "[OpenGL Error] Framebuffer treid to bind_draw() but resource was released" << std::endl;
+		ASSERT(false);
+	}
+
+	GLCall(glBindFramebuffer(GL_DRAW_FRAMEBUFFER, id));
+}
+
+void Framebuffer::attach_color(int slot, std::shared_ptr<Texture1D> texture1d, int mipmap_level)
+{
+	if (slot < 0 || slot >= _color_attachments.size()) {
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_color() to slot " << slot << " but there are maximum of " << _color_attachments.size() << " attacment slots in a Framebuffer" << std::endl;
+		ASSERT(false);
+	}
+	if (texture1d == nullptr) {
+		std::cout << "[OpenGL Error] Framebuffer treid to attach_color() but texture was nullptr" << std::endl;
+		ASSERT(false);
+	}
+	if (!texture1d->_texture_generated) {
+		std::cout << "[OpenGL Error] Framebuffer treid to attach_color() but texture was released" << std::endl;
+		ASSERT(false);
+	}
+
+	_color_attachments[slot] = texture1d;
+	texture1d->_allocate_texture();
+	GLCall(glNamedFramebufferTexture(id, GL_COLOR_ATTACHMENT0 + slot, texture1d->id, mipmap_level));
+	_draw_buffers_are_updated = false;
+}
+
+void Framebuffer::attach_color(int slot, std::shared_ptr<Texture2D> texture2d, int mipmap_level)
+{
+	if (slot < 0 || slot >= _color_attachments.size()) {
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_color() to slot " << slot << " but there are maximum of " << _color_attachments.size() << " attacment slots in a Framebuffer" << std::endl;
+		ASSERT(false);
+	}
+	if (texture2d == nullptr) {
+		std::cout << "[OpenGL Error] Framebuffer treid to attach_color() but texture was nullptr" << std::endl;
+		ASSERT(false);
+	}
+	if (!texture2d->_texture_generated) {
+		std::cout << "[OpenGL Error] Framebuffer treid to attach_color() but texture was released" << std::endl;
+		ASSERT(false);
+	}
+
+	_color_attachments[slot] = texture2d;
+	texture2d->_allocate_texture();
+	GLCall(glNamedFramebufferTexture(id, GL_COLOR_ATTACHMENT0 + slot, texture2d->id, mipmap_level));
+	_draw_buffers_are_updated = false;
+}
+
+void Framebuffer::attach_color(int slot, std::shared_ptr<Texture2DArray> texture_array, int z, int mipmap) {
+	if (slot < 0 || slot >= _color_attachments.size()) {
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_color() to slot " << slot << " but there are maximum of " << _color_attachments.size() << " attacment slots in a Framebuffer" << std::endl;
+		ASSERT(false);
+	}
+	if (texture_array == nullptr) {
+		std::cout << "[OpenGL Error] Framebuffer treid to attach_color() but TextureArray was nullptr" << std::endl;
+		ASSERT(false);
+	}
+	if (!texture_array->_texture_generated) {
+		std::cout << "[OpenGL Error] Framebuffer treid to attach_color() but TextureArray was released" << std::endl;
+		ASSERT(false);
+	}
+
+	_color_attachments[slot] = texture_array;
+	texture_array->_allocate_texture();
+
+	GLCall(glNamedFramebufferTextureLayer(id, GL_COLOR_ATTACHMENT0 + slot, texture_array->id, mipmap, z));
+	_draw_buffers_are_updated = false;
+}
+
+void Framebuffer::attach_color(int slot, std::shared_ptr<TextureCubeMap> texturecubemap, TextureCubeMap::Face face, int mipmap) {
+	if (slot < 0 || slot >= _color_attachments.size()) {
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_color() to slot " << slot << " but there are maximum of " << _color_attachments.size() << " attacment slots in a Framebuffer" << std::endl;
+		ASSERT(false);
+	}
+	if (texturecubemap == nullptr) {
+		std::cout << "[OpenGL Error] Framebuffer treid to attach_color() but TextureCubeMap was nullptr" << std::endl;
+		ASSERT(false);
+	}
+	if (!texturecubemap->_texture_generated) {
+		std::cout << "[OpenGL Error] Framebuffer treid to attach_color() but TextureCubeMap was released" << std::endl;
+		ASSERT(false);
+	}
+
+	_color_attachments[slot] = texturecubemap;
+	texturecubemap->_allocate_texture();
+
+	GLCall(glNamedFramebufferTextureLayer(id, GL_COLOR_ATTACHMENT0 + slot, texturecubemap->id, mipmap, TextureCubeMap::get_gl_face_index(face)));
+	_draw_buffers_are_updated = false;
+}
+
+void Framebuffer::attach_color(int slot, std::shared_ptr<Texture3D> texture3d, int z, int mipmap)
+{
+	if (slot < 0 || slot >= _color_attachments.size()) {
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_color() to slot " << slot << " but there are maximum of " << _color_attachments.size() << " attacment slots in a Framebuffer" << std::endl;
+		ASSERT(false);
+	}
+	if (texture3d == nullptr) {
+		std::cout << "[OpenGL Error] Framebuffer treid to attach_color() but Texture3D was nullptr" << std::endl;
+		ASSERT(false);
+	}
+	if (!texture3d->_texture_generated) {
+		std::cout << "[OpenGL Error] Framebuffer treid to attach_color() but Texture3D was released" << std::endl;
+		ASSERT(false);
+	}
+	if (z >= texture3d->depth) {
+		std::cout << "[OpenGL Error] Framebuffer treid to attach_color() but z was greater than depth of Texture3D" << std::endl;
+		ASSERT(false);
+	}
+
+	_color_attachments[slot] = texture3d;
+	texture3d->_allocate_texture();
+
+	GLCall(glNamedFramebufferTextureLayer(id, GL_COLOR_ATTACHMENT0 + slot, texture3d->id, mipmap, z));
+	_draw_buffers_are_updated = false;
+}
+
+void Framebuffer::attach_color(int slot, std::shared_ptr<Renderbuffer> render_buffer)
+{
+	if (slot < 0 || slot >= _color_attachments.size()) {
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_color() to slot " << slot << " but there are maximum of " << _color_attachments.size() << " attacment slots in a Framebuffer" << std::endl;
+		ASSERT(false);
+	}
+	if (render_buffer == nullptr) {
+		std::cout << "[OpenGL Error] Framebuffer treid to attach_color() but render_buffer was nullptr" << std::endl;
+		ASSERT(false);
+	}
+	if (!render_buffer->_texture_generated) {
+		std::cout << "[OpenGL Error] Framebuffer treid to attach_color() but render_buffer was released" << std::endl;
+		ASSERT(false);
+	}
+
+	_color_attachments[slot] = render_buffer;
+	render_buffer->_allocate_texture();
+	GLCall(glNamedFramebufferRenderbuffer(id, GL_COLOR_ATTACHMENT0 + slot, render_buffer->target, render_buffer->id));
+	_draw_buffers_are_updated = false;
+}
+
+void Framebuffer::attach_depth(std::shared_ptr<Texture2D> texture2d, int mipmap_level)
+{
+	if (texture2d == nullptr) {
+		std::cout << "[OpenGL Error] Framebuffer treid to attach_depth() but texture was nullptr" << std::endl;
+		ASSERT(false);
+	}
+	if (!texture2d->_texture_generated) {
+		std::cout << "[OpenGL Error] Framebuffer treid to attach_depth() but texture was released" << std::endl;
+		ASSERT(false);
+	}
+
+	_depth_attachment = texture2d;
+	texture2d->_allocate_texture();
+	GLCall(glNamedFramebufferTexture(id, GL_DEPTH_ATTACHMENT, texture2d->id, mipmap_level));
+}
+
+void Framebuffer::attach_depth(std::shared_ptr<Renderbuffer> render_buffer)
+{
+	if (render_buffer == nullptr) {
+		std::cout << "[OpenGL Error] Framebuffer treid to attach_depth() but render_buffer was nullptr" << std::endl;
+		ASSERT(false);
+	}
+	if (!render_buffer->_texture_generated) {
+		std::cout << "[OpenGL Error] Framebuffer treid to attach_depth() but render_buffer was released" << std::endl;
+		ASSERT(false);
+	}
+
+	_depth_attachment = render_buffer;
+	render_buffer->_allocate_texture();
+	GLCall(glNamedFramebufferRenderbuffer(id, GL_DEPTH_ATTACHMENT, render_buffer->target, render_buffer->id));
+}
+
+void Framebuffer::attach_stencil(std::shared_ptr<Texture2D> texture2d, int mipmap_level)
+{
+	if (texture2d == nullptr) {
+		std::cout << "[OpenGL Error] Framebuffer treid to attach_stencil() but texture was nullptr" << std::endl;
+		ASSERT(false);
+	}
+	if (!texture2d->_texture_generated) {
+		std::cout << "[OpenGL Error] Framebuffer treid to attach_stencil() but texture was released" << std::endl;
+		ASSERT(false);
+	}
+
+	_stencil_attachment = texture2d;
+	texture2d->_allocate_texture();
+	GLCall(glNamedFramebufferTexture(id, GL_STENCIL_ATTACHMENT, texture2d->id, mipmap_level));
+}
+
+void Framebuffer::attach_stencil(std::shared_ptr<Renderbuffer> render_buffer)
+{
+	if (render_buffer == nullptr) {
+		std::cout << "[OpenGL Error] Framebuffer treid to attach_stencil() but render_buffer was nullptr" << std::endl;
+		ASSERT(false);
+	}
+	if (!render_buffer->_texture_generated) {
+		std::cout << "[OpenGL Error] Framebuffer treid to attach_stencil() but render_buffer was released" << std::endl;
+		ASSERT(false);
+	}
+
+	_depth_attachment = render_buffer;
+	render_buffer->_allocate_texture();
+	GLCall(glNamedFramebufferRenderbuffer(id, GL_STENCIL_ATTACHMENT, render_buffer->target, render_buffer->id));
+}
+
+void Framebuffer::attach_depth_stencil(std::shared_ptr<Texture2D> texture2d, int mipmap_level)
+{
+	if (texture2d == nullptr) {
+		std::cout << "[OpenGL Error] Framebuffer treid to attach_depth_stencil() but texture was nullptr" << std::endl;
+		ASSERT(false);
+	}
+	if (!texture2d->_texture_generated) {
+		std::cout << "[OpenGL Error] Framebuffer treid to attach_depth_stencil() but texture was released" << std::endl;
+		ASSERT(false);
+	}
+
+	_stencil_attachment = texture2d;
+	texture2d->_allocate_texture();
+	GLCall(glNamedFramebufferTexture(id, GL_DEPTH_STENCIL_ATTACHMENT, texture2d->id, mipmap_level));
+}
+
+void Framebuffer::attach_depth_stencil(std::shared_ptr<Renderbuffer> render_buffer)
+{
+	if (render_buffer == nullptr) {
+		std::cout << "[OpenGL Error] Framebuffer treid to attach_depth_stencil() but render_buffer was nullptr" << std::endl;
+		ASSERT(false);
+	}
+	if (!render_buffer->_texture_generated) {
+		std::cout << "[OpenGL Error] Framebuffer treid to attach_depth_stencil() but render_buffer was released" << std::endl;
+		ASSERT(false);
+	}
+
+	_depth_attachment = render_buffer;
+	render_buffer->_allocate_texture();
+	GLCall(glNamedFramebufferRenderbuffer(id, GL_DEPTH_STENCIL_ATTACHMENT, render_buffer->target, render_buffer->id));
+}
+
+void Framebuffer::set_read_buffer(int slot)
+{
+	if (slot < 0 || slot >= _color_attachments.size()) {
+		std::cout << "[OpenGL Error] Framebuffer tried to set_read_buffer() to slot " << slot << " but there are maximum of " << _color_attachments.size() << " attacment slots in a Framebuffer" << std::endl;
+		ASSERT(false);
+	}
+	if (_color_attachments[slot] == nullptr) {
+		std::cout << "[OpenGL Error] Framebuffer tried to set_read_buffer() but slot was nullptr" << std::endl;
+		ASSERT(false);
+	}
+
+	_active_read_buffer = slot;
+	GLCall(glNamedFramebufferReadBuffer(id, GL_COLOR_ATTACHMENT0 + slot));
+	_active_read_buffer_ever_set = true;
+}
+
+void Framebuffer::activate_draw_buffer(int slot)
+{
+	if (slot < 0 || slot >= _color_attachments.size()) {
+		std::cout << "[OpenGL Error] Framebuffer tried to activate_draw_buffer() to slot " << slot << " but there are maximum of " << _color_attachments.size() << " attacment slots in a Framebuffer" << std::endl;
+		ASSERT(false);
+	}
+	if (_color_attachments[slot] == nullptr) {
+		std::cout << "[OpenGL Error] Framebuffer tried to activate_draw_buffer() but slot was nullptr" << std::endl;
+		ASSERT(false);
+	}
+
+	_active_draw_buffers.insert(slot);
+	_draw_buffers_are_updated = false;
+}
+
+void Framebuffer::deactivate_draw_buffer(int slot)
+{
+	if (slot < 0 || slot >= _color_attachments.size()) {
+		std::cout << "[OpenGL Error] Framebuffer tried to deactivate_draw_buffer() to slot " << slot << " but there are maximum of " << _color_attachments.size() << " attacment slots in a Framebuffer" << std::endl;
+		ASSERT(false);
+	}
+	if (_color_attachments[slot] == nullptr) {
+		std::cout << "[OpenGL Error] Framebuffer tried to deactivate_draw_buffer() but slot was nullptr" << std::endl;
+		ASSERT(false);
+	}
+
+	_active_draw_buffers.erase(slot);
+	_draw_buffers_are_updated = false;
+}
+
+void Framebuffer::update_activated_draw_buffers()
+{
+	if (_draw_buffers_are_updated) return;
+
+	int count = _active_draw_buffers.size();
+	unsigned int* buffer_enums = new unsigned int[count];
+	int i = 0;
+	for (auto iterator = _active_draw_buffers.begin(); iterator != _active_draw_buffers.end(); iterator++) {
+		int slot = *iterator;
+		ASSERT(i < count);
+		buffer_enums[i] = GL_COLOR_ATTACHMENT0 + (unsigned int)slot;
+		i++;
+	}
+	GLCall(glNamedFramebufferDrawBuffers(id, count, buffer_enums));
+	_draw_buffers_are_updated = true;
+}
+
+void Framebuffer::deactivate_all_draw_buffers()
+{
+	_active_draw_buffers.clear();
+	_draw_buffers_are_updated = false;
+}
+
+void Framebuffer::blit(Framebuffer& target, int self_x0, int self_y0, int self_x1, int self_y1, int target_x0, int target_y0, int target_x1, int target_y1, Channel channel, Filter filter)
+{
+	update_activated_draw_buffers();
+	target.update_activated_draw_buffers();
+
+	GLCall(glBlitNamedFramebuffer(id, target.id, self_x0, self_y0, self_x1, self_y1, target_x0, target_y0, target_x1, target_y1, Channel_to_OpenGL(channel), Filter_to_OpenGL(filter)));
+}
+
+void Framebuffer::blit_to_screen(int self_x0, int self_y0, int self_x1, int self_y1, int target_x0, int target_y0, int target_x1, int target_y1, Channel channel, Filter filter)
+{
+	update_activated_draw_buffers();
+	GLCall(glBlitNamedFramebuffer(id, 0, self_x0, self_y0, self_x1, self_y1, target_x0, target_y0, target_x1, target_y1, Channel_to_OpenGL(channel), Filter_to_OpenGL(filter)));
+}
+
+void Framebuffer::_check_framebuffer_status(unsigned int gl_bind_target)
+{
+	ASSERT(_framebuffer_generated);
+
+	GLCall(unsigned int error_status = glCheckFramebufferStatus(gl_bind_target));
+	switch (error_status) {
+	case GL_FRAMEBUFFER_COMPLETE: return;
+	case GL_FRAMEBUFFER_UNDEFINED:						{std::cout << "[OpenGL Error] Framebuffer failed to create : GL_FRAMEBUFFER_UNDEFINED" << std::endl;						return;}
+	case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:			{std::cout << "[OpenGL Error] Framebuffer failed to create : GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT" << std::endl;			return;}
+	case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:	{std::cout << "[OpenGL Error] Framebuffer failed to create : GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT" << std::endl;	return;}
+	case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER:			{std::cout << "[OpenGL Error] Framebuffer failed to create : GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER" << std::endl;			return;}
+	case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER:			{std::cout << "[OpenGL Error] Framebuffer failed to create : GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER" << std::endl;			return;}
+	case GL_FRAMEBUFFER_UNSUPPORTED:					{std::cout << "[OpenGL Error] Framebuffer failed to create : GL_FRAMEBUFFER_UNSUPPORTED" << std::endl;						return;}
+	case GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE:			{std::cout << "[OpenGL Error] Framebuffer failed to create : GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE" << std::endl;			return;}
+	case GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS:		{std::cout << "[OpenGL Error] Framebuffer failed to create : GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS" << std::endl;			return;}
+	}
 }

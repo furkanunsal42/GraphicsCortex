@@ -546,3 +546,7 @@ build-obj/windows-Release-x86_64GraphicsCortex/Texture1D.obj
 build-obj/windows-Release-x86_64GraphicsCortex/Texture3D.obj
 build-obj/windows-Release-x86_64GraphicsCortex/TextureArray.obj
 build-obj/windows-Release-x86_64GraphicsCortexApp/DeferredRenderingMain.obj
+build-obj/windows-Release-x86_64GraphicsCortex/_FrameBuffer.obj
+build-obj/windows-Release-x86_64GraphicsCortex/RenderPass.obj
+build-obj/windows-Release-x86_64GraphicsCortex/Texture2DArray.obj
+build-obj/windows-Release-x86_64GraphicsCortex/Texture2DArray.obj

@@ -6,13 +6,11 @@
 #include <memory>
 
 #include "ShaderCompiler.h"
-#include "UnifromQueue.h"
 
 class Scene;
 
 class Light : public UpdatesDefaultUniforms {
 private:
-	uniform_update_queue _uniform_update_queue;
 	static int temp_light_index;
 
 	friend Scene;

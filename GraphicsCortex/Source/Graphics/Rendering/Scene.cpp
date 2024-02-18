@@ -11,9 +11,10 @@
 #include "Debuger.h"
 #include "Frame.h"
 #include "Text.h"
-#include "CubeMap.h"
+#include "old/CubeMap.h"
 
 #include "PhysicsScene.h"
+#include "old/_FrameBuffer.h"
 
 
 Scene::Scene(const Frame& frame) {

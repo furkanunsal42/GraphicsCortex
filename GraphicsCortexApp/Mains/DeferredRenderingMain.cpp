@@ -1,4 +1,5 @@
 #include "GraphicsCortex.h"
+#include "Framebuffer.h"
 
 int main() {
 	Frame frame(1920, 1080, "FrameBuffer App", 4, 0, true, true, true, Frame::CallbackLevel::LOW, false);
@@ -6,7 +7,7 @@ int main() {
 	scene.camera->fov = 110;
 	scene.camera->max_distance = 1000;
 
-	std::shared_ptr<Program> deferred_program = std::make_shared<Program>(Shader("../GraphicsCortex/Source/GLSL/Surface/surface.vert", "../GraphicsCortex/Source/GLSL/Surface/surface.geom", "../GraphicsCortex/Source/GLSL/Surface/deferred.frag"));
+	std::shared_ptr<Program> deferred_program = std::make_shared<Program>(Shader("../GraphicsCortex/Source/GLSL/Surface/surface.vert", "../GraphicsCortex/Source/GLSL/Surface/surface.geom", "../GraphicsCortex/Source/GLSL/Surface/gbuffer.frag"));
 	std::shared_ptr<Mesh> dragon_mesh;
 	std::shared_ptr<BindlessMaterial> dragon_material;
 	{

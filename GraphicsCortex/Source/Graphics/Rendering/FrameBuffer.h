@@ -1,77 +1,88 @@
 #pragma once
-#include "Config.h"
+#include "TextureBase.h"
+#include "Texture1D.h"
+#include "Texture2D.h"
+#include "Texture2DArray.h"
+#include "TextureCubeMap.h"
+#include "Texture3D.h"
+#include "Renderbuffer.h"
+#include <array>
+#include <unordered_set>
 
-#include "GL\glew.h"
-
-#include <string>
-#include "Texture.h"
-#include "ShaderCompiler.h"
-#include "Graphic.h"
-
-#include <type_traits>
-#include <memory>
-
-class FrameBuffer {
+class Framebuffer {
 public:
-	enum
-	{
-		COLOR_TEXTURE = 0,
-		DEPTH_TEXTURE,
-		STENCIL_TEXTURE,
+	enum class Channel {
+		COLOR,
+		STENCIL,
+		DEPTH,
+		COLOR_STENCIL,
+		COLOR_DEPTH,
+		DEPTH_STENCIL,
+		COLOR_DEPTH_STENCIL,
 	};
+	
+	enum class Filter {
+		NEAREST,
+		LINEAR,
+	};
+	
+	unsigned int id;
 
-	unsigned int id = 0;
-	int width = 0, height = 0;
-	int texture_slot = 9;
-	Texture color_texture;
-	Texture depth_stencil_texture;
-	RenderBuffer depth_stencil_renderbuffer;
-	bool readable_depth_stencil_buffer;
-
-	std::shared_ptr<Program> program;
-
-	FrameBuffer(int width = 1024, int height = 1024, int anti_alliasing = 0, bool readable_depth_stencil_buffer = false);
-	~FrameBuffer();
-
+	Framebuffer();
+	Framebuffer(const Framebuffer& other) = delete;
+	~Framebuffer();
 	void release();
 
-	bool is_initialized();
+	static void bind_screen_read_draw();
+	static void bind_screen_read();
+	static void bind_screen_draw();
 
-	enum {
-		WRITE_TARGET = 1,
-		READ_TARGET = 2,
-		WRITE_READ_TARGET = 1 | 2,
-	};
+	void bind_read_draw();
+	void bind_read();
+	void bind_draw();
 
-	void bind(unsigned int bind_target = WRITE_READ_TARGET);
-	void unbind();
-	void render(unsigned int source_texture = FrameBuffer::COLOR_TEXTURE);
-	Image save(bool vertical_flip = true);
+	void attach_color(int slot, std::shared_ptr<Texture1D> texture1d, int mipmap_level = 0);
+	void attach_color(int slot, std::shared_ptr<Texture2D> texture2d, int mipmap_level = 0);
+	void attach_color(int slot, std::shared_ptr<Texture2DArray> texture_array, int z, int mipmap = 0);
+	void attach_color(int slot, std::shared_ptr<TextureCubeMap> texture_cube_map, TextureCubeMap::Face face, int mipmap = 0);
+	void attach_color(int slot, std::shared_ptr<Texture3D> texture3d, int z, int mipmap = 0);
+	void attach_color(int slot, std::shared_ptr<Renderbuffer> render_buffer);
 
-	void load_program(std::shared_ptr<Program> program);
+	void attach_depth(std::shared_ptr<Texture2D> texture2d, int mipmap_level = 0);
+	void attach_depth(std::shared_ptr<Renderbuffer> render_buffer);
 
-	enum {
-		COLOR_CHANNEL = 1,
-		DEPTH_CHANNEL = 2,
-		STENCIL_CHANNEL = 4,
-		ALL_CHANNELS = 1 | 2 | 4
-	};
+	void attach_stencil(std::shared_ptr<Texture2D> texture2d, int mipmap_level = 0);
+	void attach_stencil(std::shared_ptr<Renderbuffer> render_buffer);
 
-	enum {
-		BLIT_NEAREST_INTERPOLATION,
-		BLIT_LINEAR_INTERPOLATION,
-	};
+	void attach_depth_stencil(std::shared_ptr<Texture2D> texture2d, int mipmap_level = 0);
+	void attach_depth_stencil(std::shared_ptr<Renderbuffer> render_buffer);
 
-	void blit_section(FrameBuffer& target_buffer, const glm::vec4& source_rect, const glm::vec4& target_rect, unsigned int mask_bits = ALL_CHANNELS, unsigned int interpolation = BLIT_NEAREST_INTERPOLATION);
-	void blit_section_to_screen(const glm::vec4& source_rect, const glm::vec4& target_rect, unsigned int mask_bits = ALL_CHANNELS, unsigned int interpolation = BLIT_NEAREST_INTERPOLATION);
+	void set_read_buffer(int slot);
+
+	void activate_draw_buffer(int slot);
+	void deactivate_draw_buffer(int slot);
+	void update_activated_draw_buffers();
+	void deactivate_all_draw_buffers();
+
+	void blit(Framebuffer& target, int self_x0, int self_y0, int self_x1, int self_y1, int target_x0, int target_y0, int target_x1, int target_y1, Channel channel, Filter filter);
+	void blit_to_screen(int self_x0, int self_y0, int self_x1, int self_y1, int target_x0, int target_y0, int target_x1, int target_y1, Channel channel, Filter filter);
 
 private:
-
-	void generate_framebuffer_object();
-	std::shared_ptr<Graphic> screen;
 	
-	bool _is_initialized = false;
-	bool _is_program_loaded = false;
-	int multisample = 0;
-	bool screen_initialized = false;
+	static unsigned int Channel_to_OpenGL(Channel channel);
+	static unsigned int Filter_to_OpenGL(Filter filter);
+
+	bool _framebuffer_generated = false;
+	bool _draw_buffers_are_updated = false;
+
+	std::unordered_set<int> _active_draw_buffers;
+	int _active_read_buffer = 0;
+	bool _active_read_buffer_ever_set = false;
+
+	std::array<std::shared_ptr<TextureBase2>, 16> _color_attachments;
+	std::shared_ptr<TextureBase2> _depth_attachment;
+	std::shared_ptr<TextureBase2> _stencil_attachment;
+	std::shared_ptr<TextureBase2> _depth_stencil_attachment;
+
+	void _check_framebuffer_status(unsigned int gl_bind_target);
 };

@@ -1,16 +1,9 @@
 #pragma once
 
 #include "Scene.h"
-#include "CubeMap.h"
-#include "UnifromQueue.h"
 #include "Text.h"
-
-#include "RenderPipeline.h"
-
 #include <glm.hpp>
 #include <vector>
-
-#include "CustomRenderPipelines.h"
 
 namespace default_program {
 	Program solid_program();
@@ -30,9 +23,4 @@ namespace default_program {
 	std::shared_ptr<Program> gui_program_s();
 	std::shared_ptr<Program> text_program_s();
 	std::shared_ptr<Program> depth_program_s();
-
-	RenderPipeline default_pipeline(Frame& frame);
-	RenderPipeline_MultiTextured multitextured_pipeline(Frame& frame);
-
-
 }

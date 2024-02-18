@@ -15,8 +15,6 @@
 
 #include <iostream>
 #include <vector>
-#include "Texture.h"
-#include "ModelTextureTable.h"
 
 class AssetImporter;
 

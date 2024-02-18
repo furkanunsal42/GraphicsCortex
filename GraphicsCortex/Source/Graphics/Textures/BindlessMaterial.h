@@ -23,7 +23,7 @@ public:
 
 	const int _buffer_texture_count = 1024*4;
 	int _buffer_usage_offset = 0;
-	const std::string texture_buffer_name = "textures";
+	std::string texture_buffer_name = "textures";
 	std::shared_ptr<UniformBuffer> _texture_uniform_buffer = std::make_shared<UniformBuffer>();
 	std::unordered_map<int, std::shared_ptr<Texture2D>> _textures;
 private:

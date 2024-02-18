@@ -3,7 +3,7 @@
 #include <string>
 #include "Graphic.h"
 #include "Scene.h"
-#include "Texture.h"
+#include "old/Texture.h"
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
