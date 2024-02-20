@@ -33,7 +33,7 @@ void RenderPipeline::render(Scene& scene)
 
 	if (std::dynamic_pointer_cast<Texture2D, TextureBase2>(color_texture))
 		framebuffer->attach_color(0, std::dynamic_pointer_cast<Texture2D, TextureBase2>(color_texture), 0);
-	if (std::dynamic_pointer_cast<Renderbuffer, TextureBase2>(color_texture))
+	else if (std::dynamic_pointer_cast<Renderbuffer, TextureBase2>(color_texture))
 		framebuffer->attach_color(0, std::dynamic_pointer_cast<Renderbuffer, TextureBase2>(color_texture));
 
 	framebuffer->set_read_buffer(0);

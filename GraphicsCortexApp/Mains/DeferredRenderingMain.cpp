@@ -23,10 +23,12 @@ int main() {
 
 	std::shared_ptr<RenderPipeline> pipeline = std::make_shared<RenderPipeline>(1920, 1080, TextureBase2::ColorTextureFormat::RGBA8, 0);
 	pipeline->push_render_pass(std::make_shared<RenderPass_GBuffer>());
+	pipeline->push_render_pass(std::make_shared<RenderPass_Deferred>());
 
 	scene.pipeline = pipeline;
 
 	while (frame.is_running()) {
+		Framebuffer::bind_screen_read_draw();
 		double deltatime = frame.handle_window();
 		frame.clear_window();
 		frame.display_performance(180);

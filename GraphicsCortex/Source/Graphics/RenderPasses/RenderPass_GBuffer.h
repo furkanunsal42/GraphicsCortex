@@ -10,9 +10,9 @@ public:
 	bool is_initialized = false;
 	std::shared_ptr<Program> g_buffer_program;
 
-	std::shared_ptr<Renderbuffer> position_texture;
-	std::shared_ptr<Renderbuffer> texcoord_texture;
-	std::shared_ptr<Renderbuffer> normal_texture;
+	std::shared_ptr<Texture2D> position_texture;
+	std::shared_ptr<Texture2D> texcoord_texture;
+	std::shared_ptr<Texture2D> normal_texture;
 	std::shared_ptr<Renderbuffer> depth_stencil_texture;
 
 	std::shared_ptr<Framebuffer> g_buffer;
@@ -23,9 +23,9 @@ public:
 			"../GraphicsCortex/Source/GLSL/Surface/surface.geom",
 			"../GraphicsCortex/Source/GLSL/Surface/gbuffer.frag"));
 
-		position_texture		= std::make_shared<Renderbuffer>(pipeline.width, pipeline.height, pipeline.internal_format, 0);
-		texcoord_texture		= std::make_shared<Renderbuffer>(pipeline.width, pipeline.height, pipeline.internal_format, 0);
-		normal_texture			= std::make_shared<Renderbuffer>(pipeline.width, pipeline.height, pipeline.internal_format, 0);
+		position_texture		= std::make_shared<Texture2D>(pipeline.width, pipeline.height, pipeline.internal_format, 1);
+		texcoord_texture		= std::make_shared<Texture2D>(pipeline.width, pipeline.height, pipeline.internal_format, 1);
+		normal_texture			= std::make_shared<Texture2D>(pipeline.width, pipeline.height, pipeline.internal_format, 1);
 		depth_stencil_texture	= std::make_shared<Renderbuffer>(pipeline.width, pipeline.height, Renderbuffer::DepthStencilTextureFormat::DEPTH24_STENCIL8, 0);
 
 		g_buffer = std::make_shared<Framebuffer>();
@@ -45,6 +45,9 @@ public:
 		g_buffer->activate_draw_buffer(1);
 		g_buffer->activate_draw_buffer(2);
 		g_buffer->bind_draw();
+		Framebuffer::clear_bound_drawbuffer();
+
+		g_buffer_program->bind();
 
 		scene.camera->update_default_uniforms(*g_buffer_program);
 		for (int i = 0; i < graphics.size(); i++) {
@@ -58,5 +61,6 @@ public:
 		pipeline.texture_stack.push_back(normal_texture);
 		pipeline.texture_stack.push_back(texcoord_texture);
 		pipeline.texture_stack.push_back(position_texture);
+
 	}
 };

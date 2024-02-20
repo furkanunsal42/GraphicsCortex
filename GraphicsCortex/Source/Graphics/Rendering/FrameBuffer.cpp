@@ -99,6 +99,16 @@ void Framebuffer::bind_draw()
 	GLCall(glBindFramebuffer(GL_DRAW_FRAMEBUFFER, id));
 }
 
+void Framebuffer::clear_bound_drawbuffer()
+{
+	clear_bound_drawbuffer(0, 0, 0, 1);
+}
+
+void Framebuffer::clear_bound_drawbuffer(float r, float g, float b, float a)
+{
+	GLCall(glClearColor(r, g, b, a));
+	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
+}
 void Framebuffer::attach_color(int slot, std::shared_ptr<Texture1D> texture1d, int mipmap_level)
 {
 	if (slot < 0 || slot >= _color_attachments.size()) {
@@ -397,7 +407,7 @@ void Framebuffer::deactivate_all_draw_buffers()
 
 void Framebuffer::blit(Framebuffer& target, int self_x0, int self_y0, int self_x1, int self_y1, int target_x0, int target_y0, int target_x1, int target_y1, Channel channel, Filter filter)
 {
-	update_activated_draw_buffers();
+	//update_activated_draw_buffers();
 	target.update_activated_draw_buffers();
 
 	GLCall(glBlitNamedFramebuffer(id, target.id, self_x0, self_y0, self_x1, self_y1, target_x0, target_y0, target_x1, target_y1, Channel_to_OpenGL(channel), Filter_to_OpenGL(filter)));
@@ -405,7 +415,7 @@ void Framebuffer::blit(Framebuffer& target, int self_x0, int self_y0, int self_x
 
 void Framebuffer::blit_to_screen(int self_x0, int self_y0, int self_x1, int self_y1, int target_x0, int target_y0, int target_x1, int target_y1, Channel channel, Filter filter)
 {
-	update_activated_draw_buffers();
+	//update_activated_draw_buffers();
 	GLCall(glBlitNamedFramebuffer(id, 0, self_x0, self_y0, self_x1, self_y1, target_x0, target_y0, target_x1, target_y1, Channel_to_OpenGL(channel), Filter_to_OpenGL(filter)));
 }
 
@@ -413,7 +423,7 @@ void Framebuffer::_check_framebuffer_status(unsigned int gl_bind_target)
 {
 	ASSERT(_framebuffer_generated);
 
-	GLCall(unsigned int error_status = glCheckFramebufferStatus(gl_bind_target));
+	GLCall(unsigned int error_status = glCheckNamedFramebufferStatus(id, gl_bind_target));
 	switch (error_status) {
 	case GL_FRAMEBUFFER_COMPLETE: return;
 	case GL_FRAMEBUFFER_UNDEFINED:						{std::cout << "[OpenGL Error] Framebuffer failed to create : GL_FRAMEBUFFER_UNDEFINED" << std::endl;						return;}

@@ -37,10 +37,13 @@ public:
 	static void bind_screen_read();
 	static void bind_screen_draw();
 
+	static void clear_bound_drawbuffer();
+	static void clear_bound_drawbuffer(float r, float g, float b, float a);
+
 	void bind_read_draw();
 	void bind_read();
 	void bind_draw();
-
+	
 	void attach_color(int slot, std::shared_ptr<Texture1D> texture1d, int mipmap_level = 0);
 	void attach_color(int slot, std::shared_ptr<Texture2D> texture2d, int mipmap_level = 0);
 	void attach_color(int slot, std::shared_ptr<Texture2DArray> texture_array, int z, int mipmap = 0);

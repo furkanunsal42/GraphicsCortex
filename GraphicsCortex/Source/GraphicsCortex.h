@@ -40,6 +40,7 @@
 
 #include "RenderPipeline.h"
 #include "RenderPass_GBuffer.h"
+#include "RenderPass_Deferred.h"
 
 #include "AssetImporter.h"
 #include "DirectoryUtils.h"
