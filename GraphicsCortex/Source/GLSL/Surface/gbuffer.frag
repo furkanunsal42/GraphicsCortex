@@ -8,7 +8,9 @@ layout (location = 1) out vec4 frag_texcoord;
 layout (location = 2) out vec4 frag_world_normal;
 
 layout (location = 3) out vec4 frag_albedo;
-layout (location = 4) out vec4 frag_tbn_normal;
+layout (location = 4) out vec4 frag_metalic_roughness_ao;
+layout (location = 5) out vec4 frag_brdf;
+layout (location = 6) out vec4 frag_emmisive;
 
 layout(std140) uniform textures{
 	sampler2D bindless_textures[1024 * 4];
@@ -28,7 +30,8 @@ layout(std140) uniform pbr_material{
 	
 	sampler2D albedo;
 	sampler2D normal;
-	sampler2D metalic_roughness;
+	sampler2D metalic;
+	sampler2D roughness;
 	sampler2D brdf;
 	sampler2D emmisive;
 	sampler2D ambient_occlusion;

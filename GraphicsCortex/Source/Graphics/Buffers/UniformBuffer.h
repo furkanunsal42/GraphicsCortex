@@ -7,6 +7,8 @@
 #include <vector>
 #include <iostream>
 
+class Texture2D;
+
 class UniformBuffer {
 public:
 	unsigned int id;
@@ -33,7 +35,8 @@ public:
 		std::is_same_v<T, glm::vec4> ||
 		std::is_same_v<T, glm::mat2> ||
 		std::is_same_v<T, glm::mat3> ||
-		std::is_same_v<T, glm::mat4>, void>
+		std::is_same_v<T, glm::mat4> ||
+		std::is_same_v<T, Texture2D> , void>
 		push_variable()
 	{
 		_push_varible_size(_get_gl_std140_size<T>());
@@ -96,7 +99,8 @@ private:
 		std::is_same_v<T, glm::vec4> ||
 		std::is_same_v<T, glm::mat2> ||
 		std::is_same_v<T, glm::mat3> ||
-		std::is_same_v<T, glm::mat4>, int>
+		std::is_same_v<T, glm::mat4> || 
+		std::is_same_v<T, Texture2D>, int>
 		_get_gl_std140_size()
 	{
 		const int N = 4; // base size
@@ -109,7 +113,8 @@ private:
 		if (typeid(T) == typeid(glm::vec4))		return 4*N;
 		if (typeid(T) == typeid(glm::mat2))		return 2*4*N;
 		if (typeid(T) == typeid(glm::mat3))		return 3*4*N;
-		if (typeid(T) == typeid(glm::mat4))		return 4*4*N;
+		if (typeid(T) == typeid(glm::mat4))		return 4 * 4 * N;
+		if (typeid(T) == typeid(Texture2D))		return 2*N;
 		ASSERT(false);
 	}
 
