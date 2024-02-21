@@ -38,6 +38,15 @@ public:
 	void on_render(int pass_index, RenderPipeline& pipeline, Scene& scene, const std::vector<std::reference_wrapper<Graphic>>& graphics) {
 		if (!is_initialized) init(pass_index, pipeline, scene);
 
+
+		std::shared_ptr<TextureBase2> albedo_texture = pipeline.texture_stack.back();
+		pipeline.texture_stack.pop_back();
+		std::shared_ptr<TextureBase2> metalic_roughness_ao_texture = pipeline.texture_stack.back();
+		pipeline.texture_stack.pop_back();
+		std::shared_ptr<TextureBase2> brdf_texture = pipeline.texture_stack.back();
+		pipeline.texture_stack.pop_back();
+		std::shared_ptr<TextureBase2> emmisive_texture = pipeline.texture_stack.back();
+		pipeline.texture_stack.pop_back();
 		std::shared_ptr<TextureBase2> position_texture = pipeline.texture_stack.back();
 		pipeline.texture_stack.pop_back();
 		std::shared_ptr<TextureBase2> texcoord_texture = pipeline.texture_stack.back();
@@ -58,7 +67,7 @@ public:
 		set_texture(deferred_program, "texcoord_texture", texcoord_texture);
 		set_texture(deferred_program, "normal_texture", normal_texture);
 
-		set_texture(deferred_program, "albedo_texture", texcoord_texture);
+		set_texture(deferred_program, "albedo_texture", albedo_texture);
 
 		deferred->deactivate_all_draw_buffers();
 		deferred->activate_draw_buffer(0);
