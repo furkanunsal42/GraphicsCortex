@@ -21,9 +21,14 @@ int main() {
 
 	scene.add(dragon);
 
+	dragon->material->_pbr_ambient_occlusion = std::make_shared<Texture2D>(1024, 1024, Texture2D::ColorTextureFormat::RGBA8, 1, 0, 0);
+	dragon->material->_pbr_ambient_occlusion->load_data_async("../GraphicsCortex/Images/orange.png", Texture2D::ColorFormat::RGBA, Texture2D::Type::UNSIGNED_BYTE, 0);
+	dragon->material->_pbr_const_albedo = glm::vec4(1, 1, 1, 1);
+
 	std::shared_ptr<RenderPipeline> pipeline = std::make_shared<RenderPipeline>(1920, 1080, TextureBase2::ColorTextureFormat::RGBA8, 0);
 	pipeline->push_render_pass(std::make_shared<RenderPass_GBuffer>());
-	pipeline->push_render_pass(std::make_shared<RenderPass_Deferred>());
+	dragon->material->_pbr_const_albedo = glm::vec4(1, 1, 1, 1);
+	//pipeline->push_render_pass(std::make_shared<RenderPass_Deferred>());
 
 	scene.pipeline = pipeline;
 

@@ -19,10 +19,11 @@ layout(std140) uniform textures{
 layout(std140) uniform pbr_material{
 	bool use_albedo_map;
 	bool use_normal_map;
-	bool use_metalic_roughness_map;
+	bool use_metalic_map;
+	bool use_roughness_map;
 	bool use_brdf_map;
-	bool use_emmisive;
-	bool use_ambient_occlusion;
+	bool use_emmisive_map;
+	bool use_ambient_occlusion_map;
 
 	vec4 const_albedo;
 	vec4 const_metalic_roughness;
@@ -50,5 +51,13 @@ void main(){
 	frag_world_position = vec4(v_position, 1);
 	frag_texcoord = vec4(v_texcoord, 0, 1);
 	frag_world_normal = vec4(v_normal, 1);
-	
+
+	frag_albedo					= use_albedo_map				? texture(albedo, v_texcoord)				: const_albedo;
+	frag_metalic_roughness_ao.x = use_metalic_map				? texture(metalic, v_texcoord).x			: const_metalic_roughness.x;
+	frag_metalic_roughness_ao.y = use_roughness_map				? texture(roughness, v_texcoord).x			: const_metalic_roughness.y;
+	frag_metalic_roughness_ao.z = use_ambient_occlusion_map		? texture(ambient_occlusion, v_texcoord).x	: 0;
+	frag_brdf 					= use_brdf_map					? texture(brdf, v_texcoord)					: vec4(0, 0, 0, 0);
+	frag_emmisive				= use_emmisive_map				? texture(emmisive, v_texcoord)				: const_emmisive;
+
+	frag_albedo = const_albedo;
 }

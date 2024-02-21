@@ -7,7 +7,8 @@ BindlessMaterial::BindlessMaterial() {
 
 	_pbr_texture_uniform_buffer->push_variable<bool>();			// use_albedo_map
 	_pbr_texture_uniform_buffer->push_variable<bool>();			// use_normal_map
-	_pbr_texture_uniform_buffer->push_variable<bool>();			// use_metalic_roughness_map
+	_pbr_texture_uniform_buffer->push_variable<bool>();			// use_metalic_map
+	_pbr_texture_uniform_buffer->push_variable<bool>();			// use_roughness_map
 	_pbr_texture_uniform_buffer->push_variable<bool>();			// use_brdf_map
 	_pbr_texture_uniform_buffer->push_variable<bool>();			// use_emmisive
 	_pbr_texture_uniform_buffer->push_variable<bool>();			// use_ambient_occlusion
@@ -29,7 +30,8 @@ BindlessMaterial::BindlessMaterial(const std::shared_ptr<Program>& program)
 
 	_pbr_texture_uniform_buffer->push_variable<bool>();			// use_albedo_map
 	_pbr_texture_uniform_buffer->push_variable<bool>();			// use_normal_map
-	_pbr_texture_uniform_buffer->push_variable<bool>();			// use_metalic_roughness_map
+	_pbr_texture_uniform_buffer->push_variable<bool>();			// use_metalic_map
+	_pbr_texture_uniform_buffer->push_variable<bool>();			// use_roughness_map
 	_pbr_texture_uniform_buffer->push_variable<bool>();			// use_brdf_map
 	_pbr_texture_uniform_buffer->push_variable<bool>();			// use_emmisive
 	_pbr_texture_uniform_buffer->push_variable<bool>();			// use_ambient_occlusion
@@ -152,8 +154,8 @@ void BindlessMaterial::update_uniforms()
 		ASSERT(false);
 	}
 	
+	// cluster
 	program->attach_uniform_buffer(_cluster_texture_buffer_name, _cluster_texture_uniform_buffer);
-
 	for (auto iterator = _cluster_textures.begin(); iterator != _cluster_textures.end(); iterator++) {
 		int location = iterator->first;
 		std::shared_ptr<Texture2D>& texture = iterator->second;
@@ -170,10 +172,74 @@ void BindlessMaterial::update_uniforms()
 		_cluster_texture_uniform_buffer->set_data(4*4*location, 0, 4*4, handle);
 		delete[] handle;
 
-
 		//GLCall(glUniformHandleui64ARB(location, texture->texture_handle));
 	}
 	_cluster_texture_uniform_buffer->upload_data();
 
+	
+	//pbr
+	program->attach_uniform_buffer(_pbr_material_buffer_name, _pbr_texture_uniform_buffer);
+	
+	int use_albedo_map				= _pbr_albedo != nullptr;
+	int use_normal_map				= _pbr_normal != nullptr;
+	int use_metalic_map				= _pbr_metalic != nullptr;
+	int use_roughness_map			= _pbr_roughness != nullptr;
+	int use_brdf_map				= _pbr_brdf   != nullptr;
+	int use_emmisive_map			= _pbr_emmisive != nullptr;
+	int use_ambient_occlusion_map	= _pbr_ambient_occlusion != nullptr;
 
+	_pbr_texture_uniform_buffer->set_data(0, &use_albedo_map);				// use_albedo_map;
+	_pbr_texture_uniform_buffer->set_data(1, &use_normal_map);				// use_normal_map;
+	_pbr_texture_uniform_buffer->set_data(2, &use_metalic_map);				// use_metalic_map;
+	_pbr_texture_uniform_buffer->set_data(3, &use_roughness_map);			// use_roughness_map;
+	_pbr_texture_uniform_buffer->set_data(4, &use_brdf_map);				// use_brdf_map;
+	_pbr_texture_uniform_buffer->set_data(5, &use_emmisive_map);			// use_emmisive;
+	_pbr_texture_uniform_buffer->set_data(6, &use_ambient_occlusion_map);	// use_ambient_occlusion;
+	
+	_pbr_texture_uniform_buffer->set_data(7, &_pbr_const_albedo);				// const_albedo;
+	_pbr_texture_uniform_buffer->set_data(8, &_pbr_const_metalic_roughness);	// const_metalic_roughness;
+	_pbr_texture_uniform_buffer->set_data(9, &_pbr_const_emmisive);				// const_emmisive;
+
+	char* handle = new char[2 * 4];
+	for (int i = 0; i < 2 * 4; i++)
+		handle[i] = 0;
+
+	// albedo
+	// normal
+	// metalic
+	// roughness
+	// brdf
+	// emmisive
+	// ambient_occlusion
+	
+	if (use_albedo_map) {
+		memcpy(handle, &_pbr_albedo->texture_handle, 8);
+		_pbr_texture_uniform_buffer->set_data(10, handle);
+	}
+	if (use_normal_map) {
+		memcpy(handle, &_pbr_normal->texture_handle, 8);
+		_pbr_texture_uniform_buffer->set_data(11, handle);
+	}
+	if (use_metalic_map) {
+		memcpy(handle, &_pbr_metalic->texture_handle, 8);
+		_pbr_texture_uniform_buffer->set_data(12, handle);
+	}
+	if (use_roughness_map) {
+		memcpy(handle, &_pbr_roughness->texture_handle, 8);
+		_pbr_texture_uniform_buffer->set_data(13, handle);
+	}
+	if (use_brdf_map) {
+		memcpy(handle, &_pbr_brdf->texture_handle, 8);
+		_pbr_texture_uniform_buffer->set_data(14, handle);
+	}
+	if (use_emmisive_map) {
+		memcpy(handle, &_pbr_emmisive->texture_handle, 8);
+		_pbr_texture_uniform_buffer->set_data(15, handle);
+	}
+	if (use_ambient_occlusion_map) {
+		memcpy(handle, &_pbr_ambient_occlusion->texture_handle, 8);
+		_pbr_texture_uniform_buffer->set_data(16, handle);
+	}
+	
+	_pbr_texture_uniform_buffer->upload_data();
 }
