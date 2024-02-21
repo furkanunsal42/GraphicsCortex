@@ -2,7 +2,7 @@
 
 UniformBuffer::UniformBuffer()
 {
-	GLCall(glGenBuffers(1, &id));
+	GLCall(glCreateBuffers(1, &id));
 	_buffer_generated = true;
 }
 
@@ -120,8 +120,7 @@ void UniformBuffer::upload_data()
 	_range range = _compute_bounding_range();
 	if (range.begin == range.end) return;
 
-	bind();
-	GLCall(glBufferSubData(_target, range.begin, range.end - range.begin, (char*)cpu_data + range.begin));
+	GLCall(glNamedBufferSubData(id, range.begin, range.end - range.begin, (char*)cpu_data + range.begin));
 	_updated_ranges.clear();
 
 	_user_data_uploaded = true;
@@ -131,6 +130,9 @@ void UniformBuffer::_push_varible_size(int size) {
 	if (_buffer_allocated) {
 		std::cout << "[OpenGL Error] Uniform Buffer tried to _push_varible_size() but resource was already allocated" << std::endl;
 		ASSERT(false);
+	}
+	if (_buffer_size % size != 0) {
+		_buffer_size = _buffer_size / size * size + size;
 	}
 
 	_pushed_variable_offsets.push_back(_buffer_size);
@@ -161,7 +163,7 @@ void UniformBuffer::_allocate_buffer() {
 	
 	bind();
 	//GLCall(glBufferStorage(_target, _buffer_size, NULL, GL_DYNAMIC_STORAGE_BIT));
-	glBufferData(_target, _buffer_size, NULL, GL_STATIC_DRAW);
+	glNamedBufferData(id, _buffer_size, NULL, GL_STATIC_DRAW);
 	cpu_data = new char[_buffer_size];
 	
 	_buffer_allocated = true;

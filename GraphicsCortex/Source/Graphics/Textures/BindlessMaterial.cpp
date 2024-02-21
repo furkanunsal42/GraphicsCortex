@@ -22,6 +22,7 @@ BindlessMaterial::BindlessMaterial() {
 	_pbr_texture_uniform_buffer->push_variable<Texture2D>();	//	 brdf
 	_pbr_texture_uniform_buffer->push_variable<Texture2D>();	//	 emmisive
 	_pbr_texture_uniform_buffer->push_variable<Texture2D>();	//	 ambient_occlusion
+
 }																	 
 
 BindlessMaterial::BindlessMaterial(const std::shared_ptr<Program>& program)
@@ -213,33 +214,47 @@ void BindlessMaterial::update_uniforms()
 	// ambient_occlusion
 	
 	if (use_albedo_map) {
+		_pbr_albedo->_allocate_texture();
+		_pbr_albedo->wait_async_load();
 		memcpy(handle, &_pbr_albedo->texture_handle, 8);
 		_pbr_texture_uniform_buffer->set_data(10, handle);
 	}
 	if (use_normal_map) {
+		_pbr_normal->_allocate_texture();
+		_pbr_normal->wait_async_load();
 		memcpy(handle, &_pbr_normal->texture_handle, 8);
 		_pbr_texture_uniform_buffer->set_data(11, handle);
 	}
 	if (use_metalic_map) {
+		_pbr_metalic->_allocate_texture();
+		_pbr_metalic->wait_async_load();
 		memcpy(handle, &_pbr_metalic->texture_handle, 8);
 		_pbr_texture_uniform_buffer->set_data(12, handle);
 	}
 	if (use_roughness_map) {
+		_pbr_roughness->_allocate_texture();
+		_pbr_roughness->wait_async_load();
 		memcpy(handle, &_pbr_roughness->texture_handle, 8);
 		_pbr_texture_uniform_buffer->set_data(13, handle);
 	}
 	if (use_brdf_map) {
+		_pbr_brdf->_allocate_texture();
+		_pbr_brdf->wait_async_load();
 		memcpy(handle, &_pbr_brdf->texture_handle, 8);
 		_pbr_texture_uniform_buffer->set_data(14, handle);
 	}
 	if (use_emmisive_map) {
+		_pbr_emmisive->_allocate_texture();
+		_pbr_emmisive->wait_async_load();
 		memcpy(handle, &_pbr_emmisive->texture_handle, 8);
 		_pbr_texture_uniform_buffer->set_data(15, handle);
 	}
 	if (use_ambient_occlusion_map) {
+		_pbr_ambient_occlusion->_allocate_texture();
+		_pbr_ambient_occlusion->wait_async_load();
 		memcpy(handle, &_pbr_ambient_occlusion->texture_handle, 8);
 		_pbr_texture_uniform_buffer->set_data(16, handle);
 	}
-	
+
 	_pbr_texture_uniform_buffer->upload_data();
 }
