@@ -62,19 +62,21 @@ public:
 			else 
 				ASSERT(false);
 			};
+		
+		deferred_program->bind();
 
+		set_texture(deferred_program, "albedo_texture", albedo_texture);
+		set_texture(deferred_program, "metalic_roughness_ao_texture", metalic_roughness_ao_texture);
+		set_texture(deferred_program, "brdf_texture", brdf_texture);
+		set_texture(deferred_program, "emmisive_texture", emmisive_texture);
 		set_texture(deferred_program, "position_texture", position_texture);
 		set_texture(deferred_program, "texcoord_texture", texcoord_texture);
 		set_texture(deferred_program, "normal_texture", normal_texture);
-
-		set_texture(deferred_program, "albedo_texture", albedo_texture);
-
+		
 		deferred->deactivate_all_draw_buffers();
 		deferred->activate_draw_buffer(0);
 		deferred->bind_draw();
 		Framebuffer::clear_bound_drawbuffer();
-
-		deferred_program->bind();
 		
 		deferred_program->update_uniform("model", glm::translate(glm::scale(glm::identity<glm::mat4>(), glm::vec3(pipeline.width, pipeline.height, 1.0f)), glm::vec3(0.5f, 0.5f, 0.0f)));
 		deferred_program->update_uniform("projection", glm::ortho(0.0f, (float)pipeline.width, 0.0f, (float)pipeline.height, -1.0f, 1.0f));

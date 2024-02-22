@@ -503,6 +503,7 @@ void Program::unbind() {
 
 void Program::update_uniform(const std::string& name, Texture2D& texture2d)
 {
+	texture2d.wait_async_load();
 	if (!texture2d._texture_handle_created) texture2d._allocate_texture();
 	GLCall(unsigned int location = glGetUniformLocation(id, name.c_str()));
 	GLCall(glProgramUniformHandleui64ARB(id, location, texture2d.texture_handle));
@@ -510,6 +511,7 @@ void Program::update_uniform(const std::string& name, Texture2D& texture2d)
 
 void Program::update_uniform(const std::string& name, TextureCubeMap& texturecubemap)
 {
+	texturecubemap.wait_async_load();
 	if (!texturecubemap._texture_handle_created) texturecubemap._allocate_texture();
 	GLCall(unsigned int location = glGetUniformLocation(id, name.c_str()));
 	GLCall(glProgramUniformHandleui64ARB(id, location, texturecubemap.texture_handle));
@@ -667,6 +669,7 @@ void Program::update_uniform_buffer_slots(){
 		GLCall(unsigned int location = glGetUniformBlockIndex(id, name.c_str()));
 		if (location == GL_INVALID_INDEX) {
 			std::cout << "[OpenGL Error] Program tried to update_uniform_buffer_slots() but uniform block named: \"" + name + "\" wasn't found in the shader" << std::endl;
+			continue;
 			ASSERT(false);
 		}
 		if (used_buffer_slots.find(uniform_buffer->bound_slot) == used_buffer_slots.end()) {	// uniform buffer's currently bound position is free

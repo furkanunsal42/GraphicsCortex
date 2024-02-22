@@ -89,6 +89,5 @@ public:
 		pipeline.texture_stack.push_back(brdf_texture);
 		pipeline.texture_stack.push_back(metalic_roughness_ao_texture);
 		pipeline.texture_stack.push_back(albedo_texture);
-
 	}
 };

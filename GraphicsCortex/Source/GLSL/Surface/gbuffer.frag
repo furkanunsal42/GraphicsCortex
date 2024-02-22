@@ -59,4 +59,8 @@ void main(){
 	frag_metalic_roughness_ao.z = use_ambient_occlusion_map		? texture(ambient_occlusion, v_texcoord).x	: 0;
 	frag_brdf 					= use_brdf_map					? texture(brdf, v_texcoord)					: vec4(0, 0, 0, 0);
 	frag_emmisive				= use_emmisive_map				? texture(emmisive, v_texcoord)				: const_emmisive;
+
+	frag_metalic_roughness_ao.a = 1;
+	frag_brdf.a = 1;
+	frag_emmisive.a = 1;
 }
