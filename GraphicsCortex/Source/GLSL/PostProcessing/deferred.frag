@@ -10,13 +10,13 @@ in vec2 v_texcoord;
 
 uniform mat4 projection;
 
-uniform sampler2D albedo_texture;
-uniform sampler2D metalic_roughness_ao_texture;
-uniform sampler2D brdf_texture;
-uniform sampler2D emmisive_texture;
-uniform sampler2D position_texture;
-uniform sampler2D texcoord_texture;
-uniform sampler2D normal_texture;
+layout (bindless_sampler) uniform sampler2D albedo_texture;
+layout (bindless_sampler) uniform sampler2D metalic_roughness_ao_texture;
+layout (bindless_sampler) uniform sampler2D brdf_texture;
+layout (bindless_sampler) uniform sampler2D emmisive_texture;
+layout (bindless_sampler) uniform sampler2D position_texture;
+layout (bindless_sampler) uniform sampler2D texcoord_texture;
+layout (bindless_sampler) uniform sampler2D normal_texture;
 
 void main(){
 	vec4 albedo_color = texture(albedo_texture, v_texcoord);
