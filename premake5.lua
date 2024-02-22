@@ -38,8 +38,7 @@ project "GraphicsCortex"
 
 	includedirs 
 	{
-		"%{prj.name}/Source/Graphics/Rendering/new system",
-		"%{prj.name}/Source/Graphics/Textures/new system",
+		"%{prj.name}/Source/Graphics/RenderPasses",
 		"%{prj.name}/Source/System",
 		"%{prj.name}/Source/Physics",
 		"%{prj.name}/Source/Graphics/Windowing",
@@ -177,9 +176,7 @@ project "GraphicsCortexApp"
 	includedirs 
 	{
 		"%{prj.name}/Source",
-
-		"GraphicsCortex/Source/Graphics/Rendering/new system",
-		"GraphicsCortex/Source/Graphics/Textures/new system",
+		"GraphicsCortex/Source/Graphics/RenderPasses",
 		"GraphicsCortex/Source/System",
 		"GraphicsCortex/Source/Physics",
 		"GraphicsCortex/Source/Graphics/Windowing",
