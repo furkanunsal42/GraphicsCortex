@@ -43,7 +43,7 @@ public:
 	// pbr material
 	std::string _pbr_material_buffer_name = "pbr_material";
 	std::shared_ptr<UniformBuffer> _pbr_texture_uniform_buffer = std::make_shared<UniformBuffer>();
-	glm::vec4 _pbr_const_albedo = glm::vec4(1, 1, 0, 1);
+	glm::vec4 _pbr_const_albedo = glm::vec4(1, 0, 1, 1);
 	glm::vec4 _pbr_const_metalic_roughness = glm::vec4(0, 0, 0, 0);
 	glm::vec4 _pbr_const_emmisive = glm::vec4(0, 0, 0, 0);
 	std::shared_ptr<Texture2D> _pbr_albedo				= nullptr;

@@ -64,7 +64,7 @@ public:
 		g_buffer->activate_draw_buffer(5);
 		g_buffer->activate_draw_buffer(6);
 		g_buffer->bind_draw();
-		Framebuffer::clear_bound_drawbuffer();
+		Framebuffer::clear_bound_drawbuffer(0.5, 0.5, 0.5, 1);
 
 		g_buffer_program->bind();
 

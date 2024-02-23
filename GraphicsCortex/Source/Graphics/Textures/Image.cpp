@@ -1,11 +1,13 @@
 #include "Image.h"
 
 #include <iostream>
+#include <fstream>
 
 #include "stb_image.h"
 #include "stb_image_write.h"
 #include "stb_image_resize.h"
 
+#include "DirectoryUtils.h"
 #include "Debuger.h"
 
 Image::Image(const std::string& file_path, int desired_channels, bool vertical_flip) :
@@ -33,31 +35,40 @@ Image::~Image() {
 }
 
 void Image::_read_image(const std::string& file_path, int desired_channels) {
-	if (_image_data != nullptr){
+	if (_image_data != nullptr) {
 		std::cout << "Image::_read_image() was called but _image_data was already initialized" << std::endl;
 		ASSERT(false);
 	}
 
+	if (file_path.size() >= 4) {
+		std::string image_type = compute_filetype(file_path);
+		if (image_type == ".raw" || image_type == ".RAW") {
+
+			std::ifstream file;
+			file.open(file_path, std::ios::in | std::ios::binary);
+			if (file) {
+				int file_size = 2048 * 2048 * 2;
+				_width = 2048;
+				_height = 2048;
+				_channels = 1;
+				_image_data = new unsigned char[file_size];
+			}
+
+			int buffer_size = 256;
+			int buffer_pointer = 0;
+			while (!file.eof()) {
+				file.read((char*)_image_data + buffer_pointer, buffer_size);
+				buffer_pointer += buffer_size;
+
+			}
+
+			return;
+		}
+	}
+
 	//stbi_set_flip_vertically_on_load(_vertical_flip);	// causes wrong flags to be used while running in multithreaded mode
 	stbi_set_flip_vertically_on_load_thread(_vertical_flip);	// may not link if thread-local variables aren't supported by compiler
-	
 	_image_data = stbi_load(file_path.c_str(), &_width, &_height, &_channels, desired_channels);
-	
-	int w;
-	int h;
-	int c;
-
-	//stbi_info(file_path.c_str(), &w, &h, &c);
-	//if (_width != w) {
-	//	_width = w;
-	//}
-	//if (_height != h) {
-	//	_height = h;
-	//}
-	//if (_channels != c) {
-	//	_channels = c;
-	//}
-
 	_channels = desired_channels;
 }
 

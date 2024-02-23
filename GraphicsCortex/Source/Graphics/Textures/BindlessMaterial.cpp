@@ -151,12 +151,13 @@ void BindlessMaterial::set_program_without_texture_reset(const std::shared_ptr<P
 void BindlessMaterial::update_uniforms()
 {
 	if (program == nullptr) {
-		std::cout << "[OpenGL Error] BindlessMaterial tried to update_uniforms() but program was nullptr" << std::endl;
-		ASSERT(false);
+		//std::cout << "[OpenGL Error] BindlessMaterial tried to update_uniforms() but program was nullptr" << std::endl;
+		//ASSERT(false);
 	}
 	
 	// cluster
-	program->attach_uniform_buffer(_cluster_texture_buffer_name, _cluster_texture_uniform_buffer);
+	if (program != nullptr)
+		program->attach_uniform_buffer(_cluster_texture_buffer_name, _cluster_texture_uniform_buffer);
 	for (auto iterator = _cluster_textures.begin(); iterator != _cluster_textures.end(); iterator++) {
 		int location = iterator->first;
 		std::shared_ptr<Texture2D>& texture = iterator->second;
@@ -179,7 +180,8 @@ void BindlessMaterial::update_uniforms()
 
 	
 	//pbr
-	program->attach_uniform_buffer(_pbr_material_buffer_name, _pbr_texture_uniform_buffer);
+	if (program != nullptr)
+		program->attach_uniform_buffer(_pbr_material_buffer_name, _pbr_texture_uniform_buffer);
 	
 	int use_albedo_map				= _pbr_albedo != nullptr;
 	int use_normal_map				= _pbr_normal != nullptr;

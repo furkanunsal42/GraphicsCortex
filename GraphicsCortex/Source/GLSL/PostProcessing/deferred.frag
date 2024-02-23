@@ -23,7 +23,7 @@ vec3 directional_light_color = vec3(1, 1, 1);
 vec3 directional_light_dir = normalize(vec3(-0.2, -1, -0.2));
 
 void main(){
-	vec4 albedo_color = texture(metalic_roughness_ao_texture, v_texcoord);
+	vec4 albedo_color = texture(albedo_texture, v_texcoord);
 	frag_color = vec4(albedo_color.xyz, 1);
 
 }
