@@ -20,7 +20,8 @@ public:
 	std::string vertex_shader = "";
 	std::string fragment_shader = "";
 	std::string geometry_shader = "";
-
+	std::string compute_shader = "";
+	
 	std::string filename = "";
 
 	Shader();

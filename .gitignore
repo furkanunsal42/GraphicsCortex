@@ -568,3 +568,4 @@ CTAnalyzer/PhysXCooking_64.dll
 CTAnalyzer/PhysXDevice64.dll
 CTAnalyzer/PhysXFoundation_64.dll
 CTAnalyzer/PhysXGpu_64.dll
+CTAnalyzer/CTAnalyzer.vcxproj.filters

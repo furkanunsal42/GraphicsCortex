@@ -54,6 +54,10 @@ void Shader::read_shader(const std::string& target_file) {
 			type = "geometry";
 			continue;
 		}
+		else if (line.find("#<compute shader>") != std::string::npos) {
+			type = "compute";
+			continue;
+		}
 		if (type == "vertex") {
 			vertex_shader += line + '\n';
 		}
@@ -62,6 +66,9 @@ void Shader::read_shader(const std::string& target_file) {
 		}
 		else if (type == "geometry") {
 			geometry_shader += line + '\n';
+		}
+		else if (type == "compute") {
+			compute_shader += line + '\n';
 		}
 	}
 }
