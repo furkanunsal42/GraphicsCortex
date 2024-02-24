@@ -569,3 +569,5 @@ CTAnalyzer/PhysXDevice64.dll
 CTAnalyzer/PhysXFoundation_64.dll
 CTAnalyzer/PhysXGpu_64.dll
 CTAnalyzer/CTAnalyzer.vcxproj.filters
+build-obj/windows-Release-x86_64GraphicsCortex/ComputeProgram.obj
+build-obj/windows-Release-x86_64GraphicsCortexApp/ComputeShaderMain.obj

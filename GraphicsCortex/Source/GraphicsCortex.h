@@ -20,6 +20,7 @@
 #include "Buffer.h"
 #include "UniformBuffer.h"
 #include "ShaderCompiler.h"
+#include "ComputeProgram.h"
 #include "Image.h"
 #include "TextureBase.h"
 #include "Texture1D.h"

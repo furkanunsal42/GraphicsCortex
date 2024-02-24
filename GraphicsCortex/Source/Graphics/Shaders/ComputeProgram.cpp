@@ -30,7 +30,8 @@ void ComputeProgram::release()
 
 void ComputeProgram::dispatch(int workgroup_size_x, int workgroup_size_y, int workgroup_size_z)
 {
-	glDispatchCompute()
+	bind();
+	GLCall(glDispatchCompute(workgroup_size_x, workgroup_size_y, workgroup_size_z));
 }
 
 void ComputeProgram::bind()
@@ -71,7 +72,7 @@ void ComputeProgram::load_shader(const Shader& shader)
 		GLCall(glGetShaderInfoLog(compute_shader, max_length, &max_length, &info_log[0]));
 		GLCall(glDeleteShader(compute_shader));
 
-		std::cout << "[OpenGL Error] Compute Shader \"" << shader.filename << "\" failed to compiler with message : " << info_log;
+		std::cout << "[OpenGL Error] Compute Shader \"" << shader.filename << "\" failed to compiler with message : " << info_log << std::endl;;
 		ASSERT(false);
 		return;
 	}
@@ -89,7 +90,7 @@ void ComputeProgram::load_shader(const Shader& shader)
 		GLCall(glDeleteProgram(id));
 		GLCall(glDeleteShader(compute_shader));
 
-		std::cout << "[OpenGL Error] Compute Shader \"" << shader.filename << "\" failed to link with message : " << info_log;
+		std::cout << "[OpenGL Error] Compute Shader \"" << shader.filename << "\" failed to link with message : " << info_log << std::endl;;
 		ASSERT(false);
 		return;
 	}

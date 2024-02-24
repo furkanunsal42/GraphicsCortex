@@ -41,6 +41,11 @@ void Shader::read_shader(const std::string& target_file) {
 	std::ifstream file(target_file);
 	std::string line;
 
+	if (!file){
+		std::cout << "[Filepath Error] Shader tried to read_shader() but \"" << target_file << "\" couldn't found" << std::endl;
+		ASSERT(false);
+	}
+
 	while (std::getline(file, line)) {
 		if (line.find("#<vertex shader>") != std::string::npos) {
 			type = "vertex";
