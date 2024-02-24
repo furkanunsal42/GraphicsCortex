@@ -6,10 +6,12 @@
 #include <thread>
 
 class Program;
+class ComputeProgram;
 class BindlessMaterial;
 class Framebuffer;
 
 class Texture2D : public TextureBase2{
+	friend ComputeProgram;
 	friend Program;
 	friend BindlessMaterial;
 	friend Framebuffer;

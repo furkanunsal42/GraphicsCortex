@@ -20,11 +20,6 @@ public:
 	void update_uniform(const std::string& name, Texture2D& texture2d);
 	void update_uniform(const std::string& name, TextureCubeMap& texturecubemap);
 	
-	void update_uniform(const std::string& name, const bool& a);
-	void update_uniform(const std::string& name, const bool& a, const bool& b);
-	void update_uniform(const std::string& name, const bool& a, const bool& b, const bool& c);
-	void update_uniform(const std::string& name, const bool& a, const bool& b, const bool& c, const bool& d);
-
 	void update_uniform(const std::string& name, const int& a);
 	void update_uniform(const std::string& name, const int& a, const int& b);
 	void update_uniform(const std::string& name, const int& a, const int& b, const int& c);
@@ -50,4 +45,6 @@ private:
 
 	void _generate_program();
 
+	int _get_uniform_location(const std::string& name);
+	std::unordered_map<std::string, int> _uniform_location_table;
 };

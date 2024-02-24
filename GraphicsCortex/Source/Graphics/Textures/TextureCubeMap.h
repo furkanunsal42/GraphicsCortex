@@ -7,10 +7,12 @@
 #include <array>
 
 class Program;
+class ComputeProgram;
 class Framebuffer;
 
 class TextureCubeMap : public TextureBase2 {
 	friend Program;
+	friend ComputeProgram;
 	friend Framebuffer;
 public:
 	enum Face {
