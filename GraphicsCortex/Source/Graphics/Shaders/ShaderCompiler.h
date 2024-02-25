@@ -186,7 +186,10 @@ struct AttributeData {
 	int layout_index;
 };
 
+class Texture1D;
 class Texture2D;
+class Texture3D;
+class Texture2DArray;
 class TextureCubeMap;
 
 class Program {
@@ -253,7 +256,10 @@ public:
 	}
 
 
+	void update_uniform(const std::string& name, Texture1D& texture1d);
 	void update_uniform(const std::string& name, Texture2D& texture2d);
+	void update_uniform(const std::string& name, Texture3D& texture3d);
+	void update_uniform(const std::string& name, Texture2DArray& texturearray);
 	void update_uniform(const std::string& name, TextureCubeMap& texturecubemap);
 
 	void update_uniform(const std::string& name, const int& a, const int& b, const int& c, const int& d);

@@ -16,7 +16,7 @@ int load_vehicle_scene() {
 	std::shared_ptr<Program> solid_program = default_program::solid_program_s();
 
 	{
-		Model city_model("../GraphicsCortex/Models/circuit/nogaro.obj", 1.0f, Model::ALL);
+		Model city_model("../GraphicsCortex/Models/circuit/nogaro.obj", 1.0f, Model::COORD_XYZ | Model::TEX_COORD_XY | Model::NORMAL_XYZ | Model::TEX_COORD_Z_DIFFUSE);
 		Model city_model_collision("../GraphicsCortex/Models/circuit/collision.obj", 1.0f, Model::COORD_XYZ);
 		Model city_model_ground("../GraphicsCortex/Models/circuit/ground_physics.obj", 1.0f, Model::COORD_XYZ);
 		std::shared_ptr<Mesh> city = std::make_shared<Mesh>(city_model);

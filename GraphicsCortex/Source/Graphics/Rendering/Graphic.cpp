@@ -79,7 +79,7 @@ void Graphic::set_material(std::shared_ptr<BindlessMaterial> material) {
 void Graphic::update_matrix() {
 	model_matrix = glm::identity<glm::mat4x4>();
 	model_matrix = glm::translate(model_matrix, position);
-	model_matrix = glm::mat4_cast(rotation) * model_matrix;
+	model_matrix = model_matrix * glm::mat4_cast(rotation);
 	model_matrix = glm::scale(model_matrix, scale);
 	_last_updated_position = position;
 	_last_updated_rotation = rotation;

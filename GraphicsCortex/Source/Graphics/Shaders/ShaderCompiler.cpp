@@ -11,7 +11,10 @@
 #include "DirectoryUtils.h"
 #include <unordered_set>
 
+#include "Texture1D.h"
 #include "Texture2D.h"
+#include "Texture3D.h"
+#include "Texture2DArray.h"
 #include "TextureCubeMap.h"
 
 Shader::Shader() { ; }
@@ -513,12 +516,36 @@ void Program::unbind() {
 	GLCall(glUseProgram(0));
 }
 
+void Program::update_uniform(const std::string& name, Texture1D& texture1d)
+{
+	texture1d.wait_async_load();
+	if (!texture1d._texture_handle_created) texture1d._allocate_texture();
+	GLCall(unsigned int location = glGetUniformLocation(id, name.c_str()));
+	GLCall(glProgramUniformHandleui64ARB(id, location, texture1d.texture_handle));
+}
+
 void Program::update_uniform(const std::string& name, Texture2D& texture2d)
 {
 	texture2d.wait_async_load();
 	if (!texture2d._texture_handle_created) texture2d._allocate_texture();
 	GLCall(unsigned int location = glGetUniformLocation(id, name.c_str()));
 	GLCall(glProgramUniformHandleui64ARB(id, location, texture2d.texture_handle));
+}
+
+void Program::update_uniform(const std::string& name, Texture3D& texture3d)
+{
+	texture3d.wait_async_load();
+	if (!texture3d._texture_handle_created) texture3d._allocate_texture();
+	GLCall(unsigned int location = glGetUniformLocation(id, name.c_str()));
+	GLCall(glProgramUniformHandleui64ARB(id, location, texture3d.texture_handle));
+}
+
+void Program::update_uniform(const std::string& name, Texture2DArray& texturearray)
+{
+	texturearray.wait_async_load();
+	if (!texturearray._texture_handle_created) texturearray._allocate_texture();
+	GLCall(unsigned int location = glGetUniformLocation(id, name.c_str()));
+	GLCall(glProgramUniformHandleui64ARB(id, location, texturearray.texture_handle));
 }
 
 void Program::update_uniform(const std::string& name, TextureCubeMap& texturecubemap)

@@ -12,7 +12,7 @@ int main() {
 
 	std::shared_ptr<ComputeProgram> compute_program = std::make_shared<ComputeProgram>(Shader("../GraphicsCortex/Source/GLSL/Compute/test.comp"));
 	compute_program->update_uniform("image", *texture2d);
-	compute_program->dispatch(1, 1, 1);
+	compute_program->dispatch(std::ceil(1920/8.0f) / 2, std::ceil(1080/8.0f) / 2, 1);
 
 	while (frame.is_running()) {
 		double deltatime = frame.handle_window();

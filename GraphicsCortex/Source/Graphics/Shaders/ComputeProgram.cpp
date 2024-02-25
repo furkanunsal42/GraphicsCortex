@@ -1,6 +1,9 @@
 #include "ComputeProgram.h"
 #include "Debuger.h"
+#include "Texture1D.h"
 #include "Texture2D.h"
+#include "Texture3D.h"
+#include "Texture2DArray.h"
 #include "TextureCubeMap.h"
 
 ComputeProgram::ComputeProgram()
@@ -30,8 +33,19 @@ void ComputeProgram::release()
 
 void ComputeProgram::dispatch(int workgroup_size_x, int workgroup_size_y, int workgroup_size_z)
 {
+	if (!_program_generated) {
+		std::cout << "[OpenGL Error] ComputeProgram tried to dispatch() but it was released" << std::endl;
+		ASSERT(false);
+	}
+
+	if (!_program_compiled) {
+		std::cout << "[OpenGL Error] ComputeProgram tried to dispatch() but it wasn't compiled yet" << std::endl;
+		ASSERT(false);
+	}
+
 	bind();
 	GLCall(glDispatchCompute(workgroup_size_x, workgroup_size_y, workgroup_size_z));
+	GLCall(glMemoryBarrier(GL_ALL_BARRIER_BITS));
 }
 
 void ComputeProgram::bind()
@@ -100,11 +114,32 @@ void ComputeProgram::load_shader(const Shader& shader)
 	_program_compiled = true;
 }
 
+void ComputeProgram::update_uniform(const std::string& name, Texture1D& texture1d)
+{
+	texture1d.wait_async_load();
+	if (!texture1d._texture_handle_created) texture1d._allocate_texture();
+	GLCall(glProgramUniformHandleui64ARB(id, _get_uniform_location(name), texture1d.texture_handle));
+}
+
 void ComputeProgram::update_uniform(const std::string& name, Texture2D& texture2d)
 {
 	texture2d.wait_async_load();
 	if (!texture2d._texture_handle_created) texture2d._allocate_texture();
 	GLCall(glProgramUniformHandleui64ARB(id, _get_uniform_location(name), texture2d.texture_handle));
+}
+
+void ComputeProgram::update_uniform(const std::string& name, Texture3D& texture3d)
+{
+	texture3d.wait_async_load();
+	if (!texture3d._texture_handle_created) texture3d._allocate_texture();
+	GLCall(glProgramUniformHandleui64ARB(id, _get_uniform_location(name), texture3d.texture_handle));
+}
+
+void ComputeProgram::update_uniform(const std::string& name, Texture2DArray& texture2darray)
+{
+	texture2darray.wait_async_load();
+	if (!texture2darray._texture_handle_created) texture2darray._allocate_texture();
+	GLCall(glProgramUniformHandleui64ARB(id, _get_uniform_location(name), texture2darray.texture_handle));
 }
 
 void ComputeProgram::update_uniform(const std::string& name, TextureCubeMap& texturecubemap)
@@ -208,6 +243,10 @@ int ComputeProgram::_get_uniform_location(const std::string& name)
 		return index->second;
 	else {
 		GLCall(int location = glGetUniformLocation(id, name.c_str()));
+		if (location == -1) {
+			std::cout << "[OpenGL Error] ComputeProgram tried to _get_uniform_location() but no uniform with name: \"" << name << "\" was found" << std::endl;
+			ASSERT(false);
+		}
 		_uniform_location_table[name] = location;
 		return location;
 	}

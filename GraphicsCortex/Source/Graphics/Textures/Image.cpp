@@ -51,7 +51,7 @@ void Image::_read_image(const std::string& file_path, int desired_channels) {
 				_width = 2048;
 				_height = 2048;
 				_channels = 1;
-				_image_data = new unsigned char[file_size];
+				_image_data = (unsigned char*)malloc(file_size);
 			}
 
 			int buffer_size = 256;

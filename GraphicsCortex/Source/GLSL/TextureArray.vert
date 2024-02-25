@@ -19,6 +19,6 @@ uniform mat4 projection;
 
 void main(){
 	tex_coords = texture_coords;
-	tex_index_color = int(texture_index_color);
+	tex_index_color = int(round(texture_index_color));
 	gl_Position = projection * view * model * vec4(position, 1.0f);
 }
