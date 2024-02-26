@@ -574,3 +574,4 @@ build-obj/windows-Release-x86_64GraphicsCortexApp/ComputeShaderMain.obj
 build-obj/windows-Release-x86_64CTAnalyzer/CT_FBP_Solver.obj
 build-obj/windows-Release-x86_64GraphicsCortexApp/imgui example.obj
 CTAnalyzer/
+build-obj/windows-Release-x86_64CTAnalyzer/ApplicationMain.obj

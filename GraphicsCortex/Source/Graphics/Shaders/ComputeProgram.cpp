@@ -124,8 +124,47 @@ void ComputeProgram::update_uniform(const std::string& name, Texture1D& texture1
 void ComputeProgram::update_uniform(const std::string& name, Texture2D& texture2d)
 {
 	texture2d.wait_async_load();
+	if (!texture2d._texture_allocated) texture2d._allocate_texture();
+	
+	int slot = -1;
+	GLCall(glGetUniformiv(id, _get_uniform_location(name), &slot));
+	std::cout << slot << std::endl;
+	if (slot == -1) {
+		ASSERT(false);
+	}
+
+	texture2d.bind(slot);
+	GLCall(glProgramUniform1i(id, _get_uniform_location(name), slot));
+}
+
+void ComputeProgram::update_uniform_bindless(const std::string& name, Texture2D& texture2d)
+{
+	if (!texture2d.is_bindless) {
+		std::cout << "[OpenGL Error] ComputeProgram tried to update_uniform_bindless() but texture2d.is_bindless was false" << std::endl;
+		ASSERT(false);
+	}
+
+	texture2d.wait_async_load();
 	if (!texture2d._texture_handle_created) texture2d._allocate_texture();
 	GLCall(glProgramUniformHandleui64ARB(id, _get_uniform_location(name), texture2d.texture_handle));
+
+}
+
+void ComputeProgram::update_uniform_as_image(const std::string& name, Texture2D& texture2d, int mipmap_level)
+{
+	texture2d.wait_async_load();
+	
+	if (!texture2d._texture_allocated) texture2d._allocate_texture();
+	int slot = -1;
+	GLCall(glGetUniformiv(id, _get_uniform_location(name), &slot));
+	
+	std::cout << slot << std::endl;
+	if (slot == -1) {
+		ASSERT(false);
+	}
+
+	texture2d.bind_as_image(slot, 0);
+	GLCall(glProgramUniform1i(id, _get_uniform_location(name), slot));
 }
 
 void ComputeProgram::update_uniform(const std::string& name, Texture3D& texture3d)

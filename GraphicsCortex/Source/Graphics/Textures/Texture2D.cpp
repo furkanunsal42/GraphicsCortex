@@ -106,6 +106,21 @@ void Texture2D::bind(int texture_slot)
 	GLCall(glBindTextureUnit(texture_slot, id));
 }
 
+void Texture2D::bind_as_image(int texture_slot, int mipmap_level)
+{
+	if (!_texture_generated) {
+		std::cout << "[OpenGL Error] released Texture2D tried to bind_as_image()" << std::endl;
+		ASSERT(false);
+	}
+
+	if (!_texture_allocated) {
+		std::cout << "[OpenGL Warning] Texture2D tried to bind_as_image() but no user data was loaded yet" << std::endl;
+		_allocate_texture();
+	}
+
+	GLCall(glBindImageTexture(texture_slot, id, mipmap_level, GL_FALSE, 0, GL_READ_WRITE, _get_gl_internal_format()));
+}
+
 void Texture2D::unbind()
 {
 	std::cout << "[OpenGL Warning] Bindless Texture2D tried to unbind" << std::endl;
@@ -397,11 +412,13 @@ void Texture2D::_create_handle()
 	if (!_texture_allocated) _allocate_texture();
 
 	_set_texture_parameters();
-
-	GLCall(texture_handle = glGetTextureHandleARB(id));
-	GLCall(glMakeTextureHandleResidentARB(texture_handle));
-
-	_texture_handle_created = true;
+	
+	if (is_bindless) {
+		GLCall(texture_handle = glGetTextureHandleARB(id));
+		GLCall(glMakeTextureHandleResidentARB(texture_handle));
+		
+		_texture_handle_created = true;
+	}
 }
 
 int Texture2D::_get_gl_internal_format()

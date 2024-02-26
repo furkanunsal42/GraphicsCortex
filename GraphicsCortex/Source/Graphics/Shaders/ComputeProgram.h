@@ -18,7 +18,11 @@ public:
 	void load_shader(const Shader& shader);
 
 	void update_uniform(const std::string& name, Texture1D& texture1d);
+	
 	void update_uniform(const std::string& name, Texture2D& texture2d);
+	void update_uniform_bindless(const std::string& name, Texture2D& texture2d);
+	void update_uniform_as_image(const std::string& name, Texture2D& texture2d, int mipmap_level);
+
 	void update_uniform(const std::string& name, Texture3D& texture3d);
 	void update_uniform(const std::string& name, Texture2DArray& texture2darray);
 	void update_uniform(const std::string& name, TextureCubeMap& texturecubemap);

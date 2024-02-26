@@ -25,6 +25,7 @@ public:
 	SamplingFilter mipmap_min_filter = SamplingFilter::LINEAR;
 	SamplingFilter min_filter = SamplingFilter::LINEAR;
 	SamplingFilter mag_filter = SamplingFilter::LINEAR;
+	bool is_bindless = true;
 
 	Texture2D() = delete;
 	Texture2D(const Texture2D& other) = delete;
@@ -37,6 +38,7 @@ public:
 	void release();
 
 	void bind(int texture_slot);
+	void bind_as_image(int texture_slot, int mipmap_level);
 
 	void bind();
 	void unbind();
