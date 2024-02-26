@@ -649,10 +649,12 @@ void Texture2DArray::_create_handle()
 
 	_set_texture_parameters();
 
-	GLCall(texture_handle = glGetTextureHandleARB(id));
-	GLCall(glMakeTextureHandleResidentARB(texture_handle));
+	if (is_bindless) {
+		GLCall(texture_handle = glGetTextureHandleARB(id));
+		GLCall(glMakeTextureHandleResidentARB(texture_handle));
 
-	_texture_handle_created = true;
+		_texture_handle_created = true;
+	}
 }
 
 int Texture2DArray::_get_gl_internal_format()

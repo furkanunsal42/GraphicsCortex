@@ -137,6 +137,10 @@ void ComputeProgram::update_uniform(const std::string& name, Texture2D& texture2
 	GLCall(glProgramUniform1i(id, _get_uniform_location(name), slot));
 }
 
+void ComputeProgram::update_uniform_bindless(const std::string& name, Texture1D& texture1d)
+{
+}
+
 void ComputeProgram::update_uniform_bindless(const std::string& name, Texture2D& texture2d)
 {
 	if (!texture2d.is_bindless) {
@@ -148,6 +152,22 @@ void ComputeProgram::update_uniform_bindless(const std::string& name, Texture2D&
 	if (!texture2d._texture_handle_created) texture2d._allocate_texture();
 	GLCall(glProgramUniformHandleui64ARB(id, _get_uniform_location(name), texture2d.texture_handle));
 
+}
+
+void ComputeProgram::update_uniform_bindless(const std::string& name, Texture3D& texture3d)
+{
+}
+
+void ComputeProgram::update_uniform_bindless(const std::string& name, Texture2DArray& texture2darray)
+{
+}
+
+void ComputeProgram::update_uniform_bindless(const std::string& name, TextureCubeMap& texturecubemap)
+{
+}
+
+void ComputeProgram::update_uniform_as_image(const std::string& name, Texture1D& texture1d, int mipmap_level)
+{
 }
 
 void ComputeProgram::update_uniform_as_image(const std::string& name, Texture2D& texture2d, int mipmap_level)
@@ -165,6 +185,18 @@ void ComputeProgram::update_uniform_as_image(const std::string& name, Texture2D&
 
 	texture2d.bind_as_image(slot, 0);
 	GLCall(glProgramUniform1i(id, _get_uniform_location(name), slot));
+}
+
+void ComputeProgram::update_uniform_as_image(const std::string& name, Texture3D& texture3d, int mipmap_level)
+{
+}
+
+void ComputeProgram::update_uniform_as_image(const std::string& name, Texture2DArray& texture2darray, int mipmap_level)
+{
+}
+
+void ComputeProgram::update_uniform_as_image(const std::string& name, TextureCubeMap& texturecubemap, int mipmap_level)
+{
 }
 
 void ComputeProgram::update_uniform(const std::string& name, Texture3D& texture3d)
