@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-#include "Buffer.h";
+#include "Buffer.h"
 
 ArrayBuffer::ArrayBuffer()
 	: id(0), vao(0), data_count(0) {};
