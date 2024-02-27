@@ -3,7 +3,7 @@
 #include "Image.h"
 #include "glm.hpp"
 
-#include "GL\glew.h"
+#include "GL/glew.h"
 
 #include <string>
 #include <vector>

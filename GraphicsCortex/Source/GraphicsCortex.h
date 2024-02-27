@@ -6,12 +6,12 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 
-#include <GL\glew.h>
-#include <GLFW\glfw3.h>
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
 
 #include "glm.hpp"
-#include "gtc\matrix_transform.hpp"
-#include "gtc\type_ptr.hpp"
+#include "gtc/matrix_transform.hpp"
+#include "gtc/type_ptr.hpp"
 
 #include "CortexMath.h"
 #include "Debuger.h"

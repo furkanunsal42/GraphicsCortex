@@ -1,10 +1,10 @@
 #pragma once
 #include "Config.h"
 
-#include <GL\glew.h>
+#include <GL/glew.h>
 #include <glm.hpp>
 #include <string>
-#include <GLFW\glfw3.h>
+#include <GLFW/glfw3.h>
 
 #include "ShaderCompiler.h"
 

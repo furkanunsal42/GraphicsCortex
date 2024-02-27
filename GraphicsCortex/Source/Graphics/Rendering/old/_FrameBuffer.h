@@ -1,7 +1,7 @@
 #pragma once
 #include "Config.h"
 
-#include "GL\glew.h"
+#include "GL/glew.h"
 
 #include <string>
 #include "old/Texture.h"
