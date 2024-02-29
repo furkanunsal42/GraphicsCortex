@@ -35,6 +35,10 @@ public:
 	void update_uniform_as_image(const std::string& name, Texture2DArray& texture2darray, int mipmap_level);
 	void update_uniform_as_image(const std::string& name, TextureCubeMap& texturecubemap, int mipmap_level);
 
+	void update_uniform_as_slice(const std::string& name, Texture3D& texture3d, int mipmap_level, int layer);
+	void update_uniform_as_slice(const std::string& name, Texture2DArray& texture3d, int mipmap_level, int layer);
+	void update_uniform_as_slice(const std::string& name, TextureCubeMap& texture3d, int mipmap_level, int layer);
+
 	void update_uniform(const std::string& name, const int& a);
 	void update_uniform(const std::string& name, const int& a, const int& b);
 	void update_uniform(const std::string& name, const int& a, const int& b, const int& c);

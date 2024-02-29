@@ -227,9 +227,22 @@ void ComputeProgram::update_uniform_as_image(const std::string& name, Texture2DA
 	GLCall(glProgramUniform1i(id, _get_uniform_location(name), slot));
 }
 
-void ComputeProgram::update_uniform_as_image(const std::string& name, TextureCubeMap& texturecubemap, int mipmap_level)
-{
+void ComputeProgram::update_uniform_as_image(const std::string& name, TextureCubeMap& texturecubemap, int mipmap_level){
+
 }
+
+void ComputeProgram::update_uniform_as_slice(const std::string& name, Texture3D& texture3d, int mipmap_level, int layer){
+	
+}
+
+void ComputeProgram::update_uniform_as_slice(const std::string& name, Texture2DArray& texture3d, int mipmap_level, int layer){
+	
+}
+
+void ComputeProgram::update_uniform_as_slice(const std::string& name, TextureCubeMap& texture3d, int mipmap_level, int layer){
+	
+}
+
 
 void ComputeProgram::update_uniform(const std::string& name, const int& a)
 {

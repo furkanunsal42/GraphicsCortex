@@ -681,6 +681,15 @@ int Texture2D::query_compressed_image_size(int mipmap_level)
 	return size;
 }
 
+glm::vec2 Texture2D::get_size() {
+	return glm::vec2(width, height);
+}
+
+void Texture2D::force_allocation() {
+	wait_async_load();
+	_allocate_texture();
+}
+
 Image Texture2D::get_image(ColorFormat format, Type type, int mipmap_level)
 {
 	return get_image(format, type, mipmap_level, 0, 0, query_width(mipmap_level), query_height(mipmap_level));
