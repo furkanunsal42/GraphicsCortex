@@ -36,6 +36,8 @@ public:
 	void release();
 
 	void bind(int texture_slot);
+	void bind_as_image(int texture_slot, int mipmap_level);
+	void bind_as_slice(int texture_slot, int mipmap_level, int layer_index);
 
 	void bind();
 	void unbind();
