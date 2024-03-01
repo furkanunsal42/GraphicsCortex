@@ -64,6 +64,8 @@ private:
 
 	void _generate_program();
 
+	bool _does_uniform_exist(const std::string& name);
 	int _get_uniform_location(const std::string& name);
+
 	std::unordered_map<std::string, int> _uniform_location_table;
 };

@@ -118,6 +118,7 @@ void ComputeProgram::update_uniform(const std::string& name, Texture1D& texture1
 {
 	texture1d.wait_async_load();
 	if (!texture1d._texture_handle_created) texture1d._allocate_texture();
+	if (!_does_uniform_exist(name)) return;
 	GLCall(glProgramUniformHandleui64ARB(id, _get_uniform_location(name), texture1d.texture_handle));
 }
 
@@ -133,6 +134,7 @@ void ComputeProgram::update_uniform(const std::string& name, Texture2D& texture2
 		ASSERT(false);
 	}
 
+	if (!_does_uniform_exist(name)) return;
 	texture2d.bind(slot);
 	GLCall(glProgramUniform1i(id, _get_uniform_location(name), slot));
 }
@@ -141,6 +143,7 @@ void ComputeProgram::update_uniform(const std::string& name, Texture3D& texture3
 {
 	texture3d.wait_async_load();
 	if (!texture3d._texture_handle_created) texture3d._allocate_texture();
+	if (!_does_uniform_exist(name)) return;
 	GLCall(glProgramUniformHandleui64ARB(id, _get_uniform_location(name), texture3d.texture_handle));
 }
 
@@ -148,6 +151,7 @@ void ComputeProgram::update_uniform(const std::string& name, Texture2DArray& tex
 {
 	texture2darray.wait_async_load();
 	if (!texture2darray._texture_handle_created) texture2darray._allocate_texture();
+	if (!_does_uniform_exist(name)) return;
 	GLCall(glProgramUniformHandleui64ARB(id, _get_uniform_location(name), texture2darray.texture_handle));
 }
 
@@ -155,6 +159,7 @@ void ComputeProgram::update_uniform(const std::string& name, TextureCubeMap& tex
 {
 	texturecubemap.wait_async_load();
 	if (!texturecubemap._texture_handle_created) texturecubemap._allocate_texture();
+	if (!_does_uniform_exist(name)) return;
 	GLCall(glProgramUniformHandleui64ARB(id, _get_uniform_location(name), texturecubemap.texture_handle));
 }
 
@@ -171,6 +176,7 @@ void ComputeProgram::update_uniform_bindless(const std::string& name, Texture2D&
 
 	texture2d.wait_async_load();
 	if (!texture2d._texture_handle_created) texture2d._allocate_texture();
+	if (!_does_uniform_exist(name)) return;
 	GLCall(glProgramUniformHandleui64ARB(id, _get_uniform_location(name), texture2d.texture_handle));
 
 }
@@ -203,6 +209,7 @@ void ComputeProgram::update_uniform_as_image(const std::string& name, Texture2D&
 		ASSERT(false);
 	}
 
+	if (!_does_uniform_exist(name)) return;
 	texture2d.bind_as_image(slot, 0);
 	GLCall(glProgramUniform1i(id, _get_uniform_location(name), slot));
 }
@@ -223,6 +230,7 @@ void ComputeProgram::update_uniform_as_image(const std::string& name, Texture2DA
 		ASSERT(false);
 	}
 
+	if (!_does_uniform_exist(name)) return;
 	texture2darray.bind_as_image(slot, 0);
 	GLCall(glProgramUniform1i(id, _get_uniform_location(name), slot));
 }
@@ -246,41 +254,49 @@ void ComputeProgram::update_uniform_as_slice(const std::string& name, TextureCub
 
 void ComputeProgram::update_uniform(const std::string& name, const int& a)
 {
+	if (!_does_uniform_exist(name)) return;
 	GLCall(glProgramUniform1i(id, _get_uniform_location(name), a));
 }
 
 void ComputeProgram::update_uniform(const std::string& name, const int& a, const int& b)
 {
+	if (!_does_uniform_exist(name)) return;
 	GLCall(glProgramUniform2i(id, _get_uniform_location(name), a, b));
 }
 
 void ComputeProgram::update_uniform(const std::string& name, const int& a, const int& b, const int& c)
 {
+	if (!_does_uniform_exist(name)) return;
 	GLCall(glProgramUniform3i(id, _get_uniform_location(name), a, b, c));
 }
 
 void ComputeProgram::update_uniform(const std::string& name, const int& a, const int& b, const int& c, const int& d)
 {
+	if (!_does_uniform_exist(name)) return;
 	GLCall(glProgramUniform4i(id, _get_uniform_location(name), a, b, c, d));
 }
 
 void ComputeProgram::update_uniform(const std::string& name, const float& a)
 {
+	if (!_does_uniform_exist(name)) return;
 	GLCall(glProgramUniform1f(id, _get_uniform_location(name), a));
 }
 
 void ComputeProgram::update_uniform(const std::string& name, const float& a, const float& b)
 {
+	if (!_does_uniform_exist(name)) return;
 	GLCall(glProgramUniform2f(id, _get_uniform_location(name), a, b));
 }
 
 void ComputeProgram::update_uniform(const std::string& name, const float& a, const float& b, const float& c)
 {
+	if (!_does_uniform_exist(name)) return;
 	GLCall(glProgramUniform3f(id, _get_uniform_location(name), a, b, c));
 }
 
 void ComputeProgram::update_uniform(const std::string& name, const float& a, const float& b, const float& c, const float& d)
 {
+	if (!_does_uniform_exist(name)) return;
 	GLCall(glProgramUniform4f(id, _get_uniform_location(name), a, b, c, d));
 }
 
@@ -301,16 +317,19 @@ void ComputeProgram::update_uniform(const std::string& name, const glm::vec4& a)
 
 void ComputeProgram::update_uniform(const std::string& name, const glm::mat2& a)
 {
+	if (!_does_uniform_exist(name)) return;
 	GLCall(glProgramUniformMatrix2fv(id, _get_uniform_location(name), 1, GL_FALSE, glm::value_ptr(a)));
 }
 
 void ComputeProgram::update_uniform(const std::string& name, const glm::mat3& a)
 {
+	if (!_does_uniform_exist(name)) return;
 	GLCall(glProgramUniformMatrix3fv(id, _get_uniform_location(name), 1, GL_FALSE, glm::value_ptr(a)));
 }
 
 void ComputeProgram::update_uniform(const std::string& name, const glm::mat4& a)
 {
+	if (!_does_uniform_exist(name)) return;
 	GLCall(glProgramUniformMatrix4fv(id, _get_uniform_location(name), 1, GL_FALSE, glm::value_ptr(a)));
 }
 
@@ -320,6 +339,29 @@ void ComputeProgram::_generate_program()
 
 	GLCall(id = glCreateProgram());
 	_program_generated = true;
+}
+
+bool ComputeProgram::_does_uniform_exist(const std::string& name) {
+	if (!_program_generated) {
+		std::cout << "[OpenGL Error] ComputeProgram tried to _does_uniform_exist() but ComputeProgram was released" << std::endl;
+		ASSERT(false);
+	}
+	if (!_program_compiled) {
+		std::cout << "[OpenGL Error] ComputeProgram tried to _does_uniform_exist() but ComputeProgram wasn't compiled yet" << std::endl;
+		ASSERT(false);
+	}
+
+	auto index = _uniform_location_table.find(name);
+	if (index != _uniform_location_table.end())
+		return true;
+	else {
+		GLCall(int location = glGetUniformLocation(id, name.c_str()));
+		if (location == -1) {
+			return false;
+		}
+		_uniform_location_table[name] = location;
+		return true;
+	}
 }
 
 int ComputeProgram::_get_uniform_location(const std::string& name)
