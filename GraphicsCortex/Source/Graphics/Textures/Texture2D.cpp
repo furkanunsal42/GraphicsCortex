@@ -801,8 +801,8 @@ void Texture2D::clear(unsigned char clear_data, int x, int y, int width, int hei
 
 void Texture2D::clear(float clear_data, int x, int y, int width, int height, int mipmap_target)
 {
-	if (!_texture_allocated || !_user_data_loaded) {
-		std::cout << "[OpenGL Error] Texture2D tried to clear() but either not allocated any ram or didn't loaded any user data yet" << std::endl;
+	if (!_texture_allocated) {
+		std::cout << "[OpenGL Error] Texture2D tried to clear() but Texture2D wasn't allocated" << std::endl;
 		ASSERT(false);
 	}
 
