@@ -681,8 +681,8 @@ int Texture2D::query_compressed_image_size(int mipmap_level)
 	return size;
 }
 
-glm::vec2 Texture2D::get_size() {
-	return glm::vec2(width, height);
+glm::ivec2 Texture2D::get_size() {
+	return glm::ivec2(width, height);
 }
 
 void Texture2D::force_allocation() {

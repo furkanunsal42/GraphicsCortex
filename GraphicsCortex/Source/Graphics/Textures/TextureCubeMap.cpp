@@ -791,3 +791,12 @@ int TextureCubeMap::query_compressed_image_size(int mipmap_level)
 	GLCall(glGetTextureLevelParameteriv(id, mipmap_level, GL_TEXTURE_COMPRESSED_IMAGE_SIZE, &size));
 	return size;
 }
+
+glm::ivec1 TextureCubeMap::get_size() {
+	return glm::ivec1(width);
+}
+
+void TextureCubeMap::force_allocation() {
+	wait_async_load();
+	_allocate_texture();
+}

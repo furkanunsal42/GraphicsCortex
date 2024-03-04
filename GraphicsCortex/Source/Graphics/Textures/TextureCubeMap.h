@@ -125,6 +125,9 @@ public:
 	bool query_is_compressed(int mipmap_level);
 	int query_compressed_image_size(int mipmap_level);
 
+	glm::ivec1 get_size();
+	void force_allocation();
+
 	int static get_gl_face_index(Face face);
 private:
 	unsigned int target = GL_TEXTURE_CUBE_MAP;

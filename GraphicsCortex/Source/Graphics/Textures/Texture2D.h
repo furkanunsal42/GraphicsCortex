@@ -121,7 +121,7 @@ public:
 	bool query_is_compressed(int mipmap_level);
 	int query_compressed_image_size(int mipmap_level);
 
-	glm::vec2 get_size();
+	glm::ivec2 get_size();
 	void force_allocation();
 
 private:

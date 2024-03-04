@@ -605,6 +605,14 @@ int Texture2DArray::query_compressed_image_size(int mipmap_level)
 	return size;
 }
 
+glm::ivec3 Texture2DArray::get_size() {
+	return glm::ivec3(width, height, texture_count);
+}
+
+void Texture2DArray::force_allocation() {
+	wait_async_load();
+	_allocate_texture();
+}
 
 void Texture2DArray::_set_texture_parameters()
 {

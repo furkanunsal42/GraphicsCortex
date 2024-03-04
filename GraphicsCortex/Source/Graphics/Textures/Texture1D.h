@@ -19,6 +19,7 @@ public:
 	int64_t texture_handle = 0;
 	int mipmap_begin_level = 0;
 	float mipmap_bias = 0.0f;
+	bool is_bindless = true;
 
 	WrapMode wrap_u = WrapMode::CLAMP;
 	SamplingFilter mipmap_min_filter = SamplingFilter::LINEAR;
@@ -34,6 +35,8 @@ public:
 	void release();
 
 	void bind(int texture_slot);
+	void bind_as_image(int texture_slot, int mipmap_level);
+
 
 	void bind();
 	void unbind();
@@ -115,6 +118,9 @@ public:
 	int query_depth_size(int mipmap_level);
 	bool query_is_compressed(int mipmap_level);
 	int query_compressed_image_size(int mipmap_level);
+
+	glm::ivec1 get_size();
+	void force_allocation();
 
 private:
 	unsigned int target = GL_TEXTURE_1D;

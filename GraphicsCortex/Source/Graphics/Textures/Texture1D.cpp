@@ -69,6 +69,21 @@ void Texture1D::bind(int texture_slot)
     GLCall(glBindTextureUnit(texture_slot, id));
 }
 
+void Texture1D::bind_as_image(int texture_slot, int mipmap_level)
+{
+	if (!_texture_generated) {
+		std::cout << "[OpenGL Error] released Texture1D tried to bind_as_image()" << std::endl;
+		ASSERT(false);
+	}
+
+	if (!_texture_allocated) {
+		std::cout << "[OpenGL Warning] Texture1D tried to bind_as_image() but no user data was loaded yet" << std::endl;
+		_allocate_texture();
+	}
+
+	GLCall(glBindImageTexture(texture_slot, id, mipmap_level, GL_FALSE, 0, GL_READ_WRITE, _get_gl_internal_format()));
+}
+
 void Texture1D::bind()
 {
     if (!_texture_generated) {
@@ -356,10 +371,12 @@ void Texture1D::_create_handle()
 
     _set_texture_parameters();
 
-    GLCall(texture_handle = glGetTextureHandleARB(id));
-    GLCall(glMakeTextureHandleResidentARB(texture_handle));
+	if (is_bindless) {
+		GLCall(texture_handle = glGetTextureHandleARB(id));
+		GLCall(glMakeTextureHandleResidentARB(texture_handle));
 
-    _texture_handle_created = true;
+		_texture_handle_created = true;
+	}
 }
 
 int Texture1D::_get_gl_internal_format()
@@ -770,4 +787,13 @@ void Texture1D::clear(glm::vec4 clear_data, int x, int width, int mipmap_target)
 	}
 
 	GLCall(glClearTexSubImage(id, mipmap_target, x, 0, 0, width, 1, 1, GL_RGBA, GL_FLOAT, &clear_data));
+}
+
+glm::ivec1 Texture1D::get_size() {
+	return glm::ivec1(width);
+}
+
+void Texture1D::force_allocation() {
+	wait_async_load();
+	_allocate_texture();
 }

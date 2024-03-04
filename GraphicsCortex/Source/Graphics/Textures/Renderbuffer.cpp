@@ -112,6 +112,14 @@ int Renderbuffer::query_stencil_size()
 	return texture_stencil_size;
 }
 
+glm::ivec2 Renderbuffer::get_size() {
+	return glm::ivec2(width, height);
+}
+
+void Renderbuffer::force_allocation() {
+	_allocate_texture();
+}
+
 void Renderbuffer::_generate_texture()
 {
 	if (_texture_generated) return;

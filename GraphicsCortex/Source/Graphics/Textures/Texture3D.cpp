@@ -513,6 +513,16 @@ int Texture3D::query_compressed_image_size(int mipmap_level)
 	return size;
 }
 
+glm::ivec3 Texture3D::get_size() {
+	return glm::ivec3(width, height, depth);
+}
+
+void Texture3D::force_allocation() {
+	wait_async_load();
+	_allocate_texture();
+}
+
+
 void Texture3D::wait_async_load()
 {
 	if (async_load_happening == false) return;
