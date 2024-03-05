@@ -196,12 +196,11 @@ void ComputeProgram::update_uniform_bindless(const std::string& name, TextureCub
 void ComputeProgram::update_uniform_as_image(const std::string& name, Texture1D& texture1d, int mipmap_level)
 {
 	texture1d.wait_async_load();
-
 	if (!texture1d._texture_allocated) texture1d._allocate_texture();
+	if (!_does_uniform_exist(name)) return;
+
 	int slot = -1;
 	GLCall(glGetUniformiv(id, _get_uniform_location(name), &slot));
-
-	std::cout << slot << std::endl;
 	if (slot == -1) {
 		ASSERT(false);
 	}
@@ -221,6 +220,7 @@ void ComputeProgram::update_uniform_as_image(const std::string& name, Texture2D&
 	if (slot == -1) {
 		ASSERT(false);
 	}
+
 	texture2d.bind_as_image(slot, 0);
 	GLCall(glProgramUniform1i(id, _get_uniform_location(name), slot));
 }

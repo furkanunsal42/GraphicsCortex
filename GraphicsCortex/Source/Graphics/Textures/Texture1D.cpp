@@ -352,7 +352,7 @@ void Texture1D::_allocate_texture()
     if (!_texture_generated) return;
     if (_texture_allocated) return;
 
-    if (width >> mipmap_levels == 0 || mipmap_levels >= sizeof(int) * 8) {
+    if (width >> (mipmap_levels-1) == 0 || mipmap_levels >= sizeof(int) * 8) {
         int old_mipmap_levels = mipmap_levels;
         if (width >> mipmap_levels == 0 || mipmap_levels >= sizeof(int) * 8) mipmap_levels = std::log2(width);
         std::cout << "[OpenGL Warning] Texture1D with size (" << width << ", 1) tried to load " << old_mipmap_levels << " mipmap levels, mipmap levels reducing to " << mipmap_levels << std::endl;;
@@ -647,8 +647,8 @@ Image Texture1D::get_image(ColorFormat format, Type type, int mipmap_level)
 
 Image Texture1D::get_image(ColorFormat format, Type type, int mipmap_level, int x, int width)
 {
-	if (!_texture_allocated || !_user_data_loaded) {
-		std::cout << "[OpenGL Error] Texture1D tried to get_image() but either not allocated any ram or didn't loaded any user data yet" << std::endl;
+	if (!_texture_allocated) {
+		std::cout << "[OpenGL Error] Texture1D tried to get_image() but Texture was not allocated yet" << std::endl;
 		ASSERT(false);
 	}
 
@@ -670,8 +670,7 @@ Image Texture1D::get_image(ColorFormat format, Type type, int mipmap_level, int 
 
 	int format_channels = ColorFormat_channels(format);
 	int image_size = width * mipmap_pixel_size;
-	unsigned char* image = new unsigned char[width * mipmap_pixel_size];
-
+	unsigned char* image = new unsigned char[image_size];
 	GLCall(glGetTextureSubImage(id, mipmap_level, x, 0, 0, width, 1, 1, ColorFormat_to_OpenGL(format), Type_to_OpenGL(type), image_size, image));
 
 	return Image(image, width, 1, format_channels, true);
@@ -684,8 +683,8 @@ Image Texture1D::get_image(DepthStencilFormat format, Type type, int mipmap_leve
 
 Image Texture1D::get_image(DepthStencilFormat format, Type type, int mipmap_level, int x, int width)
 {
-	if (!_texture_allocated || !_user_data_loaded) {
-		std::cout << "[OpenGL Error] Texture1D tried to get_image() but either not allocated any ram or didn't loaded any user data yet" << std::endl;
+	if (!_texture_allocated) {
+		std::cout << "[OpenGL Error] Texture1D tried to get_image() but Texture was not allocated yet" << std::endl;
 		ASSERT(false);
 	}
 
@@ -741,8 +740,8 @@ void Texture1D::clear(glm::vec4 clear_data, int mipmap_target)
 
 void Texture1D::clear(unsigned char clear_data, int x, int width, int mipmap_target)
 {
-	if (!_texture_allocated || !_user_data_loaded) {
-		std::cout << "[OpenGL Error] Texture1D tried to clear() but either not allocated any ram or didn't loaded any user data yet" << std::endl;
+	if (!_texture_allocated) {
+		std::cout << "[OpenGL Error] Texture1D tried to get_image() but Texture was not allocated yet" << std::endl;
 		ASSERT(false);
 	}
 
@@ -751,8 +750,8 @@ void Texture1D::clear(unsigned char clear_data, int x, int width, int mipmap_tar
 
 void Texture1D::clear(float clear_data, int x, int width, int mipmap_target)
 {
-	if (!_texture_allocated || !_user_data_loaded) {
-		std::cout << "[OpenGL Error] Texture1D tried to clear() but either not allocated any ram or didn't loaded any user data yet" << std::endl;
+	if (!_texture_allocated) {
+		std::cout << "[OpenGL Error] Texture1D tried to get_image() but Texture was not allocated yet" << std::endl;
 		ASSERT(false);
 	}
 
@@ -761,8 +760,8 @@ void Texture1D::clear(float clear_data, int x, int width, int mipmap_target)
 
 void Texture1D::clear(glm::vec2 clear_data, int x, int width, int mipmap_target)
 {
-	if (!_texture_allocated || !_user_data_loaded) {
-		std::cout << "[OpenGL Error] Texture1D tried to clear() but either not allocated any ram or didn't loaded any user data yet" << std::endl;
+	if (!_texture_allocated) {
+		std::cout << "[OpenGL Error] Texture1D tried to get_image() but Texture was not allocated yet" << std::endl;
 		ASSERT(false);
 	}
 
@@ -771,8 +770,8 @@ void Texture1D::clear(glm::vec2 clear_data, int x, int width, int mipmap_target)
 
 void Texture1D::clear(glm::vec3 clear_data, int x, int width, int mipmap_target)
 {
-	if (!_texture_allocated || !_user_data_loaded) {
-		std::cout << "[OpenGL Error] Texture1D tried to clear() but either not allocated any ram or didn't loaded any user data yet" << std::endl;
+	if (!_texture_allocated) {
+		std::cout << "[OpenGL Error] Texture1D tried to get_image() but Texture was not allocated yet" << std::endl;
 		ASSERT(false);
 	}
 
@@ -781,8 +780,8 @@ void Texture1D::clear(glm::vec3 clear_data, int x, int width, int mipmap_target)
 
 void Texture1D::clear(glm::vec4 clear_data, int x, int width, int mipmap_target)
 {
-	if (!_texture_allocated || !_user_data_loaded) {
-		std::cout << "[OpenGL Error] Texture1D tried to clear() but either not allocated any ram or didn't loaded any user data yet" << std::endl;
+	if (!_texture_allocated) {
+		std::cout << "[OpenGL Error] Texture1D tried to get_image() but Texture was not allocated yet" << std::endl;
 		ASSERT(false);
 	}
 

@@ -7,7 +7,7 @@ int main() {
 	scene.camera->fov = 90;
 
 	std::shared_ptr<Texture2D> texture2d = std::make_shared<Texture2D>(1024, 1024, Texture2D::ColorTextureFormat::RGBA8, 1, 0, 0);
-	texture2d->is_bindless = false;
+	texture2d->is_bindless = true;
 
 	std::shared_ptr<Framebuffer> framebuffer = std::make_shared<Framebuffer>();
 	framebuffer->attach_color(0, texture2d, 0);
