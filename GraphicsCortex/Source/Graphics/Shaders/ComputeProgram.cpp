@@ -287,6 +287,30 @@ void ComputeProgram::update_uniform(const std::string& name, const int& a, const
 	GLCall(glProgramUniform4i(id, _get_uniform_location(name), a, b, c, d));
 }
 
+void ComputeProgram::update_uniform(const std::string& name, const unsigned int& a, const unsigned int& b, const unsigned int& c, const unsigned int& d)
+{
+	if (!_does_uniform_exist(name)) return;
+	GLCall(glProgramUniform4ui(id, _get_uniform_location(name), a, b, c, d));
+}
+
+void ComputeProgram::update_uniform(const std::string& name, const unsigned int& a, const unsigned int& b, const unsigned int& c)
+{
+	if (!_does_uniform_exist(name)) return;
+	GLCall(glProgramUniform3ui(id, _get_uniform_location(name), a, b, c));
+}
+
+void ComputeProgram::update_uniform(const std::string& name, const unsigned int& a, const unsigned int& b)
+{
+	if (!_does_uniform_exist(name)) return;
+	GLCall(glProgramUniform2ui(id, _get_uniform_location(name), a, b));
+}
+
+void ComputeProgram::update_uniform(const std::string& name, const unsigned int& a)
+{
+	if (!_does_uniform_exist(name)) return;
+	GLCall(glProgramUniform1ui(id, _get_uniform_location(name), a));
+}
+
 void ComputeProgram::update_uniform(const std::string& name, const float& a)
 {
 	if (!_does_uniform_exist(name)) return;
@@ -322,6 +346,36 @@ void ComputeProgram::update_uniform(const std::string& name, const glm::vec3& a)
 }
 
 void ComputeProgram::update_uniform(const std::string& name, const glm::vec4& a)
+{
+	update_uniform(name, a.x, a.y, a.z, a.w);
+}
+
+void ComputeProgram::update_uniform(const std::string& name, const glm::ivec2& a)
+{
+	update_uniform(name, a.x, a.y);
+}
+
+void ComputeProgram::update_uniform(const std::string& name, const glm::ivec3& a)
+{
+	update_uniform(name, a.x, a.y, a.z);
+}
+
+void ComputeProgram::update_uniform(const std::string& name, const glm::ivec4& a)
+{
+	update_uniform(name, a.x, a.y, a.z, a.w);
+}
+
+void ComputeProgram::update_uniform(const std::string& name, const glm::uvec2& a)
+{
+	update_uniform(name, a.x, a.y);
+}
+
+void ComputeProgram::update_uniform(const std::string& name, const glm::uvec3& a)
+{
+	update_uniform(name, a.x, a.y, a.z);
+}
+
+void ComputeProgram::update_uniform(const std::string& name, const glm::uvec4& a)
 {
 	update_uniform(name, a.x, a.y, a.z, a.w);
 }

@@ -44,6 +44,11 @@ public:
 	void update_uniform(const std::string& name, const int& a, const int& b, const int& c);
 	void update_uniform(const std::string& name, const int& a, const int& b, const int& c, const int& d);
 
+	void update_uniform(const std::string& name, const unsigned int& a);
+	void update_uniform(const std::string& name, const unsigned int& a, const unsigned int& b);
+	void update_uniform(const std::string& name, const unsigned int& a, const unsigned int& b, const unsigned int& c);
+	void update_uniform(const std::string& name, const unsigned int& a, const unsigned int& b, const unsigned int& c, const unsigned int& d);
+
 	void update_uniform(const std::string& name, const float& a);
 	void update_uniform(const std::string& name, const float& a, const float& b);
 	void update_uniform(const std::string& name, const float& a, const float& b, const float& c);
@@ -52,6 +57,14 @@ public:
 	void update_uniform(const std::string& name, const glm::vec2& a);
 	void update_uniform(const std::string& name, const glm::vec3& a);
 	void update_uniform(const std::string& name, const glm::vec4& a);
+
+	void update_uniform(const std::string& name, const glm::ivec2& a);
+	void update_uniform(const std::string& name, const glm::ivec3& a);
+	void update_uniform(const std::string& name, const glm::ivec4& a);
+
+	void update_uniform(const std::string& name, const glm::uvec2& a);
+	void update_uniform(const std::string& name, const glm::uvec3& a);
+	void update_uniform(const std::string& name, const glm::uvec4& a);
 
 	void update_uniform(const std::string& name, const glm::mat2& a);
 	void update_uniform(const std::string& name, const glm::mat3& a);
