@@ -71,9 +71,9 @@ public:
 	*/
 
 	//Image get_image(ColorFormat format, Type type, int mipmap_level);
-	Image get_image(ColorFormat format, Type type, int mipmap_level, int x, int y, int z, int width, int height, int depth);
+	std::shared_ptr<Image> get_image(ColorFormat format, Type type, int mipmap_level, int x, int y, int z, int width, int height, int depth);
 	//Image get_image(DepthStencilFormat format, Type type, int mipmap_level);
-	Image get_image(DepthStencilFormat format, Type type, int mipmap_level, int x, int y, int z, int width, int height, int depth);
+	std::shared_ptr<Image> get_image(DepthStencilFormat format, Type type, int mipmap_level, int x, int y, int z, int width, int height, int depth);
 
 	void clear(unsigned char clear_data, int mipmap_target = 0);
 	void clear(float clear_data, int mipmap_target = 0);

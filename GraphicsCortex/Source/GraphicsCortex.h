@@ -31,7 +31,6 @@
 #include "Renderbuffer.h"
 #include "BindlessMaterial.h"
 #include "Framebuffer.h"
-#include "old/_FrameBuffer.h"
 #include "Graphic.h"
 #include "Camera.h"
 #include "Scene.h"
@@ -52,9 +51,6 @@
 #include "Font.h"
 #include "Text.h"
 #include "RamCache.h"
-
-#include "old/Texture.h"
-#include "old/CubeMap.h"
 
 #include "PhysicsContext.h"
 #include "PhysicsGeometry.h"

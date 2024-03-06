@@ -605,7 +605,7 @@ Gui::Gui(Frame& frame) :
 	frame_ref(frame)
 {
 	gui_program = default_program::gui_program_s();
-	font = std::make_shared<Font>("..\\GraphicsCortex\\Fonts\\Roboto-Regular.ttf", 16);
+	font = std::make_shared<Font>("../GraphicsCortex/Fonts/Roboto-Regular.ttf", 16);
 }
 
 void Gui::new_frame(Time frame_time) {

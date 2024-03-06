@@ -87,14 +87,17 @@ public:
     }
 
     template<>
-    Image get_key<Image>(const std::string& key) {
+    Image get_key<Image>(const std::string& key) = delete;
+
+    template<>
+    std::shared_ptr<Image> get_key<std::shared_ptr<Image>>(const std::string& key) {
         if (context != nullptr) {
             int width = get_key<int>(key + ":width");
             int height = get_key<int>(key + ":height");
             int channels = get_key<int>(key + ":channels");
             bool vflip = get_key<bool>(key + ":vflip");
             unsigned char* image_data = true ? get_key<unsigned char*>(key) : nullptr; // such a hacky way of doing it but compiler won't allow otherwise
-            return Image(image_data, width, height, channels, vflip);
+            return std::make_shared<Image>(image_data, width, height, 1, channels, 1, vflip);
         }
         else {
             #ifdef REDIS_CONNECTION_PRINTS

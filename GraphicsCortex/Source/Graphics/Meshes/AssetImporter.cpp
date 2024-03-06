@@ -108,7 +108,7 @@ Model AssetImporter::generate_model(const std::string& filename, float scale, un
 	return Model(imported_scene, scale, vertex_property_bits);
 }
 
-Image AssetImporter::read_image_cached(const std::string& filename, int desired_channels, bool vertical_flip) {
+std::shared_ptr<Image> AssetImporter::read_image_cached(const std::string& filename, int desired_channels, bool vertical_flip) {
 	std::string native_filename = compute_directory(filename) + compute_filename_typeless(filename) + ".gcimage";
 	if (check_file_exist(native_filename)) {
 		std::cout << "cached image file exists" << std::endl;
@@ -116,15 +116,15 @@ Image AssetImporter::read_image_cached(const std::string& filename, int desired_
 	}
 	else {
 		std::cout << "cached image doesn't exist, caching it" << std::endl;
-		Image image(filename, desired_channels, vertical_flip);
-		size_t size = image.get_size();
+		std::shared_ptr<Image> image = std::make_shared<Image>(filename, desired_channels, vertical_flip);
+		size_t size = image->get_size();
 		std::ofstream file(native_filename, std::ios::binary | std::ios::out);
-		file << (int)image.get_size() << ' ';
-		file << image.get_width() << ' ';
-		file << image.get_height() << ' ';
-		file << image.get_channels() << ' ';
-		file << image.get_vertical_flip() << ' ';
-		save_buffer_to_disc(native_filename, image.get_image_data(), size, true);
+		file << (int)image->get_size() << ' ';
+		file << image->get_width() << ' ';
+		file << image->get_height() << ' ';
+		file << image->get_channel_count() << ' ';
+		file << image->get_vertical_flip() << ' ';
+		save_buffer_to_disc(native_filename, image->get_image_data(), size, true);
 		file.close();
 		return image;
 	}

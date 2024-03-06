@@ -59,7 +59,7 @@ void BindlessMaterial::add_texture(int index, const std::shared_ptr<Texture2D>& 
 {
 	if (program == nullptr) {
 		std::cout << "[OpenGL Error] Bindless Material tried to add_texture() but program wasn't set yet" << std::endl;
-		ASSERT(false);
+		//ASSERT(false);
 	}
 
 	_cluster_textures[index] = texture;
@@ -69,7 +69,7 @@ void BindlessMaterial::remove_texture(int index)
 {
 	if (program == nullptr) {
 		std::cout << "[OpenGL Error] Bindless Material tried to remove_texture() but program wasn't set yet" << std::endl;
-		ASSERT(false);
+		//ASSERT(false);
 	}
 	_cluster_textures.erase(index);
 }

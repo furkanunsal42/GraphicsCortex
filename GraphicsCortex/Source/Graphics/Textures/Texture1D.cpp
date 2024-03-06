@@ -18,7 +18,7 @@ namespace {
 			*output_image = new Image("../GraphicsCortex/Images/missing_texture.png", desired_channels);
 		}
 
-		if ((*output_image)->get_width() == 0 || (*output_image)->get_height() == 0 || (*output_image)->get_channels() == 0) {
+		if ((*output_image)->get_width() == 0 || (*output_image)->get_height() == 0 || (*output_image)->get_channel_count() == 0) {
 			std::cout << "[ERROR] Image couldn't be properly imported : " << filename << std::endl;
 			if (*output_image != nullptr) delete* output_image;
 			*output_image = new Image("../GraphicsCortex/Images/missing_texture.png", desired_channels);
@@ -640,12 +640,12 @@ int Texture1D::query_compressed_image_size(int mipmap_level)
 	return size;
 }
 
-Image Texture1D::get_image(ColorFormat format, Type type, int mipmap_level)
+std::shared_ptr<Image> Texture1D::get_image(ColorFormat format, Type type, int mipmap_level)
 {
 	return get_image(format, type, mipmap_level, 0, query_width(mipmap_level));
 }
 
-Image Texture1D::get_image(ColorFormat format, Type type, int mipmap_level, int x, int width)
+std::shared_ptr<Image> Texture1D::get_image(ColorFormat format, Type type, int mipmap_level, int x, int width)
 {
 	if (!_texture_allocated) {
 		std::cout << "[OpenGL Error] Texture1D tried to get_image() but Texture was not allocated yet" << std::endl;
@@ -673,15 +673,15 @@ Image Texture1D::get_image(ColorFormat format, Type type, int mipmap_level, int 
 	unsigned char* image = new unsigned char[image_size];
 	GLCall(glGetTextureSubImage(id, mipmap_level, x, 0, 0, width, 1, 1, ColorFormat_to_OpenGL(format), Type_to_OpenGL(type), image_size, image));
 
-	return Image(image, width, 1, format_channels, true);
+	return std::make_shared<Image>(image, width, 1, 1, format_channels, 1, true);
 }
 
-Image Texture1D::get_image(DepthStencilFormat format, Type type, int mipmap_level)
+std::shared_ptr<Image> Texture1D::get_image(DepthStencilFormat format, Type type, int mipmap_level)
 {
 	return get_image(format, type, mipmap_level, 0, query_width(mipmap_level));
 }
 
-Image Texture1D::get_image(DepthStencilFormat format, Type type, int mipmap_level, int x, int width)
+std::shared_ptr<Image> Texture1D::get_image(DepthStencilFormat format, Type type, int mipmap_level, int x, int width)
 {
 	if (!_texture_allocated) {
 		std::cout << "[OpenGL Error] Texture1D tried to get_image() but Texture was not allocated yet" << std::endl;
@@ -710,7 +710,7 @@ Image Texture1D::get_image(DepthStencilFormat format, Type type, int mipmap_leve
 
 	GLCall(glGetTextureSubImage(id, mipmap_level, x, 0, 0, width, 1, 1, gl_format, Type_to_OpenGL(type), image_size, image));
 
-	return Image(image, width, 1, format_channels, true);
+	return std::make_shared<Image>(image, width, 1, 1, format_channels, 1, true);
 }
 
 void Texture1D::clear(unsigned char clear_data, int mipmap_target)

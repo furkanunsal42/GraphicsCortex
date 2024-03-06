@@ -67,7 +67,7 @@ void Cache::set_key(const std::string& key, Image&& image) {
         set_key(key,               image.get_image_data(), image.get_size());
         set_key(key + ":width",    image.get_width());
         set_key(key + ":height",   image.get_height());
-        set_key(key + ":channels", image.get_channels());
+        set_key(key + ":channels", image.get_channel_count());
         set_key(key + ":vflip",     image.get_vertical_flip());
     }
     else {

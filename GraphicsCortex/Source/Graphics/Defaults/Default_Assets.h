@@ -2,7 +2,6 @@
 #include <memory>
 
 #include "Config.h"
-#include "Font.h"
 #include "Graphic.h"
 
 namespace default_geometry{

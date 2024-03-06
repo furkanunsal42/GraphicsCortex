@@ -19,7 +19,7 @@ namespace {
 			*output_image = new Image("../GraphicsCortex/Images/missing_texture.png", desired_channels);
 		}
 
-		if ((*output_image)->get_width() == 0 || (*output_image)->get_height() == 0 || (*output_image)->get_channels() == 0) {
+		if ((*output_image)->get_width() == 0 || (*output_image)->get_height() == 0 || (*output_image)->get_channel_count() == 0) {
 			std::cout << "[ERROR] Image couldn't be properly imported : " << filename << std::endl;
 			if (*output_image != nullptr) delete* output_image;
 			*output_image = new Image("../GraphicsCortex/Images/missing_texture.png", desired_channels);
@@ -538,7 +538,7 @@ void Texture3D::wait_async_load()
 	async_load_happening = false;
 }
 
-Image Texture3D::get_image(ColorFormat format, Type type, int mipmap_level, int x, int y, int z, int width, int height, int depth)
+std::shared_ptr<Image> Texture3D::get_image(ColorFormat format, Type type, int mipmap_level, int x, int y, int z, int width, int height, int depth)
 {
 	if (!_texture_allocated || !_user_data_loaded) {
 		std::cout << "[OpenGL Error] Texture3D tried to get_image() but either not allocated any ram or didn't loaded any user data yet" << std::endl;
@@ -573,10 +573,10 @@ Image Texture3D::get_image(ColorFormat format, Type type, int mipmap_level, int 
 
 	GLCall(glGetTextureSubImage(id, mipmap_level, x, y, z, width, height, depth, ColorFormat_to_OpenGL(format), Type_to_OpenGL(type), image_size, image));
 
-	return Image(image, width, height, format_channels, true);
+	return std::make_shared<Image>(image, width, height, 1, format_channels, 1, true);
 }
 
-Image Texture3D::get_image(DepthStencilFormat format, Type type, int mipmap_level, int x, int y, int z, int width, int height, int depth)
+std::shared_ptr<Image> Texture3D::get_image(DepthStencilFormat format, Type type, int mipmap_level, int x, int y, int z, int width, int height, int depth)
 {
 	if (!_texture_allocated || !_user_data_loaded) {
 		std::cout << "[OpenGL Error] Texture3D tried to get_image() but either not allocated any ram or didn't loaded any user data yet" << std::endl;
@@ -611,7 +611,7 @@ Image Texture3D::get_image(DepthStencilFormat format, Type type, int mipmap_leve
 
 	GLCall(glGetTextureSubImage(id, mipmap_level, x, y, z, width, height, depth, gl_format, Type_to_OpenGL(type), image_size, image));
 
-	return Image(image, width, height, format_channels, true);
+	return std::make_shared<Image>(image, width, height, 1, format_channels, 1, true);
 }
 
 void Texture3D::clear(unsigned char clear_data, int mipmap_target)

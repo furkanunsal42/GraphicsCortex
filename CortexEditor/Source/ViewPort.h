@@ -12,11 +12,15 @@ class ViewPort : public UILayer {
 	vec2 position = vec2(400, 30);
 	vec2 size = vec2(1100, 800);
 
-	std::shared_ptr<FrameBuffer> scene_render;
+	std::shared_ptr<Framebuffer> scene_render;
 
 	void init() {
-		scene_render = std::make_shared<FrameBuffer>(size.x, size.y, 0, false);
-		scene_render->load_program(default_program::framebuffer_program_s());
+		std::shared_ptr<Texture2D> render_target = std::make_shared<Texture2D>(size.x, size.y, Texture2D::ColorTextureFormat::RGBA8, 1, 0, 0);
+		std::shared_ptr<Texture2D> render_target_depthstencil = std::make_shared<Texture2D>(size.x, size.y, Texture2D::DepthStencilTextureFormat::DEPTH24_STENCIL8, 1, 0, 0);
+		scene_render = std::make_shared<Framebuffer>();
+		scene_render->attach_color(0, render_target, 0);
+		scene_render->attach_depth_stencil(render_target_depthstencil, 0);
+
 		layout_style.text_color = vec3(1, 1, 1);
 		layout_style.text_size = 12;
 		layout_style.color = gui::colorcode(0x242424);
@@ -58,9 +62,16 @@ class ViewPort : public UILayer {
 		current_scene->camera->screen_height = size.y;
 		current_scene->background_color = glm::vec4(1, 1, 1, 1);
 
-		current_scene->render_to_framebuffer(*scene_render, *editor.frame);
-		
-		scene_render->blit_section_to_screen(glm::vec4(0, 0, size.x, size.y), glm::vec4(position.x, editor.frame->window_height - position.y - size.y, position.x + size.x, editor.frame->window_height - position.y));
+		scene_render->activate_draw_buffer(0);
+		scene_render->bind_draw();
+		editor.frame->set_viewport(size.x, size.y);
+		editor.frame->clear_window();
+
+		current_scene->render();
+
+		scene_render->blit_to_screen(0, 0, size.x, size.y, position.x, editor.frame->window_height - position.y - size.y, position.x + size.x, editor.frame->window_height - position.y, Framebuffer::Channel::COLOR, Framebuffer::Filter::LINEAR);
+		Framebuffer::bind_screen_draw();
+		editor.frame->set_viewport(editor.frame->window_width, editor.frame->window_height);
 
 		glm::vec2 viewport_area_midpoint = glm::vec2(editor.frame->window_height - position.y - size.y, position.x + size.x);
 		viewport_area_midpoint = glm::vec2(position.x + size.x / 2, position.y + size.y / 2);

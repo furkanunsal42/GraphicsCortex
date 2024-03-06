@@ -79,15 +79,13 @@ Font::Font(const std::string& filename, int font_size) {
 
 	FT_Done_FreeType(ft);
 
-	Image font_atlas(png_data, tex_width, tex_height, 4, true);
-	font_atlas.save_to_disc("atlas.png");
+	std::shared_ptr<Image> font_atlas = std::make_shared<Image>(png_data, tex_width, tex_height, 1, 4, 1, true);
+	font_atlas->save_to_disc("atlas.png");
 
-	_font_atlas.mipmap_bias = -0.75f;
-	_font_atlas.generate_mipmap = true;
-	_font_atlas.load_image(font_atlas);
+	_font_atlas = std::make_shared<Texture2D>(tex_width, tex_height, Texture2D::ColorTextureFormat::RGBA8, 32, -0.75f, 0);
+	_font_atlas->load_data_with_mipmaps(*font_atlas, Texture2D::ColorFormat::RGBA, Texture2D::Type::UNSIGNED_BYTE);
 	
 	//graphics_representation->load_program(default_program::text_program_s());
-
 }
 
 /*

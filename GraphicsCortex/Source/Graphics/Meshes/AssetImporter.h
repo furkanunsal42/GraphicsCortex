@@ -26,7 +26,7 @@ public:
 	static std::shared_ptr<BindlessMaterial> generate_material(const std::string& filename, std::shared_ptr<Program> program);
 	static Model generate_model(const std::string& filename, float scale = 1.0f, unsigned int vertex_property_bits = Model::ALL);
 
-	static Image read_image_cached(const std::string& filename, int desired_channels = 4, bool vertical_flip = true);
+	static std::shared_ptr<Image> read_image_cached(const std::string& filename, int desired_channels = 4, bool vertical_flip = true);
 	static Model read_model_cached(const std::string& filename, float scale = 1.0f, unsigned int vertex_property_bits = 2047U);
 
 

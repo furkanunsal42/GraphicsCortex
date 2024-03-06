@@ -5,9 +5,9 @@
 #include "Graphic.h"
 #include "ShaderCompiler.h"
 #include "Lights.h";
-#include "old/_FrameBuffer.h"
 #include "Object.h"
 #include "Frame.h"
+#include "SkyBox.h"
 
 #include "PhysicsScene.h"
 
@@ -17,7 +17,6 @@
 #include <type_traits>
 
 class Text;
-class CubeMapTexture;
 class RenderPass;
 
 class Scene {
@@ -34,7 +33,7 @@ public:
 	glm::vec4 background_color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 
 	template<typename T>
-	std::enable_if_t<std::is_same<T, std::shared_ptr<AmbiantLight>>::value || std::is_same<T, std::shared_ptr<DirectionalLight>>::value || std::is_same<T, std::shared_ptr<PointLight>>::value || std::is_same<T, std::shared_ptr<SpotLight>>::value, void> 
+	std::enable_if_t<std::is_same<T, std::shared_ptr<AmbiantLight>>::value || std::is_same<T, std::shared_ptr<DirectionalLight>>::value || std::is_same<T, std::shared_ptr<PointLight>>::value || std::is_same<T, std::shared_ptr<SpotLight>>::value, void>
 		add(T light)
 	{
 		_lights.push_back(light);
@@ -56,7 +55,7 @@ public:
 	void remove(std::shared_ptr<Vehicle> vehicle);
 	void remove(std::shared_ptr<Text> text);
 
-	void set_skybox(std::shared_ptr<CubeMapTexture> cubemap);
+	void set_skybox(std::shared_ptr<SkyBox> cubemap);
 
 	template<typename T>
 	std::enable_if_t<std::is_same<T, PhysicsObject>::value || std::is_same<T, PhysicsVehicle>::value || std::is_same<T, physx::PxRigidActor*>::value, void>
@@ -65,7 +64,6 @@ public:
 	}
 
 	void render(bool show_warnings = true);
-	void render_to_framebuffer(FrameBuffer& framebuffer, Frame& frame, bool show_warnings = true);
 	void render_pipeline();
 
 	void sync_with_physics();
@@ -76,7 +74,7 @@ public:
 	std::vector<std::shared_ptr<Object>> _objects;
 	std::vector<std::shared_ptr<Vehicle>> _vehicles;
 	std::vector<std::shared_ptr<Text>> _texts;
-	std::shared_ptr<CubeMapTexture> skybox;
+	std::shared_ptr<SkyBox> skybox;
 
 	std::shared_ptr<RenderPipeline> pipeline;
 private:

@@ -3,7 +3,7 @@
 #include <string>
 #include "Graphic.h"
 #include "Scene.h"
-#include "old/Texture.h"
+#include "Texture2D.h"
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
@@ -20,11 +20,11 @@ class Text;
 
 class Font {
 public:
-	Font(const std::string& filename = "Fonts\\Roboto-Thin.ttf", int font_size = 100);
+	Font(const std::string& filename = "../GraphicsCortex/Fonts/Roboto-Thin.ttf", int font_size = 100);
 
 	std::unordered_map<uint32_t, glyph_info> glyphs;
 private:
-	Texture _font_atlas;
+	std::shared_ptr<Texture2D> _font_atlas;
 
 	friend Text;
 };

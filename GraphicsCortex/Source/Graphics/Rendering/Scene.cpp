@@ -11,10 +11,8 @@
 #include "Debuger.h"
 #include "Frame.h"
 #include "Text.h"
-#include "old/CubeMap.h"
-
+#include "SkyBox.h"
 #include "PhysicsScene.h"
-#include "old/_FrameBuffer.h"
 
 
 Scene::Scene(const Frame& frame) {
@@ -44,7 +42,7 @@ void Scene::add(std::shared_ptr<Text> text) {
 	// NOT PIPELINE SOURCE
 }
 
-void Scene::set_skybox(std::shared_ptr<CubeMapTexture> cubemap) {
+void Scene::set_skybox(std::shared_ptr<SkyBox> cubemap) {
 	skybox = cubemap;
 }
 
@@ -68,9 +66,7 @@ void Scene::render(bool show_warnings) {
 	camera->update_matrixes();
 
 	if (skybox != nullptr) {
-		skybox->texture_slot = 11;
-		skybox->update_default_uniforms(*skybox->cube->material->program);
-		skybox->draw();
+		skybox->render(*camera);
 	}
 
 	for(std::shared_ptr<Graphic> graphic : _graphics){
@@ -161,20 +157,6 @@ void Scene::render(bool show_warnings) {
 		camera->update_default_uniforms(*text->graphic->material->program);
 		text->render();
 	}
-}
-
-void Scene::render_to_framebuffer(FrameBuffer& frame_buffer, Frame& frame, bool show_warnings) {
-
-	frame_buffer.bind(FrameBuffer::WRITE_TARGET);
-
-	frame.set_viewport(frame_buffer.width, frame_buffer.height);
-	frame.clear_window(background_color.x, background_color.y, background_color.z, background_color.w);
-
-	render(show_warnings);
-
-	frame_buffer.unbind();
-	
-	frame.set_viewport(frame.window_width, frame.window_height);
 }
 
 void Scene::render_pipeline()

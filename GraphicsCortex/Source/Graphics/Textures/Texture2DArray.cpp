@@ -18,7 +18,7 @@ namespace {
 			*output_image = new Image("../GraphicsCortex/Images/missing_texture.png", desired_channels);
 		}
 
-		if ((*output_image)->get_width() == 0 || (*output_image)->get_height() == 0 || (*output_image)->get_channels() == 0) {
+		if ((*output_image)->get_width() == 0 || (*output_image)->get_height() == 0 || (*output_image)->get_channel_count() == 0) {
 			std::cout << "[ERROR] Image couldn't be properly imported : " << filename << std::endl;
 			if (*output_image != nullptr) delete* output_image;
 			*output_image = new Image("../GraphicsCortex/Images/missing_texture.png", desired_channels);
@@ -699,12 +699,12 @@ int Texture2DArray::_get_gl_internal_format()
 
 }
 
-Image Texture2DArray::get_image(int texture_index, ColorFormat format, Type type, int mipmap_level)
+std::shared_ptr<Image> Texture2DArray::get_image(int texture_index, ColorFormat format, Type type, int mipmap_level)
 {
 	return get_image(texture_index, format, type, mipmap_level, 0, 0, query_width(mipmap_level), query_height(mipmap_level));
 }
 
-Image Texture2DArray::get_image(int texture_index, ColorFormat format, Type type, int mipmap_level, int x, int y, int width, int height)
+std::shared_ptr<Image> Texture2DArray::get_image(int texture_index, ColorFormat format, Type type, int mipmap_level, int x, int y, int width, int height)
 {
 	if (!_texture_allocated || !_user_data_loaded) {
 		std::cout << "[OpenGL Error] Texture2DArray tried to get_image() but either not allocated any ram or didn't loaded any user data yet" << std::endl;
@@ -733,15 +733,15 @@ Image Texture2DArray::get_image(int texture_index, ColorFormat format, Type type
 
 	GLCall(glGetTextureSubImage(id, mipmap_level, x, y, texture_index, width, height, 1, ColorFormat_to_OpenGL(format), Type_to_OpenGL(type), image_size, image));
 
-	return Image(image, width, height, format_channels, true);
+	return std::make_shared<Image>(image, width, height, 1, format_channels, 1, true);
 }
 
-Image Texture2DArray::get_image(int texture_index, DepthStencilFormat format, Type type, int mipmap_level)
+std::shared_ptr<Image> Texture2DArray::get_image(int texture_index, DepthStencilFormat format, Type type, int mipmap_level)
 {
 	return get_image(texture_index, format, type, mipmap_level, 0, 0, query_width(mipmap_level), query_height(mipmap_level));
 }
 
-Image Texture2DArray::get_image(int texture_index, DepthStencilFormat format, Type type, int mipmap_level, int x, int y, int width, int height)
+std::shared_ptr<Image> Texture2DArray::get_image(int texture_index, DepthStencilFormat format, Type type, int mipmap_level, int x, int y, int width, int height)
 {
 	if (!_texture_allocated || !_user_data_loaded) {
 		std::cout << "[OpenGL Error] Texture2DArray tried to get_image() but either not allocated any ram or didn't loaded any user data yet" << std::endl;
@@ -770,7 +770,7 @@ Image Texture2DArray::get_image(int texture_index, DepthStencilFormat format, Ty
 
 	GLCall(glGetTextureSubImage(id, mipmap_level, x, y, texture_index, width, height, 1, gl_format, Type_to_OpenGL(type), image_size, image));
 
-	return Image(image, width, height, format_channels, true);
+	return std::make_shared<Image>(image, width, height, 1, format_channels, 1, true);
 }
 
 void Texture2DArray::clear(int texture_index, unsigned char clear_data, int mipmap_target)

@@ -18,7 +18,7 @@ namespace {
 			*output_image = new Image("../GraphicsCortex/Images/missing_texture.png", desired_channels, false);
 		}
 
-		if ((*output_image)->get_width() == 0 || (*output_image)->get_height() == 0 || (*output_image)->get_channels() == 0) {
+		if ((*output_image)->get_width() == 0 || (*output_image)->get_height() == 0 || (*output_image)->get_channel_count() == 0) {
 			std::cout << "[ERROR] Image couldn't be properly imported : " << filename << std::endl;
 			if (*output_image != nullptr) delete* output_image;
 			*output_image = new Image("../GraphicsCortex/Images/missing_texture.png", desired_channels, false);
@@ -386,12 +386,12 @@ int TextureCubeMap::get_gl_face_index(Face face)
 	return -1;
 }
 
-Image TextureCubeMap::get_image(Face face, ColorFormat format, Type type, int mipmap_level)
+std::shared_ptr<Image> TextureCubeMap::get_image(Face face, ColorFormat format, Type type, int mipmap_level)
 {
 	return get_image(face, format, type, mipmap_level, 0, 0, query_width(mipmap_level), query_height(mipmap_level));
 }
 
-Image TextureCubeMap::get_image(Face face, ColorFormat format, Type type, int mipmap_level, int x, int y, int width, int height)
+std::shared_ptr<Image>  TextureCubeMap::get_image(Face face, ColorFormat format, Type type, int mipmap_level, int x, int y, int width, int height)
 {
 	if (!_texture_allocated || !_user_data_loaded) {
 		std::cout << "[OpenGL Error] TextureCubeMap tried to get_image() but either not allocated any ram or didn't loaded any user data yet" << std::endl;
@@ -420,15 +420,15 @@ Image TextureCubeMap::get_image(Face face, ColorFormat format, Type type, int mi
 
 	GLCall(glGetTextureSubImage(id, mipmap_level, x, y, get_gl_face_index(face), width, height, 1, ColorFormat_to_OpenGL(format), Type_to_OpenGL(type), image_size, image));
 
-	return Image(image, width, height, format_channels, true);
+	return std::make_shared<Image>(image, width, height, 1, format_channels, 1, true);
 }
 
-Image TextureCubeMap::get_image(Face face, DepthStencilFormat format, Type type, int mipmap_level)
+std::shared_ptr<Image>  TextureCubeMap::get_image(Face face, DepthStencilFormat format, Type type, int mipmap_level)
 {
 	return get_image(face, format, type, mipmap_level, 0, 0, query_width(mipmap_level), query_height(mipmap_level));
 }
 
-Image TextureCubeMap::get_image(Face face, DepthStencilFormat format, Type type, int mipmap_level, int x, int y, int width, int height)
+std::shared_ptr<Image>  TextureCubeMap::get_image(Face face, DepthStencilFormat format, Type type, int mipmap_level, int x, int y, int width, int height)
 {
 	if (!_texture_allocated || !_user_data_loaded) {
 		std::cout << "[OpenGL Error] TextureCubeMap tried to get_image() but either not allocated any ram or didn't loaded any user data yet" << std::endl;
@@ -457,7 +457,7 @@ Image TextureCubeMap::get_image(Face face, DepthStencilFormat format, Type type,
 
 	GLCall(glGetTextureSubImage(id, mipmap_level, x, y, get_gl_face_index(face), width, height, 1, gl_format, Type_to_OpenGL(type), image_size, image));
 
-	return Image(image, width, height, format_channels, true);
+	return std::make_shared<Image>(image, width, height, 1, format_channels, 1, true);
 }
 
 void TextureCubeMap::clear(Face face, unsigned char clear_data, int mipmap_target)

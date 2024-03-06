@@ -107,20 +107,15 @@ int load_vehicle_scene() {
 	}
 	AssetImporter::clear_ram_all();
 
-	std::shared_ptr<Program> cubemap_program = std::make_shared<Program>(default_program::cubemap_program());
-	std::shared_ptr<CubeMapTexture> cube_map = std::make_shared<CubeMapTexture>();
-	cube_map->set_program(cubemap_program);
-	cube_map->camera = scene->camera.get();
-	cube_map->face_texture_filepaths[RIGHT] = "../GraphicsCortex/Images/CubeMap/Sky/px.jpg";
-	cube_map->face_texture_filepaths[LEFT] = "../GraphicsCortex/Images/CubeMap/Sky/nx.jpg";
-	cube_map->face_texture_filepaths[TOP] = "../GraphicsCortex/Images/CubeMap/Sky/py.jpg";
-	cube_map->face_texture_filepaths[BOTTOM] = "../GraphicsCortex/Images/CubeMap/Sky/ny.jpg";
-	cube_map->face_texture_filepaths[FRONT] = "../GraphicsCortex/Images/CubeMap/Sky/pz.jpg";
-	cube_map->face_texture_filepaths[BACK] = "../GraphicsCortex/Images/CubeMap/Sky/nz.jpg";
-
-	cube_map->read_queue(3);
-	cube_map->load_queue(true);
-	scene->set_skybox(cube_map);
+	std::shared_ptr<SkyBox> skybox = std::make_shared<SkyBox>();
+	skybox->cubemap = std::make_shared<TextureCubeMap>(1024, TextureCubeMap::ColorTextureFormat::RGBA8, 1, 0);
+	skybox->cubemap->load_data_async(TextureCubeMap::Face::RIGHT, "../GraphicsCortex/Images/CubeMap/Sky/px.jpg", TextureCubeMap::ColorFormat::RGBA, TextureCubeMap::Type::UNSIGNED_BYTE, 0);
+	skybox->cubemap->load_data_async(TextureCubeMap::Face::LEFT, "../GraphicsCortex/Images/CubeMap/Sky/nx.jpg", TextureCubeMap::ColorFormat::RGBA, TextureCubeMap::Type::UNSIGNED_BYTE, 0);
+	skybox->cubemap->load_data_async(TextureCubeMap::Face::UP, "../GraphicsCortex/Images/CubeMap/Sky/py.jpg", TextureCubeMap::ColorFormat::RGBA, TextureCubeMap::Type::UNSIGNED_BYTE, 0);
+	skybox->cubemap->load_data_async(TextureCubeMap::Face::DOWN, "../GraphicsCortex/Images/CubeMap/Sky/ny.jpg", TextureCubeMap::ColorFormat::RGBA, TextureCubeMap::Type::UNSIGNED_BYTE, 0);
+	skybox->cubemap->load_data_async(TextureCubeMap::Face::FRONT, "../GraphicsCortex/Images/CubeMap/Sky/pz.jpg", TextureCubeMap::ColorFormat::RGBA, TextureCubeMap::Type::UNSIGNED_BYTE, 0);
+	skybox->cubemap->load_data_async(TextureCubeMap::Face::BACK, "../GraphicsCortex/Images/CubeMap/Sky/nz.jpg", TextureCubeMap::ColorFormat::RGBA, TextureCubeMap::Type::UNSIGNED_BYTE, 0);
+	scene->set_skybox(skybox);
 }
 
 int main() {

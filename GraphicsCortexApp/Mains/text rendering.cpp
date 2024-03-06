@@ -2,11 +2,11 @@
 
 int main() {
 
-	Frame frame(1920, 1080, "GraphicsCortex", 0, 0, true, true, false, false);
+	Frame frame(1920, 1080, "GraphicsCortex", 0, 0, true, true, false, Frame::CallbackLevel::LOW, false);
 	Scene scene(frame);
-	Gui2 gui(frame);
+	Gui gui(frame);
 
-	std::shared_ptr<Font> font = std::make_shared<Font>("Fonts\\Roboto-Regular.ttf", 24);
+	std::shared_ptr<Font> font = std::make_shared<Font>("../GraphicsCortex/Fonts/Roboto-Regular.ttf", 24);
 	std::shared_ptr<Text> text = std::make_shared<Text>(font);
 
 	text->set_text(U"\
@@ -22,7 +22,7 @@ int main() {
 	text->set_max_width(1);
 	text->set_scale(1);
 	scene.add(text);
-	text->graphic->set_position(glm::vec3(0, 0, -1));
+	text->graphic->position = glm::vec3(0, 0, -1);
 	text->set_color(vec4(242.0f / 255, 166.0f / 255, 0.0f / 255, 1.0f));
 	
 	while (frame.is_running()) {
@@ -30,7 +30,7 @@ int main() {
 		frame.clear_window(0, 0, 0, 1);
 		frame.display_performance(1000);
 
-		text->graphic->set_position(text->graphic->get_position() + glm::vec3(0, 6.0f / 100 * frametime / 1000, 0));
+		text->graphic->position = text->graphic->position + glm::vec3(0, 6.0f / 100 * frametime / 1000, 0);
 		
 		gui.new_frame(frametime);
 

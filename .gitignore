@@ -578,3 +578,5 @@ build-obj/windows-Release-x86_64CTAnalyzer/ApplicationMain.obj
 build-obj/windows-Release-x86_64CTAnalyzer/CTDataMain.obj
 build-obj/windows-Release-x86_64CTAnalyzer/FBPMain.obj
 build-obj/windows-Release-x86_64CTAnalyzer/FilterMain.obj
+build-obj/windows-Release-x86_64GraphicsCortexApp/GraphicsTest.obj
+build-obj/windows-Release-x86_64GraphicsCortexApp/text rendering.obj

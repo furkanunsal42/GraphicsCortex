@@ -378,8 +378,7 @@ void Text::render(){
 	if (_graphic_needs_update)
 		_update_graphic();
 
-	_font->_font_atlas.texture_slot = 0;
-	_font->_font_atlas.bind();
+	_font->_font_atlas->bind(0);
 
 	update_default_uniforms(*graphic->material->program);
 
@@ -389,6 +388,6 @@ void Text::render(){
 }
 
 void Text::update_default_uniforms(Program& program) {
-	program.update_uniform("texture_slot", (int)_font->_font_atlas.texture_slot);
+	program.update_uniform("texture_slot", 0);
 	program.update_uniform("text_color", _color.x, _color.y, _color.z, _color.w);
 }

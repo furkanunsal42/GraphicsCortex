@@ -75,10 +75,10 @@ public:
 	void copy_to_texture(Texture2D& target_texture, int self_mipmap, int target_mipmap, int self_x, int self_y, int width, int height, int target_x, int target_y);
 	*/
 
-	Image get_image(Face face, ColorFormat format, Type type, int mipmap_level);
-	Image get_image(Face face, ColorFormat format, Type type, int mipmap_level, int x, int y, int width, int height);
-	Image get_image(Face face, DepthStencilFormat format, Type type, int mipmap_level);
-	Image get_image(Face face, DepthStencilFormat format, Type type, int mipmap_level, int x, int y, int width, int height);
+	std::shared_ptr<Image> get_image(Face face, ColorFormat format, Type type, int mipmap_level);
+	std::shared_ptr<Image> get_image(Face face, ColorFormat format, Type type, int mipmap_level, int x, int y, int width, int height);
+	std::shared_ptr<Image> get_image(Face face, DepthStencilFormat format, Type type, int mipmap_level);
+	std::shared_ptr<Image> get_image(Face face, DepthStencilFormat format, Type type, int mipmap_level, int x, int y, int width, int height);
 
 	void clear(Face face, unsigned char clear_data, int mipmap_target = 0);
 	void clear(Face face, float clear_data, int mipmap_target = 0);
