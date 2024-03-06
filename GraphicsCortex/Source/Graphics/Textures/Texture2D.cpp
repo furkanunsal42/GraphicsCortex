@@ -383,7 +383,7 @@ void Texture2D::_allocate_texture()
 	if (!_texture_generated) return;
 	if (_texture_allocated) return;
 
-	if (width >> mipmap_levels == 0 || height >> mipmap_levels == 0 || mipmap_levels >= sizeof(int) * 8) {
+	if (width >> (mipmap_levels - 1) == 0 || height >> (mipmap_levels - 1) == 0 || mipmap_levels >= sizeof(int) * 8) {
 		int old_mipmap_levels = mipmap_levels;
 		if (width >> mipmap_levels == 0 || mipmap_levels >= sizeof(int) * 8) mipmap_levels = std::log2(width);
 		if (height >> mipmap_levels == 0 || mipmap_levels >= sizeof(int) * 8) mipmap_levels = std::log2(height);
@@ -681,6 +681,15 @@ int Texture2D::query_compressed_image_size(int mipmap_level)
 	return size;
 }
 
+glm::ivec2 Texture2D::get_size() {
+	return glm::ivec2(width, height);
+}
+
+void Texture2D::force_allocation() {
+	wait_async_load();
+	_allocate_texture();
+}
+
 Image Texture2D::get_image(ColorFormat format, Type type, int mipmap_level)
 {
 	return get_image(format, type, mipmap_level, 0, 0, query_width(mipmap_level), query_height(mipmap_level));
@@ -792,8 +801,8 @@ void Texture2D::clear(unsigned char clear_data, int x, int y, int width, int hei
 
 void Texture2D::clear(float clear_data, int x, int y, int width, int height, int mipmap_target)
 {
-	if (!_texture_allocated || !_user_data_loaded) {
-		std::cout << "[OpenGL Error] Texture2D tried to clear() but either not allocated any ram or didn't loaded any user data yet" << std::endl;
+	if (!_texture_allocated) {
+		std::cout << "[OpenGL Error] Texture2D tried to clear() but Texture2D wasn't allocated" << std::endl;
 		ASSERT(false);
 	}
 

@@ -70,6 +70,34 @@ void Texture2DArray::bind(int texture_slot)
 	GLCall(glBindTextureUnit(texture_slot, id));
 }
 
+void Texture2DArray::bind_as_image(int texture_slot, int mipmap_level){
+	if (!_texture_generated) {
+		std::cout << "[OpenGL Error] released Texture2DArray tried to bind_as_image()" << std::endl;
+		ASSERT(false);
+	}
+
+	if (!_texture_allocated) {
+		std::cout << "[OpenGL Warning] Texture2DArray tried to bind_as_image() but no user data was loaded yet" << std::endl;
+		_allocate_texture();
+	}
+
+	GLCall(glBindImageTexture(texture_slot, id, mipmap_level, GL_TRUE, 0, GL_READ_WRITE, _get_gl_internal_format()));
+}
+
+void Texture2DArray::bind_as_slice(int texture_slot, int mipmap_level, int layer_index){
+	if (!_texture_generated) {
+		std::cout << "[OpenGL Error] released Texture2DArray tried to bind_as_image()" << std::endl;
+		ASSERT(false);
+	}
+
+	if (!_texture_allocated) {
+		std::cout << "[OpenGL Warning] Texture2DArray tried to bind_as_image() but no user data was loaded yet" << std::endl;
+		_allocate_texture();
+	}
+
+	GLCall(glBindImageTexture(texture_slot, id, mipmap_level, GL_FALSE, layer_index, GL_READ_WRITE, _get_gl_internal_format()));
+}
+
 void Texture2DArray::bind()
 {
 	if (!_texture_generated) {
@@ -577,6 +605,14 @@ int Texture2DArray::query_compressed_image_size(int mipmap_level)
 	return size;
 }
 
+glm::ivec3 Texture2DArray::get_size() {
+	return glm::ivec3(width, height, texture_count);
+}
+
+void Texture2DArray::force_allocation() {
+	wait_async_load();
+	_allocate_texture();
+}
 
 void Texture2DArray::_set_texture_parameters()
 {
@@ -618,7 +654,7 @@ void Texture2DArray::_allocate_texture()
 	if (!_texture_generated) return;
 	if (_texture_allocated) return;
 
-	if (width >> mipmap_levels == 0 || height >> mipmap_levels == 0 || mipmap_levels >= sizeof(int) * 8) {
+	if (width >> (mipmap_levels - 1) == 0 || height >> (mipmap_levels - 1) == 0 || mipmap_levels >= sizeof(int) * 8) {
 		int old_mipmap_levels = mipmap_levels;
 		if (width >> mipmap_levels == 0 || mipmap_levels >= sizeof(int) * 8) mipmap_levels = std::log2(width);
 		if (height >> mipmap_levels == 0 || mipmap_levels >= sizeof(int) * 8) mipmap_levels = std::log2(height);
@@ -649,10 +685,12 @@ void Texture2DArray::_create_handle()
 
 	_set_texture_parameters();
 
-	GLCall(texture_handle = glGetTextureHandleARB(id));
-	GLCall(glMakeTextureHandleResidentARB(texture_handle));
+	if (is_bindless) {
+		GLCall(texture_handle = glGetTextureHandleARB(id));
+		GLCall(glMakeTextureHandleResidentARB(texture_handle));
 
-	_texture_handle_created = true;
+		_texture_handle_created = true;
+	}
 }
 
 int Texture2DArray::_get_gl_internal_format()

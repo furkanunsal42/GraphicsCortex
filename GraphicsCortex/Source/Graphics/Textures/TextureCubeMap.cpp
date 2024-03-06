@@ -344,7 +344,7 @@ void TextureCubeMap::_allocate_texture()
 	if (!_texture_generated) return;
 	if (_texture_allocated) return;
 
-	if (width >> mipmap_levels == 0 || height >> mipmap_levels == 0 || mipmap_levels >= sizeof(int) * 8) {
+	if (width >> (mipmap_levels - 1) == 0 || height >> (mipmap_levels - 1) == 0 || mipmap_levels >= sizeof(int) * 8) {
 		int old_mipmap_levels = mipmap_levels;
 		if (width >> mipmap_levels == 0 || mipmap_levels >= sizeof(int) * 8) mipmap_levels = std::log2(width);
 		if (height >> mipmap_levels == 0 || mipmap_levels >= sizeof(int) * 8) mipmap_levels = std::log2(height);
@@ -790,4 +790,13 @@ int TextureCubeMap::query_compressed_image_size(int mipmap_level)
 	int size;
 	GLCall(glGetTextureLevelParameteriv(id, mipmap_level, GL_TEXTURE_COMPRESSED_IMAGE_SIZE, &size));
 	return size;
+}
+
+glm::ivec1 TextureCubeMap::get_size() {
+	return glm::ivec1(width);
+}
+
+void TextureCubeMap::force_allocation() {
+	wait_async_load();
+	_allocate_texture();
 }

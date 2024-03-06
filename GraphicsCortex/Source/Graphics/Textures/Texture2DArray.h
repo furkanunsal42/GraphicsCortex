@@ -25,6 +25,7 @@ public:
 	SamplingFilter mipmap_min_filter = SamplingFilter::LINEAR;
 	SamplingFilter min_filter = SamplingFilter::LINEAR;
 	SamplingFilter mag_filter = SamplingFilter::LINEAR;
+	bool is_bindless = true;
 
 	Texture2DArray() = delete;
 	Texture2DArray(const Texture2DArray& other) = delete;
@@ -35,6 +36,8 @@ public:
 	void release();
 
 	void bind(int texture_slot);
+	void bind_as_image(int texture_slot, int mipmap_level);
+	void bind_as_slice(int texture_slot, int mipmap_level, int layer_index);
 
 	void bind();
 	void unbind();
@@ -116,6 +119,9 @@ public:
 	int query_depth_size(int mipmap_level);
 	bool query_is_compressed(int mipmap_level);
 	int query_compressed_image_size(int mipmap_level);
+
+	glm::ivec3 get_size();
+	void force_allocation();
 
 private:
 	unsigned int target = GL_TEXTURE_2D_ARRAY;

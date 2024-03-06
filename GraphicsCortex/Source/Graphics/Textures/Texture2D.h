@@ -121,6 +121,9 @@ public:
 	bool query_is_compressed(int mipmap_level);
 	int query_compressed_image_size(int mipmap_level);
 
+	glm::ivec2 get_size();
+	void force_allocation();
+
 private:
 	unsigned int target = GL_TEXTURE_2D;
 	unsigned int multisample_amount = 0;

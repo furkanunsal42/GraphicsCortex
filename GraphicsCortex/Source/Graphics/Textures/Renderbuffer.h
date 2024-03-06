@@ -33,6 +33,9 @@ public:
 	int query_depth_size();
 	int query_stencil_size();
 
+	glm::ivec2 get_size();
+	void force_allocation();
+
 private:
 	unsigned int target = GL_RENDERBUFFER;
 	unsigned int multisample_amount = 0;

@@ -37,7 +37,7 @@ namespace create_geometry {
 		meshDesc.triangles.data = (const int*)indicies;
 
 		auto context = PhysxContext::get();
-
+		
 		physx::PxDefaultMemoryOutputStream writeBuffer;
 		physx::PxTriangleMeshCookingResult::Enum result;
 		bool status = context.physics_cooking->cookTriangleMesh(meshDesc, writeBuffer, &result);

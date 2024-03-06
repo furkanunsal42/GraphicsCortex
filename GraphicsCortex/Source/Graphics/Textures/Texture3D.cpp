@@ -225,7 +225,7 @@ void Texture3D::_allocate_texture()
 	if (!_texture_generated) return;
 	if (_texture_allocated) return;
 
-	if ((width >> mipmap_levels == 0 || height >> mipmap_levels == 0 || depth >> mipmap_levels == 0 || mipmap_levels >= sizeof(int) * 8) && mipmap_levels != 1) {
+	if ((width >> (mipmap_levels - 1) == 0 || height >> (mipmap_levels - 1) == 0 || depth >> (mipmap_levels - 1) == 0 || mipmap_levels >= sizeof(int) * 8) && mipmap_levels != 1) {
 		int old_mipmap_levels = mipmap_levels;
 		if (width >> mipmap_levels == 0 || mipmap_levels >= sizeof(int) * 8) mipmap_levels = std::log2(width);
 		if (height >> mipmap_levels == 0 || mipmap_levels >= sizeof(int) * 8) mipmap_levels = std::log2(height);
@@ -512,6 +512,16 @@ int Texture3D::query_compressed_image_size(int mipmap_level)
 	GLCall(glGetTextureLevelParameteriv(id, mipmap_level, GL_TEXTURE_COMPRESSED_IMAGE_SIZE, &size));
 	return size;
 }
+
+glm::ivec3 Texture3D::get_size() {
+	return glm::ivec3(width, height, depth);
+}
+
+void Texture3D::force_allocation() {
+	wait_async_load();
+	_allocate_texture();
+}
+
 
 void Texture3D::wait_async_load()
 {
