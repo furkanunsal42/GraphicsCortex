@@ -216,6 +216,7 @@ public:
 	static int ColorTextureFormat_to_OpenGL(ColorTextureFormat color_texture_format);
 	static int DepthStencilTextureFormat_to_OpenGL(DepthStencilTextureFormat depth_stencil_texture_format);
 	static int Type_to_OpenGL(Type type);
+	static int Type_bytes_per_channel(Type type);
 	static int ColorFormat_to_OpenGL(ColorFormat color_format);
 	static int DepthStencilFormat_to_OpenGL(DepthStencilFormat depth_stencil_format);
 	static int ColorFormat_channels(ColorFormat color_format);

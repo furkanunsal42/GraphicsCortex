@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <filesystem>
 
 #include "stb_image.h"
 #include "stb_image_write.h"
@@ -196,6 +197,17 @@ void Image::resize_stride(int target_bytes_per_channel)
 
 void Image::save_to_disc(const std::string& target_filename) const
 {
+	if (target_filename.size() > 4) {
+		if (target_filename.substr(target_filename.size() - 4, 4) == ".raw" || target_filename.substr(target_filename.size() - 4, 4) == ".RAW") {
+			std::filesystem::create_directories(std::filesystem::path(compute_directory(target_filename)));
+			std::fstream file(target_filename, std::fstream::out | std::fstream::binary);
+			file.write((const char*)_image_data, get_size());
+			return;
+		}
+	}
+
+	stbi_flip_vertically_on_write(_vertical_flip);
+	int result_flag = stbi_write_png(target_filename.c_str(), _width, _height, _channel_count, _image_data, _width * _channel_count * _bytes_per_channel);
 }
 
 unsigned char* Image::get_image_data() {

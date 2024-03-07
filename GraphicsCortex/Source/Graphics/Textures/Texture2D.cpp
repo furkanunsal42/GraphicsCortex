@@ -697,8 +697,8 @@ std::shared_ptr<Image> Texture2D::get_image(ColorFormat format, Type type, int m
 
 std::shared_ptr<Image> Texture2D::get_image(ColorFormat format, Type type, int mipmap_level, int x, int y, int width, int height)
 {
-	if (!_texture_allocated || !_user_data_loaded) {
-		std::cout << "[OpenGL Error] Texture2D tried to get_image() but either not allocated any ram or didn't loaded any user data yet" << std::endl;
+	if (!_texture_allocated) {
+		std::cout << "[OpenGL Error] Texture2D tried to get_image() but Texture2D was not allocated yet" << std::endl;
 		ASSERT(false);
 	}
 
@@ -724,7 +724,7 @@ std::shared_ptr<Image> Texture2D::get_image(ColorFormat format, Type type, int m
 
 	GLCall(glGetTextureSubImage(id, mipmap_level, x, y, 0, width, height, 1, ColorFormat_to_OpenGL(format), Type_to_OpenGL(type), image_size, image));
 
-	return std::make_shared<Image>(image, width, height, 1, format_channels, 1, true);
+	return std::make_shared<Image>(image, width, height, 1, format_channels, Type_bytes_per_channel(type), true);
 }
 
 std::shared_ptr<Image> Texture2D::get_image(DepthStencilFormat format, Type type, int mipmap_level)
@@ -734,8 +734,8 @@ std::shared_ptr<Image> Texture2D::get_image(DepthStencilFormat format, Type type
 
 std::shared_ptr<Image> Texture2D::get_image(DepthStencilFormat format, Type type, int mipmap_level, int x, int y, int width, int height)
 {
-	if (!_texture_allocated || !_user_data_loaded) {
-		std::cout << "[OpenGL Error] Texture2D tried to get_image() but either not allocated any ram or didn't loaded any user data yet" << std::endl;
+	if (!_texture_allocated) {
+		std::cout << "[OpenGL Error] Texture2D tried to get_image() but Texture2D was not allocated yet" << std::endl;
 		ASSERT(false);
 	}
 
@@ -761,7 +761,7 @@ std::shared_ptr<Image> Texture2D::get_image(DepthStencilFormat format, Type type
 
 	GLCall(glGetTextureSubImage(id, mipmap_level, x, y, 0, width, height, 1, gl_format, Type_to_OpenGL(type), image_size, image));
 
-	return std::make_shared<Image>(image, width, height, 1, format_channels, 1, true);
+	return std::make_shared<Image>(image, width, height, 1, format_channels, Type_bytes_per_channel(type), true);
 }
 
 void Texture2D::clear(unsigned char clear_data, int mipmap_target)
@@ -791,8 +791,8 @@ void Texture2D::clear(glm::vec4 clear_data, int mipmap_target)
 
 void Texture2D::clear(unsigned char clear_data, int x, int y, int width, int height, int mipmap_target)
 {
-	if (!_texture_allocated || !_user_data_loaded) {
-		std::cout << "[OpenGL Error] Texture2D tried to clear() but either not allocated any ram or didn't loaded any user data yet" << std::endl;
+	if (!_texture_allocated) {
+		std::cout << "[OpenGL Error] Texture2D tried to clear() but Texture2D was not allocated yet" << std::endl;
 		ASSERT(false);
 	}
 
@@ -811,8 +811,8 @@ void Texture2D::clear(float clear_data, int x, int y, int width, int height, int
 
 void Texture2D::clear(glm::vec2 clear_data, int x, int y, int width, int height, int mipmap_target)
 {
-	if (!_texture_allocated || !_user_data_loaded) {
-		std::cout << "[OpenGL Error] Texture2D tried to clear() but either not allocated any ram or didn't loaded any user data yet" << std::endl;
+	if (!_texture_allocated) {
+		std::cout << "[OpenGL Error] Texture2D tried to clear() but Texture2D was not allocated yet" << std::endl;
 		ASSERT(false);
 	}
 
@@ -821,8 +821,8 @@ void Texture2D::clear(glm::vec2 clear_data, int x, int y, int width, int height,
 
 void Texture2D::clear(glm::vec3 clear_data, int x, int y, int width, int height, int mipmap_target)
 {
-	if (!_texture_allocated || !_user_data_loaded) {
-		std::cout << "[OpenGL Error] Texture2D tried to clear() but either not allocated any ram or didn't loaded any user data yet" << std::endl;
+	if (!_texture_allocated) {
+		std::cout << "[OpenGL Error] Texture2D tried to clear() but Texture2D was not allocated yet" << std::endl;
 		ASSERT(false);
 	}
 
@@ -831,8 +831,8 @@ void Texture2D::clear(glm::vec3 clear_data, int x, int y, int width, int height,
 
 void Texture2D::clear(glm::vec4 clear_data, int x, int y, int width, int height, int mipmap_target)
 {
-	if (!_texture_allocated || !_user_data_loaded) {
-		std::cout << "[OpenGL Error] Texture2D tried to clear() but either not allocated any ram or didn't loaded any user data yet" << std::endl;
+	if (!_texture_allocated) {
+		std::cout << "[OpenGL Error] Texture2D tried to clear() but Texture2D was not allocated yet" << std::endl;
 		ASSERT(false);
 	}
 
