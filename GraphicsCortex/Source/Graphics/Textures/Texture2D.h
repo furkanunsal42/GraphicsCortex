@@ -124,6 +124,8 @@ public:
 	glm::ivec2 get_size();
 	void force_allocation();
 
+	std::shared_ptr<Texture2D> create_texture_with_same_parameters();
+
 private:
 	unsigned int target = GL_TEXTURE_2D;
 	unsigned int multisample_amount = 0;

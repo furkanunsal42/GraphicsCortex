@@ -690,6 +690,25 @@ void Texture2D::force_allocation() {
 	_allocate_texture();
 }
 
+std::shared_ptr<Texture2D> Texture2D::create_texture_with_same_parameters()
+{
+	std::shared_ptr<Texture2D> new_texture;
+	if (is_color_texture)
+		new_texture = std::make_shared<Texture2D>(width, height, color_texture_format, mipmap_levels, mipmap_bias, multisample_amount);
+	else
+		new_texture = std::make_shared<Texture2D>(width, height, depth_stencil_texture_format, mipmap_levels, mipmap_bias, multisample_amount);
+
+	new_texture->mipmap_begin_level = mipmap_begin_level;
+	new_texture->is_bindless = is_bindless;
+	new_texture->wrap_u = wrap_u;
+	new_texture->wrap_v = wrap_v;
+	new_texture->mipmap_min_filter = mipmap_min_filter;
+	new_texture->min_filter = min_filter;
+	new_texture->mag_filter = mag_filter;
+
+	return new_texture;
+}
+
 std::shared_ptr<Image> Texture2D::get_image(ColorFormat format, Type type, int mipmap_level)
 {
 	return get_image(format, type, mipmap_level, 0, 0, query_width(mipmap_level), query_height(mipmap_level));
