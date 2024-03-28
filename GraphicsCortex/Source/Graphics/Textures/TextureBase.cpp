@@ -169,6 +169,32 @@ int TextureBase2::ColorFormat_to_OpenGL(ColorFormat color_format)
 	return 0;
 }
 
+int TextureBase2::Type_bytes_per_channel(Type type) {
+	switch (type) {
+	case Type::UNSIGNED_BYTE				:	return 1;
+	case Type::BYTE							:	return 1; 
+	case Type::UNSIGNED_SHORT				:	return 2;
+	case Type::SHORT						:	return 2; 
+	case Type::UNSIGNED_INT					:	return 4; 
+	case Type::INT							:	return 4; 
+	case Type::FLOAT						:	return 4; 
+	case Type::UNSIGNED_BYTE_3_3_2			:	return 1; 
+	case Type::UNSIGNED_BYTE_2_3_3_REV		:	return 1; 
+	case Type::UNSIGNED_SHORT_5_6_5		  	:	return 2; 
+	case Type::UNSIGNED_SHORT_5_6_5_REV	  	:	return 2; 
+	case Type::UNSIGNED_SHORT_4_4_4_4	  	:	return 2; 
+	case Type::UNSIGNED_SHORT_4_4_4_4_REV 	:	return 2; 
+	case Type::UNSIGNED_SHORT_5_5_5_1	  	:	return 2; 
+	case Type::UNSIGNED_SHORT_1_5_5_5_REV 	:	return 2; 
+	case Type::UNSIGNED_INT_8_8_8_8		  	:	return 4; 
+	case Type::UNSIGNED_INT_8_8_8_8_REV	  	:	return 4; 
+	case Type::UNSIGNED_INT_10_10_10_2	  	:	return 4; 
+	case Type::UNSIGNED_INT_2_10_10_10_REV	:	return 4;
+	case Type::UNSIGNED_INT_5_9_9_9_REV	  	:	return 4;
+	}
+	return 0;
+}
+
 int TextureBase2::DepthStencilFormat_to_OpenGL(DepthStencilFormat depth_stencil_format)
 {
 	switch (depth_stencil_format) {

@@ -5,7 +5,7 @@
 #include "Default_Assets.h"
 #include "functional"
 
-// pops 4 Textures (depth_stencil, normal, texcoord, position)
+// pops 8 Textures (depth_stencil, normal, texcoord, position, emmisive_texture, brdf_texture, metalic_roughness_ao_texture, albedo_texture)
 // pushes 2 Textures (depth_stencil, render)
 class RenderPass_Deferred : public RenderPass {
 public:

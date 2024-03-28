@@ -580,3 +580,12 @@ build-obj/windows-Release-x86_64CTAnalyzer/FBPMain.obj
 build-obj/windows-Release-x86_64CTAnalyzer/FilterMain.obj
 build-obj/windows-Release-x86_64GraphicsCortexApp/GraphicsTest.obj
 build-obj/windows-Release-x86_64GraphicsCortexApp/text rendering.obj
+build-obj/windows-Release-x86_64CTAnalyzer/c.obj
+build-obj/windows-Release-x86_64CTAnalyzer/CTForwardProjection.obj
+build-obj/windows-Release-x86_64CTAnalyzer/FastFourierTransform.obj
+build-obj/windows-Release-x86_64CTAnalyzer/FastFourierTransformImage.obj
+build-obj/windows-Release-x86_64CTAnalyzer/fft.obj
+build-obj/windows-Release-x86_64CTAnalyzer/fft2.obj
+build-obj/windows-Release-x86_64CTAnalyzer/fft_filter_test.obj
+build-obj/windows-Release-x86_64CTAnalyzer/ForwardBackwardProjectionMain.obj
+build-obj/windows-Release-x86_64CTAnalyzer/ForwardProjectionMain.obj

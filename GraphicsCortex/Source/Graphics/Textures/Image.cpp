@@ -1,11 +1,14 @@
 #include "Image.h"
 
-#include "iostream"
+#include <iostream>
+#include <fstream>
+#include <filesystem>
 
 #include "stb_image.h"
 #include "stb_image_write.h"
 #include "stb_image_resize.h"
 
+#include "DirectoryUtils.h"
 #include "Debuger.h"
 
 Image::Image(int width, int height, int channel_count, int byte_per_channel, bool vertical_flip) :
@@ -79,6 +82,36 @@ void Image::_read_image_data(const ImageParameters& requested_parameters, int de
 {
 	ASSERT(_image_data == nullptr);
 
+	if (_source_filepath.size() >= 4) {
+		std::string image_type = compute_filetype(_source_filepath);
+		if (image_type == ".raw" || image_type == ".RAW") {
+
+			std::ifstream file;
+			file.open(_source_filepath, std::ios::in | std::ios::binary);
+			if (file) {
+				int file_size = 2048 * 2048 * 2;
+				_width = 2048;
+				_height = 2048;
+				_depth = 1;
+				_channel_count = 1;
+				_bytes_per_channel = 2;
+				_image_is_loaded_from_stbi = false;
+				_image_data = (unsigned char*)malloc(file_size);
+			}
+
+			int buffer_size = 256;
+			int buffer_pointer = 0;
+			while (!file.eof()) {
+				file.read((char*)_image_data + buffer_pointer, buffer_size);
+				buffer_pointer += buffer_size;
+			}
+
+			return;
+		}
+	}
+
+
+
 	_bytes_per_channel = stbi_is_16_bit(_source_filepath.c_str()) ? 2 : 1;
 	
 	stbi_set_flip_vertically_on_load_thread(_vertical_flip);
@@ -100,6 +133,34 @@ void Image::_read_image_data(const ImageParameters& requested_parameters, int de
 void Image::_read_image_data(int desired_channels)
 {
 	ASSERT(_image_data == nullptr);
+
+	if (_source_filepath.size() >= 4) {
+		std::string image_type = compute_filetype(_source_filepath);
+		if (image_type == ".raw" || image_type == ".RAW") {
+
+			std::ifstream file;
+			file.open(_source_filepath, std::ios::in | std::ios::binary);
+			if (file) {
+				int file_size = 2048 * 2048 * 2;
+				_width = 2048;
+				_height = 2048;
+				_depth = 1;
+				_channel_count = 1;
+				_bytes_per_channel = 2;
+				_image_is_loaded_from_stbi = false;
+				_image_data = (unsigned char*)malloc(file_size);
+			}
+
+			int buffer_size = 256;
+			int buffer_pointer = 0;
+			while (!file.eof()) {
+				file.read((char*)_image_data + buffer_pointer, buffer_size);
+				buffer_pointer += buffer_size;
+			}
+
+			return;
+		}
+	}
 
 	_bytes_per_channel = stbi_is_16_bit(_source_filepath.c_str()) ? 2 : 1;
 
@@ -136,6 +197,17 @@ void Image::resize_stride(int target_bytes_per_channel)
 
 void Image::save_to_disc(const std::string& target_filename) const
 {
+	if (target_filename.size() > 4) {
+		if (target_filename.substr(target_filename.size() - 4, 4) == ".raw" || target_filename.substr(target_filename.size() - 4, 4) == ".RAW") {
+			std::filesystem::create_directories(std::filesystem::path(compute_directory(target_filename)));
+			std::fstream file(target_filename, std::fstream::out | std::fstream::binary);
+			file.write((const char*)_image_data, get_size());
+			return;
+		}
+	}
+
+	stbi_flip_vertically_on_write(_vertical_flip);
+	int result_flag = stbi_write_png(target_filename.c_str(), _width, _height, _channel_count, _image_data, _width * _channel_count * _bytes_per_channel);
 }
 
 unsigned char* Image::get_image_data() {
