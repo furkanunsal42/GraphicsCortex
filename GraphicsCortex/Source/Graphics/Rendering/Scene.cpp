@@ -183,23 +183,25 @@ void Scene::sync_with_physics() {
 
 void Scene::_update_pipeline_rendering_list()
 {
-	if (_new_graphic_added) {
-		for (std::shared_ptr<Graphic> graphic : _graphics) {
-			pipeline_rendering_list.push_back(*graphic);
-		}
-		for (std::shared_ptr<Object> object : _objects) {
-			pipeline_rendering_list.push_back(object->graphics);
-		}
+	if (!_new_graphic_added) return;
 
-		for (std::shared_ptr<Vehicle> vehicle : _vehicles) {
-			if (vehicle->chassis_graphic_initialized)
-				pipeline_rendering_list.push_back(*vehicle->chassis);
+	pipeline_rendering_list.clear();
 
-			if (vehicle->wheel_graphic_initialized) {
-				for (std::shared_ptr<Graphic> wheel : vehicle->wheels)
-					pipeline_rendering_list.push_back(*wheel);
-			}
-		}
-		_new_graphic_added = false;
+	for (std::shared_ptr<Graphic> graphic : _graphics) {
+		pipeline_rendering_list.push_back(*graphic);
 	}
+	for (std::shared_ptr<Object> object : _objects) {
+		pipeline_rendering_list.push_back(object->graphics);
+	}
+	for (std::shared_ptr<Vehicle> vehicle : _vehicles) {
+		if (vehicle->chassis_graphic_initialized)
+			pipeline_rendering_list.push_back(*vehicle->chassis);
+
+		if (vehicle->wheel_graphic_initialized) {
+			for (std::shared_ptr<Graphic> wheel : vehicle->wheels)
+				pipeline_rendering_list.push_back(*wheel);
+		}
+	}
+
+	_new_graphic_added = false;
 }

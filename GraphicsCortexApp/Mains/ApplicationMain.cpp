@@ -66,10 +66,10 @@ int main() {
 	std::shared_ptr<Vehicle> vehicle = std::make_shared<Vehicle>(vehicle_raw);
 
 	{
-		Model chassis_model("../GraphicsCortex/Models/teducar/teduCar.fbx", 0.006f, Model::COORD_XYZ | Model::TEX_COORD_XY | Model::NORMAL_XYZ);
+		Model chassis_model("../GraphicsCortex/Models/teducar/teduCar.fbx", 0.006f, Model::ALL);
 		Model chassis_model_physics("../GraphicsCortex/Models/test2.obj", 1.0f, Model::COORD_XYZ | Model::TEX_COORD_XY | Model::NORMAL_XYZ);
-		Model chassis_left_wheel_model("../GraphicsCortex/Models/porsche_wheel_left.obj", 1, Model::COORD_XYZ | Model::TEX_COORD_XY | Model::NORMAL_XYZ);
-		Model chassis_right_wheel_model("../GraphicsCortex/Models/porsche_wheel_right.obj", 1, Model::COORD_XYZ | Model::TEX_COORD_XY | Model::NORMAL_XYZ);
+		Model chassis_left_wheel_model("../GraphicsCortex/Models/porsche_wheel_left.obj", 1, Model::ALL);
+		Model chassis_right_wheel_model("../GraphicsCortex/Models/porsche_wheel_right.obj", 1, Model::ALL);
 
 		std::shared_ptr<Mesh> chassis = std::make_shared<Mesh>(chassis_model);
 		std::shared_ptr<Mesh> left_wheel = std::make_shared<Mesh>(chassis_left_wheel_model);

@@ -47,21 +47,21 @@ void main(){
 	
 	frag_TBN = TBN;
 	gl_Position = projection * view * model * vec4(i[0].position, 1.0f);
-	v_position = i[0].position;
+	v_position = (model * vec4(i[0].position, 1.0f)).xyz;
 	v_texcoord = i[0].texcoord;
 	v_normal = i[0].normal;
 	EmitVertex();
 
 	frag_TBN = TBN;
 	gl_Position = projection * view * model * vec4(i[1].position, 1.0f);
-	v_position = i[1].position;
+	v_position = (model * vec4(i[1].position, 1.0f)).xyz;
 	v_texcoord = i[1].texcoord;
 	v_normal = i[1].normal;
 	EmitVertex();
 
 	frag_TBN = TBN;
 	gl_Position = projection * view * model * vec4(i[2].position, 1.0f);
-	v_position = i[2].position;
+	v_position = (model * vec4(i[2].position, 1.0f)).xyz;
 	v_texcoord = i[2].texcoord;
 	v_normal = i[2].normal;
 	EmitVertex();

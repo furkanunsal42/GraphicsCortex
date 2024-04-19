@@ -11,7 +11,9 @@ int main() {
 	std::shared_ptr<Mesh> medival_mesh;
 	std::shared_ptr<BindlessMaterial> medival_material = std::make_shared<BindlessMaterial>(program);
 	{
-		Model medival_model("../GraphicsCortex/Models/medival/medival.fbx", 1, Model::COORD_XYZ | Model::NORMAL_XYZ | Model::TEX_COORD_XY);
+		//Model medival_model("../GraphicsCortex/Models/medival/medival.fbx", 1, Model::COORD_XYZ | Model::NORMAL_XYZ | Model::TEX_COORD_XY);
+		Model medival_model("../GraphicsCortex/Models/test.obj", 100, Model::COORD_XYZ | Model::NORMAL_XYZ | Model::TEX_COORD_XY);
+
 		medival_mesh = std::make_shared<Mesh>(medival_model);
 	}
 	AssetImporter::clear_ram_all();
@@ -24,13 +26,13 @@ int main() {
 	std::shared_ptr<RenderPipeline> pipeline = std::make_shared<RenderPipeline>(1920, 1080, TextureBase2::ColorTextureFormat::RGBA8, 0);
 	pipeline->push_render_pass(std::make_shared<RenderPass_GBuffer>());
 	pipeline->push_render_pass(std::make_shared<RenderPass_Deferred>());
+	scene.pipeline = pipeline;
+
 	medival->material->add_albedo_texture(std::make_shared<Texture2D>("../GraphicsCortex/Models/medival/textures/ID01_Base_color.png", Texture2D::ColorTextureFormat::RGBA8, Texture2D::ColorFormat::RGBA, Texture2D::Type::UNSIGNED_BYTE, 1, 0, 0));
 	medival->material->add_metalic_texture(std::make_shared<Texture2D>("../GraphicsCortex/Models/medival/textures/ID01_Metallic.png", Texture2D::ColorTextureFormat::RGBA8, Texture2D::ColorFormat::RGBA, Texture2D::Type::UNSIGNED_BYTE, 1, 0, 0));
 	medival->material->add_ambient_occlusion_texture(std::make_shared<Texture2D>("../GraphicsCortex/Models/medival/textures/ID01_Mixed_AO.png", Texture2D::ColorTextureFormat::RGBA8, Texture2D::ColorFormat::RGBA, Texture2D::Type::UNSIGNED_BYTE, 1, 0, 0));
 	medival->material->add_normal_texture(std::make_shared<Texture2D>("../GraphicsCortex/Models/medival/textures/ID01_Normal_DirectX.png", Texture2D::ColorTextureFormat::RGBA8, Texture2D::ColorFormat::RGBA, Texture2D::Type::UNSIGNED_BYTE, 1, 0, 0));
 	medival->material->add_roughness_texture(std::make_shared<Texture2D>("../GraphicsCortex/Models/medival/textures/ID01_Roughness.png", Texture2D::ColorTextureFormat::RGBA8, Texture2D::ColorFormat::RGBA, Texture2D::Type::UNSIGNED_BYTE, 1, 0, 0));
-
-	scene.pipeline = pipeline;
 
 	while (frame.is_running()) {
 		Framebuffer::bind_screen_read_draw();

@@ -38,7 +38,6 @@ public:
 	void on_render(int pass_index, RenderPipeline& pipeline, Scene& scene, const std::vector<std::reference_wrapper<Graphic>>& graphics) {
 		if (!is_initialized) init(pass_index, pipeline, scene);
 
-
 		std::shared_ptr<TextureBase2> albedo_texture = pipeline.texture_stack.back();
 		pipeline.texture_stack.pop_back();
 		std::shared_ptr<TextureBase2> metalic_roughness_ao_texture = pipeline.texture_stack.back();
@@ -65,6 +64,7 @@ public:
 		
 		deferred_program->bind();
 
+		scene.camera->update_default_uniforms(*deferred_program);
 		set_texture(deferred_program, "albedo_texture", albedo_texture);
 		set_texture(deferred_program, "metalic_roughness_ao_texture", metalic_roughness_ao_texture);
 		set_texture(deferred_program, "brdf_texture", brdf_texture);

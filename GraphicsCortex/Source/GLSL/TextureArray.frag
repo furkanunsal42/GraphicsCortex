@@ -36,7 +36,7 @@ layout(std140) uniform pbr_material{
 //uniform samplerCube cubemap;
 
 void main(){
-	vec4 color = texture(bindless_textures[int(tex_index_color)], tex_coords);
+	vec4 color = texture(bindless_textures[int(round(tex_index_color))], tex_coords);
 	if (color.a < 0.05) discard;
 	
 	//color = texture(cubemap, vec3(tex_coords, 0));
