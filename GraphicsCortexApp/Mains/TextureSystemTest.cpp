@@ -7,17 +7,17 @@ int main(){
 	scene.camera->fov = 70;
 
 	std::shared_ptr<Program> program = default_program::flatcolor_program_s();
-	Graphic graphic(default_geometry::cube());
+	std::shared_ptr<Graphic> graphic = default_geometry::cube();
 
 	std::shared_ptr<Program> custom_program = std::make_shared<Program>(Shader("../GraphicsCortex/Custom Shaders/Texture.vert", "../GraphicsCortex/Custom Shaders/Texture.frag"));
 
 	Image image1("../GraphicsCortex/Images/orange.png", 4, true);
 	Image image2("../GraphicsCortex/Images/cobble.png", 4, true);
 
-	BindlessMaterial bindless_material(custom_program);
+	std::shared_ptr<BindlessMaterial> bindless_material = std::make_shared<BindlessMaterial>(custom_program);
 	std::shared_ptr<Texture2D> my_texture = std::make_shared<Texture2D>(image1.get_width(), image1.get_height(), TextureBase2::ColorTextureFormat::RGBA8, 1, 0);
-	bindless_material.add_texture("color_texture", my_texture);
-	graphic.set_material(bindless_material);
+	bindless_material->add_texture(0, my_texture);
+	graphic->set_material(bindless_material);
 
 	my_texture->load_data_width_mipmaps_async("../GraphicsCortex/Images/orange.png", TextureBase2::ColorFormat::RGBA, TextureBase2::Type::UNSIGNED_BYTE);
 
