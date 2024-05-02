@@ -88,12 +88,12 @@ void Texture3D::bind_as_image(int texture_slot, int mipmap_level)
 void Texture3D::bind_as_slice(int texture_slot, int mipmap_level, int layer_index)
 {
 	if (!_texture_generated) {
-		std::cout << "[OpenGL Error] released Texture2DArray tried to bind_as_image()" << std::endl;
+		std::cout << "[OpenGL Error] released Texture3D tried to bind_as_image()" << std::endl;
 		ASSERT(false);
 	}
 
 	if (!_texture_allocated) {
-		std::cout << "[OpenGL Warning] Texture2DArray tried to bind_as_image() but no user data was loaded yet" << std::endl;
+		std::cout << "[OpenGL Warning] Texture3D tried to bind_as_image() but no user data was loaded yet" << std::endl;
 		_allocate_texture();
 	}
 
@@ -276,10 +276,12 @@ void Texture3D::_create_handle()
 
 	_set_texture_parameters();
 
-	GLCall(texture_handle = glGetTextureHandleARB(id));
-	GLCall(glMakeTextureHandleResidentARB(texture_handle));
+	if (is_bindless) {
+		GLCall(texture_handle = glGetTextureHandleARB(id));
+		GLCall(glMakeTextureHandleResidentARB(texture_handle));
 
-	_texture_handle_created = true;
+		_texture_handle_created = true;
+	}
 }
 
 int Texture3D::_get_gl_internal_format()
@@ -552,6 +554,26 @@ void Texture3D::force_allocation() {
 	_allocate_texture();
 }
 
+std::shared_ptr<Texture3D> Texture3D::create_texture_with_same_parameters()
+{
+	std::shared_ptr<Texture3D> new_texture;
+	if (is_color_texture)
+		new_texture = std::make_shared<Texture3D>(width, height, depth, color_texture_format, mipmap_levels, mipmap_bias, multisample_amount);
+	else
+		new_texture = std::make_shared<Texture3D>(width, height, depth, depth_stencil_texture_format, mipmap_levels, mipmap_bias, multisample_amount);
+
+	new_texture->mipmap_begin_level = mipmap_begin_level;
+	new_texture->is_bindless = is_bindless;
+	new_texture->wrap_u = wrap_u;
+	new_texture->wrap_v = wrap_v;
+	new_texture->wrap_w = wrap_w;
+	new_texture->mipmap_min_filter = mipmap_min_filter;
+	new_texture->min_filter = min_filter;
+	new_texture->mag_filter = mag_filter;
+
+	return new_texture;
+}
+
 
 void Texture3D::wait_async_load()
 {
@@ -671,8 +693,8 @@ void Texture3D::clear(glm::vec4 clear_data, int mipmap_target)
 
 void Texture3D::clear(unsigned char clear_data, int x, int y, int z, int width, int height, int depth, int mipmap_target)
 {
-	if (!_texture_allocated || !_user_data_loaded) {
-		std::cout << "[OpenGL Error] Texture3D tried to clear() but either not allocated any ram or didn't loaded any user data yet" << std::endl;
+	if (!_texture_allocated) {
+		std::cout << "[OpenGL Error] Texture3D tried to clear() but Texture3D was not allocated yet" << std::endl;
 		ASSERT(false);
 	}
 
@@ -681,8 +703,8 @@ void Texture3D::clear(unsigned char clear_data, int x, int y, int z, int width, 
 
 void Texture3D::clear(float clear_data, int x, int y, int z, int width, int height, int depth, int mipmap_target)
 {
-	if (!_texture_allocated || !_user_data_loaded) {
-		std::cout << "[OpenGL Error] Texture3D tried to clear() but either not allocated any ram or didn't loaded any user data yet" << std::endl;
+	if (!_texture_allocated) {
+		std::cout << "[OpenGL Error] Texture3D tried to clear() but Texture3D was not allocated yet" << std::endl;
 		ASSERT(false);
 	}
 
@@ -691,8 +713,8 @@ void Texture3D::clear(float clear_data, int x, int y, int z, int width, int heig
 
 void Texture3D::clear(glm::vec2 clear_data, int x, int y, int z, int width, int height, int depth, int mipmap_target)
 {
-	if (!_texture_allocated || !_user_data_loaded) {
-		std::cout << "[OpenGL Error] Texture3D tried to clear() but either not allocated any ram or didn't loaded any user data yet" << std::endl;
+	if (!_texture_allocated) {
+		std::cout << "[OpenGL Error] Texture3D tried to clear() but Texture3D was not allocated yet" << std::endl;
 		ASSERT(false);
 	}
 
@@ -701,8 +723,8 @@ void Texture3D::clear(glm::vec2 clear_data, int x, int y, int z, int width, int 
 
 void Texture3D::clear(glm::vec3 clear_data, int x, int y, int z, int width, int height, int depth, int mipmap_target)
 {
-	if (!_texture_allocated || !_user_data_loaded) {
-		std::cout << "[OpenGL Error] Texture3D tried to clear() but either not allocated any ram or didn't loaded any user data yet" << std::endl;
+	if (!_texture_allocated) {
+		std::cout << "[OpenGL Error] Texture3D tried to clear() but Texture3D was not allocated yet" << std::endl;
 		ASSERT(false);
 	}
 
@@ -711,8 +733,8 @@ void Texture3D::clear(glm::vec3 clear_data, int x, int y, int z, int width, int 
 
 void Texture3D::clear(glm::vec4 clear_data, int x, int y, int z, int width, int height, int depth, int mipmap_target)
 {
-	if (!_texture_allocated || !_user_data_loaded) {
-		std::cout << "[OpenGL Error] Texture3D tried to clear() but either not allocated any ram or didn't loaded any user data yet" << std::endl;
+	if (!_texture_allocated) {
+		std::cout << "[OpenGL Error] Texture3D tried to clear() but Texture3D was not allocated yet" << std::endl;
 		ASSERT(false);
 	}
 

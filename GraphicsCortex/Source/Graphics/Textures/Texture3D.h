@@ -26,6 +26,7 @@ public:
 	SamplingFilter mipmap_min_filter = SamplingFilter::LINEAR;
 	SamplingFilter min_filter = SamplingFilter::LINEAR;
 	SamplingFilter mag_filter = SamplingFilter::LINEAR;
+	bool is_bindless = true;
 
 	Texture3D() = delete;
 	Texture3D(const Texture3D& other) = delete;
@@ -124,6 +125,8 @@ public:
 
 	glm::ivec3 get_size();
 	void force_allocation();
+
+	std::shared_ptr<Texture3D> create_texture_with_same_parameters();
 
 private:
 	unsigned int target = GL_TEXTURE_3D;
