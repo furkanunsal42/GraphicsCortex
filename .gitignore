@@ -589,3 +589,12 @@ build-obj/windows-Release-x86_64CTAnalyzer/fft2.obj
 build-obj/windows-Release-x86_64CTAnalyzer/fft_filter_test.obj
 build-obj/windows-Release-x86_64CTAnalyzer/ForwardBackwardProjectionMain.obj
 build-obj/windows-Release-x86_64CTAnalyzer/ForwardProjectionMain.obj
+build-obj/windows-Release-x86_64CTAnalyzer/fan_fbp_equiangular.obj
+build-obj/windows-Release-x86_64CTAnalyzer/FastFourierTransformGPU.obj
+build-obj/windows-Release-x86_64CTAnalyzer/FBP.obj
+build-obj/windows-Release-x86_64CTAnalyzer/fbp_cone_fdk_main.obj
+build-obj/windows-Release-x86_64CTAnalyzer/fbp_fan2d_equidistance_main.obj
+build-obj/windows-Release-x86_64CTAnalyzer/FBPSolver.obj
+build-obj/windows-Release-x86_64CTAnalyzer/gpu_animated.obj
+build-obj/windows-Release-x86_64CTAnalyzer/gpu_fft_main.obj
+build-obj/windows-Release-x86_64CTAnalyzer/ParallelFastFourierTransform.obj

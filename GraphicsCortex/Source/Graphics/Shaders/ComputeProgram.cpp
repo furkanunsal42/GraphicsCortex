@@ -227,6 +227,18 @@ void ComputeProgram::update_uniform_as_image(const std::string& name, Texture2D&
 
 void ComputeProgram::update_uniform_as_image(const std::string& name, Texture3D& texture3d, int mipmap_level)
 {
+	texture3d.wait_async_load();
+	if (!texture3d._texture_allocated) texture3d._allocate_texture();
+	if (!_does_uniform_exist(name)) return;
+
+	int slot = -1;
+	GLCall(glGetUniformiv(id, _get_uniform_location(name), &slot));
+	if (slot == -1) {
+		ASSERT(false);
+	}
+
+	texture3d.bind_as_image(slot, 0);
+	GLCall(glProgramUniform1i(id, _get_uniform_location(name), slot));
 }
 
 void ComputeProgram::update_uniform_as_image(const std::string& name, Texture2DArray& texture2darray, int mipmap_level)
