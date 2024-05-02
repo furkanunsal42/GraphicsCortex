@@ -558,9 +558,9 @@ std::shared_ptr<Texture3D> Texture3D::create_texture_with_same_parameters()
 {
 	std::shared_ptr<Texture3D> new_texture;
 	if (is_color_texture)
-		new_texture = std::make_shared<Texture3D>(width, height, depth, color_texture_format, mipmap_levels, mipmap_bias, multisample_amount);
+		new_texture = std::make_shared<Texture3D>(width, height, depth, color_texture_format, mipmap_levels, mipmap_bias);
 	else
-		new_texture = std::make_shared<Texture3D>(width, height, depth, depth_stencil_texture_format, mipmap_levels, mipmap_bias, multisample_amount);
+		new_texture = std::make_shared<Texture3D>(width, height, depth, depth_stencil_texture_format, mipmap_levels, mipmap_bias);
 
 	new_texture->mipmap_begin_level = mipmap_begin_level;
 	new_texture->is_bindless = is_bindless;
