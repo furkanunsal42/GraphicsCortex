@@ -847,3 +847,78 @@ void Texture2DArray::clear(int texture_index, glm::vec4 clear_data, int x, int y
 
 	GLCall(glClearTexSubImage(id, mipmap_target, x, y, texture_index, width, height, 1, GL_RGBA, GL_FLOAT, &clear_data));
 }
+
+void Texture2DArray::clear(unsigned char clear_data, int mipmap_target)
+{
+	clear(clear_data, 0, 0, 0, width, height, texture_count, mipmap_target);
+}
+
+void Texture2DArray::clear(float clear_data, int mipmap_target)
+{
+	clear(clear_data, 0, 0, 0, width, height, texture_count, mipmap_target);
+}
+
+void Texture2DArray::clear(glm::vec2 clear_data, int mipmap_target)
+{
+	clear(clear_data, 0, 0, 0, width, height, texture_count, mipmap_target);
+}
+
+void Texture2DArray::clear(glm::vec3 clear_data, int mipmap_target)
+{
+	clear(clear_data, 0, 0, 0, width, height, texture_count, mipmap_target);
+}
+
+void Texture2DArray::clear(glm::vec4 clear_data, int mipmap_target)
+{
+	clear(clear_data, 0, 0, 0, width, height, texture_count, mipmap_target);
+}
+
+void Texture2DArray::clear(unsigned char clear_data, int x, int y, int z, int width, int height, int depth, int mipmap_target)
+{
+	if (!_texture_allocated || !_user_data_loaded) {
+		std::cout << "[OpenGL Error] Texture2DArray tried to clear() but either not allocated any ram or didn't loaded any user data yet" << std::endl;
+		ASSERT(false);
+	}
+
+	GLCall(glClearTexSubImage(id, mipmap_target, x, y, z, width, height, depth, GL_RED, GL_UNSIGNED_BYTE, &clear_data));
+}
+
+void Texture2DArray::clear(float clear_data, int x, int y, int z, int width, int height, int depth, int mipmap_target)
+{
+	if (!_texture_allocated || !_user_data_loaded) {
+		std::cout << "[OpenGL Error] Texture2DArray tried to clear() but either not allocated any ram or didn't loaded any user data yet" << std::endl;
+		ASSERT(false);
+	}
+
+	GLCall(glClearTexSubImage(id, mipmap_target, x, y, z, width, height, depth, GL_RED, GL_FLOAT, &clear_data));
+}
+
+void Texture2DArray::clear(glm::vec2 clear_data, int x, int y, int z, int width, int height, int depth, int mipmap_target)
+{
+	if (!_texture_allocated || !_user_data_loaded) {
+		std::cout << "[OpenGL Error] Texture2DArray tried to clear() but either not allocated any ram or didn't loaded any user data yet" << std::endl;
+		ASSERT(false);
+	}
+
+	GLCall(glClearTexSubImage(id, mipmap_target, x, y, z, width, height, depth, GL_RG, GL_FLOAT, &clear_data));
+}
+
+void Texture2DArray::clear(glm::vec3 clear_data, int x, int y, int z, int width, int height, int depth, int mipmap_target)
+{
+	if (!_texture_allocated || !_user_data_loaded) {
+		std::cout << "[OpenGL Error] Texture2DArray tried to clear() but either not allocated any ram or didn't loaded any user data yet" << std::endl;
+		ASSERT(false);
+	}
+
+	GLCall(glClearTexSubImage(id, mipmap_target, x, y, z, width, height, depth, GL_RGB, GL_FLOAT, &clear_data));
+}
+
+void Texture2DArray::clear(glm::vec4 clear_data, int x, int y, int z, int width, int height, int depth, int mipmap_target)
+{
+	if (!_texture_allocated || !_user_data_loaded) {
+		std::cout << "[OpenGL Error] Texture2DArray tried to clear() but either not allocated any ram or didn't loaded any user data yet" << std::endl;
+		ASSERT(false);
+	}
+
+	GLCall(glClearTexSubImage(id, mipmap_target, x, y, z, width, height, depth, GL_RGBA, GL_FLOAT, &clear_data));
+}
