@@ -598,3 +598,6 @@ build-obj/windows-Release-x86_64CTAnalyzer/FBPSolver.obj
 build-obj/windows-Release-x86_64CTAnalyzer/gpu_animated.obj
 build-obj/windows-Release-x86_64CTAnalyzer/gpu_fft_main.obj
 build-obj/windows-Release-x86_64CTAnalyzer/ParallelFastFourierTransform.obj
+build-obj/windows-Release-x86_64CTAnalyzer/fbp_parallel2d_main.obj
+build-obj/windows-Release-x86_64CTAnalyzer/fbp_animation_main.obj
+build-obj/windows-Release-x86_64CTAnalyzer/ct3d_parallel_main.obj
