@@ -118,15 +118,14 @@ void ComputeProgram::update_uniform(const std::string& name, Texture1D& texture1
 {
 	texture1d.wait_async_load();
 	if (!texture1d._texture_allocated) texture1d._allocate_texture();
+	if (!_does_uniform_exist(name)) return;
 
 	int slot = -1;
 	GLCall(glGetUniformiv(id, _get_uniform_location(name), &slot));
-	std::cout << slot << std::endl;
 	if (slot == -1) {
 		ASSERT(false);
 	}
 
-	if (!_does_uniform_exist(name)) return;
 	texture1d.bind(slot);
 	GLCall(glProgramUniform1i(id, _get_uniform_location(name), slot));
 }
@@ -135,15 +134,14 @@ void ComputeProgram::update_uniform(const std::string& name, Texture2D& texture2
 {
 	texture2d.wait_async_load();
 	if (!texture2d._texture_allocated) texture2d._allocate_texture();
-	
+	if (!_does_uniform_exist(name)) return;
+
 	int slot = -1;
 	GLCall(glGetUniformiv(id, _get_uniform_location(name), &slot));
-	std::cout << slot << std::endl;
 	if (slot == -1) {
 		ASSERT(false);
 	}
 
-	if (!_does_uniform_exist(name)) return;
 	texture2d.bind(slot);
 	GLCall(glProgramUniform1i(id, _get_uniform_location(name), slot));
 }
@@ -152,15 +150,14 @@ void ComputeProgram::update_uniform(const std::string& name, Texture3D& texture3
 {
 	texture3d.wait_async_load();
 	if (!texture3d._texture_allocated) texture3d._allocate_texture();
+	if (!_does_uniform_exist(name)) return;
 
 	int slot = -1;
 	GLCall(glGetUniformiv(id, _get_uniform_location(name), &slot));
-	std::cout << slot << std::endl;
 	if (slot == -1) {
 		ASSERT(false);
 	}
 
-	if (!_does_uniform_exist(name)) return;
 	texture3d.bind(slot);
 	GLCall(glProgramUniform1i(id, _get_uniform_location(name), slot));
 }
@@ -169,15 +166,14 @@ void ComputeProgram::update_uniform(const std::string& name, Texture2DArray& tex
 {
 	texture2darray.wait_async_load();
 	if (!texture2darray._texture_allocated) texture2darray._allocate_texture();
+	if (!_does_uniform_exist(name)) return;
 
 	int slot = -1;
 	GLCall(glGetUniformiv(id, _get_uniform_location(name), &slot));
-	std::cout << slot << std::endl;
 	if (slot == -1) {
 		ASSERT(false);
 	}
 
-	if (!_does_uniform_exist(name)) return;
 	texture2darray.bind(slot);
 	GLCall(glProgramUniform1i(id, _get_uniform_location(name), slot));
 }
@@ -186,15 +182,14 @@ void ComputeProgram::update_uniform(const std::string& name, TextureCubeMap& tex
 {
 	texturecubemap.wait_async_load();
 	if (!texturecubemap._texture_allocated) texturecubemap._allocate_texture();
+	if (!_does_uniform_exist(name)) return;
 
 	int slot = -1;
 	GLCall(glGetUniformiv(id, _get_uniform_location(name), &slot));
-	std::cout << slot << std::endl;
 	if (slot == -1) {
 		ASSERT(false);
 	}
 
-	if (!_does_uniform_exist(name)) return;
 	texturecubemap.bind(slot);
 	GLCall(glProgramUniform1i(id, _get_uniform_location(name), slot));
 }
