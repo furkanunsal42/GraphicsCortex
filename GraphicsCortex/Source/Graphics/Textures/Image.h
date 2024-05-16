@@ -44,7 +44,6 @@ public:
 	void save_to_disc(const std::string& target_filename) const;
 
 	unsigned char* _image_data = nullptr;
-private:
 
 	void _read_image_data(const ImageParameters& requested_parameters, int desired_channels);
 	void _read_image_data(int desired_channels);
@@ -57,6 +56,7 @@ private:
 	int _channel_count = 0;
 	int _bytes_per_channel = 0;
 	bool _image_is_loaded_from_stbi = false;
+private:
 
 	//void _read_image(const std::string& file_path, int desired_channels = 4);
 	//void _clear_ram();

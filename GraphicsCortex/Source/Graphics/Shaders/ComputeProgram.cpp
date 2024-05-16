@@ -117,9 +117,18 @@ void ComputeProgram::load_shader(const Shader& shader)
 void ComputeProgram::update_uniform(const std::string& name, Texture1D& texture1d)
 {
 	texture1d.wait_async_load();
-	if (!texture1d._texture_handle_created) texture1d._allocate_texture();
+	if (!texture1d._texture_allocated) texture1d._allocate_texture();
+
+	int slot = -1;
+	GLCall(glGetUniformiv(id, _get_uniform_location(name), &slot));
+	std::cout << slot << std::endl;
+	if (slot == -1) {
+		ASSERT(false);
+	}
+
 	if (!_does_uniform_exist(name)) return;
-	GLCall(glProgramUniformHandleui64ARB(id, _get_uniform_location(name), texture1d.texture_handle));
+	texture1d.bind(slot);
+	GLCall(glProgramUniform1i(id, _get_uniform_location(name), slot));
 }
 
 void ComputeProgram::update_uniform(const std::string& name, Texture2D& texture2d)
@@ -142,35 +151,71 @@ void ComputeProgram::update_uniform(const std::string& name, Texture2D& texture2
 void ComputeProgram::update_uniform(const std::string& name, Texture3D& texture3d)
 {
 	texture3d.wait_async_load();
-	if (!texture3d._texture_handle_created) texture3d._allocate_texture();
+	if (!texture3d._texture_allocated) texture3d._allocate_texture();
+
+	int slot = -1;
+	GLCall(glGetUniformiv(id, _get_uniform_location(name), &slot));
+	std::cout << slot << std::endl;
+	if (slot == -1) {
+		ASSERT(false);
+	}
+
 	if (!_does_uniform_exist(name)) return;
-	GLCall(glProgramUniformHandleui64ARB(id, _get_uniform_location(name), texture3d.texture_handle));
+	texture3d.bind(slot);
+	GLCall(glProgramUniform1i(id, _get_uniform_location(name), slot));
 }
 
 void ComputeProgram::update_uniform(const std::string& name, Texture2DArray& texture2darray)
 {
 	texture2darray.wait_async_load();
-	if (!texture2darray._texture_handle_created) texture2darray._allocate_texture();
+	if (!texture2darray._texture_allocated) texture2darray._allocate_texture();
+
+	int slot = -1;
+	GLCall(glGetUniformiv(id, _get_uniform_location(name), &slot));
+	std::cout << slot << std::endl;
+	if (slot == -1) {
+		ASSERT(false);
+	}
+
 	if (!_does_uniform_exist(name)) return;
-	GLCall(glProgramUniformHandleui64ARB(id, _get_uniform_location(name), texture2darray.texture_handle));
+	texture2darray.bind(slot);
+	GLCall(glProgramUniform1i(id, _get_uniform_location(name), slot));
 }
 
 void ComputeProgram::update_uniform(const std::string& name, TextureCubeMap& texturecubemap)
 {
 	texturecubemap.wait_async_load();
-	if (!texturecubemap._texture_handle_created) texturecubemap._allocate_texture();
+	if (!texturecubemap._texture_allocated) texturecubemap._allocate_texture();
+
+	int slot = -1;
+	GLCall(glGetUniformiv(id, _get_uniform_location(name), &slot));
+	std::cout << slot << std::endl;
+	if (slot == -1) {
+		ASSERT(false);
+	}
+
 	if (!_does_uniform_exist(name)) return;
-	GLCall(glProgramUniformHandleui64ARB(id, _get_uniform_location(name), texturecubemap.texture_handle));
+	texturecubemap.bind(slot);
+	GLCall(glProgramUniform1i(id, _get_uniform_location(name), slot));
 }
 
 void ComputeProgram::update_uniform_bindless(const std::string& name, Texture1D& texture1d)
 {
+	if (!texture1d.is_bindless) {
+		std::cout << "[OpenGL Error] ComputeProgram tried to update_uniform_bindless() but Texture1D.is_bindless was false" << std::endl;
+		ASSERT(false);
+	}
+
+	texture1d.wait_async_load();
+	if (!texture1d._texture_handle_created) texture1d._allocate_texture();
+	if (!_does_uniform_exist(name)) return;
+	GLCall(glProgramUniformHandleui64ARB(id, _get_uniform_location(name), texture1d.texture_handle));
 }
 
 void ComputeProgram::update_uniform_bindless(const std::string& name, Texture2D& texture2d)
 {
 	if (!texture2d.is_bindless) {
-		std::cout << "[OpenGL Error] ComputeProgram tried to update_uniform_bindless() but texture2d.is_bindless was false" << std::endl;
+		std::cout << "[OpenGL Error] ComputeProgram tried to update_uniform_bindless() but Texture2D.is_bindless was false" << std::endl;
 		ASSERT(false);
 	}
 
@@ -178,19 +223,45 @@ void ComputeProgram::update_uniform_bindless(const std::string& name, Texture2D&
 	if (!texture2d._texture_handle_created) texture2d._allocate_texture();
 	if (!_does_uniform_exist(name)) return;
 	GLCall(glProgramUniformHandleui64ARB(id, _get_uniform_location(name), texture2d.texture_handle));
-
 }
 
 void ComputeProgram::update_uniform_bindless(const std::string& name, Texture3D& texture3d)
 {
+	if (!texture3d.is_bindless) {
+		std::cout << "[OpenGL Error] ComputeProgram tried to update_uniform_bindless() but Texture3D.is_bindless was false" << std::endl;
+		ASSERT(false);
+	}
+
+	texture3d.wait_async_load();
+	if (!texture3d._texture_handle_created) texture3d._allocate_texture();
+	if (!_does_uniform_exist(name)) return;
+	GLCall(glProgramUniformHandleui64ARB(id, _get_uniform_location(name), texture3d.texture_handle));
 }
 
 void ComputeProgram::update_uniform_bindless(const std::string& name, Texture2DArray& texture2darray)
 {
+	if (!texture2darray.is_bindless) {
+		std::cout << "[OpenGL Error] ComputeProgram tried to update_uniform_bindless() but Texture2DArray.is_bindless was false" << std::endl;
+		ASSERT(false);
+	}
+
+	texture2darray.wait_async_load();
+	if (!texture2darray._texture_handle_created) texture2darray._allocate_texture();
+	if (!_does_uniform_exist(name)) return;
+	GLCall(glProgramUniformHandleui64ARB(id, _get_uniform_location(name), texture2darray.texture_handle));
 }
 
 void ComputeProgram::update_uniform_bindless(const std::string& name, TextureCubeMap& texturecubemap)
 {
+	//if (!texturecubemap.is_bindless) {
+	//	std::cout << "[OpenGL Error] ComputeProgram tried to update_uniform_bindless() but TextureCubeMap.is_bindless was false" << std::endl;
+	//	ASSERT(false);
+	//}
+
+	texturecubemap.wait_async_load();
+	if (!texturecubemap._texture_handle_created) texturecubemap._allocate_texture();
+	if (!_does_uniform_exist(name)) return;
+	GLCall(glProgramUniformHandleui64ARB(id, _get_uniform_location(name), texturecubemap.texture_handle));
 }
 
 void ComputeProgram::update_uniform_as_image(const std::string& name, Texture1D& texture1d, int mipmap_level)
@@ -205,7 +276,7 @@ void ComputeProgram::update_uniform_as_image(const std::string& name, Texture1D&
 		ASSERT(false);
 	}
 
-	texture1d.bind_as_image(slot, 0);
+	texture1d.bind_as_image(slot, mipmap_level);
 	GLCall(glProgramUniform1i(id, _get_uniform_location(name), slot));
 }
 
@@ -221,7 +292,7 @@ void ComputeProgram::update_uniform_as_image(const std::string& name, Texture2D&
 		ASSERT(false);
 	}
 
-	texture2d.bind_as_image(slot, 0);
+	texture2d.bind_as_image(slot, mipmap_level);
 	GLCall(glProgramUniform1i(id, _get_uniform_location(name), slot));
 }
 
@@ -237,7 +308,7 @@ void ComputeProgram::update_uniform_as_image(const std::string& name, Texture3D&
 		ASSERT(false);
 	}
 
-	texture3d.bind_as_image(slot, 0);
+	texture3d.bind_as_image(slot, mipmap_level);
 	GLCall(glProgramUniform1i(id, _get_uniform_location(name), slot));
 }
 
@@ -254,7 +325,7 @@ void ComputeProgram::update_uniform_as_image(const std::string& name, Texture2DA
 		ASSERT(false);
 	}
 
-	texture2darray.bind_as_image(slot, 0);
+	texture2darray.bind_as_image(slot, mipmap_level);
 	GLCall(glProgramUniform1i(id, _get_uniform_location(name), slot));
 }
 
