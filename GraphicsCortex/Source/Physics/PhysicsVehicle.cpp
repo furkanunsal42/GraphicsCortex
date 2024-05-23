@@ -386,6 +386,24 @@ void PhysicsVehicle::_create_control() {
 		}
 	};
 
+	PadSmoothingData =
+	{
+		{
+			6.0f,	//rise rate eANALOG_INPUT_ACCEL
+			6.0f,	//rise rate eANALOG_INPUT_BRAKE		
+			6.0f,	//rise rate eANALOG_INPUT_HANDBRAKE	
+			2.5f,	//rise rate eANALOG_INPUT_STEER_LEFT
+			2.5f,	//rise rate eANALOG_INPUT_STEER_RIGHT
+		},
+		{
+			10.0f,	//fall rate eANALOG_INPUT_ACCEL
+			10.0f,	//fall rate eANALOG_INPUT_BRAKE		
+			10.0f,	//fall rate eANALOG_INPUT_HANDBRAKE	
+			5.0f,	//fall rate eANALOG_INPUT_STEER_LEFT
+			5.0f	//fall rate eANALOG_INPUT_STEER_RIGHT
+		}
+	};
+
 	physx::PxF32 SteerVsForwardSpeedData[2 * 8] =
 	{
 		0.0f,		0.75f,
@@ -408,7 +426,8 @@ void PhysicsVehicle::simulation_step(long double timestep) {
 	const physx::PxU32 raycastResultsSize = SceneQueryData->getQueryResultBufferSize();
 	PxVehicleSuspensionRaycasts(BatchQuery, 1, vehicles, raycastResultsSize, raycastResults);
 
-	PxVehicleDrive4WSmoothDigitalRawInputsAndSetAnalogInputs(KeySmoothingData, SteerVsForwardSpeedTable, InputData, timestep, is_vehicle_in_air, *vehicle_drive);
+	PxVehicleDrive4WSmoothAnalogRawInputsAndSetAnalogInputs(PadSmoothingData, SteerVsForwardSpeedTable, InputData, timestep, is_vehicle_in_air, *vehicle_drive);
+	//PxVehicleDrive4WSmoothDigitalRawInputsAndSetAnalogInputs(KeySmoothingData, SteerVsForwardSpeedTable, InputData, timestep, is_vehicle_in_air, *vehicle_drive);
 
 	//Vehicle update.
 	const physx::PxVec3 grav = PhysxContext::get().physics_scene->getGravity();
@@ -547,29 +566,52 @@ void PhysicsVehicle::vehicle_control_joystick(GLFWwindow* window) {
 	for (int i = GLFW_JOYSTICK_1; i <= GLFW_JOYSTICK_16; i++) {
 		if (glfwJoystickPresent(GLFW_JOYSTICK_1)) first_available_joystick = i;
 	}
-	if (first_available_joystick == -1) return;
+	if (first_available_joystick == -1) {
+		std::cout << "[Input Error] PhysicsVehicle::vehicle_control_joystick() is called but no joystick detected." << std::endl;
+		return;
+	}
 
 	int axesCount;
 	const float* axes = glfwGetJoystickAxes(GLFW_JOYSTICK_1, &axesCount);
+	
+	int buttons_count;
+	const unsigned char* buttons = glfwGetJoystickButtons(GLFW_MOUSE_BUTTON_1, &buttons_count);
+
+	//for (int i = 0; i < axesCount; i++) {
+	//	std::cout << "Axis " << i << ": " << axes[i] << " ";
+	//}
+	//std::cout << std::endl;
+
+	//for (int i = 0; i < buttons_count; i++) {
+	//	std::cout << "Button " << i << ": " << (int)buttons[i] << " ";
+	//}
+	//std::cout << std::endl;
 
 
-	bool forward;
-	bool backward;
-	bool left;
-	bool right;
-	if (axesCount > 0) {
-		right = axes[0] < -0.5f;
-		left = axes[0] > 0.5f;
+	InputData.setAnalogBrake(std::max(axes[1], 0.0f));
+	if (axes[1] > -0.99) InputData.setAnalogHandbrake(std::max(axes[1], 0.0f));
+	InputData.setAnalogAccel(-std::min(axes[1], 0.0f));
+	InputData.setAnalogSteer(-axes[0]);
+	
+	//InputData.setGearUp(!_gear_up_is_holding && buttons[0]);
+	//InputData.setGearDown(!_gear_down_is_holding && buttons[1]);
+
+
+	if (buttons[0]) {
+		if (vehicle_drive->mDriveDynData.getTargetGear() < snippetvehicle::PxVehicleGearsData::eFIRST)
+			vehicle_drive->mDriveDynData.forceGearChange(snippetvehicle::PxVehicleGearsData::eFIRST);
 	}
+	vehicle_drive->mDriveDynData.setUseAutoGears(true);
 
-	if (axesCount > 1) {
-		backward = axes[1] > 0.5f;
-		forward = axes[1] < -0.5f;
+	if (buttons[1]) {
+		if (vehicle_drive->mDriveDynData.getTargetGear() > snippetvehicle::PxVehicleGearsData::eREVERSE)
+			vehicle_drive->mDriveDynData.forceGearChange(snippetvehicle::PxVehicleGearsData::eREVERSE);
 	}
+	
+	_gear_up_is_holding = buttons[0];
+	_gear_down_is_holding = buttons[1];
 
-	//std::cout << "Axis 1: " << axes[0] << " ";
-	//std::cout << "Axis 2: " << axes[1] << " ";
-
+	/*
 	InputData.setDigitalAccel(false);
 	InputData.setDigitalBrake(false);
 	InputData.setDigitalHandbrake(false);
@@ -623,6 +665,7 @@ void PhysicsVehicle::vehicle_control_joystick(GLFWwindow* window) {
 
 	//std::cout << "rotation: " << vehicle_drive->mDriveDynData.getEngineRotationSpeed() << std::endl;
 	//std::cout << "gear: " << vehicle_drive->mDriveDynData.getCurrentGear() << std::endl;
+	*/
 }
 
 void PhysicsVehicle::set_position(float x, float y, float z) {

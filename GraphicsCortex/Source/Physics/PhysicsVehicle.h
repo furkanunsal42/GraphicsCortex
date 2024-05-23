@@ -38,7 +38,7 @@ public:
 
 	physx::PxVehicleDrive4WRawInputData InputData;
 	physx::PxVehicleKeySmoothingData KeySmoothingData;
-	//*physx::PxVehiclePadSmoothingData PadSmoothingData;
+	physx::PxVehiclePadSmoothingData PadSmoothingData;
 	physx::PxF32 SteerVsForwardSpeedData[2 * 8];
 	physx::PxFixedSizeLookupTable<8> SteerVsForwardSpeedTable;
 
@@ -158,4 +158,8 @@ private:
 	void _create_drive_sim();
 	void _create_drive();
 	void _create_control();
+
+	bool _gear_up_is_holding = false;
+	bool _gear_down_is_holding = false;
+
 };

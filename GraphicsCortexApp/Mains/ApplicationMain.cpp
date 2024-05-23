@@ -121,7 +121,7 @@ int main() {
 		frame.display_performance(180);
 
 		//scene.camera->handle_movements(frame.window, frame_time);
-		vehicle->physics_representation.vehicle_control(frame.window);
+		vehicle->physics_representation.vehicle_control_joystick(frame.window);
 		vehicle->sync_with_physics();
 
 		// let camera follow the car
