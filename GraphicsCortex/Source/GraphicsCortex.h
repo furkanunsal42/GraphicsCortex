@@ -38,9 +38,9 @@
 #include "Default_Programs.h"
 #include "SkyBox.h"
 
-#include "RenderPipeline.h"
-#include "RenderPass_GBuffer.h"
-#include "RenderPass_Deferred.h"
+#include "Rendering/RenderPipeline.h"
+#include "RenderPasses/RenderPass_GBuffer.h"
+#include "RenderPasses/RenderPass_Deferred.h"
 
 #include "AssetImporter.h"
 #include "DirectoryUtils.h"

@@ -146,13 +146,13 @@ void Image::_read_image_data(const ImageParameters& requested_parameters)
 
 
 
-	_bytes_per_channel = stbi_is_16_bit(_source_filepath.c_str()) ? 2 : 1;
+	_bytes_per_channel = stbi_is_16_bit(requested_parameters.path.c_str()) ? 2 : 1;
 	
 	stbi_set_flip_vertically_on_load_thread(_vertical_flip);
 	if (_bytes_per_channel== 1)
-		_image_data = stbi_load(_source_filepath.c_str(), &_width, &_height, &_channel_count, requested_parameters.channel_count);
+		_image_data = stbi_load(requested_parameters.path.c_str(), &_width, &_height, &_channel_count, requested_parameters.channel_count);
 	if (_bytes_per_channel == 2)
-		_image_data = (unsigned char*)stbi_load_16(_source_filepath.c_str(), &_width, &_height, &_channel_count, requested_parameters.channel_count);
+		_image_data = (unsigned char*)stbi_load_16(requested_parameters.path.c_str(), &_width, &_height, &_channel_count, requested_parameters.channel_count);
 
 	_channel_count = requested_parameters.channel_count;
 	_depth = 1;
