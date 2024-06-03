@@ -1,7 +1,12 @@
 #pragma once
-#include "Texture2D.h"
-#include "ShaderCompiler.h"
+
 #include <unordered_map>
+#include "ShaderCompiler.h"
+#include "Texture1D.h"
+#include "Texture2D.h"
+#include "Texture3D.h"
+#include "Texture2DArray.h"
+#include "TextureCubeMap.h"
 
 class BindlessMaterial {
 public:
