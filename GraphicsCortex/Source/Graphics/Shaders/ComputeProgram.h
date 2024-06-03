@@ -5,6 +5,24 @@ class ComputeProgram {
 public:
 	unsigned int id;
 
+	enum MemoryBarrierType {
+		VERTEX_ATTRIB_ARRAY_BARRIER_BIT		= 0x00000001,
+		ELEMENT_ARRAY_BARRIER_BIT			= 0x00000002,
+		UNIFORM_BARRIER_BIT					= 0x00000004,
+		TEXTURE_FETCH_BARRIER_BIT			= 0x00000008,
+		SHADER_IMAGE_ACCESS_BARRIER_BIT		= 0x00000020,
+		COMMAND_BARRIER_BIT					= 0x00000040,
+		PIXEL_BUFFER_BARRIER_BIT			= 0x00000080,
+		TEXTURE_UPDATE_BARRIER_BIT			= 0x00000100,
+		BUFFER_UPDATE_BARRIER_BIT			= 0x00000200,
+		FRAMEBUFFER_BARRIER_BIT				= 0x00000400,
+		TRANSFORM_FEEDBACK_BARRIER_BIT		= 0x00000800,
+		ATOMIC_COUNTER_BARRIER_BIT			= 0x00001000,
+		SHADER_STORAGE_BARRIER_BIT			= 0x00002000,
+		QUERY_BUFFER_BARRIER_BIT			= 0x00008000,
+		ALL_BARRIER_BITS					= 0xFFFFFFFF,
+	};
+
 	ComputeProgram();
 	ComputeProgram(const Shader& shader);
 	ComputeProgram(const ComputeProgram& other) = delete;
@@ -12,10 +30,15 @@ public:
 	void release();
 
 	void dispatch(int workgroup_size_x, int workgroup_size_y, int workgroup_size_z);
+	void dispatch_without_barrier(int workgroup_size_x, int workgroup_size_y, int workgroup_size_z);
+	void memory_barrier(MemoryBarrierType barrier);
+
 	void bind();
 	void unbind();
 
 	void load_shader(const Shader& shader);
+
+	glm::ivec3 get_work_group_size();
 
 	void update_uniform(const std::string& name, Texture1D& texture1d);
 	void update_uniform(const std::string& name, Texture2D& texture2d);

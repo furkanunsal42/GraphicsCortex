@@ -33,6 +33,12 @@ void ComputeProgram::release()
 
 void ComputeProgram::dispatch(int workgroup_size_x, int workgroup_size_y, int workgroup_size_z)
 {
+	dispatch_without_barrier(workgroup_size_x, workgroup_size_y, workgroup_size_z);
+	memory_barrier(MemoryBarrierType::ALL_BARRIER_BITS);
+}
+
+void ComputeProgram::dispatch_without_barrier(int workgroup_size_x, int workgroup_size_y, int workgroup_size_z)
+{
 	if (!_program_generated) {
 		std::cout << "[OpenGL Error] ComputeProgram tried to dispatch() but it was released" << std::endl;
 		ASSERT(false);
@@ -45,7 +51,31 @@ void ComputeProgram::dispatch(int workgroup_size_x, int workgroup_size_y, int wo
 
 	bind();
 	GLCall(glDispatchCompute(workgroup_size_x, workgroup_size_y, workgroup_size_z));
-	GLCall(glMemoryBarrier(GL_ALL_BARRIER_BITS));
+}
+
+void ComputeProgram::memory_barrier(MemoryBarrierType barrier)
+{
+	unsigned int gl_barrier_bits = 0;
+
+	gl_barrier_bits |= barrier & VERTEX_ATTRIB_ARRAY_BARRIER_BIT	?	GL_VERTEX_ATTRIB_ARRAY_BARRIER_BIT	: 0;
+	gl_barrier_bits |= barrier & ELEMENT_ARRAY_BARRIER_BIT			?	GL_ELEMENT_ARRAY_BARRIER_BIT		: 0;
+	gl_barrier_bits |= barrier & UNIFORM_BARRIER_BIT				?	GL_UNIFORM_BARRIER_BIT				: 0;
+	gl_barrier_bits |= barrier & TEXTURE_FETCH_BARRIER_BIT			?	GL_TEXTURE_FETCH_BARRIER_BIT		: 0;
+	gl_barrier_bits |= barrier & SHADER_IMAGE_ACCESS_BARRIER_BIT	?	GL_SHADER_IMAGE_ACCESS_BARRIER_BIT	: 0;
+	gl_barrier_bits |= barrier & COMMAND_BARRIER_BIT				?	GL_COMMAND_BARRIER_BIT				: 0;
+	gl_barrier_bits |= barrier & PIXEL_BUFFER_BARRIER_BIT			?	GL_PIXEL_BUFFER_BARRIER_BIT			: 0;
+	gl_barrier_bits |= barrier & TEXTURE_UPDATE_BARRIER_BIT			?	GL_TEXTURE_UPDATE_BARRIER_BIT		: 0;
+	gl_barrier_bits |= barrier & BUFFER_UPDATE_BARRIER_BIT			?	GL_BUFFER_UPDATE_BARRIER_BIT		: 0;
+	gl_barrier_bits |= barrier & FRAMEBUFFER_BARRIER_BIT			?	GL_FRAMEBUFFER_BARRIER_BIT			: 0;
+	gl_barrier_bits |= barrier & TRANSFORM_FEEDBACK_BARRIER_BIT		?	GL_TRANSFORM_FEEDBACK_BARRIER_BIT	: 0;
+	gl_barrier_bits |= barrier & ATOMIC_COUNTER_BARRIER_BIT			?	GL_ATOMIC_COUNTER_BARRIER_BIT		: 0;
+	gl_barrier_bits |= barrier & SHADER_STORAGE_BARRIER_BIT			?	GL_SHADER_STORAGE_BARRIER_BIT		: 0;
+	gl_barrier_bits |= barrier & QUERY_BUFFER_BARRIER_BIT			?	GL_QUERY_BUFFER_BARRIER_BIT			: 0;
+	gl_barrier_bits |= barrier & ALL_BARRIER_BITS					?	GL_ALL_BARRIER_BITS					: 0;
+
+	if (gl_barrier_bits != 0) {
+		GLCall(glMemoryBarrier(gl_barrier_bits));
+	}
 }
 
 void ComputeProgram::bind()
@@ -112,6 +142,25 @@ void ComputeProgram::load_shader(const Shader& shader)
 	GLCall(glDetachShader(id, compute_shader));
 
 	_program_compiled = true;
+}
+
+glm::ivec3 ComputeProgram::get_work_group_size()
+{
+	if (!_program_generated) {
+		std::cout << "[OpenGL Error] ComputeProgram tried to get_work_group_size() but it was released" << std::endl;
+		ASSERT(false);
+	}
+
+	if (!_program_compiled) {
+		std::cout << "[OpenGL Error] ComputeProgram tried to get_work_group_size() but it wasn't compiled yet" << std::endl;
+		ASSERT(false);
+	}
+	
+	int work_group_size[3];
+
+	glGetProgramiv(id, GL_COMPUTE_WORK_GROUP_SIZE, work_group_size);
+
+	return glm::ivec3(work_group_size[0], work_group_size[1], work_group_size[2]);
 }
 
 void ComputeProgram::update_uniform(const std::string& name, Texture1D& texture1d)
