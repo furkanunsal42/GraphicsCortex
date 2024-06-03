@@ -37,6 +37,11 @@ void ComputeProgram::dispatch(int workgroup_size_x, int workgroup_size_y, int wo
 	memory_barrier(MemoryBarrierType::ALL_BARRIER_BITS);
 }
 
+void ComputeProgram::dispatch_thread(int thread_count_x, int thread_count_y, int thread_count_z)
+{
+	dispatch(std::ceil(thread_count_x / (float)_work_group_size.x), std::ceil(thread_count_y / (float)_work_group_size.y), std::ceil(thread_count_z / (float)_work_group_size.z));
+}
+
 void ComputeProgram::dispatch_without_barrier(int workgroup_size_x, int workgroup_size_y, int workgroup_size_z)
 {
 	if (!_program_generated) {
@@ -51,6 +56,11 @@ void ComputeProgram::dispatch_without_barrier(int workgroup_size_x, int workgrou
 
 	bind();
 	GLCall(glDispatchCompute(workgroup_size_x, workgroup_size_y, workgroup_size_z));
+}
+
+void ComputeProgram::dispatch_thread_without_barrier(int thread_count_x, int thread_count_y, int thread_count_z)
+{
+	dispatch_without_barrier(std::ceil(thread_count_x / (float)_work_group_size.x), std::ceil(thread_count_y / (float)_work_group_size.y), std::ceil(thread_count_z / (float)_work_group_size.z));
 }
 
 void ComputeProgram::memory_barrier(MemoryBarrierType barrier)
@@ -142,6 +152,7 @@ void ComputeProgram::load_shader(const Shader& shader)
 	GLCall(glDetachShader(id, compute_shader));
 
 	_program_compiled = true;
+	_work_group_size = get_work_group_size();
 }
 
 glm::ivec3 ComputeProgram::get_work_group_size()

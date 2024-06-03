@@ -30,7 +30,9 @@ public:
 	void release();
 
 	void dispatch(int workgroup_size_x, int workgroup_size_y, int workgroup_size_z);
+	void dispatch_thread(int thread_count_x, int thread_count_y, int thread_count_z);
 	void dispatch_without_barrier(int workgroup_size_x, int workgroup_size_y, int workgroup_size_z);
+	void dispatch_thread_without_barrier(int thread_count_x, int thread_count_y, int thread_count_z);
 	void memory_barrier(MemoryBarrierType barrier);
 
 	void bind();
@@ -97,6 +99,8 @@ private:
 
 	bool _program_generated = false;
 	bool _program_compiled = false;
+
+	glm::ivec3 _work_group_size;
 
 	void _generate_program();
 
