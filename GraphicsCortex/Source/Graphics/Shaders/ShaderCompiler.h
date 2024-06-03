@@ -259,8 +259,14 @@ public:
 	void update_uniform(const std::string& name, Texture1D& texture1d);
 	void update_uniform(const std::string& name, Texture2D& texture2d);
 	void update_uniform(const std::string& name, Texture3D& texture3d);
-	void update_uniform(const std::string& name, Texture2DArray& texturearray);
+	void update_uniform(const std::string& name, Texture2DArray& texture2darray);
 	void update_uniform(const std::string& name, TextureCubeMap& texturecubemap);
+
+	void update_uniform_bindless(const std::string& name, Texture1D& texture1d);
+	void update_uniform_bindless(const std::string& name, Texture2D& texture2d);
+	void update_uniform_bindless(const std::string& name, Texture3D& texture3d);
+	void update_uniform_bindless(const std::string& name, Texture2DArray& texture2darray);
+	void update_uniform_bindless(const std::string& name, TextureCubeMap& texturecubemap);
 
 	void update_uniform(const std::string& name, const int& a, const int& b, const int& c, const int& d);
 	void update_uniform(const std::string& name, const float& a, const float& b, const float& c, const float& d);
@@ -302,6 +308,10 @@ public:
 
 private:
 	std::unordered_map<std::string, std::shared_ptr<UniformBuffer>> _uniform_buffers;
+
+	std::unordered_map<std::string, int> _uniform_location_table;
+	bool _does_uniform_exist(const std::string& name);
+	int _get_uniform_location(const std::string& name);
 };
 
  class UpdatesDefaultUniforms {
