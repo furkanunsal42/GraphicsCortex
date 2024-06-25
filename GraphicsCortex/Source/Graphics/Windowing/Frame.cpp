@@ -40,6 +40,11 @@ Frame::Frame(int width, int height, const std::string& name, int msaa, int swapi
 	if(multisample)
 		glfwWindowHint(GLFW_SAMPLES, multisample);
 
+	if (window_width == 0 || window_height == 0) {
+		window_width = 1; window_height = 1; width = 1; height = 1;
+		glfwWindowHint(GLFW_VISIBLE, 0);
+	}
+
 	window = glfwCreateWindow(width, height, name.c_str(), nullptr, nullptr);
 	glfwMakeContextCurrent(window);
 	glfwSwapInterval(swapinterval);
@@ -95,7 +100,7 @@ Frame::Frame(int width, int height, const std::string& name, int msaa, int swapi
 		int low			 = debug_callback_level >= CallbackLevel::LOW			? GL_TRUE : GL_FALSE;
 		int medium		 = debug_callback_level >= CallbackLevel::MEDIUM		? GL_TRUE : GL_FALSE;
 		int high		 = debug_callback_level >= CallbackLevel::HIGH			? GL_TRUE : GL_FALSE;
-
+	
 		glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, nullptr, notification);
 		glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_LOW,		  0, nullptr, low);
 		glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_MEDIUM,		  0, nullptr, medium);
