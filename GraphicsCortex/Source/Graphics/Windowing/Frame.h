@@ -44,7 +44,7 @@ public:
 	double handle_window();
 	void set_viewport(int width, int height);
 	void set_viewport(glm::vec2 size);
-
+	void set_visibility(bool value);
 	enum CursorType {
 		Arrow = 0,
 		IBeam,
@@ -196,7 +196,7 @@ public:
 	bool get_key_press(Frame::Key key);
 
 private:
-
+	bool visible = true;
 	CursorState _cursor_state;
 	CursorType _current_cursor_type;
 	void _window_resize_callback(GLFWwindow* window, int width, int height);

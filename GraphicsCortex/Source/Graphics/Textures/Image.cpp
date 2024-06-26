@@ -133,11 +133,10 @@ void Image::_read_image_data(const ImageParameters& requested_parameters)
 			}
 
 			int buffer_pointer = requested_parameters.vertical_flip ? file_size - row_size : 0;
-			//int buffer_pointer = 0;
+			
 			while (!file.eof()) {
 				file.read((char*)_image_data + buffer_pointer, buffer_size);
 				buffer_pointer += requested_parameters.vertical_flip ? -buffer_size : buffer_size;
-				//buffer_pointer += buffer_size;
 			}
 
 			return;

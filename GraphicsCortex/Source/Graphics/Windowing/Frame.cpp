@@ -40,11 +40,7 @@ Frame::Frame(int width, int height, const std::string& name, int msaa, int swapi
 	if(multisample)
 		glfwWindowHint(GLFW_SAMPLES, multisample);
 
-	if (window_width == 0 || window_height == 0) {
-		window_width = 1; window_height = 1; width = 1; height = 1;
-		glfwWindowHint(GLFW_VISIBLE, 0);
-	}
-
+	glfwWindowHint(GLFW_VISIBLE, 0);
 	window = glfwCreateWindow(width, height, name.c_str(), nullptr, nullptr);
 	glfwMakeContextCurrent(window);
 	glfwSwapInterval(swapinterval);
@@ -185,6 +181,10 @@ bool Frame::is_running() {
 
 bool first_handle = true;
 double Frame::handle_window() {
+	if (visible && first_handle) {
+		glfwShowWindow(window);
+	}
+
 	if (!first_handle)
 		glfwSwapBuffers(window);
 	glfwPollEvents();
@@ -216,6 +216,16 @@ void Frame::set_viewport(int width, int height) {
 
 void Frame::set_viewport(glm::vec2 size) {
 	set_viewport(size.x, size.y);
+}
+
+void Frame::set_visibility(bool value)
+{
+	if (visible != value && !first_handle) {
+		if (value) glfwShowWindow(window);
+		else glfwHideWindow(window);
+	}
+
+	visible = value;
 }
 
 Vec2<int> Frame::get_cursor_position() {
