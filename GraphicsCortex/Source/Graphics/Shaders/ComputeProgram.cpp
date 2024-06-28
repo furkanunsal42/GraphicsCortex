@@ -6,6 +6,8 @@
 #include "Texture2DArray.h"
 #include "TextureCubeMap.h"
 
+#include <sstream>
+
 ComputeProgram::ComputeProgram()
 {
 	_generate_program();
@@ -14,7 +16,7 @@ ComputeProgram::ComputeProgram()
 ComputeProgram::ComputeProgram(const Shader& shader)
 {
 	_generate_program();
-	load_shader(shader);
+	compile_shader(shader);
 }
 
 ComputeProgram::~ComputeProgram()
@@ -108,11 +110,48 @@ void ComputeProgram::unbind()
 	GLCall(glUseProgram(0));
 }
 
-void ComputeProgram::load_shader(const Shader& shader)
+void ComputeProgram::compile_shader(const Shader& shader)
 {
+	Shader shader_to_use = shader;
+	if (_preprocessing_defines.size() != 0) {
+		Shader variant;
+		std::string line;
+		std::stringstream compute_shader_stream(shader.compute_shader);
+		while (std::getline(compute_shader_stream, line)) {
+			if (int define_begin = line.find("#define") != std::string::npos) {
+				
+				int name_position_begin = define_begin + 7;
+				while (name_position_begin < line.size() && line.at(name_position_begin) == ' ') { name_position_begin++; }
+				
+				int name_position_end = name_position_begin;
+				while (name_position_end < line.size() && line.at(name_position_end) != ' ') { name_position_end++; }
+
+				int value_position_begin = name_position_end;
+				while (value_position_begin < line.size() && line.at(value_position_begin) == ' ') { value_position_begin++; }
+
+				int value_position_end = value_position_begin;
+				while (value_position_end < line.size() && line.at(value_position_end) == ' ') { value_position_end++; }
+
+				std::string define_name = line.substr(name_position_begin, name_position_end);
+				bool has_key = value_position_begin == value_position_end;
+				
+				if (_preprocessing_defines.find(define_name) == _preprocessing_defines.end()) continue;
+
+				if (!has_key) line = line.substr(0, name_position_end) + " " + _preprocessing_defines[define_name];
+				else line.replace(value_position_begin, value_position_end, _preprocessing_defines[define_name]);
+
+				std::cout << line << std::endl;
+			}
+
+			variant.compute_shader += line;
+		}
+
+		shader_to_use = variant;
+	}
+
 	unsigned int compute_shader;
 	GLCall(compute_shader = glCreateShader(GL_COMPUTE_SHADER));
-	const char* string = shader.compute_shader.c_str();
+	const char* string = shader_to_use.compute_shader.c_str();
 	GLCall(glShaderSource(compute_shader, 1, &string, nullptr));
 
 	GLCall(glCompileShader(compute_shader));
@@ -153,6 +192,21 @@ void ComputeProgram::load_shader(const Shader& shader)
 
 	_program_compiled = true;
 	_work_group_size = get_work_group_size();
+}
+
+void ComputeProgram::clear_preprocessor(const std::string& key, const std::string& value)
+{
+	_preprocessing_defines.clear();
+}
+
+void ComputeProgram::set_preprocessor(const std::string& key, const std::string& value)
+{
+	_preprocessing_defines[key] = value;
+}
+
+std::string ComputeProgram::get_preprocessor(const std::string& key, const std::string& value)
+{
+	return _preprocessing_defines[key];
 }
 
 glm::ivec3 ComputeProgram::get_work_group_size()

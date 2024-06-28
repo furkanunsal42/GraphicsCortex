@@ -38,8 +38,11 @@ public:
 	void bind();
 	void unbind();
 
-	void load_shader(const Shader& shader);
-
+	void clear_preprocessor(const std::string& key, const std::string& value);
+	void set_preprocessor(const std::string& key, const std::string& value);
+	std::string get_preprocessor(const std::string& key, const std::string& value);
+	void compile_shader(const Shader& shader);
+	
 	glm::ivec3 get_work_group_size();
 
 	void update_uniform(const std::string& name, Texture1D& texture1d);
@@ -107,5 +110,8 @@ private:
 	bool _does_uniform_exist(const std::string& name);
 	int _get_uniform_location(const std::string& name);
 
+	Shader current_shader;
+
 	std::unordered_map<std::string, int> _uniform_location_table;
+	std::unordered_map<std::string, std::string> _preprocessing_defines;
 };

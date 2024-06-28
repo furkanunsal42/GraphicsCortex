@@ -162,6 +162,23 @@ void Image::_read_image_data(const ImageParameters& requested_parameters)
 	resize_stride(requested_parameters.bytes_per_channel);
 }
 
+void Image::swap_endian()
+{
+	int image_size = _width * _height * _channel_count * _bytes_per_channel;
+	
+	if (_bytes_per_channel == 1) return;
+	for (char* pixel = (char*)_image_data; (char*)pixel < ((char*)_image_data + image_size); pixel += _bytes_per_channel)
+	{
+		if (_bytes_per_channel == 2) {
+			*(short*)pixel = (*(short*)pixel & 0x00FF) << 8  | (*(short*)pixel & 0xFF00) >> 8;
+		}
+		if (_bytes_per_channel == 4) {
+			*(int*)pixel = (*(int*)pixel & 0x0000FFFF) << 16 | (*(int*)pixel & 0xFFFF0000) >> 16;
+			*(int*)pixel = (*(int*)pixel & 0x00FF00FF) << 8  | (*(int*)pixel & 0xFF00FF00) >> 8;
+		}
+	}
+}
+
 void Image::resize(int target_width, int target_height) {
 	if (_width == target_width && _height == target_height)
 		return;
@@ -194,7 +211,19 @@ void Image::save_to_disc(const std::string& target_filename) const
 	}
 
 	stbi_flip_vertically_on_write(_vertical_flip);
-	int result_flag = stbi_write_png(target_filename.c_str(), _width, _height, _channel_count, _image_data, _width * _channel_count * _bytes_per_channel);
+	if (target_filename.size() > 4) {
+		if (target_filename.substr(target_filename.size() - 4, 4) == ".jpg" || target_filename.substr(target_filename.size() - 4, 4) == ".JPG")
+			int result_flag = stbi_write_jpg(target_filename.c_str(), _width, _height, _channel_count, _image_data, _width * _channel_count * _bytes_per_channel);
+	}
+
+	if (target_filename.size() > 4) {
+		if (target_filename.substr(target_filename.size() - 4, 4) == ".png" || target_filename.substr(target_filename.size() - 4, 4) == ".png")
+			int result_flag = stbi_write_png(target_filename.c_str(), _width, _height, _channel_count, _image_data, _width * _channel_count * _bytes_per_channel);
+	}
+
+	else {
+		int result_flag = stbi_write_png(target_filename.c_str(), _width, _height, _channel_count, _image_data, _width * _channel_count * _bytes_per_channel);
+	}
 }
 
 unsigned char* Image::get_image_data() {

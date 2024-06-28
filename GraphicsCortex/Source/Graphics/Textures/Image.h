@@ -41,6 +41,7 @@ public:
 	bool get_vertical_flip() const;
 	size_t get_size() const;
 	
+	void swap_endian();
 	void resize(int target_width, int target_height);
 	void resize_stride(int target_bytes_per_channel);
 	void save_to_disc(const std::string& target_filename) const;
