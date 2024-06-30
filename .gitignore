@@ -862,3 +862,4 @@ GraphicsCortex/Dependencies/OpenXR/src/xr_generated_dispatch_table.h
 GraphicsCortex/Dependencies/OpenXR/src/xr_generated_dispatch_table_core.c
 GraphicsCortex/Dependencies/OpenXR/src/xr_generated_dispatch_table_core.h
 /CTReconstructor
+/build

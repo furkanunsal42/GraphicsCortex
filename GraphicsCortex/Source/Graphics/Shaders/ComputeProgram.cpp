@@ -13,8 +13,11 @@ ComputeProgram::ComputeProgram()
 	_generate_program();
 }
 
-ComputeProgram::ComputeProgram(const Shader& shader)
+ComputeProgram::ComputeProgram(const Shader& shader, std::vector<std::pair<std::string, std::string>> preprocessing_key_values)
 {
+	for (std::pair<std::string, std::string>& key_value : preprocessing_key_values)
+		set_preprocessor(key_value.first, key_value.second);
+	
 	_generate_program();
 	compile_shader(shader);
 }
@@ -130,20 +133,18 @@ void ComputeProgram::compile_shader(const Shader& shader)
 				while (value_position_begin < line.size() && line.at(value_position_begin) == ' ') { value_position_begin++; }
 
 				int value_position_end = value_position_begin;
-				while (value_position_end < line.size() && line.at(value_position_end) == ' ') { value_position_end++; }
+				while (value_position_end < line.size() && line.at(value_position_end) != ' ') { value_position_end++; }
 
-				std::string define_name = line.substr(name_position_begin, name_position_end);
-				bool has_key = value_position_begin == value_position_end;
+				std::string define_name = line.substr(name_position_begin, name_position_end-name_position_begin);
+				bool has_key = value_position_begin != value_position_end;
 				
-				if (_preprocessing_defines.find(define_name) == _preprocessing_defines.end()) continue;
-
-				if (!has_key) line = line.substr(0, name_position_end) + " " + _preprocessing_defines[define_name];
-				else line.replace(value_position_begin, value_position_end, _preprocessing_defines[define_name]);
-
-				std::cout << line << std::endl;
+				if (_preprocessing_defines.find(define_name) != _preprocessing_defines.end()) {
+					if (!has_key) line = line.substr(0, name_position_end) + " " + _preprocessing_defines[define_name];
+					else line.replace(value_position_begin, value_position_end, _preprocessing_defines[define_name]);
+				}
 			}
 
-			variant.compute_shader += line;
+			variant.compute_shader += line + "\n";
 		}
 
 		shader_to_use = variant;

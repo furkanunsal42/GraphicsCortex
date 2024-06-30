@@ -24,7 +24,7 @@ public:
 	};
 
 	ComputeProgram();
-	ComputeProgram(const Shader& shader);
+	ComputeProgram(const Shader& shader, std::vector<std::pair<std::string, std::string>> preprocessing_key_values = {});
 	ComputeProgram(const ComputeProgram& other) = delete;
 	~ComputeProgram();
 	void release();
