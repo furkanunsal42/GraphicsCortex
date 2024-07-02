@@ -33,7 +33,7 @@ public:
 	void dispatch_thread(int thread_count_x, int thread_count_y, int thread_count_z);
 	void dispatch_without_barrier(int workgroup_size_x, int workgroup_size_y, int workgroup_size_z);
 	void dispatch_thread_without_barrier(int thread_count_x, int thread_count_y, int thread_count_z);
-	void memory_barrier(MemoryBarrierType barrier);
+	void memory_barrier(MemoryBarrierType barrier = MemoryBarrierType::ALL_BARRIER_BITS);
 
 	void bind();
 	void unbind();
