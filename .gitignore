@@ -863,3 +863,4 @@ GraphicsCortex/Dependencies/OpenXR/src/xr_generated_dispatch_table_core.c
 GraphicsCortex/Dependencies/OpenXR/src/xr_generated_dispatch_table_core.h
 /CTReconstructor
 /build
+/enc_temp_folder

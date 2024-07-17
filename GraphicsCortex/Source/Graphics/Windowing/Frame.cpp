@@ -182,6 +182,7 @@ bool Frame::is_running() {
 bool first_handle = true;
 double Frame::handle_window() {
 	if (visible && first_handle) {
+		glFinish();
 		glfwShowWindow(window);
 	}
 
