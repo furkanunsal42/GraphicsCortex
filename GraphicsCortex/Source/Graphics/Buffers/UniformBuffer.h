@@ -53,7 +53,7 @@ public:
 			std::cout << "[OpenGL Error] UniformBuffer tried to set_data() but offset and size was out of bound" << std::endl;
 			ASSERT(false)
 		}
-		if (uplading_data_offset_in_bytes + size_in_bytes > data.size() * sizeof(T)) {
+		if (uploading_data_offset_in_bytes + size_in_bytes > data.size() * sizeof(T)) {
 			std::cout << "[OpenGL Error] UniformBuffer tried to set_data() but given data's size is lower than given offset + size" << std::endl;
 			ASSERT(false);
 		}
@@ -63,7 +63,7 @@ public:
 		}
 		_allocate_buffer();
 
-		set_data(managed_buffer_offset_in_bytes, uploading_data_offset_in_bytes, size_in_bytes, (void*)((char*)data.data + custom_data_offset_in_bytes));
+		set_data(managed_buffer_offset_in_bytes, uploading_data_offset_in_bytes, size_in_bytes, (void*)((char*)data.data /* + custom_data_offset_in_bytes*/));
 	}
 	
 	void clear();

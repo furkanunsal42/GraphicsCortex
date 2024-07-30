@@ -94,7 +94,7 @@ void TextureCubeMap::load_data(Face face, const void* image, ColorFormat format,
 	}
 	_allocate_texture();
 
-	GLCall(glTextureSubImage3D(id, mipmap_target, 0, 0, get_gl_face_index(face), this->width >> mipmap_target, this->height >> mipmap_target, 1, TextureBase2::ColorFormat_to_OpenGL(format), TextureBase2::Type_to_OpenGL(type), image););
+	GLCall(glTextureSubImage3D(id, mipmap_target, 0, 0, get_gl_face_index(face), this->width >> mipmap_target, this->height >> mipmap_target, 1, TextureBase2::ColorFormat_to_OpenGL(format), TextureBase2::Type_to_OpenGL(type), image));
 
 	_user_data_loaded = true;
 }

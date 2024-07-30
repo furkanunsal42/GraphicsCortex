@@ -133,6 +133,7 @@ int TextureBase2::Type_to_OpenGL(Type type)
 	case Type::UNSIGNED_INT					:	return GL_UNSIGNED_INT; 
 	case Type::INT							:	return GL_INT; 
 	case Type::FLOAT						:	return GL_FLOAT; 
+	case Type::HALF_FLOAT					:	return GL_HALF_FLOAT; 
 	case Type::UNSIGNED_BYTE_3_3_2			:	return GL_UNSIGNED_BYTE_3_3_2; 
 	case Type::UNSIGNED_BYTE_2_3_3_REV		:	return GL_UNSIGNED_BYTE_2_3_3_REV; 
 	case Type::UNSIGNED_SHORT_5_6_5		  	:	return GL_UNSIGNED_SHORT_5_6_5; 
@@ -178,6 +179,7 @@ int TextureBase2::Type_bytes_per_channel(Type type) {
 	case Type::UNSIGNED_INT					:	return 4; 
 	case Type::INT							:	return 4; 
 	case Type::FLOAT						:	return 4; 
+	case Type::HALF_FLOAT					:	return 2; 
 	case Type::UNSIGNED_BYTE_3_3_2			:	return 1; 
 	case Type::UNSIGNED_BYTE_2_3_3_REV		:	return 1; 
 	case Type::UNSIGNED_SHORT_5_6_5		  	:	return 2; 
