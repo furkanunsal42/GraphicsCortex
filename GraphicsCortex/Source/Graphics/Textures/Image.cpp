@@ -145,7 +145,8 @@ void Image::_read_image_data(const ImageParameters& requested_parameters)
 
 
 
-	_bytes_per_channel = stbi_is_16_bit(requested_parameters.path.c_str()) ? 2 : 1;
+	//_bytes_per_channel = stbi_is_16_bit(requested_parameters.path.c_str()) ? 2 : 1;
+	_bytes_per_channel = requested_parameters.bytes_per_channel;
 	
 	stbi_set_flip_vertically_on_load_thread(_vertical_flip);
 	if (_bytes_per_channel== 1)

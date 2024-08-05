@@ -1,5 +1,7 @@
 #include "GraphicsCortex.h"
 #include "FilteredBackProjection/FBP3D.h"
+#include "Application/ProgramSourcePaths.h"
+using namespace shader_directory;
 
 int main() {
 	
@@ -27,6 +29,10 @@ int main() {
 	Texture2D::ColorTextureFormat fbp_projection_format_to_use			= floating_point_precision == 16 ? Texture2D::ColorTextureFormat::R16F : Texture2D::ColorTextureFormat::R32F;
 	Texture2D::ColorTextureFormat fbp_projection_complex_format_to_use	= floating_point_precision == 16 ? Texture2D::ColorTextureFormat::RG16F : Texture2D::ColorTextureFormat::RG32F;
 
+	fbp_shader_directory = "../CTReconstructor/Source/GLSL/Compute/FBP/";
+	ffft_shader_directory = "../CTReconstructor/Source/GLSL/Compute/FFT/";
+	util_shader_directory = "../CTReconstructor/Source/GLSL/Compute/Util/";
+
 	std::shared_ptr<FBP3D> solver = std::make_shared<FBP3D>(fbp_shader_defines_to_use, ffft_shader_defines_to_use);
 	solver->set_volume_max_segment_size(glm::ivec3(volume_dimentions.x, volume_dimentions.y, volume_dimentions.z));
 	
@@ -40,7 +46,7 @@ int main() {
 	//solver->project_forward_cone_to_projections(730.87f, 669.04f, 409.60f, 213.84f, 1, projection_count, 0);
 	//solver->project_forward_cone_to_sinograms(730.87f, 669.04f, 409.60f, 213.84f, 1, projection_count, 0);
 	//solver->read_projections("C:/Users/FurkanPC/Desktop/Projektionen", 2048, 2048, 1, 2, volume_dimentions.x, volume_dimentions.y, 1440);
-	solver->read_projections("C:/Users/FURKAN.UNSAL/Desktop/Projektionen", 2048, 2048, 1, 2, volume_dimentions.x, volume_dimentions.y, 1440);
+	solver->read_projections("C:/Users/furkan.unsal/Desktop/Data2/projektion", 1000, 1000, 1, 2, volume_dimentions.x, volume_dimentions.y, 720);
 	solver->log_normalize_projections(95.0 / 255);
 
 	solver->apply_fdk_weights_to_projections(730.87f, 669.04f, 409.60f);
