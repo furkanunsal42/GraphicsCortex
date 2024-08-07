@@ -7,6 +7,7 @@
 #include "stb_image.h"
 #include "stb_image_write.h"
 #include "stb_image_resize.h"
+#include "tiffio.h"
 
 #include "DirectoryUtils.h"
 #include "Debuger.h"
@@ -87,7 +88,11 @@ Image::~Image() {
 }
 
 void Image::release() {
-	if (_image_is_loaded_from_stbi)
+	if (_is_tiff) {
+		TIFFClose(_tiff_handle);
+
+	}
+	else if (_image_is_loaded_from_stbi)
 		stbi_image_free(_image_data);
 	else
 		delete[] _image_data;
@@ -108,42 +113,18 @@ void Image::_read_image_data(const ImageParameters& requested_parameters)
 	if (requested_parameters.path.size() >= 4) {
 		std::string image_type = compute_filetype(requested_parameters.path);
 		if (image_type == ".raw" || image_type == ".RAW") {
-
-			std::ifstream file;
-			file.open(requested_parameters.path, std::ios::in | std::ios::binary);
-			if (file) {
-				int file_size = requested_parameters.width * requested_parameters.height * requested_parameters.channel_count * requested_parameters.bytes_per_channel;
-				_width = requested_parameters.width;
-				_height = requested_parameters.height;
-				_depth = requested_parameters.depth;
-				_channel_count = requested_parameters.channel_count;
-				_bytes_per_channel = requested_parameters.bytes_per_channel;
-				_vertical_flip = requested_parameters.vertical_flip;
-				_image_is_loaded_from_stbi = false;
-				_image_data = (unsigned char*)malloc(file_size);
-			}
-
-			int file_size = requested_parameters.width * requested_parameters.height * requested_parameters.channel_count * requested_parameters.bytes_per_channel;
-			int row_size = _width * _channel_count * _bytes_per_channel;
-
-			int buffer_size = row_size;
-			if (buffer_size <= 0) {
-				std::cout << "[Image Loading Error] Image::_read_image_data() is called but image size couldn't determined properly. metadata of the target file format may not have determined properly" << std::endl;
-				ASSERT(false);
-			}
-
-			int buffer_pointer = requested_parameters.vertical_flip ? file_size - row_size : 0;
-			
-			while (!file.eof()) {
-				file.read((char*)_image_data + buffer_pointer, buffer_size);
-				buffer_pointer += requested_parameters.vertical_flip ? -buffer_size : buffer_size;
-			}
-
+			_read_image_data_raw(requested_parameters);
 			return;
 		}
 	}
 
-
+	if (requested_parameters.path.size() >= 5) {
+		std::string image_type = compute_filetype(requested_parameters.path);
+		if (image_type == ".tiff" || image_type == ".TIFF") {
+			_read_image_data_tiff(requested_parameters);
+			return;
+		}
+	}
 
 	//_bytes_per_channel = stbi_is_16_bit(requested_parameters.path.c_str()) ? 2 : 1;
 	_bytes_per_channel = requested_parameters.bytes_per_channel;
@@ -161,6 +142,67 @@ void Image::_read_image_data(const ImageParameters& requested_parameters)
 
 	resize(requested_parameters.width, requested_parameters.height);
 	resize_stride(requested_parameters.bytes_per_channel);
+}
+
+void Image::_read_image_data_raw(const ImageParameters& requested_parameters)
+{
+		std::ifstream file;
+		file.open(requested_parameters.path, std::ios::in | std::ios::binary);
+		if (file) {
+			int file_size = requested_parameters.width * requested_parameters.height * requested_parameters.channel_count * requested_parameters.bytes_per_channel;
+			_width = requested_parameters.width;
+			_height = requested_parameters.height;
+			_depth = requested_parameters.depth;
+			_channel_count = requested_parameters.channel_count;
+			_bytes_per_channel = requested_parameters.bytes_per_channel;
+			_vertical_flip = requested_parameters.vertical_flip;
+			_image_is_loaded_from_stbi = false;
+			_image_data = (unsigned char*)malloc(file_size);
+		}
+
+		int file_size = requested_parameters.width * requested_parameters.height * requested_parameters.channel_count * requested_parameters.bytes_per_channel;
+		int row_size = _width * _channel_count * _bytes_per_channel;
+
+		int buffer_size = row_size;
+		if (buffer_size <= 0) {
+			std::cout << "[Image Loading Error] Image::_read_image_data() is called but image size couldn't determined properly. metadata of the target file format may not have determined properly" << std::endl;
+			ASSERT(false);
+		}
+
+		int buffer_pointer = requested_parameters.vertical_flip ? file_size - row_size : 0;
+
+		while (!file.eof()) {
+			file.read((char*)_image_data + buffer_pointer, buffer_size);
+			buffer_pointer += requested_parameters.vertical_flip ? -buffer_size : buffer_size;
+		}
+}
+
+void Image::_read_image_data_tiff(const ImageParameters& requested_parameters)
+{
+	_tiff_handle = TIFFOpen(requested_parameters.path.c_str(), "r");
+
+	TIFFGetField(_tiff_handle, TIFFTAG_IMAGEWIDTH, &_width);
+	TIFFGetField(_tiff_handle, TIFFTAG_IMAGELENGTH, &_height);
+	
+	uint32_t bits_per_channel;
+	TIFFGetField(_tiff_handle, TIFFTAG_BITSPERSAMPLE, &bits_per_channel);
+	_bytes_per_channel = /*bits_per_channel / 8*/ 2;
+
+	void* temp_image_data = _TIFFmalloc(_width * _height * sizeof(uint32_t));
+	TIFFReadRGBAImage(_tiff_handle, _width, _height, (uint32_t*)temp_image_data, true);
+
+	//std::cout << _width << " " << _height << " " << bits_per_channel << " " << (unsigned int*)_image_data << std::endl;
+
+	_channel_count = 1;
+	_image_data = new unsigned char[_width * _height * _bytes_per_channel * _channel_count];
+
+	for (int byte = 0; byte < _width * _height * _bytes_per_channel; byte++) {
+		int padded_byte = byte / _bytes_per_channel * sizeof(uint32_t) + byte % _bytes_per_channel;
+		_image_data[byte] = ((unsigned char*)temp_image_data)[padded_byte];
+	}
+
+	_TIFFfree(temp_image_data);
+	_is_tiff = false;
 }
 
 void Image::swap_endian()

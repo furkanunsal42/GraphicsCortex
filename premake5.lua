@@ -56,6 +56,7 @@ project "GraphicsCortex"
 		"%{prj.name}/Source/Graphics/Buffers",
 		"%{prj.name}/Source/Graphics",
 		"%{prj.name}/Source",
+		"%{prj.name}/Dependencies/libtiff/include",
 		"%{prj.name}/Dependencies/assimp/include",
 		"%{prj.name}/Dependencies/stb_image",
 		"%{prj.name}/Dependencies/GLEW/include",
@@ -71,6 +72,7 @@ project "GraphicsCortex"
 
 	libdirs
 	{
+		"%{prj.name}/Dependencies/libtiff/lib",
 		"%{prj.name}/Dependencies/assimp/lib",
 		"%{prj.name}/Dependencies/stb_image",
 		"%{prj.name}/Dependencies/glm",
@@ -83,6 +85,7 @@ project "GraphicsCortex"
 		
 	links
 	{
+		"tiff.lib",
 		"freetype.lib",
 		"hiredis.lib",
 		"SnippetUtils_static_64.lib",

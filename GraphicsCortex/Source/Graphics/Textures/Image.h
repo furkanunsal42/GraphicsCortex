@@ -1,6 +1,7 @@
 #pragma once 
 
 #include <string>
+#include "tiffio.h"
 
 class Texture;
 class FrameBuffer;
@@ -49,6 +50,8 @@ public:
 	unsigned char* _image_data = nullptr;
 
 	void _read_image_data(const ImageParameters& requested_parameters);
+	void _read_image_data_raw(const ImageParameters& requested_parameters);
+	void _read_image_data_tiff(const ImageParameters& requested_parameters);
 
 	std::string _source_filepath;
 	bool _vertical_flip = true;
@@ -58,6 +61,9 @@ public:
 	int _channel_count = 0;
 	int _bytes_per_channel = 0;
 	bool _image_is_loaded_from_stbi = false;
+
+	bool _is_tiff = false;
+	TIFF* _tiff_handle;
 private:
 
 	//void _read_image(const std::string& file_path, int desired_channels = 4);

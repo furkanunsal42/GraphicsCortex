@@ -3,8 +3,8 @@
 
 int main() {
 	
-	int file_width = 1472;
-	glm::ivec2 volume_dimentions(1472, 1472);
+	int file_width = 2048;
+	glm::ivec2 volume_dimentions(1440, 1440);
 
 	int window_width = 1024;
 
@@ -39,7 +39,7 @@ int main() {
 	
 	solver->set_volume_max_segment_size(glm::ivec3(volume_dimentions.x, volume_dimentions.y, volume_dimentions.x));
 	//solver->read_volume("C:/Users/FURKAN.UNSAL/Desktop/Projektionen", 2048, 512, 1, 2, volume_dimentions.x);
-	solver->read_volume("C:/Users/FURKAN.UNSAL/Desktop/reconstruction", file_width, volume_dimentions.y, 1, 2, volume_dimentions.x);
+	solver->read_volume("C:/Users/furkan.unsal/Desktop/raw_data/slices", file_width, volume_dimentions.y, 1, 2, volume_dimentions.x);
 
 	solver->set_volume_active(glm::ivec3(0, 0, 0), glm::ivec3(solver->get_segment_count().x, solver->get_segment_count().y, solver->get_segment_count().z), true);
 
