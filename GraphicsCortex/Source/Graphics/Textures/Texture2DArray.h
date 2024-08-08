@@ -135,6 +135,9 @@ public:
 	glm::ivec3 get_size();
 	void force_allocation();
 
+	ColorTextureFormat get_internal_format_color();
+	DepthStencilTextureFormat get_internal_format_depthstencil();
+
 private:
 	unsigned int target = GL_TEXTURE_2D_ARRAY;
 	unsigned int multisample_amount = 0;

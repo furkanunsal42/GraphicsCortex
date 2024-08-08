@@ -128,6 +128,9 @@ public:
 	glm::ivec1 get_size();
 	void force_allocation();
 
+	ColorTextureFormat get_internal_format_color();
+	DepthStencilTextureFormat get_internal_format_depthstencil();
+
 	int static get_gl_face_index(Face face);
 private:
 	unsigned int target = GL_TEXTURE_CUBE_MAP;

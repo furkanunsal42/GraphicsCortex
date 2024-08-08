@@ -120,6 +120,17 @@ void Renderbuffer::force_allocation() {
 	_allocate_texture();
 }
 
+Renderbuffer::ColorTextureFormat Renderbuffer::get_internal_format_color()
+{
+	return color_texture_format;
+}
+
+Renderbuffer::DepthStencilTextureFormat Renderbuffer::get_internal_format_depthstencil()
+{
+	return depth_stencil_texture_format;
+}
+
+
 void Renderbuffer::_generate_texture()
 {
 	if (_texture_generated) return;

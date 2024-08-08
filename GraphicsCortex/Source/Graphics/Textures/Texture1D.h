@@ -122,6 +122,9 @@ public:
 	glm::ivec1 get_size();
 	void force_allocation();
 
+	ColorTextureFormat get_internal_format_color();
+	DepthStencilTextureFormat get_internal_format_depthstencil();
+
 private:
 	unsigned int target = GL_TEXTURE_1D;
 

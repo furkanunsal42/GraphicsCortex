@@ -73,9 +73,9 @@ public:
 	void copy_to_texture(Texture2D& target_texture, int self_mipmap, int target_mipmap, int self_x, int self_y, int width, int height, int target_x, int target_y);
 	*/
 
-	//Image get_image(ColorFormat format, Type type, int mipmap_level);
+	std::shared_ptr<Image> get_image(ColorFormat format, Type type, int mipmap_level);
 	std::shared_ptr<Image> get_image(ColorFormat format, Type type, int mipmap_level, int x, int y, int z, int width, int height, int depth);
-	//Image get_image(DepthStencilFormat format, Type type, int mipmap_level);
+	std::shared_ptr<Image> get_image(DepthStencilFormat format, Type type, int mipmap_level);
 	std::shared_ptr<Image> get_image(DepthStencilFormat format, Type type, int mipmap_level, int x, int y, int z, int width, int height, int depth);
 
 	void clear(unsigned char clear_data, int mipmap_target = 0);
@@ -125,6 +125,9 @@ public:
 
 	glm::ivec3 get_size();
 	void force_allocation();
+
+	ColorTextureFormat get_internal_format_color();
+	DepthStencilTextureFormat get_internal_format_depthstencil();
 
 	std::shared_ptr<Texture3D> create_texture_with_same_parameters();
 

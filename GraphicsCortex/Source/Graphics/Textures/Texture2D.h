@@ -124,6 +124,9 @@ public:
 	glm::ivec2 get_size();
 	void force_allocation();
 
+	ColorTextureFormat get_internal_format_color();
+	DepthStencilTextureFormat get_internal_format_depthstencil();
+
 	std::shared_ptr<Texture2D> create_texture_with_same_parameters();
 
 private:

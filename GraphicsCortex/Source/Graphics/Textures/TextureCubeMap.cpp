@@ -800,3 +800,13 @@ void TextureCubeMap::force_allocation() {
 	wait_async_load();
 	_allocate_texture();
 }
+
+TextureCubeMap::ColorTextureFormat TextureCubeMap::get_internal_format_color()
+{
+	return color_texture_format;
+}
+
+TextureCubeMap::DepthStencilTextureFormat TextureCubeMap::get_internal_format_depthstencil()
+{
+	return depth_stencil_texture_format;
+}

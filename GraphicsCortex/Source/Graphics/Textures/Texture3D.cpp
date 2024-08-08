@@ -554,6 +554,14 @@ void Texture3D::force_allocation() {
 	_allocate_texture();
 }
 
+Texture3D::ColorTextureFormat Texture3D::get_internal_format_color() {
+	return color_texture_format;
+}
+
+Texture3D::DepthStencilTextureFormat Texture3D::get_internal_format_depthstencil() {
+	return depth_stencil_texture_format;
+}
+
 std::shared_ptr<Texture3D> Texture3D::create_texture_with_same_parameters()
 {
 	std::shared_ptr<Texture3D> new_texture;
@@ -590,48 +598,53 @@ void Texture3D::wait_async_load()
 	async_load_happening = false;
 }
 
+std::shared_ptr<Image> Texture3D::get_image(ColorFormat format, Type type, int mipmap_level)
+{
+	return get_image(format, type, mipmap_level, 0, 0, 0, query_width(mipmap_level), query_height(mipmap_level), query_depth(mipmap_level));
+}
+
 std::shared_ptr<Image> Texture3D::get_image(ColorFormat format, Type type, int mipmap_level, int x, int y, int z, int width, int height, int depth)
 {
-	if (!_texture_allocated || !_user_data_loaded) {
-		std::cout << "[OpenGL Error] Texture3D tried to get_image() but either not allocated any ram or didn't loaded any user data yet" << std::endl;
+	if (!_texture_allocated) {
+		std::cout << "[OpenGL Error] Texture3D tried to get_image() but Texture3D was not allocated yet" << std::endl;
 		ASSERT(false);
 	}
 
-	int r_channel = query_red_size(mipmap_level);
-	int g_channel = query_green_size(mipmap_level);
-	int b_channel = query_blue_size(mipmap_level);
-	int a_channel = query_alpha_size(mipmap_level);
+	size_t r_channel = query_red_size(mipmap_level);
+	size_t g_channel = query_green_size(mipmap_level);
+	size_t b_channel = query_blue_size(mipmap_level);
+	size_t a_channel = query_alpha_size(mipmap_level);
 
-	int is_r = r_channel != 0;
-	int is_g = g_channel != 0;
-	int is_b = b_channel != 0;
-	int is_a = a_channel != 0;
+	size_t is_r = r_channel != 0;
+	size_t is_g = g_channel != 0;
+	size_t is_b = b_channel != 0;
+	size_t is_a = a_channel != 0;
 
-	int mipmap_channels = is_r + is_g + is_b + is_a;
-	int mipmap_pixel_size = r_channel + g_channel + b_channel + a_channel;
+	size_t mipmap_channels = is_r + is_g + is_b + is_a;
+	size_t mipmap_pixel_size = (r_channel + g_channel + b_channel + a_channel) / 8;
 
-	int mipmap_width = query_width(mipmap_level);
-	int mipmap_height = query_height(mipmap_level);
-	int mipmap_depth = query_depth(mipmap_level);
+	size_t mipmap_width = query_width(mipmap_level);
+	size_t mipmap_height = query_height(mipmap_level);
+	size_t mipmap_depth = query_depth(mipmap_level);
 
-	if (depth != 1) {
-		std::cout << "[OpenGL Error] Texture3D tried to get_image() with depth != 1, 3D Images aren't supported yet" << std::endl;
-		ASSERT(false);
-	}
-
-	int format_channels = ColorFormat_channels(format);
-	int image_size = width * height * depth * mipmap_pixel_size;
-	unsigned char* image = new unsigned char[width * height * mipmap_pixel_size];
+	size_t format_channels = ColorFormat_channels(format);
+	size_t image_size = width * height * depth * mipmap_pixel_size;
+	unsigned char* image = new unsigned char[image_size];
 
 	GLCall(glGetTextureSubImage(id, mipmap_level, x, y, z, width, height, depth, ColorFormat_to_OpenGL(format), Type_to_OpenGL(type), image_size, image));
 
 	return std::make_shared<Image>(image, width, height, 1, format_channels, 1, true);
 }
 
+std::shared_ptr<Image> Texture3D::get_image(DepthStencilFormat format, Type type, int mipmap_level)
+{
+	return get_image(format, type, mipmap_level, 0, 0, 0, query_width(mipmap_level), query_height(mipmap_level), query_depth(mipmap_level));
+}
+
 std::shared_ptr<Image> Texture3D::get_image(DepthStencilFormat format, Type type, int mipmap_level, int x, int y, int z, int width, int height, int depth)
 {
-	if (!_texture_allocated || !_user_data_loaded) {
-		std::cout << "[OpenGL Error] Texture3D tried to get_image() but either not allocated any ram or didn't loaded any user data yet" << std::endl;
+	if (!_texture_allocated) {
+		std::cout << "[OpenGL Error] Texture3D tried to get_image() but Texture3D was not allocated yet" << std::endl;
 		ASSERT(false);
 	}
 
@@ -643,11 +656,6 @@ std::shared_ptr<Image> Texture3D::get_image(DepthStencilFormat format, Type type
 	int mipmap_width = query_width(mipmap_level);
 	int mipmap_height = query_height(mipmap_level);
 	int mipmap_depth = query_depth(mipmap_level);
-
-	if (depth != 1) {
-		std::cout << "[OpenGL Error] Texture3D tried to get_image() with depth != 1, 3D Images aren't supported yet" << std::endl;
-		ASSERT(false);
-	}
 
 	int format_channels = 1;
 	int image_size = width * height * depth * mipmap_pixel_size;

@@ -796,3 +796,13 @@ void Texture1D::force_allocation() {
 	wait_async_load();
 	_allocate_texture();
 }
+
+Texture1D::ColorTextureFormat Texture1D::get_internal_format_color()
+{
+	return color_texture_format;
+}
+
+Texture1D::DepthStencilTextureFormat Texture1D::get_internal_format_depthstencil()
+{
+	return depth_stencil_texture_format;
+}

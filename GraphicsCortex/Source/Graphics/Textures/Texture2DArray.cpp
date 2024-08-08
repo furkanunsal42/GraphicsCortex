@@ -614,6 +614,17 @@ void Texture2DArray::force_allocation() {
 	_allocate_texture();
 }
 
+Texture2DArray::ColorTextureFormat Texture2DArray::get_internal_format_color()
+{
+	return color_texture_format;
+}
+
+Texture2DArray::DepthStencilTextureFormat Texture2DArray::get_internal_format_depthstencil()
+{
+	return depth_stencil_texture_format;
+}
+
+
 void Texture2DArray::_set_texture_parameters()
 {
 	if (_texture_handle_created) {

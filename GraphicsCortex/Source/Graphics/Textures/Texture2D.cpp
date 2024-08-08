@@ -690,6 +690,17 @@ void Texture2D::force_allocation() {
 	_allocate_texture();
 }
 
+Texture2D::ColorTextureFormat Texture2D::get_internal_format_color()
+{
+	return color_texture_format;
+}
+
+Texture2D::DepthStencilTextureFormat Texture2D::get_internal_format_depthstencil()
+{
+	return depth_stencil_texture_format;
+}
+
+
 std::shared_ptr<Texture2D> Texture2D::create_texture_with_same_parameters()
 {
 	std::shared_ptr<Texture2D> new_texture;

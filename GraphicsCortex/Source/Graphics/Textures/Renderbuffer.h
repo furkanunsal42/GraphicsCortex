@@ -36,6 +36,9 @@ public:
 	glm::ivec2 get_size();
 	void force_allocation();
 
+	ColorTextureFormat get_internal_format_color();
+	DepthStencilTextureFormat get_internal_format_depthstencil();
+
 private:
 	unsigned int target = GL_RENDERBUFFER;
 	unsigned int multisample_amount = 0;
