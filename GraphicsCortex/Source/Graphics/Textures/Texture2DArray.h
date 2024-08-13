@@ -54,12 +54,27 @@ public:
 	void load_data(int texture_index, const Image& image, DepthStencilFormat format, Type type, int mipmap_target = 0);
 	void load_data(int texture_index, const Image& image, DepthStencilFormat format, Type type, int x, int y, int width, int height, int mipmap_target = 0);
 
+	void load_data(const void* image, ColorFormat format, Type type, int mipmap_target = 0);
+	void load_data(const void* image, ColorFormat format, Type type, int x, int y, int z, int width, int height, int depth, int mipmap_target = 0);
+	void load_data(const Image& image, ColorFormat format, Type type, int mipmap_target = 0);
+	void load_data(const Image& image, ColorFormat format, Type type, int x, int y, int z, int width, int height, int depth, int mipmap_target = 0);
+
+	void load_data(const void* image, DepthStencilFormat format, Type type, int mipmap_target = 0);
+	void load_data(const void* image, DepthStencilFormat format, Type type, int x, int y, int z, int width, int height, int depth, int mipmap_target = 0);
+	void load_data(const Image& image, DepthStencilFormat format, Type type, int mipmap_target = 0);
+	void load_data(const Image& image, DepthStencilFormat format, Type type, int x, int y, int z, int width, int height, int depth, int mipmap_target = 0);
+
 	void generate_mipmap();
 
 	void load_data_with_mipmaps(int texture_index, const void* image, ColorFormat format, Type type);
 	void load_data_with_mipmaps(int texture_index, const Image& image, ColorFormat format, Type type);
 	void load_data_with_mipmaps(int texture_index, const void* image, DepthStencilFormat format, Type type);
 	void load_data_with_mipmaps(int texture_index, const Image& image, DepthStencilFormat format, Type type);
+
+	void load_data_with_mipmaps(const void* image, ColorFormat format, Type type);
+	void load_data_with_mipmaps(const Image& image, ColorFormat format, Type type);
+	void load_data_with_mipmaps(const void* image, DepthStencilFormat format, Type type);
+	void load_data_with_mipmaps(const Image& image, DepthStencilFormat format, Type type);
 
 	void load_data_width_mipmaps_async(int texture_index, const std::string& image_filepath, ColorFormat format, Type type);
 
@@ -74,6 +89,11 @@ public:
 	std::shared_ptr<Image> get_image(int texture_index, ColorFormat format, Type type, int mipmap_level, int x, int y, int width, int height);
 	std::shared_ptr<Image> get_image(int texture_index, DepthStencilFormat format, Type type, int mipmap_level);
 	std::shared_ptr<Image> get_image(int texture_index, DepthStencilFormat format, Type type, int mipmap_level, int x, int y, int width, int height);
+
+	std::shared_ptr<Image> get_image(ColorFormat format, Type type, int mipmap_level);
+	std::shared_ptr<Image> get_image(ColorFormat format, Type type, int mipmap_level, int x, int y, int z, int width, int height, int depth);
+	std::shared_ptr<Image> get_image(DepthStencilFormat format, Type type, int mipmap_level);
+	std::shared_ptr<Image> get_image(DepthStencilFormat format, Type type, int mipmap_level, int x, int y, int z, int width, int height, int depth);
 
 	void clear(int texture_index, unsigned char clear_data, int mipmap_target = 0);
 	void clear(int texture_index, float clear_data, int mipmap_target = 0);

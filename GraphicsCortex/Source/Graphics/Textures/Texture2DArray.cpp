@@ -707,7 +707,6 @@ void Texture2DArray::_create_handle()
 int Texture2DArray::_get_gl_internal_format()
 {
 	return is_color_texture ? ColorTextureFormat_to_OpenGL(color_texture_format) : DepthStencilTextureFormat_to_OpenGL(depth_stencil_texture_format);
-
 }
 
 std::shared_ptr<Image> Texture2DArray::get_image(int texture_index, ColorFormat format, Type type, int mipmap_level)
@@ -716,6 +715,26 @@ std::shared_ptr<Image> Texture2DArray::get_image(int texture_index, ColorFormat 
 }
 
 std::shared_ptr<Image> Texture2DArray::get_image(int texture_index, ColorFormat format, Type type, int mipmap_level, int x, int y, int width, int height)
+{
+	return get_image(format, type, mipmap_level, x, y, texture_index, width, height, 1);
+}
+
+std::shared_ptr<Image> Texture2DArray::get_image(int texture_index, DepthStencilFormat format, Type type, int mipmap_level)
+{
+	return get_image(texture_index, format, type, mipmap_level, 0, 0, query_width(mipmap_level), query_height(mipmap_level));
+}
+
+std::shared_ptr<Image> Texture2DArray::get_image(int texture_index, DepthStencilFormat format, Type type, int mipmap_level, int x, int y, int width, int height)
+{
+	return get_image(format, type, mipmap_level, x, y, texture_index, width, height, 1);
+}
+
+std::shared_ptr<Image> Texture2DArray::get_image(ColorFormat format, Type type, int mipmap_level)
+{
+	return get_image(format, type, mipmap_level, 0, 0, 0, query_width(mipmap_level), query_height(mipmap_level), get_size().z);
+}
+
+std::shared_ptr<Image> Texture2DArray::get_image(ColorFormat format, Type type, int mipmap_level, int x, int y, int z, int width, int height, int depth)
 {
 	if (!_texture_allocated) {
 		std::cout << "[OpenGL Error] Texture2DArray tried to get_image() but either not allocated any ram or didn't loaded any user data yet" << std::endl;
@@ -733,26 +752,26 @@ std::shared_ptr<Image> Texture2DArray::get_image(int texture_index, ColorFormat 
 	int is_a = a_channel != 0;
 
 	int mipmap_channels = is_r + is_g + is_b + is_a;
-	int mipmap_pixel_size = r_channel + g_channel + b_channel + a_channel;
+	int mipmap_pixel_size = r_channel + g_channel + b_channel + a_channel / 8;
 
 	int mipmap_width = query_width(mipmap_level);
 	int mipmap_height = query_height(mipmap_level);
 
 	int format_channels = ColorFormat_channels(format);
-	int image_size = width * height * mipmap_pixel_size;
-	unsigned char* image = new unsigned char[width * height * mipmap_pixel_size];
+	int image_size = width * height * depth * mipmap_pixel_size;
+	unsigned char* image = new unsigned char[image_size];
 
-	GLCall(glGetTextureSubImage(id, mipmap_level, x, y, texture_index, width, height, 1, ColorFormat_to_OpenGL(format), Type_to_OpenGL(type), image_size, image));
+	GLCall(glGetTextureSubImage(id, mipmap_level, x, y, z, width, height, depth, ColorFormat_to_OpenGL(format), Type_to_OpenGL(type), image_size, image));
 
-	return std::make_shared<Image>(image, width, height, 1, format_channels, 1, true);
+	return std::make_shared<Image>(image, width, height, depth, format_channels, 1, true);
 }
 
-std::shared_ptr<Image> Texture2DArray::get_image(int texture_index, DepthStencilFormat format, Type type, int mipmap_level)
+std::shared_ptr<Image> Texture2DArray::get_image(DepthStencilFormat format, Type type, int mipmap_level)
 {
-	return get_image(texture_index, format, type, mipmap_level, 0, 0, query_width(mipmap_level), query_height(mipmap_level));
+	return get_image(format, type, mipmap_level, 0, 0, 0, query_width(mipmap_level), query_height(mipmap_level), get_size().z);
 }
 
-std::shared_ptr<Image> Texture2DArray::get_image(int texture_index, DepthStencilFormat format, Type type, int mipmap_level, int x, int y, int width, int height)
+std::shared_ptr<Image> Texture2DArray::get_image(DepthStencilFormat format, Type type, int mipmap_level, int x, int y, int z, int width, int height, int depth)
 {
 	if (!_texture_allocated) {
 		std::cout << "[OpenGL Error] Texture2DArray tried to get_image() but either not allocated any ram or didn't loaded any user data yet" << std::endl;
@@ -768,8 +787,8 @@ std::shared_ptr<Image> Texture2DArray::get_image(int texture_index, DepthStencil
 	int mipmap_height = query_height(mipmap_level);
 
 	int format_channels = 1;
-	int image_size = width * height * mipmap_pixel_size;
-	unsigned char* image = new unsigned char[width * height * mipmap_pixel_size];
+	int image_size = width * height * depth * mipmap_pixel_size;
+	unsigned char* image = new unsigned char[image_size];
 
 	int gl_format;
 	if (format == DepthStencilFormat::DEPTH) gl_format = GL_DEPTH_COMPONENT;
@@ -779,9 +798,9 @@ std::shared_ptr<Image> Texture2DArray::get_image(int texture_index, DepthStencil
 		ASSERT(false);
 	}
 
-	GLCall(glGetTextureSubImage(id, mipmap_level, x, y, texture_index, width, height, 1, gl_format, Type_to_OpenGL(type), image_size, image));
+	GLCall(glGetTextureSubImage(id, mipmap_level, x, y, z, width, height, depth, gl_format, Type_to_OpenGL(type), image_size, image));
 
-	return std::make_shared<Image>(image, width, height, 1, format_channels, 1, true);
+	return std::make_shared<Image>(image, width, height, depth, format_channels, 1, true);
 }
 
 void Texture2DArray::clear(int texture_index, unsigned char clear_data, int mipmap_target)

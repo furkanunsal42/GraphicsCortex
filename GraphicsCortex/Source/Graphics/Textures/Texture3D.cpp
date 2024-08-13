@@ -633,7 +633,7 @@ std::shared_ptr<Image> Texture3D::get_image(ColorFormat format, Type type, int m
 
 	GLCall(glGetTextureSubImage(id, mipmap_level, x, y, z, width, height, depth, ColorFormat_to_OpenGL(format), Type_to_OpenGL(type), image_size, image));
 
-	return std::make_shared<Image>(image, width, height, 1, format_channels, 1, true);
+	return std::make_shared<Image>(image, width, height, depth, format_channels, 1, true);
 }
 
 std::shared_ptr<Image> Texture3D::get_image(DepthStencilFormat format, Type type, int mipmap_level)
@@ -671,7 +671,7 @@ std::shared_ptr<Image> Texture3D::get_image(DepthStencilFormat format, Type type
 
 	GLCall(glGetTextureSubImage(id, mipmap_level, x, y, z, width, height, depth, gl_format, Type_to_OpenGL(type), image_size, image));
 
-	return std::make_shared<Image>(image, width, height, 1, format_channels, 1, true);
+	return std::make_shared<Image>(image, width, height, depth, format_channels, 1, true);
 }
 
 void Texture3D::clear(unsigned char clear_data, int mipmap_target)
