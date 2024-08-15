@@ -136,7 +136,7 @@ void Texture2DArray::load_data(int texture_index, const void* image, ColorFormat
 	}
 	_allocate_texture();
 
-	GLCall(glTextureSubImage3D(id, mipmap_target, x, y, texture_index, custom_width, custom_height, 1, TextureBase2::ColorFormat_to_OpenGL(format), TextureBase2::Type_to_OpenGL(type), image));
+	GLCall(glTextureSubImage3D(id, mipmap_target, x, y, texture_index, width, height, 1, TextureBase2::ColorFormat_to_OpenGL(format), TextureBase2::Type_to_OpenGL(type), image));
 
 	_user_data_loaded = true;
 }
@@ -255,6 +255,91 @@ void Texture2DArray::load_data(int texture_index, const Image& image, DepthStenc
 	load_data(texture_index, image._image_data, format, type, x, y, width, height, mipmap_target);
 }
 
+void Texture2DArray::load_data(const void* image, ColorFormat format, Type type, int mipmap_target)
+{
+	load_data(image, format, type, 0, 0, 0, query_width(mipmap_target), query_height(mipmap_target), get_size().z, mipmap_target);
+}
+
+void Texture2DArray::load_data(const void* image, ColorFormat format, Type type, int x, int y, int z, int width, int height, int depth, int mipmap_target)
+{
+	if (!_texture_generated) {
+		std::cout << "[OpenGL Error] released Texture2DArray tried to load_data()" << std::endl;
+		ASSERT(false);
+	}
+	_allocate_texture();
+
+	GLCall(glTextureSubImage3D(id, mipmap_target, x, y, z, width, height, depth, TextureBase2::ColorFormat_to_OpenGL(format), TextureBase2::Type_to_OpenGL(type), image));
+
+	_user_data_loaded = true;
+}
+
+void Texture2DArray::load_data(const Image& image, ColorFormat format, Type type, int mipmap_target)
+{
+	load_data(image, format, type, 0, 0, 0, query_width(mipmap_target), query_height(mipmap_target), get_size().z, mipmap_target);
+}
+
+void Texture2DArray::load_data(const Image& image, ColorFormat format, Type type, int x, int y, int z, int width, int height, int depth, int mipmap_target)
+{
+	int mipmap_width = this->width >> mipmap_target;
+	int mipmap_height = this->height >> mipmap_target;
+
+	if (mipmap_width != image.get_width() || mipmap_height != image.get_height()) {
+		std::cout << "[OpenGL Error] Texture2DArray.load_data() image size mismatch. " << " texture size : (" << width << ", " << height << "), " << " image size : (" << image.get_width() << ", " << image.get_height() << ")" << std::endl;
+		ASSERT(false);
+	}
+
+	load_data(image, format, type, x, y, z, width, height, depth, mipmap_target);
+}
+
+void Texture2DArray::load_data(const void* image, DepthStencilFormat format, Type type, int mipmap_target)
+{
+	load_data(image, format, type, 0, 0, 0, query_width(mipmap_target), query_height(mipmap_target), get_size().z, mipmap_target);
+}
+
+void Texture2DArray::load_data(const void* image, DepthStencilFormat format, Type type, int x, int y, int z, int width, int height, int depth, int mipmap_target)
+{
+	if (!_texture_generated) {
+		std::cout << "[OpenGL Error] released Texture2DArray tried to load_data()" << std::endl;
+		ASSERT(false);
+	}
+	_allocate_texture();
+
+	GLCall(glTextureSubImage3D(id, mipmap_target, x, y, z, width, height, depth, TextureBase2::DepthStencilFormat_to_OpenGL(format), TextureBase2::Type_to_OpenGL(type), image));
+
+	_user_data_loaded = true;
+}
+
+void Texture2DArray::load_data(const Image& image, DepthStencilFormat format, Type type, int mipmap_target)
+{
+	int mipmap_width = this->width >> mipmap_target;
+	int mipmap_height = this->height >> mipmap_target;
+
+	if (mipmap_width != image.get_width() || mipmap_height != image.get_height()) {
+		std::cout << "[OpenGL Error] Texture2DArray.load_data() image size mismatch. " << " texture size : (" << width << ", " << height << "), " << " image size : (" << image.get_width() << ", " << image.get_height() << ")" << std::endl;
+		ASSERT(false);
+	}
+
+	load_data(image._image_data, format, type, mipmap_target);
+}
+
+void Texture2DArray::load_data(const Image& image, DepthStencilFormat format, Type type, int x, int y, int z, int width, int height, int depth, int mipmap_target)
+{
+	int mipmap_width = this->width >> mipmap_target;
+	int mipmap_height = this->height >> mipmap_target;
+
+	if (width > image.get_width() || height > image.get_height()) {
+		std::cout << "[OpenGL Error] Texture2DArray.load_data() image size mismatch. " << " load_data() size : (" << width << ", " << height << "), " << " image size : (" << image.get_width() << ", " << image.get_height() << ")" << std::endl;
+		ASSERT(false);
+	}
+
+	if (mipmap_width < width || mipmap_height < height) {
+		std::cout << "[OpenGL Error] Texture2DArray.load_data() image size mismatch. " << " texture size : (" << width << ", " << height << "), " << " load_data() size : (" << image.get_width() << ", " << image.get_height() << ")" << std::endl;
+		ASSERT(false);
+	}
+
+	load_data(image._image_data, format, type, x, y, z, width, height, depth, mipmap_target);
+}
+
 void Texture2DArray::generate_mipmap()
 {
 	if (!_texture_generated) return;
@@ -299,6 +384,40 @@ void Texture2DArray::load_data_with_mipmaps(int texture_index, const Image& imag
 	}
 
 	load_data(texture_index, image, format, type, 0);
+	generate_mipmap();
+}
+
+void Texture2DArray::load_data_with_mipmaps(const void* image, ColorFormat format, Type type)
+{
+	load_data(image, format, type, 0);
+	generate_mipmap();
+}
+
+void Texture2DArray::load_data_with_mipmaps(const Image& image, ColorFormat format, Type type)
+{
+	if (this->width != image.get_width() || this->height != image.get_height()) {
+		std::cout << "[OpenGL Error] Texture2DArray.load_data_with_mipmaps() image size mismatch. " << " texture size : (" << width << ", " << height << "), " << " image size : (" << image.get_width() << ", " << image.get_height() << ")" << std::endl;
+		ASSERT(false);
+	}
+
+	load_data(image, format, type, 0);
+	generate_mipmap();
+}
+
+void Texture2DArray::load_data_with_mipmaps(const void* image, DepthStencilFormat format, Type type)
+{
+	load_data(image, format, type, 0);
+	generate_mipmap();
+}
+
+void Texture2DArray::load_data_with_mipmaps(const Image& image, DepthStencilFormat format, Type type)
+{
+	if (this->width != image.get_width() || this->height != image.get_height()) {
+		std::cout << "[OpenGL Error] Texture2DArray.load_data_with_mipmaps() image size mismatch. " << " texture size : (" << width << ", " << height << "), " << " image size : (" << image.get_width() << ", " << image.get_height() << ")" << std::endl;
+		ASSERT(false);
+	}
+
+	load_data(image, format, type, 0);
 	generate_mipmap();
 }
 
