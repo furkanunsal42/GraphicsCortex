@@ -257,7 +257,7 @@ void Texture2DArray::load_data(int texture_index, const Image& image, DepthStenc
 
 void Texture2DArray::load_data(const void* image, ColorFormat format, Type type, int mipmap_target)
 {
-	load_data(image, format, type, 0, 0, 0, query_width(mipmap_target), query_height(mipmap_target), get_size().z, mipmap_target);
+	load_data(image, format, type, 0, 0, 0, this->width >> mipmap_target, this->height >> mipmap_target, get_size().z, mipmap_target);
 }
 
 void Texture2DArray::load_data(const void* image, ColorFormat format, Type type, int x, int y, int z, int width, int height, int depth, int mipmap_target)
@@ -275,7 +275,7 @@ void Texture2DArray::load_data(const void* image, ColorFormat format, Type type,
 
 void Texture2DArray::load_data(const Image& image, ColorFormat format, Type type, int mipmap_target)
 {
-	load_data(image, format, type, 0, 0, 0, query_width(mipmap_target), query_height(mipmap_target), get_size().z, mipmap_target);
+	load_data(image, format, type, 0, 0, 0, this->width >> mipmap_target, this->height >> mipmap_target, get_size().z, mipmap_target);
 }
 
 void Texture2DArray::load_data(const Image& image, ColorFormat format, Type type, int x, int y, int z, int width, int height, int depth, int mipmap_target)
@@ -288,12 +288,12 @@ void Texture2DArray::load_data(const Image& image, ColorFormat format, Type type
 		ASSERT(false);
 	}
 
-	load_data(image, format, type, x, y, z, width, height, depth, mipmap_target);
+	load_data(image._image_data, format, type, x, y, z, width, height, depth, mipmap_target);
 }
 
 void Texture2DArray::load_data(const void* image, DepthStencilFormat format, Type type, int mipmap_target)
 {
-	load_data(image, format, type, 0, 0, 0, query_width(mipmap_target), query_height(mipmap_target), get_size().z, mipmap_target);
+	load_data(image, format, type, 0, 0, 0, this->width >> mipmap_target, this->height >> mipmap_target, get_size().z, mipmap_target);
 }
 
 void Texture2DArray::load_data(const void* image, DepthStencilFormat format, Type type, int x, int y, int z, int width, int height, int depth, int mipmap_target)
@@ -871,13 +871,13 @@ std::shared_ptr<Image> Texture2DArray::get_image(ColorFormat format, Type type, 
 	int is_a = a_channel != 0;
 
 	int mipmap_channels = is_r + is_g + is_b + is_a;
-	int mipmap_pixel_size = r_channel + g_channel + b_channel + a_channel / 8;
+	int mipmap_pixel_size = (r_channel + g_channel + b_channel + a_channel) / 8;
 
 	int mipmap_width = query_width(mipmap_level);
 	int mipmap_height = query_height(mipmap_level);
 
 	int format_channels = ColorFormat_channels(format);
-	int image_size = width * height * depth * mipmap_pixel_size;
+	unsigned int image_size = width * height * depth * mipmap_pixel_size;
 	unsigned char* image = new unsigned char[image_size];
 
 	GLCall(glGetTextureSubImage(id, mipmap_level, x, y, z, width, height, depth, ColorFormat_to_OpenGL(format), Type_to_OpenGL(type), image_size, image));
