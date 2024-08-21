@@ -8,7 +8,7 @@ using namespace shader_directory;
 
 int main() {
 	
-	glm::ivec3 volume_dimentions(500, 1000, 500);
+	glm::ivec3 volume_dimentions(1024, 1024, 1024);
 	glm::vec3 voxel_size(200.0f / volume_dimentions.x, 200.0f / volume_dimentions.y, 200.0f / volume_dimentions.z);
 	int projection_count = 1440;
 	//int window_width = 1024;
@@ -38,6 +38,7 @@ int main() {
 
 	std::shared_ptr<FBP3D> solver = std::make_shared<FBP3D>(fbp_shader_defines_to_use, ffft_shader_defines_to_use);
 	solver->set_volume_max_segment_size(glm::ivec3(volume_dimentions.x, volume_dimentions.y, volume_dimentions.z));
+	solver->set_projections_max_segment_size(glm::ivec3(volume_dimentions.x, volume_dimentions.y, projection_count));
 	
 	solver->set_volume_format(fbp_volume_format_to_use);
 	solver->set_projection_format(fbp_projection_format_to_use);
@@ -58,6 +59,7 @@ int main() {
 	//solver->apply_fdk_weights_to_projections(730.87f, 669.04f, 409.60f);
 	solver->apply_filter_to_projections(FBP2D::FilterType::SHEPP_LOGAN);
 
+	solver->generate_blank_volume(volume_dimentions.x, volume_dimentions.y, volume_dimentions.z);
 	solver->project_backward_cone_fdk_from_projections(730.87f, 669.04f, 409.60f, 213.84f, 209.196216, 1, volume_dimentions.x, volume_dimentions.y, 0);
 	//solver->project_backward_cone_fdk_from_projections(606.93, 1036.15, 409.60f, 200, 200, 1, volume_dimentions.x, volume_dimentions.y, 0);
 	//solver->project_backward_cone_fdk_from_projections(582.017, 1036.15, 409.60f, 200, 200, 1, volume_dimentions.x, volume_dimentions.y, 0);

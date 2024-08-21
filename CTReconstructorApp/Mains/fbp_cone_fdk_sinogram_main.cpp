@@ -17,6 +17,7 @@ int main() {
 	scene.camera->max_distance = 1000;
 
 	std::shared_ptr<FBP3D> solver = std::make_shared<FBP3D>();
+	solver->set_volume_max_segment_size(glm::ivec3(volume_dimentions.x, volume_dimentions.y, volume_dimentions.z));
 
 	//solver->generate_shepplogan(volume_dimentions.x, volume_dimentions.y, volume_dimentions.z);
 	//solver->project_forward_cone_to_sinogram(730.87f, 669.04f, 409.60f, 213.84f, 1, projection_count, 0);
@@ -30,21 +31,21 @@ int main() {
 	//solver->project_forward_cone(730.87f, 669.04f, 409.60f, 213.84f, 1, projection_count, 0);
 	//solver->read_projections_as_sinograms("C:/Users/FurkanPC/Desktop/Projektionen", 2048, 2048, 1, 2, volume_dimentions.x, volume_dimentions.y, 1440);
 	solver->read_projections_as_sinograms("C:/Users/FURKAN.UNSAL/Desktop/Projektionen", 2048, 2048, 1, 2, volume_dimentions.x, volume_dimentions.y, 1440);
-	solver->log_normalize_sinograms(97.0 / 255);
-	//
+	solver->log_normalize_sinograms(95.0 / 255);
+	
 	//solver->apply_fdk_weights_to_sinograms(730.87f, 669.04f, 409.60f);
-	solver->apply_filter_to_sinograms(FBP2D::FilterType::RAM_LAK);
-	solver->project_backward_cone_fdk_from_sinograms(730.87f, 669.04f, 409.60f, 213.84f, 1, volume_dimentions.x, volume_dimentions.y, 0);
+	solver->apply_filter_to_sinograms(FBP2D::FilterType::SHEPP_LOGAN);
+	//solver->project_backward_cone_fdk_from_sinograms(730.87f, 669.04f, 409.60f, 213.84f, 1, volume_dimentions.x, volume_dimentions.y, 0);
 
 	//solver->project_forward_cone_to_sinogram(730.87f, 669.04f, 409.60f, 213.84f, 1, projection_count, 0);
 	//solver->apply_filter_to_sinograms(FBP2D::FilterType::RAM_LAK);
-	//solver->project_backward_cone_fdk_from_sinograms(730.87f, 669.04f, 409.60f, 213.84f, 1, volume_dimentions.x, volume_dimentions.y, 0);
+	solver->project_backward_cone_fdk_from_sinograms(730.87f, 669.04f, 409.60f, 213.84f, 1, volume_dimentions.x, volume_dimentions.y, 0);
 	
 	//solver->project_forward_parallel_to_sinogram(1, projection_count, 0);
 	//solver->apply_filter_to_sinograms(FBP2D::FilterType::RAM_LAK);
 	//solver->project_backward_parallel_from_sinograms(1, volume_dimentions.x, volume_dimentions.y, 0);
 
-	solver->normalize_histogram();
+	//solver->normalize_histogram();
 
 	//
 	//solver->write_volume(reconstruction_path);
