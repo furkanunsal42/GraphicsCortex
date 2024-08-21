@@ -8,15 +8,15 @@ using namespace shader_directory;
 
 int main() {
 
-	glm::ivec3 volume_dimentions(720, 720, 720);
+	glm::ivec3 volume_dimentions(2800, 2800, 2800);
 	glm::vec3 voxel_size(200.0f / volume_dimentions.x, 200.0f / volume_dimentions.y, 200.0f / volume_dimentions.z);
 	int projection_count = 1440;
-	//int window_width = 1024;
+	int window_width = 1024;
 
 	int slice_index_number_length = 6;
 	std::string reconstruction_path = "reconstruction";
 
-	Frame frame(volume_dimentions.x, volume_dimentions.z, "CTReconstructor", 0, 2, true, true, false, Frame::CallbackLevel::NOTIFICATION, false);
+	Frame frame(window_width, window_width, "CTReconstructor", 0, 2, true, true, false, Frame::CallbackLevel::NOTIFICATION, false);
 	Scene scene(frame);
 	scene.camera->fov = 90;
 	scene.camera->max_distance = 1000;
@@ -38,7 +38,7 @@ int main() {
 
 	std::shared_ptr<FBP3D> solver = std::make_shared<FBP3D>(fbp_shader_defines_to_use, ffft_shader_defines_to_use);
 	solver->set_volume_max_segment_size(glm::ivec3(volume_dimentions.x, 128, volume_dimentions.z));
-	solver->set_projections_max_segment_size(glm::ivec3(volume_dimentions.x, volume_dimentions.y, projection_count / 4));
+	solver->set_projections_max_segment_size(glm::ivec3(volume_dimentions.x, volume_dimentions.y, 128/*projection_count*/));
 
 	solver->set_volume_format(fbp_volume_format_to_use);
 	solver->set_projection_format(fbp_projection_format_to_use);
@@ -46,7 +46,8 @@ int main() {
 
 	solver->set_display_progress(true, 8);
 
-	solver->read_projections("C:/Users/furkan.unsal/Desktop/Projektionen", 2048, 2048, 1, 2, volume_dimentions.x, volume_dimentions.y, projection_count);
+	//solver->read_projections("C:/Users/furkan.unsal/Desktop/Projektionen", 2048, 2048, 1, 2, volume_dimentions.x, volume_dimentions.y, projection_count);
+	solver->read_projections("C:/Users/FurkanPC/Desktop/Projektionen", 2048, 2048, 1, 2, volume_dimentions.x, volume_dimentions.y, projection_count);
 
 	for (int projections_index = 0; projections_index < solver->get_projections_segment_count().z; projections_index++) {
 		solver->set_projections_active_all(false);
@@ -56,8 +57,8 @@ int main() {
 		solver->apply_fdk_weights_to_projections(730.87f, 669.04f, 409.60f);
 		solver->apply_filter_to_projections(FBP2D::FilterType::SHEPP_LOGAN);
 		
-		//solver->projections_transfer_vram_to_ram();
-		//solver->projections_clear_vram();
+		solver->projections_transfer_vram_to_ram();
+		solver->projections_clear_vram();
 	}
 
 	std::shared_ptr<Texture1D> min_texture = std::make_shared<Texture1D>(1, solver->histogram_int_texture_internal_format, 1, 0);
@@ -69,15 +70,18 @@ int main() {
 	for (int projections_index = 0; projections_index < solver->get_projections_segment_count().z; projections_index++) {
 		solver->set_projections_active_all(false);
 		solver->set_projections_active_layer_z(projections_index, 1, true);
-	
-		//solver->projections_transfer_ram_to_vram();
+		
+		solver->projections_transfer_ram_to_vram();
 	
 		for (int horizontal_layer = 0; horizontal_layer < solver->get_volume_segment_count().y; horizontal_layer++) {
+
 			solver->set_volume_active_all(false);
 			solver->set_volume_active_layer_y(horizontal_layer, 1, true);
-	
+			
+			solver->volume_transfer_ram_to_vram();
+
 			solver->project_backward_cone_fdk_from_projections(730.87f, 669.04f, 409.60f, 213.84f, 213.84f, 1, volume_dimentions.x, volume_dimentions.y, 0);
-			solver->mirror_along_x();
+			//solver->mirror_along_x();
 		
 			solver->compute_min_value_of_volume(*min_texture);
 			solver->compute_max_value_of_volume(*max_texture);
@@ -86,8 +90,8 @@ int main() {
 			solver->volume_clear_vram();
 		}
 	
-		//solver->projections_clear_vram();
-		//solver->projections_clear_ram();
+		solver->projections_clear_vram();
+		solver->projections_clear_ram();
 	}
 	
 	for (int horizontal_layer = 0; horizontal_layer < solver->get_volume_segment_count().y; horizontal_layer++) {
@@ -132,10 +136,10 @@ int main() {
 
 		i++;
 
-		//i = i % volume_dimentions.y;
-		//solver->load_volume_slice_y(i, *slice);
-		i = i % projection_count;
-		solver->load_projection(i, *slice);
+		i = i % volume_dimentions.y;
+		solver->load_volume_slice_y(i, *slice);
+		//i = i % projection_count;
+		//solver->load_projection(i, *slice);
 		//i = i % volume_dimentions.y;
 		//solver->load_sinogram(i, *slice);
 
@@ -143,6 +147,6 @@ int main() {
 
 		framebuffer->attach_color(0, slice_white);
 		framebuffer->set_read_buffer(0);
-		framebuffer->blit_to_screen(0, 0, volume_dimentions.x, volume_dimentions.z, 0, 0, volume_dimentions.x, volume_dimentions.z, Framebuffer::Channel::COLOR, Framebuffer::Filter::LINEAR);
+		framebuffer->blit_to_screen(0, 0, volume_dimentions.x, volume_dimentions.z, 0, 0, window_width, window_width, Framebuffer::Channel::COLOR, Framebuffer::Filter::LINEAR);
 	}
 }
