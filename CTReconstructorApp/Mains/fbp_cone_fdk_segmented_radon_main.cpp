@@ -60,12 +60,20 @@ int main() {
 			solver->set_projections_active_all(false);
 			solver->set_projections_active_layer_y(projection_segment_index, 1, true);
 
-			//solver->projections_transfer_ram_to_vram();
+			FBP3D::AABB2D bounding_box = solver->get_aabb_conebeam(
+				FBP3D::AABB3D(solver->get_volume_max_segment_size() * glm::ivec3(1, volume_segment_index, 1), 
+							  solver->get_volume_max_segment_size() * glm::ivec3(1, volume_segment_index + 1, 1)),
+				0, volume_dimentions, projection_count, 730.87f, 669.04f, 409.60f, 213.84f, 213.84, 1.0f, 0.0f);
+			
+			if (bounding_box.min.y < (solver->get_projections_max_segment_size() * glm::ivec3(1, projection_segment_index, 1)).y) continue;
+			if (bounding_box.min.y >= (solver->get_projections_max_segment_size() * glm::ivec3(1, projection_segment_index + 1, 1)).y) continue;
+
+			solver->projections_transfer_ram_to_vram();
 
 			solver->project_forward_cone_to_projections(730.87f, 669.04f, 409.60f, 213.84f, 1.0f, projection_count, 0);
 
-			//solver->projections_transfer_vram_to_ram();
-			//solver->projections_clear_vram();
+			solver->projections_transfer_vram_to_ram();
+			solver->projections_clear_vram();
 		}
 
 		solver->volume_transfer_vram_to_ram();
@@ -73,6 +81,7 @@ int main() {
 	}
 
 	solver->set_projections_active_all(true);
+	solver->projections_transfer_ram_to_vram();
 
 	std::shared_ptr<Texture2D> slice = std::make_shared<Texture2D>(volume_dimentions.x, volume_dimentions.y, solver->get_volume_format(), 1, 0, 0);
 	slice->is_bindless = false;

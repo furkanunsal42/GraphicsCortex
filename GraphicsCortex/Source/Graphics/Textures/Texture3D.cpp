@@ -628,7 +628,7 @@ std::shared_ptr<Image> Texture3D::get_image(ColorFormat format, Type type, int m
 	size_t mipmap_depth = query_depth(mipmap_level);
 
 	size_t format_channels = ColorFormat_channels(format);
-	size_t image_size = width * height * depth * mipmap_pixel_size;
+	size_t image_size = (size_t)width * height * depth * mipmap_pixel_size;
 	unsigned char* image = new unsigned char[image_size];
 
 	GLCall(glGetTextureSubImage(id, mipmap_level, x, y, z, width, height, depth, ColorFormat_to_OpenGL(format), Type_to_OpenGL(type), image_size, image));

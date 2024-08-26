@@ -37,8 +37,8 @@ int main() {
 	util_shader_directory = "../CTReconstructor/Source/GLSL/Compute/Util/";
 
 	std::shared_ptr<FBP3D> solver = std::make_shared<FBP3D>(fbp_shader_defines_to_use, ffft_shader_defines_to_use);
-	solver->set_volume_max_segment_size(glm::ivec3(volume_dimentions.x, 256/*volume_dimentions.y*/, volume_dimentions.z));
-	solver->set_projections_max_segment_size(glm::ivec3(volume_dimentions.x, 256/*volume_dimentions.y*/, projection_count));
+	solver->set_volume_max_segment_size(glm::ivec3(volume_dimentions.x, 512/*volume_dimentions.y*/, volume_dimentions.z));
+	solver->set_projections_max_segment_size(glm::ivec3(volume_dimentions.x, 512/*volume_dimentions.y*/, projection_count));
 
 	solver->set_volume_format(fbp_volume_format_to_use);
 	solver->set_projection_format(fbp_projection_format_to_use);
@@ -73,8 +73,15 @@ int main() {
 		solver->projections_transfer_ram_to_vram();
 	
 		for (int horizontal_layer = 0; horizontal_layer < solver->get_volume_segment_count().y; horizontal_layer++) {
-			if (horizontal_layer * solver->get_volume_max_segment_size().y  >= (projections_index + 1) * solver->get_projections_max_segment_size().y) continue;
-			if ((horizontal_layer + 1) * solver->get_volume_max_segment_size().y < projections_index * solver->get_projections_max_segment_size().y) continue;
+			FBP3D::AABB2D bounding_box = solver->get_aabb_conebeam(
+				FBP3D::AABB3D(solver->get_volume_max_segment_size() * glm::ivec3(1, horizontal_layer, 1), 
+							  solver->get_volume_max_segment_size() * glm::ivec3(1, horizontal_layer + 1, 1)),
+				0, volume_dimentions, projection_count, 730.87f, 669.04f, 409.60f, 213.84f, 213.84, 1.0f, 0.0f);
+			
+			if (bounding_box.min.y > (solver->get_projections_max_segment_size() * glm::ivec3(1, projections_index + 1, 1)).y) continue;
+			if (bounding_box.max.y < (solver->get_projections_max_segment_size() * glm::ivec3(1, projections_index, 1)).y) continue;
+
+			std::cout << "projection_index: " << projections_index << " horiztonal_layer: " << horizontal_layer << std::endl;
 
 			solver->set_volume_active_all(false);
 			solver->set_volume_active_layer_y(horizontal_layer, 1, true);

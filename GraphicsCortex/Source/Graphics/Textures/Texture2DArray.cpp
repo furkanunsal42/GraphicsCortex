@@ -877,7 +877,7 @@ std::shared_ptr<Image> Texture2DArray::get_image(ColorFormat format, Type type, 
 	int mipmap_height = query_height(mipmap_level);
 
 	int format_channels = ColorFormat_channels(format);
-	unsigned int image_size = width * height * depth * mipmap_pixel_size;
+	size_t image_size = (size_t)width * height * depth * mipmap_pixel_size;
 	unsigned char* image = new unsigned char[image_size];
 
 	GLCall(glGetTextureSubImage(id, mipmap_level, x, y, z, width, height, depth, ColorFormat_to_OpenGL(format), Type_to_OpenGL(type), image_size, image));
@@ -906,7 +906,7 @@ std::shared_ptr<Image> Texture2DArray::get_image(DepthStencilFormat format, Type
 	int mipmap_height = query_height(mipmap_level);
 
 	int format_channels = 1;
-	int image_size = width * height * depth * mipmap_pixel_size;
+	size_t image_size = (size_t)width * height * depth * mipmap_pixel_size;
 	unsigned char* image = new unsigned char[image_size];
 
 	int gl_format;

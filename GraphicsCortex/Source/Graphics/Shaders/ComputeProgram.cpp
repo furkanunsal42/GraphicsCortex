@@ -574,6 +574,12 @@ void ComputeProgram::update_uniform(const std::string& name, const glm::mat4& a)
 	GLCall(glProgramUniformMatrix4fv(id, _get_uniform_location(name), 1, GL_FALSE, glm::value_ptr(a)));
 }
 
+void ComputeProgram::update_uniform(const std::string& name, const glm::mat3x4& a)
+{
+	if (!_does_uniform_exist(name)) return;
+	GLCall(glProgramUniformMatrix3x4fv(id, _get_uniform_location(name), 1, GL_FALSE, glm::value_ptr(a)));
+}
+
 void ComputeProgram::_generate_program()
 {
 	if (_program_generated) return;

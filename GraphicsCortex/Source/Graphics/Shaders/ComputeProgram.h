@@ -97,6 +97,8 @@ public:
 	void update_uniform(const std::string& name, const glm::mat2& a);
 	void update_uniform(const std::string& name, const glm::mat3& a);
 	void update_uniform(const std::string& name, const glm::mat4& a);
+	void update_uniform(const std::string& name, const glm::mat3x4& a);
+
 
 private:
 

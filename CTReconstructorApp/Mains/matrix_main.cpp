@@ -39,7 +39,6 @@ int main() {
 	view = glm::translate(view, -glm::vec3(detector_panel_distance, 0, 0));
 	view = glm::rotate(view, radian, glm::vec3(0, 1, 0));
 	
-	//glm::mat4x4 ortogonal_projection = glm::ortho<float>(-detector_width / detector_resolution_x, detector_width / detector_resolution_x, -detector_height / volume_resolution_y, detector_height / volume_resolution_y, 0, 1);
 	glm::mat4x4 ortogonal_projection(
 		glm::vec4(1 / detector_width * detector_resolution_x, 0, 0, 0),
 		glm::vec4(0, 1 / detector_height * detector_resolution_y, 0, 0),
