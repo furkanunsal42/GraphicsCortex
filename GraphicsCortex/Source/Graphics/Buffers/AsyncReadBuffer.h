@@ -5,9 +5,10 @@ class AsyncReadBuffer {
 public:
 	unsigned int id;
 
+	AsyncReadBuffer() = delete;;
 	AsyncReadBuffer(const AsyncReadBuffer& other) = delete;
 	
-	AsyncReadBuffer();
+	AsyncReadBuffer(size_t buffer_size);
 	~AsyncReadBuffer();
 	void release();
 
@@ -17,7 +18,7 @@ public:
 	
 	void bind();
 	void unbind();
-	void map(size_t buffer_size_in_bytes);
+	void map();
 	void unmap();
 
 private:

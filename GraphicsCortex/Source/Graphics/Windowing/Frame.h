@@ -44,6 +44,7 @@ public:
 	double handle_window();
 	void set_viewport(int width, int height);
 	void set_viewport(glm::vec2 size);
+	void resize(int width, int height);
 	void set_visibility(bool value);
 	enum CursorType {
 		Arrow = 0,

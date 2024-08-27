@@ -66,7 +66,7 @@ void Framebuffer::bind_read_draw()
 	_check_framebuffer_status(GL_FRAMEBUFFER);
 
 	if (!_framebuffer_generated) {
-		std::cout << "[OpenGL Error] Framebuffer treid to bind_read_draw() but resource was released" << std::endl;
+		std::cout << "[OpenGL Error] Framebuffer tried to bind_read_draw() but resource was released" << std::endl;
 		ASSERT(false);
 	}
 
@@ -78,7 +78,7 @@ void Framebuffer::bind_read()
 	_check_framebuffer_status(GL_READ_FRAMEBUFFER);
 
 	if (!_framebuffer_generated) {
-		std::cout << "[OpenGL Error] Framebuffer treid to bind_read() but resource was released" << std::endl;
+		std::cout << "[OpenGL Error] Framebuffer tried to bind_read() but resource was released" << std::endl;
 		ASSERT(false);
 	}
 
@@ -92,7 +92,7 @@ void Framebuffer::bind_draw()
 	_check_framebuffer_status(GL_DRAW_FRAMEBUFFER);
 
 	if (!_framebuffer_generated) {
-		std::cout << "[OpenGL Error] Framebuffer treid to bind_draw() but resource was released" << std::endl;
+		std::cout << "[OpenGL Error] Framebuffer tried to bind_draw() but resource was released" << std::endl;
 		ASSERT(false);
 	}
 
@@ -116,11 +116,11 @@ void Framebuffer::attach_color(int slot, std::shared_ptr<Texture1D> texture1d, i
 		ASSERT(false);
 	}
 	if (texture1d == nullptr) {
-		std::cout << "[OpenGL Error] Framebuffer treid to attach_color() but texture was nullptr" << std::endl;
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_color() but texture was nullptr" << std::endl;
 		ASSERT(false);
 	}
 	if (!texture1d->_texture_generated) {
-		std::cout << "[OpenGL Error] Framebuffer treid to attach_color() but texture was released" << std::endl;
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_color() but texture was released" << std::endl;
 		ASSERT(false);
 	}
 
@@ -137,11 +137,11 @@ void Framebuffer::attach_color(int slot, std::shared_ptr<Texture2D> texture2d, i
 		ASSERT(false);
 	}
 	if (texture2d == nullptr) {
-		std::cout << "[OpenGL Error] Framebuffer treid to attach_color() but texture was nullptr" << std::endl;
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_color() but texture was nullptr" << std::endl;
 		ASSERT(false);
 	}
 	if (!texture2d->_texture_generated) {
-		std::cout << "[OpenGL Error] Framebuffer treid to attach_color() but texture was released" << std::endl;
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_color() but texture was released" << std::endl;
 		ASSERT(false);
 	}
 
@@ -157,11 +157,11 @@ void Framebuffer::attach_color(int slot, std::shared_ptr<Texture2DArray> texture
 		ASSERT(false);
 	}
 	if (texture_array == nullptr) {
-		std::cout << "[OpenGL Error] Framebuffer treid to attach_color() but TextureArray was nullptr" << std::endl;
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_color() but TextureArray was nullptr" << std::endl;
 		ASSERT(false);
 	}
 	if (!texture_array->_texture_generated) {
-		std::cout << "[OpenGL Error] Framebuffer treid to attach_color() but TextureArray was released" << std::endl;
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_color() but TextureArray was released" << std::endl;
 		ASSERT(false);
 	}
 
@@ -178,11 +178,11 @@ void Framebuffer::attach_color(int slot, std::shared_ptr<TextureCubeMap> texture
 		ASSERT(false);
 	}
 	if (texturecubemap == nullptr) {
-		std::cout << "[OpenGL Error] Framebuffer treid to attach_color() but TextureCubeMap was nullptr" << std::endl;
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_color() but TextureCubeMap was nullptr" << std::endl;
 		ASSERT(false);
 	}
 	if (!texturecubemap->_texture_generated) {
-		std::cout << "[OpenGL Error] Framebuffer treid to attach_color() but TextureCubeMap was released" << std::endl;
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_color() but TextureCubeMap was released" << std::endl;
 		ASSERT(false);
 	}
 
@@ -200,15 +200,15 @@ void Framebuffer::attach_color(int slot, std::shared_ptr<Texture3D> texture3d, i
 		ASSERT(false);
 	}
 	if (texture3d == nullptr) {
-		std::cout << "[OpenGL Error] Framebuffer treid to attach_color() but Texture3D was nullptr" << std::endl;
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_color() but Texture3D was nullptr" << std::endl;
 		ASSERT(false);
 	}
 	if (!texture3d->_texture_generated) {
-		std::cout << "[OpenGL Error] Framebuffer treid to attach_color() but Texture3D was released" << std::endl;
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_color() but Texture3D was released" << std::endl;
 		ASSERT(false);
 	}
 	if (z >= texture3d->depth) {
-		std::cout << "[OpenGL Error] Framebuffer treid to attach_color() but z was greater than depth of Texture3D" << std::endl;
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_color() but z was greater than depth of Texture3D" << std::endl;
 		ASSERT(false);
 	}
 
@@ -226,11 +226,11 @@ void Framebuffer::attach_color(int slot, std::shared_ptr<Renderbuffer> render_bu
 		ASSERT(false);
 	}
 	if (render_buffer == nullptr) {
-		std::cout << "[OpenGL Error] Framebuffer treid to attach_color() but render_buffer was nullptr" << std::endl;
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_color() but render_buffer was nullptr" << std::endl;
 		ASSERT(false);
 	}
 	if (!render_buffer->_texture_generated) {
-		std::cout << "[OpenGL Error] Framebuffer treid to attach_color() but render_buffer was released" << std::endl;
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_color() but render_buffer was released" << std::endl;
 		ASSERT(false);
 	}
 
@@ -243,11 +243,11 @@ void Framebuffer::attach_color(int slot, std::shared_ptr<Renderbuffer> render_bu
 void Framebuffer::attach_depth(std::shared_ptr<Texture2D> texture2d, int mipmap_level)
 {
 	if (texture2d == nullptr) {
-		std::cout << "[OpenGL Error] Framebuffer treid to attach_depth() but texture was nullptr" << std::endl;
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_depth() but texture was nullptr" << std::endl;
 		ASSERT(false);
 	}
 	if (!texture2d->_texture_generated) {
-		std::cout << "[OpenGL Error] Framebuffer treid to attach_depth() but texture was released" << std::endl;
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_depth() but texture was released" << std::endl;
 		ASSERT(false);
 	}
 
@@ -259,11 +259,11 @@ void Framebuffer::attach_depth(std::shared_ptr<Texture2D> texture2d, int mipmap_
 void Framebuffer::attach_depth(std::shared_ptr<Renderbuffer> render_buffer)
 {
 	if (render_buffer == nullptr) {
-		std::cout << "[OpenGL Error] Framebuffer treid to attach_depth() but render_buffer was nullptr" << std::endl;
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_depth() but render_buffer was nullptr" << std::endl;
 		ASSERT(false);
 	}
 	if (!render_buffer->_texture_generated) {
-		std::cout << "[OpenGL Error] Framebuffer treid to attach_depth() but render_buffer was released" << std::endl;
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_depth() but render_buffer was released" << std::endl;
 		ASSERT(false);
 	}
 
@@ -275,11 +275,11 @@ void Framebuffer::attach_depth(std::shared_ptr<Renderbuffer> render_buffer)
 void Framebuffer::attach_stencil(std::shared_ptr<Texture2D> texture2d, int mipmap_level)
 {
 	if (texture2d == nullptr) {
-		std::cout << "[OpenGL Error] Framebuffer treid to attach_stencil() but texture was nullptr" << std::endl;
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_stencil() but texture was nullptr" << std::endl;
 		ASSERT(false);
 	}
 	if (!texture2d->_texture_generated) {
-		std::cout << "[OpenGL Error] Framebuffer treid to attach_stencil() but texture was released" << std::endl;
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_stencil() but texture was released" << std::endl;
 		ASSERT(false);
 	}
 
@@ -291,11 +291,11 @@ void Framebuffer::attach_stencil(std::shared_ptr<Texture2D> texture2d, int mipma
 void Framebuffer::attach_stencil(std::shared_ptr<Renderbuffer> render_buffer)
 {
 	if (render_buffer == nullptr) {
-		std::cout << "[OpenGL Error] Framebuffer treid to attach_stencil() but render_buffer was nullptr" << std::endl;
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_stencil() but render_buffer was nullptr" << std::endl;
 		ASSERT(false);
 	}
 	if (!render_buffer->_texture_generated) {
-		std::cout << "[OpenGL Error] Framebuffer treid to attach_stencil() but render_buffer was released" << std::endl;
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_stencil() but render_buffer was released" << std::endl;
 		ASSERT(false);
 	}
 
@@ -307,11 +307,11 @@ void Framebuffer::attach_stencil(std::shared_ptr<Renderbuffer> render_buffer)
 void Framebuffer::attach_depth_stencil(std::shared_ptr<Texture2D> texture2d, int mipmap_level)
 {
 	if (texture2d == nullptr) {
-		std::cout << "[OpenGL Error] Framebuffer treid to attach_depth_stencil() but texture was nullptr" << std::endl;
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_depth_stencil() but texture was nullptr" << std::endl;
 		ASSERT(false);
 	}
 	if (!texture2d->_texture_generated) {
-		std::cout << "[OpenGL Error] Framebuffer treid to attach_depth_stencil() but texture was released" << std::endl;
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_depth_stencil() but texture was released" << std::endl;
 		ASSERT(false);
 	}
 
@@ -323,11 +323,11 @@ void Framebuffer::attach_depth_stencil(std::shared_ptr<Texture2D> texture2d, int
 void Framebuffer::attach_depth_stencil(std::shared_ptr<Renderbuffer> render_buffer)
 {
 	if (render_buffer == nullptr) {
-		std::cout << "[OpenGL Error] Framebuffer treid to attach_depth_stencil() but render_buffer was nullptr" << std::endl;
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_depth_stencil() but render_buffer was nullptr" << std::endl;
 		ASSERT(false);
 	}
 	if (!render_buffer->_texture_generated) {
-		std::cout << "[OpenGL Error] Framebuffer treid to attach_depth_stencil() but render_buffer was released" << std::endl;
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_depth_stencil() but render_buffer was released" << std::endl;
 		ASSERT(false);
 	}
 

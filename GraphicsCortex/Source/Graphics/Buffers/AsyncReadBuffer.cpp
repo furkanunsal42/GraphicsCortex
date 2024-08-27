@@ -7,6 +7,9 @@ AsyncReadBuffer::AsyncReadBuffer()
 	_generate_buffer();
 }
 
+AsyncReadBuffer::AsyncReadBuffer(size_t buffer_size) : 
+	_buffer_size(buffer_size) { }
+
 AsyncReadBuffer::~AsyncReadBuffer()
 {
 	release();
@@ -55,14 +58,9 @@ void AsyncReadBuffer::unbind()
 	GLCall(glBindBuffer(target, 0));
 }
 
-void AsyncReadBuffer::map(size_t buffer_size_in_bytes)
+void AsyncReadBuffer::map()
 {
-	if (get_buffer_size() != 0 && get_buffer_size() != buffer_size_in_bytes) {
-		std::cout << "[OpenGL Error] AsyncReadBuffer tried to map() with inconsistent buffer_size" << std::endl;
-		ASSERT(false);
-	}
-
-	_allocate_buffer(buffer_size_in_bytes);
+	_allocate_buffer(_buffer_size);
 
 	if (!_buffer_generated) {
 		std::cout << "[OpenGL Error] released AsyncReadBuffer tried to map()" << std::endl;

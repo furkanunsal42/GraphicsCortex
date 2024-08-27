@@ -219,6 +219,11 @@ void Frame::set_viewport(glm::vec2 size) {
 	set_viewport(size.x, size.y);
 }
 
+void Frame::resize(int width, int height)
+{
+	glfwSetWindowSize(window, width, height);
+}
+
 void Frame::set_visibility(bool value)
 {
 	if (visible != value && !first_handle) {

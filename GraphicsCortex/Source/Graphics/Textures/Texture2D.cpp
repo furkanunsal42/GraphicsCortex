@@ -5,6 +5,7 @@
 #include <thread>
 #include <memory>
 #include <functional>
+#include "AsyncReadBuffer.h"
 
 namespace {
 	void read_image(const std::string& filename, Image** output_image, unsigned int texture_width, unsigned int texture_height, int desired_channels) {
@@ -792,6 +793,27 @@ std::shared_ptr<Image> Texture2D::get_image(DepthStencilFormat format, Type type
 	GLCall(glGetTextureSubImage(id, mipmap_level, x, y, 0, width, height, 1, gl_format, Type_to_OpenGL(type), image_size, image));
 
 	return std::make_shared<Image>(image, width, height, 1, format_channels, Type_bytes_per_channel(type), true);
+}
+
+std::shared_ptr<AsyncReadBuffer> Texture2D::get_image_async(ColorFormat format, Type type, int mipmap_level){
+	std::shared_ptr readback_buffer = std::make_shared<AsyncReadBuffer>();
+
+	readback_buffer->bind();
+	readback_buffer->map()
+
+	readback_buffer->unbind();
+}
+
+std::shared_ptr<AsyncReadBuffer> Texture2D::get_image_async(ColorFormat format, Type type, int mipmap_level, int x, int y, int width, int height){
+	
+}
+
+std::shared_ptr<AsyncReadBuffer> Texture2D::get_image_async(DepthStencilFormat format, Type type, int mipmap_level){
+	
+}
+
+std::shared_ptr<AsyncReadBuffer> Texture2D::get_image_async(DepthStencilFormat format, Type type, int mipmap_level, int x, int y, int width, int height){
+	
 }
 
 void Texture2D::clear(unsigned char clear_data, int mipmap_target)
