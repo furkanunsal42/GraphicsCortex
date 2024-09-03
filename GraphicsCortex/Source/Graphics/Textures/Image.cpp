@@ -83,6 +83,11 @@ Image::Image(unsigned char* image_data, int width, int height, int depth, int ch
 
 }
 
+Image::Image(ImageParameters parameters)
+{
+	_read_image_data(parameters);
+}
+
 Image::~Image() {
 	release();
 }

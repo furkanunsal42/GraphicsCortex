@@ -2,6 +2,7 @@
 #include "Config.h"
 
 #include <string>
+#include <chrono>
 #include "CortexMath.h"
 
 extern bool is_glew_initialized;
@@ -9,6 +10,7 @@ extern bool is_glfw_initialized;
 extern int fps_counter_batch;
 extern double frame_time_ms;
 extern double frame_rate_fps;
+extern std::chrono::time_point<std::chrono::system_clock> frame_begin_time;
 
 struct GLFWwindow;
 

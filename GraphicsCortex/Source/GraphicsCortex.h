@@ -19,6 +19,7 @@
 #include "Model.h"
 #include "Buffer.h"
 #include "UniformBuffer.h"
+#include "AsyncBuffer.h"
 #include "ShaderCompiler.h"
 #include "ComputeProgram.h"
 #include "Image.h"

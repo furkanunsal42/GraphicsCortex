@@ -6,6 +6,7 @@
 #include <iostream>
 #include <fstream>
 #include <iostream>
+#include <chrono>
 
 bool log_errors(const char* function, int line, const char* file) {
 	if (is_glfw_initialized && is_glew_initialized) {
@@ -91,6 +92,7 @@ void opengl_debug_callback(unsigned int source, unsigned int type, unsigned int 
 		return ".";
 	}();
 
-	std::cout << "[OpenGL Callack] " << src_str << ", " << type_str << ", " << severity_str << ", " << id << ": " << message << '\n';
+	long time_ms = (std::chrono::system_clock::now() - frame_begin_time).count() / 1000;
+	std::cout << "[OpenGL Callack] t:" << time_ms << "ms " << src_str << ", " << type_str << ", " << severity_str << ", " << id << ": " << message << '\n';
 }
 

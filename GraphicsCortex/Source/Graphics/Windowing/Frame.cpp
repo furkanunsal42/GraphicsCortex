@@ -16,6 +16,7 @@ bool is_glfw_initialized = false;
 int fps_counter_batch = 180;
 double frame_time_ms = 0;
 double frame_rate_fps = 0;
+std::chrono::time_point<std::chrono::system_clock> frame_begin_time;
 
 // private
 double old_time = glfwGetTime();
@@ -26,6 +27,8 @@ double seconds_total_batch = 0;
 Frame::Frame(int width, int height, const std::string& name, int msaa, int swapinterval, bool depth_test, bool blend, bool face_culling, CallbackLevel debug_callback_level, bool initialize_gui) :
 	window_width(width), window_height(height), window_name(name), multisample(msaa), swapinterval(swapinterval), depth_test(depth_test), blend(blend), face_culling(face_culling), initialize_imgui(initialize_gui)
 {
+	frame_begin_time = std::chrono::system_clock::now();
+
 	multisample = msaa;
 
 	window_width = width;

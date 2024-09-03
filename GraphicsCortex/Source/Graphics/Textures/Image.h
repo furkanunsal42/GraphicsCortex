@@ -26,6 +26,7 @@ public:
 	Image(const std::string& file_path, int target_width, int target_height, int channel_count, int byte_per_channel, bool vertical_flip);
 	Image(const std::string& file_path, int target_width, int target_height, int target_depth, int channel_count, int byte_per_channel, bool vertical_flip);
 	Image(unsigned char* image_data, int width, int height, int depth, int channel_count, int byte_per_channel, bool vertical_flip);
+	Image(ImageParameters parameters);
 	~Image();
 	void release();
 
