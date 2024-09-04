@@ -9,6 +9,7 @@ class Program;
 class ComputeProgram;
 class BindlessMaterial;
 class Framebuffer;
+class AsyncBuffer;
 
 class Texture1D : public TextureBase2 {
 	friend Program;
@@ -37,7 +38,6 @@ public:
 	void bind(int texture_slot);
 	void bind_as_image(int texture_slot, int mipmap_level);
 
-
 	void bind();
 	void unbind();
 
@@ -45,6 +45,9 @@ public:
 	void load_data(const void* image, ColorFormat format, Type type, int x, int width, int mipmap_target = 0);
 	void load_data(const Image& image, ColorFormat format, Type type, int mipmap_target = 0);
 	void load_data(const Image& image, ColorFormat format, Type type, int x, int width, int mipmap_target = 0);
+	void load_data(AsyncBuffer& async_buffer, ColorFormat format, Type type, int mipmap_target = 0);
+	void load_data(AsyncBuffer& async_buffer, ColorFormat format, Type type, int x, int width, int mipmap_target = 0);
+
 	void load_data_async(const std::string& image_filepath, ColorFormat format, Type type, int mipmap_target = 0);
 	void load_data_async(const std::string& image_filepath, ColorFormat format, Type type, int x, int width, int mipmap_target = 0);
 
@@ -52,6 +55,8 @@ public:
 	void load_data(const void* image, DepthStencilFormat format, Type type, int x, int width, int mipmap_target = 0);
 	void load_data(const Image& image, DepthStencilFormat format, Type type, int mipmap_target = 0);
 	void load_data(const Image& image, DepthStencilFormat format, Type type, int x, int width, int mipmap_target = 0);
+	void load_data(AsyncBuffer& async_buffer, DepthStencilFormat format, Type type, int mipmap_target = 0);
+	void load_data(AsyncBuffer& async_buffer, DepthStencilFormat format, Type type, int x, int width, int mipmap_target = 0);
 
 	void generate_mipmap();
 
@@ -73,6 +78,11 @@ public:
 	std::shared_ptr<Image> get_image(ColorFormat format, Type type, int mipmap_level, int x, int width);
 	std::shared_ptr<Image> get_image(DepthStencilFormat format, Type type, int mipmap_level);
 	std::shared_ptr<Image> get_image(DepthStencilFormat format, Type type, int mipmap_level, int x, int width);
+
+	std::shared_ptr<AsyncBuffer> get_image_async(ColorFormat format, Type type, int mipmap_level);
+	std::shared_ptr<AsyncBuffer> get_image_async(ColorFormat format, Type type, int mipmap_level, int x, int width);
+	std::shared_ptr<AsyncBuffer> get_image_async(DepthStencilFormat format, Type type, int mipmap_level);
+	std::shared_ptr<AsyncBuffer> get_image_async(DepthStencilFormat format, Type type, int mipmap_level, int x, int width);
 
 	void clear(unsigned char clear_data, int mipmap_target = 0);
 	void clear(float clear_data, int mipmap_target = 0);

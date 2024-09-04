@@ -5,6 +5,7 @@
 #include <thread>
 #include <memory>
 #include <functional>
+#include "AsyncBuffer.h"
 
 namespace {
 	void read_image(const std::string& filename, Image** output_image, unsigned int texture_width, unsigned int texture_height, unsigned int texture_depth, int desired_channels) {
@@ -143,6 +144,63 @@ void Texture3D::load_data(const void* image, ColorFormat format, Type type, int 
 	_user_data_loaded = true;
 }
 
+void Texture3D::load_data(const Image& image, ColorFormat format, Type type, int mipmap_target)
+{
+	int mipmap_width = this->width >> mipmap_target;
+	int mipmap_height = this->height >> mipmap_target;
+	int mipmap_depth = this->depth >> mipmap_target;
+
+	if (mipmap_width != image.get_width() || mipmap_height != image.get_height() || mipmap_depth != image.get_depth()) {
+		std::cout << "[OpenGL Error] Texture3D.load_data() image size mismatch. " << " texture size : (" << width << ", " << height << ", " << depth << "), " << " image size : (" << image.get_width() << ", " << image.get_height() << ", " << image.get_depth() << ")" << std::endl;
+		ASSERT(false);
+	}
+
+	load_data(image._image_data, format, type, mipmap_target);
+}
+
+void Texture3D::load_data(const Image& image, ColorFormat format, Type type, int x, int y, int z, int width, int height, int depth, int mipmap_target)
+{
+	int mipmap_width = this->width >> mipmap_target;
+	int mipmap_height = this->height >> mipmap_target;
+	int mipmap_depth = this->depth >> mipmap_target;
+
+	if (width > image.get_width() || height > image.get_height() || depth > image.get_depth()) {
+		std::cout << "[OpenGL Error] Texture3D.load_data() image size mismatch. " << " load_data() size : (" << width << ", " << height << ", " << depth <<  "), " << " image size : (" << image.get_width() << ", " << image.get_height() << ", " << image.get_depth() << ")" << std::endl;
+		ASSERT(false);
+	}
+
+	if (mipmap_width < width || mipmap_height < height || mipmap_depth < depth) {
+		std::cout << "[OpenGL Error] Texture3D.load_data() image size mismatch. " << " texture size : (" << width << ", " << height << ", " << depth << "), " << " load_data() size : (" << image.get_width() << ", " << image.get_height() << ", " << image.get_depth() << ")" << std::endl;
+		ASSERT(false);
+	}
+
+	load_data(image._image_data, format, type, x, y, z, width, height, depth, mipmap_target);
+}
+
+void Texture3D::load_data(AsyncBuffer& async_buffer, ColorFormat format, Type type, int mipmap_target)
+{
+	load_data(async_buffer, format, type, 0, 0, 0, width >> mipmap_target, height >> mipmap_target, depth >> mipmap_target, mipmap_target);
+}
+
+void Texture3D::load_data(AsyncBuffer& async_buffer, ColorFormat format, Type type, int x, int y, int z, int width, int height, int depth, int mipmap_target)
+{
+	if (!_texture_generated) {
+		std::cout << "[OpenGL Error] released Texture3D tried to load_data()" << std::endl;
+		ASSERT(false);
+	}
+	_allocate_texture();
+
+	async_buffer.wait_to_sycronize_download();
+	async_buffer.bind_upload();
+
+	glTextureSubImage3D(id, mipmap_target, x, y, z, width, height, depth, TextureBase2::ColorFormat_to_OpenGL(format), TextureBase2::Type_to_OpenGL(type), 0);
+
+	async_buffer.unbind();
+	async_buffer.set_fence_upload();
+
+	_user_data_loaded = true;
+}
+
 void Texture3D::load_data_async(const std::string& image_filepath, ColorFormat format, Type type, int x, int y, int z, int width, int height, int depth, int mipmap_target)
 {
 	if (async_load_happening) {
@@ -192,6 +250,63 @@ void Texture3D::load_data(const void* image, DepthStencilFormat format, Type typ
 	_user_data_loaded = true;
 }
 
+void Texture3D::load_data(const Image& image, DepthStencilFormat format, Type type, int mipmap_target)
+{
+	int mipmap_width = this->width >> mipmap_target;
+	int mipmap_height = this->height >> mipmap_target;
+	int mipmap_depth = this->depth >> mipmap_target;
+
+	if (mipmap_width != image.get_width() || mipmap_height != image.get_height() || mipmap_depth != image.get_depth()) {
+		std::cout << "[OpenGL Error] Texture3D.load_data() image size mismatch. " << " texture size : (" << width << ", " << height << ", " << depth << "), " << " image size : (" << image.get_width() << ", " << image.get_height() << ", " << image.get_depth() << ")" << std::endl;
+		ASSERT(false);
+	}
+
+	load_data(image._image_data, format, type, mipmap_target);
+}
+
+void Texture3D::load_data(const Image& image, DepthStencilFormat format, Type type, int x, int y, int z, int width, int height, int depth, int mipmap_target)
+{
+	int mipmap_width = this->width >> mipmap_target;
+	int mipmap_height = this->height >> mipmap_target;
+	int mipmap_depth = this->depth >> mipmap_target;
+
+	if (width > image.get_width() || height > image.get_height() || depth > image.get_depth()) {
+		std::cout << "[OpenGL Error] Texture3D.load_data() image size mismatch. " << " load_data() size : (" << width << ", " << height << ", " << depth << "), " << " image size : (" << image.get_width() << ", " << image.get_height() << ", " << image.get_depth() << ")" << std::endl;
+		ASSERT(false);
+	}
+
+	if (mipmap_width < width || mipmap_height < height || mipmap_depth < depth) {
+		std::cout << "[OpenGL Error] Texture3D.load_data() image size mismatch. " << " texture size : (" << width << ", " << height << ", " << depth << "), " << " load_data() size : (" << image.get_width() << ", " << image.get_height() << ", " << image.get_depth() << ")" << std::endl;
+		ASSERT(false);
+	}
+
+	load_data(image._image_data, format, type, x, y, z, width, height, depth, mipmap_target);
+}
+
+void Texture3D::load_data(AsyncBuffer& async_buffer, DepthStencilFormat format, Type type, int mipmap_target)
+{
+	load_data(async_buffer, format, type, 0, 0, 0, width >> mipmap_target, height >> mipmap_target, depth >> mipmap_target, mipmap_target);
+}
+
+void Texture3D::load_data(AsyncBuffer& async_buffer, DepthStencilFormat format, Type type, int x, int y, int z, int width, int height, int depth, int mipmap_target)
+{
+	if (!_texture_generated) {
+		std::cout << "[OpenGL Error] released Texture3D tried to load_data()" << std::endl;
+		ASSERT(false);
+	}
+	_allocate_texture();
+
+	async_buffer.wait_to_sycronize_download();
+	async_buffer.bind_upload();
+
+	GLCall(glTextureSubImage3D(id, mipmap_target, x, y, z, width, height, depth, TextureBase2::DepthStencilFormat_to_OpenGL(format), TextureBase2::Type_to_OpenGL(type), 0));
+
+	async_buffer.unbind();
+	async_buffer.set_fence_upload();
+
+	_user_data_loaded = true;
+}
+
 void Texture3D::generate_mipmap()
 {
 	if (!_texture_generated) return;
@@ -211,8 +326,30 @@ void Texture3D::load_data_with_mipmaps(const void* image, ColorFormat format, Ty
 	generate_mipmap();
 }
 
+void Texture3D::load_data_with_mipmaps(const Image& image, ColorFormat format, Type type)
+{
+	if (this->width != image.get_width() || this->height != image.get_height() || this->depth != image.get_depth()) {
+		std::cout << "[OpenGL Error] Texture3D.load_data_with_mipmaps() image size mismatch. " << " texture size : (" << width << ", " << height << ", " << depth << "), " << " image size : (" << image.get_width() << ", " << image.get_height() << ", " << image.get_depth() << ")" << std::endl;
+		ASSERT(false);
+	}
+
+	load_data(image, format, type, 0);
+	generate_mipmap();
+}
+
 void Texture3D::load_data_with_mipmaps(const void* image, DepthStencilFormat format, Type type)
 {
+	load_data(image, format, type, 0);
+	generate_mipmap();
+}
+
+void Texture3D::load_data_with_mipmaps(const Image& image, DepthStencilFormat format, Type type)
+{
+	if (this->width != image.get_width() || this->height != image.get_height() || this->depth != image.get_depth()) {
+		std::cout << "[OpenGL Error] Texture3D.load_data_with_mipmaps() image size mismatch. " << " texture size : (" << width << ", " << height << ", " << depth << "), " << " image size : (" << image.get_width() << ", " << image.get_height() << ", " << image.get_depth() << ")" << std::endl;
+		ASSERT(false);
+	}
+
 	load_data(image, format, type, 0);
 	generate_mipmap();
 }
@@ -672,6 +809,88 @@ std::shared_ptr<Image> Texture3D::get_image(DepthStencilFormat format, Type type
 	GLCall(glGetTextureSubImage(id, mipmap_level, x, y, z, width, height, depth, gl_format, Type_to_OpenGL(type), image_size, image));
 
 	return std::make_shared<Image>(image, width, height, depth, format_channels, 1, true);
+}
+
+std::shared_ptr<AsyncBuffer> Texture3D::get_image_async(ColorFormat format, Type type, int mipmap_level)
+{
+	return get_image_async(format, type, mipmap_level, 0, 0, 0, width >> mipmap_level, height >> mipmap_level, depth >> mipmap_level);
+}
+
+std::shared_ptr<AsyncBuffer> Texture3D::get_image_async(ColorFormat format, Type type, int mipmap_level, int x, int y, int z, int width, int height, int depth)
+{
+	int pixel_size = query_red_size(mipmap_level) + query_green_size(mipmap_level) + query_blue_size(mipmap_level) + query_alpha_size(mipmap_level);
+	pixel_size = pixel_size / 8;
+	std::shared_ptr<AsyncBuffer> readback_buffer = std::make_shared<AsyncBuffer>((size_t)width * height * depth * pixel_size);
+
+	readback_buffer->wait_to_sycronize_upload();
+	readback_buffer->bind_download();
+
+	if (!_texture_allocated) {
+		std::cout << "[OpenGL Error] Texture3D tried to get_image_async() but Texture3D was not allocated yet" << std::endl;
+		ASSERT(false);
+	}
+
+	int format_channels = ColorFormat_channels(format);
+	size_t image_size = (size_t)width * height * depth * pixel_size;
+
+	GLCall(glGetTextureSubImage(id, mipmap_level, x, y, z, width, height, depth, ColorFormat_to_OpenGL(format), Type_to_OpenGL(type), image_size, 0));
+	GLCall(glMemoryBarrier(GL_CLIENT_MAPPED_BUFFER_BARRIER_BIT));
+
+	readback_buffer->unbind();
+	readback_buffer->set_fence_download();
+
+	Image::ImageParameters parameters;
+	parameters.width = width;
+	parameters.height = height;
+	parameters.depth = depth;
+	parameters.vertical_flip = true;
+	parameters.bytes_per_channel = pixel_size / format_channels;
+	parameters.channel_count = format_channels;
+
+	readback_buffer->set_image_parameters(parameters);
+
+	return readback_buffer;
+}
+
+std::shared_ptr<AsyncBuffer> Texture3D::get_image_async(DepthStencilFormat format, Type type, int mipmap_level)
+{
+	return get_image_async(format, type, mipmap_level, 0, 0, 0, width >> mipmap_level, height >> mipmap_level, depth >> mipmap_level);
+}
+
+std::shared_ptr<AsyncBuffer> Texture3D::get_image_async(DepthStencilFormat format, Type type, int mipmap_level, int x, int y, int z, int width, int height, int depth)
+{
+	int pixel_size = query_depth_size(mipmap_level);
+	pixel_size = pixel_size / 8;
+	std::shared_ptr readback_buffer = std::make_shared<AsyncBuffer>((size_t)width * height * depth * pixel_size);
+
+	readback_buffer->bind_download();
+	readback_buffer->map();
+
+	if (!_texture_allocated) {
+		std::cout << "[OpenGL Error] Texture3D tried to get_image_async() but Texture3D was not allocated yet" << std::endl;
+		ASSERT(false);
+	}
+
+	int mipmap_width = query_width(mipmap_level);
+	int mipmap_height = query_height(mipmap_level);
+	int mipmap_depth = query_depth(mipmap_level);
+
+	int format_channels = 1;
+	size_t image_size = width * height * depth * pixel_size;
+
+	int gl_format;
+	if (format == DepthStencilFormat::DEPTH) gl_format = GL_DEPTH_COMPONENT;
+	else if (format == DepthStencilFormat::STENCIL) gl_format = GL_STENCIL_INDEX;
+	else {
+		std::cout << "[OpenGL Error] Texture3D tried to get_image_async() with unsuppoerted format" << std::endl;
+		ASSERT(false);
+	}
+
+	GLCall(glGetTextureSubImage(id, mipmap_level, x, y, z, width, height, depth, gl_format, Type_to_OpenGL(type), image_size, 0));
+
+	readback_buffer->unbind();
+
+	return readback_buffer;
 }
 
 void Texture3D::clear(unsigned char clear_data, int mipmap_target)

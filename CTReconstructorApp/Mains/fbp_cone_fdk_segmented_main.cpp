@@ -16,7 +16,7 @@ int main() {
 	int slice_index_number_length = 6;
 	std::string reconstruction_path = "reconstruction";
 
-	Frame frame(window_width, window_width, "CTReconstructor", 0, 2, true, true, false, Frame::CallbackLevel::NOTIFICATION, false);
+	Frame frame(window_width, window_width, "CTReconstructor", 0, 2, true, true, false, Frame::CallbackLevel::DISABLED, false);
 	Scene scene(frame);
 	scene.camera->fov = 90;
 	scene.camera->max_distance = 1000;
@@ -37,14 +37,14 @@ int main() {
 	util_shader_directory = "../CTReconstructor/Source/GLSL/Compute/Util/";
 
 	std::shared_ptr<FBP3D> solver = std::make_shared<FBP3D>(fbp_shader_defines_to_use, ffft_shader_defines_to_use);
-	solver->set_volume_max_segment_size(glm::ivec3(volume_dimentions.x, 512/*volume_dimentions.y*/, volume_dimentions.z));
-	solver->set_projections_max_segment_size(glm::ivec3(volume_dimentions.x, 512/*volume_dimentions.y*/, projection_count));
+	solver->set_projections_max_segment_size(glm::ivec3(volume_dimentions.x, volume_dimentions.y / 4, projection_count));
+	solver->set_volume_max_segment_size(glm::ivec3(volume_dimentions.x, 128/*volume_dimentions.y*/, volume_dimentions.z));
 
 	solver->set_volume_format(fbp_volume_format_to_use);
 	solver->set_projection_format(fbp_projection_format_to_use);
 	solver->set_projection_complex_format(fbp_projection_complex_format_to_use);
 
-	solver->set_display_progress(true, 8);
+	solver->set_display_progress(true, 128);
 
 	solver->read_projections("C:/Users/furkan.unsal/Desktop/Projektionen", 2048, 2048, 1, 2, volume_dimentions.x, volume_dimentions.y, projection_count);
 
@@ -54,10 +54,12 @@ int main() {
 	
 		solver->log_normalize_projections(95.0 / 255);
 		solver->apply_fdk_weights_to_projections(730.87f, 669.04f, 409.60f);
-		solver->apply_filter_to_projections(FBP2D::FilterType::SHEPP_LOGAN);
+		//solver->apply_filter_to_projections(FBP2D::FilterType::SHEPP_LOGAN);
 		
-		solver->projections_transfer_vram_to_ram();
-		solver->projections_clear_vram();
+		if (solver->get_projections_segment_count() != glm::ivec3(1, 1,1 )) {
+			solver->projections_transfer_vram_to_ram();
+			solver->projections_clear_vram();
+		}
 	}
 
 	std::shared_ptr<Texture1D> min_texture = std::make_shared<Texture1D>(1, solver->histogram_int_texture_internal_format, 1, 0);
@@ -67,56 +69,113 @@ int main() {
 
 	solver->generate_blank_volume(volume_dimentions.x, volume_dimentions.y, volume_dimentions.y);
 	for (int projections_index = 0; projections_index < solver->get_projections_segment_count().y; projections_index++) {
+		
+		if (solver->get_projections_segment_count() != glm::ivec3(1, 1, 1)) {
+			if (projections_index < solver->get_projections_segment_count().y - 1) {
+				solver->set_projections_active_all(false);
+				solver->set_projections_active_layer_y(projections_index + 1, 1, true);
+				solver->projections_transfer_ram_to_vram();
+			}
+
+			if (projections_index == 0) {
+				solver->set_projections_active_all(false);
+				solver->set_projections_active_layer_y(0, 1, true);
+				solver->projections_transfer_ram_to_vram();
+			}
+		}
+
 		solver->set_projections_active_all(false);
 		solver->set_projections_active_layer_y(projections_index, 1, true);
-		
-		solver->projections_transfer_ram_to_vram();
 	
 		for (int horizontal_layer = 0; horizontal_layer < solver->get_volume_segment_count().y; horizontal_layer++) {
-			FBP3D::AABB2D bounding_box = solver->get_aabb_conebeam(
-				FBP3D::AABB3D(solver->get_volume_max_segment_size() * glm::ivec3(1, horizontal_layer, 1), 
-							  solver->get_volume_max_segment_size() * glm::ivec3(1, horizontal_layer + 1, 1)),
-				0, volume_dimentions, projection_count, 730.87f, 669.04f, 409.60f, 213.84f, 213.84, 1.0f, 0.0f);
 			
+			FBP3D::AABB2D bounding_box = solver->get_aabb_conebeam(
+				FBP3D::AABB3D(solver->get_volume_max_segment_size() * glm::ivec3(0, horizontal_layer, 0),
+					solver->get_volume_max_segment_size() * glm::ivec3(1, horizontal_layer + 1, 1)),
+				0, volume_dimentions, projection_count, 730.87f, 669.04f, 409.60f, 213.84f, 213.84, 1.0f, 0.0f);
+
+			for (int projection_index = 0; projection_index < solver->get_projections_size().z; projection_index++) {
+				FBP3D::AABB2D bounding_box_i = solver->get_aabb_conebeam(
+					FBP3D::AABB3D(solver->get_volume_max_segment_size() * glm::ivec3(0, horizontal_layer, 0),
+						solver->get_volume_max_segment_size() * glm::ivec3(1, horizontal_layer + 1, 1)),
+					projection_index, volume_dimentions, projection_count, 730.87f, 669.04f, 409.60f, 213.84f, 213.84, 1.0f, 0.0f);
+
+				//#pragma critical
+				{
+					bounding_box.min = glm::min(bounding_box.min, bounding_box_i.min);
+					bounding_box.max = glm::max(bounding_box.max, bounding_box_i.max);
+				}
+			}
+			
+			std::cout << bounding_box.min.y << ", " << bounding_box.max.y << std::endl;
+
 			if (bounding_box.min.y > (solver->get_projections_max_segment_size() * glm::ivec3(1, projections_index + 1, 1)).y) continue;
-			if (bounding_box.max.y < (solver->get_projections_max_segment_size() * glm::ivec3(1, projections_index, 1)).y) continue;
+			if (bounding_box.max.y < (solver->get_projections_max_segment_size() * glm::ivec3(0, projections_index, 0)).y) continue;
 
 			std::cout << "projection_index: " << projections_index << " horiztonal_layer: " << horizontal_layer << std::endl;
 
+			if (solver->get_volume_segment_count() != glm::ivec3(1, 1, 1)) {
+				if (horizontal_layer < solver->get_volume_segment_count().y - 1) {
+					solver->set_volume_active_all(false);
+					solver->set_volume_active_layer_y(horizontal_layer + 1, 1, true);
+					solver->volume_transfer_ram_to_vram();
+				}
+
+				if (horizontal_layer == 0) {
+					solver->set_volume_active_all(false);
+					solver->set_volume_active_layer_y(0, 1, true);
+					solver->volume_transfer_ram_to_vram();
+				}
+			}
+
 			solver->set_volume_active_all(false);
 			solver->set_volume_active_layer_y(horizontal_layer, 1, true);
-			
-			solver->volume_transfer_ram_to_vram();
 
-			solver->project_backward_cone_fdk_from_projections(730.87f, 669.04f, 409.60f, 213.84f, 213.84f, 1, volume_dimentions.x, volume_dimentions.y, 0);
+			solver->project_backward_cone_fdk_from_projections_matrix(730.87f, 669.04f, 409.60f, 213.84f, 213.84f, 1, volume_dimentions.x, volume_dimentions.y, 0);
 		
 			solver->compute_min_value_of_volume(*min_texture);
 			solver->compute_max_value_of_volume(*max_texture);
 	
-			solver->volume_transfer_vram_to_ram();
-			solver->volume_clear_vram();
+			if (solver->get_volume_segment_count() != glm::ivec3(1, 1, 1)) {
+				solver->volume_transfer_vram_to_ram();
+				solver->volume_clear_vram();
+			}
 		}
-	
-		solver->projections_clear_vram();
-		solver->projections_clear_ram();
+		
+		if (solver->get_volume_segment_count() != glm::ivec3(1, 1, 1)) {
+			solver->projections_clear_vram();
+			solver->projections_clear_ram();
+		}
 	}
 	
 	for (int horizontal_layer = 0; horizontal_layer < solver->get_volume_segment_count().y; horizontal_layer++) {
+
+		if (solver->get_volume_segment_count() != glm::ivec3(1, 1, 1)) {
+			solver->set_volume_active_all(false);
+			solver->set_volume_active_layer_y(horizontal_layer, 1, true);
+			solver->volume_transfer_ram_to_vram();
+		}
+
 		solver->set_volume_active_all(false);
 		solver->set_volume_active_layer_y(horizontal_layer, 1, true);
-		solver->volume_transfer_ram_to_vram();
-	
-		solver->normalize_histogram(*min_texture, *max_texture);
-		solver->mirror_along_x();
 
-		solver->volume_transfer_vram_to_ram();
-		solver->volume_clear_vram();
+		solver->clip_negatives_of_volume();
+		solver->normalize_histogram(*min_texture, *max_texture);
+		//solver->mirror_along_x();
+
+		if (solver->get_volume_segment_count() != glm::ivec3(1, 1, 1)) {
+			solver->volume_transfer_vram_to_ram();
+			solver->volume_clear_vram();
+		}
 	}
+	
 	solver->set_volume_active_all(true);
 	solver->set_projections_active_all(true);
 
-	solver->volume_transfer_ram_to_vram();
-	solver->volume_clear_ram();
+	if (solver->get_volume_segment_count() != glm::ivec3(1, 1, 1)) {
+		solver->volume_transfer_ram_to_vram();
+		solver->volume_clear_ram();
+	}
 	
 	ReconstructionInfo info;
 	info.name = compute_filename(reconstruction_path);

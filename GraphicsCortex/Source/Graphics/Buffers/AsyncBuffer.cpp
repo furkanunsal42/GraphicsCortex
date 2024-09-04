@@ -2,8 +2,8 @@
 #include "Debuger.h"
 #include <iostream>
 
-AsyncBuffer::AsyncBuffer(size_t buffer_size) : 
-	_buffer_size(buffer_size) 
+AsyncBuffer::AsyncBuffer(size_t buffer_size, AsyncBuffer::Direction transfer_direction) : 
+	_buffer_size(buffer_size), _transfer_direction(transfer_direction)
 {
 	_generate_buffer();
 }
@@ -15,54 +15,114 @@ AsyncBuffer::~AsyncBuffer()
 
 void AsyncBuffer::release()
 {
+	unmap();
+	
 	if (_buffer_generated) {
 		GLCall(glDeleteBuffers(1, &id));
 	}
+	
 	_buffer_generated = false;
 	_buffer_allocated = false;
 }
 
-bool AsyncBuffer::wait_to_sycronize(int64_t timeout_ms)
+bool AsyncBuffer::wait_to_sycronize_download(int64_t timeout_ms)
 {
-	if (_gl_sync_object == nullptr)
+	if (_gl_sync_object_download == nullptr)
 		return true;
 
 	GLenum wait_return = GL_UNSIGNALED;
- 	GLCall(glClientWaitSync(_gl_sync_object, GL_SYNC_FLUSH_COMMANDS_BIT, timeout_ms));
+	GLCall(wait_return = glClientWaitSync(_gl_sync_object_download, GL_SYNC_FLUSH_COMMANDS_BIT, timeout_ms));
 
-	if (wait_return == GL_ALREADY_SIGNALED || wait_return == GL_CONDITION_SATISFIED) return true;
+	if (wait_return == GL_ALREADY_SIGNALED || wait_return == GL_CONDITION_SATISFIED) {
+		_gl_sync_object_download = nullptr;
+		return true;
+	}
+	else if (wait_return == GL_WAIT_FAILED) {
+		ASSERT(false);
+	}
 	else return false;
 }
 
-bool AsyncBuffer::wait_to_sycronize()
+bool AsyncBuffer::wait_to_sycronize_download()
 {
-	return wait_to_sycronize(100000000);
+	return wait_to_sycronize_download(1000000000);
 }
 
-bool AsyncBuffer::is_syncronized()
+bool AsyncBuffer::is_syncronized_download()
 {
-	if (_gl_sync_object == nullptr)
+	if (_gl_sync_object_download == nullptr)
 		return true;
 
 	int result;
-	GLCall(glGetSynciv(_gl_sync_object, GL_SYNC_STATUS, sizeof(result), NULL, &result));
+	GLCall(glGetSynciv(_gl_sync_object_download, GL_SYNC_STATUS, sizeof(result), NULL, &result));
 	bool success = result == GL_SIGNALED;
 
 	if (success)
-		_gl_sync_object = nullptr;
+		_gl_sync_object_download = nullptr;
 
 	return success;
 }
 
-void AsyncBuffer::set_fence()
+void AsyncBuffer::set_fence_download()
 {
-	if (_gl_sync_object != nullptr)
-		glDeleteSync(_gl_sync_object);
+	if (_gl_sync_object_download != nullptr)
+		glDeleteSync(_gl_sync_object_download);
 
-	_gl_sync_object = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+	_gl_sync_object_download = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
 
-	if (_gl_sync_object == 0) {
-		std::cout << "[OpenGl Error] AsyncBuffer::set_fence() is called but fence creation failed" << std::endl;
+	if (_gl_sync_object_download == 0) {
+		std::cout << "[OpenGl Error] AsyncBuffer::set_fence_download() is called but fence creation failed" << std::endl;
+		ASSERT(false);
+	}
+}
+
+bool AsyncBuffer::wait_to_sycronize_upload(int64_t timeout_ms)
+{
+	if (_gl_sync_object_upload == nullptr)
+		return true;
+
+	GLenum wait_return = GL_UNSIGNALED;
+	GLCall(wait_return = glClientWaitSync(_gl_sync_object_upload, GL_SYNC_FLUSH_COMMANDS_BIT, timeout_ms));
+
+	if (wait_return == GL_ALREADY_SIGNALED || wait_return == GL_CONDITION_SATISFIED) {
+		_gl_sync_object_upload = nullptr;
+		return true;
+	}
+	else if (wait_return == GL_WAIT_FAILED) {
+		ASSERT(false);
+	}
+	else return false;
+}
+
+bool AsyncBuffer::wait_to_sycronize_upload()
+{
+	return wait_to_sycronize_upload(1000000000);
+}
+
+bool AsyncBuffer::is_syncronized_upload()
+{
+	if (_gl_sync_object_upload == nullptr)
+		return true;
+
+	int result;
+	GLCall(glGetSynciv(_gl_sync_object_upload, GL_SYNC_STATUS, sizeof(result), NULL, &result));
+	bool success = result == GL_SIGNALED;
+
+	if (success)
+		_gl_sync_object_upload = nullptr;
+
+	return success;
+}
+
+void AsyncBuffer::set_fence_upload()
+{
+	if (_gl_sync_object_upload != nullptr)
+		glDeleteSync(_gl_sync_object_upload);
+
+	_gl_sync_object_upload = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+
+	if (_gl_sync_object_upload == 0) {
+		std::cout << "[OpenGl Error] AsyncBuffer::set_fence_upload() is called but fence creation failed" << std::endl;
 		ASSERT(false);
 	}
 }
@@ -83,7 +143,7 @@ std::shared_ptr<Image> AsyncBuffer::get_image()
 	size_t image_size = image_parameters->width * image_parameters->height * image_parameters->channel_count * image_parameters->bytes_per_channel;
 	unsigned char* image_copy = new unsigned char[image_parameters->width * image_parameters->height * image_parameters->depth * image_parameters->channel_count * image_parameters->bytes_per_channel];
 	
-	wait_to_sycronize();
+	wait_to_sycronize_download();
 
 	std::memcpy(image_copy, _buffer_data, image_size);
 
@@ -137,7 +197,12 @@ void AsyncBuffer::map()
 		std::cout << "[OpenGL Error] released AsyncBuffer tried to map()" << std::endl;
 		ASSERT(false);
 	}
-	GLCall(_buffer_data = (char*)glMapNamedBufferRange(id, 0, get_buffer_size(), GL_MAP_WRITE_BIT | GL_MAP_READ_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_FLUSH_EXPLICIT_BIT))
+
+	unsigned int flag = GL_MAP_PERSISTENT_BIT | GL_MAP_FLUSH_EXPLICIT_BIT;
+	if (_transfer_direction == Bothways || _transfer_direction == Upload) flag |= GL_MAP_WRITE_BIT;
+	if (_transfer_direction == Bothways || _transfer_direction == Download) flag |= GL_MAP_READ_BIT;
+
+	GLCall(_buffer_data = (char*)glMapNamedBufferRange(id, 0, get_buffer_size(), flag))
 }
 
 void AsyncBuffer::unmap()
@@ -176,8 +241,12 @@ void AsyncBuffer::_allocate_buffer(size_t buffer_size)
 {
 	if (!_buffer_generated) return;
 	if (_buffer_allocated) return;
+	
+	unsigned int flag = GL_MAP_PERSISTENT_BIT;
+	if (_transfer_direction == Bothways || _transfer_direction == Upload) flag |= GL_MAP_WRITE_BIT;
+	if (_transfer_direction == Bothways || _transfer_direction == Download) flag |= GL_MAP_READ_BIT;
 
-	GLCall(glNamedBufferStorage(id, buffer_size, nullptr, GL_MAP_WRITE_BIT | GL_MAP_READ_BIT | GL_MAP_PERSISTENT_BIT));
+	GLCall(glNamedBufferStorage(id, buffer_size, nullptr, flag));
 	_buffer_size = buffer_size;
 	_buffer_allocated = true;
 

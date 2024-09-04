@@ -9,6 +9,7 @@ class Program;
 class ComputeProgram;
 class BindlessMaterial;
 class Framebuffer;
+class AsyncBuffer;
 
 class Texture3D : public TextureBase2 {
 	friend Program;
@@ -43,26 +44,29 @@ public:
 	void bind();
 	void unbind();
 
-	// functions that require Image3D isn't supported yet
-	
 	void load_data(const void* image, ColorFormat format, Type type, int mipmap_target = 0);	
 	void load_data(const void* image, ColorFormat format, Type type, int x, int y, int z, int width, int height, int depth, int mipmap_target = 0);
-	//void load_data(const Image& image, ColorFormat format, Type type, int mipmap_target = 0);	
-	//void load_data(const Image& image, ColorFormat format, Type type, int x, int y, int z, int width, int height, int depth, int mipmap_target = 0);
+	void load_data(const Image& image, ColorFormat format, Type type, int mipmap_target = 0);	
+	void load_data(const Image& image, ColorFormat format, Type type, int x, int y, int z, int width, int height, int depth, int mipmap_target = 0);
+	void load_data(AsyncBuffer& async_buffer, ColorFormat format, Type type, int mipmap_target = 0);
+	void load_data(AsyncBuffer& async_buffer, ColorFormat format, Type type, int x, int y, int z, int width, int height, int depth, int mipmap_target = 0);
+
 	//void load_data_async(const std::string& image_filepath, ColorFormat format, Type type, int mipmap_target = 0);
 	void load_data_async(const std::string& image_filepath, ColorFormat format, Type type, int x, int y, int z, int width, int height, int depth, int mipmap_target = 0);
 
 	void load_data(const void* image, DepthStencilFormat format, Type type, int mipmap_target = 0);
 	void load_data(const void* image, DepthStencilFormat format, Type type, int x, int y, int z, int width, int height, int depth, int mipmap_target = 0);
-	//void load_data(const Image& image, DepthStencilFormat format, Type type, int mipmap_target = 0);
-	//void load_data(const Image& image, DepthStencilFormat format, Type type, int x, int y, int z, int width, int height, int depth, int mipmap_target = 0);
+	void load_data(const Image& image, DepthStencilFormat format, Type type, int mipmap_target = 0);
+	void load_data(const Image& image, DepthStencilFormat format, Type type, int x, int y, int z, int width, int height, int depth, int mipmap_target = 0);
+	void load_data(AsyncBuffer& async_buffer, DepthStencilFormat format, Type type, int mipmap_target = 0);
+	void load_data(AsyncBuffer& async_buffer, DepthStencilFormat format, Type type, int x, int y, int z, int width, int height, int depth, int mipmap_target = 0);
 
 	void generate_mipmap();
 
 	void load_data_with_mipmaps(const void* image, ColorFormat format, Type type);
-	//void load_data_with_mipmaps(const Image& image, ColorFormat format, Type type);
+	void load_data_with_mipmaps(const Image& image, ColorFormat format, Type type);
 	void load_data_with_mipmaps(const void* image, DepthStencilFormat format, Type type);
-	//void load_data_with_mipmaps(const Image& image, DepthStencilFormat format, Type type);
+	void load_data_with_mipmaps(const Image& image, DepthStencilFormat format, Type type);
 
 	//void load_data_width_mipmaps_async(const std::string& image_filepath, ColorFormat format, Type type);
 
@@ -77,6 +81,11 @@ public:
 	std::shared_ptr<Image> get_image(ColorFormat format, Type type, int mipmap_level, int x, int y, int z, int width, int height, int depth);
 	std::shared_ptr<Image> get_image(DepthStencilFormat format, Type type, int mipmap_level);
 	std::shared_ptr<Image> get_image(DepthStencilFormat format, Type type, int mipmap_level, int x, int y, int z, int width, int height, int depth);
+
+	std::shared_ptr<AsyncBuffer> get_image_async(ColorFormat format, Type type, int mipmap_level);
+	std::shared_ptr<AsyncBuffer> get_image_async(ColorFormat format, Type type, int mipmap_level, int x, int y, int z, int width, int height, int depth);
+	std::shared_ptr<AsyncBuffer> get_image_async(DepthStencilFormat format, Type type, int mipmap_level);
+	std::shared_ptr<AsyncBuffer> get_image_async(DepthStencilFormat format, Type type, int mipmap_level, int x, int y, int z, int width, int height, int depth);
 
 	void clear(unsigned char clear_data, int mipmap_target = 0);
 	void clear(float clear_data, int mipmap_target = 0);

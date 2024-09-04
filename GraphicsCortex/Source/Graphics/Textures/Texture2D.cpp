@@ -199,14 +199,13 @@ void Texture2D::load_data(AsyncBuffer& async_buffer, ColorFormat format, Type ty
 	}
 	_allocate_texture();
 
-	async_buffer.wait_to_sycronize();
-	async_buffer.unbind();
+	async_buffer.wait_to_sycronize_download();
 	async_buffer.bind_upload();
 
 	glTextureSubImage2D(id, mipmap_target, x, y, width, height, TextureBase2::ColorFormat_to_OpenGL(format), TextureBase2::Type_to_OpenGL(type), 0);
 
 	async_buffer.unbind();
-	async_buffer.set_fence();
+	async_buffer.set_fence_upload();
 
 	_user_data_loaded = true;
 }
@@ -301,14 +300,13 @@ void Texture2D::load_data(AsyncBuffer& async_buffer, DepthStencilFormat format, 
 	}
 	_allocate_texture();
 
-	async_buffer.wait_to_sycronize();
-	async_buffer.unbind();
+	async_buffer.wait_to_sycronize_download();
 	async_buffer.bind_upload();
 
 	GLCall(glTextureSubImage2D(id, mipmap_target, x, y, width, height, TextureBase2::DepthStencilFormat_to_OpenGL(format), TextureBase2::Type_to_OpenGL(type), 0));
 
 	async_buffer.unbind();
-	async_buffer.set_fence();
+	async_buffer.set_fence_upload();
 
 	_user_data_loaded = true;
 }
@@ -850,9 +848,9 @@ std::shared_ptr<AsyncBuffer> Texture2D::get_image_async(ColorFormat format, Type
 std::shared_ptr<AsyncBuffer> Texture2D::get_image_async(ColorFormat format, Type type, int mipmap_level, int x, int y, int width, int height){
 	int pixel_size = query_red_size(mipmap_level) + query_green_size(mipmap_level) + query_blue_size(mipmap_level) + query_alpha_size(mipmap_level);
 	pixel_size = pixel_size / 8;
-	std::shared_ptr<AsyncBuffer> readback_buffer = std::make_shared<AsyncBuffer>(query_width(mipmap_level) * query_height(mipmap_level) * pixel_size);
+	std::shared_ptr<AsyncBuffer> readback_buffer = std::make_shared<AsyncBuffer>((size_t)width * height * pixel_size);
 
-	readback_buffer->wait_to_sycronize();
+	readback_buffer->wait_to_sycronize_upload();
 	readback_buffer->bind_download();
 
 	if (!_texture_allocated) {
@@ -862,13 +860,12 @@ std::shared_ptr<AsyncBuffer> Texture2D::get_image_async(ColorFormat format, Type
 
 	int format_channels = ColorFormat_channels(format);
 	size_t image_size = width * height * pixel_size;
-	unsigned char* image = new unsigned char[width * height * pixel_size];
 
 	GLCall(glGetTextureSubImage(id, mipmap_level, x, y, 0, width, height, 1, ColorFormat_to_OpenGL(format), Type_to_OpenGL(type), image_size, 0));
 	GLCall(glMemoryBarrier(GL_CLIENT_MAPPED_BUFFER_BARRIER_BIT));
 
 	readback_buffer->unbind();
-	readback_buffer->set_fence();
+	readback_buffer->set_fence_download();
 
 	Image::ImageParameters parameters;
 	parameters.width = width;
@@ -890,7 +887,7 @@ std::shared_ptr<AsyncBuffer> Texture2D::get_image_async(DepthStencilFormat forma
 std::shared_ptr<AsyncBuffer> Texture2D::get_image_async(DepthStencilFormat format, Type type, int mipmap_level, int x, int y, int width, int height){
 	int pixel_size = query_depth_size(mipmap_level);
 	pixel_size = pixel_size / 8;
-	std::shared_ptr readback_buffer = std::make_shared<AsyncBuffer>(query_width(mipmap_level) * query_height(mipmap_level) * pixel_size);
+	std::shared_ptr readback_buffer = std::make_shared<AsyncBuffer>((size_t)width * height * pixel_size);
 
 	readback_buffer->bind_download();
 	readback_buffer->map();
@@ -906,7 +903,6 @@ std::shared_ptr<AsyncBuffer> Texture2D::get_image_async(DepthStencilFormat forma
 
 	int format_channels = 1;
 	size_t image_size = width * height * pixel_size;
-	unsigned char* image = new unsigned char[width * height * pixel_size];
 
 	int gl_format;
 	if (format == DepthStencilFormat::DEPTH) gl_format = GL_DEPTH_COMPONENT;
@@ -916,7 +912,7 @@ std::shared_ptr<AsyncBuffer> Texture2D::get_image_async(DepthStencilFormat forma
 		ASSERT(false);
 	}
 
-	GLCall(glGetTextureSubImage(id, mipmap_level, x, y, 0, width, height, 1, gl_format, Type_to_OpenGL(type), image_size, image));
+	GLCall(glGetTextureSubImage(id, mipmap_level, x, y, 0, width, height, 1, gl_format, Type_to_OpenGL(type), image_size, 0));
 
 	readback_buffer->unbind();
 

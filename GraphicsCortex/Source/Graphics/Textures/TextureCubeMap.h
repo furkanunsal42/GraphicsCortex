@@ -9,6 +9,7 @@
 class Program;
 class ComputeProgram;
 class Framebuffer;
+class AsyncBuffer;
 
 class TextureCubeMap : public TextureBase2 {
 	friend Program;
@@ -51,6 +52,9 @@ public:
 	void load_data(Face face, const void* image, ColorFormat format, Type type, int x, int y, int width, int height, int mipmap_target = 0);
 	void load_data(Face face, const Image& image, ColorFormat format, Type type, int mipmap_target = 0);
 	void load_data(Face face, const Image& image, ColorFormat format, Type type, int x, int y, int width, int height, int mipmap_target = 0);
+	//void load_data(AsyncBuffer& async_buffer, ColorFormat format, Type type, int mipmap_target = 0);
+	//void load_data(AsyncBuffer& async_buffer, ColorFormat format, Type type, int x, int y, int width, int height, int mipmap_target = 0);
+
 	void load_data_async(Face face, const std::string& image_filepath, ColorFormat format, Type type, int mipmap_target = 0);
 	void load_data_async(Face face, const std::string& image_filepath, ColorFormat format, Type type, int x, int y, int width, int height, int mipmap_target = 0);
 
@@ -58,6 +62,8 @@ public:
 	void load_data(Face face, const void* image, DepthStencilFormat format, Type type, int x, int y, int width, int height, int mipmap_target = 0);
 	void load_data(Face face, const Image& image, DepthStencilFormat format, Type type, int mipmap_target = 0);
 	void load_data(Face face, const Image& image, DepthStencilFormat format, Type type, int x, int y, int width, int height, int mipmap_target = 0);
+	//void load_data(AsyncBuffer& async_buffer, DepthStencilFormat format, Type type, int mipmap_target = 0);
+	//void load_data(AsyncBuffer& async_buffer, DepthStencilFormat format, Type type, int x, int y, int width, int height, int mipmap_target = 0);
 
 	void generate_mipmap();
 
@@ -79,6 +85,11 @@ public:
 	std::shared_ptr<Image> get_image(Face face, ColorFormat format, Type type, int mipmap_level, int x, int y, int width, int height);
 	std::shared_ptr<Image> get_image(Face face, DepthStencilFormat format, Type type, int mipmap_level);
 	std::shared_ptr<Image> get_image(Face face, DepthStencilFormat format, Type type, int mipmap_level, int x, int y, int width, int height);
+
+	//std::shared_ptr<AsyncBuffer> get_image_async(ColorFormat format, Type type, int mipmap_level);
+	//std::shared_ptr<AsyncBuffer> get_image_async(ColorFormat format, Type type, int mipmap_level, int x, int y, int width, int height);
+	//std::shared_ptr<AsyncBuffer> get_image_async(DepthStencilFormat format, Type type, int mipmap_level);
+	//std::shared_ptr<AsyncBuffer> get_image_async(DepthStencilFormat format, Type type, int mipmap_level, int x, int y, int width, int height);
 
 	void clear(Face face, unsigned char clear_data, int mipmap_target = 0);
 	void clear(Face face, float clear_data, int mipmap_target = 0);
