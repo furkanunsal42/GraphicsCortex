@@ -359,6 +359,8 @@ project "CTReconstructor"
 
 	files
 	{
+		"%{prj.name}/Dependencies/half_precision/include/**.h",
+		"%{prj.name}/Dependencies/half_precision/include/**.hpp",
 		"%{prj.name}/Source/**.h", 
 		"%{prj.name}/Source/**.cpp",
 	}
@@ -371,6 +373,7 @@ project "CTReconstructor"
 	includedirs 
 	{
 		"%{prj.name}/Source",
+		"%{prj.name}/Dependencies/half_precision/include",
 		"GraphicsCortex/Source/Graphics/RenderPasses",
 		"GraphicsCortex/Source/System",
 		"GraphicsCortex/Source/Physics",
@@ -454,6 +457,8 @@ project "CTReconstructorApp"
 
 	files
 	{
+		"CTReconstructor/Dependencies/half_precision/include/**.h",
+		"CTReconstructor/Dependencies/half_precision/include/**.hpp",
 		"CTReconstructor/Source/**.h",
 		"CTReconstructor/Source/**.cpp",
 		"%{prj.name}/Source/**.h", 
@@ -469,6 +474,7 @@ project "CTReconstructorApp"
 	{
 		"%{prj.name}/Source",
 		"CTReconstructor/Source",
+		"CTReconstructor/Dependencies/half_precision/include",
 		"GraphicsCortex/Source/Graphics/RenderPasses",
 		"GraphicsCortex/Source/System",
 		"GraphicsCortex/Source/Physics",

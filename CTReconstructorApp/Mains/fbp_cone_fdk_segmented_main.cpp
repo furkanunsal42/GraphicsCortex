@@ -8,7 +8,7 @@ using namespace shader_directory;
 
 int main() {
 
-	glm::ivec3 volume_dimentions(1472, 1472, 1472);
+	glm::ivec3 volume_dimentions(3072, 3072, 3072);
 	glm::vec3 voxel_size(200.0f / volume_dimentions.x, 200.0f / volume_dimentions.y, 200.0f / volume_dimentions.z);
 	int projection_count = 1440;
 	int window_width = 1024;
@@ -37,7 +37,7 @@ int main() {
 	util_shader_directory = "../CTReconstructor/Source/GLSL/Compute/Util/";
 
 	std::shared_ptr<FBP3D> solver = std::make_shared<FBP3D>(fbp_shader_defines_to_use, ffft_shader_defines_to_use);
-	solver->set_projections_max_segment_size(glm::ivec3(volume_dimentions.x, volume_dimentions.y, projection_count));
+	solver->set_projections_max_segment_size(glm::ivec3(volume_dimentions.x, volume_dimentions.y / 4, projection_count));
 	solver->set_volume_max_segment_size(glm::ivec3(volume_dimentions.x, volume_dimentions.y / 64, volume_dimentions.z));
 
 	solver->set_volume_format(fbp_volume_format_to_use);
@@ -52,6 +52,8 @@ int main() {
 		solver->set_projections_active_all(false);
 		solver->set_projections_active_layer_y(projections_index, 1, true);
 	
+		solver->projections_transfer_ram_to_vram();
+
 		solver->log_normalize_projections(95.0 / 255);
 		solver->apply_fdk_weights_to_projections(730.87f, 669.04f, 409.60f);
 		solver->apply_filter_to_projections(FBP2D::FilterType::SHEPP_LOGAN);
@@ -61,7 +63,7 @@ int main() {
 			solver->projections_clear_vram();
 		}
 	}
-
+	
 	std::shared_ptr<Texture1D> min_texture = std::make_shared<Texture1D>(1, solver->histogram_int_texture_internal_format, 1, 0);
 	min_texture->is_bindless = false;
 	std::shared_ptr<Texture1D> max_texture = std::make_shared<Texture1D>(1, solver->histogram_int_texture_internal_format, 1, 0);
@@ -109,7 +111,6 @@ int main() {
 				solver->projections_transfer_ram_to_vram();
 			}
 		}
-
 		solver->set_projections_active_all(false);
 		solver->set_projections_active_layer_y(projections_index, 1, true);
 	
@@ -179,6 +180,7 @@ int main() {
 			solver->volume_clear_vram();
 		}
 	}
+	
 	
 	solver->set_volume_active_all(true);
 	solver->set_projections_active_all(true);
