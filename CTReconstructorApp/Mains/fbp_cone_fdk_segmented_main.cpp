@@ -8,7 +8,7 @@ using namespace shader_directory;
 
 int main() {
 
-	glm::ivec3 volume_dimentions(3072, 3072, 3072);
+	glm::ivec3 volume_dimentions(512, 512, 512);
 	glm::vec3 voxel_size(200.0f / volume_dimentions.x, 200.0f / volume_dimentions.y, 200.0f / volume_dimentions.z);
 	int projection_count = 1440;
 	int window_width = 1024;
@@ -16,7 +16,7 @@ int main() {
 	int slice_index_number_length = 6;
 	std::string reconstruction_path = "reconstruction";
 
-	Frame frame(window_width, window_width, "CTReconstructor", 0, 2, true, true, false, Frame::CallbackLevel::DISABLED, false);
+	Frame frame(window_width, window_width, "CTReconstructor", 0, 4, true, true, false, Frame::CallbackLevel::DISABLED, false);
 	Scene scene(frame);
 	scene.camera->fov = 90;
 	scene.camera->max_distance = 1000;
@@ -37,8 +37,8 @@ int main() {
 	util_shader_directory = "../CTReconstructor/Source/GLSL/Compute/Util/";
 
 	std::shared_ptr<FBP3D> solver = std::make_shared<FBP3D>(fbp_shader_defines_to_use, ffft_shader_defines_to_use);
-	solver->set_projections_max_segment_size(glm::ivec3(volume_dimentions.x, volume_dimentions.y / 4, projection_count));
-	solver->set_volume_max_segment_size(glm::ivec3(volume_dimentions.x, volume_dimentions.y / 64, volume_dimentions.z));
+	solver->set_projections_max_segment_size(glm::ivec3(volume_dimentions.x, volume_dimentions.y / 32, projection_count));
+	solver->set_volume_max_segment_size(glm::ivec3(volume_dimentions.x, volume_dimentions.y / 32, volume_dimentions.z));
 
 	solver->set_volume_format(fbp_volume_format_to_use);
 	solver->set_projection_format(fbp_projection_format_to_use);
@@ -83,8 +83,7 @@ int main() {
 				FBP3D::AABB3D(solver->get_volume_max_segment_size() * glm::ivec3(0, horizontal_layer, 0),
 					solver->get_volume_max_segment_size() * glm::ivec3(1, horizontal_layer + 1, 1)),
 				projection_index, volume_dimentions, projection_count, 730.87f, 669.04f, 409.60f, 213.84f, 213.84, 1.0f, 0.0f);
-
-			//#pragma critical
+		
 			{
 				bounding_box.min = glm::min(bounding_box.min, bounding_box_i.min);
 				bounding_box.max = glm::max(bounding_box.max, bounding_box_i.max);
@@ -119,9 +118,9 @@ int main() {
 			
 			FBP3D::AABB2D& bounding_box = volume_segment_bounding_boxes[horizontal_layer];
 			
-			if	((bounding_box.min.y > (solver->get_projections_max_segment_size() * glm::ivec3(1, projections_index + 1, 1)).y)
+			if	((bounding_box.min.y > (solver->get_projections_max_segment_size().y * (projections_index + 1)))
 				||
-				((bounding_box.max.y < (solver->get_projections_max_segment_size() * glm::ivec3(0, projections_index, 0)).y))) continue;
+				((bounding_box.max.y < (solver->get_projections_max_segment_size().y * projections_index)))) continue;
 
 			std::cout << "projection_index: " << projections_index << " horiztonal_layer: " << horizontal_layer << std::endl;
 			
