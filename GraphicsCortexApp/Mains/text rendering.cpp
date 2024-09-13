@@ -6,10 +6,11 @@ int main() {
 	Scene scene(frame);
 	Gui gui(frame);
 
-	std::shared_ptr<Font> font = std::make_shared<Font>("../GraphicsCortex/Fonts/Roboto-Regular.ttf", 24);
+	std::shared_ptr<Font> font = std::make_shared<Font>("../GraphicsCortex/Fonts/Roboto-Regular.ttf", 80);
 	std::shared_ptr<Text> text = std::make_shared<Text>(font);
 
 	text->set_text(U"\
+						abcçdefgğhıijklmnoöprsştuüvyz\n\
 						Long ago in a distant galaxy, an electro-optical workload and its trusty image processing software were unleashed upon the world of technology! \n\
 						\n\
 						But as they began to process images, a conflict arose between them, each claiming to be the true master of the satellite imagery domain. \n\

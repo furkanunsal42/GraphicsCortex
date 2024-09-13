@@ -737,6 +737,11 @@ void Texture2D::force_allocation() {
 	_allocate_texture();
 }
 
+bool Texture2D::is_allocated()
+{
+	return _texture_allocated;
+}
+
 Texture2D::ColorTextureFormat Texture2D::get_internal_format_color()
 {
 	return color_texture_format;

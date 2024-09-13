@@ -691,6 +691,11 @@ void Texture3D::force_allocation() {
 	_allocate_texture();
 }
 
+bool Texture3D::is_allocated()
+{
+	return _texture_allocated;
+}
+
 Texture3D::ColorTextureFormat Texture3D::get_internal_format_color() {
 	return color_texture_format;
 }
@@ -818,8 +823,7 @@ std::shared_ptr<AsyncBuffer> Texture3D::get_image_async(ColorFormat format, Type
 
 std::shared_ptr<AsyncBuffer> Texture3D::get_image_async(ColorFormat format, Type type, int mipmap_level, int x, int y, int z, int width, int height, int depth)
 {
-	int pixel_size = query_red_size(mipmap_level) + query_green_size(mipmap_level) + query_blue_size(mipmap_level) + query_alpha_size(mipmap_level);
-	pixel_size = pixel_size / 8;
+	int pixel_size = ColorTextureFormat_bytes_per_pixel(get_internal_format_color());
 	std::shared_ptr<AsyncBuffer> readback_buffer = std::make_shared<AsyncBuffer>((size_t)width * height * depth * pixel_size);
 
 	readback_buffer->wait_to_sycronize_upload();

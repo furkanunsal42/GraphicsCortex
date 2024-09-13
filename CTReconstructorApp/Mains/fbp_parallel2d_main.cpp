@@ -22,6 +22,10 @@ int main() {
 
 	FBP2D fbp_solver;
 	FFFT fft_solver;
+	fft_solver.set_complex_format(Texture2D::ColorTextureFormat::RG32F);
+	fft_solver.set_real_format(Texture2D::ColorTextureFormat::R32F);
+	fft_solver.compile_shaders(_ffft_shader_defines_f32);
+	fbp_solver.compile_shaders(_fbp_shader_defines_f32);
 
 	std::shared_ptr<Image> test_image = std::make_shared<Image>("../CTReconstructor/Images/lenna.png", 1, true);
 	test_image->resize(projection_width, projection_width);

@@ -801,6 +801,11 @@ void TextureCubeMap::force_allocation() {
 	_allocate_texture();
 }
 
+bool TextureCubeMap::is_allocated()
+{
+	return _texture_allocated;
+}
+
 TextureCubeMap::ColorTextureFormat TextureCubeMap::get_internal_format_color()
 {
 	return color_texture_format;

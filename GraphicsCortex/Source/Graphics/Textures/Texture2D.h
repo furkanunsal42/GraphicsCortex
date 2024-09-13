@@ -134,6 +134,7 @@ public:
 
 	glm::ivec2 get_size();
 	void force_allocation();
+	bool is_allocated();
 
 	ColorTextureFormat get_internal_format_color();
 	DepthStencilTextureFormat get_internal_format_depthstencil();

@@ -782,6 +782,11 @@ void Texture2DArray::force_allocation() {
 	_allocate_texture();
 }
 
+bool Texture2DArray::is_allocated()
+{
+	return _texture_allocated;
+}
+
 Texture2DArray::ColorTextureFormat Texture2DArray::get_internal_format_color()
 {
 	return color_texture_format;

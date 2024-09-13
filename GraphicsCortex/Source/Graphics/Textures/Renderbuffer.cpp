@@ -120,6 +120,11 @@ void Renderbuffer::force_allocation() {
 	_allocate_texture();
 }
 
+bool Renderbuffer::is_allocated()
+{
+	return _texture_allocated;
+}
+
 Renderbuffer::ColorTextureFormat Renderbuffer::get_internal_format_color()
 {
 	return color_texture_format;

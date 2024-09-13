@@ -921,6 +921,11 @@ void Texture1D::force_allocation() {
 	_allocate_texture();
 }
 
+bool Texture1D::is_allocated()
+{
+	return _texture_allocated;
+}
+
 Texture1D::ColorTextureFormat Texture1D::get_internal_format_color()
 {
 	return color_texture_format;
