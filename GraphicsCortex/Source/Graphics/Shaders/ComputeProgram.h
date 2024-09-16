@@ -38,7 +38,7 @@ public:
 	void bind();
 	void unbind();
 
-	void clear_preprocessor(const std::string& key, const std::string& value);
+	void clear_preprocessor();
 	void set_preprocessor(const std::string& key, const std::string& value);
 	std::string get_preprocessor(const std::string& key, const std::string& value);
 	void compile_shader(const Shader& shader);

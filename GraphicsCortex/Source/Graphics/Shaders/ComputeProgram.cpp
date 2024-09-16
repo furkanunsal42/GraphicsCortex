@@ -195,7 +195,7 @@ void ComputeProgram::compile_shader(const Shader& shader)
 	_work_group_size = get_work_group_size();
 }
 
-void ComputeProgram::clear_preprocessor(const std::string& key, const std::string& value)
+void ComputeProgram::clear_preprocessor()
 {
 	_preprocessing_defines.clear();
 }

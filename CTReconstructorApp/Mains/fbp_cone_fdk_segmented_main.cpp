@@ -10,7 +10,7 @@ using namespace shader_directory;
 
 int main() {
 
-	glm::ivec3 volume_dimentions(1472, 1472, 1472);
+	glm::ivec3 volume_dimentions(3072, 3072, 3072);
 	glm::vec3 voxel_size(200.0f / volume_dimentions.x, 200.0f / volume_dimentions.y, 200.0f / volume_dimentions.z);
 	int projection_count = 1440;
 	int window_width = 1024;
@@ -18,7 +18,7 @@ int main() {
 	int slice_index_number_length = 6;
 	std::string reconstruction_path = "reconstruction";
 
-	Frame frame(window_width, window_width, "CTReconstructor", 0, 4, true, true, false, Frame::CallbackLevel::DISABLED, false);
+	Frame frame(window_width, window_width, "CTReconstructor", 0, 0, true, true, false, Frame::CallbackLevel::DISABLED, false);
 	Scene scene(frame);
 	scene.camera->fov = 90;
 	scene.camera->max_distance = 1000;
@@ -39,8 +39,8 @@ int main() {
 	util_shader_directory = "../CTReconstructor/Source/GLSL/Compute/Util/";
 
 	std::shared_ptr<FBP3D> solver = std::make_shared<FBP3D>(fbp_shader_defines_to_use, ffft_shader_defines_to_use);
-	solver->set_projections_max_segment_size(glm::ivec3(volume_dimentions.x, volume_dimentions.y, projection_count));
-	solver->set_volume_max_segment_size(glm::ivec3(volume_dimentions.x, volume_dimentions.y, volume_dimentions.z));
+	solver->set_projections_max_segment_size(glm::ivec3(volume_dimentions.x, volume_dimentions.y / 8, projection_count));
+	solver->set_volume_max_segment_size(glm::ivec3(volume_dimentions.x, volume_dimentions.y / 32, volume_dimentions.z));
 
 	solver->set_volume_format(fbp_volume_format_to_use);
 	solver->set_projection_format(fbp_projection_format_to_use);
@@ -58,7 +58,7 @@ int main() {
 	fbp_segmented_memory::iterate_horizontal_projection_segments(*solver, false, true, [&](glm::ivec3 projection_segment_index) {
 		solver->log_normalize_projections(95.0 / 255);
 		solver->apply_fdk_weights_to_projections(730.87f, 669.04f, 409.60f);
-		solver->apply_filter_to_projections(FBP2D::FilterType::SHEPP_LOGAN);
+		solver->apply_filter_to_projections(FBP2D::FilterType::RAM_LAK);
 		});
 
 	solver->generate_blank_volume(volume_dimentions.x, volume_dimentions.y, volume_dimentions.y);
@@ -95,7 +95,7 @@ int main() {
 
 	frame.set_visibility(true);
 	while (true) {
-		iterate_horizontal_volume_segments(*solver, false, false, [&](glm::ivec3 volume_segment_index) {
+		fbp_segmented_memory::iterate_horizontal_volume_segments(*solver, false, false, [&](glm::ivec3 volume_segment_index) {
 		
 			int segment_height = solver->get_volume_max_segment_size().y;
 			for (int slice_id = volume_segment_index.y * segment_height; slice_id < (volume_segment_index.y + 1) * segment_height; slice_id++) {
@@ -113,6 +113,7 @@ int main() {
 				framebuffer->attach_color(0, slice_white);
 				framebuffer->set_read_buffer(0);
 				framebuffer->blit_to_screen(0, 0, volume_dimentions.x, volume_dimentions.z, 0, 0, window_width, window_width, Framebuffer::Channel::COLOR, Framebuffer::Filter::LINEAR);
+				std::this_thread::sleep_for(std::chrono::milliseconds(16));
 			}
 			});
 	}
