@@ -60,12 +60,12 @@ std::string TextureBase2::ColorTextureFormat_to_OpenGL_compute_Image_type(ColorT
 			is_unsigned_int = true;
 
 	if (image_format.size() >= 1)
-		if (image_format.substr(image_format.size() - 2, 2) == "i" && !is_unsigned_int)
+		if (image_format.substr(image_format.size() - 1, 1) == "i" && !is_unsigned_int)
 			is_int = true;
 
 	if (image_format.size() >= 1)
-		if (image_format.substr(image_format.size() - 2, 2) == "f")
-			is_int = true;
+		if (image_format.substr(image_format.size() - 1, 1) == "f")
+			is_float = true;
 
 	std::string prefix = "";
 	

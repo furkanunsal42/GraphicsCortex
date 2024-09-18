@@ -196,196 +196,7 @@ project "GraphicsCortexApp"
 		"GraphicsCortex/Source/Graphics/Buffers",
 		"GraphicsCortex/Source/Graphics",
 		"GraphicsCortex/Source",
-		"GraphicsCortex/Dependencies/assimp/include",
-		"GraphicsCortex/Dependencies/stb_image",
-		"GraphicsCortex/Dependencies/GLEW/include",
-		"GraphicsCortex/Dependencies/imgui",
-		"GraphicsCortex/Dependencies/glm",
-		"GraphicsCortex/Dependencies/GLFWx64/include",
-		"GraphicsCortex/Dependencies/physx/include",
-		"GraphicsCortex/Dependencies/physx/snippetutils",
-		"GraphicsCortex/Dependencies/physx/snippetcommon",
-		"GraphicsCortex/Dependencies/hiredis/include",
-		"GraphicsCortex/Dependencies/freetype/include"
-	}
-
-	links
-	{
-		"GraphicsCortex",
-	}
-
-	buildoptions { "/sdl", "/openmp" }
-
-	filter "system:windows"
-		cppdialect "C++17"
-		staticruntime "On"
-		systemversion "latest"
-
-	filter "configurations:Debug"
-		symbols "On"
-		defines
-		{
-			"GLEW_STATIC",
-			"WIN32",
-			"_DEBUG",
-			"_CONSOLE"
-		}
-
-	filter "configurations:Release"
-		optimize "On"
-		defines 
-		{
-			"GLEW_STATIC",
-			"WIN32",
-			"NDEBUG",
-			"_CONSOLE"
-		}
-
-	--filter {"system:windows", "configurations:Debug"}
-	--	buildoptions { "/MDd" }
-	filter {"system:windows", "configurations:Release"}
-		buildoptions { "/MD" }
-
-	postbuildcommands 
-	{
-		("{COPY} %{wks.location}GraphicsCortex/Dependencies/physx/lib_checked/*.dll %{cfg.buildtarget.relpath.directory}")
-	}
-
-project "CortexEditor"
-	location "CortexEditor"
-	kind "ConsoleApp"
-	language "C++"
-
-	targetdir("build/" .. out_dir .. "%{prj.name}")
-	objdir("build-obj/" .. out_dir .. "%{prj.name}")
-
-	files
-	{
-		"%{prj.name}/Mains/ApplicationMain.cpp", 
-		"%{prj.name}/Source/**.h", 
-		"%{prj.name}/Source/**.cpp",
-	}
-
-	removefiles  
-	{
-
-	}
-
-	includedirs 
-	{
-		"%{prj.name}/Source",
-
-		"GraphicsCortex/Source/Graphics/Rendering/new system",
-		"GraphicsCortex/Source/Graphics/Textures/new system",
-		"GraphicsCortex/Source/System",
-		"GraphicsCortex/Source/Physics",
-		"GraphicsCortex/Source/Graphics/Windowing",
-		"GraphicsCortex/Source/Graphics/Textures",
-		"GraphicsCortex/Source/Graphics/Text",
-		"GraphicsCortex/Source/Graphics/Shaders",
-		"GraphicsCortex/Source/Graphics/Rendering",
-		"GraphicsCortex/Source/Graphics/Meshes",
-		"GraphicsCortex/Source/Graphics/Math",
-		"GraphicsCortex/Source/Graphics/Lights",
-		"GraphicsCortex/Source/Graphics/GUI",
-		"GraphicsCortex/Source/Graphics/Defaults",
-		"GraphicsCortex/Source/Graphics/Buffers",
-		"GraphicsCortex/Source/Graphics",
-		"GraphicsCortex/Source",
-		"GraphicsCortex/Dependencies/assimp/include",
-		"GraphicsCortex/Dependencies/stb_image",
-		"GraphicsCortex/Dependencies/GLEW/include",
-		"GraphicsCortex/Dependencies/imgui",
-		"GraphicsCortex/Dependencies/glm",
-		"GraphicsCortex/Dependencies/GLFWx64/include",
-		"GraphicsCortex/Dependencies/physx/include",
-		"GraphicsCortex/Dependencies/physx/snippetutils",
-		"GraphicsCortex/Dependencies/physx/snippetcommon",
-		"GraphicsCortex/Dependencies/hiredis/include",
-		"GraphicsCortex/Dependencies/freetype/include"
-	}
-
-	links
-	{
-		"GraphicsCortex",
-	}
-
-	buildoptions { "/sdl", "/openmp" }
-
-	filter "system:windows"
-		cppdialect "C++17"
-		staticruntime "On"
-		systemversion "latest"
-
-	filter "configurations:Debug"
-		symbols "On"
-		defines
-		{
-			"GLEW_STATIC",
-			"WIN32",
-			"_DEBUG",
-			"_CONSOLE"
-		}
-
-	filter "configurations:Release"
-		optimize "On"
-		defines 
-		{
-			"GLEW_STATIC",
-			"WIN32",
-			"NDEBUG",
-			"_CONSOLE"
-		}
-
-	--filter {"system:windows", "configurations:Debug"}
-	--	buildoptions { "/MDd" }
-	filter {"system:windows", "configurations:Release"}
-		buildoptions { "/MD" }
-
-	postbuildcommands 
-	{
-		("{COPY} %{wks.location}GraphicsCortex/Dependencies/physx/lib_checked/*.dll %{cfg.buildtarget.relpath.directory}")
-	}
-	
-
-	project "ImageCortex"
-	location "ImageCortex"
-	kind "ConsoleApp"
-	language "C++"
-
-	targetdir("build/" .. out_dir .. "%{prj.name}")
-	objdir("build-obj/" .. out_dir .. "%{prj.name}")
-
-	files
-	{
-		"%{prj.name}/Source/**.h", 
-		"%{prj.name}/Source/**.cpp",
-	}
-
-	removefiles  
-	{
-
-	}
-
-	includedirs 
-	{
-		"%{prj.name}/Source",
-		"GraphicsCortex/Source/Graphics/RenderPasses",
-		"GraphicsCortex/Source/System",
-		"GraphicsCortex/Source/Physics",
-		"GraphicsCortex/Source/Graphics/Windowing",
-		"GraphicsCortex/Source/Graphics/Textures",
-		"GraphicsCortex/Source/Graphics/Text",
-		"GraphicsCortex/Source/Graphics/Shaders",
-		"GraphicsCortex/Source/Graphics/Rendering",
-		"GraphicsCortex/Source/Graphics/Meshes",
-		"GraphicsCortex/Source/Graphics/Math",
-		"GraphicsCortex/Source/Graphics/Lights",
-		"GraphicsCortex/Source/Graphics/GUI",
-		"GraphicsCortex/Source/Graphics/Defaults",
-		"GraphicsCortex/Source/Graphics/Buffers",
-		"GraphicsCortex/Source/Graphics",
-		"GraphicsCortex/Source",
+		"GraphicsCortex/Dependencies/libtiff/include",
 		"GraphicsCortex/Dependencies/assimp/include",
 		"GraphicsCortex/Dependencies/stb_image",
 		"GraphicsCortex/Dependencies/GLEW/include",
@@ -439,12 +250,12 @@ project "CortexEditor"
 	postbuildcommands 
 	{
 		("{COPY} %{wks.location}GraphicsCortex/Dependencies/physx/lib_checked/*.dll %{cfg.buildtarget.relpath.directory}"),
+		("{COPY} %{wks.location}GraphicsCortex/Dependencies/libtiff/lib/*.dll %{cfg.buildtarget.relpath.directory}")
 	}
 
-	
-project "CTReconstructor"
-	location "CTReconstructor"
-	kind "SharedLib"
+project "CortexEditor"
+	location "CortexEditor"
+	kind "ConsoleApp"
 	language "C++"
 
 	targetdir("build/" .. out_dir .. "%{prj.name}")
@@ -452,8 +263,7 @@ project "CTReconstructor"
 
 	files
 	{
-		"%{prj.name}/Dependencies/half_precision/include/**.h",
-		"%{prj.name}/Dependencies/half_precision/include/**.hpp",
+		"%{prj.name}/Mains/ApplicationMain.cpp", 
 		"%{prj.name}/Source/**.h", 
 		"%{prj.name}/Source/**.cpp",
 	}
@@ -466,8 +276,9 @@ project "CTReconstructor"
 	includedirs 
 	{
 		"%{prj.name}/Source",
-		"%{prj.name}/Dependencies/half_precision/include",
-		"GraphicsCortex/Source/Graphics/RenderPasses",
+
+		"GraphicsCortex/Source/Graphics/Rendering/new system",
+		"GraphicsCortex/Source/Graphics/Textures/new system",
 		"GraphicsCortex/Source/System",
 		"GraphicsCortex/Source/Physics",
 		"GraphicsCortex/Source/Graphics/Windowing",
@@ -483,6 +294,7 @@ project "CTReconstructor"
 		"GraphicsCortex/Source/Graphics/Buffers",
 		"GraphicsCortex/Source/Graphics",
 		"GraphicsCortex/Source",
+		"GraphicsCortex/Dependencies/libtiff/include",
 		"GraphicsCortex/Dependencies/assimp/include",
 		"GraphicsCortex/Dependencies/stb_image",
 		"GraphicsCortex/Dependencies/GLEW/include",
@@ -535,7 +347,203 @@ project "CTReconstructor"
 
 	postbuildcommands 
 	{
-		("{COPY} %{wks.location}GraphicsCortex/Dependencies/physx/lib_checked/*.dll %{cfg.buildtarget.relpath.directory}")
+		("{COPY} %{wks.location}GraphicsCortex/Dependencies/physx/lib_checked/*.dll %{cfg.buildtarget.relpath.directory}"),
+		("{COPY} %{wks.location}GraphicsCortex/Dependencies/libtiff/lib/*.dll %{cfg.buildtarget.relpath.directory}")
+	}
+	
+
+	project "ImageCortex"
+	location "ImageCortex"
+	kind "ConsoleApp"
+	language "C++"
+
+	targetdir("build/" .. out_dir .. "%{prj.name}")
+	objdir("build-obj/" .. out_dir .. "%{prj.name}")
+
+	files
+	{
+		"%{prj.name}/Source/**.h", 
+		"%{prj.name}/Source/**.cpp",
+	}
+
+	removefiles  
+	{
+
+	}
+
+	includedirs 
+	{
+		"%{prj.name}/Source",
+		"GraphicsCortex/Source/Graphics/RenderPasses",
+		"GraphicsCortex/Source/System",
+		"GraphicsCortex/Source/Physics",
+		"GraphicsCortex/Source/Graphics/Windowing",
+		"GraphicsCortex/Source/Graphics/Textures",
+		"GraphicsCortex/Source/Graphics/Text",
+		"GraphicsCortex/Source/Graphics/Shaders",
+		"GraphicsCortex/Source/Graphics/Rendering",
+		"GraphicsCortex/Source/Graphics/Meshes",
+		"GraphicsCortex/Source/Graphics/Math",
+		"GraphicsCortex/Source/Graphics/Lights",
+		"GraphicsCortex/Source/Graphics/GUI",
+		"GraphicsCortex/Source/Graphics/Defaults",
+		"GraphicsCortex/Source/Graphics/Buffers",
+		"GraphicsCortex/Source/Graphics",
+		"GraphicsCortex/Source",
+		"GraphicsCortex/Dependencies/libtiff/include",
+		"GraphicsCortex/Dependencies/assimp/include",
+		"GraphicsCortex/Dependencies/stb_image",
+		"GraphicsCortex/Dependencies/GLEW/include",
+		"GraphicsCortex/Dependencies/imgui",
+		"GraphicsCortex/Dependencies/glm",
+		"GraphicsCortex/Dependencies/GLFWx64/include",
+		"GraphicsCortex/Dependencies/physx/include",
+		"GraphicsCortex/Dependencies/physx/snippetutils",
+		"GraphicsCortex/Dependencies/physx/snippetcommon",
+		"GraphicsCortex/Dependencies/hiredis/include",
+		"GraphicsCortex/Dependencies/freetype/include"
+	}
+
+	links
+	{
+		"GraphicsCortex",
+	}
+
+	buildoptions { "/sdl", "/openmp" }
+
+	filter "system:windows"
+		cppdialect "C++17"
+		staticruntime "On"
+		systemversion "latest"
+
+	filter "configurations:Debug"
+		symbols "On"
+		defines
+		{
+			"GLEW_STATIC",
+			"WIN32",
+			"_DEBUG",
+			"_CONSOLE"
+		}
+
+	filter "configurations:Release"
+		optimize "On"
+		defines 
+		{
+			"GLEW_STATIC",
+			"WIN32",
+			"NDEBUG",
+			"_CONSOLE"
+		}
+
+	--filter {"system:windows", "configurations:Debug"}
+	--	buildoptions { "/MDd" }
+	filter {"system:windows", "configurations:Release"}
+		buildoptions { "/MD" }
+
+	postbuildcommands 
+	{
+		("{COPY} %{wks.location}GraphicsCortex/Dependencies/physx/lib_checked/*.dll %{cfg.buildtarget.relpath.directory}"),
+		("{COPY} %{wks.location}GraphicsCortex/Dependencies/libtiff/lib/*.dll %{cfg.buildtarget.relpath.directory}")
+	}
+
+	
+project "CTReconstructor"
+	location "CTReconstructor"
+	kind "SharedLib"
+	language "C++"
+
+	targetdir("build/" .. out_dir .. "%{prj.name}")
+	objdir("build-obj/" .. out_dir .. "%{prj.name}")
+
+	files
+	{
+		"%{prj.name}/Dependencies/half_precision/include/**.h",
+		"%{prj.name}/Dependencies/half_precision/include/**.hpp",
+		"%{prj.name}/Source/**.h", 
+		"%{prj.name}/Source/**.cpp",
+	}
+
+	removefiles  
+	{
+
+	}
+
+	includedirs 
+	{
+		"%{prj.name}/Source",
+		"%{prj.name}/Dependencies/half_precision/include",
+		"GraphicsCortex/Source/Graphics/RenderPasses",
+		"GraphicsCortex/Source/System",
+		"GraphicsCortex/Source/Physics",
+		"GraphicsCortex/Source/Graphics/Windowing",
+		"GraphicsCortex/Source/Graphics/Textures",
+		"GraphicsCortex/Source/Graphics/Text",
+		"GraphicsCortex/Source/Graphics/Shaders",
+		"GraphicsCortex/Source/Graphics/Rendering",
+		"GraphicsCortex/Source/Graphics/Meshes",
+		"GraphicsCortex/Source/Graphics/Math",
+		"GraphicsCortex/Source/Graphics/Lights",
+		"GraphicsCortex/Source/Graphics/GUI",
+		"GraphicsCortex/Source/Graphics/Defaults",
+		"GraphicsCortex/Source/Graphics/Buffers",
+		"GraphicsCortex/Source/Graphics",
+		"GraphicsCortex/Source",
+		"GraphicsCortex/Dependencies/libtiff/include",
+		"GraphicsCortex/Dependencies/assimp/include",
+		"GraphicsCortex/Dependencies/stb_image",
+		"GraphicsCortex/Dependencies/GLEW/include",
+		"GraphicsCortex/Dependencies/imgui",
+		"GraphicsCortex/Dependencies/glm",
+		"GraphicsCortex/Dependencies/GLFWx64/include",
+		"GraphicsCortex/Dependencies/physx/include",
+		"GraphicsCortex/Dependencies/physx/snippetutils",
+		"GraphicsCortex/Dependencies/physx/snippetcommon",
+		"GraphicsCortex/Dependencies/hiredis/include",
+		"GraphicsCortex/Dependencies/freetype/include"
+	}
+
+	links
+	{
+		"GraphicsCortex",
+	}
+
+	buildoptions { "/sdl", "/openmp" }
+
+	filter "system:windows"
+		cppdialect "C++17"
+		staticruntime "On"
+		systemversion "latest"
+
+	filter "configurations:Debug"
+		symbols "On"
+		defines
+		{
+			"GLEW_STATIC",
+			"WIN32",
+			"_DEBUG",
+			"_CONSOLE"
+		}
+
+	filter "configurations:Release"
+		optimize "On"
+		defines 
+		{
+			"GLEW_STATIC",
+			"WIN32",
+			"NDEBUG",
+			"_CONSOLE"
+		}
+
+	--filter {"system:windows", "configurations:Debug"}
+	--	buildoptions { "/MDd" }
+	filter {"system:windows", "configurations:Release"}
+		buildoptions { "/MD" }
+
+	postbuildcommands 
+	{
+		("{COPY} %{wks.location}GraphicsCortex/Dependencies/physx/lib_checked/*.dll %{cfg.buildtarget.relpath.directory}"),
+		("{COPY} %{wks.location}GraphicsCortex/Dependencies/libtiff/lib/*.dll %{cfg.buildtarget.relpath.directory}")
 	}
 
 
@@ -584,6 +592,7 @@ project "CTReconstructorApp"
 		"GraphicsCortex/Source/Graphics/Buffers",
 		"GraphicsCortex/Source/Graphics",
 		"GraphicsCortex/Source",
+		"GraphicsCortex/Dependencies/libtiff/include",
 		"GraphicsCortex/Dependencies/assimp/include",
 		"GraphicsCortex/Dependencies/stb_image",
 		"GraphicsCortex/Dependencies/GLEW/include",
@@ -638,6 +647,7 @@ project "CTReconstructorApp"
 	postbuildcommands 
 	{
 		("{COPY} %{wks.location}GraphicsCortex/Dependencies/physx/lib_checked/*.dll %{cfg.buildtarget.relpath.directory}"),
+		("{COPY} %{wks.location}GraphicsCortex/Dependencies/libtiff/lib/*.dll %{cfg.buildtarget.relpath.directory}")
 		--("{COPY} %{wks.location}build/" .. out_dir .. "CTReconstructor/*.dll %{cfg.buildtarget.relpath.directory}"),
 	}
 
@@ -705,6 +715,7 @@ project "ipclib"
 	postbuildcommands 
 	{
 		--("{COPY} %{wks.location}GraphicsCortex/Dependencies/physx/lib_checked/*.dll %{cfg.buildtarget.relpath.directory}"),
+		--("{COPY} %{wks.location}GraphicsCortex/Dependencies/libtiff/lib/*.dll %{cfg.buildtarget.relpath.directory}")
 	}
 
 	
@@ -776,4 +787,5 @@ project "ipclibcs"
 	postbuildcommands 
 	{
 		--("{COPY} %{wks.location}GraphicsCortex/Dependencies/physx/lib_checked/*.dll %{cfg.buildtarget.relpath.directory}"),
+		--("{COPY} %{wks.location}GraphicsCortex/Dependencies/libtiff/lib/*.dll %{cfg.buildtarget.relpath.directory}")
 	}
