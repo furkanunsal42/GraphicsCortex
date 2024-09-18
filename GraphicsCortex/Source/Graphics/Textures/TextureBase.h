@@ -220,14 +220,20 @@ public:
 	static int ColorFormat_to_OpenGL(ColorFormat color_format);
 	static int DepthStencilFormat_to_OpenGL(DepthStencilFormat depth_stencil_format);
 	
-	
 	static int Type_bytes_per_channel(Type type);
 	static int ColorFormat_channels(ColorFormat color_format);
 	static int ColorTextureFormat_channels(ColorTextureFormat color_texture_format);
 	static int ColorTextureFormat_bytes_per_channel(ColorTextureFormat color_texture_format);
 	static int ColorTextureFormat_bytes_per_pixel(ColorTextureFormat color_texture_format);
 
-	//static int WellDefinedFormat_to_OpenGL(WellDefinedColorFormat well_defined_color_format);
+	template<typename TextureType>
+	static std::string ColorTextureFormat_to_OpenGL_compute_Sampler_type();
+	static std::string ColorTextureFormat_to_OpenGL_compute_Image_format(ColorTextureFormat color_texture_format);
+	template<typename TextureType>
+	static std::string ColorTextureFormat_to_OpenGL_compute_Image_type(ColorTextureFormat color_texture_format);
+
+	template<typename TextureType>
+	static int get_texture_dimention();
 
 	unsigned int id = 0;
 
@@ -235,42 +241,8 @@ public:
 	~TextureBase2() {};
 	virtual void release() = 0;
 
-	//virtual SamplingFilter query_mag_filter() = 0;
-	//virtual SamplingFilter query_min_filter() = 0;
-	//virtual SamplingFilter query_mipmap_min_filter() = 0;
-	//virtual WrapMode query_wrap_u() = 0;
-	//virtual WrapMode query_wrap_v() = 0;
-	//virtual WrapMode query_wrap_w() = 0;
-	//virtual int query_base_level() = 0;
-	//virtual int query_compare_mode() = 0;
-	//virtual query_compare_function() = 0;
-	//virtual float query_lod_bias() = 0;
-	//virtual int query_max_level() = 0;
-	//virtual int query_max_lod() = 0;
-	//virtual int query_min_lod() = 0;
-	//virtual int query_swizzle_r() = 0;
-	//virtual int query_swizzle_g() = 0;
-	//virtual int query_swizzle_b() = 0;
-	//virtual int query_swizzle_a() = 0;
-	//virtual int query_swizzle_rgba() = 0;
-
-	//virtual int query_width(int mipmap_level) = 0;
-	//virtual int query_height(int mipmap_level) = 0;
-	//virtual int query_depth(int mipmap_level) = 0;
-	//virtual int query_internal_format(int mipmap_level) = 0;
-	//virtual int query_red_type(int mipmap_level) = 0;
-	//virtual int query_green_type(int mipmap_level) = 0;
-	//virtual int query_blue_type(int mipmap_level) = 0;
-	//virtual int query_alpha_type(int mipmap_level) = 0;
-	//virtual int query_depth_type(int mipmap_level) = 0;
-	//virtual int query_red_size(int mipmap_level) = 0;
-	//virtual int query_green_size(int mipmap_level) = 0;
-	//virtual int query_blue_size(int mipmap_level) = 0;
-	//virtual int query_alpha_size(int mipmap_level) = 0;
-	//virtual int query_depth_size(int mipmap_level) = 0;
-	//virtual bool query_is_compressed(int mipmap_level) = 0;
-	//virtual int query_compressed_image_size(int mipmap_level) = 0;
-
 private:
 	int target = NULL;
 };
+
+#include "TextureBaseTemplated.h"

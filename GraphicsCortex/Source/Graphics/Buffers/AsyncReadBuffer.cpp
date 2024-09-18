@@ -2,11 +2,6 @@
 #include "Debuger.h"
 #include <iostream>
 
-AsyncReadBuffer::AsyncReadBuffer()
-{
-	_generate_buffer();
-}
-
 AsyncReadBuffer::AsyncReadBuffer(size_t buffer_size) : 
 	_buffer_size(buffer_size) { }
 

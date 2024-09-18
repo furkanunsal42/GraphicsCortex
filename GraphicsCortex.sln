@@ -11,6 +11,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GraphicsCortex", "GraphicsC
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GraphicsCortexApp", "GraphicsCortexApp\GraphicsCortexApp.vcxproj", "{4C1F0D6C-B835-0B02-01AD-96236D02DC89}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ImageCortex", "ImageCortex\ImageCortex.vcxproj", "{BD7219E0-2928-92D5-B21C-8CAC1ED188D9}"
+EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ipclib", "ipclib\ipclib.vcxproj", "{188AEF04-042C-1ADB-EDE6-2D2FD927A12B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ipclibcs", "ipclibcs\ipclibcs.csproj", "{4E7DFAFE-3A4A-550A-6363-43B24F8F8A98}"
@@ -30,6 +32,8 @@ Global
 		{CB8BE4B9-B759-D8BF-A0ED-48E68C5AB424}.Release|x64.Build.0 = Release|x64
 		{4C1F0D6C-B835-0B02-01AD-96236D02DC89}.Release|x64.ActiveCfg = Release|x64
 		{4C1F0D6C-B835-0B02-01AD-96236D02DC89}.Release|x64.Build.0 = Release|x64
+		{BD7219E0-2928-92D5-B21C-8CAC1ED188D9}.Release|x64.ActiveCfg = Release|x64
+		{BD7219E0-2928-92D5-B21C-8CAC1ED188D9}.Release|x64.Build.0 = Release|x64
 		{188AEF04-042C-1ADB-EDE6-2D2FD927A12B}.Release|x64.ActiveCfg = Release|x64
 		{188AEF04-042C-1ADB-EDE6-2D2FD927A12B}.Release|x64.Build.0 = Release|x64
 		{4E7DFAFE-3A4A-550A-6363-43B24F8F8A98}.Release|x64.ActiveCfg = Release|x64

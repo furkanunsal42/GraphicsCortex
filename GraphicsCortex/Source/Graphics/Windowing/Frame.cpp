@@ -34,6 +34,18 @@ Frame::Frame(int width, int height, const std::string& name, int msaa, int swapi
 	window_width = width;
 	window_height = height;
 
+	if (window_width == 0 ) {
+		window_width = 1;
+		width = 1;
+		set_visibility(false);
+	}
+
+	if (window_height == 0) {
+		window_height = 1;
+		height = 1;
+		set_visibility(false);
+	}
+
 	if (!is_glfw_initialized) {
 		glfwInit();
 		is_glfw_initialized = true;

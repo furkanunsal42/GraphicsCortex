@@ -1,5 +1,8 @@
 #include "TextureBase.h"
 #include "GL/glew.h"
+#include "Debuger.h"
+#include <functional>
+#include <iostream>
 
 int TextureBase2::SamplingFilter_to_OpenGL(SamplingFilter filter)
 {
@@ -489,3 +492,91 @@ int TextureBase2::ColorTextureFormat_bytes_per_pixel(ColorTextureFormat color_te
 	}
 	return 0;
 }
+
+std::string TextureBase2::ColorTextureFormat_to_OpenGL_compute_Image_format(ColorTextureFormat color_texture_format){
+
+	switch (color_texture_format) {
+	case ColorTextureFormat::RED								:	return "";
+	case ColorTextureFormat::RG									:	return "";
+	case ColorTextureFormat::RGB								:	return "";
+	case ColorTextureFormat::BGR								:	return "";
+	case ColorTextureFormat::RGBA								:	return "";
+	case ColorTextureFormat::BGRA								:	return "";
+	case ColorTextureFormat::R8 								:	return "r8";
+	case ColorTextureFormat::R8_SNORM 							:	return "r8_snorm";
+	case ColorTextureFormat::R16 								:	return "r16";
+	case ColorTextureFormat::R16_SNORM 							:	return "r16_snorm";
+	case ColorTextureFormat::RG8 								:	return "rg8";
+	case ColorTextureFormat::RG8_SNORM 							:	return "rg8_snorm";
+	case ColorTextureFormat::RG16 								:	return "rg16";
+	case ColorTextureFormat::RG16_SNORM 						:	return "rg16_snorm";
+	case ColorTextureFormat::R3_G3_B2 							:	return "";
+	case ColorTextureFormat::RGB4 								:	return "";
+	case ColorTextureFormat::RGB5 								:	return "";
+	case ColorTextureFormat::RGB8 								:	return "";
+	case ColorTextureFormat::RGB8_SNORM 						:	return "";
+	case ColorTextureFormat::RGB10 								:	return "";
+	case ColorTextureFormat::RGB12 								:	return "";
+	case ColorTextureFormat::RGB16_SNORM 						:	return "";
+	case ColorTextureFormat::RGBA2 								:	return "";
+	case ColorTextureFormat::RGBA4 								:	return "";
+	case ColorTextureFormat::RGB5_A1 							:	return "";
+	case ColorTextureFormat::RGBA8 								:	return "rgba8";
+	case ColorTextureFormat::RGBA8_SNORM 						:	return "rgba8_snorm";
+	case ColorTextureFormat::RGB10_A2 							:	return "rgb10_a2";
+	case ColorTextureFormat::RGB10_A2UI 						:	return "rgb10_a2ui";
+	case ColorTextureFormat::RGBA12 							:	return "";
+	case ColorTextureFormat::RGBA16 							:	return "rgba16";
+	case ColorTextureFormat::SRGB8 								:	return "";
+	case ColorTextureFormat::SRGB8_ALPHA8 						:	return "rgba8";	//?
+	case ColorTextureFormat::R16F 								:	return "r16f";
+	case ColorTextureFormat::RG16F 								:	return "rg16f";
+	case ColorTextureFormat::RGB16F 							:	return "";
+	case ColorTextureFormat::RGBA16F 							:	return "rgba16f";
+	case ColorTextureFormat::R32F 								:	return "r32f";
+	case ColorTextureFormat::RG32F 								:	return "rg32f";
+	case ColorTextureFormat::RGB32F 							:	return "";
+	case ColorTextureFormat::RGBA32F 							:	return "rgba32f";
+	case ColorTextureFormat::R11F_G11F_B10F						:	return "r11f_g11f_b10f";
+	case ColorTextureFormat::RGB9_E5 							:	return "";
+	case ColorTextureFormat::R8I 								:	return "r8i";
+	case ColorTextureFormat::R8UI 								:	return "r8ui";
+	case ColorTextureFormat::R16I 								:	return "r16i";
+	case ColorTextureFormat::R16UI 								:	return "r16ui";
+	case ColorTextureFormat::R32I 								:	return "r32i";
+	case ColorTextureFormat::R32UI 								:	return "r32ui";
+	case ColorTextureFormat::RG8I 								:	return "rg8i";
+	case ColorTextureFormat::RG8UI 								:	return "rg8ui";
+	case ColorTextureFormat::RG16I 								:	return "rg16i";
+	case ColorTextureFormat::RG16UI 							:	return "rg16ui";
+	case ColorTextureFormat::RG32I 								:	return "rg32i";
+	case ColorTextureFormat::RG32UI 							:	return "rg32ui";
+	case ColorTextureFormat::RGB8I 								:	return "";
+	case ColorTextureFormat::RGB8UI 							:	return "";
+	case ColorTextureFormat::RGB16I 							:	return "";
+	case ColorTextureFormat::RGB16UI 							:	return "";
+	case ColorTextureFormat::RGB32I 							:	return "";
+	case ColorTextureFormat::RGB32UI 							:	return "";
+	case ColorTextureFormat::RGBA8I 							:	return "rgba8i";
+	case ColorTextureFormat::RGBA8UI 							:	return "rgba8ui";
+	case ColorTextureFormat::RGBA16I 							:	return "rgba16i";
+	case ColorTextureFormat::RGBA16UI 							:	return "rgba16ui";
+	case ColorTextureFormat::RGBA32I 							:	return "rgba32i";
+	case ColorTextureFormat::RGBA32UI 							:	return "rgba32ui";
+	case ColorTextureFormat::COMPRESSED_RED						:	return "";
+	case ColorTextureFormat::COMPRESSED_RG						:	return "";
+	case ColorTextureFormat::COMPRESSED_RGB						:	return "";
+	case ColorTextureFormat::COMPRESSED_RGBA					:	return "";
+	case ColorTextureFormat::COMPRESSED_SRGB					:	return "";
+	case ColorTextureFormat::COMPRESSED_SRGB_ALPHA				:	return "";
+	case ColorTextureFormat::COMPRESSED_RED_RGTC1				:	return "";
+	case ColorTextureFormat::COMPRESSED_SIGNED_RED_RGTC1		:	return "";
+	case ColorTextureFormat::COMPRESSED_RG_RGTC2				:	return "";
+	case ColorTextureFormat::COMPRESSED_SIGNED_RG_RGTC2			:	return "";
+	case ColorTextureFormat::COMPRESSED_RGBA_BPTC_UNORM			:	return "";
+	case ColorTextureFormat::COMPRESSED_SRGB_ALPHA_BPTC_UNORM	:	return "";
+	case ColorTextureFormat::COMPRESSED_RGB_BPTC_SIGNED_FLOAT	:	return "";
+	case ColorTextureFormat::COMPRESSED_RGB_BPTC_UNSIGNED_FLOAT	:	return "";
+	}
+}
+

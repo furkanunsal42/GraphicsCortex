@@ -4,11 +4,11 @@
 #include "tiffio.h"
 
 class Texture;
-class FrameBuffer;
+class Framebuffer;
 
 class Image {
 	friend Texture;
-	friend FrameBuffer;
+	friend Framebuffer;
 public:
 	struct ImageParameters {
 		int width;
