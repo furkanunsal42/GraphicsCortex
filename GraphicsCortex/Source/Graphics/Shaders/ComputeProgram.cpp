@@ -205,7 +205,7 @@ void ComputeProgram::set_preprocessor(const std::string& key, const std::string&
 	_preprocessing_defines[key] = value;
 }
 
-std::string ComputeProgram::get_preprocessor(const std::string& key, const std::string& value)
+std::string ComputeProgram::get_preprocessor(const std::string& key)
 {
 	return _preprocessing_defines[key];
 }

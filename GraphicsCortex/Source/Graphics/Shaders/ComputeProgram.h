@@ -40,7 +40,7 @@ public:
 
 	void clear_preprocessor();
 	void set_preprocessor(const std::string& key, const std::string& value);
-	std::string get_preprocessor(const std::string& key, const std::string& value);
+	std::string get_preprocessor(const std::string& key);
 	void compile_shader(const Shader& shader);
 	
 	glm::ivec3 get_work_group_size();

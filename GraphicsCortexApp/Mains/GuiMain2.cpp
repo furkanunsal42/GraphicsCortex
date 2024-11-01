@@ -7,7 +7,7 @@ int main() {
 	std::shared_ptr<Text> text = std::make_shared<Text>(Gui::font, "Haha");
 
 	Style style1;
-	style1.color = vec3(0.5, 0.5, 0.5);
+	style1.color = vec3(1, 1, 1);
 	style1.border_color = vec3(0, 0, 0);
 	style1.border_thickness = vec4(1, 1, 1, 1);
 

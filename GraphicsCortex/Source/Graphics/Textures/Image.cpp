@@ -41,7 +41,7 @@ Image::Image(const std::string& file_path, int desired_channels, bool vertical_f
 	target_parameters.width = target_width;
 	target_parameters.height = target_height;
 	target_parameters.depth = 1;
-	target_parameters.channel_count = target_channel_count;
+	target_parameters.channel_count = desired_channels;
 	target_parameters.bytes_per_channel = target_bytes_per_channel;
 	target_parameters.path = file_path;
 	target_parameters.vertical_flip = vertical_flip;

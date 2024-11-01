@@ -35,3 +35,12 @@ GraphicsCortexApp/PhysXGpu_64.dll
 /CTReconstructorApp/pipe
 /CTReconstructorApp/reconstruction
 /ImageCortex
+/CortexEditorWPF
+GraphicsCortexApp/jpeg62.dll
+GraphicsCortexApp/liblzma.dll
+GraphicsCortexApp/tiff.dll
+GraphicsCortexApp/zlib1.dll
+CortexEditor/zlib1.dll
+CortexEditor/tiff.dll
+CortexEditor/liblzma.dll
+CortexEditor/jpeg62.dll
