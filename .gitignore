@@ -44,3 +44,8 @@ CortexEditor/zlib1.dll
 CortexEditor/tiff.dll
 CortexEditor/liblzma.dll
 CortexEditor/jpeg62.dll
+/GraphicsCortex/Release
+/GraphicsCortex/Release Editor
+/GraphicsCortex/Images/.vs
+/CortexEditor/Release
+/CortexEditor/Release Editor

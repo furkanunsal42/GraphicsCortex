@@ -7,7 +7,9 @@ int main() {
 
 	std::shared_ptr<Entity> entity = std::make_shared<Entity>();
 
-	entity->add_component<MeshComponent>();
+	std::shared_ptr<Program> program = std::make_shared<Program>();
+	entity->add_component<MaterialComponent>(program);
+
 	entity->remove_component<MeshRendererComponent>();
 
 	std::weak_ptr<MeshComponent> mesh_component = entity->get_component<MeshComponent>();

@@ -15,31 +15,14 @@ public:
 	
 	virtual ~Entity() = default;
 
-	enum UpdateType {
-		Activated,
-		Deactivated,
-		Initialized,
-		Destructed,
-
-		Begin,
-		
-		Update,
-		FixedUpdate,
-		
-		PreRender,
-		PostRender,
-		PrePhysics,
-		PostPhysics,
-	};
-
-	template<typename ComponentType>
-	void add_component();
+	template<typename ComponentType, typename... ArgType>
+	void add_component(ArgType... arguments);
 	template<typename ComponentType>
 	void remove_component();
 	template<typename ComponentType>
 	std::weak_ptr<ComponentType> get_component();
 
-	void update(UpdateType type);
+	void update(Component::UpdateType type);
 
 private:
 
@@ -49,6 +32,6 @@ private:
 	std::unordered_map<size_t, std::shared_ptr<Component>> _components;
 };
 
-#include "EntityTemplated.hpp"
+#include "EntityTemplated.h"
 
 

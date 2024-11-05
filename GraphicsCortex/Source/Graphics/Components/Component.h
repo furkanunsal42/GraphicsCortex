@@ -4,7 +4,24 @@
 
 class Component {
 public:
-	
+
+	enum UpdateType {
+		Activated,
+		Deactivated,
+		Initialized,
+		Destructed,
+
+		Begin,
+
+		Update,
+		FixedUpdate,
+
+		PreRender,
+		PostRender,
+		PrePhysics,
+		PostPhysics,
+	};
+
 	Component(const Component& other) = delete;
 	Component(Component&& other) = delete;
 	Component& operator=(const Component& other) = delete;
