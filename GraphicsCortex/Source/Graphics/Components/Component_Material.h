@@ -10,11 +10,21 @@
 class MaterialComponent : public Component {
 public:
 
-	void set_texture(const std::string& name, std::shared_ptr<Texture2D> texture) {};
-	void remove_texture(const std::string& name) {};
-	
-	MaterialComponent(std::shared_ptr<Program> program) { _program = program; };
+	enum TexturePurpose {
+		GeneralTexture,
+		NormalTexture,
+	};
 
+	MaterialComponent(std::shared_ptr<Program> program);
+	
+	void set_texture(const std::string& name, std::shared_ptr<Texture2D> texture, TexturePurpose texture_purpose = GeneralTexture);
+	std::shared_ptr<Texture2D> get_texture2d(const std::string& name);
+	TexturePurpose get_texture2d_purpose(const std::string& name);
+	void remove_texture(const std::string& name);
+
+
+	std::shared_ptr<Program> get_program();
+	
 	/*
 	void on_activated();
 	void on_deactivated();
@@ -32,7 +42,20 @@ public:
 	void on_post_physics();
 	*/
 
+
 private:
-	std::unordered_map<std::string, std::shared_ptr<Texture2D>> _textures;
+
+	struct _texture_with_purpose {
+	public:
+		_texture_with_purpose(std::shared_ptr<Texture2D> texture = nullptr, TexturePurpose purpose = GeneralTexture) {
+			_texture = texture;
+			_purpose = purpose;
+		}
+
+		std::shared_ptr<Texture2D> _texture;
+		TexturePurpose _purpose;
+	};
+
+	std::unordered_map<std::string, _texture_with_purpose> _textures;
 	std::shared_ptr<Program> _program;
 };
