@@ -18,6 +18,7 @@
 #include "Frame.h"
 #include "Model.h"
 #include "Buffer.h"
+#include "StandardBuffer.h"
 #include "UniformBuffer.h"
 #include "AsyncBuffer.h"
 #include "ShaderCompiler.h"
