@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Entity.h"
+
 template<typename ComponentType, typename... ArgType>
 void Entity::add_component(ArgType... arguments)
 {

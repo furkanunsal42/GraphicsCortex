@@ -5,11 +5,11 @@
 
 class Text : public UpdatesDefaultUniforms {
 public:
-	Text(std::shared_ptr<Font> font, const std::string& text = u8"");
+	Text(std::shared_ptr<Font> font, const std::string& text = "");
 	Text(std::shared_ptr<Font> font, const std::u16string& text);
 	Text(std::shared_ptr<Font> font, const std::u32string& text);
 
-	Text(std::shared_ptr<Font> font, std::shared_ptr<Program> custom_renderer, const std::string& text = u8"");
+	Text(std::shared_ptr<Font> font, std::shared_ptr<Program> custom_renderer, const std::string& text = "");
 	Text(std::shared_ptr<Font> font, std::shared_ptr<Program> custom_renderer, const std::u16string& text);
 	Text(std::shared_ptr<Font> font, std::shared_ptr<Program> custom_renderer, const std::u32string& text);
 

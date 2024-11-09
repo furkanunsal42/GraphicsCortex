@@ -6,16 +6,22 @@ int main() {
 
 	size_t size = 40;
 	Buffer buffer(size);
+	Buffer buffer2(size);
 
-	char* data = new char[size];
-	std::memset(data, 69, size);
+	std::vector<int> vector_a = { 10, 20, 30, 40 };
+	buffer.set_data(4, 0, vector_a);
 
-	buffer.set_data(10, 0, 20, data);
-	buffer.map(5, 16);
+	buffer.map();
+	std::span<int> span = buffer.get_mapped_span<int>();
+	
+	span[0] = 100;
+	span[9] = 1;
 
-	std::vector<float> vector = buffer.get_mapped_vector<float>();
+	buffer.copy_to(0, 0, size, buffer2);
 
-	for (auto& element : vector)
+	auto vector_b = buffer2.get_data<int8_t>();
+
+	for (auto& element : vector_b)
 		std::cout << (int)element << " ";
 	std::cout << std::endl;
 

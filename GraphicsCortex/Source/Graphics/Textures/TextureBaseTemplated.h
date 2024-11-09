@@ -1,5 +1,12 @@
 #pragma once
 
+class Texture1D;
+class Texture2D;
+class Texture2DArray;
+class TextureCubeMap;
+class Texture3D;
+class Renderbuffer;
+
 template<typename TextureType>
 std::string TextureBase2::ColorTextureFormat_to_OpenGL_compute_Sampler_type() {
 
