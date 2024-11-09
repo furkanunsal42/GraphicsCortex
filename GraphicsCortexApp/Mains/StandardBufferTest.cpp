@@ -21,6 +21,9 @@ int main() {
 
 	auto vector_b = buffer2.get_data<int8_t>();
 
+	AttributedVertexBuffer vao;
+	std::cout << vao.get_max_attribute_count() << std::endl;
+
 	for (auto& element : vector_b)
 		std::cout << (int)element << " ";
 	std::cout << std::endl;
