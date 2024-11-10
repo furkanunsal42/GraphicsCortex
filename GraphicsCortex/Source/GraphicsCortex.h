@@ -20,6 +20,7 @@
 #include "Buffer.h"
 #include "StandardBuffer.h"
 #include "AttributedVertexBuffer.h"
+#include "StandardMesh.h"
 #include "UniformBuffer.h"
 #include "AsyncBuffer.h"
 #include "ShaderCompiler.h"

@@ -297,8 +297,8 @@ namespace {
 	}
 }
 
-template<typename T>
-inline void Buffer::clear(size_t offset_in_bytes, size_t size_in_bytes, T value)
+template<typename value_type>
+inline void Buffer::clear(size_t offset_in_bytes, size_t size_in_bytes, value_type value)
 {
 	static_assert(
 		std::is_same_v<T, int8_t> ||

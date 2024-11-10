@@ -6,7 +6,11 @@
 
 #include "StandardBuffer.h"
 
+class Mesh2;
+
 class AttributedVertexBuffer {
+	
+	friend Mesh2;
 public:
 
 	enum AttributeType {
@@ -30,7 +34,18 @@ public:
 		ui32_normalized,
 		i_2_10_10_10_normalized,
 		ui_2_10_10_10_normalized,
-		ui_10f_11f_11f
+		ui_10f_11f_11f,
+	};
+
+	enum PrimitiveType {
+		point,
+		line,
+		line_strip,
+		line_loop,
+		triangle,
+		triangle_strip,
+		triangle_fan,
+		//patch
 	};
 
 	AttributedVertexBuffer();
@@ -42,40 +57,44 @@ public:
 	void bind();
 	void unbind();
 
-	void attach_vertex_buffer(int slot, std::shared_ptr<Buffer> vertex_buffer, AttributeType attribute_type, int8_t element_per_vertex, size_t stride);
-	void deattach_vertex_buffer(int slot);
-	std::shared_ptr<Buffer> get_vertex_buffer(int slot);
+	void attach_vertex_buffer(int32_t slot, std::shared_ptr<Buffer> vertex_buffer, size_t stride, size_t offset);
+	void attach_vertex_buffer(int32_t slot, std::shared_ptr<Buffer> vertex_buffer, AttributeType attribute_type, int32_t element_per_vertex, size_t stride, size_t offset, bool enabled = false);
+	void detach_vertex_buffer(int32_t slot);
+	
+	void set_attribute_format(int32_t slot, AttributeType attribute_type, int32_t element_per_vertex, size_t offset);
+	std::shared_ptr<Buffer> get_vertex_buffer(int32_t slot);
+	AttributeType get_attribute_type(int32_t slot);
+	int32_t get_attribute_element_per_vertex(int32_t slot);
+	size_t get_attribute_stride(int32_t slot);
+	size_t get_attribute_offset(int32_t slot);
 
-	void attach_index_buffer(std::shared_ptr<Buffer> index_buffer);
-	void deattach_index_buffer();
-	std::shared_ptr<Buffer> get_index_buffer();
-
-	void enable_attribute(int slot);
-	void disable_attribute(int slot);
-	bool is_attribute_enabled(int slot);
+	void enable_attribute(int32_t slot);
+	void disable_attribute(int32_t slot);
+	bool is_attribute_enabled(int32_t slot);
 	void enabled_all_attached_attributes();
 	void disable_all_attributes();
 
-	int get_max_attribute_count();
+	int32_t get_max_attribute_count();
+
 private:
 
-	struct _buffer_with_slotinfo {
+	struct _buffer_with_structure_info {
 	public:
-		_buffer_with_slotinfo() = default;
-		_buffer_with_slotinfo(std::shared_ptr<Buffer> buffer, AttributeType attribute_type, int8_t element_per_vertex, size_t stride, bool is_enabled);
+		_buffer_with_structure_info() = default;
+		_buffer_with_structure_info(std::shared_ptr<Buffer> buffer, AttributeType attribute_type, int32_t element_per_vertex, size_t stride, size_t offset, bool is_enabled);
 		std::shared_ptr<Buffer> _buffer = nullptr;
 		AttributeType _attribute_type = AttributeType::i8;
-		int8_t _element_per_vertex = 0;
+		int32_t _element_per_vertex = 0;
 		size_t _stride = 0;
-		
-		bool _enabled = false;
+		size_t _offset = 0;
+
+		bool _slot_enabled = false;
 	};
 
 	unsigned int id = 0;
-	const int _max_attribute_count;
+	const int32_t _max_attribute_count;
 
-	std::shared_ptr<Buffer> _index_buffer = nullptr;
-	std::unordered_map<int, _buffer_with_slotinfo> _vertex_buffers;
+	std::vector<_buffer_with_structure_info> _vertex_buffers;
 
 	void _generate_buffer();
 

@@ -6,7 +6,14 @@
 #include <iostream>
 #include "Image.h"
 
+class AttributedVertexBuffer;
+class Mesh2;
+
 class Buffer {
+
+	friend AttributedVertexBuffer;
+	friend Mesh2;
+
 public:
 
 	struct MapInfo {
@@ -41,6 +48,7 @@ public:
 	Buffer(size_t buffer_size_in_bytes, MemoryType buffer_memory_type = GPU_BUFFER);
 
 	~Buffer();
+	
 	void release();
 
 	bool wait_to_sycronize_download(int64_t timeout_ms);
