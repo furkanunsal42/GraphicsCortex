@@ -37,17 +37,6 @@ public:
 		ui_10f_11f_11f,
 	};
 
-	enum PrimitiveType {
-		point,
-		line,
-		line_strip,
-		line_loop,
-		triangle,
-		triangle_strip,
-		triangle_fan,
-		//patch
-	};
-
 	AttributedVertexBuffer();
 	AttributedVertexBuffer(const AttributedVertexBuffer& other) = delete;
 	~AttributedVertexBuffer();
