@@ -301,22 +301,22 @@ template<typename value_type>
 inline void Buffer::clear(size_t offset_in_bytes, size_t size_in_bytes, value_type value)
 {
 	static_assert(
-		std::is_same_v<T, int8_t> ||
-		std::is_same_v<T, int16_t> ||
-		std::is_same_v<T, int32_t> ||
-		std::is_same_v<T, uint8_t> ||
-		std::is_same_v<T, uint16_t> ||
-		std::is_same_v<T, uint32_t> ||
-		std::is_same_v<T, float> ||
-		std::is_same_v<T, glm::vec2> ||
-		std::is_same_v<T, glm::ivec2> ||
-		std::is_same_v<T, glm::uvec2> ||
-		std::is_same_v<T, glm::vec3> ||
-		std::is_same_v<T, glm::ivec3> ||
-		std::is_same_v<T, glm::uvec3> ||
-		std::is_same_v<T, glm::vec4> ||
-		std::is_same_v<T, glm::ivec4> ||
-		std::is_same_v<T, glm::uvec4>
+		std::is_same_v<value_type, int8_t> ||
+		std::is_same_v<value_type, int16_t> ||
+		std::is_same_v<value_type, int32_t> ||
+		std::is_same_v<value_type, uint8_t> ||
+		std::is_same_v<value_type, uint16_t> ||
+		std::is_same_v<value_type, uint32_t> ||
+		std::is_same_v<value_type, float> ||
+		std::is_same_v<value_type, glm::vec2> ||
+		std::is_same_v<value_type, glm::ivec2> ||
+		std::is_same_v<value_type, glm::uvec2> ||
+		std::is_same_v<value_type, glm::vec3> ||
+		std::is_same_v<value_type, glm::ivec3> ||
+		std::is_same_v<value_type, glm::uvec3> ||
+		std::is_same_v<value_type, glm::vec4> ||
+		std::is_same_v<value_type, glm::ivec4> ||
+		std::is_same_v<value_type, glm::uvec4>
 		);
 
 	if (!_buffer_generated) {
@@ -326,7 +326,7 @@ inline void Buffer::clear(size_t offset_in_bytes, size_t size_in_bytes, value_ty
 
 	_allocate_buffer(_buffer_size);
 
-	GLCall(glClearNamedBufferSubData(id, get_GL_buffer_internal_format<T>(), offset_in_bytes, size_in_bytes, get_GL_buffer_format<T>(), get_GL_buffer_type<T>(), &value));
+	GLCall(glClearNamedBufferSubData(id, get_GL_buffer_internal_format<value_type>(), offset_in_bytes, size_in_bytes, get_GL_buffer_format<value_type>(), get_GL_buffer_type<value_type>(), &value));
 }
 
 template<typename value_type>
@@ -342,7 +342,7 @@ inline void Buffer::clear(value_type value)
 }
 
 template<typename T>
-void copy_to(size_t managed_buffer_offset_by_count, size_t target_buffer_offset_by_count, size_t copy_count, Buffer& target_buffer) {
+void Buffer::copy_to(size_t managed_buffer_offset_by_count, size_t target_buffer_offset_by_count, size_t copy_count, Buffer& target_buffer) {
 	
 	size_t managed_buffer_offset_in_bytes = managed_buffer_offset_by_count * sizeof(T);
 	size_t target_buffer_offset_in_bytes = target_buffer_offset_by_count * sizeof(T);
