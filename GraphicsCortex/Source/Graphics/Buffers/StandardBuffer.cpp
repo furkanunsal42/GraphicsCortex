@@ -195,6 +195,18 @@ void Buffer::force_allocation()
 	_allocate_buffer(_buffer_size);
 }
 
+void Buffer::bind_as_vertex_buffer()
+{
+	if (!_buffer_generated) {
+		std::cout << "[OpenGL Error] released Buffer tried to bind_as_vertex_buffer()" << std::endl;
+		ASSERT(false);
+	}
+
+	_allocate_buffer(_buffer_size);
+
+	GLCall(glBindBuffer(_target_vertex_buffer, id));
+}
+
 void Buffer::unbind()
 {
 	GLCall(glBindBuffer(_target_download, 0));
@@ -249,7 +261,7 @@ bool Buffer::is_mapped()
 	return _mapped_pointer_size != 0;
 }
 
-size_t Buffer::get_buffer_size()
+size_t Buffer::get_buffer_size_in_bytes()
 {
 	return _buffer_size;
 }
@@ -278,7 +290,6 @@ void Buffer::set_data(size_t managed_buffer_offset_in_bytes, size_t uploading_da
 	
 	_allocate_buffer(_buffer_size);
 	
-	std::cout << managed_buffer_offset_in_bytes << " " << std::min<size_t>(_buffer_size, size_in_bytes) << std::endl;
 	GLCall(glNamedBufferSubData(id, managed_buffer_offset_in_bytes, std::min<size_t>(_buffer_size, size_in_bytes), (char*)data + uploading_data_offset_in_bytes));
 }
 
@@ -331,11 +342,6 @@ void Buffer::clear()
 char* Buffer::get_mapped_pointer()
 {
 	return _buffer_data;
-}
-
-size_t Buffer::get_buffer_size_in_bytes()
-{
-	return _buffer_size;
 }
 
 void Buffer::bind_to_async_download()

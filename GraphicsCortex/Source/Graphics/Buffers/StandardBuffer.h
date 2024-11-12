@@ -51,6 +51,13 @@ public:
 	
 	void release();
 
+	void bind_to_async_download();
+	void bind_to_async_upload();
+	void bind_as_storage_buffer(size_t offset, unsigned int texture_slot);
+	void bind_as_transform_feedback(size_t offset, unsigned int texture_slot);
+	void bind_as_vertex_buffer();
+	void unbind();
+
 	bool wait_to_sycronize_download(int64_t timeout_ms);
 	bool wait_to_sycronize_download();
 	bool is_syncronized_download();
@@ -61,28 +68,21 @@ public:
 	bool is_syncronized_upload();
 	void set_fence_upload();
 
-	char* get_mapped_pointer();
-	template<typename T>
-	std::span<T> get_mapped_span();
-	size_t get_buffer_size_in_bytes();
-
-	void bind_to_async_download();
-	void bind_to_async_upload();
-	void bind_as_storage_buffer(size_t offset, unsigned int texture_slot);
-	void bind_as_transform_feedback(size_t offset, unsigned int texture_slot);
-	void unbind();
-
 	void map(MapInfo map_description = MapInfo());
 	void map(size_t offset_in_bytes, size_t size_in_bytes, MapInfo map_description = MapInfo());
 	template<typename T>
 	void map(size_t offset_by_count, size_t size_by_count, MapInfo map_description = MapInfo());
 	void unmap();
-	
-	bool is_mapped();
-	size_t get_buffer_size();
-	size_t get_mapped_buffer_size();
-	bool is_mapping_persistant();
 
+	char* get_mapped_pointer();
+	template<typename T>
+	std::span<T> get_mapped_span();
+
+	bool is_mapped();
+	bool is_mapping_persistant();
+	size_t get_mapped_buffer_size();
+
+	size_t get_buffer_size_in_bytes();
 	template<typename T>
 	size_t get_buffer_count();
 	template<typename T>

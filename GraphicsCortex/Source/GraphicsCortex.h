@@ -17,6 +17,7 @@
 #include "Debuger.h"
 #include "Frame.h"
 #include "Model.h"
+#include "StandardModel.h"
 #include "Buffer.h"
 #include "StandardBuffer.h"
 #include "AttributedVertexBuffer.h"
@@ -41,6 +42,9 @@
 #include "Default_Assets.h"
 #include "Default_Programs.h"
 #include "SkyBox.h"
+
+#include "RenderParameters.h"
+#include "PrimitiveRenderer.h"
 
 #include "Rendering/RenderPipeline.h"
 #include "RenderPasses/RenderPass_GBuffer.h"

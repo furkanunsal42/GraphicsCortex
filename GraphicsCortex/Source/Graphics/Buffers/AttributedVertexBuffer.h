@@ -64,6 +64,7 @@ public:
 	void disable_all_attributes();
 
 	int32_t get_max_attribute_count();
+	int32_t get_largest_active_buffer_slot();
 
 private:
 
@@ -88,5 +89,4 @@ private:
 	void _generate_buffer();
 
 	bool _buffer_generated = false;
-
 };

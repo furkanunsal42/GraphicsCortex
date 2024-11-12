@@ -28,6 +28,18 @@ int32_t AttributedVertexBuffer::get_max_attribute_count()
     return value;
 }
 
+int32_t AttributedVertexBuffer::get_largest_active_buffer_slot()
+{
+    size_t largest_buffer_size_by_bytes = 0;
+    int32_t largest_slot = -1;
+    uint32_t slot;
+    for (slot = 0; slot < _max_attribute_count; slot++) {
+        if (_vertex_buffers[slot]._slot_enabled && _vertex_buffers[slot]._buffer->get_buffer_size_in_bytes() > largest_buffer_size_by_bytes)
+            largest_slot = slot;
+    }
+    return largest_slot;
+}
+
 void AttributedVertexBuffer::bind()
 {
     if (!_buffer_generated) {
@@ -117,6 +129,8 @@ void AttributedVertexBuffer::attach_vertex_buffer(int32_t slot, std::shared_ptr<
 {
     attach_vertex_buffer(slot, vertex_buffer, stride, offset);
     set_attribute_format(slot, attribute_type, element_per_vertex, offset);
+    if (enabled) enable_attribute(slot);
+    else disable_attribute(slot);
 }
 
 void AttributedVertexBuffer::set_attribute_format(int32_t slot, AttributeType attribute_type, int32_t element_per_vertex, size_t offset)
@@ -249,7 +263,7 @@ void AttributedVertexBuffer::disable_all_attributes()
 void AttributedVertexBuffer::_generate_buffer()
 {
     if (_buffer_generated) return;
-    GLCall(glCreateBuffers(1, &id));
+    GLCall(glCreateVertexArrays(1, &id));
     _buffer_generated = true;
 }
 
