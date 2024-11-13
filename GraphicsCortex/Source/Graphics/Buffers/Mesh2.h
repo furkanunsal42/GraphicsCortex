@@ -6,11 +6,9 @@
 
 #include "StandardBuffer.h"
 
-class Mesh2;
+class Model2;
 
-class AttributedVertexBuffer {
-	
-	friend Mesh2;
+class Mesh2 {
 public:
 
 	enum AttributeType {
@@ -37,14 +35,44 @@ public:
 		ui_10f_11f_11f,
 	};
 
-	AttributedVertexBuffer();
-	AttributedVertexBuffer(const AttributedVertexBuffer& other) = delete;
-	~AttributedVertexBuffer();
+	enum PrimitiveType {
+		point,
+		line,
+		line_strip,
+		line_loop,
+		triangle,
+		triangle_strip,
+		triangle_fan,
+
+		line_strip_adjacency,
+		line_adjacency,
+		triangle_strip_adjacency,
+		triangle_adjacency,
+		patches,
+	};
+
+	enum IndexType {
+		ui8,
+		ui16,
+		ui32,
+	};
+
+	Mesh2();
+	Mesh2(const Mesh2& other) = delete;
+	~Mesh2();
+
+	void load_model(const Model2& model);
+	std::shared_ptr<Model2> get_model();
 
 	void release();
+	void clear();
 
 	void bind();
 	void unbind();
+
+	void set_index_buffer(std::shared_ptr<Buffer> index_buffer, IndexType index_type);
+	std::shared_ptr<Buffer> get_index_buffer();
+	IndexType get_index_buffer_type();
 
 	void attach_vertex_buffer(int32_t slot, std::shared_ptr<Buffer> vertex_buffer, size_t stride, size_t offset);
 	void attach_vertex_buffer(int32_t slot, std::shared_ptr<Buffer> vertex_buffer, AttributeType attribute_type, int32_t element_per_vertex, size_t stride, size_t offset, bool enabled = false);
@@ -68,6 +96,12 @@ public:
 
 private:
 
+	unsigned int id = 0;
+	const int32_t _max_attribute_count;
+
+	void _generate_buffer();
+	bool _buffer_generated = false;
+
 	struct _buffer_with_structure_info {
 	public:
 		_buffer_with_structure_info() = default;
@@ -81,12 +115,24 @@ private:
 		bool _slot_enabled = false;
 	};
 
-	unsigned int id = 0;
-	const int32_t _max_attribute_count;
-
 	std::vector<_buffer_with_structure_info> _vertex_buffers;
+	std::shared_ptr<Buffer> _index_buffer;
 
-	void _generate_buffer();
+	struct _singlemesh_description {
+		size_t _offset;
+		size_t _size;
 
-	bool _buffer_generated = false;
+		Mesh2::PrimitiveType _primitive;
+	};
+
+	struct _submesh_description {
+		
+		_submesh_description* _children_submesh;
+		size_t _children_submesh_count;
+
+		_singlemesh_description* _children_singlemesh;
+		size_t _children_singlemesh_count;
+	};
+
+	_submesh_description* _submesh_tree;
 };
