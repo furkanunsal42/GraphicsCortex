@@ -4,6 +4,8 @@
 #include <string>
 #include "glm.hpp"
 
+#include "NTree.h"
+
 struct SingleModel2 {
 public:
 
@@ -38,6 +40,5 @@ public:
 
 private:
 	
-	std::vector<SingleModel2> _sub_models;
-
+	NTree<uint32, SingleModel2> _sub_model_tree;
 };

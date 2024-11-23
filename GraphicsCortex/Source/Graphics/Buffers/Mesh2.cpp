@@ -59,53 +59,53 @@ namespace {
 
     uint32_t _attribute_type_to_GL_type(Mesh2::AttributeType type) {
         switch (type) {
-        case Mesh2::AttributeType::f16_fixed                  : return GL_HALF_FLOAT;
-        case Mesh2::AttributeType::f16                        : return GL_FIXED;
-        case Mesh2::AttributeType::f32                        : return GL_FLOAT;
-        case Mesh2::AttributeType::f64                        : return GL_DOUBLE;
-        case Mesh2::AttributeType::i8                         : return GL_BYTE;
-        case Mesh2::AttributeType::ui8                        : return GL_UNSIGNED_BYTE;
-        case Mesh2::AttributeType::i16                        : return GL_SHORT;
-        case Mesh2::AttributeType::ui16                       : return GL_UNSIGNED_SHORT;
-        case Mesh2::AttributeType::i32                        : return GL_INT;
-        case Mesh2::AttributeType::ui32                       : return GL_UNSIGNED_INT;
-        case Mesh2::AttributeType::i_2_10_10_10               : return GL_INT_2_10_10_10_REV;
-        case Mesh2::AttributeType::ui_2_10_10_10              : return GL_UNSIGNED_INT_2_10_10_10_REV;
-        case Mesh2::AttributeType::i8_normalized              : return GL_BYTE;
-        case Mesh2::AttributeType::ui8_normalized             : return GL_UNSIGNED_BYTE;
-        case Mesh2::AttributeType::i16_normalized             : return GL_SHORT;
-        case Mesh2::AttributeType::ui16_normalized            : return GL_UNSIGNED_SHORT;
-        case Mesh2::AttributeType::i32_normalized             : return GL_INT;
-        case Mesh2::AttributeType::ui32_normalized            : return GL_UNSIGNED_INT;
-        case Mesh2::AttributeType::i_2_10_10_10_normalized    : return GL_INT_2_10_10_10_REV;
-        case Mesh2::AttributeType::ui_2_10_10_10_normalized   : return GL_UNSIGNED_INT_2_10_10_10_REV;
-        case Mesh2::AttributeType::ui_10f_11f_11f             : return GL_UNSIGNED_INT_10F_11F_11F_REV;
+        case Mesh2::AttributeType::a_f16_fixed                  : return GL_HALF_FLOAT;
+        case Mesh2::AttributeType::a_f16                        : return GL_FIXED;
+        case Mesh2::AttributeType::a_f32                        : return GL_FLOAT;
+        case Mesh2::AttributeType::a_f64                        : return GL_DOUBLE;
+        case Mesh2::AttributeType::a_i8                         : return GL_BYTE;
+        case Mesh2::AttributeType::a_ui8                        : return GL_UNSIGNED_BYTE;
+        case Mesh2::AttributeType::a_i16                        : return GL_SHORT;
+        case Mesh2::AttributeType::a_ui16                       : return GL_UNSIGNED_SHORT;
+        case Mesh2::AttributeType::a_i32                        : return GL_INT;
+        case Mesh2::AttributeType::a_ui32                       : return GL_UNSIGNED_INT;
+        case Mesh2::AttributeType::a_i_2_10_10_10               : return GL_INT_2_10_10_10_REV;
+        case Mesh2::AttributeType::a_ui_2_10_10_10              : return GL_UNSIGNED_INT_2_10_10_10_REV;
+        case Mesh2::AttributeType::a_i8_normalized              : return GL_BYTE;
+        case Mesh2::AttributeType::a_ui8_normalized             : return GL_UNSIGNED_BYTE;
+        case Mesh2::AttributeType::a_i16_normalized             : return GL_SHORT;
+        case Mesh2::AttributeType::a_ui16_normalized            : return GL_UNSIGNED_SHORT;
+        case Mesh2::AttributeType::a_i32_normalized             : return GL_INT;
+        case Mesh2::AttributeType::a_ui32_normalized            : return GL_UNSIGNED_INT;
+        case Mesh2::AttributeType::a_i_2_10_10_10_normalized    : return GL_INT_2_10_10_10_REV;
+        case Mesh2::AttributeType::a_ui_2_10_10_10_normalized   : return GL_UNSIGNED_INT_2_10_10_10_REV;
+        case Mesh2::AttributeType::a_ui_10f_11f_11f             : return GL_UNSIGNED_INT_10F_11F_11F_REV;
         }
     } 
 
     uint32_t _attribute_type_to_GL_normalized_flag(Mesh2::AttributeType type) {
         switch (type) {
-        case Mesh2::AttributeType::f16_fixed                  : return GL_FALSE;
-        case Mesh2::AttributeType::f16                        : return GL_FALSE;
-        case Mesh2::AttributeType::f32                        : return GL_FALSE;
-        case Mesh2::AttributeType::f64                        : return GL_FALSE;
-        case Mesh2::AttributeType::i8                         : return GL_FALSE;
-        case Mesh2::AttributeType::ui8                        : return GL_FALSE;
-        case Mesh2::AttributeType::i16                        : return GL_FALSE;
-        case Mesh2::AttributeType::ui16                       : return GL_FALSE;
-        case Mesh2::AttributeType::i32                        : return GL_FALSE;
-        case Mesh2::AttributeType::ui32                       : return GL_FALSE;
-        case Mesh2::AttributeType::i_2_10_10_10               : return GL_FALSE;
-        case Mesh2::AttributeType::ui_2_10_10_10              : return GL_FALSE;
-        case Mesh2::AttributeType::i8_normalized              : return GL_TRUE;
-        case Mesh2::AttributeType::ui8_normalized             : return GL_TRUE;
-        case Mesh2::AttributeType::i16_normalized             : return GL_TRUE;
-        case Mesh2::AttributeType::ui16_normalized            : return GL_TRUE;
-        case Mesh2::AttributeType::i32_normalized             : return GL_TRUE;
-        case Mesh2::AttributeType::ui32_normalized            : return GL_TRUE;
-        case Mesh2::AttributeType::i_2_10_10_10_normalized    : return GL_TRUE;
-        case Mesh2::AttributeType::ui_2_10_10_10_normalized   : return GL_TRUE;
-        case Mesh2::AttributeType::ui_10f_11f_11f             : return GL_FALSE;
+        case Mesh2::AttributeType::a_f16_fixed                  : return GL_FALSE;
+        case Mesh2::AttributeType::a_f16                        : return GL_FALSE;
+        case Mesh2::AttributeType::a_f32                        : return GL_FALSE;
+        case Mesh2::AttributeType::a_f64                        : return GL_FALSE;
+        case Mesh2::AttributeType::a_i8                         : return GL_FALSE;
+        case Mesh2::AttributeType::a_ui8                        : return GL_FALSE;
+        case Mesh2::AttributeType::a_i16                        : return GL_FALSE;
+        case Mesh2::AttributeType::a_ui16                       : return GL_FALSE;
+        case Mesh2::AttributeType::a_i32                        : return GL_FALSE;
+        case Mesh2::AttributeType::a_ui32                       : return GL_FALSE;
+        case Mesh2::AttributeType::a_i_2_10_10_10               : return GL_FALSE;
+        case Mesh2::AttributeType::a_ui_2_10_10_10              : return GL_FALSE;
+        case Mesh2::AttributeType::a_i8_normalized              : return GL_TRUE;
+        case Mesh2::AttributeType::a_ui8_normalized             : return GL_TRUE;
+        case Mesh2::AttributeType::a_i16_normalized             : return GL_TRUE;
+        case Mesh2::AttributeType::a_ui16_normalized            : return GL_TRUE;
+        case Mesh2::AttributeType::a_i32_normalized             : return GL_TRUE;
+        case Mesh2::AttributeType::a_ui32_normalized            : return GL_TRUE;
+        case Mesh2::AttributeType::a_i_2_10_10_10_normalized    : return GL_TRUE;
+        case Mesh2::AttributeType::a_ui_2_10_10_10_normalized   : return GL_TRUE;
+        case Mesh2::AttributeType::a_ui_10f_11f_11f             : return GL_FALSE;
         }
     } 
 

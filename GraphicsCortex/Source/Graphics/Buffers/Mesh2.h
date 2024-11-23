@@ -12,27 +12,27 @@ class Mesh2 {
 public:
 
 	enum AttributeType {
-		f16_fixed,
-		f16,
-		f32,
-		f64,
-		i8,
-		ui8,
-		i16,
-		ui16,
-		i32,
-		ui32,
-		i_2_10_10_10,
-		ui_2_10_10_10,
-		i8_normalized,
-		ui8_normalized,
-		i16_normalized,
-		ui16_normalized,
-		i32_normalized,
-		ui32_normalized,
-		i_2_10_10_10_normalized,
-		ui_2_10_10_10_normalized,
-		ui_10f_11f_11f,
+		a_f16_fixed,
+		a_f16,
+		a_f32,
+		a_f64,
+		a_i8,
+		a_ui8,
+		a_i16,
+		a_ui16,
+		a_i32,
+		a_ui32,
+		a_i_2_10_10_10,
+		a_ui_2_10_10_10,
+		a_i8_normalized,
+		a_ui8_normalized,
+		a_i16_normalized,
+		a_ui16_normalized,
+		a_i32_normalized,
+		a_ui32_normalized,
+		a_i_2_10_10_10_normalized,
+		a_ui_2_10_10_10_normalized,
+		a_ui_10f_11f_11f,
 	};
 
 	enum PrimitiveType {
@@ -52,9 +52,9 @@ public:
 	};
 
 	enum IndexType {
-		ui8,
-		ui16,
-		ui32,
+		i_ui8,
+		i_ui16,
+		i_ui32,
 	};
 
 	Mesh2();
@@ -107,7 +107,7 @@ private:
 		_buffer_with_structure_info() = default;
 		_buffer_with_structure_info(std::shared_ptr<Buffer> buffer, AttributeType attribute_type, int32_t element_per_vertex, size_t stride, size_t offset, bool is_enabled);
 		std::shared_ptr<Buffer> _buffer = nullptr;
-		AttributeType _attribute_type = AttributeType::i8;
+		AttributeType _attribute_type = AttributeType::a_i8;
 		int32_t _element_per_vertex = 0;
 		size_t _stride = 0;
 		size_t _offset = 0;

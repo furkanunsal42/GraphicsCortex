@@ -4,13 +4,13 @@
 #include "Debuger.h"
 
 #include "ShaderCompiler.h"
-#include "AttributedVertexBuffer.h"
+#include "Mesh2.h"
 
-void primitive_renderer::render(Program& program, AttributedVertexBuffer& verticies)
+void primitive_renderer::render(Program& program, Mesh2& verticies)
 {
 	int32_t largest_slot = verticies.get_largest_active_buffer_slot();
 	if (largest_slot == -1) {
-		std::cout << "[OpenGL Error] primitive_renderer::render() is called but no attribute of given AttributedVertexBuffer is enabled" << std::endl;
+		std::cout << "[OpenGL Error] primitive_renderer::render() is called but no attribute of given Mesh is enabled" << std::endl;
 		ASSERT(false);
 	}
 

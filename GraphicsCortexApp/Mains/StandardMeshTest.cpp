@@ -17,8 +17,8 @@ int main() {
 
 		});
 
-	std::shared_ptr<AttributedVertexBuffer> vao = std::make_shared<AttributedVertexBuffer>();
-	vao->attach_vertex_buffer(0, buffer, AttributedVertexBuffer::f32, 3, sizeof(float) * 3, 0, true);
+	std::shared_ptr<Mesh2> mesh = std::make_shared<Mesh2>();
+	mesh->attach_vertex_buffer(0, buffer, Mesh2::a_f32, 3, sizeof(float) * 3, 0, true);
 
 	std::shared_ptr<Program> program = std::make_shared<Program>(Shader("../GraphicsCortex/Source/GLSL/Debug/basic.vert", "../GraphicsCortex/Source/GLSL/Debug/flatcolor.frag"));
 	
@@ -32,7 +32,7 @@ int main() {
 		frame.clear_window();
 		frame.display_performance(1000);
 
-		primitive_renderer::render(*program, *vao);
+		primitive_renderer::render(*program, *mesh);
 
 	}
 
