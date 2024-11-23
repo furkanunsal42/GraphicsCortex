@@ -36,5 +36,5 @@ private:
 	std::unique_ptr<Node> _root = nullptr; 
 };
 
-#include "TreeTemplated.h"
+#include "NTreeTemplated.h"
 
