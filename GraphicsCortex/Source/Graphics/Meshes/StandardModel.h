@@ -2,6 +2,9 @@
 
 #include <vector>
 #include <string>
+#include <stdint.h>
+#include <memory>
+
 #include "glm.hpp"
 
 #include "NTree.h"
@@ -15,7 +18,6 @@ public:
 	std::vector<glm::vec4> vertex_colors;
 	std::vector<uint32_t> indicies;
 	uint32_t primitive;
-
 };
 
 
@@ -23,22 +25,33 @@ class Model2 {
 public:
 
 	Model2(const std::string& filepath);
-	~Model2();
-	void release();
+	Model2(std::shared_ptr<SingleModel2> single_model);
+	Model2() = default;
+	~Model2() = default;
+	void clear();
 
 	void load_model(const std::string& filepath);
-	void load_model_async(const std::string& filepath);
+	//void load_model_async(const std::string& filepath);
 
-	SingleModel2& operator[](uint32_t index);
-	SingleModel2& get_submodel(uint32_t index);
-	uint32_t get_submodel_count();
-
-	void push_submodel(SingleModel2 submodel);
-	void pop_submodel();
-
-	void save_to_disc(const std::string& output_filepath);
-
-private:
+	std::shared_ptr<SingleModel2>& operator[](uint32_t key);
+	std::shared_ptr<SingleModel2> get_submodel(uint32_t key);
 	
-	NTree<uint32, SingleModel2> _sub_model_tree;
+	size_t get_submodel_count(uint32_t parent_key);
+	SingleModel2* get_submodels(uint32_t parent_key);
+	NTree<uint32_t, std::shared_ptr<SingleModel2>>::Node* get_children(uint32_t parent_key);
+
+	uint32_t insert_submodel(uint32_t parent_key, std::shared_ptr<SingleModel2> submodel);
+	bool erase_submodel(uint32_t key);
+
+	bool set_submodel(uint32_t key, std::shared_ptr<SingleModel2> submodel);
+	std::shared_ptr<SingleModel2> get_submodel(uint32_t key);
+
+	//void save_to_disc(const std::string& output_filepath);
+
+	NTree<uint32_t, std::shared_ptr<SingleModel2>> sub_model_tree;
+	
+private:
+
+	uint32_t _next_key = 1;
+	uint32_t _generate_next_key();
 };

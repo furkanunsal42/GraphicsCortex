@@ -5,6 +5,7 @@
 #include <unordered_map>
 
 #include "StandardBuffer.h"
+#include "NTree.h"
 
 class Model2;
 
@@ -125,14 +126,5 @@ private:
 		Mesh2::PrimitiveType _primitive;
 	};
 
-	struct _submesh_description {
-		
-		_submesh_description* _children_submesh;
-		size_t _children_submesh_count;
-
-		_singlemesh_description* _children_singlemesh;
-		size_t _children_singlemesh_count;
-	};
-
-	_submesh_description* _submesh_tree;
+	NTree<uint32_t, _singlemesh_description> _submesh_tree;
 };

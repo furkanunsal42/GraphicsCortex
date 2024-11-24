@@ -10,6 +10,12 @@ inline NTree<key_type, value_type>::Node::Node(key_type key, value_type value) :
 
 
 template<typename key_type, typename value_type>
+inline bool NTree<key_type, value_type>::clear()
+{
+	_root = nullptr;
+}
+
+template<typename key_type, typename value_type>
 inline size_t NTree<key_type, value_type>::get_children_count(key_type key) {
 	return _find_key(key)->children.size();
 }
