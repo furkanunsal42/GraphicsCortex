@@ -10,7 +10,7 @@ inline NTree<key_type, value_type>::Node::Node(key_type key, value_type value) :
 
 
 template<typename key_type, typename value_type>
-inline bool NTree<key_type, value_type>::clear()
+inline void NTree<key_type, value_type>::clear()
 {
 	_root = nullptr;
 }
@@ -100,7 +100,10 @@ inline std::optional<value_type> NTree<key_type, value_type>::get(key_type key)
 
 	_Node* result = _find_key(key);
 
-	return result == nullptr ? std::nullopt : result->value;
+	if (result == nullptr)
+		return std::nullopt;
+	else 
+		return result->value;
 }
 
 template<typename key_type, typename value_type>

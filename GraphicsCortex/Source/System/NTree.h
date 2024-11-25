@@ -15,7 +15,7 @@ public:
 		std::vector<Node> children;
 	};
 
-	bool clear();
+	void clear();
 
 	size_t get_children_count(key_type key);
 	bool does_exist(key_type key);

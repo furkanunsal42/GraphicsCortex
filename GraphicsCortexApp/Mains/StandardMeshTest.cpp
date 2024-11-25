@@ -5,20 +5,27 @@
 int main() {
 	Frame frame(512, 512, "Mesh System Test", 0, 0, true, true, false, Frame::NOTIFICATION, false);
 	
-	std::shared_ptr<Buffer> buffer = std::make_shared<Buffer>(sizeof(float) * 3 * 6);
-	buffer->set_data<float>({
-			-1.0f, -1.0f, 0.0f,
-			1.0f, -1.0f, 0.0f,
-			0.0f, 1.0f, -1.0f,
-		
-			1.0f, 1.0f, 0.0f,
-			-1.0f, 1.0f, 0.0f,
-			0.0f, -1.0f, 1.0f,
-
-		});
-
 	std::shared_ptr<Mesh2> mesh = std::make_shared<Mesh2>();
-	mesh->attach_vertex_buffer(0, buffer, Mesh2::a_f32, 3, sizeof(float) * 3, 0, true);
+	
+	std::shared_ptr<SingleModel2> single_model = std::make_shared<SingleModel2>();
+
+	single_model->verticies = {
+		glm::vec3(-1.0f, -1.0f, 0.0f),
+		glm::vec3(1.0f, -1.0f, 0.0f),
+		glm::vec3(0.0f, 1.0f, -1.0f),
+
+		glm::vec3(1.0f, 1.0f, 0.0f),
+		glm::vec3(-1.0f, 1.0f, 0.0f),
+		glm::vec3(0.0f, -1.0f, 1.0f),
+	};
+
+	std::shared_ptr<Model2> model = std::make_shared<Model2>();
+	model->set_submodel(0, single_model);
+
+
+	std::shared_ptr<Buffer> vertex_buffer = single_model->create_vertex_buffer();
+
+	mesh->attach_vertex_buffer(0, vertex_buffer, Mesh2::a_f32, 3, sizeof(float) * 3, 0, true);
 
 	std::shared_ptr<Program> program = std::make_shared<Program>(Shader("../GraphicsCortex/Source/GLSL/Debug/basic.vert", "../GraphicsCortex/Source/GLSL/Debug/flatcolor.frag"));
 	
