@@ -39,7 +39,7 @@ inline void Buffer::set_data(size_t managed_buffer_offset_by_count, size_t uploa
 	size_t uploading_data_offset_in_bytes = uploading_data_offset_by_count * sizeof(T);
 	size_t size_in_bytes = count * sizeof(T);
 	
-	set_data(managed_buffer_offset_in_bytes, uploading_data_offset_in_bytes, std::min(data.size() * sizeof(T) - uploading_data_offset_in_bytes, size_in_bytes), &data[0]);
+	set_data(managed_buffer_offset_in_bytes, uploading_data_offset_in_bytes, std::min(data.size() * sizeof(T) - uploading_data_offset_in_bytes, size_in_bytes), (void*) & data[0]);
 }
 
 template<typename T>

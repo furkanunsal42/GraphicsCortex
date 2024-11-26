@@ -20,8 +20,7 @@ int main() {
 	};
 
 	std::shared_ptr<Model2> model = std::make_shared<Model2>();
-	model->set_submodel(0, single_model);
-
+	model->insert_submodel(single_model);
 
 	std::shared_ptr<Buffer> vertex_buffer = single_model->create_vertex_buffer();
 

@@ -21,7 +21,8 @@ public:
 	std::vector<uint32_t> indicies;
 	uint32_t primitive;
 
-	std::unique_ptr<Buffer> create_vertex_buffer();
+	std::unique_ptr<Buffer> create_vertex_buffer(size_t vertex_offset, size_t vertex_count);
+	std::unique_ptr<Buffer> create_vertex_buffer(size_t vertex_offset = 0);
 	std::unique_ptr<Buffer> create_normal_buffer();
 	std::unique_ptr<Buffer> create_uv_buffer();
 	std::unique_ptr<Buffer> create_vertex_color_buffer();
@@ -41,12 +42,11 @@ public:
 	};
 
 
-	class _ProxyNode {
+	struct _ProxyNode {
 		friend Model2;
 	public:
 		
 		void operator=(const _ProxyNode& other);
-		bool operator==(const _ProxyNode& other);
 
 		bool add_submodel(uint32_t submodel_name);
 		bool remove_submodel(uint32_t submodel_name);
@@ -54,23 +54,23 @@ public:
 		bool add_childnode(uint32_t node_name);
 		bool remove_childnode(uint32_t node_name);
 
-		std::vector<Node>& childnodes;
+		std::vector<node_name>& childnodes;
 		std::vector<submodel_name>& submodels;
 	
-		std::unique_ptr<Buffer> create_vertex_buffer();
-		std::unique_ptr<Buffer> create_normal_buffer();
-		std::unique_ptr<Buffer> create_uv_buffer();
-		std::unique_ptr<Buffer> create_vertex_color_buffer();
-		std::unique_ptr<Buffer> create_index_buffer();
+		//std::unique_ptr<Buffer> create_vertex_buffer();
+		//std::unique_ptr<Buffer> create_normal_buffer();
+		//std::unique_ptr<Buffer> create_uv_buffer();
+		//std::unique_ptr<Buffer> create_vertex_color_buffer();
+		//std::unique_ptr<Buffer> create_index_buffer();
 
 		void clear();
 
-		void load_model();
-		void load_model_async();
+		//void load_model();
+		//void load_model_async();
 		//void save_to_disc(const std::string& output_filepath);
 
 	private:
-		_ProxyNode(Model2& owner_model, uint32_t name, std::vector<Node>& childnodes, std::vector<submodel_name>& submodels);
+		_ProxyNode(Model2& owner_model, uint32_t name, std::vector<node_name>& childnodes, std::vector<submodel_name>& submodels);
 
 		Model2& _owner_model;
 		uint32_t _node_name;
@@ -103,20 +103,20 @@ public:
 	void create_node(uint32_t node_name);
 	void delete_node(uint32_t node_name);
 
-	void save_to_disc(const std::string& output_filepath);
+	//void save_to_disc(const std::string& output_filepath);
 
-	std::unique_ptr<Buffer> create_vertex_buffer();
-	std::unique_ptr<Buffer> create_normal_buffer();
-	std::unique_ptr<Buffer> create_uv_buffer();
-	std::unique_ptr<Buffer> create_vertex_color_buffer();
-	std::unique_ptr<Buffer> create_index_buffer();
+	//std::unique_ptr<Buffer> create_vertex_buffer();
+	//std::unique_ptr<Buffer> create_normal_buffer();
+	//std::unique_ptr<Buffer> create_uv_buffer();
+	//std::unique_ptr<Buffer> create_vertex_color_buffer();
+	//std::unique_ptr<Buffer> create_index_buffer();
 
 private:
 
 	uint32_t _next_submodel_name = 0;
 	uint32_t _generate_submodel_name();
 
-	std::unordered_map<node_name, std::pair<Node, std::vector<Node>>> _nodes;
+	std::unordered_map<node_name, std::pair<Node, std::vector<uint32_t>>> _nodes;
 	std::unordered_map<submodel_name, std::shared_ptr<SingleModel2>> _name_to_submodels;
 	std::unordered_map<std::shared_ptr<SingleModel2>, submodel_name> _submodels_to_name;
 };

@@ -1,6 +1,26 @@
 #include <algorithm>
 
 #include "StandardModel.h"
+#include "Debuger.h"
+#include "StandardBuffer.h"
+
+std::unique_ptr<Buffer> SingleModel2::create_vertex_buffer(size_t vertex_offset, size_t vertex_count)
+{
+	if (vertex_offset >= verticies.size()) return nullptr;
+	if (vertex_count + vertex_offset > verticies.size()) return nullptr;
+
+	std::unique_ptr<Buffer> buffer = std::make_unique<Buffer>(vertex_count * sizeof(glm::vec3), Buffer::MemoryType::GPU_BUFFER);
+
+	buffer->set_data<glm::vec3>(0, vertex_offset, vertex_count, verticies);
+
+	return buffer;
+}
+
+std::unique_ptr<Buffer> SingleModel2::create_vertex_buffer(size_t vertex_offset) {
+	return create_vertex_buffer(vertex_offset, verticies.size() - vertex_offset);
+}
+
+
 void Model2::clear()
 {
 	_submodels_to_name.clear();
@@ -103,14 +123,14 @@ Model2::_ProxyNode Model2::operator[](uint32_t node_name)
 	if (!does_node_exist(node_name))
 		create_node(node_name);
 
-	std::pair<Node, std::vector<Node>>& node_info = _nodes[node_name];
+	std::pair<Node, std::vector<uint32_t>>& node_info = _nodes[node_name];
 	
 	return _ProxyNode(*this, node_name, node_info.second, node_info.first.submodels);
 }
 
 void Model2::create_node(uint32_t node_name)
 {
-	_nodes[node_name] = std::pair(Node(), std::vector<Node>());
+	_nodes[node_name] = std::pair(Node(), std::vector<uint32_t>());
 	_nodes[node_name].first.name = node_name;
 }
 
@@ -124,15 +144,42 @@ uint32_t Model2::_generate_submodel_name()
 	return _next_submodel_name++;
 }
 
-Model2::_ProxyNode::_ProxyNode(Model2& owner_model, uint32_t name, std::vector<Node>& childnodes, std::vector<submodel_name>& submodels) :
+Model2::_ProxyNode::_ProxyNode(Model2& owner_model, uint32_t name, std::vector<node_name>& childnodes, std::vector<submodel_name>& submodels) :
 	_owner_model(owner_model), _node_name(name), childnodes(childnodes), submodels(submodels) {}
+
+void Model2::_ProxyNode::operator=(const Model2::_ProxyNode& other) {
+	if (&_owner_model != &other._owner_model) {
+		
+		std::cout << "[Model Error] Model::_ProxyNode::operator=(const Model::_ProxyNode& other) cannot be called between _ProxyNodes of distinct Models" << std::endl;
+		ASSERT(false);
+
+		// insert all relevant submodels to this
+		//for (uint32_t _others_submodel_name : other.submodels) {
+		//	_owner_model.insert_submodel(other._owner_model.get_submodel(_others_submodel_name));
+		//}
+
+		// define all other's child nodes to this
+
+
+		// create same hierarchy in this
+		return;
+	}
+	
+	submodels = other.submodels;
+	childnodes = other.childnodes;
+}
 
 bool Model2::_ProxyNode::add_submodel(uint32_t submodel_name)
 {
 	if(!_owner_model.does_submodel_exist(submodel_name))
 		return false;
 
-	_owner_model._nodes[_node_name].first.submodels.push_back(submodel_name);
+	std::vector<uint32_t>& submodels_ref = _owner_model._nodes[_node_name].first.submodels;
+
+	if (std::find(submodels_ref.begin(), submodels_ref.end(), submodel_name) == submodels_ref.end())
+		return false;
+
+	submodels_ref.push_back(submodel_name);
 	return true;
 }
 
@@ -141,8 +188,43 @@ bool Model2::_ProxyNode::remove_submodel(uint32_t submodel_name)
 	if (!_owner_model.does_submodel_exist(submodel_name))
 		return false;
 
-	std::vector<uint32_t>& submodels = _owner_model._nodes[_node_name].first.submodels;
-	submodels.erase(std::remove(submodels.begin(), submodels.end(), submodel_name), submodels.end());
-	
+	std::vector<uint32_t>& submodels_ref = _owner_model._nodes[_node_name].first.submodels;
+
+	auto erase_begin = std::remove(submodels_ref.begin(), submodels_ref.end(), submodel_name);
+	if (erase_begin == submodels_ref.end())
+		return false;
+
+	submodels_ref.erase(erase_begin, submodels_ref.end());
 	return true;
+}
+
+bool Model2::_ProxyNode::add_childnode(uint32_t node_name)
+{
+	if (!_owner_model.does_node_exist(node_name))
+		return false;
+
+	if (std::find(childnodes.begin(), childnodes.end(), node_name) != childnodes.end())
+		return false;
+
+	childnodes.push_back(node_name);
+	return true;
+}
+
+bool Model2::_ProxyNode::remove_childnode(uint32_t node_name)
+{
+	if (!_owner_model.does_node_exist(node_name))
+		return false;
+
+	if (std::find(childnodes.begin(), childnodes.end(), node_name) == childnodes.end())
+		return false;
+
+	
+	childnodes.erase(std::remove(childnodes.begin(), childnodes.end(), node_name));
+	return true;
+}
+
+void Model2::_ProxyNode::clear()
+{
+	childnodes.clear();
+	submodels.clear();
 }
