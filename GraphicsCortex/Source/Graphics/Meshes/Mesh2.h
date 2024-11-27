@@ -117,8 +117,10 @@ class Mesh2 {
 public:
 
 	struct SubmeshInfo {
-		size_t offset;
-		size_t size;
+		size_t vertex_buffers_offset;
+		size_t vertex_buffers_size;
+		size_t index_buffer_offset;
+		size_t index_buffer_size;
 
 		VertexAttributeBuffer::PrimitiveType primitive;
 	};
@@ -137,8 +139,10 @@ public:
 		bool load_model(const Model2::_ProxyNode& submodel, uint32_t submeshes_begin);
 		bool load_model(const SingleModel2& single_model, uint32_t submeshes_begin);
 
-		bool add_submodel(uint32_t submodel_name);
-		bool remove_submodel(uint32_t submodel_name);
+		bool add_submesh(uint32_t submesh_name);
+		bool add_submeshes(uint32_t submesh_begin, size_t submesh_count);
+		bool remove_submesh(uint32_t submesh_name);
+		bool remove_submeshes(uint32_t submesh_begin, size_t submesh_count);
 
 		bool add_childnode(uint32_t node_name);
 		bool remove_childnode(uint32_t node_name);

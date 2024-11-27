@@ -12,7 +12,12 @@
 class Buffer;
 
 struct SingleModel2 {
+	friend std::hash<SingleModel2>;
 public:
+
+	bool operator==(const SingleModel2& other) const;
+	void operator=(const SingleModel2& other);
+	SingleModel2(const SingleModel2& other);
 
 	std::vector<glm::vec3> verticies;
 	std::vector<glm::vec3> vertex_normals;
@@ -27,18 +32,32 @@ public:
 	std::unique_ptr<Buffer> create_uv_buffer();
 	std::unique_ptr<Buffer> create_vertex_color_buffer();
 	std::unique_ptr<Buffer> create_index_buffer();
+
+	const size_t id = s_generate_next_id();
+private:
+	static size_t s_next_id;
+	static size_t s_generate_next_id();
+};
+
+template<>
+struct std::hash<SingleModel2> {
+	size_t operator()(const SingleModel2& object) const;
 };
 
 
 class Model2 {
 public:
 
-	typedef uint32_t node_name;
-	typedef uint32_t submodel_name;
-
 	struct Node {
-		node_name name;
-		std::vector<submodel_name> submodels;
+	public:
+		uint32_t name;
+		std::vector<size_t> submodels;
+		std::vector<size_t> childnodes;
+
+		size_t id;
+	private:
+		static size_t s_next_id;
+		static size_t s_genearte_next_id();
 	};
 
 
@@ -87,14 +106,13 @@ public:
 
 	// submodels
 	size_t get_submodel_count();
-	bool does_submodel_exist(uint32_t submodel_name);
-	bool does_submodel_exist(std::shared_ptr<SingleModel2> submodel);
-	uint32_t insert_submodel(std::shared_ptr<SingleModel2> submodel);
-	void erase_submodel(uint32_t submodel_name);
-	void erase_submodel(std::shared_ptr<SingleModel2> submodel);
+	bool does_submodel_exist(size_t submodel_id);
+	bool does_submodel_exist(const SingleModel2& submodel);
+	void insert_submodel(std::shared_ptr<SingleModel2> submodel);
+	void insert_submodel(SingleModel2&& submodel);
+	void erase_submodel(size_t submodel_id);
+	void erase_submodel(const SingleModel2& submodel);
 	std::shared_ptr<SingleModel2> get_submodel(uint32_t submodel_name);
-	uint32_t get_submodel_name(std::shared_ptr<SingleModel2> submodel);
-	bool set_submodel(uint32_t submodel_name, std::shared_ptr<SingleModel2> submodel);
 
 	// nodes
 	size_t get_node_count();
@@ -116,7 +134,8 @@ private:
 	uint32_t _next_submodel_name = 0;
 	uint32_t _generate_submodel_name();
 
-	std::unordered_map<node_name, std::pair<Node, std::vector<uint32_t>>> _nodes;
-	std::unordered_map<submodel_name, std::shared_ptr<SingleModel2>> _name_to_submodels;
-	std::unordered_map<std::shared_ptr<SingleModel2>, submodel_name> _submodels_to_name;
+	std::unordered_map<size_t, std::shared_ptr<SingleModel2>> _id_to_singlemodel;
+	std::unordered_map<uint32_t, Node> _name_to_nodes;
+	std::unordered_map<size_t, uint32_t> _id_to_node_name;
+
 };

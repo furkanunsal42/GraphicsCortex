@@ -4,6 +4,40 @@
 #include "Debuger.h"
 #include "StandardBuffer.h"
 
+size_t SingleModel2::s_generate_next_id() {
+	size_t generated_id = s_next_id;
+	s_next_id++;
+	return generated_id;
+}
+
+
+bool SingleModel2::operator==(const SingleModel2& other) const
+{
+	return id == other.id;
+}
+
+void SingleModel2::operator=(const SingleModel2& other)
+{
+	verticies = other.verticies;
+	vertex_normals = other.vertex_normals;
+	texture_coordinates = other.texture_coordinates;
+	vertex_colors = other.vertex_colors;
+	indicies = other.indicies;
+	primitive = other.primitive;
+}
+
+template<>
+struct std::hash<SingleModel2> {
+	size_t operator()(const SingleModel2& object) const {
+		return std::hash<size_t>()(object.id);
+	}
+};
+
+SingleModel2::SingleModel2(const SingleModel2& other)
+{
+	this->operator=(other);
+}
+
 std::unique_ptr<Buffer> SingleModel2::create_vertex_buffer(size_t vertex_offset, size_t vertex_count)
 {
 	if (vertex_offset >= verticies.size()) return nullptr;
