@@ -15,34 +15,47 @@ struct SingleModel2 {
 	friend Buffer;
 public:
 
-	bool operator==(const SingleModel2& other) const;
-	void operator=(const SingleModel2& other);
-	SingleModel2(const SingleModel2& other);
-
 	std::vector<glm::vec3>& unlock_verticies();
 	std::vector<glm::vec3>& unlock_vertex_normals();
-	std::vector<glm::vec2>& unlock_texture_coordinates();
+	std::vector<glm::vec3>& unlock_vertex_tangents();
+	std::vector<glm::vec4>& unlock_texture_coordinates();
 	std::vector<glm::vec4>& unlock_vertex_colors();
+	std::vector<glm::ivec4>& unlock_bone_indicies();
+	std::vector<glm::vec4>& unlock_bone_weights();
+
 	std::vector<uint32_t>& unlock_indicies();
 	void set_primitive(PrimitiveType primitive);
 	
 	const std::vector<glm::vec3>& read_verticies() const;
 	const std::vector<glm::vec3>& read_vertex_normals() const;
-	const std::vector<glm::vec2>& read_texture_coordinates() const;
+	const std::vector<glm::vec3>& read_vertex_tangents() const;
+	const std::vector<glm::vec4>& read_texture_coordinates() const;
 	const std::vector<glm::vec4>& read_vertex_colors() const;
+	const std::vector<glm::ivec4>& read_bone_indicies() const;
+	const std::vector<glm::vec4>& read_bone_weights() const;
 	const std::vector<uint32_t>& read_indicies() const;
 	PrimitiveType get_primitive() const;
 
-	std::unique_ptr<Buffer> create_vertex_buffer(size_t vertex_offset, size_t vertex_count) const;
-	std::unique_ptr<Buffer> create_vertex_buffer(size_t vertex_offset = 0) const;
-	std::unique_ptr<Buffer> create_normal_buffer(size_t vertex_offset, size_t vertex_count) const;
-	std::unique_ptr<Buffer> create_normal_buffer(size_t vertex_offset = 0) const;
-	std::unique_ptr<Buffer> create_uv_buffer(size_t vertex_offset, size_t vertex_count) const;
-	std::unique_ptr<Buffer> create_uv_buffer(size_t vertex_offset = 0) const;
-	std::unique_ptr<Buffer> create_vertex_color_buffer(size_t vertex_offset, size_t vertex_count) const;
-	std::unique_ptr<Buffer> create_vertex_color_buffer(size_t vertex_offset = 0) const;
-	std::unique_ptr<Buffer> create_index_buffer(size_t vertex_offset, size_t vertex_count) const;
-	std::unique_ptr<Buffer> create_index_buffer(size_t vertex_offset = 0) const;
+	std::unique_ptr<Buffer> create_vertex_buffer(size_t vertex_offset_count, size_t buffer_offset_in_bytes, size_t vertex_count) const;
+	std::unique_ptr<Buffer> create_vertex_buffer(size_t vertex_offset_count = 0) const;
+	std::unique_ptr<Buffer> create_normal_buffer(size_t vertex_offset_count, size_t buffer_offset_in_bytes, size_t vertex_count) const;
+	std::unique_ptr<Buffer> create_normal_buffer(size_t vertex_offset_count = 0) const;
+	std::unique_ptr<Buffer> create_tangent_buffer(size_t vertex_offset_count, size_t buffer_offset_in_bytes, size_t vertex_count) const;
+	std::unique_ptr<Buffer> create_tangent_buffer(size_t vertex_offset_count = 0) const;
+	std::unique_ptr<Buffer> create_uv0_buffer(size_t vertex_offset_count, size_t buffer_offset_in_bytes, size_t vertex_count) const;
+	std::unique_ptr<Buffer> create_uv0_buffer(size_t vertex_offset_count = 0) const;
+	std::unique_ptr<Buffer> create_uv1_buffer(size_t vertex_offset_count, size_t buffer_offset_in_bytes, size_t vertex_count) const;
+	std::unique_ptr<Buffer> create_uv1_buffer(size_t vertex_offset_count = 0) const;
+	std::unique_ptr<Buffer> create_uv_merged_buffer(size_t vertex_offset_count, size_t buffer_offset_in_bytes, size_t vertex_count) const;
+	std::unique_ptr<Buffer> create_uv_merged_buffer(size_t vertex_offset_count = 0) const;
+	std::unique_ptr<Buffer> create_vertex_color_buffer(size_t vertex_offset_count, size_t buffer_offset_in_bytes, size_t vertex_count) const;
+	std::unique_ptr<Buffer> create_vertex_color_buffer(size_t vertex_offset_count = 0) const;
+	std::unique_ptr<Buffer> create_bone_indicies_buffer(size_t vertex_offset_count, size_t buffer_offset_in_bytes, size_t vertex_count) const;
+	std::unique_ptr<Buffer> create_bone_indicies_buffer(size_t vertex_offset_count = 0) const;
+	std::unique_ptr<Buffer> create_bone_weights_buffer(size_t vertex_offset_count, size_t buffer_offset_in_bytes, size_t vertex_count) const;
+	std::unique_ptr<Buffer> create_bone_weights_buffer(size_t vertex_offset_count = 0) const;
+	std::unique_ptr<Buffer> create_index_buffer(size_t vertex_offset_count, size_t buffer_offset_in_bytes, size_t vertex_count) const;
+	std::unique_ptr<Buffer> create_index_buffer(size_t vertex_offset_count = 0) const;
 
 	void load_model(const std::string& path, uint32_t submodel_index);
 	void load_model(const std::string& path, uint32_t submodels_begin_index, uint32_t submodel_count);
@@ -51,7 +64,7 @@ private:
 	std::vector<glm::vec3> _verticies;
 	std::vector<glm::vec3> _vertex_normals;
 	std::vector<glm::vec3> _vertex_tangents;
-	std::vector<glm::vec2> _texture_coordinates;
+	std::vector<glm::vec4> _texture_coordinates;
 	std::vector<glm::vec4> _vertex_colors;
 	std::vector<glm::ivec4> _bone_indicies;
 	std::vector<glm::vec4> _bone_weights;
@@ -60,8 +73,11 @@ private:
 
 	size_t _revision_counter_verticies = 0;
 	size_t _revision_counter_vertex_normals = 0;
+	size_t _revision_counter_vertex_tangents = 0;
 	size_t _revision_counter_texture_coordinates = 0;
 	size_t _revision_counter_vertex_colors = 0;
+	size_t _revision_counter_bone_indicies = 0;
+	size_t _revision_counter_bone_weights = 0;
 	size_t _revision_counter_indicies = 0;
 	size_t _revision_counter_primitive = 0;
 };
@@ -166,5 +182,5 @@ private:
 	std::unordered_map<uint32_t, std::shared_ptr<SingleModel2>> _name_to_submodel;
 
 	std::unordered_map<uint32_t, Node> _name_to_node;
-	std::unordered_map<size_t, uint32_t> _id_to_node;
+	std::unordered_map<size_t, uint32_t> _nodehash_to_node;
 };
