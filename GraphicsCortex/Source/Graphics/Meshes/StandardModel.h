@@ -7,6 +7,8 @@
 #include <unordered_map>
 #include "glm.hpp"
 
+#include "IndexBufferEnums.h"
+
 class Buffer;
 
 struct SingleModel2 {
@@ -22,15 +24,14 @@ public:
 	std::vector<glm::vec2>& unlock_texture_coordinates();
 	std::vector<glm::vec4>& unlock_vertex_colors();
 	std::vector<uint32_t>& unlock_indicies();
+	void set_primitive(PrimitiveType primitive);
 	
 	const std::vector<glm::vec3>& read_verticies() const;
 	const std::vector<glm::vec3>& read_vertex_normals() const;
 	const std::vector<glm::vec2>& read_texture_coordinates() const;
 	const std::vector<glm::vec4>& read_vertex_colors() const;
 	const std::vector<uint32_t>& read_indicies() const;
-
-	uint32_t get_primitive();
-	void set_primitive(uint32_t primitive);
+	PrimitiveType get_primitive() const;
 
 	std::unique_ptr<Buffer> create_vertex_buffer(size_t vertex_offset, size_t vertex_count) const;
 	std::unique_ptr<Buffer> create_vertex_buffer(size_t vertex_offset = 0) const;
@@ -49,10 +50,13 @@ public:
 private:
 	std::vector<glm::vec3> _verticies;
 	std::vector<glm::vec3> _vertex_normals;
+	std::vector<glm::vec3> _vertex_tangents;
 	std::vector<glm::vec2> _texture_coordinates;
 	std::vector<glm::vec4> _vertex_colors;
+	std::vector<glm::ivec4> _bone_indicies;
+	std::vector<glm::vec4> _bone_weights;
 	std::vector<uint32_t> _indicies;
-	uint32_t _primitive;
+	PrimitiveType _primitive = PrimitiveType::triangle;
 
 	size_t _revision_counter_verticies = 0;
 	size_t _revision_counter_vertex_normals = 0;
@@ -67,7 +71,6 @@ public:
 
 	struct Node {
 	public:
-
 		bool operator==(const Node& other) const;
 
 		uint32_t name;
@@ -88,7 +91,9 @@ public:
 		bool operator==(const _ProxyNode& other) const;
 
 		bool add_submodel(std::shared_ptr<SingleModel2> submodel);
+		bool add_submodel(uint32_t submodel_name);
 		bool remove_submodel(std::weak_ptr<SingleModel2> submodel);
+		bool remove_submodel(uint32_t submodel_name);
 
 		bool add_childnode(uint32_t node_name);
 		bool remove_childnode(uint32_t node_name);
@@ -105,8 +110,8 @@ public:
 
 		void clear();
 
-		void load_model();
-		void load_model_async();
+		void load_model(const std::string& path);
+		void load_model_async(const std::string& path);
 		void save_to_disc(const std::string& output_filepath);
 
 	private:
@@ -131,8 +136,10 @@ public:
 	uint32_t insert_submodel(std::shared_ptr<SingleModel2> submodel);
 	uint32_t insert_submodel(SingleModel2&& submodel);
 	void erase_submodel(std::weak_ptr<SingleModel2> submodel);
+	void erase_submodel(uint32_t submodel_name);
 	bool set_submodel(uint32_t submodel_name, std::shared_ptr<SingleModel2> new_submodel);
-	uint32_t get_submodel_name(std::weak_ptr<SingleModel2> submodel);
+	bool set_submodel(uint32_t submodel_name, SingleModel2&& new_submodel);
+	uint32_t get_submodel_name(std::weak_ptr<SingleModel2> submodel) const;
 	std::shared_ptr<SingleModel2> get_submodel(uint32_t submodel_name);
 
 	// nodes
@@ -160,5 +167,4 @@ private:
 
 	std::unordered_map<uint32_t, Node> _name_to_node;
 	std::unordered_map<size_t, uint32_t> _id_to_node;
-
 };
