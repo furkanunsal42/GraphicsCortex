@@ -38,7 +38,7 @@ SingleModel2::SingleModel2(const SingleModel2& other)
 	this->operator=(other);
 }
 
-std::unique_ptr<Buffer> SingleModel2::create_vertex_buffer(size_t vertex_offset, size_t vertex_count)
+std::unique_ptr<Buffer> SingleModel2::create_vertex_buffer(size_t vertex_offset, size_t vertex_count) const
 {
 	if (vertex_offset >= verticies.size()) return nullptr;
 	if (vertex_count + vertex_offset > verticies.size()) return nullptr;
@@ -50,7 +50,7 @@ std::unique_ptr<Buffer> SingleModel2::create_vertex_buffer(size_t vertex_offset,
 	return buffer;
 }
 
-std::unique_ptr<Buffer> SingleModel2::create_vertex_buffer(size_t vertex_offset) {
+std::unique_ptr<Buffer> SingleModel2::create_vertex_buffer(size_t vertex_offset) const {
 	return create_vertex_buffer(vertex_offset, verticies.size() - vertex_offset);
 }
 

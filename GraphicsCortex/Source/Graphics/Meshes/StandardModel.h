@@ -7,8 +7,6 @@
 #include <unordered_map>
 #include "glm.hpp"
 
-#include "NTree.h"
-
 class Buffer;
 
 struct SingleModel2 {
@@ -26,13 +24,20 @@ public:
 	std::vector<uint32_t> indicies;
 	uint32_t primitive;
 
-	std::unique_ptr<Buffer> create_vertex_buffer(size_t vertex_offset, size_t vertex_count);
-	std::unique_ptr<Buffer> create_vertex_buffer(size_t vertex_offset = 0);
-	std::unique_ptr<Buffer> create_normal_buffer();
-	std::unique_ptr<Buffer> create_uv_buffer();
-	std::unique_ptr<Buffer> create_vertex_color_buffer();
-	std::unique_ptr<Buffer> create_index_buffer();
+	std::unique_ptr<Buffer> create_vertex_buffer(size_t vertex_offset, size_t vertex_count) const;
+	std::unique_ptr<Buffer> create_vertex_buffer(size_t vertex_offset = 0) const;
+	std::unique_ptr<Buffer> create_normal_buffer(size_t vertex_offset, size_t vertex_count) const;
+	std::unique_ptr<Buffer> create_normal_buffer(size_t vertex_offset = 0) const;
+	std::unique_ptr<Buffer> create_uv_buffer(size_t vertex_offset, size_t vertex_count) const;
+	std::unique_ptr<Buffer> create_uv_buffer(size_t vertex_offset = 0) const;
+	std::unique_ptr<Buffer> create_vertex_color_buffer(size_t vertex_offset, size_t vertex_count) const;
+	std::unique_ptr<Buffer> create_vertex_color_buffer(size_t vertex_offset = 0) const;
+	std::unique_ptr<Buffer> create_index_buffer(size_t vertex_offset, size_t vertex_count) const;
+	std::unique_ptr<Buffer> create_index_buffer(size_t vertex_offset = 0) const;
 
+	void load_model(const std::string& path, uint32_t submodel_index);
+	void load_model(const std::string& path, uint32_t submodels_begin_index, uint32_t submodel_count);
+	
 	const size_t id = s_generate_next_id();
 private:
 	static size_t s_next_id;
@@ -50,14 +55,15 @@ public:
 
 	struct Node {
 	public:
+
+		bool operator==(const Node& other) const;
+
 		uint32_t name;
 		std::vector<size_t> submodels;
 		std::vector<size_t> childnodes;
+		glm::mat4 transform;
 
-		size_t id;
-	private:
-		static size_t s_next_id;
-		static size_t s_genearte_next_id();
+		size_t _childnodes_hash;
 	};
 
 
@@ -66,30 +72,34 @@ public:
 	public:
 		
 		void operator=(const _ProxyNode& other);
+		bool operator==(const Node& other) const;
+		bool operator==(const _ProxyNode& other) const;
 
 		bool add_submodel(uint32_t submodel_name);
 		bool remove_submodel(uint32_t submodel_name);
+		void set_submodel(uint32_t local_index, uint32_t submodel_name);
 
 		bool add_childnode(uint32_t node_name);
 		bool remove_childnode(uint32_t node_name);
 
-		std::vector<node_name>& childnodes;
-		std::vector<submodel_name>& submodels;
-	
-		//std::unique_ptr<Buffer> create_vertex_buffer();
-		//std::unique_ptr<Buffer> create_normal_buffer();
-		//std::unique_ptr<Buffer> create_uv_buffer();
-		//std::unique_ptr<Buffer> create_vertex_color_buffer();
-		//std::unique_ptr<Buffer> create_index_buffer();
+		const std::vector<uint32_t>& childnode;
+		const std::vector<uint32_t>& submodels;
+		glm::mat4& transform;
+
+		std::unique_ptr<Buffer> create_vertex_buffer();
+		std::unique_ptr<Buffer> create_normal_buffer();
+		std::unique_ptr<Buffer> create_uv_buffer();
+		std::unique_ptr<Buffer> create_vertex_color_buffer();
+		std::unique_ptr<Buffer> create_index_buffer();
 
 		void clear();
 
-		//void load_model();
-		//void load_model_async();
-		//void save_to_disc(const std::string& output_filepath);
+		void load_model();
+		void load_model_async();
+		void save_to_disc(const std::string& output_filepath);
 
 	private:
-		_ProxyNode(Model2& owner_model, uint32_t name, std::vector<node_name>& childnodes, std::vector<submodel_name>& submodels);
+		_ProxyNode(Model2& owner_model, uint32_t name, size_t id, std::vector<uint32_t>& childnodes, std::vector<uint32_t>& submodels);
 
 		Model2& _owner_model;
 		uint32_t _node_name;
@@ -105,14 +115,15 @@ public:
 	void load_model_async(const std::string& filepath);
 
 	// submodels
-	size_t get_submodel_count();
-	bool does_submodel_exist(size_t submodel_id);
-	bool does_submodel_exist(const SingleModel2& submodel);
-	void insert_submodel(std::shared_ptr<SingleModel2> submodel);
-	void insert_submodel(SingleModel2&& submodel);
+	size_t get_submodel_count() const;
+	bool does_submodel_exist(uint32_t submodel_name) const;
+	bool does_submodel_exist(const SingleModel2& submodel) const;
+	uint32_t insert_submodel(std::shared_ptr<SingleModel2> submodel);
+	uint32_t insert_submodel(SingleModel2&& submodel);
 	void erase_submodel(size_t submodel_id);
 	void erase_submodel(const SingleModel2& submodel);
 	std::shared_ptr<SingleModel2> get_submodel(uint32_t submodel_name);
+	uint32_t get_submodel_name(const SingleModel2& submodel) const;
 
 	// nodes
 	size_t get_node_count();
@@ -121,21 +132,21 @@ public:
 	void create_node(uint32_t node_name);
 	void delete_node(uint32_t node_name);
 
-	//void save_to_disc(const std::string& output_filepath);
+	void save_to_disc(const std::string& output_filepath);
 
-	//std::unique_ptr<Buffer> create_vertex_buffer();
-	//std::unique_ptr<Buffer> create_normal_buffer();
-	//std::unique_ptr<Buffer> create_uv_buffer();
-	//std::unique_ptr<Buffer> create_vertex_color_buffer();
-	//std::unique_ptr<Buffer> create_index_buffer();
+	std::unique_ptr<Buffer> create_vertex_buffer();
+	std::unique_ptr<Buffer> create_normal_buffer();
+	std::unique_ptr<Buffer> create_uv_buffer();
+	std::unique_ptr<Buffer> create_vertex_color_buffer();
+	std::unique_ptr<Buffer> create_index_buffer();
 
 private:
 
 	uint32_t _next_submodel_name = 0;
 	uint32_t _generate_submodel_name();
 
-	std::unordered_map<size_t, std::shared_ptr<SingleModel2>> _id_to_singlemodel;
-	std::unordered_map<uint32_t, Node> _name_to_nodes;
-	std::unordered_map<size_t, uint32_t> _id_to_node_name;
+	std::unordered_map<uint32_t, std::shared_ptr<SingleModel2>> _name_to_submodel;
+	std::unordered_map<uint32_t, Node> _name_to_node;
+	std::unordered_map<size_t, uint32_t> _id_to_submodel_name;
 
 };
