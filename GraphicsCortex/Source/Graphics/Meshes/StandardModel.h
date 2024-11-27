@@ -10,19 +10,27 @@
 class Buffer;
 
 struct SingleModel2 {
-	friend std::hash<SingleModel2>;
+	friend Buffer;
 public:
 
 	bool operator==(const SingleModel2& other) const;
 	void operator=(const SingleModel2& other);
 	SingleModel2(const SingleModel2& other);
 
-	std::vector<glm::vec3> verticies;
-	std::vector<glm::vec3> vertex_normals;
-	std::vector<glm::vec2> texture_coordinates;
-	std::vector<glm::vec4> vertex_colors;
-	std::vector<uint32_t> indicies;
-	uint32_t primitive;
+	std::vector<glm::vec3>& unlock_verticies();
+	std::vector<glm::vec3>& unlock_vertex_normals();
+	std::vector<glm::vec2>& unlock_texture_coordinates();
+	std::vector<glm::vec4>& unlock_vertex_colors();
+	std::vector<uint32_t>& unlock_indicies();
+	
+	const std::vector<glm::vec3>& read_verticies() const;
+	const std::vector<glm::vec3>& read_vertex_normals() const;
+	const std::vector<glm::vec2>& read_texture_coordinates() const;
+	const std::vector<glm::vec4>& read_vertex_colors() const;
+	const std::vector<uint32_t>& read_indicies() const;
+
+	uint32_t get_primitive();
+	void set_primitive(uint32_t primitive);
 
 	std::unique_ptr<Buffer> create_vertex_buffer(size_t vertex_offset, size_t vertex_count) const;
 	std::unique_ptr<Buffer> create_vertex_buffer(size_t vertex_offset = 0) const;
@@ -37,18 +45,22 @@ public:
 
 	void load_model(const std::string& path, uint32_t submodel_index);
 	void load_model(const std::string& path, uint32_t submodels_begin_index, uint32_t submodel_count);
-	
-	const size_t id = s_generate_next_id();
+
 private:
-	static size_t s_next_id;
-	static size_t s_generate_next_id();
-};
+	std::vector<glm::vec3> _verticies;
+	std::vector<glm::vec3> _vertex_normals;
+	std::vector<glm::vec2> _texture_coordinates;
+	std::vector<glm::vec4> _vertex_colors;
+	std::vector<uint32_t> _indicies;
+	uint32_t _primitive;
 
-template<>
-struct std::hash<SingleModel2> {
-	size_t operator()(const SingleModel2& object) const;
+	size_t _revision_counter_verticies = 0;
+	size_t _revision_counter_vertex_normals = 0;
+	size_t _revision_counter_texture_coordinates = 0;
+	size_t _revision_counter_vertex_colors = 0;
+	size_t _revision_counter_indicies = 0;
+	size_t _revision_counter_primitive = 0;
 };
-
 
 class Model2 {
 public:
@@ -61,7 +73,7 @@ public:
 		uint32_t name;
 		std::vector<size_t> submodels;
 		std::vector<size_t> childnodes;
-		glm::mat4 transform;
+		glm::mat4 transform = glm::identity<glm::mat4>();
 
 		size_t _childnodes_hash;
 	};
@@ -75,9 +87,8 @@ public:
 		bool operator==(const Node& other) const;
 		bool operator==(const _ProxyNode& other) const;
 
-		bool add_submodel(uint32_t submodel_name);
-		bool remove_submodel(uint32_t submodel_name);
-		void set_submodel(uint32_t local_index, uint32_t submodel_name);
+		bool add_submodel(std::shared_ptr<SingleModel2> submodel);
+		bool remove_submodel(std::weak_ptr<SingleModel2> submodel);
 
 		bool add_childnode(uint32_t node_name);
 		bool remove_childnode(uint32_t node_name);
@@ -116,14 +127,13 @@ public:
 
 	// submodels
 	size_t get_submodel_count() const;
-	bool does_submodel_exist(uint32_t submodel_name) const;
-	bool does_submodel_exist(const SingleModel2& submodel) const;
+	bool does_submodel_exist(std::weak_ptr<SingleModel2> submodel) const;
 	uint32_t insert_submodel(std::shared_ptr<SingleModel2> submodel);
 	uint32_t insert_submodel(SingleModel2&& submodel);
-	void erase_submodel(size_t submodel_id);
-	void erase_submodel(const SingleModel2& submodel);
+	void erase_submodel(std::weak_ptr<SingleModel2> submodel);
+	bool set_submodel(uint32_t submodel_name, std::shared_ptr<SingleModel2> new_submodel);
+	uint32_t get_submodel_name(std::weak_ptr<SingleModel2> submodel);
 	std::shared_ptr<SingleModel2> get_submodel(uint32_t submodel_name);
-	uint32_t get_submodel_name(const SingleModel2& submodel) const;
 
 	// nodes
 	size_t get_node_count();
@@ -145,8 +155,10 @@ private:
 	uint32_t _next_submodel_name = 0;
 	uint32_t _generate_submodel_name();
 
+	std::unordered_map<std::shared_ptr<SingleModel2>, uint32_t> _submodel_to_name;
 	std::unordered_map<uint32_t, std::shared_ptr<SingleModel2>> _name_to_submodel;
+
 	std::unordered_map<uint32_t, Node> _name_to_node;
-	std::unordered_map<size_t, uint32_t> _id_to_submodel_name;
+	std::unordered_map<size_t, uint32_t> _id_to_node;
 
 };
