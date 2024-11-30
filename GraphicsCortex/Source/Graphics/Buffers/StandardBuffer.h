@@ -6,12 +6,12 @@
 #include <iostream>
 #include "Image.h"
 
-class AttributedVertexBuffer;
+class VertexAttributeBuffer;
 class Mesh2;
 
 class Buffer {
 
-	friend AttributedVertexBuffer;
+	friend VertexAttributeBuffer;
 	friend Mesh2;
 
 public:

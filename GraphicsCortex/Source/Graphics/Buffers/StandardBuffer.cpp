@@ -24,10 +24,15 @@ Buffer::~Buffer()
 
 void Buffer::release()
 {
-	unmap();
-
+	bool was_mapped = is_mapped();
+	
 	if (_buffer_generated) {
 		GLCall(glDeleteBuffers(1, &id));
+	}
+
+	if (was_mapped) {
+		_buffer_data = nullptr;
+		_mapped_pointer_size = 0;
 	}
 
 	_buffer_generated = false;
@@ -251,7 +256,7 @@ void Buffer::unmap()
 	if (_buffer_data == nullptr)
 		return;
 
-	GLCall(ASSERT(glUnmapNamedBuffer(id) == GL_TRUE));
+	GLCall(glUnmapNamedBuffer(id));
 	_buffer_data = nullptr;
 	_mapped_pointer_size = 0;
 }

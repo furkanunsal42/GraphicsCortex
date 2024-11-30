@@ -5,19 +5,20 @@
 
 #include "ShaderCompiler.h"
 #include "Mesh2.h"
+#include "VertexAttributeBuffer.h"
 
-void primitive_renderer::render(Program& program, Mesh2& verticies)
+void primitive_renderer::render(Program& program, VertexAttributeBuffer& vab, PrimitiveType primitive)
 {
-	int32_t largest_slot = verticies.get_largest_active_buffer_slot();
+	int32_t largest_slot = vab.get_largest_active_buffer_slot();
 	if (largest_slot == -1) {
-		std::cout << "[OpenGL Error] primitive_renderer::render() is called but no attribute of given Mesh is enabled" << std::endl;
+		std::cout << "[OpenGL Error] primitive_renderer::render() is called but no attribute of given VertexAttributeBuffer is enabled" << std::endl;
 		ASSERT(false);
 	}
 
-	Buffer& vertex_buffer = *verticies.get_vertex_buffer(largest_slot);
+	Buffer& vertex_buffer = *vab.get_vertex_buffer(largest_slot);
 
-	verticies.bind();
+	vab.bind();
 	program.bind();
 
-	GLCall(glDrawArrays(GL_TRIANGLES, 0, vertex_buffer.get_buffer_size_in_bytes()));
+	GLCall(glDrawArrays(PrimitiveType_to_GL(primitive), 0, vertex_buffer.get_buffer_size_in_bytes()));
 }

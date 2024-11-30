@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stdint.h>
+
 enum IndexType {
 	i_ui8,
 	i_ui16,
@@ -21,3 +23,6 @@ enum PrimitiveType {
 	triangle_adjacency,
 	patches,
 };
+
+uint32_t get_IndexType_bytes_per_index(IndexType type);
+uint32_t PrimitiveType_to_GL(PrimitiveType primitive);

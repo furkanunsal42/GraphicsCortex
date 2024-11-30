@@ -20,6 +20,7 @@
 #include "StandardModel.h"
 #include "Buffer.h"
 #include "StandardBuffer.h"
+#include "VertexAttributeBuffer.h"
 #include "Mesh2.h"
 #include "UniformBuffer.h"
 #include "AsyncBuffer.h"
