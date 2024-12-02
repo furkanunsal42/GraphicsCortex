@@ -6,6 +6,16 @@
 #include <iostream>
 #include "Image.h"
 
+#define BufferElementType(type_name, size, allignment_std430, allignment_std140)	\
+	struct type_name {																\
+		type_name(uint32_t count = 1) :												\
+			_count(count) {}														\
+		const uint32_t _size = size;												\
+		const uint32_t _allignment_std430 = allignment_std430;						\
+		const uint32_t _allignment_std140 = allignment_std140;						\
+		const uint32_t _count;														\
+	};																			\
+
 class VertexAttributeBuffer;
 class Mesh2;
 
@@ -15,6 +25,38 @@ class Buffer {
 	friend Mesh2;
 
 public:
+
+	BufferElementType(boolean,		1,		1,		1				); 
+	BufferElementType(float32,		4,		4,		4				);
+	BufferElementType(float64,		8,		8,		8				);
+	BufferElementType(int8,			1,		1,		1				);
+	BufferElementType(int16,		2,		2,		2				);
+	BufferElementType(int32,		4,		4,		4				);
+	BufferElementType(int64,		8,		8,		8				);
+	BufferElementType(vec2,			4*2,	2*4,	2*4				);
+	BufferElementType(vec3,			4*3,	3*4,	4*4				);
+	BufferElementType(vec4,			4*4,	4*4,	4*4				);
+	BufferElementType(mat2x2,		4*2*2,	2*2*4,	2*2*4			);
+	BufferElementType(mat3x3,		4*3*3,	3*3*4,	3*4*4/*?*/		);
+	BufferElementType(mat4x4,		4*4*4,	4*4*4,	4*4*4			);
+
+	struct structure {
+		structure(uint32_t count, int types...) :
+			_count(count), _allignment_std430(types), _allignment_std140(types) {}			
+		
+		const uint32_t _count;
+		const uint32_t _allignment_std430;
+		const uint32_t _allignment_std140;
+
+		uint32_t compute_allignment_430(int types...) {
+
+		}
+		uint32_t compute_allignment_140();
+
+
+
+	};										
+
 
 	struct MapInfo {
 	public:

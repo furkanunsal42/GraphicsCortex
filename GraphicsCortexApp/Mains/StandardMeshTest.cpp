@@ -50,4 +50,6 @@ int main() {
 
 	}
 
+	std::shared_ptr<Buffer> buffer = std::make_shared<Buffer>(128);
+
 }
