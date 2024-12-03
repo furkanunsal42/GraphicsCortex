@@ -4,17 +4,10 @@
 #include <vector>
 #include <span>
 #include <iostream>
-#include "Image.h"
+#include <type_traits>
 
-#define BufferElementType(type_name, size, allignment_std430, allignment_std140)	\
-	struct type_name {																\
-		type_name(uint32_t count = 1) :												\
-			_count(count) {}														\
-		const uint32_t _size = size;												\
-		const uint32_t _allignment_std430 = allignment_std430;						\
-		const uint32_t _allignment_std140 = allignment_std140;						\
-		const uint32_t _count;														\
-	};																			\
+#include "Image.h"
+#include <iostream>
 
 class VertexAttributeBuffer;
 class Mesh2;
@@ -26,37 +19,247 @@ class Buffer {
 
 public:
 
-	BufferElementType(boolean,		1,		1,		1				); 
-	BufferElementType(float32,		4,		4,		4				);
-	BufferElementType(float64,		8,		8,		8				);
-	BufferElementType(int8,			1,		1,		1				);
-	BufferElementType(int16,		2,		2,		2				);
-	BufferElementType(int32,		4,		4,		4				);
-	BufferElementType(int64,		8,		8,		8				);
-	BufferElementType(vec2,			4*2,	2*4,	2*4				);
-	BufferElementType(vec3,			4*3,	3*4,	4*4				);
-	BufferElementType(vec4,			4*4,	4*4,	4*4				);
-	BufferElementType(mat2x2,		4*2*2,	2*2*4,	2*2*4			);
-	BufferElementType(mat3x3,		4*3*3,	3*3*4,	3*4*4/*?*/		);
-	BufferElementType(mat4x4,		4*4*4,	4*4*4,	4*4*4			);
+	#define BufferElementType(type_name, size_std430, alignment_std430, array_alignment_std430, size_std140, alignment_std140, array_alignment_std140)		\
+		struct type_name {																\
+			type_name()																	\
+				{}																		\
+			const uint32_t _size_std430 = size_std430;									\
+			const uint32_t _alignment_std430 = alignment_std430;						\
+			const uint32_t _size_std140 = size_std140;									\
+			const uint32_t _alignment_std140 = alignment_std140;						\
+			const uint32_t _count = 1;													\
+			const bool _is_array_type = false;											\
+			const bool _is_dynamic_length = false;										\
+		};																				\
+		struct type_name##_array {														\
+			type_name##_array(uint32_t count) :											\
+				_count(count), _is_dynamic_length(false) {}								\
+			type_name##_array() :														\
+				_count(1), _is_dynamic_length(true) {}									\
+			const uint32_t _size_std430 = size_std430;									\
+			const uint32_t _alignment_std430 = array_alignment_std430;					\
+			const uint32_t _size_std140 = size_std140;									\
+			const uint32_t _alignment_std140 = array_alignment_std140;					\
+			const uint32_t _count;														\
+			const bool _is_array_type = true;											\
+			const bool _is_dynamic_length = false;										\
+		};																				\
 
+	//					name		size430		align430	align430_array	size140		align140	align140_array
+	BufferElementType(boolean,		4,			4,			4,				4,			4,			4*4		); 
+	BufferElementType(float32,		4,			4,			4,				4,			4,			4*4		);
+	BufferElementType(float64,		8,			8,			8,				8,			8,			4*4		);
+	BufferElementType(int32,		4,			4,			4,				4,			4,			4*4		);
+	BufferElementType(int64,		8,			8,			8,				8,			8,			4*4		);
+	BufferElementType(vec2,			2*4,		2*4,		2*4,			2*4,		2*4,		4*4		);
+	BufferElementType(vec4,			4*4,		4*4,		4*4,			4*4,		4*4,		4*4		);
+	BufferElementType(mat2x2,		2*2*4,		2*2*4,		2*2*4,			2*2*4,		2*4*4,		2*4*4	);
+	BufferElementType(mat4x4,		4*4*4,		4*4*4,		4*4*4,			4*4*4,		4*4*4,		2*4*4	);
+
+	template<typename... element_types>
+	struct structure_array;
+
+	template<typename... element_types>
 	struct structure {
-		structure(uint32_t count, int types...) :
-			_count(count), _allignment_std430(types), _allignment_std140(types) {}			
+		structure(element_types... types) :
+			_alignment_std430(compute_alignment_430(types...)), 
+			_size_std430(compute_size_430(types...)), 
+			_alignment_std140(compute_alignment_140(types...)), 
+			_size_std140(compute_size_140(types...)) {}
 		
-		const uint32_t _count;
-		const uint32_t _allignment_std430;
-		const uint32_t _allignment_std140;
+		static_assert(((
+			std::is_same_v<element_types, boolean>			||
+			std::is_same_v<element_types, float32>			||
+			std::is_same_v<element_types, float64>			||
+			std::is_same_v<element_types, int32>			||
+			std::is_same_v<element_types, int64>			||
+			std::is_same_v<element_types, vec2>				||
+			std::is_same_v<element_types, vec4>				||
+			std::is_same_v<element_types, mat2x2>			||
+			std::is_same_v<element_types, mat4x4>			||
+			std::is_same_v<element_types, boolean_array>	||
+			std::is_same_v<element_types, float32_array>	||
+			std::is_same_v<element_types, float64_array>	||
+			std::is_same_v<element_types, int32_array>		||
+			std::is_same_v<element_types, int64_array>		||
+			std::is_same_v<element_types, vec2_array>		||
+			std::is_same_v<element_types, vec4_array>		||
+			std::is_same_v<element_types, mat2x2_array>		||
+			std::is_same_v<element_types, mat4x4_array>		||
+			std::is_same_v<element_types, structure<element_types>>		||
+			std::is_same_v<element_types, structure_array<element_types>>) && ...),
+			"Buffer::structure is defined with unsupperted types, use Buffer::float32, Buffer::int32, Buffer::vec4 etc.."
+			);
 
-		uint32_t compute_allignment_430(int types...) {
-
+		const uint32_t _size_std430;
+		const uint32_t _alignment_std430;
+		const uint32_t _size_std140;
+		const uint32_t _alignment_std140;
+		const uint32_t _count = 1;
+		const bool _is_array_type = false;											
+		const bool _is_dynamic_length = false;										
+		constexpr uint32_t compute_alignment_430(element_types... types) {
+			uint32_t max_alignment = 0;
+			([&] { max_alignment = std::max<uint32_t>(max_alignment, types._size_std430); }(), ...);
+			return max_alignment;
 		}
-		uint32_t compute_allignment_140();
 
+		constexpr uint32_t compute_size_430(element_types... types) {
+			uint32_t total_size = 0;
+			([&] { total_size += types._size_std430 * types._count; }(), ...);
+			return total_size;
+		}
 
+		constexpr uint32_t compute_alignment_140(element_types... types) {
+			uint32_t max_alignment = 0;
+			([&] { max_alignment = std::max<uint32_t>(max_alignment, types._size_std140); }(), ...);
+			return max_alignment;
+		}
 
+		constexpr uint32_t compute_size_140(element_types... types) {
+			uint32_t total_size = 0;
+			([&] { total_size += types._size_std140 * types._count; }(), ...);
+			return total_size;
+		}
 	};										
 
+	template<typename... element_types>
+	struct structure_array {
+		structure_array(uint32_t count, element_types... types) :
+			_count(count),
+			_is_dynamic_length(false),
+			_alignment_std430(compute_alignment_430(types...)),
+			_size_std430(compute_size_430(types...)),
+			_alignment_std140(compute_alignment_140(types...)),
+			_size_std140(compute_size_140(types...)) {}
+
+		structure_array(element_types... types) :
+			_count(1),
+			_is_dynamic_length(true),
+			_alignment_std430(compute_alignment_430(types...)),
+			_size_std430(compute_size_430(types...)),
+			_alignment_std140(compute_alignment_140(types...)),
+			_size_std140(compute_size_140(types...)) {}
+
+		const uint32_t _size_std430;
+		const uint32_t _alignment_std430;
+		const uint32_t _size_std140;
+		const uint32_t _alignment_std140;
+		const uint32_t _count = 1;
+		const bool _is_array_type = true;
+		const bool _is_dynamic_length = false;
+
+		static_assert(((
+			std::is_same_v<element_types, boolean>			||
+			std::is_same_v<element_types, float32>			||
+			std::is_same_v<element_types, float64>			||
+			std::is_same_v<element_types, int32>			||
+			std::is_same_v<element_types, int64>			||
+			std::is_same_v<element_types, vec2>				||
+			std::is_same_v<element_types, vec4>				||
+			std::is_same_v<element_types, mat2x2>			||
+			std::is_same_v<element_types, mat4x4>			||
+			std::is_same_v<element_types, boolean_array>	||
+			std::is_same_v<element_types, float32_array>	||
+			std::is_same_v<element_types, float64_array>	||
+			std::is_same_v<element_types, int32_array>		||
+			std::is_same_v<element_types, int64_array>		||
+			std::is_same_v<element_types, vec2_array>		||
+			std::is_same_v<element_types, vec4_array>		||
+			std::is_same_v<element_types, mat2x2_array>		||
+			std::is_same_v<element_types, mat4x4_array>		||
+			std::is_same_v<element_types, structure<element_types>>		||
+			std::is_same_v<element_types, structure_array<element_types>>) && ...),
+			"Buffer::structure_array is defined with unsupperted types, use Buffer::float32, Buffer::int32, Buffer::vec4 etc.."
+			);
+
+		constexpr uint32_t compute_alignment_430(element_types... types) {
+			uint32_t max_alignment = 0;
+			([&] { max_alignment = std::max<uint32_t>(max_alignment, types._size_std430); }(), ...);
+			return max_alignment;
+		}
+
+		constexpr uint32_t compute_size_430(element_types... types) {
+			uint32_t total_size = 0;
+			([&] { total_size += types._size_std430 * types._count; }(), ...);
+			return total_size;
+		}
+
+		constexpr uint32_t compute_alignment_140(element_types... types) {
+			uint32_t max_alignment = 0;
+			([&] { max_alignment = std::max<uint32_t>(max_alignment, types._size_std140); }(), ...);
+			return max_alignment;
+		}
+
+		constexpr uint32_t compute_size_140(element_types... types) {
+			uint32_t total_size = (types._size_std430 + ...);
+			return total_size;
+		}
+	};
+
+	template<typename... element_types>
+	struct layout {
+		layout(element_types... types) :
+			_alignment_std430(compute_alignment_430(types...)),
+			_size_std430(compute_size_430(types...)),
+			_alignment_std140(compute_alignment_140(types...)),
+			_size_std140(compute_size_140(types...)) {}
+
+		static_assert(((
+			std::is_same_v<element_types, boolean>			||
+			std::is_same_v<element_types, float32> 			||
+			std::is_same_v<element_types, float64> 			||
+			std::is_same_v<element_types, int32> 			||
+			std::is_same_v<element_types, int64> 			||
+			std::is_same_v<element_types, vec2> 			||
+			std::is_same_v<element_types, vec4> 			||
+			std::is_same_v<element_types, mat2x2> 			||
+			std::is_same_v<element_types, mat4x4> 			||
+			std::is_same_v<element_types, boolean_array>	||
+			std::is_same_v<element_types, float32_array>	||
+			std::is_same_v<element_types, float64_array>	||
+			std::is_same_v<element_types, int32_array> 		||
+			std::is_same_v<element_types, int64_array> 		||
+			std::is_same_v<element_types, vec2_array> 		||
+			std::is_same_v<element_types, vec4_array> 		||
+			std::is_same_v<element_types, mat2x2_array>		||
+			std::is_same_v<element_types, mat4x4_array>		||
+			std::is_same_v<element_types, structure<element_types>>		||
+			std::is_same_v<element_types, structure_array<element_types>>) && ...),
+			"Buffer::layout is defined with unsupperted types, use Buffer::float32, Buffer::int32, Buffer::vec4 etc.."
+			);
+
+		const uint32_t _size_std430;
+		const uint32_t _alignment_std430;
+		const uint32_t _size_std140;
+		const uint32_t _alignment_std140;
+		const uint32_t _count = 1;
+		const bool _is_array_type = false;
+		const bool _is_dynamic_length = false;
+
+		constexpr uint32_t compute_alignment_430(element_types... types) {
+			uint32_t max_alignment = 0;
+			([&] { max_alignment = std::max<uint32_t>(max_alignment, types._size_std430); }(), ...);
+			return max_alignment;
+		}
+
+		constexpr uint32_t compute_size_430(element_types... types) {
+			uint32_t total_size = 0;
+			([&] { total_size += types._size_std430 * types._count; }(), ...);
+			return total_size;
+		}
+
+		constexpr uint32_t compute_alignment_140(element_types... types) {
+			uint32_t max_alignment = 0;
+			([&] { max_alignment = std::max<uint32_t>(max_alignment, types._size_std140); }(), ...);
+			return max_alignment;
+		}
+
+		constexpr uint32_t compute_size_140(element_types... types) {
+			uint32_t total_size = (types._size_std430 + ...);
+			return total_size;
+		}
+	};
 
 	struct MapInfo {
 	public:
