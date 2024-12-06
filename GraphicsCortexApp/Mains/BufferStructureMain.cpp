@@ -1,5 +1,6 @@
 #include "GraphicsCortex.h"
 #include<source_location>
+#include<type_traits>
 
 int main() {
 	Frame frame(0, 0, "BufferStructureTest", 0, 1, true, true, false, Frame::NOTIFICATION, false);
@@ -7,22 +8,37 @@ int main() {
 	std::shared_ptr<Buffer> buffer = std::make_shared<Buffer>(512, Buffer::GPU_BUFFER);
 
 	struct cpu_layout_struct {
-		glm::vec3 a;
-		float b;
-		float c;
+		float a;
+		glm::vec3 b;
+		float c[32];
+		float d;
 	};
 
 	Buffer::layout layout =
 		Buffer::layout(
-			Buffer::vec3(layout_map_to(cpu_layout_struct, a)),
-			Buffer::float32(layout_map_to(cpu_layout_struct, b)),
-			Buffer::float32_array(layout_map_to(cpu_layout_struct, c), 32),
-			Buffer::float32(layout_map_to(cpu_layout_struct, b))
+			Buffer::float32(layout_map_to(cpu_layout_struct, a)),
+			Buffer::vec3(layout_map_to(cpu_layout_struct, b)),
+			Buffer::float32_array(layout_map_to(cpu_layout_struct, c)),
+			Buffer::float32(layout_map_to(cpu_layout_struct, d))
 		);
+
+	std::cout << sizeof(std::remove_all_extents<decltype(cpu_layout_struct::c)>::type) << std::endl;
 
 	std::cout << "std140 layout" << std::endl;
 	for (int i = 0; i < layout.layout_std140.size(); i++)
 		std::cout << layout.layout_std140[i].begin_offset << " ";
+	std::cout << std::endl;
+	
+	std::cout << std::endl;
+	std::cout << "std430 layout" << std::endl;
+	for (int i = 0; i < layout.layout_std430.size(); i++)
+		std::cout << layout.layout_std430[i].begin_offset << " ";
+	std::cout << std::endl;
+
+	std::cout << std::endl;
+	std::cout << "cpu layout" << std::endl;
+	for (int i = 0; i < layout.layout_cpu.size(); i++)
+		std::cout << layout.layout_cpu[i].element_stride << " ";
 	std::cout << std::endl;
 
 	//std::cout << "std430 size, alignment = " << layout._size_std430 << " " << layout._alignment_std430 << std::endl;

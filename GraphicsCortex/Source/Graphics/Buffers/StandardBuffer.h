@@ -20,11 +20,11 @@ class Buffer {
 
 public:
 
-	#define BufferElementType(type_name, size_std430, alignment_std430, array_alignment_std430, size_std140, alignment_std140, array_alignment_std140)		\
+	#define BufferElementType(type_name, size_std430, alignment_std430, array_size_std430, array_alignment_std430, size_std140, alignment_std140, array_size_std140, array_alignment_std140)\
 		struct type_name {																						\
 			type_name():																						\
 				_offset_map(-1), _stride_map(-1) {}																\
-			type_name(size_t offset_map, size_t stride_map) :													\
+			type_name(size_t offset_map, size_t stride_map, size_t count) :													\
 				_offset_map(offset_map), _stride_map(stride_map) {}												\
 			const size_t _offset_map;																			\
 			const size_t _stride_map;																			\
@@ -39,34 +39,34 @@ public:
 		struct type_name##_array {																				\
 			type_name##_array(size_t offset_map, size_t stride_map, uint32_t count) :							\
 				_offset_map(offset_map), _stride_map(stride_map), _count(count), _is_dynamic_length(false) {}	\
-			type_name##_array(size_t offset_map, size_t stride_map) :											\
+			/*type_name##_array(size_t offset_map, size_t stride_map) :											\
 				_offset_map(offset_map), _stride_map(stride_map), _count(1), _is_dynamic_length(true) {}		\
-			type_name##_array(uint32_t count) :																	\
+			*/type_name##_array(uint32_t count) :																	\
 				_offset_map(-1), _stride_map(-1), _count(count), _is_dynamic_length(false) {}					\
 			type_name##_array() :																				\
 				_offset_map(-1), _stride_map(-1), _count(1), _is_dynamic_length(true) {}						\
 			const size_t _offset_map;																			\
 			const size_t _stride_map;																			\
-			const uint32_t _size_std430 = size_std430;															\
+			const uint32_t _size_std430 = array_size_std430;													\
 			const uint32_t _alignment_std430 = array_alignment_std430;											\
-			const uint32_t _size_std140 = size_std140;															\
+			const uint32_t _size_std140 = array_size_std140;													\
 			const uint32_t _alignment_std140 = array_alignment_std140;											\
 			const uint32_t _count;																				\
 			const bool _is_array_type = true;																	\
 			const bool _is_dynamic_length = false;																\
 		};																										\
 
-	//					name		size430		align430	align430_array	size140		align140	align140_array
-	BufferElementType(boolean,		4,			4,			4,				4,			4,			4*4		); 
-	BufferElementType(float32,		4,			4,			4,				4,			4,			4*4		);
-	BufferElementType(float64,		8,			8,			8,				8,			8,			4*4		);
-	BufferElementType(int32,		4,			4,			4,				4,			4,			4*4		);
-	BufferElementType(int64,		8,			8,			8,				8,			8,			4*4		);
-	BufferElementType(vec2,			2*4,		2*4,		2*4,			2*4,		2*4,		4*4		);
-	BufferElementType(vec3,			3*4,		4*4,		3*4,			3*4,		4*4,		4*4		);
-	BufferElementType(vec4,			4*4,		4*4,		4*4,			4*4,		4*4,		4*4		);
-	BufferElementType(mat2x2,		2*2*4,		2*2*4,		2*2*4,			2*2*4,		2*4*4,		2*4*4	);
-	BufferElementType(mat4x4,		4*4*4,		4*4*4,		4*4*4,			4*4*4,		4*4*4,		2*4*4	);
+	//					name		size430		align430	size430_arr align430_array	size140		align140	size140_arr	align140_array
+	BufferElementType(boolean,		4,			4,			4,			4,				4,			4,			4*4,		4*4		); 
+	BufferElementType(float32,		4,			4,			4,			4,				4,			4,			4*4,		4*4		);
+	BufferElementType(float64,		8,			8,			8,			8,				8,			8,			4*4,		4*4		);
+	BufferElementType(int32,		4,			4,			4,			4,				4,			4,			4*4,		4*4		);
+	BufferElementType(int64,		8,			8,			8,			8,				8,			8,			4*4,		4*4		);
+	BufferElementType(vec2,			2*4,		2*4,		2*4,		2*4,			2*4,		2*4,		4*4,		4*4		);
+	BufferElementType(vec3,			3*4,		4*4,		3*4,		3*4,			3*4,		4*4,		4*4,		4*4		);
+	BufferElementType(vec4,			4*4,		4*4,		4*4,		4*4,			4*4,		4*4,		4*4,		4*4		);
+	BufferElementType(mat2x2,		2*2*4,		2*2*4,		2*2*4,		2*2*4,			2*4*4,		2*4*4,		2*4*4,		2*4*4	);
+	BufferElementType(mat4x4,		4*4*4,		4*4*4,		4*4*4,		4*4*4,			4*4*4,		4*4*4,		4*4*4,		4*4*4	);
 
 	/*
 	template<typename... element_types>
@@ -247,13 +247,12 @@ public:
 
 		struct _layout_info {
 			_layout_info() = default;
-			_layout_info(size_t begin_offset, size_t count, size_t element_stride, size_t element_size) :
-				begin_offset(begin_offset), count(count), element_stride(element_stride), element_size(element_size) {}
+			_layout_info(size_t begin_offset, size_t count, size_t element_stride) :
+				begin_offset(begin_offset), count(count), element_stride(element_stride) {}
 			
 			size_t begin_offset = 0;
 			size_t count = 0;
 			size_t element_stride = 0;
-			size_t element_size = 0;
 		};
 
 		std::array<_layout_info, sizeof...(element_types)> layout_cpu;
@@ -262,6 +261,17 @@ public:
 
 		constexpr void _compute_cpu_layout(element_types... types) {
 			
+			int i = 0;
+			size_t offset = 0;
+
+			([&] {
+
+				layout_cpu[i].begin_offset = types._offset_map;
+				layout_cpu[i].element_stride = types._stride_map;
+				i++;
+				
+			}(), ...);
+
 		}
 
 		constexpr void _compute_std140_layout(element_types... types) {
@@ -274,31 +284,39 @@ public:
 				if (offset % types._alignment_std140 != 0)
 					offset = (offset / types._alignment_std140 + 1) * types._alignment_std140;
 
-				size_t element_stride = types._size_std140;
-
-				if (types._count != 1){
-					if (element_stride % types._alignment_std140 != 0)
-						element_stride = (element_stride / types._alignment_std140 + 1) * types._alignment_std140;
-				}
-				
 				layout_std140[i].begin_offset = offset;
 				layout_std140[i].count = types._count;
-				layout_std140[i].element_stride = element_stride;
-				layout_std140[i].element_size = types._size_std140;
+				layout_std140[i].element_stride = types._size_std140;
 
-				offset += element_stride * types._count;
+				offset += types._size_std140 * types._count;
 
 				i++;
 			}(), ...);
 		}
 		
 		constexpr void _compute_std430_layout(element_types... types) {
-			
+			int i = 0;
+			size_t offset = 0;
+
+			([&] {
+
+			if (offset % types._alignment_std430 != 0)
+				offset = (offset / types._alignment_std430 + 1) * types._alignment_std430;
+
+			layout_std430[i].begin_offset = offset;
+			layout_std430[i].count = types._count;
+			layout_std430[i].element_stride = types._size_std430;
+
+			offset += types._size_std430 * types._count;
+
+			i++;
+				}(), ...);
 		}
 
 	};
 
-	#define layout_map_to(structure, member) offsetof(structure, member), sizeof(((structure*) 0)->member) 
+
+#define layout_map_to(structure, member) offsetof(structure, member), sizeof(std::remove_all_extents<decltype(structure##:: member)>::type), sizeof(((structure*) 0)->member) / sizeof(std::remove_all_extents<decltype(cpu_layout_struct::c)>::type) 
 
 	struct x {
 		int32_t a;
