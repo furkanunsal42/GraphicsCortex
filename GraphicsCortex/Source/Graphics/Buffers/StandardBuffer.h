@@ -5,22 +5,11 @@
 #include <span>
 #include <iostream>
 #include <type_traits>
-
 #include "Image.h"
 #include <iostream>
 #include <array>
 
-class VertexAttributeBuffer;
-class Mesh2;
-
-class Buffer {
-
-	friend VertexAttributeBuffer;
-	friend Mesh2;
-
-public:
-
-	#define BufferElementType(type_name, size_std430, alignment_std430, array_size_std430, array_alignment_std430, size_std140, alignment_std140, array_size_std140, array_alignment_std140)\
+#define _BufferElementType(type_name, size_std430, alignment_std430, array_size_std430, array_alignment_std430, size_std140, alignment_std140, array_size_std140, array_alignment_std140)\
 		struct type_name {																						\
 			type_name():																						\
 				_offset_map (-1),																				\
@@ -64,19 +53,31 @@ public:
 			const uint32_t _count;																				\
 			const bool _is_array_type;																			\
 			const bool _is_dynamic_length;																		\
-		};																										\
+		};			
+
+#define layout_map_to(structure, member) offsetof(structure, member), sizeof(std::remove_all_extents<decltype(structure##:: member)>::type), sizeof(((structure*) 0)->member) / sizeof(std::remove_all_extents<decltype(structure##:: member)>::type) 
+
+class VertexAttributeBuffer;
+class Mesh2;
+
+class Buffer {
+
+	friend VertexAttributeBuffer;
+	friend Mesh2;
+
+public:
 
 	//					name		size430		align430	size430_arr align430_array	size140		align140	size140_arr	align140_array
-	BufferElementType(boolean,		4,			4,			4,			4,				4,			4,			4*4,		4*4		); 
-	BufferElementType(float32,		4,			4,			4,			4,				4,			4,			4*4,		4*4		);
-	BufferElementType(float64,		8,			8,			8,			8,				8,			8,			4*4,		4*4		);
-	BufferElementType(int32,		4,			4,			4,			4,				4,			4,			4*4,		4*4		);
-	BufferElementType(int64,		8,			8,			8,			8,				8,			8,			4*4,		4*4		);
-	BufferElementType(vec2,			2*4,		2*4,		2*4,		2*4,			2*4,		2*4,		4*4,		4*4		);
-	BufferElementType(vec3,			3*4,		4*4,		3*4,		3*4,			3*4,		4*4,		4*4,		4*4		);
-	BufferElementType(vec4,			4*4,		4*4,		4*4,		4*4,			4*4,		4*4,		4*4,		4*4		);
-	BufferElementType(mat2x2,		2*2*4,		2*2*4,		2*2*4,		2*2*4,			2*4*4,		2*4*4,		2*4*4,		2*4*4	);
-	BufferElementType(mat4x4,		4*4*4,		4*4*4,		4*4*4,		4*4*4,			4*4*4,		4*4*4,		4*4*4,		4*4*4	);
+	_BufferElementType(boolean,		4,			4,			4,			4,				4,			4,			4*4,		4*4		); 
+	_BufferElementType(float32,		4,			4,			4,			4,				4,			4,			4*4,		4*4		);
+	_BufferElementType(float64,		8,			8,			8,			8,				8,			8,			4*4,		4*4		);
+	_BufferElementType(int32,		4,			4,			4,			4,				4,			4,			4*4,		4*4		);
+	_BufferElementType(int64,		8,			8,			8,			8,				8,			8,			4*4,		4*4		);
+	_BufferElementType(vec2,		2*4,		2*4,		2*4,		2*4,			2*4,		2*4,		4*4,		4*4		);
+	_BufferElementType(vec3,		3*4,		4*4,		3*4,		3*4,			3*4,		4*4,		4*4,		4*4		);
+	_BufferElementType(vec4,		4*4,		4*4,		4*4,		4*4,			4*4,		4*4,		4*4,		4*4		);
+	_BufferElementType(mat2x2,		2*2*4,		2*2*4,		2*2*4,		2*2*4,			2*4*4,		2*4*4,		2*4*4,		2*4*4	);
+	_BufferElementType(mat4x4,		4*4*4,		4*4*4,		4*4*4,		4*4*4,			4*4*4,		4*4*4,		4*4*4,		4*4*4	);
 
 	/*
 	template<typename... element_types>
@@ -223,106 +224,23 @@ public:
 
 	template<typename... element_types>
 	struct layout {
-		layout(element_types... types) //:
-		{
-			_compute_cpu_layout(types...);
-			_compute_std140_layout(types...);
-			_compute_std430_layout(types...);
-		}
-
-		static_assert(((
-			std::is_same_v<element_types, boolean>			||
-			std::is_same_v<element_types, float32> 			||
-			std::is_same_v<element_types, float64> 			||
-			std::is_same_v<element_types, int32> 			||
-			std::is_same_v<element_types, int64> 			||
-			std::is_same_v<element_types, vec2>				||
-			std::is_same_v<element_types, vec3> 			||
-			std::is_same_v<element_types, vec4> 			||
-			std::is_same_v<element_types, mat2x2> 			||
-			std::is_same_v<element_types, mat4x4> 			
-			/*std::is_same_v<element_types, structure<element_types>> ||
-			std::is_same_v<element_types, structure_array<element_types>>*/) && ...),
-			"Buffer::layout is defined with unsupperted types, use Buffer::float32, Buffer::int32, Buffer::vec4 etc.."
-			);
-
+		layout(element_types... types);
+		
 		struct _layout_info {
-			_layout_info() = default;
-			_layout_info(size_t begin_offset, size_t count, size_t element_stride) :
-				begin_offset(begin_offset), count(count), element_stride(element_stride) {}
-			
-			size_t begin_offset = 0;
-			size_t count = 0;
-			size_t element_stride = 0;
-		};
+			_layout_info();
+			_layout_info(size_t begin_offset, size_t count, size_t element_stride);
 
+			size_t begin_offset;
+			size_t count;
+			size_t element_stride;
+		};
 		std::array<_layout_info, sizeof...(element_types)> layout_cpu;
 		std::array<_layout_info, sizeof...(element_types)> layout_std430;
 		std::array<_layout_info, sizeof...(element_types)> layout_std140;
 
-		constexpr void _compute_cpu_layout(element_types... types) {
-			
-			int i = 0;
-			size_t offset = 0;
-
-			([&] {
-
-				layout_cpu[i].begin_offset = types._offset_map;
-				layout_cpu[i].element_stride = types._stride_map;
-				layout_cpu[i].count = types._count;
-				i++;
-				
-			}(), ...);
-
-		}
-
-		constexpr void _compute_std140_layout(element_types... types) {
-
-			int i = 0;
-			size_t offset = 0;
-
-			([&] {
-
-				if (offset % types._alignment_std140 != 0)
-					offset = (offset / types._alignment_std140 + 1) * types._alignment_std140;
-
-				layout_std140[i].begin_offset = offset;
-				layout_std140[i].count = types._count;
-				layout_std140[i].element_stride = types._size_std140;
-
-				offset += types._size_std140 * types._count;
-
-				i++;
-			}(), ...);
-		}
-		
-		constexpr void _compute_std430_layout(element_types... types) {
-			int i = 0;
-			size_t offset = 0;
-
-			([&] {
-
-			if (offset % types._alignment_std430 != 0)
-				offset = (offset / types._alignment_std430 + 1) * types._alignment_std430;
-
-			layout_std430[i].begin_offset = offset;
-			layout_std430[i].count = types._count;
-			layout_std430[i].element_stride = types._size_std430;
-
-			offset += types._size_std430 * types._count;
-
-			i++;
-				}(), ...);
-		}
-
-	};
-
-
-#define layout_map_to(structure, member) offsetof(structure, member), sizeof(std::remove_all_extents<decltype(structure##:: member)>::type), sizeof(((structure*) 0)->member) / sizeof(std::remove_all_extents<decltype(structure##:: member)>::type) 
-
-	struct x {
-		int32_t a;
-		double b;
+		constexpr void _compute_cpu_layout(element_types... types);
+		constexpr void _compute_std140_layout(element_types... types);
+		constexpr void _compute_std430_layout(element_types... types);
 	};
 
 	struct MapInfo {
@@ -435,10 +353,16 @@ public:
 	void set_image_parameters(Image::ImageParameters parameters);
 	void clear_image_parameters();
 
-	void push_variable(size_t element_size_in_bytes, size_t array_count = 1);
-	template<typename T>
-	void push_variable(size_t array_count = 1);
-
+	template<typename... element_types>
+	void set_memory_structure(layout<element_types...> memory_layout);
+	void clear_memory_structure();
+	void set_structured_data(size_t structured_data_offset_in_bytes, size_t structured_data_size_in_bytes, void* structured_data);
+	void set_structured_data(void* structured_data);
+	void set_structured_data(size_t dynamic_array_count, void* structured_data);
+	void* get_structured_data(size_t structured_data_offset_in_bytes, size_t structured_data_size_in_bytes);
+	void* get_structured_data(size_t dynamic_array_count);
+	void* get_structured_data();
+	
 	void force_allocation();
 
 	MemoryType get_memory_type();
@@ -478,6 +402,11 @@ private:
 
 	bool _map_after_initialization = false;
 	std::unique_ptr<Image::ImageParameters> image_parameters = nullptr;
+
+	std::vector<layout::_layout_info> layout_cpu;
+	std::vector<layout::_layout_info> layout_std430;
+	std::vector<layout::_layout_info> layout_std140;
+
 
 	GLsync _gl_sync_object_download = nullptr;
 	GLsync _gl_sync_object_upload = nullptr;

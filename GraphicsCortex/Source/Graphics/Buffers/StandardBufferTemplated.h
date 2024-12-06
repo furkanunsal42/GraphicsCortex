@@ -5,6 +5,7 @@
 
 #include "glm.hpp"
 #include <iostream>
+#include <StandardBuffer.h>
 
 template<typename T>
 inline std::span<T> Buffer::get_mapped_span()
@@ -349,4 +350,125 @@ void Buffer::copy_to(size_t managed_buffer_offset_by_count, size_t target_buffer
 	size_t copy_size_in_bytes = copy_count * sizeof(T);
 
 	copy_to(managed_buffer_offset_in_bytes, target_buffer_offset_in_bytes, copy_size_in_bytes, target_buffer);
+}
+
+template<typename... element_types>
+Buffer::layout<element_types...>::layout(element_types... types)
+{
+	static_assert(((
+		std::is_same_v<element_types, boolean> ||
+		std::is_same_v<element_types, float32> ||
+		std::is_same_v<element_types, float64> ||
+		std::is_same_v<element_types, int32> ||
+		std::is_same_v<element_types, int64> ||
+		std::is_same_v<element_types, vec2> ||
+		std::is_same_v<element_types, vec3> ||
+		std::is_same_v<element_types, vec4> ||
+		std::is_same_v<element_types, mat2x2> ||
+		std::is_same_v<element_types, mat4x4>
+		/*std::is_same_v<element_types, structure<element_types>> ||
+		std::is_same_v<element_types, structure_array<element_types>>*/) && ...),
+		"Buffer::layout is defined with unsupperted types, use Buffer::float32, Buffer::int32, Buffer::vec4 etc.."
+		);
+
+	_compute_cpu_layout(types...);
+	_compute_std140_layout(types...);
+	_compute_std430_layout(types...);
+}
+
+template<typename... element_types>
+Buffer::_layout_info::_layout_info() :
+	begin_offset(0), count(0), element_stride(0) {}
+
+template<typename... element_types>
+Buffer::layout<element_types...>::_layout_info::_layout_info(size_t begin_offset, size_t count, size_t element_stride) :
+	begin_offset(begin_offset), count(count), element_stride(element_stride) {}
+
+template<typename... element_types>
+constexpr void Buffer::layout<element_types...>::_compute_cpu_layout(element_types... types) {
+
+	int i = 0;
+	size_t offset = 0;
+
+	([&] {
+
+		layout_cpu[i].begin_offset = types._offset_map;
+		layout_cpu[i].element_stride = types._stride_map;
+		layout_cpu[i].count = types._count;
+		i++;
+
+	}(), ...);
+
+}
+
+template<typename... element_types>
+constexpr void Buffer::layout<element_types...>::_compute_std140_layout(element_types... types) {
+
+	int i = 0;
+	size_t offset = 0;
+
+	([&] {
+		if (offset % types._alignment_std140 != 0)
+			offset = (offset / types._alignment_std140 + 1) * types._alignment_std140;
+
+		layout_std140[i].begin_offset = offset;
+		layout_std140[i].count = types._count;
+		layout_std140[i].element_stride = types._size_std140;
+
+		offset += types._size_std140 * types._count;
+
+		i++;
+	}(), ...);
+}
+
+template<typename... element_types>
+constexpr void Buffer::layout<element_types...>::_compute_std430_layout(element_types... types) {
+	int i = 0;
+	size_t offset = 0;
+
+	([&] {
+
+		if (offset % types._alignment_std430 != 0)
+			offset = (offset / types._alignment_std430 + 1) * types._alignment_std430;
+
+		layout_std430[i].begin_offset = offset;
+		layout_std430[i].count = types._count;
+		layout_std430[i].element_stride = types._size_std430;
+
+		offset += types._size_std430 * types._count;
+
+		i++;
+	}(), ...);
+}
+
+template<typename... element_types>
+void Buffer::set_memory_structure<element_types...>(layout<element_types...> memory_layout) {
+
+	int32_t element_count = memory_layout.layout_cpu.size();
+
+	if (element_count == 0) {
+		std::cout << "[OpenGL Error] Buffer::set_memory_structure() is called with an empty layout" << std::endl;
+		ASSERT(false);
+	}
+
+	bool is_std_140_compatible = true;
+	bool is_std_430_compatible = true;
+
+	for (int i = 1; i < memory_layout.layout_cpu.size(); i++) {
+		if (!is_std_430_compatible && !is_std_140_compatible)
+			break;
+		
+		if (memory_layout.layout_cpu[i].begin_offset != memory_layout.layout_std430[i].begin_offset)
+			is_std_430_compatible = false;
+	
+		if (memory_layout.layout_cpu[i].begin_offset != memory_layout.layout_std140[i].begin_offset)
+			is_std_140_compatible = false;
+	}
+
+	if (!is_std_430_compatible && !is_std_140_compatible) {
+		std::cout << "[OpenGL Warning] Buffer::set_memory_structure() is called with a layout that isn't compatible with std140 or std430, uncompatible layouts will cause performance penalty" << std::endl;
+	}
+		
+
+
 }
