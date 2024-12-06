@@ -23,37 +23,47 @@ public:
 	#define BufferElementType(type_name, size_std430, alignment_std430, array_size_std430, array_alignment_std430, size_std140, alignment_std140, array_size_std140, array_alignment_std140)\
 		struct type_name {																						\
 			type_name():																						\
-				_offset_map(-1), _stride_map(-1) {}																\
-			type_name(size_t offset_map, size_t stride_map, size_t count) :													\
-				_offset_map(offset_map), _stride_map(stride_map) {}												\
+				_offset_map (-1),																				\
+				_stride_map (-1),																				\
+				_size_std430 (size_std430),																		\
+				_alignment_std430 (alignment_std430),															\
+				_size_std140 (size_std140),																		\
+				_alignment_std140 (alignment_std140),															\
+				_count (1),																						\
+				_is_array_type (false),																			\
+				_is_dynamic_length (false)																		\
+				{}																								\
+			type_name(size_t count):																			\
+				_offset_map(-1),																				\
+				_stride_map(-1),																				\
+				_size_std430 (count == 1 ? size_std430 : array_size_std430),									\
+				_alignment_std430 (count == 1 ? alignment_std430 : array_alignment_std430),						\
+				_size_std140 (count == 1 ? size_std140 : array_size_std140),									\
+				_alignment_std140 (count == 1 ? alignment_std140 : array_alignment_std140),						\
+				_count (count),																					\
+				_is_array_type (count == 1 ? false : true),														\
+				_is_dynamic_length (false)																		\
+				{}																								\
+			type_name(size_t offset_map, size_t stride_map, size_t count) :										\
+				_offset_map(offset_map),																		\
+				_stride_map(stride_map),																		\
+				_size_std430 (count == 1 ? size_std430 : array_size_std430),									\
+				_alignment_std430 (count == 1 ? alignment_std430 : array_alignment_std430),						\
+				_size_std140 (count == 1 ? size_std140 : array_size_std140),									\
+				_alignment_std140 (count == 1 ? alignment_std140 : array_alignment_std140),						\
+				_count (count),																					\
+				_is_array_type (count == 1 ? false : true),														\
+				_is_dynamic_length (false)																		\
+				{}																								\
 			const size_t _offset_map;																			\
 			const size_t _stride_map;																			\
-			const uint32_t _size_std430 = size_std430;															\
-			const uint32_t _alignment_std430 = alignment_std430;												\
-			const uint32_t _size_std140 = size_std140;															\
-			const uint32_t _alignment_std140 = alignment_std140;												\
-			const uint32_t _count = 1;																			\
-			const bool _is_array_type = false;																	\
-			const bool _is_dynamic_length = false;																\
-		};																										\
-		struct type_name##_array {																				\
-			type_name##_array(size_t offset_map, size_t stride_map, uint32_t count) :							\
-				_offset_map(offset_map), _stride_map(stride_map), _count(count), _is_dynamic_length(false) {}	\
-			/*type_name##_array(size_t offset_map, size_t stride_map) :											\
-				_offset_map(offset_map), _stride_map(stride_map), _count(1), _is_dynamic_length(true) {}		\
-			*/type_name##_array(uint32_t count) :																	\
-				_offset_map(-1), _stride_map(-1), _count(count), _is_dynamic_length(false) {}					\
-			type_name##_array() :																				\
-				_offset_map(-1), _stride_map(-1), _count(1), _is_dynamic_length(true) {}						\
-			const size_t _offset_map;																			\
-			const size_t _stride_map;																			\
-			const uint32_t _size_std430 = array_size_std430;													\
-			const uint32_t _alignment_std430 = array_alignment_std430;											\
-			const uint32_t _size_std140 = array_size_std140;													\
-			const uint32_t _alignment_std140 = array_alignment_std140;											\
+			const uint32_t _size_std430;																		\
+			const uint32_t _alignment_std430;																	\
+			const uint32_t _size_std140;																		\
+			const uint32_t _alignment_std140;																	\
 			const uint32_t _count;																				\
-			const bool _is_array_type = true;																	\
-			const bool _is_dynamic_length = false;																\
+			const bool _is_array_type;																			\
+			const bool _is_dynamic_length;																		\
 		};																										\
 
 	//					name		size430		align430	size430_arr align430_array	size140		align140	size140_arr	align140_array
@@ -230,17 +240,8 @@ public:
 			std::is_same_v<element_types, vec3> 			||
 			std::is_same_v<element_types, vec4> 			||
 			std::is_same_v<element_types, mat2x2> 			||
-			std::is_same_v<element_types, mat4x4> 			||
-			std::is_same_v<element_types, boolean_array>	||
-			std::is_same_v<element_types, float32_array>	||
-			std::is_same_v<element_types, float64_array>	||
-			std::is_same_v<element_types, int32_array> 		||
-			std::is_same_v<element_types, int64_array> 		||
-			std::is_same_v<element_types, vec2_array> 		||
-			std::is_same_v<element_types, vec4_array> 		||
-			std::is_same_v<element_types, mat2x2_array>		||
-			std::is_same_v<element_types, mat4x4_array>/*		||
-			std::is_same_v<element_types, structure<element_types>> ||
+			std::is_same_v<element_types, mat4x4> 			
+			/*std::is_same_v<element_types, structure<element_types>> ||
 			std::is_same_v<element_types, structure_array<element_types>>*/) && ...),
 			"Buffer::layout is defined with unsupperted types, use Buffer::float32, Buffer::int32, Buffer::vec4 etc.."
 			);
@@ -268,6 +269,7 @@ public:
 
 				layout_cpu[i].begin_offset = types._offset_map;
 				layout_cpu[i].element_stride = types._stride_map;
+				layout_cpu[i].count = types._count;
 				i++;
 				
 			}(), ...);
@@ -316,7 +318,7 @@ public:
 	};
 
 
-#define layout_map_to(structure, member) offsetof(structure, member), sizeof(std::remove_all_extents<decltype(structure##:: member)>::type), sizeof(((structure*) 0)->member) / sizeof(std::remove_all_extents<decltype(cpu_layout_struct::c)>::type) 
+#define layout_map_to(structure, member) offsetof(structure, member), sizeof(std::remove_all_extents<decltype(structure##:: member)>::type), sizeof(((structure*) 0)->member) / sizeof(std::remove_all_extents<decltype(structure##:: member)>::type) 
 
 	struct x {
 		int32_t a;
