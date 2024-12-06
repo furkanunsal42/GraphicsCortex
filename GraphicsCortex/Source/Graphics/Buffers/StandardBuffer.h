@@ -63,6 +63,7 @@ public:
 	BufferElementType(int32,		4,			4,			4,				4,			4,			4*4		);
 	BufferElementType(int64,		8,			8,			8,				8,			8,			4*4		);
 	BufferElementType(vec2,			2*4,		2*4,		2*4,			2*4,		2*4,		4*4		);
+	BufferElementType(vec3,			3*4,		4*4,		3*4,			3*4,		4*4,		4*4		);
 	BufferElementType(vec4,			4*4,		4*4,		4*4,			4*4,		4*4,		4*4		);
 	BufferElementType(mat2x2,		2*2*4,		2*2*4,		2*2*4,			2*2*4,		2*4*4,		2*4*4	);
 	BufferElementType(mat4x4,		4*4*4,		4*4*4,		4*4*4,			4*4*4,		4*4*4,		2*4*4	);
@@ -213,14 +214,10 @@ public:
 	template<typename... element_types>
 	struct layout {
 		layout(element_types... types) //:
-			//_alignment_std430(compute_alignment_430(types...)),
-			//_size_std430(compute_size_430(types...)),
-			//_alignment_std140(compute_alignment_140(types...)),
-			//_size_std140(compute_size_140(types...)) 
-			{
-			_compute_cpu_layout();
-			_compute_std140_layout();
-			_compute_std430_layout();
+		{
+			_compute_cpu_layout(types...);
+			_compute_std140_layout(types...);
+			_compute_std430_layout(types...);
 		}
 
 		static_assert(((
@@ -229,7 +226,8 @@ public:
 			std::is_same_v<element_types, float64> 			||
 			std::is_same_v<element_types, int32> 			||
 			std::is_same_v<element_types, int64> 			||
-			std::is_same_v<element_types, vec2> 			||
+			std::is_same_v<element_types, vec2>				||
+			std::is_same_v<element_types, vec3> 			||
 			std::is_same_v<element_types, vec4> 			||
 			std::is_same_v<element_types, mat2x2> 			||
 			std::is_same_v<element_types, mat4x4> 			||
@@ -247,20 +245,51 @@ public:
 			"Buffer::layout is defined with unsupperted types, use Buffer::float32, Buffer::int32, Buffer::vec4 etc.."
 			);
 
-		struct _member_info {
-			uint32_t offset, stride, count;
+		struct _layout_info {
+			_layout_info() = default;
+			_layout_info(size_t begin_offset, size_t count, size_t element_stride, size_t element_size) :
+				begin_offset(begin_offset), count(count), element_stride(element_stride), element_size(element_size) {}
+			
+			size_t begin_offset = 0;
+			size_t count = 0;
+			size_t element_stride = 0;
+			size_t element_size = 0;
 		};
 
-		std::array<_member_info, sizeof...(element_types)> layout_cpu;
-		std::array<_member_info, sizeof...(element_types)> layout_std140;
-		std::array<_member_info, sizeof...(element_types)> layout_std430;
+		std::array<_layout_info, sizeof...(element_types)> layout_cpu;
+		std::array<_layout_info, sizeof...(element_types)> layout_std430;
+		std::array<_layout_info, sizeof...(element_types)> layout_std140;
 
 		constexpr void _compute_cpu_layout(element_types... types) {
-		
+			
 		}
 
 		constexpr void _compute_std140_layout(element_types... types) {
-		
+
+			int i = 0;
+			size_t offset = 0;
+
+			([&] {
+
+				if (offset % types._alignment_std140 != 0)
+					offset = (offset / types._alignment_std140 + 1) * types._alignment_std140;
+
+				size_t element_stride = types._size_std140;
+
+				if (types._count != 1){
+					if (element_stride % types._alignment_std140 != 0)
+						element_stride = (element_stride / types._alignment_std140 + 1) * types._alignment_std140;
+				}
+				
+				layout_std140[i].begin_offset = offset;
+				layout_std140[i].count = types._count;
+				layout_std140[i].element_stride = element_stride;
+				layout_std140[i].element_size = types._size_std140;
+
+				offset += element_stride * types._count;
+
+				i++;
+			}(), ...);
 		}
 		
 		constexpr void _compute_std430_layout(element_types... types) {
