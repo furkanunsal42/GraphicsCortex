@@ -50,3 +50,6 @@ CortexEditor/jpeg62.dll
 /CortexEditor/Release
 /CortexEditor/Release Editor
 GraphicsCortex.sln
+CTReconstructorApp/jpeg62.dll
+*.dll
+GraphicsCortexApp/atlas.png

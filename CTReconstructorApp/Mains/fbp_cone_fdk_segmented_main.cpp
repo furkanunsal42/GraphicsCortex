@@ -10,7 +10,7 @@ using namespace shader_directory;
 
 int main() {
 
-	glm::ivec3 volume_dimentions(3072, 3072, 3072);
+	glm::ivec3 volume_dimentions(1024, 1024, 1024);
 	glm::vec3 voxel_size(200.0f / volume_dimentions.x, 200.0f / volume_dimentions.y, 200.0f / volume_dimentions.z);
 	int projection_count = 1440;
 	int window_width = 1024;
@@ -39,8 +39,8 @@ int main() {
 	util_shader_directory = "../CTReconstructor/Source/GLSL/Compute/Util/";
 
 	std::shared_ptr<FBP3D> solver = std::make_shared<FBP3D>(fbp_shader_defines_to_use, ffft_shader_defines_to_use);
-	solver->set_projections_max_segment_size(glm::ivec3(volume_dimentions.x, volume_dimentions.y / 8, projection_count));
-	solver->set_volume_max_segment_size(glm::ivec3(volume_dimentions.x, volume_dimentions.y / 32, volume_dimentions.z));
+	solver->set_projections_max_segment_size(glm::ivec3(volume_dimentions.x, volume_dimentions.y / 1, projection_count));
+	solver->set_volume_max_segment_size(glm::ivec3(volume_dimentions.x, volume_dimentions.y / 1, volume_dimentions.z));
 
 	solver->set_volume_format(fbp_volume_format_to_use);
 	solver->set_projection_format(fbp_projection_format_to_use);

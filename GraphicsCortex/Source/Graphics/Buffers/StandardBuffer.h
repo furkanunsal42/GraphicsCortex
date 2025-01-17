@@ -222,18 +222,19 @@ public:
 	};
 	*/
 
+	struct _layout_info {
+		_layout_info();
+		_layout_info(size_t begin_offset, size_t count, size_t element_stride);
+
+		size_t begin_offset;
+		size_t count;
+		size_t element_stride;
+	};
+
 	template<typename... element_types>
 	struct layout {
 		layout(element_types... types);
 		
-		struct _layout_info {
-			_layout_info();
-			_layout_info(size_t begin_offset, size_t count, size_t element_stride);
-
-			size_t begin_offset;
-			size_t count;
-			size_t element_stride;
-		};
 		std::array<_layout_info, sizeof...(element_types)> layout_cpu;
 		std::array<_layout_info, sizeof...(element_types)> layout_std430;
 		std::array<_layout_info, sizeof...(element_types)> layout_std140;
@@ -242,6 +243,7 @@ public:
 		constexpr void _compute_std140_layout(element_types... types);
 		constexpr void _compute_std430_layout(element_types... types);
 	};
+
 
 	struct MapInfo {
 	public:
@@ -403,9 +405,9 @@ private:
 	bool _map_after_initialization = false;
 	std::unique_ptr<Image::ImageParameters> image_parameters = nullptr;
 
-	std::vector<layout::_layout_info> layout_cpu;
-	std::vector<layout::_layout_info> layout_std430;
-	std::vector<layout::_layout_info> layout_std140;
+	std::vector<_layout_info> layout_cpu;
+	std::vector<_layout_info> layout_std430;
+	std::vector<_layout_info> layout_std140;
 
 
 	GLsync _gl_sync_object_download = nullptr;

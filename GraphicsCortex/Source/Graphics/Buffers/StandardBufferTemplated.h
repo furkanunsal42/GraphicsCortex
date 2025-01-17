@@ -377,14 +377,6 @@ Buffer::layout<element_types...>::layout(element_types... types)
 }
 
 template<typename... element_types>
-Buffer::_layout_info::_layout_info() :
-	begin_offset(0), count(0), element_stride(0) {}
-
-template<typename... element_types>
-Buffer::layout<element_types...>::_layout_info::_layout_info(size_t begin_offset, size_t count, size_t element_stride) :
-	begin_offset(begin_offset), count(count), element_stride(element_stride) {}
-
-template<typename... element_types>
 constexpr void Buffer::layout<element_types...>::_compute_cpu_layout(element_types... types) {
 
 	int i = 0;
@@ -442,7 +434,7 @@ constexpr void Buffer::layout<element_types...>::_compute_std430_layout(element_
 }
 
 template<typename... element_types>
-void Buffer::set_memory_structure<element_types...>(layout<element_types...> memory_layout) {
+void Buffer::set_memory_structure(layout<element_types...> memory_layout) {
 
 	int32_t element_count = memory_layout.layout_cpu.size();
 
