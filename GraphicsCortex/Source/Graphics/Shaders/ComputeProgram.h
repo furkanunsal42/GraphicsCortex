@@ -1,6 +1,8 @@
 #pragma once
 #include "ShaderCompiler.h"
 
+class Buffer;
+
 class ComputeProgram {
 public:
 	unsigned int id;
@@ -44,6 +46,8 @@ public:
 	void compile_shader(const Shader& shader);
 	
 	glm::ivec3 get_work_group_size();
+
+	void update_uniform_as_storage_buffer(const std::string& name, Buffer& buffer, size_t offset, size_t size);
 
 	void update_uniform(const std::string& name, Texture1D& texture1d);
 	void update_uniform(const std::string& name, Texture2D& texture2d);

@@ -5,6 +5,7 @@
 #include "Texture3D.h"
 #include "Texture2DArray.h"
 #include "TextureCubeMap.h"
+#include "StandardBuffer.h"
 
 #include <sstream>
 
@@ -227,6 +228,22 @@ glm::ivec3 ComputeProgram::get_work_group_size()
 	glGetProgramiv(id, GL_COMPUTE_WORK_GROUP_SIZE, work_group_size);
 
 	return glm::ivec3(work_group_size[0], work_group_size[1], work_group_size[2]);
+}
+
+void ComputeProgram::update_uniform_as_storage_buffer(const std::string& name, Buffer& buffer, size_t offset, size_t size) {
+	
+	// I don't think they are necessary
+	//buffer.wait_to_sycronize_upload();
+	//buffer.wait_to_sycronize_download();
+
+	if (!buffer._buffer_allocated) buffer._allocate_buffer(buffer._buffer_size);
+
+	GLCall(int slot = glGetProgramResourceIndex(id, GL_SHADER_STORAGE_BLOCK, name.c_str()));
+	if (slot == -1) {	// maybe
+		ASSERT(false);
+	}
+
+	buffer.bind_as_storage_buffer(slot, offset, size);
 }
 
 void ComputeProgram::update_uniform(const std::string& name, Texture1D& texture1d)

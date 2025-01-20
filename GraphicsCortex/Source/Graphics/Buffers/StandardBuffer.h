@@ -59,11 +59,13 @@
 
 class VertexAttributeBuffer;
 class Mesh2;
+class ComputeProgram;
 
 class Buffer {
 
 	friend VertexAttributeBuffer;
 	friend Mesh2;
+	friend ComputeProgram;
 
 public:
 
@@ -282,8 +284,8 @@ public:
 
 	void bind_to_async_download();
 	void bind_to_async_upload();
-	void bind_as_storage_buffer(size_t offset, unsigned int texture_slot);
-	void bind_as_transform_feedback(size_t offset, unsigned int texture_slot);
+	void bind_as_storage_buffer(unsigned int buffer_slot, size_t offset, size_t size);
+	void bind_as_transform_feedback(unsigned int buffer_slot, size_t offset, size_t size);
 	void bind_as_vertex_buffer();
 	void unbind();
 

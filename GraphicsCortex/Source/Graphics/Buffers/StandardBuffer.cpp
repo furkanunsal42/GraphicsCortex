@@ -380,6 +380,21 @@ void Buffer::bind_to_async_upload()
 	GLCall(glBindBuffer(_target_upload, id));
 }
 
+void Buffer::bind_as_storage_buffer(unsigned int buffer_slot, size_t offset, size_t size)
+{
+	if (!_buffer_generated) {
+		std::cout << "[OpenGL Error] released Buffer tried to bind_as_storage_buffer()" << std::endl;
+		ASSERT(false);
+	}
+
+	if (!_buffer_allocated) {
+		std::cout << "[OpenGL Warning] Buffer tried to bind_as_storage_buffer() but no user data was loaded yet" << std::endl;
+		_allocate_buffer(_buffer_size);
+	}
+	
+	GLCall(glBindBufferRange(_target_storage_buffer, buffer_slot, id, offset, size));
+}
+
 void Buffer::_generate_buffer()
 {
 	if (_buffer_generated) return;

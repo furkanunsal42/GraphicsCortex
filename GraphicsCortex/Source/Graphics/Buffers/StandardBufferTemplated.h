@@ -66,7 +66,7 @@ inline std::vector<T> Buffer::get_data(size_t managed_buffer_offset_by_count, si
 	size_t managed_buffer_offset_in_bytes = managed_buffer_offset_by_count * sizeof(T);
 	size_t size_in_bytes = count * sizeof(T);
 
-	char* buffer = get_data(managed_buffer_offset_in_bytes, size_in_bytes);
+	char* buffer = (char*)get_data(managed_buffer_offset_in_bytes, size_in_bytes);
 
 	return std::vector<T>((T*)buffer, (T*)(buffer + size_in_bytes));
 }
@@ -76,7 +76,7 @@ inline std::vector<T> Buffer::get_data(size_t managed_buffer_offset_by_count){
 
 	size_t managed_buffer_offset_in_bytes = managed_buffer_offset_by_count * sizeof(T);
 
-	char* buffer = get_data(managed_buffer_offset_in_bytes);
+	char* buffer = (char*)get_data(managed_buffer_offset_in_bytes);
 
 	return std::vector<T>((T*)buffer, (T*)(buffer + _buffer_size - managed_buffer_offset_in_bytes));
 }

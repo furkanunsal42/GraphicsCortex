@@ -57,7 +57,7 @@ int main() {
 	std::shared_ptr<Texture1D> max_texture = std::make_shared<Texture1D>(1, solver->histogram_int_texture_internal_format, 1, 0);
 	max_texture->is_bindless = false;
 
-	solver->read_projections("C:/Users/FurkanPC/Desktop/Projektionen", 2048, 2048, 1, 2, volume_dimentions.x, volume_dimentions.y, projection_count);
+	solver->read_projections("C:/Users/furkan.unsal/Desktop/Projektionen", 2048, 2048, 1, 2, volume_dimentions.x, volume_dimentions.y, projection_count);
 
 	fbp_segmented_memory::iterate_horizontal_projection_segments(*solver, false, true, [&](glm::ivec3 projection_segment_index) {
 		solver->log_normalize_projections(95.0 / 255);
@@ -87,6 +87,29 @@ int main() {
 
 	solver->generate_blank_distanced_projections(volume_dimentions.x, volume_dimentions.y, volume_dimentions.y/*projection_count*/);
 	solver->bh_project_forward_parallel_to_distanced_projections({ 2, 15 }, 1, volume_dimentions.y/*projection_count*/, 0);
+	//solver->bh_compute_distance_attenuation_graph_from_distanced_projections(128, 128, 40, 40);
+	
+	//{
+	//	std::shared_ptr<VertexAttributeBuffer> vab = std::make_shared<VertexAttributeBuffer>();
+	//	vab->attach_vertex_buffer(0, solver->distance_attenuation_table, VertexAttributeBuffer::a_f32, 3, sizeof(glm::vec3), 0, true);
+	//
+	//	std::shared_ptr<Program> program = std::make_shared<Program>(Shader("../GraphicsCortex/Source/GLSL/Debug/basic.vert", "../GraphicsCortex/Source/GLSL/Debug/flatcolor.frag"));
+	//	program->update_uniform("model", glm::identity<glm::mat4x4>());
+	//	program->update_uniform("color", glm::vec4(1, 1, 0, 1));
+	//
+	//	while (frame.is_running()) {
+	//		double deltatime = frame.handle_window();
+	//		frame.clear_window();
+	//		frame.display_performance();
+	//
+	//		scene.camera->handle_movements(frame.window, deltatime);
+	//		scene.camera->update_matrixes();
+	//		scene.camera->update_default_uniforms(*program);
+	//
+	//		primitive_renderer::render(*program, *vab, PrimitiveType::point);
+	//	}
+	//}
+	
 
 	ReconstructionInfo info;
 	info.name = compute_filename(reconstruction_path);
