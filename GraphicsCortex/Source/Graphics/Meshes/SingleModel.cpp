@@ -109,7 +109,7 @@ std::unique_ptr<Buffer> SingleModel2::create_vertex_buffer(size_t vertex_offset_
 {
 	typedef glm::vec3 attribute_type;
 	std::unique_ptr<Buffer> buffer = std::make_unique<Buffer>(vertex_count * sizeof(attribute_type), Buffer::GPU_BUFFER);
-	buffer->set_data(buffer_offset_in_bytes / sizeof(attribute_type), vertex_offset_count, vertex_count, _verticies);
+	buffer->load_data(buffer_offset_in_bytes / sizeof(attribute_type), vertex_offset_count, vertex_count, _verticies);
 	return buffer;
 }
 
@@ -122,7 +122,7 @@ std::unique_ptr<Buffer> SingleModel2::create_normal_buffer(size_t vertex_offset_
 {
 	typedef glm::vec3 attribute_type;
 	std::unique_ptr<Buffer> buffer = std::make_unique<Buffer>(vertex_count * sizeof(attribute_type), Buffer::GPU_BUFFER);
-	buffer->set_data(buffer_offset_in_bytes / sizeof(attribute_type), vertex_offset_count, vertex_count, _vertex_normals);
+	buffer->load_data(buffer_offset_in_bytes / sizeof(attribute_type), vertex_offset_count, vertex_count, _vertex_normals);
 	return buffer;
 }
 
@@ -135,7 +135,7 @@ std::unique_ptr<Buffer> SingleModel2::create_tangent_buffer(size_t vertex_offset
 {
 	typedef glm::vec3 attribute_type;
 	std::unique_ptr<Buffer> buffer = std::make_unique<Buffer>(vertex_count * sizeof(attribute_type), Buffer::GPU_BUFFER);
-	buffer->set_data(buffer_offset_in_bytes / sizeof(attribute_type), vertex_offset_count, vertex_count, _vertex_tangents);
+	buffer->load_data(buffer_offset_in_bytes / sizeof(attribute_type), vertex_offset_count, vertex_count, _vertex_tangents);
 	return buffer;
 }
 
@@ -148,7 +148,7 @@ std::unique_ptr<Buffer> SingleModel2::create_uv_merged_buffer(size_t vertex_offs
 {
 	typedef glm::vec4 attribute_type;
 	std::unique_ptr<Buffer> buffer = std::make_unique<Buffer>(vertex_count * sizeof(attribute_type), Buffer::GPU_BUFFER);
-	buffer->set_data(buffer_offset_in_bytes / sizeof(attribute_type), vertex_offset_count, vertex_count, _texture_coordinates);
+	buffer->load_data(buffer_offset_in_bytes / sizeof(attribute_type), vertex_offset_count, vertex_count, _texture_coordinates);
 	return buffer;
 }
 
@@ -161,7 +161,7 @@ std::unique_ptr<Buffer> SingleModel2::create_vertex_color_buffer(size_t vertex_o
 {
 	typedef glm::vec4 attribute_type;
 	std::unique_ptr<Buffer> buffer = std::make_unique<Buffer>(vertex_count * sizeof(attribute_type), Buffer::GPU_BUFFER);
-	buffer->set_data(buffer_offset_in_bytes / sizeof(attribute_type), vertex_offset_count, vertex_count, _vertex_colors);
+	buffer->load_data(buffer_offset_in_bytes / sizeof(attribute_type), vertex_offset_count, vertex_count, _vertex_colors);
 	return buffer;
 }
 
@@ -174,7 +174,7 @@ std::unique_ptr<Buffer> SingleModel2::create_bone_indicies_buffer(size_t vertex_
 {
 	typedef glm::ivec4 attribute_type;
 	std::unique_ptr<Buffer> buffer = std::make_unique<Buffer>(vertex_count * sizeof(attribute_type), Buffer::GPU_BUFFER);
-	buffer->set_data(buffer_offset_in_bytes / sizeof(attribute_type), vertex_offset_count, vertex_count, _bone_indicies);
+	buffer->load_data(buffer_offset_in_bytes / sizeof(attribute_type), vertex_offset_count, vertex_count, _bone_indicies);
 	return buffer;
 }
 
@@ -187,7 +187,7 @@ std::unique_ptr<Buffer> SingleModel2::create_bone_weights_buffer(size_t vertex_o
 {
 	typedef glm::vec4 attribute_type;
 	std::unique_ptr<Buffer> buffer = std::make_unique<Buffer>(vertex_count * sizeof(attribute_type), Buffer::GPU_BUFFER);
-	buffer->set_data(buffer_offset_in_bytes / sizeof(attribute_type), vertex_offset_count, vertex_count, _bone_weights);
+	buffer->load_data(buffer_offset_in_bytes / sizeof(attribute_type), vertex_offset_count, vertex_count, _bone_weights);
 	return buffer;
 }
 
@@ -200,7 +200,7 @@ std::unique_ptr<Buffer> SingleModel2::create_index_buffer(size_t vertex_offset_c
 {
 	typedef uint32_t attribute_type;
 	std::unique_ptr<Buffer> buffer = std::make_unique<Buffer>(vertex_count * sizeof(attribute_type), Buffer::GPU_BUFFER);
-	buffer->set_data(buffer_offset_in_bytes / sizeof(attribute_type), vertex_offset_count, vertex_count, _indicies);
+	buffer->load_data(buffer_offset_in_bytes / sizeof(attribute_type), vertex_offset_count, vertex_count, _indicies);
 	return buffer;
 }
 

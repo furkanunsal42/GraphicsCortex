@@ -44,9 +44,11 @@ namespace primitive_renderer {
 	);
 
 	void render(
-		Program& program, 
+		Program& program,
 		VertexAttributeBuffer& vab,
-		PrimitiveType primitive = PrimitiveType::triangle
+		PrimitiveType primitive = PrimitiveType::triangle,
+		size_t first = 0,
+		size_t count = 0
 	);
 	
 	void render(

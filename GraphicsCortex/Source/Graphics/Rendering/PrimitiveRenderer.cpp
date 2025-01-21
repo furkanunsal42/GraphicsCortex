@@ -7,7 +7,7 @@
 #include "Mesh2.h"
 #include "VertexAttributeBuffer.h"
 
-void primitive_renderer::render(Program& program, VertexAttributeBuffer& vab, PrimitiveType primitive)
+void primitive_renderer::render(Program& program, VertexAttributeBuffer& vab, PrimitiveType primitive, size_t first, size_t count)
 {
 	int32_t largest_slot = vab.get_largest_active_buffer_slot();
 	if (largest_slot == -1) {
@@ -20,5 +20,10 @@ void primitive_renderer::render(Program& program, VertexAttributeBuffer& vab, Pr
 	vab.bind();
 	program.bind();
 
-	GLCall(glDrawArrays(PrimitiveType_to_GL(primitive), 0, vertex_buffer.get_buffer_size_in_bytes()));
+	if (count == 0) {
+		int32_t stride = vab.get_attribute_stride(largest_slot);
+		count = vertex_buffer.get_buffer_size_in_bytes() / stride;
+	}
+
+	GLCall(glDrawArrays(PrimitiveType_to_GL(primitive), first, count));
 }

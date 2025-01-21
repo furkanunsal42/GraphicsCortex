@@ -293,10 +293,10 @@ Buffer::MemoryType Buffer::get_memory_type()
 	return _buffer_memory_type;
 }
 
-void Buffer::set_data(size_t managed_buffer_offset_in_bytes, size_t uploading_data_offset_in_bytes, size_t size_in_bytes, void* const data)
+void Buffer::load_data(size_t managed_buffer_offset_in_bytes, size_t uploading_data_offset_in_bytes, size_t size_in_bytes, void* const data)
 {
 	if (!_buffer_generated) {
-		std::cout << "[OpenGL Error] released Buffer tried to set_data()" << std::endl;
+		std::cout << "[OpenGL Error] released Buffer tried to load_data()" << std::endl;
 		ASSERT(false);
 	}
 	
@@ -305,9 +305,9 @@ void Buffer::set_data(size_t managed_buffer_offset_in_bytes, size_t uploading_da
 	GLCall(glNamedBufferSubData(id, managed_buffer_offset_in_bytes, std::min<size_t>(_buffer_size, size_in_bytes), (char*)data + uploading_data_offset_in_bytes));
 }
 
-void Buffer::set_data(size_t size_in_bytes, void* const data)
+void Buffer::load_data(size_t size_in_bytes, void* const data)
 {
-	set_data(0, 0, size_in_bytes, data);
+	load_data(0, 0, size_in_bytes, data);
 }
 
 void Buffer::get_data(size_t managed_buffer_offset_in_bytes, size_t downloading_data_offset_in_bytes, size_t size_in_bytes, void* data_out)

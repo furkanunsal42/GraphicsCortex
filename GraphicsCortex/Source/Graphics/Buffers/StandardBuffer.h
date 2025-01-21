@@ -319,14 +319,14 @@ public:
 	template<typename T>
 	size_t get_mapped_buffer_count();
 
-	void set_data(size_t managed_buffer_offset_in_bytes, size_t uploading_data_offset_in_bytes, size_t size_in_bytes, void* const data);
-	void set_data(size_t size_in_bytes, void* const data);
+	void load_data(size_t managed_buffer_offset_in_bytes, size_t uploading_data_offset_in_bytes, size_t size_in_bytes, void* const data);
+	void load_data(size_t size_in_bytes, void* const data);
 	template<typename T>
-	void set_data(size_t managed_buffer_offset_by_count, size_t uploading_data_offset_by_count, size_t count, const std::vector<T>& data);
+	void load_data(size_t managed_buffer_offset_by_count, size_t uploading_data_offset_by_count, size_t count, const std::vector<T>& data);
 	template<typename T>
-	void set_data(size_t managed_buffer_offset_by_count, size_t uploading_data_offset_by_count, const std::vector<T>& data);
+	void load_data(size_t managed_buffer_offset_by_count, size_t uploading_data_offset_by_count, const std::vector<T>& data);
 	template<typename T>
-	void set_data(const std::vector<T>& data);
+	void load_data(const std::vector<T>& data);
 
 	void get_data(size_t managed_buffer_offset_in_bytes, size_t downloading_data_offset_in_bytes, size_t size_in_bytes, void* data_out);
 	void get_data(size_t managed_buffer_offset_in_bytes, size_t downloading_data_offset_in_bytes, void* data_out);

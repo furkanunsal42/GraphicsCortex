@@ -32,7 +32,7 @@ inline size_t Buffer::get_mapped_buffer_count()
 }
 
 template<typename T>
-inline void Buffer::set_data(size_t managed_buffer_offset_by_count, size_t uploading_data_offset_by_count, size_t count, const std::vector<T>& data)
+inline void Buffer::load_data(size_t managed_buffer_offset_by_count, size_t uploading_data_offset_by_count, size_t count, const std::vector<T>& data)
 {
 	if (data.size() == 0) return;
 
@@ -40,24 +40,24 @@ inline void Buffer::set_data(size_t managed_buffer_offset_by_count, size_t uploa
 	size_t uploading_data_offset_in_bytes = uploading_data_offset_by_count * sizeof(T);
 	size_t size_in_bytes = count * sizeof(T);
 	
-	set_data(managed_buffer_offset_in_bytes, uploading_data_offset_in_bytes, std::min(data.size() * sizeof(T) - uploading_data_offset_in_bytes, size_in_bytes), (void*) & data[0]);
+	load_data(managed_buffer_offset_in_bytes, uploading_data_offset_in_bytes, std::min(data.size() * sizeof(T) - uploading_data_offset_in_bytes, size_in_bytes), (void*) & data[0]);
 }
 
 template<typename T>
-inline void Buffer::set_data(size_t managed_buffer_offset_by_count, size_t uploading_data_offset_by_count, const std::vector<T>& data)
+inline void Buffer::load_data(size_t managed_buffer_offset_by_count, size_t uploading_data_offset_by_count, const std::vector<T>& data)
 {
 	if (data.size() == 0) return;
 
 	size_t managed_buffer_offset_in_bytes = managed_buffer_offset_by_count * sizeof(T);
 	size_t uploading_data_offset_in_bytes = uploading_data_offset_by_count * sizeof(T);
 
-	set_data(managed_buffer_offset_in_bytes, uploading_data_offset_in_bytes, data.size() * sizeof(T), (void*) &data[0]);
+	load_data(managed_buffer_offset_in_bytes, uploading_data_offset_in_bytes, data.size() * sizeof(T), (void*) &data[0]);
 }
 
 template<typename T>
-inline void Buffer::set_data(const std::vector<T>& data)
+inline void Buffer::load_data(const std::vector<T>& data)
 {
-	set_data(0, 0, data);
+	load_data(0, 0, data);
 }
 
 template<typename T>
@@ -65,7 +65,7 @@ inline std::vector<T> Buffer::get_data(size_t managed_buffer_offset_by_count, si
 	
 	size_t managed_buffer_offset_in_bytes = managed_buffer_offset_by_count * sizeof(T);
 	size_t size_in_bytes = count * sizeof(T);
-
+	
 	char* buffer = (char*)get_data(managed_buffer_offset_in_bytes, size_in_bytes);
 
 	return std::vector<T>((T*)buffer, (T*)(buffer + size_in_bytes));

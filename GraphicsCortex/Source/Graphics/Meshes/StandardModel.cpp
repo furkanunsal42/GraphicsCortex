@@ -297,7 +297,7 @@ std::unique_ptr<Buffer> Model2::create_vertex_buffer(size_t buffer_left_padding,
 	size_t vertex_begin_pointer = 0;
 	for (auto& pair : _name_to_submodel) {
 		const std::vector<attribute_type>& data = pair.second->read_verticies();
-		buffer->set_data(vertex_begin_pointer, 0, data.size(), data);
+		buffer->load_data(vertex_begin_pointer, 0, data.size(), data);
 		vertex_begin_pointer += data.size();
 	}
 
@@ -315,7 +315,7 @@ std::unique_ptr<Buffer> Model2::create_normal_buffer(size_t buffer_left_padding,
 	size_t vertex_begin_pointer = 0;
 	for (auto& pair : _name_to_submodel) {
 		const std::vector<attribute_type>& data = pair.second->read_vertex_normals();
-		buffer->set_data(vertex_begin_pointer, 0, data.size(), data);
+		buffer->load_data(vertex_begin_pointer, 0, data.size(), data);
 		vertex_begin_pointer += data.size();
 	}
 
@@ -333,7 +333,7 @@ std::unique_ptr<Buffer> Model2::create_tangent_buffer(size_t buffer_left_padding
 	size_t vertex_begin_pointer = 0;
 	for (auto& pair : _name_to_submodel) {
 		const std::vector<attribute_type>& data = pair.second->read_vertex_tangents();
-		buffer->set_data(vertex_begin_pointer, 0, data.size(), data);
+		buffer->load_data(vertex_begin_pointer, 0, data.size(), data);
 		vertex_begin_pointer += data.size();
 	}
 
@@ -355,7 +355,7 @@ std::unique_ptr<Buffer> Model2::create_uv_merged_buffer(size_t buffer_left_paddi
 	size_t vertex_begin_pointer = 0;
 	for (auto& pair : _name_to_submodel) {
 		const std::vector<attribute_type>& data = pair.second->read_texture_coordinates();
-		buffer->set_data(vertex_begin_pointer, 0, data.size(), data);
+		buffer->load_data(vertex_begin_pointer, 0, data.size(), data);
 		vertex_begin_pointer += data.size();
 	}
 
@@ -374,7 +374,7 @@ std::unique_ptr<Buffer> Model2::create_vertex_color_buffer(size_t buffer_left_pa
 	size_t vertex_begin_pointer = 0;
 	for (auto& pair : _name_to_submodel) {
 		const std::vector<attribute_type>& data = pair.second->read_vertex_colors();
-		buffer->set_data(vertex_begin_pointer, 0, data.size(), data);
+		buffer->load_data(vertex_begin_pointer, 0, data.size(), data);
 		vertex_begin_pointer += data.size();
 	}
 
@@ -392,7 +392,7 @@ std::unique_ptr<Buffer> Model2::create_bone_indicies_buffer(size_t buffer_left_p
 	size_t vertex_begin_pointer = 0;
 	for (auto& pair : _name_to_submodel) {
 		const std::vector<attribute_type>& data = pair.second->read_bone_indicies();
-		buffer->set_data(vertex_begin_pointer, 0, data.size(), data);
+		buffer->load_data(vertex_begin_pointer, 0, data.size(), data);
 		vertex_begin_pointer += data.size();
 	}
 
@@ -410,7 +410,7 @@ std::unique_ptr<Buffer> Model2::create_bone_weights_buffer(size_t buffer_left_pa
 	size_t vertex_begin_pointer = 0;
 	for (auto& pair : _name_to_submodel) {
 		const std::vector<attribute_type>& data = pair.second->read_bone_weights();
-		buffer->set_data(vertex_begin_pointer, 0, data.size(), data);
+		buffer->load_data(vertex_begin_pointer, 0, data.size(), data);
 		vertex_begin_pointer += data.size();
 	}
 
@@ -437,7 +437,7 @@ std::unique_ptr<Buffer> Model2::create_index_buffer(size_t buffer_left_padding, 
 			for (int i = 0; i < data.size(); i++)
 				data_refactored[i] = (uint8_t)data[i];
 
-			buffer->set_data(vertex_begin_pointer, 0, data_refactored.size(), data_refactored);
+			buffer->load_data(vertex_begin_pointer, 0, data_refactored.size(), data_refactored);
 			vertex_begin_pointer += data_refactored.size();
 		}
 
@@ -450,14 +450,14 @@ std::unique_ptr<Buffer> Model2::create_index_buffer(size_t buffer_left_padding, 
 			for (int i = 0; i < data.size(); i++)
 				data_refactored[i] = (uint16_t)data[i];
 
-			buffer->set_data(vertex_begin_pointer, 0, data_refactored.size(), data_refactored);
+			buffer->load_data(vertex_begin_pointer, 0, data_refactored.size(), data_refactored);
 			vertex_begin_pointer += data_refactored.size();
 		}
 
 		else if (_index_buffer_type == IndexType::i_ui32) {
 
 			const std::vector<uint32_t>& data = pair.second->read_indicies();
-			buffer->set_data(vertex_begin_pointer, 0, data.size(), data);
+			buffer->load_data(vertex_begin_pointer, 0, data.size(), data);
 			vertex_begin_pointer += data.size();
 
 		}

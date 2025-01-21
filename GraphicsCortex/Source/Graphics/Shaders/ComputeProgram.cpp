@@ -246,6 +246,22 @@ void ComputeProgram::update_uniform_as_storage_buffer(const std::string& name, B
 	buffer.bind_as_storage_buffer(slot, offset, size);
 }
 
+void ComputeProgram::update_uniform_as_storage_buffer(const std::string& name, Buffer& buffer, size_t offset)
+{
+	// I don't think they are necessary
+	//buffer.wait_to_sycronize_upload();
+	//buffer.wait_to_sycronize_download();
+
+	if (!buffer._buffer_allocated) buffer._allocate_buffer(buffer._buffer_size);
+
+	GLCall(int slot = glGetProgramResourceIndex(id, GL_SHADER_STORAGE_BLOCK, name.c_str()));
+	if (slot == -1) {	// maybe
+		ASSERT(false);
+	}
+
+	buffer.bind_as_storage_buffer(slot, offset, buffer.get_buffer_size_in_bytes());
+}
+
 void ComputeProgram::update_uniform(const std::string& name, Texture1D& texture1d)
 {
 	texture1d.wait_async_load();
