@@ -21,8 +21,9 @@ int main() {
 
 	std::shared_ptr<FBP3D> fbp_solver = std::make_shared<FBP3D>();
 
-	fbp_solver->generate_shepplogan(volume_size.x, volume_size.y, volume_size.z);
-	fbp_solver->read_projections_as_sinograms("C:/Users/FURKAN.UNSAL/Desktop/Projektionen", 2048, 2048, 1, 2, volume_size.x, volume_size.y, 1440);
+	fbp_solver->generate_blank_volume(volume_size.x, volume_size.y, volume_size.z);
+	fbp_solver->generate_shepplogan();
+	fbp_solver->read_projections_as_sinograms("C:/Users/unsal/Desktop/Projektionen", 2048, 2048, 1, 2, volume_size.x, volume_size.y, 1440);
 	fbp_solver->log_normalize_sinograms(97.0 / 255);
 	
 	//fbp_solver->apply_fdk_weights_to_sinograms(730.87f, 669.04f, 409.60f);
@@ -30,7 +31,7 @@ int main() {
 	fbp_solver->project_backward_cone_fdk_from_sinograms(730.87f, 669.04f, 409.60f, 213.84f, 1, volume_size.x, volume_size.y, 0);
 	fbp_solver->normalize_histogram();
 
-	volumetric_program->update_uniform("volume", *fbp_solver->volume[0][0][0]);
+	volumetric_program->update_uniform("volume", *fbp_solver->volume[0][0][0].get_texture());
 
 	while (frame.is_running()) {
 		double deltatime = frame.handle_window();
