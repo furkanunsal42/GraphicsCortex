@@ -23,7 +23,7 @@ int main() {
 	
 	op.compute(
 		*function_texture,
-		0, std::vector<std::string>(),
+		0,
 		"vec4(pow(length(vec2((ivec2(id.xy) - 256) / 512.0f * 10.0f)), 2))");
 
 	std::shared_ptr<Texture2D> white_texture = std::make_shared<Texture2D>(512, 512, Texture2D::ColorTextureFormat::RGBA8, 1, 0, 0);

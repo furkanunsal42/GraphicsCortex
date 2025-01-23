@@ -111,7 +111,6 @@ void Camera::set_rotation(const glm::vec3& rotation) {
 }
 
 void Camera::update_default_uniforms(Program& program) {
-	update_matrixes();
 
 	program.update_uniform("view", view_matrix);
 	program.update_uniform("projection", projection_matrix);
