@@ -1,6 +1,7 @@
 #include "GraphicsCortex.h"
 #include "GraphRenderer/GraphRenderer.h"
 #include "TextureArithmatic/TextureArithmatic.h"
+#include "TextureArithmatic/DataArithmatic.h"
 
 int main() {
 	int window_width = 1024;
@@ -10,9 +11,20 @@ int main() {
 	scene.camera->fov = 90;
 	scene.camera->max_distance = 1000;
 
+	DataArithmatic op;
+	
 	std::shared_ptr<Texture2D> function_texture = std::make_shared<Texture2D>(512, 512, Texture2D::ColorTextureFormat::R32F, 1, 0, 0);
-	TextureArithmatic function;
-	function.operation_unary(*function_texture, "vec4(pow(length(vec2((ivec2(id.xy) - 256) / 512.0f * 10.0f)), 2))");
+	//op._compute_general(
+	//	*function_texture, "",
+	//	(Texture2D*)nullptr, "", false,
+	//	(Texture2D*)nullptr, "", false,
+	//	(int32_t*)nullptr, nullptr,
+	//	"vec4(pow(length(vec2((ivec2(id.xy) - 256) / 512.0f * 10.0f)), 2))");
+	
+	op.compute(
+		*function_texture,
+		0, std::vector<std::string>(),
+		"vec4(pow(length(vec2((ivec2(id.xy) - 256) / 512.0f * 10.0f)), 2))");
 
 	std::shared_ptr<Texture2D> white_texture = std::make_shared<Texture2D>(512, 512, Texture2D::ColorTextureFormat::RGBA8, 1, 0, 0);
 	TextureArithmatic blit_to_rgba;
@@ -31,10 +43,10 @@ int main() {
 
 		scene.camera->handle_movements(frame.window, deltatime);
 
-		graph_renderer.render(*scene.camera);
+		//graph_renderer.render(*scene.camera);
 
-		//fb.activate_draw_buffer(0);
-		//fb.blit_to_screen(0, 0, 512, 512, 0, 0, window_width, window_width, Framebuffer::Channel::COLOR, Framebuffer::Filter::LINEAR);
+		fb.activate_draw_buffer(0);
+		fb.blit_to_screen(0, 0, 512, 512, 0, 0, window_width, window_width, Framebuffer::Channel::COLOR, Framebuffer::Filter::LINEAR);
 
 	}
 }
