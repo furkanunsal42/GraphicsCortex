@@ -47,12 +47,12 @@ int main() {
 		glm::mat4x4 model_matrix = glm::scale(glm::rotate(glm::identity<glm::mat4x4>(), angle, glm::vec3(0, 1, 0)), glm::vec3(1.0f / resolution.x, 1.0f / 1, 1.0f / resolution.y));
 		point_cloud_program->update_uniform("model", model_matrix);
 		
-		primitive_renderer::render(*point_cloud_program, *vab, PrimitiveType::line_strip);
+		primitive_renderer::render(*point_cloud_program, *vab, PrimitiveType::point);
 	
 		model_matrix = glm::scale(glm::rotate(glm::identity<glm::mat4x4>(), angle + 3.14f/2, glm::vec3(0, 1, 0)), glm::vec3(1.0f / resolution.x, 1.0f / 1, 1.0f / resolution.y));
 		point_cloud_program->update_uniform("model", model_matrix);
 
-		primitive_renderer::render(*point_cloud_program, *vab, PrimitiveType::line_strip);
+		primitive_renderer::render(*point_cloud_program, *vab, PrimitiveType::point);
 
 	}
 }
