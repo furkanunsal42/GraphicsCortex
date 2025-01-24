@@ -258,7 +258,7 @@ void ComputeProgram::update_uniform_as_storage_buffer(const std::string& name, B
 	if (slot == -1) {	// maybe
 		ASSERT(false);
 	}
-
+	
 	buffer.bind_as_storage_buffer(slot, offset, buffer.get_buffer_size_in_bytes());
 }
 
