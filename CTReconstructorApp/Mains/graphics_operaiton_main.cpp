@@ -1,7 +1,7 @@
 #include "GraphicsCortex.h"
 #include "GraphRenderer/GraphRenderer.h"
 #include "TextureArithmatic/TextureArithmatic.h"
-#include "TextureArithmatic/DataArithmatic.h"
+#include "TextureArithmatic/GraphicsOperation.h"
 
 int main() {
 	int window_width = 1024;
@@ -11,24 +11,19 @@ int main() {
 	scene.camera->fov = 90;
 	scene.camera->max_distance = 1000;
 
-	DataArithmatic op;
+	GraphicsOperation op;
 	
-	std::shared_ptr<Texture2D> function_texture = std::make_shared<Texture2D>(512, 512, Texture2D::ColorTextureFormat::R32F, 1, 0, 0);
-	//op._compute_general(
-	//	*function_texture, "",
-	//	(Texture2D*)nullptr, "", false,
-	//	(Texture2D*)nullptr, "", false,
-	//	(int32_t*)nullptr, nullptr,
-	//	"vec4(pow(length(vec2((ivec2(id.xy) - 256) / 512.0f * 10.0f)), 2))");
+	std::shared_ptr<Texture2D> function_texture = std::make_shared<Texture2D>(512, 512, Texture2D::ColorTextureFormat::R16F, 1, 0, 0);
 	
 	op.compute(
-		*function_texture,
-		0,
-		"vec4(pow(length(vec2((ivec2(id.xy) - 256) / 512.0f * 10.0f)), 2))");
+		*function_texture, 
+		"pow(length( (id_n.xy - 0.5) * 10.0f), 2)");
 
 	std::shared_ptr<Texture2D> white_texture = std::make_shared<Texture2D>(512, 512, Texture2D::ColorTextureFormat::RGBA8, 1, 0, 0);
-	TextureArithmatic blit_to_rgba;
-	blit_to_rgba.operation_binary(*white_texture, *function_texture, "vec4(operand.x)");
+	op.compute(
+		*white_texture,
+		*function_texture, false,
+		"source.xxxx");
 
 	GraphRenderer graph_renderer(glm::vec3(-5, -5, -5), glm::vec3(5, 5, 5), glm::ivec2(4096, 32));
 	graph_renderer.load_data(*function_texture, glm::vec2(-5, -5), glm::vec2(5, 5));
