@@ -16,35 +16,57 @@ int main() {
 	std::shared_ptr<Texture2D> function_texture = std::make_shared<Texture2D>(512, 512, Texture2D::ColorTextureFormat::R16F, 1, 0, 0);
 	std::shared_ptr<Texture2D> white_texture = std::make_shared<Texture2D>(512, 512, Texture2D::ColorTextureFormat::RGBA8, 1, 0, 0);
 	
+	float range = 16;
 	{
+		op.set_precomputation_statements({
+			"float rho = 1.0;"
+			"float mean = 4.0;"
+			"float frequency = 4.0;"
+			"float range = "+std::to_string(range)+";"
+			"float gauss(float x) { return 1/sqrt(2*3.14)/rho*exp(-1/2.0 * (x-mean)*(x-mean)/rho/rho); }"
+			"float polynomial2(float x) { return pow(x, 2); }"
+			"float logarithm(float x) { return log(x); }"
+			"float sinusoidal(float x) { return sin(frequency*x); }"
+			});
+		
 		op.compute(
-			*function_texture, 
-			"pow(length( (id_n.xy - 0.5) * 10.0f), 2)");
+			*function_texture,
+		//	"polynomial2( length((id_n.xy - 0.5)*range))");
+		//	"logarithm( length(id_n.xy - 0.5)*range)");
+		//	"sinusoidal( length(id_n.xy - 0.5)*range)");
+			"gauss( length(id_n.xy - 0.5)*range) * 4");
 
+	
 		op.compute(
 			*white_texture,
-			*function_texture, false,
+			*function_texture, true,
 			"source.xxxx");
 	}
-
-
-	GraphRenderer graph_renderer(glm::vec3(-5, -5, -5), glm::vec3(5, 5, 5), glm::ivec2(4096, 32));
-	graph_renderer.load_data(*function_texture, glm::vec2(-5, -5), glm::vec2(5, 5));
-
+	
+	
+	GraphRenderer graph_renderer(glm::vec3(-range/2, -range/2, -range/2), glm::vec3(range/2, range/2, range/2), glm::vec3(1), glm::ivec2(2, 64));
+	graph_renderer.load_data(*function_texture, glm::vec2(-range/2, -range/2), glm::vec2(range/2, range/2));
+	
+	
+	std::shared_ptr<Renderbuffer> render_target = std::make_shared<Renderbuffer>(window_width, window_width, Renderbuffer::ColorTextureFormat::RGBA8, 8);
 	Framebuffer fb;
-	fb.attach_color(0, white_texture);
+	fb.attach_color(0, render_target);
 
 	while (frame.is_running()) {
 		double deltatime = frame.handle_window();
-		frame.clear_window();
 		frame.display_performance();
 
 		scene.camera->handle_movements(frame.window, deltatime);
-
+		
+		fb.activate_draw_buffer(0);
+		fb.bind_draw();
+		fb.clear_bound_drawbuffer(1, 1, 1, 1);
+		
 		graph_renderer.render(*scene.camera);
+		
+		fb.deactivate_all_draw_buffers();
+		Framebuffer::bind_screen_draw();
 
-		//fb.activate_draw_buffer(0);
-		//fb.blit_to_screen(0, 0, 512, 512, 0, 0, window_width, window_width, Framebuffer::Channel::COLOR, Framebuffer::Filter::LINEAR);
-
+		fb.blit_to_screen(0, 0, render_target->get_size().x, render_target->get_size().y, 0, 0, window_width, window_width, Framebuffer::Channel::COLOR, Framebuffer::Filter::LINEAR);
 	}
 }

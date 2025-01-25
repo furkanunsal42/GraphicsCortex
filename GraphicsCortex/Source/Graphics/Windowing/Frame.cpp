@@ -98,10 +98,10 @@ Frame::Frame(int width, int height, const std::string& name, int msaa, int swapi
 	else
 		glEnable(GL_BLEND);
 
-	if (multisample)
+	//if (multisample)
 		glEnable(GL_MULTISAMPLE);
-	else
-		glDisable(GL_MULTISAMPLE);
+	//else
+	//	glDisable(GL_MULTISAMPLE);
 
 	if (debug_callback_level != CallbackLevel::DISABLED) {
 		glEnable(GL_DEBUG_OUTPUT);
