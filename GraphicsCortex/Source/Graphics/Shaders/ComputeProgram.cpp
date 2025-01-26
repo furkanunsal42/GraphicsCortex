@@ -168,7 +168,7 @@ void ComputeProgram::compile_shader(const Shader& shader)
 		GLCall(glDeleteShader(compute_shader));
 
 		std::cout << "[OpenGL Error] Compute Shader \"" << shader.filename << "\" failed to compiler with message : " << info_log << std::endl;;
-		ASSERT(false);
+		//ASSERT(false);
 		return;
 	}
 

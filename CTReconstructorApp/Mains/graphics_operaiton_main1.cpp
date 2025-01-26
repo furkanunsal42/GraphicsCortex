@@ -18,22 +18,27 @@ int main() {
 	
 	float range = 16;
 	{
-		op.set_precomputation_statements({
-			"float rho = 1.0;"
-			"float mean = 4.0;"
-			"float frequency = 4.0;"
-			"float range = "+std::to_string(range)+";"
-			"float gauss(float x) { return 1/sqrt(2*3.14)/rho*exp(-1/2.0 * (x-mean)*(x-mean)/rho/rho); }"
+		op.push_constant("rho", 1.0f);
+		op.push_constant("mean", 4.0f);
+		op.push_constant("frequency", 4.0f);
+		op.push_constant("range", 16.0f);
+
+		op.push_precomputation_statement({
+			"float gauss(vec2 x) { return 1/sqrt(2*3.14)/rho*exp(-1/2.0 * dot((x-vec2(mean)),(x-vec2(mean)))/rho/rho); }"
+			"float gauss(float x) { return 1/sqrt(2*3.14)/rho*exp(-1/2.0 * dot((x-float(mean)),(x-float(mean)))/rho/rho); }"
+			"float polynomial2(vec2 x) { return pow(length(x), 2); }"
 			"float polynomial2(float x) { return pow(x, 2); }"
+			"float logarithm(vec2 x) { return log(length(x)); }"
 			"float logarithm(float x) { return log(x); }"
+			"float sinusoidal(vec2 x) { return sin(length(frequency*x)); }"
 			"float sinusoidal(float x) { return sin(frequency*x); }"
 			});
 		
 		op.compute(
 			*function_texture,
-		//	"polynomial2( length((id_n.xy - 0.5)*range))");
-		//	"logarithm( length(id_n.xy - 0.5)*range)");
-		//	"sinusoidal( length(id_n.xy - 0.5)*range)");
+		//	"polynomial2(((id_n.xy - 0.5)*range))");
+		//	"logarithm((id_n.xy - 0.5)*range)");
+		//	"sinusoidal((id_n.xy - 0.5)*range)");
 			"gauss( length(id_n.xy - 0.5)*range) * 4");
 
 	
@@ -44,7 +49,7 @@ int main() {
 	}
 	
 	
-	GraphRenderer graph_renderer(glm::vec3(-range/2, -range/2, -range/2), glm::vec3(range/2, range/2, range/2), glm::vec3(1), glm::ivec2(2, 64));
+	GraphRenderer graph_renderer(glm::vec3(-range/2, -range/2, -range/2), glm::vec3(range/2, range/2, range/2), glm::vec3(1), glm::ivec2(8, 64));
 	graph_renderer.load_data(*function_texture, glm::vec2(-range/2, -range/2), glm::vec2(range/2, range/2));
 	
 	

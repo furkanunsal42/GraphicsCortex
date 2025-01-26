@@ -119,6 +119,7 @@ void VertexAttributeBuffer::attach_vertex_buffer(int32_t slot, std::shared_ptr<B
         std::cout << "[OpenGL Error] VertexAttributeBuffer tried to access slot: " << slot << " but only " << _max_attribute_count << " attributes are supported" << std::endl;
         ASSERT(false);
     }
+    vertex_buffer->force_allocation();
 
     GLCall(glVertexArrayVertexBuffer(id, slot, vertex_buffer->id, offset, stride));
 
