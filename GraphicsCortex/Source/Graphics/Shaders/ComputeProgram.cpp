@@ -9,18 +9,19 @@
 
 #include <sstream>
 
-ComputeProgram::ComputeProgram()
+ComputeProgram::ComputeProgram(const Shader& shader, const std::vector<std::pair<std::string, std::string>>& preprocessing_key_values)
 {
-	_generate_program();
-}
-
-ComputeProgram::ComputeProgram(const Shader& shader, std::vector<std::pair<std::string, std::string>> preprocessing_key_values)
-{
-	for (std::pair<std::string, std::string>& key_value : preprocessing_key_values)
-		set_preprocessor(key_value.first, key_value.second);
+	set_preprocessor(preprocessing_key_values);
 	
 	_generate_program();
 	compile_shader(shader);
+}
+
+ComputeProgram::ComputeProgram(const std::vector<std::pair<std::string, std::string>>& preprocessing_key_values)
+{
+	set_preprocessor(preprocessing_key_values);
+
+	_generate_program();
 }
 
 ComputeProgram::~ComputeProgram()
@@ -204,6 +205,12 @@ void ComputeProgram::clear_preprocessor()
 void ComputeProgram::set_preprocessor(const std::string& key, const std::string& value)
 {
 	_preprocessing_defines[key] = value;
+}
+
+void ComputeProgram::set_preprocessor(const std::vector<std::pair<std::string, std::string>>& preprocessing_key_values)
+{
+	for (const std::pair<std::string, std::string>& key_value : preprocessing_key_values)
+		set_preprocessor(key_value.first, key_value.second);
 }
 
 std::string ComputeProgram::get_preprocessor(const std::string& key)

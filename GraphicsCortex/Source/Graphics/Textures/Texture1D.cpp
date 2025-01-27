@@ -868,7 +868,7 @@ void Texture1D::clear(unsigned char clear_data, int x, int width, int mipmap_tar
 		std::cout << "[OpenGL Error] Texture1D tried to get_image() but Texture was not allocated yet" << std::endl;
 		ASSERT(false);
 	}
-
+	
 	GLCall(glClearTexSubImage(id, mipmap_target, x, 0, 0, width, 1, 1, GL_RED, GL_UNSIGNED_BYTE, &clear_data));
 }
 

@@ -13,13 +13,13 @@ int main() {
 
 	GraphicsOperation op;
 
-	std::shared_ptr<Texture2D> function_texture = std::make_shared<Texture2D>(1024, 1024, Texture2D::ColorTextureFormat::R16F, 1, 0, 0);
+	std::shared_ptr<Texture2D> function_texture = std::make_shared<Texture2D>(1024, 1024, Texture2D::ColorTextureFormat::R32F, 1, 0, 0);
 	std::shared_ptr<Texture2D> white_texture = std::make_shared<Texture2D>(1024, 1024, Texture2D::ColorTextureFormat::RGBA8, 1, 0, 0);
 
 	float range = 16;
 	op.set_constant("rho", 1.0f);
 	op.set_constant("mean", 4.0f);
-	op.set_constant("frequency", 4.0f);
+	op.set_constant("frequency", 1.0f);
 	op.set_constant("range", 16.0f);
 	op.set_constant("phase", 0.0f);
 
@@ -32,9 +32,13 @@ int main() {
 		"float logarithm(float x) { return log(x); }"
 		"float sinusoidal(vec2 x) { return sin(length(frequency*x - phase)); }"
 		"float sinusoidal(float x) { return sin(frequency*x - phase); }"
+		"float sinc(vec2 x) { return sin(length(frequency*x - phase)) / length(frequency*x - phase); }"
+		"float sinc(float x) { return sin(frequency*x - phase) / (frequency*x); }"
+		"float sinc2(vec2 x) { return pow(sinc(x), 2); }"
+		"float sinc2(float x) { return pow(sinc(x), 2); }"
 		});
 
-	GraphRenderer graph_renderer(glm::vec3(-range / 2, -range / 2, -range / 2), glm::vec3(range / 2, range / 2, range / 2), glm::vec3(1), glm::ivec2(2, 64));
+	GraphRenderer graph_renderer(glm::vec3(-range / 2, -range / 2, -range / 2), glm::vec3(range / 2, range / 2, range / 2), glm::vec3(1), glm::ivec2(4, 64));
 
 
 	std::shared_ptr<Renderbuffer> render_target = std::make_shared<Renderbuffer>(window_width, window_width, Renderbuffer::ColorTextureFormat::RGBA8, 8);
@@ -59,8 +63,10 @@ int main() {
 			*function_texture,
 			//	"polynomial2(((id_n.xy - 0.5)*range))");
 			//	"logarithm((id_n.xy - 0.5)*range)");
-			 //	"sinusoidal(length(id_n.xy - 0.5)*range)");
-				"gauss( length(id_n.xy - 0.5)*range) * 4");
+				"sinusoidal(length(id_n.xy - 0.5)*range)");
+			//	"sinc(length(id_n.xy - 0.5)*range)");
+			//	"sinc2(length(id_n.xy - 0.5)*range)");
+			//	"gauss( length(id_n.xy - 0.5)*range) * 4");
 
 		graph_renderer.load_data(*function_texture, glm::vec2(-range / 2, -range / 2), glm::vec2(range / 2, range / 2));
 

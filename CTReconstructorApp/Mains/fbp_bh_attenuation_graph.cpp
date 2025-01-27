@@ -5,6 +5,7 @@
 #include "Application/ReconstructionInfo.h"
 #include "DirectoryUtils.h"
 #include "TextureArithmatic/TextureArithmatic.h"
+#include "TextureArithmatic/GraphicsOperation.h"
 
 using namespace shader_directory;
 
@@ -81,14 +82,45 @@ int main() {
 	solver->projections_clear_vram();
 
 	fbp_segmented_memory::iterate_horizontal_volume_segments(*solver, false, false, [&](glm::ivec3 volume_segment_index) {
-		solver->clip_negatives_of_volume();
-		//solver->normalize_histogram(*min_texture, *max_texture);
+		//solver->clip_negatives_of_volume();
+		//solver->normalize_min_max_values(*min_texture, *max_texture);
 		});
 
-	solver->generate_blank_distanced_projections(volume_dimentions.x, volume_dimentions.y, volume_dimentions.y/*projection_count*/);
-	solver->bh_project_forward_parallel_to_distanced_projections({ 2, 15 }, 1, volume_dimentions.y/*projection_count*/, 0);
-	//solver->bh_compute_distance_attenuation_graph_from_distanced_projections(128, 128, 40, 40);
+	GraphicsOperation op;
+
+	Texture1D histogram(4096, Texture1D::ColorTextureFormat::R32UI, 1, 0);
+	histogram.is_bindless = false;
+	solver->bh_compute_volume_histogram(glm::vec2(-10, 30), histogram);
+
+	std::shared_ptr<Image> image = histogram.get_image(Texture1D::ColorFormat::RED_INTEGER, Texture1D::Type::UNSIGNED_INT, 0);
+	uint32_t* histogram_data = (uint32_t*)image->get_image_data();
+	for (int i = 0; i < histogram.get_size().x; i++)
+		std::cout << histogram_data[i] << " ";
+	std::cout << std::endl;
+
+	std::shared_ptr<Texture2D> histogram_render = std::make_shared<Texture2D>(4096, window_width, Texture2D::ColorTextureFormat::RGBA8, 1, 0, 0);
+
+	op.compute(
+		*histogram_render,
+		histogram, false,
+		"int(id.y < log(source.x * 100))"
+	);
+
+	Framebuffer fb;
+	fb.attach_color(0, histogram_render);
+	while (frame.is_running()) {
+		frame.handle_window();
+		frame.clear_window(1, 0, 1, 1);
+
+		fb.activate_draw_buffer(0);
+		fb.blit_to_screen(0, 0, 4096, window_width, 0, 0, window_width, window_width, Framebuffer::Channel::COLOR, Framebuffer::Filter::NEAREST);
+	}
+
+	solver->generate_blank_distanced_projections(volume_dimentions.x, volume_dimentions.y, volume_dimentions.y/*projection_count*/, 2);
+	solver->bh_project_forward_parallel_to_distanced_projections({ 2, 15, 30, 100 }, 1, volume_dimentions.y/*projection_count*/, 0);
 	
+	//solver->bh_compute_distance_attenuation_graph_from_distanced_projections(128, 128, 40, 40);
+
 	//{
 	//	std::shared_ptr<VertexAttributeBuffer> vab = std::make_shared<VertexAttributeBuffer>();
 	//	vab->attach_vertex_buffer(0, solver->distance_attenuation_table, VertexAttributeBuffer::a_f32, 3, sizeof(glm::vec3), 0, true);
@@ -123,7 +155,7 @@ int main() {
 	slice->is_bindless = false;
 	std::shared_ptr<Texture2D> slice_complex = std::make_shared<Texture2D>(volume_dimentions.x, volume_dimentions.z, solver->get_projection_complex_format(), 1, 0, 0);
 	slice_complex->is_bindless = false;
-	std::shared_ptr<Texture2D> slice_white = std::make_shared<Texture2D>(volume_dimentions.x, volume_dimentions.z, Texture2D::ColorTextureFormat::RGBA32F, 1, 0, 0);
+	std::shared_ptr<Texture2D> slice_white = std::make_shared<Texture2D>(volume_dimentions.x, volume_dimentions.z, Texture2D::ColorTextureFormat::RGBA8, 1, 0, 0);
 	slice_white->is_bindless = false;
 	std::shared_ptr<Texture2D> slice_distanced = std::make_shared<Texture2D>(volume_dimentions.x, volume_dimentions.z, solver->get_distanced_projection_format(), 1, 0, 0);
 	slice->is_bindless = false;
@@ -145,10 +177,10 @@ int main() {
 				//solver->load_volume_slice_y(slice_id, *slice);
 				//solver->load_projection(slice_id, *slice);
 				//solver->load_sinogram(slice_id, *slice);
-				solver->load_distanced_projection(slice_id, *slice_distanced);
+				solver->load_distanced_projection(slice_id, 1, *slice_distanced);
 
 				//solver->fbp_solver->_texture_blit_float1_to_float4(*slice, *slice_white);
-				arithmatic.operation_binary(*slice_white, *slice_distanced, "vec4(operand.xz, 0, 1) / 200");
+				arithmatic.operation_binary(*slice_white, *slice_distanced, "vec4(operand.xyz, 1) / 200");
 
 				framebuffer->attach_color(0, slice_white);
 				framebuffer->set_read_buffer(0);
