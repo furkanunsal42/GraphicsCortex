@@ -226,6 +226,15 @@ public:
 	static int ColorTextureFormat_bytes_per_channel(ColorTextureFormat color_texture_format);
 	static int ColorTextureFormat_bytes_per_pixel(ColorTextureFormat color_texture_format);
 
+	static ColorFormat ColorTextureFormat_to_ColorFormat(ColorTextureFormat color_texture_format);
+	static Type ColorTextureFormat_to_Type(ColorTextureFormat color_texture_format);
+	//static ColorTextureFormat ColorFormat_Type_to_ColorTextureFormat(ColorFormat format, Type type);
+	static bool is_intager_ColorTextureFormat(ColorTextureFormat format);
+	static bool is_unsigned_intager_ColorTextureFormat(ColorTextureFormat format);
+	static bool is_float_ColorTextureFormat(ColorTextureFormat format);
+
+	static bool is_intager_ColorFormat(ColorFormat format);
+
 	template<typename TextureType>
 	static std::string ColorTextureFormat_to_OpenGL_compute_Sampler_type();
 	static std::string ColorTextureFormat_to_OpenGL_compute_Image_format(ColorTextureFormat color_texture_format);

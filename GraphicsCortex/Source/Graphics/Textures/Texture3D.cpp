@@ -929,7 +929,11 @@ void Texture3D::clear(unsigned char clear_data, int x, int y, int z, int width, 
 		ASSERT(false);
 	}
 
-	GLCall(glClearTexSubImage(id, mipmap_target, x, y, z, width, height, depth, GL_RED, GL_UNSIGNED_BYTE, &clear_data));
+	uint32_t type = GL_RED;
+	if (is_intager_ColorTextureFormat(get_internal_format_color()) || is_unsigned_intager_ColorTextureFormat(get_internal_format_color()))
+		type = GL_RED_INTEGER;
+
+	GLCall(glClearTexSubImage(id, mipmap_target, x, y, z, width, height, depth, type, GL_UNSIGNED_BYTE, &clear_data));
 }
 
 void Texture3D::clear(float clear_data, int x, int y, int z, int width, int height, int depth, int mipmap_target)
@@ -939,7 +943,11 @@ void Texture3D::clear(float clear_data, int x, int y, int z, int width, int heig
 		ASSERT(false);
 	}
 
-	GLCall(glClearTexSubImage(id, mipmap_target, x, y, z, width, height, depth, GL_RED, GL_FLOAT, &clear_data));
+	uint32_t type = GL_RED;
+	if (is_intager_ColorTextureFormat(get_internal_format_color()) || is_unsigned_intager_ColorTextureFormat(get_internal_format_color()))
+		type = GL_RED_INTEGER;
+
+	GLCall(glClearTexSubImage(id, mipmap_target, x, y, z, width, height, depth, type, GL_FLOAT, &clear_data));
 }
 
 void Texture3D::clear(glm::vec2 clear_data, int x, int y, int z, int width, int height, int depth, int mipmap_target)
@@ -949,7 +957,11 @@ void Texture3D::clear(glm::vec2 clear_data, int x, int y, int z, int width, int 
 		ASSERT(false);
 	}
 
-	GLCall(glClearTexSubImage(id, mipmap_target, x, y, z, width, height, depth, GL_RG, GL_FLOAT, &clear_data));
+	uint32_t type = GL_RG;
+	if (is_intager_ColorTextureFormat(get_internal_format_color()) || is_unsigned_intager_ColorTextureFormat(get_internal_format_color()))
+		type = GL_RG_INTEGER;
+
+	GLCall(glClearTexSubImage(id, mipmap_target, x, y, z, width, height, depth, type, GL_FLOAT, &clear_data));
 }
 
 void Texture3D::clear(glm::vec3 clear_data, int x, int y, int z, int width, int height, int depth, int mipmap_target)
@@ -958,6 +970,10 @@ void Texture3D::clear(glm::vec3 clear_data, int x, int y, int z, int width, int 
 		std::cout << "[OpenGL Error] Texture3D tried to clear() but Texture3D was not allocated yet" << std::endl;
 		ASSERT(false);
 	}
+
+	uint32_t type = GL_RGB;
+	if (is_intager_ColorTextureFormat(get_internal_format_color()) || is_unsigned_intager_ColorTextureFormat(get_internal_format_color()))
+		type = GL_RGB_INTEGER;
 
 	GLCall(glClearTexSubImage(id, mipmap_target, x, y, z, width, height, depth, GL_RGB, GL_FLOAT, &clear_data));
 }
@@ -968,6 +984,11 @@ void Texture3D::clear(glm::vec4 clear_data, int x, int y, int z, int width, int 
 		std::cout << "[OpenGL Error] Texture3D tried to clear() but Texture3D was not allocated yet" << std::endl;
 		ASSERT(false);
 	}
+
+	uint32_t type = GL_RGBA;
+	if (is_intager_ColorTextureFormat(get_internal_format_color()) || is_unsigned_intager_ColorTextureFormat(get_internal_format_color()))
+		type = GL_RGBA_INTEGER;
+
 
 	GLCall(glClearTexSubImage(id, mipmap_target, x, y, z, width, height, depth, GL_RGBA, GL_FLOAT, &clear_data));
 }

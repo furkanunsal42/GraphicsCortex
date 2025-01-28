@@ -17,13 +17,6 @@ Buffer::Buffer(size_t buffer_size, MemoryType buffer_memory_type) :
 	_generate_buffer();
 }
 
-Buffer::_layout_info::_layout_info() :
-	begin_offset(0), count(0), element_stride(0) {}
-
-Buffer::_layout_info::_layout_info(size_t begin_offset, size_t count, size_t element_stride) :
-	begin_offset(begin_offset), count(count), element_stride(element_stride) {}
-
-
 Buffer::~Buffer()
 {
 	release();

@@ -15,7 +15,7 @@ int main() {
 	glm::ivec3 volume_dimentions(512, 512, 512);
 	glm::vec3 voxel_size(200.0f / volume_dimentions.x, 200.0f / volume_dimentions.y, 200.0f / volume_dimentions.z);
 	int projection_count = 1440;
-	int window_width = 1024;
+	int window_width = 512;
 
 	int slice_index_number_length = 6;
 	std::string reconstruction_path = "reconstruction";
@@ -82,28 +82,35 @@ int main() {
 	solver->projections_clear_vram();
 
 	fbp_segmented_memory::iterate_horizontal_volume_segments(*solver, false, false, [&](glm::ivec3 volume_segment_index) {
-		//solver->clip_negatives_of_volume();
+		solver->clip_negatives_of_volume();
 		//solver->normalize_min_max_values(*min_texture, *max_texture);
 		});
 
 	GraphicsOperation op;
 
+	Texture1D min_tex(1, Texture1D::ColorTextureFormat::R32I, 1, 0);
+	Texture1D max_tex(1, Texture1D::ColorTextureFormat::R32I, 1, 0);
+	solver->compute_min_value_of_volume(min_tex);
+	solver->compute_max_value_of_volume(max_tex);
+
+	int32_t sensitivity = 256 * 256 * 256;
+	int32_t histogram_min = *(int32_t*)min_tex.get_image(Texture1D::ColorFormat::RED_INTEGER, Texture1D::Type::INT, 0)->get_image_data() / sensitivity;
+	int32_t histogram_max = *(int32_t*)max_tex.get_image(Texture1D::ColorFormat::RED_INTEGER, Texture1D::Type::INT, 0)->get_image_data() / sensitivity;
+
+	std::cout << histogram_min << " " << histogram_max << std::endl;
+
 	Texture1D histogram(4096, Texture1D::ColorTextureFormat::R32UI, 1, 0);
-	histogram.is_bindless = false;
-	solver->bh_compute_volume_histogram(glm::vec2(-10, 30), histogram);
+	solver->bh_compute_volume_histogram(glm::vec2(-256, 256/*histogram_min, histogram_max*/), histogram);
 
 	std::shared_ptr<Image> image = histogram.get_image(Texture1D::ColorFormat::RED_INTEGER, Texture1D::Type::UNSIGNED_INT, 0);
-	uint32_t* histogram_data = (uint32_t*)image->get_image_data();
-	for (int i = 0; i < histogram.get_size().x; i++)
-		std::cout << histogram_data[i] << " ";
-	std::cout << std::endl;
-
 	std::shared_ptr<Texture2D> histogram_render = std::make_shared<Texture2D>(4096, window_width, Texture2D::ColorTextureFormat::RGBA8, 1, 0, 0);
 
 	op.compute(
 		*histogram_render,
 		histogram, false,
-		"int(id.y < log(source.x * 100))"
+		"vec4 source_prev = imageLoad(source_data, source_index_type(id.x - 1));"
+		"bool condution = id.y < (log(source.x));"
+		"imageStore(target_data, target_index_type(id), vec4(int(condution)));"
 	);
 
 	Framebuffer fb;

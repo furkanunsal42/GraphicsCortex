@@ -869,7 +869,11 @@ void Texture1D::clear(unsigned char clear_data, int x, int width, int mipmap_tar
 		ASSERT(false);
 	}
 	
-	GLCall(glClearTexSubImage(id, mipmap_target, x, 0, 0, width, 1, 1, GL_RED, GL_UNSIGNED_BYTE, &clear_data));
+	uint32_t type = GL_RED;
+	if (is_intager_ColorTextureFormat(get_internal_format_color()) || is_unsigned_intager_ColorTextureFormat(get_internal_format_color()))
+		type = GL_RED_INTEGER;
+
+	GLCall(glClearTexSubImage(id, mipmap_target, x, 0, 0, width, 1, 1, type, GL_UNSIGNED_BYTE, &clear_data));
 }
 
 void Texture1D::clear(float clear_data, int x, int width, int mipmap_target)
@@ -879,7 +883,11 @@ void Texture1D::clear(float clear_data, int x, int width, int mipmap_target)
 		ASSERT(false);
 	}
 
-	GLCall(glClearTexSubImage(id, mipmap_target, x, 0, 0, width, 1, 1, GL_RED, GL_FLOAT, &clear_data));
+	uint32_t type = GL_RED;
+	if (is_intager_ColorTextureFormat(get_internal_format_color()) || is_unsigned_intager_ColorTextureFormat(get_internal_format_color()))
+		type = GL_RED_INTEGER;
+
+	GLCall(glClearTexSubImage(id, mipmap_target, x, 0, 0, width, 1, 1, type, GL_FLOAT, &clear_data));
 }
 
 void Texture1D::clear(glm::vec2 clear_data, int x, int width, int mipmap_target)
@@ -889,7 +897,12 @@ void Texture1D::clear(glm::vec2 clear_data, int x, int width, int mipmap_target)
 		ASSERT(false);
 	}
 
-	GLCall(glClearTexSubImage(id, mipmap_target, x, 0, 0, width, 1, 1, GL_RG, GL_FLOAT, &clear_data));
+	uint32_t type = GL_RG;
+	if (is_intager_ColorTextureFormat(get_internal_format_color()) || is_unsigned_intager_ColorTextureFormat(get_internal_format_color()))
+		type = GL_RG_INTEGER;
+
+
+	GLCall(glClearTexSubImage(id, mipmap_target, x, 0, 0, width, 1, 1, type, GL_FLOAT, &clear_data));
 }
 
 void Texture1D::clear(glm::vec3 clear_data, int x, int width, int mipmap_target)
@@ -899,7 +912,11 @@ void Texture1D::clear(glm::vec3 clear_data, int x, int width, int mipmap_target)
 		ASSERT(false);
 	}
 
-	GLCall(glClearTexSubImage(id, mipmap_target, x, 0, 0, width, 1, 1, GL_RGB, GL_FLOAT, &clear_data));
+	uint32_t type = GL_RGB;
+	if (is_intager_ColorTextureFormat(get_internal_format_color()) || is_unsigned_intager_ColorTextureFormat(get_internal_format_color()))
+		type = GL_RGB_INTEGER;
+
+	GLCall(glClearTexSubImage(id, mipmap_target, x, 0, 0, width, 1, 1, type, GL_FLOAT, &clear_data));
 }
 
 void Texture1D::clear(glm::vec4 clear_data, int x, int width, int mipmap_target)
@@ -909,7 +926,11 @@ void Texture1D::clear(glm::vec4 clear_data, int x, int width, int mipmap_target)
 		ASSERT(false);
 	}
 
-	GLCall(glClearTexSubImage(id, mipmap_target, x, 0, 0, width, 1, 1, GL_RGBA, GL_FLOAT, &clear_data));
+	uint32_t type = GL_RGBA;
+	if (is_intager_ColorTextureFormat(get_internal_format_color()) || is_unsigned_intager_ColorTextureFormat(get_internal_format_color()))
+		type = GL_RGBA_INTEGER;
+
+	GLCall(glClearTexSubImage(id, mipmap_target, x, 0, 0, width, 1, 1, type, GL_FLOAT, &clear_data));
 }
 
 glm::ivec1 Texture1D::get_size() {
