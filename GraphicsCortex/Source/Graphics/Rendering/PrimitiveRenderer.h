@@ -82,5 +82,5 @@ namespace primitive_renderer {
 	);
 
 	void clear(Framebuffer& framebuffer, float red, float green, float blue, float alpha);
-	void clear(float red, float green, float blue, float alpha);
+	void clear(float red = 1, float green = 0, float blue = 1, float alpha = 1);
 }

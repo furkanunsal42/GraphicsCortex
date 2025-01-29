@@ -1,0 +1,46 @@
+#include "GL/glew.h"
+#include "GLFW/glfw3.h"
+#include "Library.h"
+
+#include <iostream>
+
+bool GraphicsCortex::_is_glfw_initialized = false;
+bool GraphicsCortex::_is_glew_initialized = false;
+
+void GraphicsCortex::_init_glfw()
+{
+	if (_is_glfw_initialized) return;
+
+	if (!glfwInit()) {
+		std::cout << "[GraphicsCortex Error] GraphicsCortex failed to initialize " << std::endl;
+		__debugbreak();
+	}
+
+	_is_glfw_initialized = true;
+}
+
+void GraphicsCortex::_release_glfw()
+{
+	if (!_is_glfw_initialized) return;
+
+	glfwTerminate();
+
+	_is_glfw_initialized = false;
+}
+
+
+void GraphicsCortex::_init_glew()
+{
+	if (_is_glew_initialized) return;
+
+	glewInit();
+
+	_is_glew_initialized = true;
+}
+
+void GraphicsCortex::_release_glew()
+{
+	if (!_is_glew_initialized) return;
+
+	_is_glew_initialized = false;
+}

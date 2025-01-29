@@ -113,14 +113,33 @@ int main() {
 		"imageStore(target_data, target_index_type(id), vec4(int(condution)));"
 	);
 
+	std::shared_ptr<Texture2D> preview = std::make_shared<Texture2D>(volume_dimentions.x, volume_dimentions.z, solver->get_volume_format(), 1, 0, 0);
+	std::shared_ptr<Texture2D> preview_w = std::make_shared<Texture2D>(volume_dimentions.x, volume_dimentions.z, Texture2D::ColorTextureFormat::RGBA8, 1, 0, 0);
+
 	Framebuffer fb;
-	fb.attach_color(0, histogram_render);
+
+	//fb.attach_color(0, histogram_render);
+	fb.attach_color(0, preview_w);
+	int i = 0;
 	while (frame.is_running()) {
 		frame.handle_window();
 		frame.clear_window(1, 0, 1, 1);
 
+		std::function<void(GLFWwindow * window, double xoffset, double yoffset)> func;
+
+	
+
+		i = i % solver->get_volume_size().y;
+
+		solver->load_volume_slice_y(i, *preview);
+		op.compute(
+			*preview_w,
+			*preview, false,
+			"source.xxxx"
+		);
+
 		fb.activate_draw_buffer(0);
-		fb.blit_to_screen(0, 0, 4096, window_width, 0, 0, window_width, window_width, Framebuffer::Channel::COLOR, Framebuffer::Filter::NEAREST);
+		fb.blit_to_screen(0, 0, /*4096*/ window_width, window_width, 0, 0, window_width, window_width, Framebuffer::Channel::COLOR, Framebuffer::Filter::NEAREST);
 	}
 
 	solver->generate_blank_distanced_projections(volume_dimentions.x, volume_dimentions.y, volume_dimentions.y/*projection_count*/, 2);
@@ -159,13 +178,9 @@ int main() {
 	//solver->project_forward_parallel(1, projection_count, 0);
 
 	std::shared_ptr<Texture2D> slice = std::make_shared<Texture2D>(volume_dimentions.x, volume_dimentions.z, solver->get_volume_format(), 1, 0, 0);
-	slice->is_bindless = false;
 	std::shared_ptr<Texture2D> slice_complex = std::make_shared<Texture2D>(volume_dimentions.x, volume_dimentions.z, solver->get_projection_complex_format(), 1, 0, 0);
-	slice_complex->is_bindless = false;
 	std::shared_ptr<Texture2D> slice_white = std::make_shared<Texture2D>(volume_dimentions.x, volume_dimentions.z, Texture2D::ColorTextureFormat::RGBA8, 1, 0, 0);
-	slice_white->is_bindless = false;
 	std::shared_ptr<Texture2D> slice_distanced = std::make_shared<Texture2D>(volume_dimentions.x, volume_dimentions.z, solver->get_distanced_projection_format(), 1, 0, 0);
-	slice->is_bindless = false;
 	TextureArithmatic arithmatic;
 
 	std::shared_ptr<Framebuffer> framebuffer = std::make_shared<Framebuffer>();
