@@ -1,80 +1,34 @@
 #pragma once
+
 #include <cstdint>
 #include <string>
-#include <vector>
-#include <memory>
-#include <vec2.hpp>
+#include "vec2.hpp"
 
 class Monitor;
-class GraphicsCortex;
 
-class Frame2 {
-public:
+class Window {
 
-	enum GraphicsAPI {
-		OpenGL,
-		OpenGL_ES,
-		Vulkan,
-		None,
-	};
-
-	enum OpenGLProfile {
-		Core,
-		Compatibility,
-	};
-
-	Frame2(
+	Window(
 		uint32_t window_width, uint32_t window_height,
 		const std::string& window_name,
-		const Monitor& full_screen_target_monitor,
-		GraphicsAPI api = OpenGL, uint32_t context_version_major = 4, uint32_t context_version_minor = 6
+		const Monitor& full_screen_target_monitor
 	);
-	Frame2(
+	Window(
 		uint32_t window_width, uint32_t window_height,
-		const std::string& window_name,
-		const Frame2& shared_context,
-		const Monitor& full_screen_target_monitor,
-		GraphicsAPI api = OpenGL, uint32_t context_version_major = 4, uint32_t context_version_minor = 6
-	);
-	Frame2(
-		uint32_t window_width, uint32_t window_height,
-		const std::string& window_name,
-		GraphicsAPI api = OpenGL, uint32_t context_version_major = 4, uint32_t context_version_minor = 6
-	);
-	Frame2(
-		uint32_t window_width, uint32_t window_height,
-		const std::string& window_name,
-		const Frame2& shared_context,
-		GraphicsAPI api = OpenGL, uint32_t context_version_major = 4, uint32_t context_version_minor = 6
+		const std::string& window_name
 	);
 
-	static Frame2 create_from_current();
+	static Window create_from_current();
 
-	Frame2(const Frame2& other) = delete;
-	~Frame2();
+	Window(const Window& other) = delete;
+	~Window();
 
 	void release();
-
-	// graphics context
-	void context_make_current();
-
-	uint32_t get_context_version_major();
-	uint32_t get_context_version_minor();
-
-	void set_context_forward_compatibility(bool value);
-	void set_context_debug_mode(bool value);
-	void set_context_profile(OpenGLProfile profile);
-
-
-	// default framebuffer
-	bool is_double_buffered();
-	void set_double_buffer(bool value);
-
 
 	// windowing
 	bool should_close();
 	void set_should_close(bool value);
-	
+
 	void swap_buffers();
 	void poll_events();
 	void wait_events();
@@ -90,28 +44,12 @@ public:
 	// input handling
 
 
-private:
 
-	
-
+protected:
 	void _initialize();
 	bool _is_frame_initialized = false;
 	void* glfw_window = nullptr;
 	void* glfw_window_shared = nullptr;
-
-
-	// graphics context
-	uint32_t ctx_version_major;
-	uint32_t ctx_version_minor;
-	GraphicsAPI ctx_api;
-	bool ctx_forward_compatibility = false;
-	bool ctx_debug_mode = true;
-	OpenGLProfile ctx_profile = Compatibility;
-
-	// default framebuffer
-	uint32_t f_width;
-	uint32_t f_height;
-
 
 	// windowing
 	uint32_t w_width;
@@ -131,6 +69,4 @@ private:
 	// input handling
 	bool i_begin_cursor_centered = false;
 
-
-	friend GraphicsCortex;
 };

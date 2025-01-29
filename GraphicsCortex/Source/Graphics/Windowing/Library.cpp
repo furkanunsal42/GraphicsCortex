@@ -4,22 +4,22 @@
 
 #include <iostream>
 
-bool GraphicsCortex::_is_glfw_initialized = false;
-bool GraphicsCortex::_is_glew_initialized = false;
+bool OpenGLBackend::_is_glfw_initialized = false;
+bool OpenGLBackend::_is_glew_initialized = false;
 
-void GraphicsCortex::_init_glfw()
+void OpenGLBackend::_init_glfw()
 {
 	if (_is_glfw_initialized) return;
 
 	if (!glfwInit()) {
-		std::cout << "[GraphicsCortex Error] GraphicsCortex failed to initialize " << std::endl;
+		std::cout << "[OpenGL Error] OpenGL failed to initialize " << std::endl;
 		__debugbreak();
 	}
 
 	_is_glfw_initialized = true;
 }
 
-void GraphicsCortex::_release_glfw()
+void OpenGLBackend::_release_glfw()
 {
 	if (!_is_glfw_initialized) return;
 
@@ -29,7 +29,7 @@ void GraphicsCortex::_release_glfw()
 }
 
 
-void GraphicsCortex::_init_glew()
+void OpenGLBackend::_init_glew()
 {
 	if (_is_glew_initialized) return;
 
@@ -38,7 +38,7 @@ void GraphicsCortex::_init_glew()
 	_is_glew_initialized = true;
 }
 
-void GraphicsCortex::_release_glew()
+void OpenGLBackend::_release_glew()
 {
 	if (!_is_glew_initialized) return;
 

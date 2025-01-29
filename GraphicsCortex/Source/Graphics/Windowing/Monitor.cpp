@@ -9,7 +9,7 @@ int32_t Monitor::monitor_count = 0;
 
 const std::span<const Monitor> Monitor::get_all_monitors()
 {
-	GraphicsCortex::_init_glfw();
+	OpenGLBackend::_init_glfw();
 
 	if (!monitors_up_to_date) {
 		all_monitors = (void**)glfwGetMonitors(&monitor_count);

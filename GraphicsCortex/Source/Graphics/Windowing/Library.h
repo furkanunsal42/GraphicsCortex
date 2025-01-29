@@ -7,12 +7,11 @@
 #include "Window.h"
 #include "Monitor.h"
 
-struct GraphicsCortex{
+struct OpenGLBackend{
 public:
 
 	//static void initiailze();
 	//static void release();
-
 
 	static bool _is_glfw_initialized;
 	static bool _is_glew_initialized;
