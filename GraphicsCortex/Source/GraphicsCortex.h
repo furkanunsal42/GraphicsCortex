@@ -19,7 +19,6 @@
 #include "Monitor.h"
 #include "GraphicsContext.h"
 #include "Window.h"
-#include "StandardFrame.h"
 #include "Library.h"
 #include "Model.h"
 #include "StandardModel.h"

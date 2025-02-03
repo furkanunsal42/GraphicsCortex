@@ -61,6 +61,7 @@ void GraphicsContext::_initialize(const GraphicsContextDescription& description)
 	switch (description.ctx_api) {
 	case OpenGL: 	glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API); break;
 	case OpenGL_ES:	glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API); break;
+	case Vulkan:	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API); break;
 	case None:		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API); break;
 	}
 

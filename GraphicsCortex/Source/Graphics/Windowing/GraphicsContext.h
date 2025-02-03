@@ -57,7 +57,6 @@ public:
 	// graphics context
 	void context_make_current();
 	
-	void set_context_version(uint32_t major, uint32_t minor);
 	uint32_t get_context_version_major();
 	uint32_t get_context_version_minor();
 	GraphicsAPI get_context_api();
@@ -70,7 +69,6 @@ public:
 	glm::ivec4 get_framebuffer_color_bits();
 	glm::ivec2 get_framebuffer_depth_stencil_bits();
 	int32_t get_framebuffer_multisample_count();
-	int32_t get_framebuffer_swap_interval();
 
 	void set_framebuffer_swap_interval(int32_t value);
 

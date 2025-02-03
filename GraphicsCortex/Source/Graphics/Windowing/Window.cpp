@@ -13,34 +13,109 @@ Window::Window(const WindowDescription& description)
 	_initialize(description);
 }
 
-Window::Window(glm::ivec2 window_resolution, const std::string& window_name, Monitor& full_screen_target_monitor)
+Window::Window(glm::ivec2 window_resolution, const std::string& window_name, Monitor& full_screen_target_monitor, GraphicsAPI api, uint32_t context_version_major, uint32_t context_version_minor)
 {
 	WindowDescription description;
 	description.w_resolution = window_resolution;
+	description.f_resolution = window_resolution;
 	description.w_name = window_name;
 	description.w_fullscreen_monitor_ptr = &full_screen_target_monitor;
+	description.ctx_api = api;
+	description.ctx_version_major = context_version_major;
+	description.ctx_version_minor = context_version_minor;
 
 	_initialize(description);
 }
 
-Window::Window(glm::ivec2 window_resolution, const std::string& window_name)
+Window::Window(glm::ivec2 window_resolution, const std::string& window_name, Window& shared_context, GraphicsAPI api, uint32_t context_version_major, uint32_t context_version_minor)
 {
 	WindowDescription description;
 	description.w_resolution = window_resolution;
+	description.f_resolution = window_resolution;
 	description.w_name = window_name;
+	description.context_shared = shared_context.handle;
+	description.ctx_api = api;
+	description.ctx_version_major = context_version_major;
+	description.ctx_version_minor = context_version_minor;
 
 	_initialize(description);
 }
+
+Window::Window(glm::ivec2 window_resolution, const std::string& window_name, Monitor& full_screen_target_monitor, Window& shared_context, GraphicsAPI api, uint32_t context_version_major, uint32_t context_version_minor)
+{
+	WindowDescription description;
+	description.w_resolution = window_resolution;
+	description.f_resolution = window_resolution;
+	description.w_name = window_name;
+	description.w_fullscreen_monitor_ptr = &full_screen_target_monitor;
+	description.context_shared = shared_context.handle;
+	description.ctx_api = api;
+	description.ctx_version_major = context_version_major;
+	description.ctx_version_minor = context_version_minor;
+
+	_initialize(description);
+}
+
+Window::Window(glm::ivec2 window_resolution, const std::string& window_name, GraphicsAPI api, uint32_t context_version_major, uint32_t context_version_minor)
+{
+	WindowDescription description;
+	description.w_resolution = window_resolution;
+	description.f_resolution = window_resolution;
+	description.w_name = window_name;
+	description.ctx_api = api;
+	description.ctx_version_major = context_version_major;
+	description.ctx_version_minor = context_version_minor;
+
+	_initialize(description);
+}
+
+Window::Window(void* context)
+{
+	this->handle = context;
+}
+
+std::shared_ptr<Window> Window::create_from_current()
+{
+	GLFWwindow* current_handle = glfwGetCurrentContext();
+	auto window = std::shared_ptr<Window>(new Window((void*)current_handle));
+	return window;
+};
 
 void Window::_initialize(const WindowDescription& description)
 {
 	OpenGLBackend::_init_glfw();
 
 	// context
-	//glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
-	//glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
-	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-	
+	switch (description.ctx_api) {
+	case OpenGL: 	glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API); break;
+	case OpenGL_ES:	glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API); break;
+	case Vulkan:	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API); break;
+	case None:		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API); break;
+	}
+
+	// context
+	glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_NATIVE_CONTEXT_API);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, description.ctx_version_major);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, description.ctx_version_minor);
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, description.ctx_forward_compatibility ? GLFW_TRUE : GLFW_FALSE);
+	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, description.ctx_debug_mode ? GLFW_TRUE : GLFW_FALSE);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, description.ctx_profile == OpenGLProfile::Core ? GLFW_OPENGL_CORE_PROFILE : GLFW_OPENGL_COMPAT_PROFILE);
+	//glfwWindowHint(GLFW_CONTEXT_ROBUSTNESS, );
+	glfwWindowHint(GLFW_CONTEXT_RELEASE_BEHAVIOR, GLFW_ANY_RELEASE_BEHAVIOR);
+	glfwWindowHint(GLFW_CONTEXT_NO_ERROR, GLFW_FALSE);
+
+	// framebuffer
+	glfwWindowHint(GLFW_RED_BITS, description.f_color_bits.r);
+	glfwWindowHint(GLFW_GREEN_BITS, description.f_color_bits.g);
+	glfwWindowHint(GLFW_BLUE_BITS, description.f_color_bits.b);
+	glfwWindowHint(GLFW_ALPHA_BITS, description.f_color_bits.a);
+	glfwWindowHint(GLFW_DEPTH_BITS, description.f_depth_stencil_bits.x);
+	glfwWindowHint(GLFW_STENCIL_BITS, description.f_depth_stencil_bits.y);
+	glfwWindowHint(GLFW_SAMPLES, description.f_multisample_count);
+	glfwWindowHint(GLFW_SRGB_CAPABLE, description.f_srgb_enabled ? GLFW_TRUE : GLFW_FALSE);
+	glfwWindowHint(GLFW_DOUBLEBUFFER, description.f_double_buffered ? GLFW_TRUE : GLFW_FALSE);
+
+	// window
 	glfwWindowHint(GLFW_RESIZABLE,					description.w_resizable ? GLFW_TRUE : GLFW_FALSE);
 	glfwWindowHint(GLFW_VISIBLE,					description.w_visible ? GLFW_TRUE : GLFW_FALSE);
 	glfwWindowHint(GLFW_DECORATED,					description.w_decorated ? GLFW_TRUE : GLFW_FALSE);
@@ -62,13 +137,15 @@ void Window::_initialize(const WindowDescription& description)
 
 	glm::ivec2 clipped_resolution = description.w_resolution;
 	clipped_resolution = glm::max(clipped_resolution, glm::ivec2(1, 1));
+	if (glm::any(glm::lessThanEqual(description.w_resolution, glm::ivec2(0, 0))))
+		glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
 
 	void* monitor_ptr = nullptr;
 	if (description.w_fullscreen_monitor_ptr != nullptr)
 		monitor_ptr = (GLFWmonitor*)(description.w_fullscreen_monitor_ptr->monitor_ptr);
 
-	handle = glfwCreateWindow(clipped_resolution.x, clipped_resolution.y, description.w_name.c_str(), (GLFWmonitor*)monitor_ptr, nullptr);
-	glfwMakeContextCurrent((GLFWwindow*)handle); // ?
+	handle = glfwCreateWindow(clipped_resolution.x, clipped_resolution.y, description.w_name.c_str(), (GLFWmonitor*)monitor_ptr, (GLFWwindow*)description.context_shared);
+	context_make_current();
 
 	if (description.n_create_newsletters) {
 		newsletters = new NewslettersBlock();
@@ -79,6 +156,14 @@ void Window::_initialize(const WindowDescription& description)
 			NewslettersBlock* newsletters = context->newsletters;
 			if (newsletters != nullptr) {
 				newsletters->on_should_close_events.publish();
+			}
+			});
+
+		glfwSetFramebufferSizeCallback((GLFWwindow*)handle, [](GLFWwindow* window, int width, int height) {
+			Window* context = (Window*)glfwGetWindowUserPointer(window);
+			NewslettersBlock* newsletters = context->newsletters;
+			if (newsletters != nullptr) {
+				newsletters->on_framebuffer_resolution_events.publish(glm::ivec2(width, height));
 			}
 			});
 
@@ -223,6 +308,11 @@ void Window::release()
 	}
 }
 
+void Window::context_make_current()
+{
+	glfwMakeContextCurrent((GLFWwindow*)handle);
+}
+
 // event handling
 
 bool Window::should_close()
@@ -266,6 +356,100 @@ double Window::handle_events(bool print_performances) {
 
 	return 0;
 }
+
+// context
+
+uint32_t Window::get_context_version_major()
+{
+	GLint version_major = 0;
+	glGetIntegerv(GL_MAJOR_VERSION, &version_major);
+	return version_major;
+}
+
+
+uint32_t Window::get_context_version_minor()
+{
+	GLint version_minor = 0;
+	glGetIntegerv(GL_MINOR_VERSION, &version_minor);
+	return version_minor;
+}
+
+
+Window::GraphicsAPI Window::get_context_api()
+{
+	const unsigned char* version_str = glGetString(GL_VERSION);
+	std::cout << version_str << std::endl;
+	return OpenGL;
+}
+
+bool Window::get_context_forward_compatibility()
+{
+	GLint flags = 0;
+	glGetIntegerv(GL_CONTEXT_FLAGS, &flags);
+	return flags & GL_CONTEXT_FLAG_FORWARD_COMPATIBLE_BIT;
+}
+
+//bool Window::get_context_debug_mode()
+//{
+//	__debugbreak();
+//	return true;
+//}
+
+Window::OpenGLProfile Window::get_context_profile()
+{
+	GLint profile = 0;
+	glGetIntegerv(GL_CONTEXT_PROFILE_MASK, &profile);
+
+	if (profile & GL_CONTEXT_CORE_PROFILE_BIT) {
+		return Window::OpenGLProfile::Core;
+	}
+
+	if (profile & GL_CONTEXT_COMPATIBILITY_PROFILE_BIT) {
+		return Window::OpenGLProfile::Compatibility;
+	}
+
+	__debugbreak();
+	return Window::OpenGLProfile::Compatibility;
+}
+
+// framebuffer
+
+glm::ivec2 Window::get_framebuffer_resolution() {
+	glm::ivec2 size;
+	glfwGetFramebufferSize((GLFWwindow*)handle, &size.x, &size.y);
+	return size;
+}
+
+glm::ivec4 Window::get_framebuffer_color_bits()
+{
+	glm::ivec4 color_bits;
+	glGetNamedFramebufferAttachmentParameteriv(0, GL_FRONT_LEFT, GL_FRAMEBUFFER_ATTACHMENT_RED_SIZE, &color_bits.r);
+	glGetNamedFramebufferAttachmentParameteriv(0, GL_FRONT_LEFT, GL_FRAMEBUFFER_ATTACHMENT_GREEN_SIZE, &color_bits.g);
+	glGetNamedFramebufferAttachmentParameteriv(0, GL_FRONT_LEFT, GL_FRAMEBUFFER_ATTACHMENT_BLUE_SIZE, &color_bits.b);
+	glGetNamedFramebufferAttachmentParameteriv(0, GL_FRONT_LEFT, GL_FRAMEBUFFER_ATTACHMENT_ALPHA_SIZE, &color_bits.a);
+	return color_bits;
+}
+
+glm::ivec2 Window::get_framebuffer_depth_stencil_bits()
+{
+	glm::ivec4 depth_stencil_bits;
+	glGetNamedFramebufferAttachmentParameteriv(0, GL_DEPTH, GL_FRAMEBUFFER_ATTACHMENT_DEPTH_SIZE, &depth_stencil_bits.x);
+	glGetNamedFramebufferAttachmentParameteriv(0, GL_STENCIL, GL_FRAMEBUFFER_ATTACHMENT_STENCIL_SIZE, &depth_stencil_bits.y);
+	return depth_stencil_bits;
+}
+
+int32_t Window::get_framebuffer_multisample_count()
+{
+	int32_t samples;
+	glGetIntegerv(GL_SAMPLES, &samples);
+	return samples;
+}
+
+void Window::set_framebuffer_swap_interval(int32_t value)
+{
+	glfwSwapInterval(value);
+}
+
 
 // window
 
