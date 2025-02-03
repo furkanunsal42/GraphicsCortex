@@ -259,6 +259,8 @@ void Framebuffer::attach_depth(std::shared_ptr<Texture2D> texture2d, int mipmap_
 		ASSERT(false);
 	}
 
+	_depth_stencil_attachment = nullptr;
+
 	_depth_attachment = texture2d;
 	texture2d->_allocate_texture();
 	GLCall(glNamedFramebufferTexture(id, GL_DEPTH_ATTACHMENT, texture2d->id, mipmap_level));
@@ -275,6 +277,8 @@ void Framebuffer::attach_depth(std::shared_ptr<Renderbuffer> render_buffer)
 		ASSERT(false);
 	}
 
+	_depth_stencil_attachment = nullptr;
+
 	_depth_attachment = render_buffer;
 	render_buffer->_allocate_texture();
 	GLCall(glNamedFramebufferRenderbuffer(id, GL_DEPTH_ATTACHMENT, render_buffer->target, render_buffer->id));
@@ -290,6 +294,8 @@ void Framebuffer::attach_stencil(std::shared_ptr<Texture2D> texture2d, int mipma
 		std::cout << "[OpenGL Error] Framebuffer tried to attach_stencil() but texture was released" << std::endl;
 		ASSERT(false);
 	}
+	
+	_depth_stencil_attachment = nullptr;
 
 	_stencil_attachment = texture2d;
 	texture2d->_allocate_texture();
@@ -307,7 +313,9 @@ void Framebuffer::attach_stencil(std::shared_ptr<Renderbuffer> render_buffer)
 		ASSERT(false);
 	}
 
-	_depth_attachment = render_buffer;
+	_depth_stencil_attachment = nullptr;
+
+	_stencil_attachment = render_buffer;
 	render_buffer->_allocate_texture();
 	GLCall(glNamedFramebufferRenderbuffer(id, GL_STENCIL_ATTACHMENT, render_buffer->target, render_buffer->id));
 }
@@ -323,7 +331,10 @@ void Framebuffer::attach_depth_stencil(std::shared_ptr<Texture2D> texture2d, int
 		ASSERT(false);
 	}
 
-	_stencil_attachment = texture2d;
+	_depth_attachment = nullptr;
+	_stencil_attachment = nullptr;
+
+	_depth_stencil_attachment = texture2d;
 	texture2d->_allocate_texture();
 	GLCall(glNamedFramebufferTexture(id, GL_DEPTH_STENCIL_ATTACHMENT, texture2d->id, mipmap_level));
 }
@@ -339,7 +350,10 @@ void Framebuffer::attach_depth_stencil(std::shared_ptr<Renderbuffer> render_buff
 		ASSERT(false);
 	}
 
-	_depth_attachment = render_buffer;
+	_depth_attachment = nullptr;
+	_stencil_attachment = nullptr;
+
+	_depth_stencil_attachment = render_buffer;
 	render_buffer->_allocate_texture();
 	GLCall(glNamedFramebufferRenderbuffer(id, GL_DEPTH_STENCIL_ATTACHMENT, render_buffer->target, render_buffer->id));
 }

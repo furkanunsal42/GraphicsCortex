@@ -58,7 +58,7 @@ int main() {
 	std::shared_ptr<Texture1D> max_texture = std::make_shared<Texture1D>(1, solver->histogram_int_texture_internal_format, 1, 0);
 	max_texture->is_bindless = false;
 
-	solver->read_projections("C:/Users/furkan.unsal/Desktop/Projektionen", 2048, 2048, 1, 2, volume_dimentions.x, volume_dimentions.y, projection_count);
+	solver->read_projections("C:/Users/FurkanPC/Desktop/Projektionen", 2048, 2048, 1, 2, volume_dimentions.x, volume_dimentions.y, projection_count);
 
 	fbp_segmented_memory::iterate_horizontal_projection_segments(*solver, false, true, [&](glm::ivec3 projection_segment_index) {
 		solver->log_normalize_projections(95.0 / 255);
@@ -114,24 +114,25 @@ int main() {
 	);
 
 	std::shared_ptr<Texture2D> preview = std::make_shared<Texture2D>(volume_dimentions.x, volume_dimentions.z, solver->get_volume_format(), 1, 0, 0);
-	std::shared_ptr<Texture2D> preview_w = std::make_shared<Texture2D>(volume_dimentions.x, volume_dimentions.z, Texture2D::ColorTextureFormat::RGBA8, 1, 0, 0);
+	std::shared_ptr<Texture2D> preview_w = std::make_shared<Texture2D>(volume_dimentions.x, volume_dimentions.z, Texture2D::ColorTextureFormat::RGBA32F, 1, 0, 0);
 
 	Framebuffer fb;
 
 	//fb.attach_color(0, histogram_render);
 	fb.attach_color(0, preview_w);
-	int i = 0;
-	while (frame.is_running()) {
+	double original_scroll = frame.get_scroll_position_y();
+	int32_t index = 0;
+
+	while (frame.is_running() && !frame.get_key_press(Frame::ENTER)) {
 		frame.handle_window();
 		frame.clear_window(1, 0, 1, 1);
 
 		std::function<void(GLFWwindow * window, double xoffset, double yoffset)> func;
 
-	
+		index = (int32_t)(frame.get_scroll_position_y() - original_scroll + solver->get_volume_size().y) % solver->get_volume_size().y;
 
-		i = i % solver->get_volume_size().y;
-
-		solver->load_volume_slice_y(i, *preview);
+		solver->load_volume_slice_y(index, *preview);
+		op.push_constant("max_value", histogram_max);
 		op.compute(
 			*preview_w,
 			*preview, false,

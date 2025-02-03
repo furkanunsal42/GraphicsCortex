@@ -28,8 +28,6 @@ public:
 	SamplingFilter mag_filter = SamplingFilter::LINEAR;
 	bool is_bindless = false;
 
-	
-
 	Texture2D() = delete;
 	Texture2D(const Texture2D& other) = delete;
 

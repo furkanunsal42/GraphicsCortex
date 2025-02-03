@@ -3,6 +3,11 @@
 #include <cstdint>
 #include <memory>
 #include "vec2.hpp"
+#include "vec4.hpp"
+#include <vector>
+#include "Newsletter.h"
+
+struct GraphicsContextDescription;
 
 class GraphicsContext {
 public:
@@ -19,11 +24,15 @@ public:
 		Compatibility,
 	};
 
+	GraphicsContext(const GraphicsContextDescription& params);
+
 	GraphicsContext(
+		glm::ivec2 framebuffer_resolution = glm::ivec2(0, 0),
 		GraphicsAPI api = OpenGL, uint32_t context_version_major = 4, uint32_t context_version_minor = 6
 	);
 	GraphicsContext(
-		const GraphicsContext& shared_context,
+		glm::ivec2 framebuffer_resolution,
+		GraphicsContext& shared_context,
 		GraphicsAPI api = OpenGL, uint32_t context_version_major = 4, uint32_t context_version_minor = 6
 	);
 
@@ -34,39 +43,71 @@ public:
 
 	void release();
 
+	// events
+	bool should_close();
+	void set_should_close(bool value);
+
+	void swap_buffers();
+	void poll_events();
+	void wait_events();
+	void wait_events_timeout(double timeout_seconds);
+	void post_empty_event();
+	double handle_events(bool print_performance = true);
+
 	// graphics context
 	void context_make_current();
 	
 	void set_context_version(uint32_t major, uint32_t minor);
 	uint32_t get_context_version_major();
 	uint32_t get_context_version_minor();
-
-	void set_context_api(GraphicsAPI api);
 	GraphicsAPI get_context_api();
-
-	void set_context_forward_compatibility(bool value);
-	bool get_context_forawrd_compatibility();
-
-	void set_context_debug_mode(bool value);
-	bool get_context_debug_mode();
-	
-	void set_context_profile(OpenGLProfile profile);
+	bool get_context_forward_compatibility();
+	//bool get_context_debug_mode();
 	OpenGLProfile get_context_profile();
 	
-	double handle_events(bool print_performances = true);
+	// default framebuffer
+	glm::ivec2 get_framebuffer_resolution();
+	glm::ivec4 get_framebuffer_color_bits();
+	glm::ivec2 get_framebuffer_depth_stencil_bits();
+	int32_t get_framebuffer_multisample_count();
+	int32_t get_framebuffer_swap_interval();
 
+	void set_framebuffer_swap_interval(int32_t value);
+
+	// newsletters
+	struct NewslettersBlock;
+	NewslettersBlock* newsletters = nullptr;
 protected:
 
-	void _initialize();
-	bool _is_context_initialized = false;
-	void* context = nullptr;
-	void* context_shared = nullptr;
+	GraphicsContext(void* context);
 
+	struct NewslettersBlock {
+		Newsletter<>						on_should_close_events;
+		Newsletter<const int&, const int&>	on_framebuffer_resolution_events;
+	};
+
+	void _initialize(const GraphicsContextDescription& description);
+	void* context = nullptr;
+};
+
+struct GraphicsContextDescription {
 	// graphics context
-	uint32_t ctx_version_major;
-	uint32_t ctx_version_minor;
-	GraphicsAPI ctx_api;
+	void* context_shared = nullptr;
+	uint32_t ctx_version_major = 4;
+	uint32_t ctx_version_minor = 6;
+	GraphicsContext::GraphicsAPI ctx_api = GraphicsContext::OpenGL;
 	bool ctx_forward_compatibility = false;
 	bool ctx_debug_mode = true;
-	OpenGLProfile ctx_profile = Compatibility;
+	GraphicsContext::OpenGLProfile ctx_profile = GraphicsContext::Compatibility;
+
+	// default framebuffer
+	glm::ivec2 f_resolution = glm::ivec2(0, 0);
+	glm::ivec4 f_color_bits = glm::ivec4(8, 8, 8, 8);
+	glm::ivec2 f_depth_stencil_bits = glm::ivec2(24, 8);
+	int32_t f_multisample_count = 1;
+	bool f_srgb_enabled = false;
+	bool f_double_buffered = true;
+	int32_t f_swap_interval = 0;
+
+	bool n_create_newsletters = true;
 };

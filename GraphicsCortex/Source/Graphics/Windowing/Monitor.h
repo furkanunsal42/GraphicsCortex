@@ -8,8 +8,9 @@
 #include "vec3.hpp"
 
 class Frame2;
+class Window;
 
-struct Monitor {
+class Monitor {
 public:
 	
 	static const std::span<const Monitor> get_all_monitors();
@@ -33,4 +34,5 @@ private:
 	static void** all_monitors;
 
 	friend Frame2;
+	friend Window;
 };

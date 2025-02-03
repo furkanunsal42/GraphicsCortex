@@ -125,6 +125,12 @@ Frame::Frame(int width, int height, const std::string& name, int msaa, int swapi
 		ImGui_ImplOpenGL3_Init("#version 460");
 	}
 
+	glfwSetScrollCallback(window, [](GLFWwindow* window, double xoffset, double yoffset) {
+		Frame& frame = *(Frame*)glfwGetWindowUserPointer(window);
+		frame.scroll_position_x += xoffset;
+		frame.scroll_position_y += yoffset;
+		});
+
 	set_cursor_type(Arrow);
 }
 
@@ -300,4 +306,14 @@ bool Frame::get_mouse_state(Frame::CursorState state) {
 
 bool Frame::get_key_press(Frame::Key key) {
 	return glfwGetKey(window, (int)key);
+}
+
+double Frame::get_scroll_position_x()
+{
+	return scroll_position_x;
+}
+
+double Frame::get_scroll_position_y()
+{
+	return scroll_position_y;
 }

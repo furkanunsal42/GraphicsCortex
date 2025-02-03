@@ -198,6 +198,12 @@ public:
 	};
 
 	bool get_key_press(Frame::Key key);
+	
+	double get_scroll_position_x();
+	double get_scroll_position_y();
+
+	double scroll_position_x = 0;
+	double scroll_position_y = 0;
 
 private:
 	bool visible = true;
