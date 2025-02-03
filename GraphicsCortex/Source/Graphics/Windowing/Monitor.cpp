@@ -7,7 +7,7 @@ bool Monitor::monitors_up_to_date = false;
 void** Monitor::all_monitors = nullptr;
 int32_t Monitor::monitor_count = 0;
 
-const std::span<const Monitor> Monitor::get_all_monitors()
+const std::span<Monitor> Monitor::get_all_monitors()
 {
 	OpenGLBackend::_init_glfw();
 
@@ -24,7 +24,12 @@ const std::span<const Monitor> Monitor::get_all_monitors()
 			std::cout << "[GraphicsCortex Info] A Monitor is disconnected" << std::endl;
 		});
 
-	return std::span<const Monitor>((Monitor*)all_monitors, (size_t)monitor_count);
+	return std::span<Monitor>((Monitor*)all_monitors, (size_t)monitor_count);
+}
+
+bool Monitor::operator==(const Monitor& other)
+{
+	return monitor_ptr == other.monitor_ptr;
 }
 
 glm::ivec2 Monitor::get_position() const
@@ -34,7 +39,16 @@ glm::ivec2 Monitor::get_position() const
 	return position;
 }
 
-glm::ivec2 Monitor::get_work_area_position() const
+glm::ivec2 Monitor::get_resolution() const
+{
+	glm::ivec2 resolution;
+	const GLFWvidmode* video_mode = glfwGetVideoMode((GLFWmonitor*)monitor_ptr);
+	resolution.x = video_mode->width;
+	resolution.y = video_mode->height;
+	return resolution;
+}
+
+glm::ivec2 Monitor::get_position_undecorated() const
 {
 	glm::ivec2 work_area_position;
 	glm::ivec2 work_area_size;
@@ -42,7 +56,7 @@ glm::ivec2 Monitor::get_work_area_position() const
 	return work_area_position;
 }
 
-glm::ivec2 Monitor::get_work_area_size() const
+glm::ivec2 Monitor::get_resolution_undecorated() const
 {
 	glm::ivec2 work_area_position;
 	glm::ivec2 work_area_size;
@@ -84,5 +98,10 @@ int32_t Monitor::get_refresh_rate() const
 {
 	const GLFWvidmode* video_mode = glfwGetVideoMode((GLFWmonitor*)monitor_ptr);
 	return video_mode->refreshRate;
+}
+
+Monitor::Monitor(void* monitor_ptr)
+{
+	this->monitor_ptr = monitor_ptr;
 }
 

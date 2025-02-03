@@ -27,7 +27,7 @@ public:
 	GraphicsContext(const GraphicsContextDescription& params);
 
 	GraphicsContext(
-		glm::ivec2 framebuffer_resolution = glm::ivec2(0, 0),
+		glm::ivec2 framebuffer_resolution,
 		GraphicsAPI api = OpenGL, uint32_t context_version_major = 4, uint32_t context_version_minor = 6
 	);
 	GraphicsContext(
@@ -78,16 +78,17 @@ public:
 	struct NewslettersBlock;
 	NewslettersBlock* newsletters = nullptr;
 protected:
+	GraphicsContext() = default;
 
 	GraphicsContext(void* context);
 
 	struct NewslettersBlock {
 		Newsletter<>						on_should_close_events;
-		Newsletter<const int&, const int&>	on_framebuffer_resolution_events;
+		Newsletter<const glm::ivec2&>		on_framebuffer_resolution_events;
 	};
 
 	void _initialize(const GraphicsContextDescription& description);
-	void* context = nullptr;
+	void* handle = nullptr;
 };
 
 struct GraphicsContextDescription {

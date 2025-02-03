@@ -30,7 +30,7 @@ GraphicsContext::GraphicsContext(glm::ivec2 framebuffer_resolution, GraphicsCont
 	params.ctx_api = api;
 	params.ctx_version_major = context_version_major;
 	params.ctx_version_minor = context_version_minor;
-	params.context_shared = shared_context.context;
+	params.context_shared = shared_context.handle;
 
 	if (shared_context.get_context_api() != api) {
 		std::cout << "[GraphicsCortex Error] Context Sharing cannot be used between different Graphics APIs" << std::endl;
@@ -43,7 +43,7 @@ GraphicsContext::GraphicsContext(glm::ivec2 framebuffer_resolution, GraphicsCont
 // private constructor for create_from_current(); context is created from an another application that uses this library as a dll.
 GraphicsContext::GraphicsContext(void* context)
 {
-	this->context = context;
+	this->handle = context;
 }
 
 std::shared_ptr<GraphicsContext> GraphicsContext::create_from_current()
@@ -91,7 +91,7 @@ void GraphicsContext::_initialize(const GraphicsContextDescription& description)
 	glm::ivec2 clipped_resolution = description.f_resolution;
 	clipped_resolution = glm::max(clipped_resolution, glm::ivec2(1, 1));
 
-	context = glfwCreateWindow(clipped_resolution.x, clipped_resolution.y, "", nullptr, (GLFWwindow*)description.context_shared);
+	handle = glfwCreateWindow(clipped_resolution.x, clipped_resolution.y, "", nullptr, (GLFWwindow*)description.context_shared);
 	context_make_current();
 
 	if (description.f_multisample_count > 0) {
@@ -100,17 +100,17 @@ void GraphicsContext::_initialize(const GraphicsContextDescription& description)
 
 	if (description.n_create_newsletters) {
 		newsletters = new NewslettersBlock();
-		glfwSetWindowUserPointer((GLFWwindow*)context, this);
+		glfwSetWindowUserPointer((GLFWwindow*)handle, this);
 		
-		glfwSetFramebufferSizeCallback((GLFWwindow*)context, [](GLFWwindow* window, int width, int height) {
+		glfwSetFramebufferSizeCallback((GLFWwindow*)handle, [](GLFWwindow* window, int width, int height) {
 			GraphicsContext* context = (GraphicsContext*)glfwGetWindowUserPointer(window);
 			NewslettersBlock* newsletters = context->newsletters;
 			if (newsletters != nullptr){
-				newsletters->on_framebuffer_resolution_events.publish(width, height);
+				newsletters->on_framebuffer_resolution_events.publish(glm::ivec2(width, height));
 			}
 			});
 		
-		glfwSetWindowCloseCallback((GLFWwindow*)context, [](GLFWwindow* window) {
+		glfwSetWindowCloseCallback((GLFWwindow*)handle, [](GLFWwindow* window) {
 			GraphicsContext* context = (GraphicsContext*)glfwGetWindowUserPointer(window);
 			NewslettersBlock* newsletters = context->newsletters;
 			if (newsletters != nullptr) {
@@ -134,25 +134,25 @@ void GraphicsContext::release()
 		newsletters = nullptr;
 	}
 
-	if (context != nullptr) {
-		glfwDestroyWindow((GLFWwindow*)context);
-		context = nullptr;
+	if (handle != nullptr) {
+		glfwDestroyWindow((GLFWwindow*)handle);
+		handle = nullptr;
 	}
 }
 
 bool GraphicsContext::should_close()
 {
-	return glfwWindowShouldClose((GLFWwindow*)context) == GLFW_TRUE; 
+	return glfwWindowShouldClose((GLFWwindow*)handle) == GLFW_TRUE;
 }
 
 void GraphicsContext::set_should_close(bool value)
 {
-	glfwSetWindowShouldClose((GLFWwindow*)context, value ? GLFW_TRUE : GLFW_FALSE);
+	glfwSetWindowShouldClose((GLFWwindow*)handle, value ? GLFW_TRUE : GLFW_FALSE);
 }
 
 void GraphicsContext::swap_buffers()
 {
-	glfwSwapBuffers((GLFWwindow*)context);
+	glfwSwapBuffers((GLFWwindow*)handle);
 }
 
 void GraphicsContext::poll_events()
@@ -177,14 +177,14 @@ void GraphicsContext::post_empty_event() {
 double GraphicsContext::handle_events(bool print_performances) {
 
 	glfwPollEvents();
-	glfwSwapBuffers((GLFWwindow*)context);
+	glfwSwapBuffers((GLFWwindow*)handle);
 
 	return 0;
 }
 
 void GraphicsContext::context_make_current()
 {
-	glfwMakeContextCurrent((GLFWwindow*)context);
+	glfwMakeContextCurrent((GLFWwindow*)handle);
 }
 
 uint32_t GraphicsContext::get_context_version_major()
@@ -244,7 +244,7 @@ GraphicsContext::OpenGLProfile GraphicsContext::get_context_profile()
 
 glm::ivec2 GraphicsContext::get_framebuffer_resolution() {
 	glm::ivec2 size;
-	glfwGetFramebufferSize((GLFWwindow*)context, &size.x, &size.y);
+	glfwGetFramebufferSize((GLFWwindow*)handle, &size.x, &size.y);
 	return size;
 }
 

@@ -7,13 +7,14 @@
 #include "Newsletter.h"
 #include <memory>
 
+class Image;
 class Monitor;
 
 struct WindowDescription {
 	// windowing
 	glm::ivec2 w_resolution = glm::ivec2(512, 512);
 	std::string w_name = "GraphicsCortex Window";
-	void* w_fullscreen_monitor_ptr = nullptr;
+	Monitor* w_fullscreen_monitor_ptr = nullptr;
 	bool w_resizable = true;
 	bool w_visible = true;
 	bool w_decorated = true;
@@ -47,7 +48,7 @@ public:
 	Window(
 		glm::ivec2 window_resolution,
 		const std::string& window_name,
-		const Monitor& full_screen_target_monitor
+		Monitor& full_screen_target_monitor
 	);
 	Window(
 		glm::ivec2 window_resolution,
@@ -71,62 +72,59 @@ public:
 	double handle_events(bool print_performance = true);
 
 	// window
-	Monitor get_window_fullscreen_monitor();
-	void set_window_fullscreen_monitor(const Monitor& monitor);
-	void disable_window_fullscreen();
+	Monitor get_fullscreen_monitor();
+	void set_fullscreen_monitor(const Monitor& monitor);
+	void set_fullscreen_monitor(const Monitor& monitor, glm::ivec2 position, glm::ivec2 resolution, int32_t refresh_rate);
+	void disable_fullscreen();
 
 	glm::ivec2 get_window_resolution();
+	//glm::ivec2 get_window_resolution_undecorated();
 	void set_window_resolution(glm::ivec2 window_resolution);
+
+	glm::vec2 get_window_content_scale();
+	void set_window_resolution_limits(glm::ivec2 min_resolution, glm::ivec2 max_resolution);
+	void set_aspect_ratio(int numerator, int denumerator);
+
+	void set_window_position(glm::ivec2 position);
+	glm::ivec2 get_window_position();
 
 	std::string get_window_name();
 	void set_window_name(const std::string window_name);
+	void set_window_icon(Image& icon);
+	void set_default_window_icon();
 
-	bool is_window_resizeable();
-	void set_window_resizeable(bool value);
+	bool is_window_minimized();
+	bool is_window_maximized();
+	bool is_window_restored();
+	void window_minimize();
+	void window_maximize();
+	void window_restore();
 
 	bool is_window_visible();
-	void set_window_visible(bool value);
+	void set_window_visibility(bool value);
 
-	bool is_window_decorated();
-	void set_window_decorated(bool value);
+	bool is_window_focused();
+	void window_focus();
+	void window_request_attention();
 
-	bool is_window_auto_iconify_when_fullscreen();
-	void set_window_auto_iconify_when_fullscreen(bool value);
+	void set_window_opacity(float opacity);
+	float get_window_opacity();
+
+	bool is_window_resizable();
+	void set_window_resizable(bool value);
 
 	bool is_window_always_on_top();
 	void set_window_always_on_top(bool value);
 
-	bool is_window_transparent();
-	void set_window_always_transparent(bool value);
-
-	bool is_window_scale_window_size();
-	void set_window_scale_window_size(bool value);
-
-	bool is_window_scale_framebuffer_size();				// ?
-	void set_window_scale_framebuffer_size(bool value);		// ?
-
-	bool is_window_mouse_passthrough();
-	void set_window_mouse_passthrough(bool value);
-
-	bool get_window_has_initial_position();
-	void set_window_has_initial_position(bool value);
-
-	glm::ivec2 get_window_initial_position();
-	void set_window_initial_position(glm::ivec2 value);
-
-	bool is_window_maximize_on_create();
-	void set_window_maximize_on_create();
-
-	bool is_window_focus_on_create();
-	void set_window_focus_on_create();
+	bool is_window_auto_iconify_when_fullscreen();
+	void set_window_auto_iconify_when_fullscreen(bool value);
 
 	bool is_window_focus_on_show();
-	void set_window_focus_on_show();
+	void set_window_focus_on_show(bool value);
 
-	int32_t get_window_fullscreen_refresh_rate();
-	void set_window_fullscreen_refresh_rate(int32_t value);
-	
-	
+	bool is_window_decorated();
+	void set_window_decorated(bool value);
+
 	// input handling
 
 	// newsletters
@@ -292,9 +290,9 @@ public:
 	}; 
 
 	enum class PressAction {
-		PRESS,
-		RELEASE,
-		REPEAT,
+		RELEASE		= 0,
+		PRESS		= 1,
+		REPEAT		= 2,
 	};
 
 	enum class KeyMods {
@@ -304,6 +302,13 @@ public:
 		SUPER		= 0x0008,
 		CAPS_LOCK	= 0x0010,
 		NUM_LOCK	= 0x0020,
+	};
+
+	enum class CursorMode {
+		NORMAL		= 0x00034001,
+		HIDDEN		= 0x00034002,
+		DISABLED	= 0x00034003,
+		CAPTURED	= 0x00034004,
 	};
 
 	struct KeyPressResult {
@@ -321,22 +326,26 @@ public:
 
 	void set_sticky_keys(bool value);
 	bool get_sticky_keys();
-	void set_sticky_mods(bool value);
-	bool get_sticky_mods();
 	PressAction get_key(Key key);
 	int32_t get_key_scancode(Key key);
-	std::string get_key_name(Key key);
+	std::u8string get_key_name(Key key);
 
 	bool is_raw_mouse_movement_supported();
 	bool get_raw_mouse_movement();
 	void set_raw_mouse_movement(bool value);
 	glm::dvec2 get_cursor_position();
+	void set_cursor_mode(CursorMode mode);
+	CursorMode get_cursor_mode();
 
 	void set_sticky_mouse_buttons(bool value);
 	bool get_sticky_mouse_buttons();
 	PressAction get_mouse_button(MouseButton mouse_button);
 
+	// TODO : custom and default cursor images
+
 protected:
+	Window() = default;
+
 	struct NewslettersBlock {
 		Newsletter<>							on_should_close_events;
 		Newsletter<const glm::ivec2&>			on_window_resolution_events;
@@ -358,5 +367,5 @@ protected:
 	};
 
 	void _initialize(const WindowDescription& description);
-	void* window = nullptr;
+	void* handle = nullptr;
 };

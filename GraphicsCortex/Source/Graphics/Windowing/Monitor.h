@@ -13,11 +13,13 @@ class Window;
 class Monitor {
 public:
 	
-	static const std::span<const Monitor> get_all_monitors();
-	
+	static const std::span<Monitor> get_all_monitors();
+	bool operator==(const Monitor& other);
+
 	glm::ivec2 get_position() const;
-	glm::ivec2 get_work_area_position() const;
-	glm::ivec2 get_work_area_size() const;
+	glm::ivec2 get_resolution() const;
+	glm::ivec2 get_position_undecorated() const;
+	glm::ivec2 get_resolution_undecorated() const;
 	glm::ivec2 get_physical_size_mm() const;
 	glm::vec2 get_content_scale() const;
 	std::u8string get_name() const;
