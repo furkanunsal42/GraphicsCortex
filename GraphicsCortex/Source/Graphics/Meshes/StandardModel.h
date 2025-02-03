@@ -7,7 +7,7 @@
 #include <unordered_map>
 #include "glm.hpp"
 #include <stdint.h>
-
+#include <filesystem>
 #include "IndexBufferEnums.h"
 #include "SingleModel.h"
 
@@ -25,33 +25,23 @@ public:
 	struct Node {
 		friend Model2;
 	public:
-		//bool operator==(const Node& other) const;
 		Node(uint32_t node_name = null_node_name);
 
 		uint32_t name;
+		uint32_t parent;
+		std::vector<uint32_t> childs;
 		std::vector<uint32_t> submodels;
-		std::vector<uint32_t> childnodes;
 		glm::mat4 transform = glm::mat4(1.0f);
-
-	private:
-		//uint64_t _childnodes_hash = 0;
 	};
 
 	struct _ProxyNode {
 		friend Model2;
 	public:
 
-		//void operator=(const _ProxyNode& other);
-		//bool operator==(const Node& other) const;
-		//bool operator==(const _ProxyNode& other) const;
+		bool add_submodel(int32_t submodel);
+		bool remove_submodel(int32_t submodel);
 
-		bool add_submodel(std::shared_ptr<SingleModel2> submodel);
-		bool add_submodel(uint32_t submodel_name);
-		bool remove_submodel(std::shared_ptr<SingleModel2> submodel);
-		bool remove_submodel(uint32_t submodel_name);
-
-		bool add_childnode(uint32_t node_name);
-		bool remove_childnode(uint32_t node_name);
+		_ProxyNode add_childnode();
 
 		const std::vector<uint32_t>& childnodes;
 		const std::vector<uint32_t>& submodels;
@@ -80,38 +70,20 @@ public:
 		uint32_t _node_name;
 	};
 
-	Model2(const std::string& filepath);
-	Model2(std::shared_ptr<SingleModel2> single_model);
+	Model2(const std::filesystem::path& filepath);
 	Model2() = default;
 	~Model2() = default;
+	
 	void clear();
-
-	void load_model(const std::string& filepath);
-	void load_model_async(const std::string& filepath);
-
-	// submodels
-	size_t get_submodel_count() const;
-	bool does_submodel_exist(std::shared_ptr<SingleModel2> submodel) const;
-	bool does_submodel_exist(uint32_t submodel_name) const;
-	uint32_t insert_submodel(std::shared_ptr<SingleModel2> submodel);
-	//uint32_t insert_submodel(SingleModel2&& submodel);
-	void erase_submodel(std::shared_ptr<SingleModel2> submodel);
-	void erase_submodel(uint32_t submodel_name);
-	//bool set_submodel(uint32_t submodel_name, std::shared_ptr<SingleModel2> new_submodel);
-	//bool set_submodel(uint32_t submodel_name, SingleModel2&& new_submodel);
-	uint32_t get_submodel_name(std::shared_ptr<SingleModel2> submodel) const;
-	std::shared_ptr<SingleModel2> get_submodel(uint32_t submodel_name);
-
-	void set_index_type(IndexType index_type);
-	IndexType get_index_type();
+	void load_model(const std::filesystem::path& filepath);
+	
+	std::vector<SingleModel2> single_models;
+	IndexType index_buffer_type = IndexType::i_ui32;
 
 	// nodes
 	size_t get_node_count();
 	bool does_node_exist(uint32_t node_name);
-	_ProxyNode operator[](uint32_t node_name);
 	_ProxyNode get_node(uint32_t node_name);
-	void create_node(uint32_t node_name);
-	void delete_node(uint32_t node_name);
 
 	//void save_to_disc(const std::string& output_filepath);
 
@@ -128,16 +100,7 @@ public:
 
 private:
 
-	uint32_t _next_submodel_name = 0;
 	uint32_t _generate_submodel_name();
-	//uint64_t _update_childnode_hahs();
-	//uint64_t _update_childnode_hash(uint32_t node_name);
-
-	std::unordered_map<std::shared_ptr<SingleModel2>, uint32_t> _submodel_to_name;
-	std::unordered_map<uint32_t, std::shared_ptr<SingleModel2>> _name_to_submodel;
-	IndexType _index_buffer_type = IndexType::i_ui32;
-
 	std::unordered_map<uint32_t, Node> _name_to_node;
-	//std::unordered_map<size_t, uint32_t> _nodehash_to_node;
 };
 
