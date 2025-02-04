@@ -1,0 +1,332 @@
+#<compute shader>
+
+#version 460 core
+#define id gl_GlobalInvocationID
+
+#define sample_t 0
+#define image_t 1
+#define buffer_t 2
+
+// inputs: 0, 1
+#define source_enabled 1
+#define operand_enabled 1
+
+// inputs: sample_t, image_t, buffer_t
+#define source_type image_t
+#define operand_type image_t
+
+// inputs: image_t, buffer_t
+#define target_type image_t
+
+// inputs:	-- for image types:
+//			image1D, iimage1D, uimage1D,
+//			image2D, iimage2D, uimage2D,
+//			image3D, iimage3D, uimage3D,
+//			-- for sampler types:
+//			sampler1D, sampler2D, sampler3D,
+//			-- for buffer types:
+//			float, int, vec2, ivec2, uvec2, 
+//			vec3, ivec3, uvec3, 
+//			vec4, ivec4, uvec4,
+#define source_precise_type image2D
+#define operand_precise_type image2D
+#define target_precise_type image2D
+
+// required only if source/operand/target is of image type
+#define source_image_internal_format rgba8
+#define operand_image_internal_format rgba8
+#define target_image_internal_format rgba8
+
+#define image1D		10
+#define iimage1D	11
+#define uimage1D	12
+#define image2D		13
+#define iimage2D	14
+#define uimage2D	15
+#define image3D		16
+#define iimage3D	17
+#define uimage3D	18
+#define sampler1D	19
+#define sampler2D	20
+#define sampler3D	21
+
+//		source type deduction
+#if		source_precise_type == iimage1D ||\
+		source_precise_type == iimage2D ||\
+		source_precise_type == iimage3D
+		#define source_image_is_int 1
+#endif
+#if		source_precise_type == uimage1D ||\
+		source_precise_type == uimage2D ||\
+		source_precise_type == uimage3D
+		#define source_image_is_uint 1
+#endif
+#if		source_precise_type == sampler1D ||\
+		source_precise_type == sampler2D ||\
+		source_precise_type == sampler3D
+		#define source_is_sampler 1
+#endif
+
+
+#if		source_precise_type == image1D  ||\
+		source_precise_type == iimage1D ||\
+		source_precise_type == uimage1D ||\
+		source_precise_type == sampler1D 
+		#define source_image_dim 1
+		#if source_precise_type == sampler1D
+		#define source_index_type float
+		#else
+		#define source_index_type int
+		#endif
+#elif	source_precise_type == image2D  ||\
+		source_precise_type == iimage2D ||\
+		source_precise_type == uimage2D ||\
+		source_precise_type == sampler2D 
+		#define source_image_dim 2
+		#if source_precise_type == sampler2D
+		#define source_index_type vec2
+		#else
+		#define source_index_type ivec2
+		#endif
+#elif	source_precise_type == image3D  ||\
+		source_precise_type == iimage3D ||\
+		source_precise_type == uimage3D ||\
+		source_precise_type == sampler3D 
+		#define source_image_dim 3
+		#if source_precise_type == sampler3D
+		#define source_index_type vec3
+		#else
+		#define source_index_type ivec3
+		#endif
+#endif
+
+//		operand type deduction
+#if		operand_precise_type == iimage1D ||\
+		operand_precise_type == iimage2D ||\
+		operand_precise_type == iimage3D
+		#define operand_image_is_int 1
+#endif
+#if		operand_precise_type == uimage1D ||\
+		operand_precise_type == uimage2D ||\
+		operand_precise_type == uimage3D
+		#define operand_image_is_uint 1
+#endif
+#if		operand_precise_type == sampler1D ||\
+		operand_precise_type == sampler2D ||\
+		operand_precise_type == sampler3D
+		#define operand_is_sampler 1
+#endif
+
+#if		operand_precise_type == image1D  ||\
+		operand_precise_type == iimage1D ||\
+		operand_precise_type == uimage1D ||\
+		operand_precise_type == sampler1D 
+		#define operand_image_dim 1
+		#if operand_precise_type == sampler1D
+		#define operand_index_type float
+		#else
+		#define operand_index_type int
+		#endif
+#elif	operand_precise_type == image2D  ||\
+		operand_precise_type == iimage2D ||\
+		operand_precise_type == uimage2D ||\
+		operand_precise_type == sampler2D 
+		#define operand_image_dim 2
+		#if operand_precise_type == sampler2D
+		#define operand_index_type vec2
+		#else
+		#define operand_index_type ivec2
+		#endif
+#elif	operand_precise_type == image3D  ||\
+		operand_precise_type == iimage3D ||\
+		operand_precise_type == uimage3D ||\
+		operand_precise_type == sampler3D 
+		#define operand_image_dim 3
+		#if operand_precise_type == sampler3D
+		#define operand_index_type vec3
+		#else
+		#define operand_index_type ivec3
+		#endif
+#endif
+
+//		target type deduction
+#if		target_precise_type == iimage1D ||\
+		target_precise_type == iimage2D ||\
+		target_precise_type == iimage3D
+		#define target_image_is_int 1
+#endif
+#if		target_precise_type == uimage1D ||\
+		target_precise_type == uimage2D ||\
+		target_precise_type == uimage3D
+		#define target_image_is_uint 1
+#endif
+
+#if		target_precise_type == image1D  ||\
+		target_precise_type == iimage1D ||\
+		target_precise_type == uimage1D
+		#define target_image_dim 1
+		#define target_index_type int
+#elif	target_precise_type == image2D  ||\
+		target_precise_type == iimage2D ||\
+		target_precise_type == uimage2D
+		#define target_image_dim 2
+		#define target_index_type ivec2
+#elif	target_precise_type == image3D  ||\
+		target_precise_type == iimage3D ||\
+		target_precise_type == uimage3D
+		#define target_image_dim 3
+		#define target_index_type ivec3
+#endif
+
+#undef image1D
+#undef iimage1D
+#undef uimage1D
+#undef image2D
+#undef iimage2D
+#undef uimage2D
+#undef image3D
+#undef iimage3D
+#undef uimage3D
+#undef sampler1D
+#undef sampler2D
+#undef sampler3D
+
+// code to allow intermediate computation and define variables
+#define preprocessing
+
+// value that will be written to the target
+// is target is of type image operation must be r-value statement of type vec4/ivec4/uvec4
+// if target is of type buffer, operation must contain whole asignment statement in the form "target[id.x] = float(source.x + operand.y)"
+#define enable_strong_operation 0
+#define operation vec4(0, 1, 1, 1)
+
+
+#define workgroup_size_x 8
+#define workgroup_size_y 8
+#define workgroup_size_z 1
+
+layout (local_size_x = workgroup_size_x, local_size_y = workgroup_size_y, local_size_z = workgroup_size_z) in;
+
+// source definition
+#if source_enabled == 1
+#if source_type == image_t
+layout (source_image_internal_format, binding = 0) uniform source_precise_type source_data;
+#elif source_type == sampler_t
+layout (binding = 0) uniform source_precise_type source_data;
+#elif source_type == buffer_t
+layout (binding = 0) buffer source_data{
+	source_precise_type source[];
+};
+#else
+#error source_type was not valid
+#endif
+#endif // source enabled
+
+// operand definition
+#if operand_enabled == 1
+#if operand_type == image_t
+layout (operand_image_internal_format, binding = 1) uniform operand_precise_type operand_data;
+#elif operand_type == sampler_t
+layout (binding = 1) uniform operand_precise_type operand_data;
+#elif operand_type == buffer_t
+layout (binding = 1) buffer operand_data{
+	operand_precise_type operand[];
+};
+#else
+#error operand_type was not valid
+#endif
+#endif // operand enabled
+
+// target definition
+#if target_type == image_t
+layout (target_image_internal_format, binding = 2) uniform target_precise_type target_data;
+#elif target_type == buffer_t
+layout (std430, binding = 0) buffer target_data{
+	target_precise_type target[];
+};
+#else
+#error target_type was not valid
+#endif
+
+uniform uvec3 source_resolution;
+uniform uvec3 operand_resolution;
+uniform uvec3 target_resolution;
+
+uniform uvec3 id_begin;
+uniform uvec3 id_end;
+
+#define constant_definitions
+
+constant_definitions
+
+// preprocessing
+preprocessing
+
+void main(){
+	id += id_begin;
+	if (any(greaterThanEqual(id.xyz, id_end.xyz))) return;
+	
+	// normalized id between vec3(0, 0, 0) and vec3(1, 1, 1)
+	vec3 id_n = vec3(id) / max(id_end, vec3(1, 1, 1));
+
+	// source image/sampler read
+	#if source_enabled == 1 && source_type != buffer_t
+	#if source_image_is_int == 1
+	ivec4 source;
+	#elif source_image_is_uint == 1
+	uvec4 source;
+	#else
+	vec4 source;
+	#endif
+	
+	#if source_is_sampler == 1
+	source = texture(source_data, source_index_type(id_n));
+	#else
+	source = imageLoad(source_data, source_index_type(id));
+	#endif
+	#endif
+
+	// operand image/sampler read
+	#if operand_enabled == 1 && operand_type != buffer_t
+	#if operand_image_is_int == 1
+	ivec4 operand;
+	#elif operand_image_is_uint == 1
+	uvec4 operand;
+	#else
+	vec4 operand;
+	#endif
+	
+	#if operand_is_sampler == 1
+	operand = texture(operand_data, operand_index_type(id_n));
+	#else
+	operand = imageLoad(operand_data, operand_index_type(id));
+	#endif
+	#endif
+
+	// target image/sampler read
+	#if target_type != buffer_t
+	#if target_image_is_int == 1
+	ivec4 target;
+	#elif target_image_is_uint == 1
+	uvec4 target;
+	#else
+	vec4 target;
+	#endif
+	
+	target = imageLoad(target_data, target_index_type(id));
+	#endif
+
+	#if target_type != buffer_t && enable_strong_operation == 0
+	
+	#if target_image_is_int == 1
+	imageStore(target_data, target_index_type(id), ivec4(operation));
+	#elif target_image_is_uint == 1
+	imageStore(target_data, target_index_type(id), uvec4(operation));
+	#else
+	imageStore(target_data, target_index_type(id), vec4(operation));
+	#endif
+	
+	#else
+	operation
+	#endif
+}

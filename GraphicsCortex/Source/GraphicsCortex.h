@@ -17,7 +17,6 @@
 #include "Debuger.h"
 #include "Frame.h"
 #include "Monitor.h"
-#include "GraphicsContext.h"
 #include "Window.h"
 #include "Library.h"
 #include "Model.h"

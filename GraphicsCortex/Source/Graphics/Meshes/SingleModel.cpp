@@ -4,6 +4,7 @@
 #include "Debuger.h"
 #include "StandardBuffer.h"
 
+/*
 std::vector<glm::vec3>& SingleModel2::unlock_verticies()
 {
 	_revision_counter_verticies++;
@@ -253,3 +254,4 @@ size_t SingleModel2::get_primitive_revision_count()
 {
 	return _revision_counter_primitive;
 }
+*/

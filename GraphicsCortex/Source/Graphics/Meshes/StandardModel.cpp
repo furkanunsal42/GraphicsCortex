@@ -6,6 +6,7 @@
 #include "Debuger.h"
 #include "StandardBuffer.h"
 
+/*
 size_t Model2::get_submodel_count() const {
 	if (_submodel_to_name.size() != _name_to_submodel.size()) {
 		std::cout << "[Model2 Error] internal error on the submodel datastructure, _submodel_to_name and _name_to_submodel maps are inconsistant" << std::endl;
@@ -228,7 +229,6 @@ void Model2::_ProxyNode::clear(){
 	_submodels.clear();
 }
 
-/*
 namespace {
 	uint32_t _hash(uint32_t x) {
 		x = ((x >> 16) ^ x) * 0x45d9f3b;
@@ -283,8 +283,6 @@ size_t Model2::_update_childnode_hash(uint32_t node_name) {
 		hash ^= _update_childnode_hash(childnode);
 	}
 }
-*/
-
 
 std::unique_ptr<Buffer> Model2::create_vertex_buffer(size_t buffer_left_padding, size_t buffer_right_padding) const {
 	size_t vertex_count = 0;
@@ -465,3 +463,4 @@ std::unique_ptr<Buffer> Model2::create_index_buffer(size_t buffer_left_padding, 
 
 	return buffer;
 }
+*/
