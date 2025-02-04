@@ -1,0 +1,41 @@
+#<compute shader>
+
+#version 460 core
+#define id gl_GlobalInvocationID
+
+#define source_image_internal_format rgba8
+#define source_image_type image2D
+
+#define operand_image_internal_format rgba8
+#define operand_image_type image2D
+#define operand_image_enabled 1
+
+#define constant_operand_type int
+
+#define operation vec4(0, 1, 1, 1)
+
+layout (local_size_x = 8, local_size_y = 8, local_size_z = 1) in;
+
+layout (source_image_internal_format, binding = 0) uniform source_image_type source_texture;
+#if operand_image_enabled == 1
+	layout (operand_image_internal_format, binding = 1) uniform operand_image_type operand_texture;
+#endif
+
+uniform ivec2 source_resolution;
+uniform ivec2 operand_resolution;
+uniform constant_operand_type constant_operand;
+
+void main(){
+	if (any(greaterThanEqual(id.xy, source_resolution.xy))) return;
+
+	vec4 source = imageLoad(source_texture, ivec2(id.xy));
+	
+	#if operand_image_enabled == 1
+		vec4 operand = imageLoad(operand_texture, ivec2(id.xy)); 
+	#endif
+	#if operand_image_enabled == 0
+		vec4 operand = vec4(constant_operand);
+	#endif
+
+	imageStore(source_texture, ivec2(id.xy), operation);
+}

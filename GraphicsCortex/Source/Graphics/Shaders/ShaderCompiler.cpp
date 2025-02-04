@@ -472,7 +472,8 @@ void Program::_define_all_uniforms() {
 				uniform_type = UniformData::UNKNOWN;
 		}
 
-		uniforms[uniform_name] = UniformData(uniform_name, uniform_type, i);
+		GLCall(uint32_t uniform_index = glGetUniformLocation(id, uniform_name.c_str()));
+		uniforms[uniform_name] = UniformData(uniform_name, uniform_type, uniform_index);
 	}
 }
 

@@ -107,7 +107,15 @@ void Framebuffer::clear_bound_drawbuffer()
 void Framebuffer::clear_bound_drawbuffer(float r, float g, float b, float a)
 {
 	GLCall(glClearColor(r, g, b, a));
-	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
+
+	uint32_t clear_targets = GL_COLOR_BUFFER_BIT;
+
+	if (_depth_attachment != nullptr || _depth_stencil_attachment != nullptr)
+		clear_targets |= GL_DEPTH_BUFFER_BIT;
+	if (_stencil_attachment != nullptr || _depth_stencil_attachment != nullptr)
+		clear_targets |= GL_STENCIL_BUFFER_BIT;
+
+	GLCall(glClear(clear_targets));
 }
 void Framebuffer::attach_color(int slot, std::shared_ptr<Texture1D> texture1d, int mipmap_level)
 {
@@ -236,7 +244,7 @@ void Framebuffer::attach_color(int slot, std::shared_ptr<Renderbuffer> render_bu
 
 	_color_attachments[slot] = render_buffer;
 	render_buffer->_allocate_texture();
-	GLCall(glNamedFramebufferRenderbuffer(id, GL_COLOR_ATTACHMENT0 + slot, render_buffer->target, render_buffer->id));
+	GLCall(glNamedFramebufferRenderbuffer(id, GL_COLOR_ATTACHMENT0 + slot, GL_RENDERBUFFER, render_buffer->id));
 	_draw_buffers_are_updated = false;
 }
 
@@ -250,6 +258,8 @@ void Framebuffer::attach_depth(std::shared_ptr<Texture2D> texture2d, int mipmap_
 		std::cout << "[OpenGL Error] Framebuffer tried to attach_depth() but texture was released" << std::endl;
 		ASSERT(false);
 	}
+
+	_depth_stencil_attachment = nullptr;
 
 	_depth_attachment = texture2d;
 	texture2d->_allocate_texture();
@@ -267,6 +277,8 @@ void Framebuffer::attach_depth(std::shared_ptr<Renderbuffer> render_buffer)
 		ASSERT(false);
 	}
 
+	_depth_stencil_attachment = nullptr;
+
 	_depth_attachment = render_buffer;
 	render_buffer->_allocate_texture();
 	GLCall(glNamedFramebufferRenderbuffer(id, GL_DEPTH_ATTACHMENT, render_buffer->target, render_buffer->id));
@@ -282,6 +294,8 @@ void Framebuffer::attach_stencil(std::shared_ptr<Texture2D> texture2d, int mipma
 		std::cout << "[OpenGL Error] Framebuffer tried to attach_stencil() but texture was released" << std::endl;
 		ASSERT(false);
 	}
+	
+	_depth_stencil_attachment = nullptr;
 
 	_stencil_attachment = texture2d;
 	texture2d->_allocate_texture();
@@ -299,7 +313,9 @@ void Framebuffer::attach_stencil(std::shared_ptr<Renderbuffer> render_buffer)
 		ASSERT(false);
 	}
 
-	_depth_attachment = render_buffer;
+	_depth_stencil_attachment = nullptr;
+
+	_stencil_attachment = render_buffer;
 	render_buffer->_allocate_texture();
 	GLCall(glNamedFramebufferRenderbuffer(id, GL_STENCIL_ATTACHMENT, render_buffer->target, render_buffer->id));
 }
@@ -315,7 +331,10 @@ void Framebuffer::attach_depth_stencil(std::shared_ptr<Texture2D> texture2d, int
 		ASSERT(false);
 	}
 
-	_stencil_attachment = texture2d;
+	_depth_attachment = nullptr;
+	_stencil_attachment = nullptr;
+
+	_depth_stencil_attachment = texture2d;
 	texture2d->_allocate_texture();
 	GLCall(glNamedFramebufferTexture(id, GL_DEPTH_STENCIL_ATTACHMENT, texture2d->id, mipmap_level));
 }
@@ -331,7 +350,10 @@ void Framebuffer::attach_depth_stencil(std::shared_ptr<Renderbuffer> render_buff
 		ASSERT(false);
 	}
 
-	_depth_attachment = render_buffer;
+	_depth_attachment = nullptr;
+	_stencil_attachment = nullptr;
+
+	_depth_stencil_attachment = render_buffer;
 	render_buffer->_allocate_texture();
 	GLCall(glNamedFramebufferRenderbuffer(id, GL_DEPTH_STENCIL_ATTACHMENT, render_buffer->target, render_buffer->id));
 }

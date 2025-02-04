@@ -27,7 +27,7 @@ public:
 	SamplingFilter mipmap_min_filter = SamplingFilter::LINEAR;
 	SamplingFilter min_filter = SamplingFilter::LINEAR;
 	SamplingFilter mag_filter = SamplingFilter::LINEAR;
-	bool is_bindless = true;
+	bool is_bindless = false;
 
 	Texture3D() = delete;
 	Texture3D(const Texture3D& other) = delete;

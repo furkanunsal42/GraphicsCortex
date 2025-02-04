@@ -76,7 +76,7 @@ public:
 		deferred->deactivate_all_draw_buffers();
 		deferred->activate_draw_buffer(0);
 		deferred->bind_draw();
-		Framebuffer::clear_bound_drawbuffer();
+		deferred->clear_bound_drawbuffer();
 		
 		deferred_program->update_uniform("model", glm::translate(glm::scale(glm::identity<glm::mat4>(), glm::vec3(pipeline.width, pipeline.height, 1.0f)), glm::vec3(0.5f, 0.5f, 0.0f)));
 		deferred_program->update_uniform("projection", glm::ortho(0.0f, (float)pipeline.width, 0.0f, (float)pipeline.height, -1.0f, 1.0f));

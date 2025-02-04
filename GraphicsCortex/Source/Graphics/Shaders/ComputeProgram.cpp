@@ -5,21 +5,23 @@
 #include "Texture3D.h"
 #include "Texture2DArray.h"
 #include "TextureCubeMap.h"
+#include "StandardBuffer.h"
 
 #include <sstream>
 
-ComputeProgram::ComputeProgram()
+ComputeProgram::ComputeProgram(const Shader& shader, const std::vector<std::pair<std::string, std::string>>& preprocessing_key_values)
 {
-	_generate_program();
-}
-
-ComputeProgram::ComputeProgram(const Shader& shader, std::vector<std::pair<std::string, std::string>> preprocessing_key_values)
-{
-	for (std::pair<std::string, std::string>& key_value : preprocessing_key_values)
-		set_preprocessor(key_value.first, key_value.second);
+	set_preprocessor(preprocessing_key_values);
 	
 	_generate_program();
 	compile_shader(shader);
+}
+
+ComputeProgram::ComputeProgram(const std::vector<std::pair<std::string, std::string>>& preprocessing_key_values)
+{
+	set_preprocessor(preprocessing_key_values);
+
+	_generate_program();
 }
 
 ComputeProgram::~ComputeProgram()
@@ -167,7 +169,7 @@ void ComputeProgram::compile_shader(const Shader& shader)
 		GLCall(glDeleteShader(compute_shader));
 
 		std::cout << "[OpenGL Error] Compute Shader \"" << shader.filename << "\" failed to compiler with message : " << info_log << std::endl;;
-		ASSERT(false);
+		//ASSERT(false);
 		return;
 	}
 
@@ -205,6 +207,12 @@ void ComputeProgram::set_preprocessor(const std::string& key, const std::string&
 	_preprocessing_defines[key] = value;
 }
 
+void ComputeProgram::set_preprocessor(const std::vector<std::pair<std::string, std::string>>& preprocessing_key_values)
+{
+	for (const std::pair<std::string, std::string>& key_value : preprocessing_key_values)
+		set_preprocessor(key_value.first, key_value.second);
+}
+
 std::string ComputeProgram::get_preprocessor(const std::string& key)
 {
 	return _preprocessing_defines[key];
@@ -227,6 +235,38 @@ glm::ivec3 ComputeProgram::get_work_group_size()
 	glGetProgramiv(id, GL_COMPUTE_WORK_GROUP_SIZE, work_group_size);
 
 	return glm::ivec3(work_group_size[0], work_group_size[1], work_group_size[2]);
+}
+
+void ComputeProgram::update_uniform_as_storage_buffer(const std::string& name, Buffer& buffer, size_t offset, size_t size) {
+	
+	// I don't think they are necessary
+	//buffer.wait_to_sycronize_upload();
+	//buffer.wait_to_sycronize_download();
+
+	if (!buffer._buffer_allocated) buffer._allocate_buffer(buffer._buffer_size);
+
+	GLCall(int slot = glGetProgramResourceIndex(id, GL_SHADER_STORAGE_BLOCK, name.c_str()));
+	if (slot == -1) {	// maybe
+		ASSERT(false);
+	}
+
+	buffer.bind_as_storage_buffer(slot, offset, size);
+}
+
+void ComputeProgram::update_uniform_as_storage_buffer(const std::string& name, Buffer& buffer, size_t offset)
+{
+	// I don't think they are necessary
+	//buffer.wait_to_sycronize_upload();
+	//buffer.wait_to_sycronize_download();
+
+	if (!buffer._buffer_allocated) buffer._allocate_buffer(buffer._buffer_size);
+
+	GLCall(int slot = glGetProgramResourceIndex(id, GL_SHADER_STORAGE_BLOCK, name.c_str()));
+	if (slot == -1) {	// maybe
+		ASSERT(false);
+	}
+	
+	buffer.bind_as_storage_buffer(slot, offset, buffer.get_buffer_size_in_bytes());
 }
 
 void ComputeProgram::update_uniform(const std::string& name, Texture1D& texture1d)

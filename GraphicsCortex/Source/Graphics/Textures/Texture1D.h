@@ -20,7 +20,7 @@ public:
 	int64_t texture_handle = 0;
 	int mipmap_begin_level = 0;
 	float mipmap_bias = 0.0f;
-	bool is_bindless = true;
+	bool is_bindless = false;
 
 	WrapMode wrap_u = WrapMode::CLAMP;
 	SamplingFilter mipmap_min_filter = SamplingFilter::LINEAR;

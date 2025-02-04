@@ -37,8 +37,8 @@ public:
 	static void bind_screen_read();
 	static void bind_screen_draw();
 
-	static void clear_bound_drawbuffer();
-	static void clear_bound_drawbuffer(float r, float g, float b, float a);
+	void clear_bound_drawbuffer();
+	void clear_bound_drawbuffer(float r, float g, float b, float a);
 
 	void bind_read_draw();
 	void bind_read();

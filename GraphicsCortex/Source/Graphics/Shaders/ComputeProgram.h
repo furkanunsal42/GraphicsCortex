@@ -1,6 +1,8 @@
 #pragma once
 #include "ShaderCompiler.h"
 
+class Buffer;
+
 class ComputeProgram {
 public:
 	unsigned int id;
@@ -23,8 +25,8 @@ public:
 		ALL_BARRIER_BITS					= 0xFFFFFFFF,
 	};
 
-	ComputeProgram();
-	ComputeProgram(const Shader& shader, std::vector<std::pair<std::string, std::string>> preprocessing_key_values = {});
+	ComputeProgram(const std::vector<std::pair<std::string, std::string>>& preprocessing_key_values = {});
+	ComputeProgram(const Shader& shader, const std::vector<std::pair<std::string, std::string>>& preprocessing_key_values = {});
 	ComputeProgram(const ComputeProgram& other) = delete;
 	~ComputeProgram();
 	void release();
@@ -40,10 +42,14 @@ public:
 
 	void clear_preprocessor();
 	void set_preprocessor(const std::string& key, const std::string& value);
+	void set_preprocessor(const std::vector<std::pair<std::string, std::string>>& preprocessing_key_values);
 	std::string get_preprocessor(const std::string& key);
 	void compile_shader(const Shader& shader);
 	
 	glm::ivec3 get_work_group_size();
+
+	void update_uniform_as_storage_buffer(const std::string& name, Buffer& buffer, size_t offset, size_t size);
+	void update_uniform_as_storage_buffer(const std::string& name, Buffer& buffer, size_t offset = 0);
 
 	void update_uniform(const std::string& name, Texture1D& texture1d);
 	void update_uniform(const std::string& name, Texture2D& texture2d);

@@ -26,7 +26,7 @@ public:
 	SamplingFilter mipmap_min_filter = SamplingFilter::LINEAR;
 	SamplingFilter min_filter = SamplingFilter::LINEAR;
 	SamplingFilter mag_filter = SamplingFilter::LINEAR;
-	bool is_bindless = true;
+	bool is_bindless = false;
 
 	Texture2DArray() = delete;
 	Texture2DArray(const Texture2DArray& other) = delete;

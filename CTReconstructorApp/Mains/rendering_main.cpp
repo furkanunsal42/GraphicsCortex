@@ -1,10 +1,16 @@
 #include "GraphicsCortex.h"
 #include "FilteredBackProjection/FBP3D.h"
+#include "FilteredBackProjection/FBP3DSegmentedMemory.h"
+#include "Application/ProgramSourcePaths.h"
+#include "Application/ReconstructionInfo.h"
+#include "DirectoryUtils.h"
 
 int main() {
 	
-	glm::ivec3 volume_size(512, 512, 512);
-	glm::ivec2 frame_size(1024, 1024);
+	glm::ivec3 volume_size(1024, 1024, 1024);
+	glm::ivec2 frame_size(1920, 1080);
+	int32_t projection_count = 1440;
+	glm::ivec2 projection_size = glm::ivec2(2048, 2048);
 
 	Frame frame(frame_size.x, frame_size.y, "CTReconstructor Rendering", 0, 0, true, true, true, Frame::CallbackLevel::NOTIFICATION, 0);
 	Scene scene(frame);
@@ -19,18 +25,47 @@ int main() {
 	std::shared_ptr<Graphic> box = default_geometry::cube(volumetric_material, glm::vec3(1, 1, 1));
 	scene.add(box);
 
-	std::shared_ptr<FBP3D> fbp_solver = std::make_shared<FBP3D>();
+	std::shared_ptr<FBP3D> solver;
+	{
+		int floating_point_precision = 16;
+		std::vector<std::pair<std::string, std::string>> fbp_shader_defines_to_use =
+			floating_point_precision == 16 ? _fbp_shader_defines_f16 : _fbp_shader_defines_f32;
 
-	fbp_solver->generate_shepplogan(volume_size.x, volume_size.y, volume_size.z);
-	fbp_solver->read_projections_as_sinograms("C:/Users/FURKAN.UNSAL/Desktop/Projektionen", 2048, 2048, 1, 2, volume_size.x, volume_size.y, 1440);
-	fbp_solver->log_normalize_sinograms(97.0 / 255);
+		std::vector<std::pair<std::string, std::string>> ffft_shader_defines_to_use =
+			floating_point_precision == 16 ? _ffft_shader_defines_f16 : _ffft_shader_defines_f32;
+
+		Texture2D::ColorTextureFormat fbp_volume_format_to_use = floating_point_precision == 16 ? Texture2D::ColorTextureFormat::R16F : Texture2D::ColorTextureFormat::R32F;
+		Texture2D::ColorTextureFormat fbp_projection_format_to_use = floating_point_precision == 16 ? Texture2D::ColorTextureFormat::R16F : Texture2D::ColorTextureFormat::R32F;
+		Texture2D::ColorTextureFormat fbp_projection_complex_format_to_use = floating_point_precision == 16 ? Texture2D::ColorTextureFormat::RG16F : Texture2D::ColorTextureFormat::RG32F;
+
+		solver = std::make_shared<FBP3D>(fbp_shader_defines_to_use, ffft_shader_defines_to_use);
 	
-	//fbp_solver->apply_fdk_weights_to_sinograms(730.87f, 669.04f, 409.60f);
-	fbp_solver->apply_filter_to_sinograms(FBP2D::FilterType::SHEPP_LOGAN);
-	fbp_solver->project_backward_cone_fdk_from_sinograms(730.87f, 669.04f, 409.60f, 213.84f, 1, volume_size.x, volume_size.y, 0);
-	fbp_solver->normalize_histogram();
+		solver->set_projections_max_segment_size(glm::ivec3(volume_size.x, volume_size.y / 1, projection_count));
+		solver->set_volume_max_segment_size(glm::ivec3(volume_size.x, volume_size.y / 1, volume_size.z));
+		solver->set_volume_format(fbp_volume_format_to_use);
+		solver->set_projection_format(fbp_projection_format_to_use);
+		solver->set_projection_complex_format(fbp_projection_complex_format_to_use);
+	}
+	
+	solver->set_display_progress(true, 128);
+	
+	solver->read_projections("C:/Users/FurkanPC/Desktop/Projektionen", 2048, 2048, 1, 2, volume_size.x, volume_size.y, projection_count);
 
-	volumetric_program->update_uniform("volume", *fbp_solver->volume[0][0][0]);
+	solver->projections_transfer_ram_to_vram();
+	solver->log_normalize_projections(95.0 / 255);
+	solver->apply_fdk_weights_to_projections(730.87f, 669.04f, 409.60f);
+	solver->apply_filter_to_projections(FBP2D::FilterType::RAM_LAK);
+
+	solver->generate_blank_volume(volume_size.x, volume_size.y, volume_size.y);
+
+	solver->project_backward_cone_fdk_from_projections_matrix(730.87f, 669.04f, 409.60f, 213.84f, 213.84f, 1, volume_size.x, volume_size.y, 0);
+	solver->clip_negatives_of_volume();
+	//solver->normalize_min_max_values();
+
+	solver->projections_clear_ram();
+	solver->projections_clear_vram();
+
+	volumetric_program->update_uniform("volume", *solver->volume[0][0][0].get_texture());
 
 	while (frame.is_running()) {
 		double deltatime = frame.handle_window();

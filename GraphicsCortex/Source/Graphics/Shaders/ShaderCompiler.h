@@ -306,6 +306,23 @@ public:
 		
 	void update_uniform_buffer_slots();
 
+
+	template<typename T>
+	static std::string get_glsl_primitive_name();
+
+	template<> static std::string get_glsl_primitive_name<int32_t>()	{ return "int"; }
+	template<> static std::string get_glsl_primitive_name<uint32_t>()	{ return "uint"; }
+	template<> static std::string get_glsl_primitive_name<float>()		{ return "float"; }
+	template<> static std::string get_glsl_primitive_name<glm::vec2>()	{ return "vec2"; }
+	template<> static std::string get_glsl_primitive_name<glm::vec3>()	{ return "vec3"; }
+	template<> static std::string get_glsl_primitive_name<glm::vec4>()	{ return "vec4"; }
+	template<> static std::string get_glsl_primitive_name<glm::ivec2>()	{ return "ivec2"; }
+	template<> static std::string get_glsl_primitive_name<glm::ivec3>()	{ return "ivec3"; }
+	template<> static std::string get_glsl_primitive_name<glm::ivec4>()	{ return "ivec4"; }
+	template<> static std::string get_glsl_primitive_name<glm::uvec2>()	{ return "uvec2"; }
+	template<> static std::string get_glsl_primitive_name<glm::uvec3>()	{ return "uvec3"; }
+	template<> static std::string get_glsl_primitive_name<glm::uvec4>()	{ return "uvec4"; }
+
 private:
 	std::unordered_map<std::string, std::shared_ptr<UniformBuffer>> _uniform_buffers;
 

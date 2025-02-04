@@ -126,7 +126,7 @@ int main() {
 	Editor::get().push_layer(std::make_shared<Inspector<void>>());
 	Editor::get().push_layer(std::make_shared<ProjectExplorer>());
 
-	load_vehicle_scene();
+	//load_vehicle_scene();
 
 	while (Editor::get().frame->is_running()) {
 		Editor::get().render();

@@ -46,6 +46,7 @@ public:
 	double handle_window();
 	void set_viewport(int width, int height);
 	void set_viewport(glm::vec2 size);
+
 	void resize(int width, int height);
 	void set_visibility(bool value);
 	enum CursorType {
@@ -197,6 +198,12 @@ public:
 	};
 
 	bool get_key_press(Frame::Key key);
+	
+	double get_scroll_position_x();
+	double get_scroll_position_y();
+
+	double scroll_position_x = 0;
+	double scroll_position_y = 0;
 
 private:
 	bool visible = true;

@@ -127,7 +127,7 @@ project "GraphicsCortex"
 	buildoptions { "/sdl", "/openmp" }
 
 	filter "system:windows"
-		cppdialect "C++17"
+		cppdialect "C++20"
 		staticruntime "On"
 		systemversion "latest"
 
@@ -218,7 +218,7 @@ project "GraphicsCortexApp"
 	buildoptions { "/sdl", "/openmp" }
 
 	filter "system:windows"
-		cppdialect "C++17"
+		cppdialect "C++20"
 		staticruntime "On"
 		systemversion "latest"
 
@@ -316,7 +316,7 @@ project "CortexEditor"
 	buildoptions { "/sdl", "/openmp" }
 
 	filter "system:windows"
-		cppdialect "C++17"
+		cppdialect "C++20"
 		staticruntime "On"
 		systemversion "latest"
 
@@ -412,7 +412,7 @@ project "CortexEditor"
 	buildoptions { "/sdl", "/openmp" }
 
 	filter "system:windows"
-		cppdialect "C++17"
+		cppdialect "C++20"
 		staticruntime "On"
 		systemversion "latest"
 
@@ -511,7 +511,7 @@ project "CTReconstructor"
 	buildoptions { "/sdl", "/openmp" }
 
 	filter "system:windows"
-		cppdialect "C++17"
+		cppdialect "C++20"
 		staticruntime "On"
 		systemversion "latest"
 
@@ -615,7 +615,7 @@ project "CTReconstructorApp"
 	buildoptions { "/sdl", "/openmp" }
 
 	filter "system:windows"
-		cppdialect "C++17"
+		cppdialect "C++20"
 		staticruntime "On"
 		systemversion "latest"
 
@@ -683,7 +683,7 @@ project "ipclib"
 	buildoptions { "/sdl", "/openmp" }
 
 	filter "system:windows"
-		cppdialect "C++17"
+		cppdialect "C++20"
 		staticruntime "On"
 		systemversion "latest"
 
@@ -755,7 +755,7 @@ project "ipclibcs"
 		 }
 
 	filter "system:windows"
-		--cppdialect "C++17"
+		--cppdialect "C++20"
 		staticruntime "On"
 		systemversion "latest"
 
