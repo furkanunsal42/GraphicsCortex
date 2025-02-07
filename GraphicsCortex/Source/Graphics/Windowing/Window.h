@@ -6,6 +6,7 @@
 #include "vec4.hpp"
 #include "Newsletter.h"
 #include <memory>
+#include <filesystem>
 
 class Image;
 class Monitor;
@@ -389,7 +390,7 @@ protected:
 		Newsletter<const MousePressResult&>		on_mouse_key_events;
 		Newsletter<const glm::dvec2&>			on_mouse_scroll_events;
 
-		Newsletter<const std::vector<std::u8string>&>	on_filepath_drop_events;
+		Newsletter<const std::vector<std::filesystem::path>&>	on_filepath_drop_events;
 	};
 
 	void _initialize(const WindowDescription& description);

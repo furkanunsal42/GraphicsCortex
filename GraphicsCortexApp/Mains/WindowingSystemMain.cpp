@@ -8,9 +8,9 @@ int main() {
 	WindowDescription desc;
 	auto window = std::make_shared<Window>(desc);
 	
-	window->newsletters->on_filepath_drop_events.subscribe([](const std::vector<std::u8string>& paths) {
+	window->newsletters->on_filepath_drop_events.subscribe([](const std::vector<std::filesystem::path>& paths) {
 		for (auto& path : paths)
-			std::cout << (const char*)path.c_str() << std::endl;
+			std::wcout << path.c_str() << std::endl;
 		});
 	window->newsletters->on_should_close_events.subscribe([]() {
 		exit(0);

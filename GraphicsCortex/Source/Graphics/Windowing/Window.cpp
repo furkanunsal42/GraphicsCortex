@@ -2,7 +2,7 @@
 #include "Window.h"
 #include "GLFW/glfw3.h"
 #include "Library.h"
-
+#include <filesystem>
 #include <iostream>
 #include "glm.hpp"
 #include "Image.h"
@@ -276,9 +276,9 @@ void Window::_initialize(const WindowDescription& description)
 			Window* context = (Window*)glfwGetWindowUserPointer(window);
 			NewslettersBlock* newsletters = context->newsletters;
 			if (newsletters != nullptr) {
-				std::vector<std::u8string> paths_v;
+				std::vector<std::filesystem::path> paths_v;
 				for (int i = 0; i < path_count; i++)
-					paths_v.push_back((const char8_t*)paths[i]);
+					paths_v.push_back(paths[i]);
 				newsletters->on_filepath_drop_events.publish(paths_v);
 			}
 			});

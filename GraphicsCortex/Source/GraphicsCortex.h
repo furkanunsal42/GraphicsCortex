@@ -19,6 +19,7 @@
 #include "Monitor.h"
 #include "Window.h"
 #include "Library.h"
+#include "Clipboard.h"
 #include "Model.h"
 #include "StandardModel.h"
 #include "Buffer.h"
