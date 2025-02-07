@@ -8,6 +8,7 @@
 
 #include "ShaderCompiler.h"
 
+
 class Camera : public UpdatesDefaultUniforms{
 public:
 	glm::vec3 up_vector = glm::vec3(0.0f, 1.0f, 0.0f);

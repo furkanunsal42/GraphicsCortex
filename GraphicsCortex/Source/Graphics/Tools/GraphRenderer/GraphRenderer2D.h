@@ -15,27 +15,25 @@ class Buffer;
 class Texture2D;
 class VertexAttributeBuffer;
 
-class GraphRenderer {
+class GraphRenderer2D {
 public:
 
-	GraphRenderer(glm::vec3 region_min = glm::vec3(-5, -5, -5), glm::vec3 region_max = glm::vec3(5, 5, 5), glm::vec3 scale = glm::vec3(1), glm::ivec2 sample_rate = glm::ivec2(16, 4));
-	GraphRenderer(glm::vec3 region_min = glm::vec3(-5, -5, -5), glm::vec3 region_max = glm::vec3(5, 5, 5), glm::vec3 scale = glm::vec3(1), glm::ivec2 sample_rate = glm::ivec2(16, 4));
+	GraphRenderer2D(glm::vec2 region_min = glm::vec2(-5, -5), glm::vec2 region_max = glm::vec2(5, 5), glm::vec2 scale = glm::vec2(1));
+	GraphRenderer2D(glm::vec2 region_min = glm::vec2(-5, -5), glm::vec2 region_max = glm::vec2(5, 5), glm::vec2 scale = glm::vec2(1));
 
-	void load_data(Buffer& buffer_source);
-	void load_data(Texture2D& texture_source, glm::vec2 source_region_min, glm::vec2 source_region_max);
+	void load_data(Buffer& buffer_source, float source_region_min, float source_region_max);
+	void load_data(Texture1D& texture_source, float source_region_min, float source_region_max);
 	
-	void render(Framebuffer& target, Camera& camera);
-	void render(Camera& camera);
+	void render(Framebuffer& target);
+	void render();
 
 private:
 
 	void _allocate_resources();
 	bool _is_resources_allocated = false;
 
-	glm::vec3 region_min;
-	glm::vec3 region_max;
-	glm::vec3 scale;
-	glm::ivec2 sample_rate;
+	glm::vec2 region_min;
+	glm::vec2 region_max;
 
 	std::shared_ptr<Program> point_cloud_renderer;
 	std::shared_ptr<Program> axis_line_renderer;
