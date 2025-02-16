@@ -19,12 +19,8 @@
 #include "Monitor.h"
 #include "Window.h"
 #include "Library.h"
-<<<<<<< Updated upstream
 #include "Clipboard.h"
-#include "Model.h"
-=======
 //#include "Model.h"
->>>>>>> Stashed changes
 #include "StandardModel.h"
 //#include "Buffer.h"
 #include "StandardBuffer.h"

@@ -18,7 +18,6 @@ class GraphRenderer {
 public:
 
 	GraphRenderer(glm::vec3 region_min = glm::vec3(-5, -5, -5), glm::vec3 region_max = glm::vec3(5, 5, 5), glm::vec3 scale = glm::vec3(1), glm::ivec2 sample_rate = glm::ivec2(16, 4));
-	GraphRenderer(glm::vec3 region_min = glm::vec3(-5, -5, -5), glm::vec3 region_max = glm::vec3(5, 5, 5), glm::vec3 scale = glm::vec3(1), glm::ivec2 sample_rate = glm::ivec2(16, 4));
 
 	void load_data(Buffer& buffer_source);
 	void load_data(Texture2D& texture_source, glm::vec2 source_region_min, glm::vec2 source_region_max);
@@ -36,12 +35,6 @@ private:
 	glm::vec3 scale;
 	glm::ivec2 sample_rate;
 
-<<<<<<< Updated upstream
-=======
-	//std::vector<std::shared_ptr<Text>> axis_texts;
-	//std::shared_ptr<Font> axis_font;
-
->>>>>>> Stashed changes
 	std::shared_ptr<Program> point_cloud_renderer;
 	std::shared_ptr<Program> axis_line_renderer;
 	

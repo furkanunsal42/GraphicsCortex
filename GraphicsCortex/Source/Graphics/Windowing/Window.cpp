@@ -278,7 +278,7 @@ void Window::_initialize(const WindowDescription& description)
 			if (newsletters != nullptr) {
 				std::vector<std::filesystem::path> paths_v;
 				for (int i = 0; i < path_count; i++)
-					paths_v.push_back(paths[i]);
+					paths_v.push_back(std::filesystem::path(paths[i]));
 				newsletters->on_filepath_drop_events.publish(paths_v);
 			}
 			});
