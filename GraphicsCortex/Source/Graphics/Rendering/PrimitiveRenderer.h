@@ -1,7 +1,7 @@
 #pragma once
 
 #include "RenderParameters.h"
-#include "Mesh2.h"
+#include "Mesh.h"
 
 class Framebuffer;
 class Program;
@@ -62,23 +62,23 @@ namespace primitive_renderer {
 	void render(
 		Framebuffer& framebuffer,
 		Program& program,
-		Mesh2::_ProxyNode& mesh
+		Mesh::_ProxyNode& mesh
 		);
 
 	void render(
 		Framebuffer& framebuffer,
 		Program& program,
-		Mesh2& mesh
+		Mesh& mesh
 	);
 
 	void render(
 		Program& program, 
-		Mesh2::_ProxyNode& mesh
+		Mesh::_ProxyNode& mesh
 	);
 	
 	void render(
 		Program& program, 
-		Mesh2& mesh
+		Mesh& mesh
 	);
 
 	void clear(Framebuffer& framebuffer, float red, float green, float blue, float alpha);

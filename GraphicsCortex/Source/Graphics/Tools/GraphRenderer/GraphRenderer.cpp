@@ -1,6 +1,6 @@
 #include "GraphRenderer.h"
 #include "glm.hpp"
-#include "StandardBuffer.h"
+#include "Buffer.h"
 #include "PrimitiveRenderer.h"
 #include "VertexAttributeBuffer.h"
 #include "Tools/GraphicsOperation/GraphicsOperation.h"

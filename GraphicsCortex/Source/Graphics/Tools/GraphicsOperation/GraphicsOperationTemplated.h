@@ -2,7 +2,7 @@
 #include "GraphicsOperation.h"
 #include "ShaderCompiler.h"
 #include "Debuger.h"
-#include "StandardBuffer.h"
+#include "Buffer.h"
 #include <string>
 
 namespace {

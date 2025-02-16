@@ -4,13 +4,12 @@
 #include <memory>
 #include <unordered_map>
 
-#include "StandardBuffer.h"
+#include "Buffer.h"
 #include "NTree.h"
-#include "StandardModel.h"
+#include "Model.h"
 #include "IndexBufferEnums.h"
 
-
-class Mesh2 {
+class Mesh {
 public:
 
 	static const uint32_t null_submesh_name = -1;
@@ -35,12 +34,12 @@ public:
 	};
 
 	struct _ProxyNode {
-		friend Mesh2;
+		friend Mesh;
 	public:
 
-		bool load_model(const Model2& model, uint32_t submeshes_begin);
-		bool load_model(const Model2::_ProxyNode& submodel, uint32_t submeshes_begin);
-		bool load_model(const SingleModel2& single_model, uint32_t submeshes_begin);
+		bool load_model(const Model& model, uint32_t submeshes_begin);
+		bool load_model(const Model::_ProxyNode& submodel, uint32_t submeshes_begin);
+		bool load_model(const SingleModel& single_model, uint32_t submeshes_begin);
 
 		bool add_submesh(uint32_t submesh_name);
 		bool add_submeshes(uint32_t submesh_begin, size_t submesh_count);
@@ -58,7 +57,7 @@ public:
 	private:
 		_ProxyNode();
 
-		Mesh2& _owner_mesh;
+		Mesh& _owner_mesh;
 		uint32_t _node_name;
 	};
 
@@ -80,9 +79,9 @@ public:
 	// submeshes
 	size_t get_submesh_count();
 	bool does_submesh_exist(uint32_t submesh_name);
-	uint32_t insert_submeshes(const Model2& model);
-	uint32_t insert_submeshes(const Model2::_ProxyNode& submodel);
-	uint32_t insert_submesh(const SingleModel2& single_model);
+	uint32_t insert_submeshes(const Model& model);
+	uint32_t insert_submeshes(const Model::_ProxyNode& submodel);
+	uint32_t insert_submesh(const SingleModel& single_model);
 	void erase_submesh(uint32_t submesh_name);
 	void erase_submesh(uint32_t submesh_name, size_t submesh_count);
 	SubmeshInfo& get_submesh(uint32_t submesh_name);

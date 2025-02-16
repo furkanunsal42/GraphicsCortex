@@ -11,7 +11,7 @@
 
 class Buffer;
 
-struct SingleModel2 {
+struct SingleModel {
 	friend Buffer;
 public:
 

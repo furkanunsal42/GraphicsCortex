@@ -12,10 +12,10 @@
 #include "SingleModel.h"
 
 class Buffer;
-class Mesh2;
+class Mesh;
 
-class Model2 {
-	friend Mesh2;
+class Model {
+	friend Mesh;
 public:
 
 	static const uint32_t null_submodel_name = -1;
@@ -23,7 +23,7 @@ public:
 	static const uint32_t root_node_name = 0;
 
 	struct Node {
-		friend Model2;
+		friend Model;
 	public:
 		Node(uint32_t node_name = null_node_name);
 
@@ -35,7 +35,7 @@ public:
 	};
 
 	struct _ProxyNode {
-		friend Model2;
+		friend Model;
 	public:
 
 		bool add_submodel(int32_t submodel);
@@ -64,20 +64,20 @@ public:
 		std::vector<uint32_t>& _childnodes;
 		std::vector<uint32_t>& _submodels;
 
-		_ProxyNode(Model2& owner_model, uint32_t name, std::vector<uint32_t>& childnodes, std::vector<uint32_t>& submodels, glm::mat4& transform);
+		_ProxyNode(Model& owner_model, uint32_t name, std::vector<uint32_t>& childnodes, std::vector<uint32_t>& submodels, glm::mat4& transform);
 
-		Model2& _owner_model;
+		Model& _owner_model;
 		uint32_t _node_name;
 	};
 
-	Model2(const std::filesystem::path& filepath);
-	Model2() = default;
-	~Model2() = default;
+	Model(const std::filesystem::path& filepath);
+	Model() = default;
+	~Model() = default;
 	
 	void clear();
 	void load_model(const std::filesystem::path& filepath);
 	
-	std::vector<SingleModel2> single_models;
+	std::vector<SingleModel> single_models;
 	IndexType index_buffer_type = IndexType::i_ui32;
 
 	// nodes

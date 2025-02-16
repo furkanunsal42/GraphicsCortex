@@ -2,9 +2,9 @@
 #include <iostream>
 #include <stdint.h>
 
-#include "StandardModel.h"
+#include "Model.h"
 #include "Debuger.h"
-#include "StandardBuffer.h"
+#include "Buffer.h"
 
 /*
 size_t Model2::get_submodel_count() const {

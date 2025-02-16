@@ -5,7 +5,7 @@
 #include "Texture3D.h"
 #include "Texture2DArray.h"
 #include "TextureCubeMap.h"
-#include "StandardBuffer.h"
+#include "Buffer.h"
 
 #include <sstream>
 

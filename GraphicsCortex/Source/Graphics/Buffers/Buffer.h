@@ -10,13 +10,13 @@
 #include <array>
 
 class VertexAttributeBuffer;
-class Mesh2;
+class Mesh;
 class ComputeProgram;
 
 class Buffer {
 
 	friend VertexAttributeBuffer;
-	friend Mesh2;
+	friend Mesh;
 	friend ComputeProgram;
 
 public:
@@ -195,4 +195,4 @@ private:
 	bool _buffer_allocated = false;
 };
 
-#include "StandardBufferTemplated.h"
+#include "BufferTemplated.h"

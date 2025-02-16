@@ -1,11 +1,10 @@
 #pragma once
 
-#include "StandardBuffer.h"
+#include "Buffer.h"
 #include "Debuger.h"
 
 #include "glm.hpp"
 #include <iostream>
-#include <StandardBuffer.h>
 
 template<typename T>
 inline std::span<T> Buffer::get_mapped_span()

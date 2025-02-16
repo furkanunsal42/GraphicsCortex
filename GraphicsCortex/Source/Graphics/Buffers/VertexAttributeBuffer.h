@@ -1,10 +1,10 @@
 #pragma once
 
 #include <memory>
-#include "StandardBuffer.h"
+#include "Buffer.h"
 #include "IndexBufferEnums.h"
 
-class SingleModel2;
+class SingleModel;
 
 class VertexAttributeBuffer {
 public:
@@ -39,7 +39,7 @@ public:
 	void release();
 	void clear();
 
-	void load_model(const SingleModel2& model);
+	void load_model(const SingleModel& model);
 
 	void bind();
 	void unbind();
