@@ -5,11 +5,19 @@
 #include "VertexAttributeBuffer.h"
 #include "Tools/GraphicsOperation/GraphicsOperation.h"
 
+<<<<<<< Updated upstream
 GraphRenderer::GraphRenderer(glm::vec3 region_min, glm::vec3 region_max, glm::vec3 scale, glm::ivec2 sample_rate) :
 	region_min(region_min), region_max(region_max), scale(scale), sample_rate(sample_rate) { }
 
 GraphRenderer::GraphRenderer(glm::vec3 region_min, glm::vec3 region_max, glm::vec3 scale, glm::ivec2 sample_rate) :
 	region_min(region_min), region_max(region_max), scale(scale), sample_rate(sample_rate) { }
+=======
+GraphRenderer::GraphRenderer(std::string font_path, glm::vec3 region_min, glm::vec3 region_max, glm::vec3 scale, glm::ivec2 sample_rate) :
+	/*axis_font(nullptr std::make_shared<Font>()), */region_min(region_min), region_max(region_max), scale(scale), sample_rate(sample_rate) { }
+
+GraphRenderer::GraphRenderer(glm::vec3 region_min, glm::vec3 region_max, glm::vec3 scale, glm::ivec2 sample_rate) :
+	/*axis_font(nullptr std::make_shared<Font>()), */region_min(region_min), region_max(region_max), scale(scale), sample_rate(sample_rate) { }
+>>>>>>> Stashed changes
 
 void GraphRenderer::load_data(Texture2D& texture_source, glm::vec2 source_region_min, glm::vec2 source_region_max)
 {

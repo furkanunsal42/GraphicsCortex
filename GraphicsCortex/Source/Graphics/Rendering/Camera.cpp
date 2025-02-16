@@ -5,7 +5,6 @@
 #include "gtx\rotate_vector.hpp"
 
 #include <iostream>
-#include "Default_Assets.h"
 
 Camera::Camera() :
 	screen_width(100.0f), screen_height(100.0f) {}

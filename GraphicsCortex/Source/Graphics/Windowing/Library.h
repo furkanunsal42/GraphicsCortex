@@ -6,6 +6,7 @@
 
 #include "Window.h"
 #include "Monitor.h"
+#include <chrono>
 
 struct OpenGLBackend{
 public:
@@ -15,6 +16,7 @@ public:
 
 	static bool _is_glfw_initialized;
 	static bool _is_glew_initialized;
+	static std::chrono::time_point<std::chrono::system_clock> _opengl_initialization_time;
 
 	static void _init_glfw();
 	static void _init_glew();

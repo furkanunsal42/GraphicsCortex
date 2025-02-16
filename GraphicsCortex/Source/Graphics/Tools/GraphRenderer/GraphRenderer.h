@@ -3,7 +3,6 @@
 #include <memory>
 #include <vector>
 
-#include "Text/Text.h"
 #include "FrameBuffer.h"
 #include "Camera.h"
 #include "glm.hpp"
@@ -37,6 +36,12 @@ private:
 	glm::vec3 scale;
 	glm::ivec2 sample_rate;
 
+<<<<<<< Updated upstream
+=======
+	//std::vector<std::shared_ptr<Text>> axis_texts;
+	//std::shared_ptr<Font> axis_font;
+
+>>>>>>> Stashed changes
 	std::shared_ptr<Program> point_cloud_renderer;
 	std::shared_ptr<Program> axis_line_renderer;
 	

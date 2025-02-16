@@ -1,7 +1,7 @@
 #include <GL/glew.h>
 
 #include "Debuger.h"
-#include "Frame.h"
+#include "Library.h"
 
 #include <iostream>
 #include <fstream>
@@ -80,7 +80,7 @@ void opengl_debug_callback(unsigned int source, unsigned int type, unsigned int 
 		return ".";
 	}();
 
-	long time_ms = (std::chrono::system_clock::now() - frame_begin_time).count() / 1000;
+	long time_ms = (std::chrono::system_clock::now() - OpenGLBackend::_opengl_initialization_time).count() / 1000;
 	std::cout << "[OpenGL Callack] t:" << time_ms << "ms " << src_str << ", " << type_str << ", " << severity_str << ", " << id << ": " << message << '\n';
 }
 

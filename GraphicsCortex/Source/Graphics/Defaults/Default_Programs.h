@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Scene.h"
-#include "Text.h"
 #include <glm.hpp>
 #include <vector>
+#include "ShaderCompiler.h"
+#include <memory>
 
 namespace default_program {
 	Program solid_program();

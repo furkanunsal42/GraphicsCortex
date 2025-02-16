@@ -6,6 +6,7 @@
 
 bool OpenGLBackend::_is_glfw_initialized = false;
 bool OpenGLBackend::_is_glew_initialized = false;
+std::chrono::time_point<std::chrono::system_clock> OpenGLBackend::_opengl_initialization_time;
 
 void OpenGLBackend::_init_glfw()
 {
@@ -34,6 +35,7 @@ void OpenGLBackend::_init_glew()
 	if (_is_glew_initialized) return;
 
 	glewInit();
+	OpenGLBackend::_opengl_initialization_time = std::chrono::system_clock::now();
 
 	_is_glew_initialized = true;
 }
