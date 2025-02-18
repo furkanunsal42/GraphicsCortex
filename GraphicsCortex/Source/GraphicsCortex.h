@@ -70,6 +70,7 @@
 #include "Components/Component_Mesh.h"
 #include "Components/Component_MeshRenderer.h"
 #include "Components/Component_Material.h"
+#include "Components/Scene.h"
 
 #include "PhysicsContext.h"
 #include "PhysicsGeometry.h"

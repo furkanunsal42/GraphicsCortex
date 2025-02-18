@@ -77,6 +77,7 @@ public:
 	void wait_events_timeout(double timeout_seconds);
 	void post_empty_event();
 	double handle_events(bool print_performance = true);
+	void* get_handle();
 
 	// graphics context
 	void context_make_current();

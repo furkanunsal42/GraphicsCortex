@@ -170,6 +170,10 @@ project "GraphicsCortexApp"
 		"%{prj.name}/Mains/ApplicationMain.cpp", 
 		"%{prj.name}/Source/**.h", 
 		"%{prj.name}/Source/**.cpp",
+		"%{prj.name}/Tests/**.h",
+		"%{prj.name}/Tests/**.cpp",
+		"%{prj.name}/Source/**.h",
+		"%{prj.name}/Source/**.cpp",
 	}
 
 	removefiles  
@@ -180,6 +184,7 @@ project "GraphicsCortexApp"
 	includedirs 
 	{
 		"%{prj.name}/Source",
+		"%{prj.name}/Tests",
 		"GraphicsCortex/Source/Graphics/RenderPasses",
 		"GraphicsCortex/Source/System",
 		"GraphicsCortex/Source/Physics",

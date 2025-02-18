@@ -1,23 +1,13 @@
 #pragma once
 #include "Component.h"
 
+#include "Mesh.h"
+
 class MeshComponent : public Component {
 public:
 
-	/*
-	void on_activated();
-	void on_deactivated();
-	void on_initialized();
-	void on_destructed();
+	MeshComponent() { this->mesh = std::make_shared<Mesh>(); }
+	MeshComponent(std::shared_ptr<Mesh> mesh) { this->mesh = mesh; }
 
-	void on_begin();
-	void on_update();
-
-	void on_fixed_update();
-	void on_pre_render();
-	void on_post_render();
-
-	void on_pre_physics();
-	void on_post_physics();
-	*/
+	std::shared_ptr<Mesh> mesh = nullptr;
 };

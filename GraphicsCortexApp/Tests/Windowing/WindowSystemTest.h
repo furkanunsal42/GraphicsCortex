@@ -1,7 +1,7 @@
 #pragma once
 
 #include "GraphicsCortex.h"
-#include "../TestBench/TestBench.h"
+#include "TestBench/TestBench.h"
 
 class WindowSystemTest : public TestBench {
 public:

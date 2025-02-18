@@ -357,6 +357,10 @@ double Window::handle_events(bool print_performances) {
 	return 0;
 }
 
+void* Window::get_handle() {
+	return handle;
+}
+
 // context
 
 uint32_t Window::get_context_version_major()

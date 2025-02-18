@@ -4,8 +4,7 @@
 #include <unordered_map>
 #include <memory>
 #include "Component.h"
-
-typedef uint32_t ComponentId;
+#include "Scene.h"
 
 class Entity {
 public:
@@ -22,16 +21,13 @@ public:
 	template<typename ComponentType>
 	std::weak_ptr<ComponentType> get_component();
 
-	void update(Component::UpdateType type);
-
 private:
+	friend Scene;
 
-	ComponentId _next_id_to_generate = 0;
-	ComponentId _generate_id();
+	std::vector<Scene*> _scenes;
 
-	std::unordered_map<size_t, std::shared_ptr<Component>> _components;
+	void update(Component::UpdateType type);
+	std::unordered_map<component_type_id, std::shared_ptr<Component>> _components;
 };
 
 #include "EntityTemplated.h"
-
-

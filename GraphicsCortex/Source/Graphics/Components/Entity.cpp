@@ -3,7 +3,6 @@
 void Entity::update(Component::UpdateType type) {
 	for (auto& component_pair : _components) {
 		std::shared_ptr<Component> component = component_pair.second;
-
 		switch (type) {
 
 		case Component::UpdateType::Activated	: component->on_activated();	break;
@@ -23,10 +22,4 @@ void Entity::update(Component::UpdateType type) {
 
 		}
 	}
-}
-
-ComponentId Entity::_generate_id()
-{
-    ComponentId id = _next_id_to_generate++;
-    return id;
 }

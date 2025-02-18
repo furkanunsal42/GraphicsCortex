@@ -4,6 +4,8 @@
 #include "Debuger.h"
 #include "Buffer.h"
 
+
+
 /*
 std::vector<glm::vec3>& SingleModel2::unlock_verticies()
 {
