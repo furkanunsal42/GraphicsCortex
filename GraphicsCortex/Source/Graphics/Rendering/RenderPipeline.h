@@ -4,6 +4,7 @@
 
 #include "Framebuffer.h"
 #include "Components/Scene.h"
+#include "Camera.h"
 
 class RenderPipeline;
 class RenderPass {
@@ -16,7 +17,7 @@ public:
 	virtual void on_initialize(int pass_index, RenderPipeline& pipeline, Scene& scene) = 0;
 	
 	// implementation of the pass
-	virtual void on_render(int pass_index, RenderPipeline& pipeline, Scene& scene) = 0;
+	virtual void on_render(int pass_index, RenderPipeline& pipeline, Scene& scene, Camera& camera) = 0;
 };
 
 class RenderPipeline {
@@ -27,7 +28,7 @@ public:
 	~RenderPipeline() = default;
 
 	void push_render_pass(std::shared_ptr<RenderPass> renderpass);
-	void render(Scene& scene);
+	void render(Scene& scene, Camera& camera);
 
 //protected: 
 //	friend RenderPass; // Children of RenderPass still cannot see them

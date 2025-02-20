@@ -1,5 +1,6 @@
 #pragma once
 #include "RenderPipeline.h"
+#include "PrimitiveRenderer.h"
 #include "vec4.hpp"
 
 class RenderPass_Clear : public RenderPass {
@@ -15,8 +16,8 @@ public:
 
 	}
 
-	void on_render(int pass_index, RenderPipeline& pipeline, Scene& scene) {
+	void on_render(int pass_index, RenderPipeline& pipeline, Scene& scene, Camera& camera) {
 		
-		pipeline.framebuffer->clear_bound_drawbuffer(color.r, color.g, color.b, color.a);
+		primitive_renderer::clear(color.r, color.g, color.b, color.a);
 	}
 };
