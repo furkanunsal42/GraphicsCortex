@@ -1,6 +1,8 @@
 #pragma once
-
 #include <iostream>
+
+typedef size_t component_type_id;
+class Entity;
 
 class Component {
 public:
@@ -43,4 +45,10 @@ public:
 
 	virtual void on_pre_physics() {};
 	virtual void on_post_physics() {};
+
+	Entity* get_entity();
+
+private:
+	friend Entity;
+	Entity* entity = nullptr;
 };

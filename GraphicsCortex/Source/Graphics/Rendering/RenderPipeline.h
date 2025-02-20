@@ -23,21 +23,29 @@ class RenderPipeline {
 public:
 
 	RenderPipeline(const RenderPipeline& other) = delete;
-	RenderPipeline(int width, int height, TextureBase2::ColorTextureFormat internal_format, int multisample);
+	RenderPipeline(int width, int height, Texture2D::ColorTextureFormat internal_format, int multisample);
 	~RenderPipeline() = default;
 
 	void push_render_pass(std::shared_ptr<RenderPass> renderpass);
-	void pop_render_pass(std::shared_ptr<RenderPass> renderpass);
 	void render(Scene& scene);
 
-private:
-	friend RenderPass;
+//protected: 
+//	friend RenderPass; // Children of RenderPass still cannot see them
+
+	std::vector<std::shared_ptr<RenderPass>> passes;
+
+	std::shared_ptr<Texture2D> texture = nullptr;
 	std::shared_ptr<Framebuffer> framebuffer = std::make_shared<Framebuffer>();
 	int width;
 	int height;
 	TextureBase2::ColorTextureFormat internal_format;
 	int multisample;
 
-	std::vector<std::shared_ptr<RenderPass>> passes;
-	std::vector<std::shared_ptr<TextureBase2>> texture_stack;
+	std::vector<std::shared_ptr<Texture1D>>			stack_1d;
+	std::vector<std::shared_ptr<Texture2D>>			stack_2d;
+	std::vector<std::shared_ptr<Texture2DArray>>	stack_2d_array;
+	std::vector<std::shared_ptr<Texture3D>>			stack_3d;
+	std::vector<std::shared_ptr<TextureCubeMap>>	stack_cubemap;
+
+	bool initialized = false;
 };

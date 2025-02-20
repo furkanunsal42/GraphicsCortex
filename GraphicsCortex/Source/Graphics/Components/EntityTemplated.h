@@ -13,6 +13,7 @@ void Entity::add_component(ArgType... arguments)
     }
 
     std::shared_ptr<Component> component = std::make_shared<ComponentType>(arguments...);
+    component->entity = this;
 
     for (Scene* scene : _scenes) {
         scene->type_to_components[type].push_back(component.get());

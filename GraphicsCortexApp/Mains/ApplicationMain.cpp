@@ -1,13 +1,15 @@
 #include "GraphicsCortex.h"
 
 #include "Windowing/WindowSystemTest.h"
-#include "MeshRendering/SingleMeshSystemTest.h"
+#include "Rendering/SingleMeshSystemTest.h"
+#include "Rendering/RenderPassClearTest.h"
 #include "EntityComponent/EntityComponentTest.h"
 
 int main() {
 	
 	//WindowSystemTest().run();
 	//SingleMeshSystemTest().run();
-	EntityComponentSystemTest().run();
+	RenderPassClearTest().run();
+	//EntityComponentSystemTest().run();
 
 }

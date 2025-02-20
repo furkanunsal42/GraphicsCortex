@@ -50,7 +50,8 @@
 #include "RenderParameters.h"
 #include "PrimitiveRenderer.h"
 
-//#include "Rendering/RenderPipeline.h"
+#include "Rendering/RenderPipeline.h"
+#include "RenderPasses/RenderPass_Clear.h"
 //#include "RenderPasses/RenderPass_GBuffer.h"
 //#include "RenderPasses/RenderPass_Deferred.h"
 

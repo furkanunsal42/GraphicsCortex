@@ -8,9 +8,6 @@
 #include "Component.h"
 
 class Entity;
-typedef size_t component_type_id;
-
-typedef size_t entity_t;
 
 class Scene {
 public:

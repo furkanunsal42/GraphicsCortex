@@ -5,8 +5,7 @@
 class MeshRendererComponent : public Component {
 public:
 	
-	void on_update() {
-
-	}
+	void get_material();
+	void get_mesh();
 
 };
