@@ -354,7 +354,15 @@ double Window::handle_events(bool print_performances) {
 	glfwPollEvents();
 	glfwSwapBuffers((GLFWwindow*)handle);
 
-	return 0;
+	if (last_handle_events_time == invalid_time) {
+		last_handle_events_time = std::chrono::system_clock::now();
+		return 0;
+	}
+	else {
+		std::chrono::system_clock::duration deltatime = std::chrono::system_clock::now() - last_handle_events_time;
+		last_handle_events_time = std::chrono::system_clock::now();
+		return std::chrono::duration_cast<std::chrono::milliseconds>(deltatime).count();
+	}
 }
 
 void* Window::get_handle() {

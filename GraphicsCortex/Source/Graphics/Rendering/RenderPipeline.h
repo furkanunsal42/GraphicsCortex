@@ -3,10 +3,11 @@
 #include <memory>
 
 #include "Framebuffer.h"
-#include "Components/Scene.h"
+#include "Component/Scene.h"
 #include "Camera.h"
 
 class RenderPipeline;
+
 class RenderPass {
 public:
 	RenderPass(const RenderPass& other) = delete;
@@ -15,13 +16,14 @@ public:
 
 	// gets called after RenderPipeline is initalized, RenderPasses should prepare their constant values here and they may reject the RenderPass configuration
 	virtual void on_initialize(int pass_index, RenderPipeline& pipeline, Scene& scene) = 0;
-	
+
 	// implementation of the pass
 	virtual void on_render(int pass_index, RenderPipeline& pipeline, Scene& scene, Camera& camera) = 0;
 };
 
 class RenderPipeline {
 public:
+
 
 	RenderPipeline(const RenderPipeline& other) = delete;
 	RenderPipeline(int width, int height, Texture2D::ColorTextureFormat internal_format, int multisample);
@@ -31,8 +33,6 @@ public:
 	void render(Scene& scene, Camera& camera);
 
 //protected: 
-//	friend RenderPass; // Children of RenderPass still cannot see them
-
 	std::vector<std::shared_ptr<RenderPass>> passes;
 
 	std::shared_ptr<Texture2D> texture = nullptr;

@@ -396,6 +396,9 @@ protected:
 
 	void _initialize(const WindowDescription& description);
 	void* handle = nullptr;
+
+	const std::chrono::system_clock::time_point invalid_time = std::chrono::system_clock::time_point(std::chrono::milliseconds::max());
+	std::chrono::system_clock::time_point last_handle_events_time = invalid_time;
 };
 
 

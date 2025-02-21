@@ -82,7 +82,7 @@ void GraphRenderer::render(Camera& camera)
 	size_t line_size = (sample_rate.y * (region_max - region_min).y);
 
 	for (int i = 0; i < line_count; i++)
-		primitive_renderer::render(*point_cloud_renderer, *vab, PrimitiveType::line_strip, i*line_size, line_size);
+		primitive_renderer::render(*point_cloud_renderer, *vab, PrimitiveType::line_strip, RenderParameters(), i * line_size, line_size);
 }
 
 void GraphRenderer::_allocate_resources()

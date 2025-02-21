@@ -28,37 +28,43 @@ namespace primitive_renderer {
 	);
 
 	void render(
-		Framebuffer& framebuffer,
-		Program& program,
-		VertexAttributeBuffer& vab,
-		PrimitiveType primitive = PrimitiveType::triangle
-	);
-
-	void render(
-		Framebuffer& framebuffer,
 		Program& program,
 		VertexAttributeBuffer& vab,
 		Buffer& index_buffer,
 		PrimitiveType primitive = PrimitiveType::triangle,
-		IndexType index_type = IndexType::i_ui32
+		IndexType index_type = IndexType::i_ui32,
+		const RenderParameters& render_parameters = RenderParameters(),
+		size_t attribute_offset = 0,
+		size_t vertex_count = 0,
+		size_t index_offset = 0,
+		size_t primitive_count = 0,
+		size_t instance_count = 1,
+		size_t instance_offset = 0
+	);
+
+	void render(
+		Framebuffer& framebuffer,
+		Program& program,
+		VertexAttributeBuffer& vab,
+		PrimitiveType primitive = PrimitiveType::triangle,
+		const RenderParameters& render_parameters = RenderParameters(),
+		size_t attribute_offset = 0,
+		size_t vertex_count = 0,
+		size_t instance_count = 1,
+		size_t instance_offset = 0
 	);
 
 	void render(
 		Program& program,
 		VertexAttributeBuffer& vab,
 		PrimitiveType primitive = PrimitiveType::triangle,
-		size_t first = 0,
-		size_t count = 0
+		const RenderParameters& render_parameters = RenderParameters(),
+		size_t attribute_offset = 0,
+		size_t vertex_count = 0,
+		size_t instance_count = 1,
+		size_t instance_offset = 0
 	);
-	
-	void render(
-		Program& program, 
-		VertexAttributeBuffer& vab, 
-		Buffer& index_buffer, 
-		PrimitiveType primitive = PrimitiveType::triangle,
-		IndexType index_type = IndexType::i_ui32
-	);
-	
+
 	void render(
 		Framebuffer& framebuffer,
 		Program& program,

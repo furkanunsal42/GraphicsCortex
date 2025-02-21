@@ -4,8 +4,6 @@
 #include "Debuger.h"
 #include "Buffer.h"
 
-
-
 /*
 std::vector<glm::vec3>& SingleModel2::unlock_verticies()
 {
@@ -107,20 +105,22 @@ PrimitiveType SingleModel2::get_primitive() const
 {
 	return _primitive;
 }
+*/
 
-std::unique_ptr<Buffer> SingleModel2::create_vertex_buffer(size_t vertex_offset_count, size_t buffer_offset_in_bytes, size_t vertex_count) const
+std::unique_ptr<Buffer> SingleModel::create_vertex_buffer(size_t vertex_offset_count, size_t buffer_offset_in_bytes, size_t vertex_count) const
 {
 	typedef glm::vec3 attribute_type;
 	std::unique_ptr<Buffer> buffer = std::make_unique<Buffer>(vertex_count * sizeof(attribute_type), Buffer::GPU_BUFFER);
-	buffer->load_data(buffer_offset_in_bytes / sizeof(attribute_type), vertex_offset_count, vertex_count, _verticies);
+	buffer->load_data(buffer_offset_in_bytes / sizeof(attribute_type), vertex_offset_count, vertex_count, verticies);
 	return buffer;
 }
 
-std::unique_ptr<Buffer> SingleModel2::create_vertex_buffer(size_t vertex_offset_count) const
+std::unique_ptr<Buffer> SingleModel::create_vertex_buffer(size_t vertex_offset_count) const
 {
-	return create_vertex_buffer(vertex_offset_count, 0, _verticies.size());
+	return create_vertex_buffer(vertex_offset_count, 0, verticies.size());
 }
 
+/*
 std::unique_ptr<Buffer> SingleModel2::create_normal_buffer(size_t vertex_offset_count, size_t buffer_offset_in_bytes, size_t vertex_count) const
 {
 	typedef glm::vec3 attribute_type;

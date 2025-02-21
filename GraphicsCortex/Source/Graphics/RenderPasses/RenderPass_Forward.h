@@ -15,6 +15,8 @@ class RenderPass_Forward : public RenderPass {
 
 		std::span<MeshRendererComponent*> mesh_renderers = scene.get_components<MeshRendererComponent>();
 
-		primitive_renderer::render();
+		for (MeshRendererComponent* mesh_renderer : mesh_renderers) {
+			mesh_renderer->render(camera);
+		}
 	}
 };

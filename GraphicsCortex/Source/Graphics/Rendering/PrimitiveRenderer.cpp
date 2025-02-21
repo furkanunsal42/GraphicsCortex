@@ -8,8 +8,33 @@
 #include "VertexAttributeBuffer.h"
 #include "FrameBuffer.h"
 
-void primitive_renderer::render(Program& program, VertexAttributeBuffer& vab, PrimitiveType primitive, size_t first, size_t count)
+void primitive_renderer::render(Framebuffer& framebuffer, Program& program, VertexAttributeBuffer& vab, PrimitiveType primitive, const RenderParameters& render_parameters, size_t attribute_offset, size_t vertex_count, size_t instance_count, size_t instance_offset)
 {
+	framebuffer.bind_draw();
+
+	render(
+		program,
+		vab,
+		primitive,
+		render_parameters,
+		attribute_offset,
+		vertex_count,
+		instance_count,
+		instance_offset
+	);
+}
+
+void primitive_renderer::render(
+	Program& program, 
+	VertexAttributeBuffer& vab, 
+	PrimitiveType primitive, 
+	const RenderParameters& render_parameters, 
+	size_t attribute_offset, 
+	size_t vertex_count, 
+	size_t instance_count, 
+	size_t instance_offset)
+{
+	
 	int32_t largest_slot = vab.get_largest_active_buffer_slot();
 	if (largest_slot == -1) {
 		std::cout << "[OpenGL Error] primitive_renderer::render() is called but no attribute of given VertexAttributeBuffer is enabled" << std::endl;
@@ -21,12 +46,12 @@ void primitive_renderer::render(Program& program, VertexAttributeBuffer& vab, Pr
 	vab.bind();
 	program.bind();
 
-	if (count == 0) {
+	if (vertex_count == 0) {
 		int32_t stride = vab.get_attribute_stride(largest_slot);
-		count = vertex_buffer.get_buffer_size_in_bytes() / stride;
+		vertex_count = vertex_buffer.get_buffer_size_in_bytes() / stride;
 	}
 
-	GLCall(glDrawArrays(PrimitiveType_to_GL(primitive), first, count));
+	GLCall(glDrawArraysInstancedBaseInstance(PrimitiveType_to_GL(primitive), attribute_offset, vertex_count, instance_count, instance_offset));
 }
 
 void primitive_renderer::clear(Framebuffer& framebuffer, float red, float green, float blue, float alpha)

@@ -66,12 +66,12 @@
 //#include "Text.h"
 #include "RamCache.h"
 
-#include "Components/Component.h"
-#include "Components/Entity.h"
+#include "Component/Component.h"
+#include "Component/Entity.h"
+#include "Component/Scene.h"
 #include "Components/Component_Mesh.h"
 #include "Components/Component_MeshRenderer.h"
 #include "Components/Component_Material.h"
-#include "Components/Scene.h"
 
 #include "PhysicsContext.h"
 #include "PhysicsGeometry.h"
