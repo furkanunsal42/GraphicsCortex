@@ -9,6 +9,9 @@
 #include <iostream>
 #include <array>
 
+// draw indirect buffer
+// dispatch indirect buffer
+
 class VertexAttributeBuffer;
 class Mesh;
 class ComputeProgram;

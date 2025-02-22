@@ -10,6 +10,35 @@ uint32_t get_IndexType_bytes_per_index(IndexType type) {
 	return 4;
 }
 
+uint32_t get_PrimitiveType_index_count(PrimitiveType primitive)
+{
+	switch (primitive) {
+	case PrimitiveType::point :						return 1;
+	case PrimitiveType::line :						return 2;
+	case PrimitiveType::line_strip :				return 2;	
+	case PrimitiveType::line_loop :					return 2;
+	case PrimitiveType::triangle :					return 3;
+	case PrimitiveType::triangle_strip :			return 3;		
+	case PrimitiveType::triangle_fan :				return 3;	
+	case PrimitiveType::line_strip_adjacency :		return 2;			
+	case PrimitiveType::line_adjacency :			return 2;		
+	case PrimitiveType::triangle_strip_adjacency :	return 3;				
+	case PrimitiveType::triangle_adjacency :		return 3;			
+	case PrimitiveType::patches :					return 0;	// ? unknown
+	}
+	return 3;
+}
+
+uint32_t IndexType_to_GL(IndexType type)
+{
+	switch (type) {
+	case IndexType::i_ui8:  return GL_UNSIGNED_BYTE;
+	case IndexType::i_ui16: return GL_UNSIGNED_SHORT;
+	case IndexType::i_ui32: return GL_UNSIGNED_INT;
+	}
+	return 0;
+}
+
 uint32_t PrimitiveType_to_GL(PrimitiveType primitive)
 {
 	switch (primitive) {

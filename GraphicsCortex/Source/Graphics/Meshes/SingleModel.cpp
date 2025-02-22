@@ -4,108 +4,47 @@
 #include "Debuger.h"
 #include "Buffer.h"
 
-/*
-std::vector<glm::vec3>& SingleModel2::unlock_verticies()
+#include <iostream>
+#include <fstream>
+
+#include "assimp/Importer.hpp"
+#include "assimp/scene.h"
+#include "assimp/postprocess.h"
+
+void SingleModel::load_model(const std::filesystem::path& path, uint32_t submodel_index)
 {
-	_revision_counter_verticies++;
-	return _verticies;
+	Assimp::Importer importer;
+
+	std::string path_string((char*)path.c_str());
+	const aiScene* scene = importer.ReadFile(path_string,
+		aiProcess_CalcTangentSpace |
+		aiProcess_Triangulate |
+		aiProcess_JoinIdenticalVertices |
+		aiProcess_SortByPType);
+
+	if (scene == nullptr) {
+		std::cout << "[Import Error] SingleModel::load_model() from \""<< path_string <<"\" failed with message: " << (importer.GetErrorString()) << std::endl;
+		return;
+	}
+
 }
 
-std::vector<glm::vec3>& SingleModel2::unlock_vertex_normals()
+void SingleModel::load_model(const std::filesystem::path& path, uint32_t submodels_begin_index, uint32_t submodel_count)
 {
-	_revision_counter_vertex_normals++;
-	return _vertex_normals;
+
 }
 
-std::vector<glm::vec3>& SingleModel2::unlock_vertex_tangents()
+void SingleModel::clear()
 {
-	_revision_counter_vertex_tangents++;
-	return _vertex_tangents;
+	verticies.clear();
+	vertex_normals.clear();
+	vertex_tangents.clear();
+	texture_coordinates.clear();
+	vertex_colors.clear();
+	bone_indicies.clear();
+	bone_weights.clear();
+	indicies.clear();
 }
-
-std::vector<glm::vec4>& SingleModel2::unlock_texture_coordinates()
-{
-	_revision_counter_texture_coordinates++;
-	return _texture_coordinates;
-}
-
-std::vector<glm::vec4>& SingleModel2::unlock_vertex_colors()
-{
-	_revision_counter_vertex_colors++;
-	return _vertex_colors;
-}
-
-std::vector<glm::ivec4>& SingleModel2::unlock_bone_indicies()
-{
-	_revision_counter_bone_indicies++;
-	return _bone_indicies;
-}
-
-std::vector<glm::vec4>& SingleModel2::unlock_bone_weights()
-{
-	_revision_counter_bone_weights++;
-	return _bone_weights;
-}
-
-std::vector<uint32_t>& SingleModel2::unlock_indicies()
-{
-	_revision_counter_indicies++;
-	return _indicies;
-}
-
-void SingleModel2::set_primitive(PrimitiveType primitive)
-{
-	if (primitive == _primitive) return;
-
-	_revision_counter_primitive++;
-	_primitive = primitive;
-}
-
-const std::vector<glm::vec3>& SingleModel2::read_verticies() const
-{
-	return _verticies;
-}
-
-const std::vector<glm::vec3>& SingleModel2::read_vertex_normals() const
-{
-	return _vertex_normals;
-}
-
-const std::vector<glm::vec3>& SingleModel2::read_vertex_tangents() const
-{
-	return _vertex_tangents;
-}
-
-const std::vector<glm::vec4>& SingleModel2::read_texture_coordinates() const
-{
-	return _texture_coordinates;
-}
-
-const std::vector<glm::vec4>& SingleModel2::read_vertex_colors() const
-{
-	return _vertex_colors;
-}
-
-const std::vector<glm::ivec4>& SingleModel2::read_bone_indicies() const
-{
-	return _bone_indicies;
-}
-
-const std::vector<glm::vec4>& SingleModel2::read_bone_weights() const
-{
-	return _bone_weights;
-}
-
-const std::vector<uint32_t>& SingleModel2::read_indicies() const
-{
-	return _indicies;
-}
-
-PrimitiveType SingleModel2::get_primitive() const
-{
-	return _primitive;
-}
-*/
 
 std::unique_ptr<Buffer> SingleModel::create_vertex_buffer(size_t vertex_offset_count, size_t buffer_offset_in_bytes, size_t vertex_count) const
 {
@@ -120,140 +59,93 @@ std::unique_ptr<Buffer> SingleModel::create_vertex_buffer(size_t vertex_offset_c
 	return create_vertex_buffer(vertex_offset_count, 0, verticies.size());
 }
 
-/*
-std::unique_ptr<Buffer> SingleModel2::create_normal_buffer(size_t vertex_offset_count, size_t buffer_offset_in_bytes, size_t vertex_count) const
+std::unique_ptr<Buffer> SingleModel::create_normal_buffer(size_t vertex_offset_count, size_t buffer_offset_in_bytes, size_t vertex_count) const
 {
 	typedef glm::vec3 attribute_type;
 	std::unique_ptr<Buffer> buffer = std::make_unique<Buffer>(vertex_count * sizeof(attribute_type), Buffer::GPU_BUFFER);
-	buffer->load_data(buffer_offset_in_bytes / sizeof(attribute_type), vertex_offset_count, vertex_count, _vertex_normals);
+	buffer->load_data(buffer_offset_in_bytes / sizeof(attribute_type), vertex_offset_count, vertex_count, vertex_normals);
 	return buffer;
 }
 
-std::unique_ptr<Buffer> SingleModel2::create_normal_buffer(size_t vertex_offset_count) const
+std::unique_ptr<Buffer> SingleModel::create_normal_buffer(size_t vertex_offset_count) const
 {
-	return create_normal_buffer(vertex_offset_count, 0, _vertex_normals.size());
+	return create_normal_buffer(vertex_offset_count, 0, vertex_normals.size());
 }
 
-std::unique_ptr<Buffer> SingleModel2::create_tangent_buffer(size_t vertex_offset_count, size_t buffer_offset_in_bytes, size_t vertex_count) const
+std::unique_ptr<Buffer> SingleModel::create_tangent_buffer(size_t vertex_offset_count, size_t buffer_offset_in_bytes, size_t vertex_count) const
 {
 	typedef glm::vec3 attribute_type;
 	std::unique_ptr<Buffer> buffer = std::make_unique<Buffer>(vertex_count * sizeof(attribute_type), Buffer::GPU_BUFFER);
-	buffer->load_data(buffer_offset_in_bytes / sizeof(attribute_type), vertex_offset_count, vertex_count, _vertex_tangents);
+	buffer->load_data(buffer_offset_in_bytes / sizeof(attribute_type), vertex_offset_count, vertex_count, vertex_tangents);
 	return buffer;
 }
 
-std::unique_ptr<Buffer> SingleModel2::create_tangent_buffer(size_t vertex_offset_count) const
+std::unique_ptr<Buffer> SingleModel::create_tangent_buffer(size_t vertex_offset_count) const
 {
-	return create_tangent_buffer(vertex_offset_count, 0, _vertex_tangents.size());
+	return create_tangent_buffer(vertex_offset_count, 0, vertex_tangents.size());
 }
 
-std::unique_ptr<Buffer> SingleModel2::create_uv_merged_buffer(size_t vertex_offset_count, size_t buffer_offset_in_bytes, size_t vertex_count) const
+std::unique_ptr<Buffer> SingleModel::create_uv_merged_buffer(size_t vertex_offset_count, size_t buffer_offset_in_bytes, size_t vertex_count) const
 {
 	typedef glm::vec4 attribute_type;
 	std::unique_ptr<Buffer> buffer = std::make_unique<Buffer>(vertex_count * sizeof(attribute_type), Buffer::GPU_BUFFER);
-	buffer->load_data(buffer_offset_in_bytes / sizeof(attribute_type), vertex_offset_count, vertex_count, _texture_coordinates);
+	buffer->load_data(buffer_offset_in_bytes / sizeof(attribute_type), vertex_offset_count, vertex_count, texture_coordinates);
 	return buffer;
 }
 
-std::unique_ptr<Buffer> SingleModel2::create_uv_merged_buffer(size_t vertex_offset_count) const
+std::unique_ptr<Buffer> SingleModel::create_uv_merged_buffer(size_t vertex_offset_count) const
 {
-	return create_uv_merged_buffer(vertex_offset_count, 0, _texture_coordinates.size());
+	return create_uv_merged_buffer(vertex_offset_count, 0, texture_coordinates.size());
 }
 
-std::unique_ptr<Buffer> SingleModel2::create_vertex_color_buffer(size_t vertex_offset_count, size_t buffer_offset_in_bytes, size_t vertex_count) const
+std::unique_ptr<Buffer> SingleModel::create_vertex_color_buffer(size_t vertex_offset_count, size_t buffer_offset_in_bytes, size_t vertex_count) const
 {
 	typedef glm::vec4 attribute_type;
 	std::unique_ptr<Buffer> buffer = std::make_unique<Buffer>(vertex_count * sizeof(attribute_type), Buffer::GPU_BUFFER);
-	buffer->load_data(buffer_offset_in_bytes / sizeof(attribute_type), vertex_offset_count, vertex_count, _vertex_colors);
+	buffer->load_data(buffer_offset_in_bytes / sizeof(attribute_type), vertex_offset_count, vertex_count, vertex_colors);
 	return buffer;
 }
 
-std::unique_ptr<Buffer> SingleModel2::create_vertex_color_buffer(size_t vertex_offset_count) const
+std::unique_ptr<Buffer> SingleModel::create_vertex_color_buffer(size_t vertex_offset_count) const
 {
-	return create_vertex_color_buffer(vertex_offset_count, 0, _vertex_colors.size());
+	return create_vertex_color_buffer(vertex_offset_count, 0, vertex_colors.size());
 }
 
-std::unique_ptr<Buffer> SingleModel2::create_bone_indicies_buffer(size_t vertex_offset_count, size_t buffer_offset_in_bytes, size_t vertex_count) const
+std::unique_ptr<Buffer> SingleModel::create_bone_indicies_buffer(size_t vertex_offset_count, size_t buffer_offset_in_bytes, size_t vertex_count) const
 {
 	typedef glm::ivec4 attribute_type;
 	std::unique_ptr<Buffer> buffer = std::make_unique<Buffer>(vertex_count * sizeof(attribute_type), Buffer::GPU_BUFFER);
-	buffer->load_data(buffer_offset_in_bytes / sizeof(attribute_type), vertex_offset_count, vertex_count, _bone_indicies);
+	buffer->load_data(buffer_offset_in_bytes / sizeof(attribute_type), vertex_offset_count, vertex_count, bone_indicies);
 	return buffer;
 }
 
-std::unique_ptr<Buffer> SingleModel2::create_bone_indicies_buffer(size_t vertex_offset_count) const
+std::unique_ptr<Buffer> SingleModel::create_bone_indicies_buffer(size_t vertex_offset_count) const
 {
-	return create_bone_indicies_buffer(vertex_offset_count, 0, _bone_indicies.size());
+	return create_bone_indicies_buffer(vertex_offset_count, 0, bone_indicies.size());
 }
 
-std::unique_ptr<Buffer> SingleModel2::create_bone_weights_buffer(size_t vertex_offset_count, size_t buffer_offset_in_bytes, size_t vertex_count) const
+std::unique_ptr<Buffer> SingleModel::create_bone_weights_buffer(size_t vertex_offset_count, size_t buffer_offset_in_bytes, size_t vertex_count) const
 {
 	typedef glm::vec4 attribute_type;
 	std::unique_ptr<Buffer> buffer = std::make_unique<Buffer>(vertex_count * sizeof(attribute_type), Buffer::GPU_BUFFER);
-	buffer->load_data(buffer_offset_in_bytes / sizeof(attribute_type), vertex_offset_count, vertex_count, _bone_weights);
+	buffer->load_data(buffer_offset_in_bytes / sizeof(attribute_type), vertex_offset_count, vertex_count, bone_weights);
 	return buffer;
 }
 
-std::unique_ptr<Buffer> SingleModel2::create_bone_weights_buffer(size_t vertex_offset_count) const
+std::unique_ptr<Buffer> SingleModel::create_bone_weights_buffer(size_t vertex_offset_count) const
 {
-	return create_bone_weights_buffer(vertex_offset_count, 0, _bone_weights.size());
+	return create_bone_weights_buffer(vertex_offset_count, 0, bone_weights.size());
 }
 
-std::unique_ptr<Buffer> SingleModel2::create_index_buffer(size_t vertex_offset_count, size_t buffer_offset_in_bytes, size_t vertex_count) const
+std::unique_ptr<Buffer> SingleModel::create_index_buffer(size_t vertex_offset_count, size_t buffer_offset_in_bytes, size_t vertex_count) const
 {
 	typedef uint32_t attribute_type;
 	std::unique_ptr<Buffer> buffer = std::make_unique<Buffer>(vertex_count * sizeof(attribute_type), Buffer::GPU_BUFFER);
-	buffer->load_data(buffer_offset_in_bytes / sizeof(attribute_type), vertex_offset_count, vertex_count, _indicies);
+	buffer->load_data(buffer_offset_in_bytes / sizeof(attribute_type), vertex_offset_count, vertex_count, indicies);
 	return buffer;
 }
 
-std::unique_ptr<Buffer> SingleModel2::create_index_buffer(size_t vertex_offset_count) const
+std::unique_ptr<Buffer> SingleModel::create_index_buffer(size_t vertex_offset_count) const
 {
-	return create_index_buffer(vertex_offset_count, 0, _indicies.size());
+	return create_index_buffer(vertex_offset_count, 0, indicies.size());
 }
-
-size_t SingleModel2::get_verticies_revision_count()
-{
-	return _revision_counter_verticies;
-}
-
-size_t SingleModel2::get_vertex_normals_revision_count()
-{
-	return _revision_counter_vertex_normals;
-}
-
-size_t SingleModel2::get_vertex_tangents_revision_count()
-{
-	return _revision_counter_vertex_tangents;
-}
-
-size_t SingleModel2::get_texture_coordinates_revision_count()
-{
-	return _revision_counter_texture_coordinates;
-}
-
-size_t SingleModel2::get_vertex_colors_revision_count()
-{
-	return _revision_counter_vertex_colors;
-}
-
-size_t SingleModel2::get_bone_indicies_revision_count()
-{
-	return _revision_counter_bone_indicies;
-}
-
-size_t SingleModel2::get_bone_weights_revision_count()
-{
-	return _revision_counter_bone_weights;
-}
-
-size_t SingleModel2::get_indicies_revision_count()
-{
-	return _revision_counter_indicies;
-}
-
-size_t SingleModel2::get_primitive_revision_count()
-{
-	return _revision_counter_primitive;
-}
-*/

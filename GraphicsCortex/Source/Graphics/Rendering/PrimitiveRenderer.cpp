@@ -8,8 +8,91 @@
 #include "VertexAttributeBuffer.h"
 #include "FrameBuffer.h"
 
-void primitive_renderer::render(Framebuffer& framebuffer, Program& program, VertexAttributeBuffer& vab, PrimitiveType primitive, const RenderParameters& render_parameters, size_t attribute_offset, size_t vertex_count, size_t instance_count, size_t instance_offset)
-{
+
+void primitive_renderer::render(
+	Framebuffer& framebuffer, 
+	Program& program, 
+	VertexAttributeBuffer& vab, 
+	Buffer& index_buffer, 
+	PrimitiveType primitive, 
+	IndexType index_type, 
+	const RenderParameters& render_parameters, 
+	size_t attribute_offset, 
+	size_t vertex_count, 
+	size_t index_offset, 
+	size_t index_count, 
+	size_t instance_count, 
+	size_t instance_offset
+){
+	framebuffer.bind_draw();
+
+	primitive_renderer::render(
+		program,
+		vab,
+		index_buffer,
+		primitive,
+		index_type,
+		render_parameters,
+		attribute_offset,
+		vertex_count,
+		index_offset,
+		index_count,
+		instance_count,
+		instance_offset
+	);
+}
+
+void primitive_renderer::render(
+	Program& program,
+	VertexAttributeBuffer& vab,
+	Buffer& index_buffer,
+	PrimitiveType primitive,
+	IndexType index_type,
+	const RenderParameters& render_parameters,
+	size_t attribute_offset,
+	size_t vertex_count,
+	size_t index_offset,
+	size_t index_count,
+	size_t instance_count,
+	size_t instance_offset
+) {
+
+	int32_t largest_slot = vab.get_largest_active_buffer_slot();
+	if (largest_slot == -1) {
+		std::cout << "[OpenGL Error] primitive_renderer::render() is called but no attribute of given VertexAttributeBuffer is enabled" << std::endl;
+		ASSERT(false);
+	}
+
+	Buffer& vertex_buffer = *vab.get_vertex_buffer(largest_slot);
+
+	vab.bind();
+	program.bind();
+
+	if (vertex_count == 0) {
+		int32_t stride = vab.get_attribute_stride(largest_slot);
+		vertex_count = vertex_buffer.get_buffer_size_in_bytes() / stride;
+	}
+
+	size_t ib_index_count = index_buffer.get_buffer_size_in_bytes() / get_IndexType_bytes_per_index(index_type);
+
+	if (index_count == 0)
+		index_count = ib_index_count;
+
+	glDrawElementsInstancedBaseVertexBaseInstance(PrimitiveType_to_GL(primitive), index_count, IndexType_to_GL(index_type), (void*)index_offset, instance_count, attribute_offset, instance_offset);
+}
+
+
+void primitive_renderer::render(
+	Framebuffer& framebuffer, 
+	Program& program, 
+	VertexAttributeBuffer& vab,
+	PrimitiveType primitive, 
+	const RenderParameters& render_parameters, 
+	size_t attribute_offset, 
+	size_t vertex_count, 
+	size_t instance_count, 
+	size_t instance_offset	
+) {
 	framebuffer.bind_draw();
 
 	render(
@@ -32,8 +115,8 @@ void primitive_renderer::render(
 	size_t attribute_offset, 
 	size_t vertex_count, 
 	size_t instance_count, 
-	size_t instance_offset)
-{
+	size_t instance_offset
+) {
 	
 	int32_t largest_slot = vab.get_largest_active_buffer_slot();
 	if (largest_slot == -1) {

@@ -25,4 +25,6 @@ enum PrimitiveType {
 };
 
 uint32_t get_IndexType_bytes_per_index(IndexType type);
+uint32_t get_PrimitiveType_index_count(PrimitiveType primitive);
+uint32_t IndexType_to_GL(IndexType type);
 uint32_t PrimitiveType_to_GL(PrimitiveType primitive);

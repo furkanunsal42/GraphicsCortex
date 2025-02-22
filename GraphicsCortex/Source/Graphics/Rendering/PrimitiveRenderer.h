@@ -22,7 +22,7 @@ namespace primitive_renderer {
 		size_t attribute_offset = 0,
 		size_t vertex_count = 0,
 		size_t index_offset = 0,
-		size_t primitive_count = 0,
+		size_t index_count = 0,
 		size_t instance_count = 1,
 		size_t instance_offset = 0
 	);
@@ -37,7 +37,7 @@ namespace primitive_renderer {
 		size_t attribute_offset = 0,
 		size_t vertex_count = 0,
 		size_t index_offset = 0,
-		size_t primitive_count = 0,
+		size_t index_count = 0,
 		size_t instance_count = 1,
 		size_t instance_offset = 0
 	);

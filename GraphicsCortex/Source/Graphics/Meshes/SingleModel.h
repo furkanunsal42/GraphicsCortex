@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include <memory>
 #include <unordered_map>
+#include <filesystem>
 #include "glm.hpp"
 
 #include "IndexBufferEnums.h"
@@ -25,8 +26,8 @@ public:
 	std::vector<uint32_t> indicies;
 	PrimitiveType primitive = PrimitiveType::triangle;
 
-	void load_model(const std::string& path, uint32_t submodel_index);
-	void load_model(const std::string& path, uint32_t submodels_begin_index, uint32_t submodel_count);
+	void load_model(const std::filesystem::path& path, uint32_t submodel_index);
+	void load_model(const std::filesystem::path& path, uint32_t submodels_begin_index, uint32_t submodel_count);
 	void clear();
 
 	std::unique_ptr<Buffer> create_vertex_buffer(size_t vertex_offset_count, size_t buffer_offset_in_bytes, size_t vertex_count) const;
