@@ -18,7 +18,6 @@ void primitive_renderer::render(
 	IndexType index_type, 
 	const RenderParameters& render_parameters, 
 	size_t attribute_offset, 
-	size_t vertex_count, 
 	size_t index_offset, 
 	size_t index_count, 
 	size_t instance_count, 
@@ -34,7 +33,6 @@ void primitive_renderer::render(
 		index_type,
 		render_parameters,
 		attribute_offset,
-		vertex_count,
 		index_offset,
 		index_count,
 		instance_count,
@@ -50,7 +48,6 @@ void primitive_renderer::render(
 	IndexType index_type,
 	const RenderParameters& render_parameters,
 	size_t attribute_offset,
-	size_t vertex_count,
 	size_t index_offset,
 	size_t index_count,
 	size_t instance_count,
@@ -67,18 +64,14 @@ void primitive_renderer::render(
 
 	vab.bind();
 	program.bind();
-
-	if (vertex_count == 0) {
-		int32_t stride = vab.get_attribute_stride(largest_slot);
-		vertex_count = vertex_buffer.get_buffer_size_in_bytes() / stride;
-	}
+	index_buffer.bind_as_index_buffer();
 
 	size_t ib_index_count = index_buffer.get_buffer_size_in_bytes() / get_IndexType_bytes_per_index(index_type);
 
 	if (index_count == 0)
 		index_count = ib_index_count;
 
-	glDrawElementsInstancedBaseVertexBaseInstance(PrimitiveType_to_GL(primitive), index_count, IndexType_to_GL(index_type), (void*)index_offset, instance_count, attribute_offset, instance_offset);
+	GLCall(glDrawElementsInstancedBaseVertexBaseInstance(PrimitiveType_to_GL(primitive), index_count, IndexType_to_GL(index_type), (void*)(index_offset * get_IndexType_bytes_per_index(index_type)), instance_count, attribute_offset, instance_offset));
 }
 
 

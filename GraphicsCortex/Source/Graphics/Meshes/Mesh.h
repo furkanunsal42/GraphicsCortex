@@ -38,7 +38,7 @@ public:
 	public:
 
 		bool load_model(const Model& model, uint32_t submeshes_begin);
-		bool load_model(const Model::_ProxyNode& submodel, uint32_t submeshes_begin);
+		bool load_model(const Model::Node& submodel, uint32_t submeshes_begin);
 		bool load_model(const SingleModel& single_model, uint32_t submeshes_begin);
 
 		bool add_submesh(uint32_t submesh_name);
@@ -80,7 +80,7 @@ public:
 	size_t get_submesh_count();
 	bool does_submesh_exist(uint32_t submesh_name);
 	uint32_t insert_submeshes(const Model& model);
-	uint32_t insert_submeshes(const Model::_ProxyNode& submodel);
+	uint32_t insert_submeshes(const Model::Node& submodel);
 	uint32_t insert_submesh(const SingleModel& single_model);
 	void erase_submesh(uint32_t submesh_name);
 	void erase_submesh(uint32_t submesh_name, size_t submesh_count);

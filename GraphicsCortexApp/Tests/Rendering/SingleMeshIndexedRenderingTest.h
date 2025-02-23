@@ -51,7 +51,11 @@ public:
 				*vab,
 				*index_buffer,
 				PrimitiveType::triangle,
-				IndexType::i_ui32
+				IndexType::i_ui32,
+				RenderParameters(),
+				1,
+				0,
+				6
 			);
 		}
 

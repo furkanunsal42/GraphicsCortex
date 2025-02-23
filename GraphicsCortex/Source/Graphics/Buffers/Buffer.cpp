@@ -212,6 +212,11 @@ void Buffer::bind_as_vertex_buffer()
 	GLCall(glBindBuffer(_target_vertex_buffer, id));
 }
 
+void Buffer::bind_as_index_buffer()
+{
+	GLCall(glBindBuffer(_target_index_buffer, id));
+}
+
 void Buffer::unbind()
 {
 	GLCall(glBindBuffer(_target_download, 0));

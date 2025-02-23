@@ -4,103 +4,132 @@
 #include <string>
 #include <stdint.h>
 #include <memory>
+#include <span>
 #include <unordered_map>
-#include "glm.hpp"
 #include <stdint.h>
 #include <filesystem>
+
+#include "mat4x4.hpp"
+
 #include "IndexBufferEnums.h"
 #include "SingleModel.h"
 
 class Buffer;
 class Mesh;
+class VertexAttributeBuffer;
+
+typedef uint32_t model_t;
+typedef uint32_t node_t;
 
 class Model {
 	friend Mesh;
 public:
 
-	static const uint32_t null_submodel_name = -1;
 	static const uint32_t null_node_name = -1;
 	static const uint32_t root_node_name = 0;
-
-	struct Node {
-		friend Model;
+	
+	class Node {
 	public:
-		Node(uint32_t node_name = null_node_name);
+		Node() = default;
 
-		uint32_t name;
-		uint32_t parent;
-		std::vector<uint32_t> childs;
-		std::vector<uint32_t> submodels;
+		node_t get_name();
+		node_t get_parent();
+		void set_parent(node_t parent);
+
+		std::span<node_t> get_children();
+		void add_child(node_t child);
+		node_t create_child();
+
+		std::span<model_t> get_submodels();
+		void add_submodel(model_t model);
+
+		glm::mat4 get_transform();
+		void set_transform(glm::mat4 transform);
+
+		Model* get_model();
+
+		//std::unique_ptr<Buffer> create_vertex_buffer() const;
+		//std::unique_ptr<Buffer> create_normal_buffer() const;
+		//std::unique_ptr<Buffer> create_tangent_buffer() const;
+		//std::unique_ptr<Buffer> create_uv0_buffer() const;
+		//std::unique_ptr<Buffer> create_uv1_buffer() const;
+		////std::unique_ptr<Buffer> create_uv_merged_buffer() const;
+		//std::unique_ptr<Buffer> create_vertex_color_buffer() const;
+		//std::unique_ptr<Buffer> create_bone_indicies_buffer() const;
+		//std::unique_ptr<Buffer> create_bone_weights_buffer() const;
+		//std::unique_ptr<Buffer> create_index_buffer() const;
+		//
+		//std::unique_ptr<VertexAttributeBuffer> create_vertex_attribute_buffer() const;
+
+	private:
+		friend Model;
+		Node(Model* owner, uint32_t node_name, node_t parent, glm::mat4 transform = glm::mat4(1));
+
+		Model* owner = nullptr;
+		node_t name = null_node_name;
+		node_t parent = null_node_name;
+		std::vector<node_t> children;
+		std::vector<model_t> submodels;
 		glm::mat4 transform = glm::mat4(1.0f);
 	};
 
-	struct _ProxyNode {
-		friend Model;
-	public:
-
-		bool add_submodel(int32_t submodel);
-		bool remove_submodel(int32_t submodel);
-
-		_ProxyNode add_childnode();
-
-		const std::vector<uint32_t>& childnodes;
-		const std::vector<uint32_t>& submodels;
-		glm::mat4& transform;
-
-		//std::unique_ptr<Buffer> create_vertex_buffer();
-		//std::unique_ptr<Buffer> create_normal_buffer();
-		//std::unique_ptr<Buffer> create_uv_buffer();
-		//std::unique_ptr<Buffer> create_vertex_color_buffer();
-		//std::unique_ptr<Buffer> create_index_buffer();
-
-		void clear();
-
-		//void load_model(const std::string& path);
-		//void load_model_async(const std::string& path);
-		//void save_to_disc(const std::string& output_filepath);
-
-	private:
-
-		std::vector<uint32_t>& _childnodes;
-		std::vector<uint32_t>& _submodels;
-
-		_ProxyNode(Model& owner_model, uint32_t name, std::vector<uint32_t>& childnodes, std::vector<uint32_t>& submodels, glm::mat4& transform);
-
-		Model& _owner_model;
-		uint32_t _node_name;
-	};
-
-	Model(const std::filesystem::path& filepath);
 	Model() = default;
+	Model(const Model& other) = default;
+	Model(Model&& other);
+	Model& operator=(const Model& other) = default;
+	Model& operator=(Model&& other);
 	~Model() = default;
 	
 	void clear();
-	void load_model(const std::filesystem::path& filepath);
+	//void load_model(const std::filesystem::path& filepath);
 	
-	std::vector<SingleModel> single_models;
-	IndexType index_buffer_type = IndexType::i_ui32;
+	bool does_model_exist(model_t model_name);
+	model_t add_model(const SingleModel& single_model);
+	model_t add_model(SingleModel&& single_model);
+	SingleModel* get_model(model_t submodel_name);
+	std::span<SingleModel> get_models();
+
+	void set_index_type(IndexType type);
+	IndexType get_index_type();
 
 	// nodes
 	size_t get_node_count();
-	bool does_node_exist(uint32_t node_name);
-	_ProxyNode get_node(uint32_t node_name);
+	bool does_node_exist(node_t node_name);
+	node_t add_node(node_t parent);
+	Node* get_node(node_t node_name);
+	Node& operator[](node_t node_name); // error if given node name not found
 
-	//void save_to_disc(const std::string& output_filepath);
+	//void save_to_disk(const std::filesystem::path& output_filepath);
 
-	std::unique_ptr<Buffer> create_vertex_buffer(size_t buffer_left_padding = 0, size_t buffer_right_padding = 0) const;
-	std::unique_ptr<Buffer> create_normal_buffer(size_t buffer_left_padding = 0, size_t buffer_right_padding = 0) const;
-	std::unique_ptr<Buffer> create_tangent_buffer(size_t buffer_left_padding = 0, size_t buffer_right_padding = 0) const;
-	//std::unique_ptr<Buffer> create_uv0_buffer(size_t buffer_left_padding = 0, size_t buffer_right_padding = 0) const;
-	//std::unique_ptr<Buffer> create_uv1_buffer(size_t buffer_left_padding = 0, size_t buffer_right_padding = 0) const;
-	std::unique_ptr<Buffer> create_uv_merged_buffer(size_t buffer_left_padding = 0, size_t buffer_right_padding = 0) const;
-	std::unique_ptr<Buffer> create_vertex_color_buffer(size_t buffer_left_padding = 0, size_t buffer_right_padding = 0) const;
-	std::unique_ptr<Buffer> create_bone_indicies_buffer(size_t buffer_left_padding = 0, size_t buffer_right_padding = 0) const;
-	std::unique_ptr<Buffer> create_bone_weights_buffer(size_t buffer_left_padding = 0, size_t buffer_right_padding = 0) const;
-	std::unique_ptr<Buffer> create_index_buffer(size_t buffer_left_padding = 0, size_t buffer_right_padding = 0) const;
+	std::unique_ptr<Buffer> create_vertex_buffer() const;
+	std::unique_ptr<Buffer> create_normal_buffer() const;
+	std::unique_ptr<Buffer> create_tangent_buffer() const;
+	std::unique_ptr<Buffer> create_uv0_buffer() const;
+	std::unique_ptr<Buffer> create_uv1_buffer() const;
+	//std::unique_ptr<Buffer> create_uv_merged_buffer() const;
+	std::unique_ptr<Buffer> create_vertex_color_buffer() const;
+	std::unique_ptr<Buffer> create_bone_indicies_buffer() const;
+	std::unique_ptr<Buffer> create_bone_weights_buffer() const;
+	std::unique_ptr<Buffer> create_index_buffer() const;
+
+	std::unique_ptr<VertexAttributeBuffer> create_vertex_attribute_buffer() const;
+
+	static const uint32_t vab_vertex_slot			= 0;
+	static const uint32_t vab_normal_slot			= 1;
+	static const uint32_t vab_tangent_slot			= 2;
+	static const uint32_t vab_uv0_slot				= 3;
+	static const uint32_t vab_uv1_slot				= 4;
+	static const uint32_t vab_vertex_color_slot		= 5;
+	static const uint32_t vab_bone_indicies_slot	= 6;
+	static const uint32_t vab_bone_weights_slot		= 7;
 
 private:
+	node_t _next_node_name = root_node_name;
+	node_t _generate_node_name();
+	std::unordered_map<node_t, Node> _name_to_node;
 
-	uint32_t _generate_submodel_name();
-	std::unordered_map<uint32_t, Node> _name_to_node;
+	std::vector<SingleModel> single_models;
+	IndexType index_buffer_type = IndexType::i_ui32;
+
 };
 

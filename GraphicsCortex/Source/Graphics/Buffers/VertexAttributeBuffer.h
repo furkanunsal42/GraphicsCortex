@@ -44,11 +44,11 @@ public:
 	void bind();
 	void unbind();
 
-	void attach_vertex_buffer(int32_t slot, std::shared_ptr<Buffer> vertex_buffer, size_t stride, size_t offset);
-	void attach_vertex_buffer(int32_t slot, std::shared_ptr<Buffer> vertex_buffer, AttributeType attribute_type, int32_t element_per_vertex, size_t stride, size_t offset, bool enabled = true);
+	void attach_vertex_buffer(int32_t slot, std::shared_ptr<Buffer> vertex_buffer, size_t stride, size_t offset_between_elements);
+	void attach_vertex_buffer(int32_t slot, std::shared_ptr<Buffer> vertex_buffer, AttributeType attribute_type, int32_t element_per_vertex, size_t stride, size_t offset_between_elements, bool enabled = true);
 	void detach_vertex_buffer(int32_t slot);
 
-	void set_attribute_format(int32_t slot, AttributeType attribute_type, int32_t element_per_vertex, size_t offset);
+	void set_attribute_format(int32_t slot, AttributeType attribute_type, int32_t element_per_vertex, size_t offset_between_elements);
 	std::shared_ptr<Buffer> get_vertex_buffer(int32_t slot);
 	AttributeType get_attribute_type(int32_t slot);
 	int32_t get_attribute_element_per_vertex(int32_t slot);

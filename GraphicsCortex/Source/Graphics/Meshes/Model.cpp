@@ -5,6 +5,127 @@
 #include "Model.h"
 #include "Debuger.h"
 #include "Buffer.h"
+#include "VertexAttributeBuffer.h"
+
+
+Model::Model(Model&& other) :
+	single_models(std::move(other.single_models)),
+	index_buffer_type(other.index_buffer_type),
+	_name_to_node(std::move(other._name_to_node)),
+	_next_node_name(other._next_node_name)
+{
+
+}
+
+Model& Model::operator=(Model&& other)
+{
+	std::swap(single_models, other.single_models);
+	std::swap(index_buffer_type, other.index_buffer_type);
+	std::swap(_name_to_node, other._name_to_node);
+	std::swap(_next_node_name, other._next_node_name);
+
+	return *this;
+}
+
+void Model::clear()
+{
+	single_models.clear();
+	_name_to_node.clear();
+}
+
+bool Model::does_model_exist(model_t model_name)
+{
+	return (model_name >= 0) && (model_name < single_models.size());
+}
+
+model_t Model::add_model(const SingleModel& single_model)
+{
+	single_models.emplace_back(single_model);
+	return single_models.size() - 1;
+}
+
+model_t Model::add_model(SingleModel&& single_model)
+{
+	single_models.emplace_back(single_model);
+	return single_models.size() - 1;
+}
+
+SingleModel* Model::get_model(model_t submodel_name)
+{
+	if (!does_model_exist(submodel_name))
+		return nullptr;
+
+	return &single_models[submodel_name];
+}
+
+std::span<SingleModel> Model::get_models()
+{
+	return std::span<SingleModel>(single_models);
+}
+
+void Model::set_index_type(IndexType type)
+{
+	index_buffer_type = type;
+}
+
+IndexType Model::get_index_type()
+{
+	return index_buffer_type;
+}
+
+size_t Model::get_node_count()
+{
+	return _name_to_node.size();
+}
+
+bool Model::does_node_exist(node_t node_name)
+{
+	return (_name_to_node.find(node_name) != _name_to_node.end());
+}
+
+node_t Model::add_node(node_t parent)
+{
+	if (_name_to_node.find(parent) == _name_to_node.end() && parent != null_node_name) {
+		std::cout << "[Model Error] Model::add_node() is called with a parent node that doesn't exist" << std::endl;
+		ASSERT(false);
+	}
+
+	node_t name = _generate_node_name();
+	_name_to_node[name] = Node(this, name, parent);
+	
+	if (parent != null_node_name)
+		_name_to_node[parent].add_child(name);
+	
+	return name;
+}
+
+Model::Node* Model::get_node(node_t node_name)
+{
+	auto iterator = _name_to_node.find(node_name);
+	if (iterator == _name_to_node.end())
+		return nullptr;
+
+	return &_name_to_node.at(node_name);
+}
+
+Model::Node& Model::operator[](node_t node_name)
+{
+	Node* node = get_node(node_name);
+	if (node == nullptr) {
+		std::cout << "[Model Error] Model::operator[]() is called with a node name that doesn't exist: " << node_name << std::endl;
+		ASSERT(false);
+	}
+
+	return *get_node(node_name);
+}
+
+node_t Model::_generate_node_name()
+{
+	node_t id = _next_node_name;
+	_next_node_name++;
+	return id;
+}
+
 
 /*
 size_t Model2::get_submodel_count() const {
@@ -283,18 +404,19 @@ size_t Model2::_update_childnode_hash(uint32_t node_name) {
 		hash ^= _update_childnode_hash(childnode);
 	}
 }
+*/
 
-std::unique_ptr<Buffer> Model2::create_vertex_buffer(size_t buffer_left_padding, size_t buffer_right_padding) const {
+std::unique_ptr<Buffer> Model::create_vertex_buffer() const {
 	size_t vertex_count = 0;
-	for (auto& pair : _name_to_submodel)
-		vertex_count += pair.second->read_verticies().size();
+	for (const SingleModel& submodel : single_models)
+		vertex_count += submodel.verticies.size();
 	
 	typedef glm::vec3 attribute_type;
 	std::unique_ptr<Buffer> buffer = std::make_unique<Buffer>(vertex_count * sizeof(attribute_type), Buffer::GPU_BUFFER);
 	
 	size_t vertex_begin_pointer = 0;
-	for (auto& pair : _name_to_submodel) {
-		const std::vector<attribute_type>& data = pair.second->read_verticies();
+	for (const SingleModel& submodel : single_models) {
+		const std::vector<attribute_type>& data = submodel.verticies;
 		buffer->load_data(vertex_begin_pointer, 0, data.size(), data);
 		vertex_begin_pointer += data.size();
 	}
@@ -302,17 +424,17 @@ std::unique_ptr<Buffer> Model2::create_vertex_buffer(size_t buffer_left_padding,
 	return buffer;
 }
 
-std::unique_ptr<Buffer> Model2::create_normal_buffer(size_t buffer_left_padding, size_t buffer_right_padding) const {
+std::unique_ptr<Buffer> Model::create_normal_buffer() const {
 	size_t vertex_count = 0;
-	for (auto& pair : _name_to_submodel)
-		vertex_count += pair.second->read_vertex_normals().size();
+	for (const SingleModel& submodel : single_models)
+		vertex_count += submodel.vertex_normals.size();
 
 	typedef glm::vec3 attribute_type;
 	std::unique_ptr<Buffer> buffer = std::make_unique<Buffer>(vertex_count * sizeof(attribute_type), Buffer::GPU_BUFFER);
 
 	size_t vertex_begin_pointer = 0;
-	for (auto& pair : _name_to_submodel) {
-		const std::vector<attribute_type>& data = pair.second->read_vertex_normals();
+	for (const SingleModel& submodel : single_models) {
+		const std::vector<attribute_type>& data = submodel.vertex_normals;
 		buffer->load_data(vertex_begin_pointer, 0, data.size(), data);
 		vertex_begin_pointer += data.size();
 	}
@@ -320,17 +442,17 @@ std::unique_ptr<Buffer> Model2::create_normal_buffer(size_t buffer_left_padding,
 	return buffer;
 }
 
-std::unique_ptr<Buffer> Model2::create_tangent_buffer(size_t buffer_left_padding, size_t buffer_right_padding) const {
+std::unique_ptr<Buffer> Model::create_tangent_buffer() const {
 	size_t vertex_count = 0;
-	for (auto& pair : _name_to_submodel)
-		vertex_count += pair.second->read_vertex_tangents().size();
+	for (const SingleModel& submodel : single_models)
+		vertex_count += submodel.vertex_tangents.size();
 
 	typedef glm::vec3 attribute_type;
 	std::unique_ptr<Buffer> buffer = std::make_unique<Buffer>(vertex_count * sizeof(attribute_type), Buffer::GPU_BUFFER);
 
 	size_t vertex_begin_pointer = 0;
-	for (auto& pair : _name_to_submodel) {
-		const std::vector<attribute_type>& data = pair.second->read_vertex_tangents();
+	for (const SingleModel& submodel : single_models) {
+		const std::vector<attribute_type>& data = submodel.vertex_tangents;
 		buffer->load_data(vertex_begin_pointer, 0, data.size(), data);
 		vertex_begin_pointer += data.size();
 	}
@@ -338,21 +460,73 @@ std::unique_ptr<Buffer> Model2::create_tangent_buffer(size_t buffer_left_padding
 	return buffer;
 }
 
-//std::unique_ptr<Buffer> Model2::create_uv0_buffer(size_t buffer_left_padding, size_t buffer_right_padding) const;
-//std::unique_ptr<Buffer> Model2::create_uv1_buffer(size_t buffer_left_padding, size_t buffer_right_padding) const;
-
-
-std::unique_ptr<Buffer> Model2::create_uv_merged_buffer(size_t buffer_left_padding, size_t buffer_right_padding) const {
+std::unique_ptr<Buffer> Model::create_uv0_buffer() const
+{
 	size_t vertex_count = 0;
-	for (auto& pair : _name_to_submodel)
-		vertex_count += pair.second->read_texture_coordinates().size();
+	for (const SingleModel& submodel : single_models)
+		vertex_count += submodel.texture_coordinates_0.size();
+
+	typedef glm::vec2 attribute_type;
+	std::unique_ptr<Buffer> buffer = std::make_unique<Buffer>(vertex_count * sizeof(attribute_type), Buffer::GPU_BUFFER);
+
+	size_t vertex_begin_pointer = 0;
+	for (const SingleModel& submodel : single_models) {
+		const std::vector<attribute_type>& data = submodel.texture_coordinates_0;
+		buffer->load_data(vertex_begin_pointer, 0, data.size(), data);
+		vertex_begin_pointer += data.size();
+	}
+
+	return buffer;
+}
+
+std::unique_ptr<Buffer> Model::create_uv1_buffer() const
+{
+	size_t vertex_count = 0;
+	for (const SingleModel& submodel : single_models)
+		vertex_count += submodel.texture_coordinates_1.size();
+
+	typedef glm::vec2 attribute_type;
+	std::unique_ptr<Buffer> buffer = std::make_unique<Buffer>(vertex_count * sizeof(attribute_type), Buffer::GPU_BUFFER);
+
+	size_t vertex_begin_pointer = 0;
+	for (const SingleModel& submodel : single_models) {
+		const std::vector<attribute_type>& data = submodel.texture_coordinates_1;
+		buffer->load_data(vertex_begin_pointer, 0, data.size(), data);
+		vertex_begin_pointer += data.size();
+	}
+
+	return buffer;
+}
+
+//std::unique_ptr<Buffer> Model::create_uv_merged_buffer() const {
+//	size_t vertex_count = 0;
+//	for (const SingleModel& submodel : single_models)
+//		vertex_count += submodel.texture_coordinates.size();
+//
+//	typedef glm::vec4 attribute_type;
+//	std::unique_ptr<Buffer> buffer = std::make_unique<Buffer>(vertex_count * sizeof(attribute_type), Buffer::GPU_BUFFER);
+//
+//	size_t vertex_begin_pointer = 0;
+//	for (const SingleModel& submodel : single_models) {
+//		const std::vector<attribute_type>& data = submodel.texture_coordinates;
+//		buffer->load_data(vertex_begin_pointer, 0, data.size(), data);
+//		vertex_begin_pointer += data.size();
+//	}
+//
+//	return buffer;
+//}
+
+std::unique_ptr<Buffer> Model::create_vertex_color_buffer() const {
+	size_t vertex_count = 0;
+	for (const SingleModel& submodel : single_models)
+		vertex_count += submodel.vertex_colors.size();
 
 	typedef glm::vec4 attribute_type;
 	std::unique_ptr<Buffer> buffer = std::make_unique<Buffer>(vertex_count * sizeof(attribute_type), Buffer::GPU_BUFFER);
 
 	size_t vertex_begin_pointer = 0;
-	for (auto& pair : _name_to_submodel) {
-		const std::vector<attribute_type>& data = pair.second->read_texture_coordinates();
+	for (const SingleModel& submodel : single_models) {
+		const std::vector<attribute_type>& data = submodel.vertex_colors;
 		buffer->load_data(vertex_begin_pointer, 0, data.size(), data);
 		vertex_begin_pointer += data.size();
 	}
@@ -360,36 +534,17 @@ std::unique_ptr<Buffer> Model2::create_uv_merged_buffer(size_t buffer_left_paddi
 	return buffer;
 }
 
-
-std::unique_ptr<Buffer> Model2::create_vertex_color_buffer(size_t buffer_left_padding, size_t buffer_right_padding) const {
+std::unique_ptr<Buffer> Model::create_bone_indicies_buffer() const {
 	size_t vertex_count = 0;
-	for (auto& pair : _name_to_submodel)
-		vertex_count += pair.second->read_vertex_colors().size();
-
-	typedef glm::vec4 attribute_type;
-	std::unique_ptr<Buffer> buffer = std::make_unique<Buffer>(vertex_count * sizeof(attribute_type), Buffer::GPU_BUFFER);
-
-	size_t vertex_begin_pointer = 0;
-	for (auto& pair : _name_to_submodel) {
-		const std::vector<attribute_type>& data = pair.second->read_vertex_colors();
-		buffer->load_data(vertex_begin_pointer, 0, data.size(), data);
-		vertex_begin_pointer += data.size();
-	}
-
-	return buffer;
-}
-
-std::unique_ptr<Buffer> Model2::create_bone_indicies_buffer(size_t buffer_left_padding, size_t buffer_right_padding) const {
-	size_t vertex_count = 0;
-	for (auto& pair : _name_to_submodel)
-		vertex_count += pair.second->read_bone_indicies().size();
+	for (const SingleModel& submodel : single_models)
+		vertex_count += submodel.bone_indicies.size();
 
 	typedef glm::ivec4 attribute_type;
 	std::unique_ptr<Buffer> buffer = std::make_unique<Buffer>(vertex_count * sizeof(attribute_type), Buffer::GPU_BUFFER);
 
 	size_t vertex_begin_pointer = 0;
-	for (auto& pair : _name_to_submodel) {
-		const std::vector<attribute_type>& data = pair.second->read_bone_indicies();
+	for (const SingleModel& submodel : single_models) {
+		const std::vector<attribute_type>& data = submodel.bone_indicies;
 		buffer->load_data(vertex_begin_pointer, 0, data.size(), data);
 		vertex_begin_pointer += data.size();
 	}
@@ -397,17 +552,17 @@ std::unique_ptr<Buffer> Model2::create_bone_indicies_buffer(size_t buffer_left_p
 	return buffer;
 }
 
-std::unique_ptr<Buffer> Model2::create_bone_weights_buffer(size_t buffer_left_padding, size_t buffer_right_padding) const {
+std::unique_ptr<Buffer> Model::create_bone_weights_buffer() const {
 	size_t vertex_count = 0;
-	for (auto& pair : _name_to_submodel)
-		vertex_count += pair.second->read_bone_weights().size();
+	for (const SingleModel& submodel : single_models)
+		vertex_count += submodel.bone_weights.size();
 
 	typedef glm::vec4 attribute_type;
 	std::unique_ptr<Buffer> buffer = std::make_unique<Buffer>(vertex_count * sizeof(attribute_type), Buffer::GPU_BUFFER);
 
 	size_t vertex_begin_pointer = 0;
-	for (auto& pair : _name_to_submodel) {
-		const std::vector<attribute_type>& data = pair.second->read_bone_weights();
+	for (const SingleModel& submodel : single_models) {
+		const std::vector<attribute_type>& data = submodel.bone_weights;
 		buffer->load_data(vertex_begin_pointer, 0, data.size(), data);
 		vertex_begin_pointer += data.size();
 	}
@@ -415,20 +570,20 @@ std::unique_ptr<Buffer> Model2::create_bone_weights_buffer(size_t buffer_left_pa
 	return buffer;
 }
 
-std::unique_ptr<Buffer> Model2::create_index_buffer(size_t buffer_left_padding, size_t buffer_right_padding) const{
+std::unique_ptr<Buffer> Model::create_index_buffer() const {
 	size_t vertex_count = 0;
-	for (auto& pair : _name_to_submodel)
-		vertex_count += pair.second->read_indicies().size();
+	for (const SingleModel& submodel : single_models)
+		vertex_count += submodel.indicies.size();
 
-	uint32_t index_bytes_per_index = get_IndexType_bytes_per_index(_index_buffer_type);
+	uint32_t index_bytes_per_index = get_IndexType_bytes_per_index(index_buffer_type);
 	std::unique_ptr<Buffer> buffer = std::make_unique<Buffer>(vertex_count * index_bytes_per_index, Buffer::GPU_BUFFER);
 
 	size_t vertex_begin_pointer = 0;
-	for (auto& pair : _name_to_submodel) {
+	for (const SingleModel& submodel : single_models) {
 
-		if (_index_buffer_type == IndexType::i_ui8) {
+		if (index_buffer_type == IndexType::i_ui8) {
 			
-			const std::vector<uint32_t>& data = pair.second->read_indicies();
+			const std::vector<uint32_t>& data = submodel.indicies;
 			std::vector<uint8_t> data_refactored;
 			data_refactored.resize(data.size());
 
@@ -439,9 +594,9 @@ std::unique_ptr<Buffer> Model2::create_index_buffer(size_t buffer_left_padding, 
 			vertex_begin_pointer += data_refactored.size();
 		}
 
-		else if (_index_buffer_type == IndexType::i_ui16) {
+		else if (index_buffer_type == IndexType::i_ui16) {
 
-			const std::vector<uint32_t>& data = pair.second->read_indicies();
+			const std::vector<uint32_t>& data = submodel.indicies;
 			std::vector<uint16_t> data_refactored;
 			data_refactored.resize(data.size());
 
@@ -452,9 +607,9 @@ std::unique_ptr<Buffer> Model2::create_index_buffer(size_t buffer_left_padding, 
 			vertex_begin_pointer += data_refactored.size();
 		}
 
-		else if (_index_buffer_type == IndexType::i_ui32) {
+		else if (index_buffer_type == IndexType::i_ui32) {
 
-			const std::vector<uint32_t>& data = pair.second->read_indicies();
+			const std::vector<uint32_t>& data = submodel.indicies;
 			buffer->load_data(vertex_begin_pointer, 0, data.size(), data);
 			vertex_begin_pointer += data.size();
 
@@ -463,4 +618,135 @@ std::unique_ptr<Buffer> Model2::create_index_buffer(size_t buffer_left_padding, 
 
 	return buffer;
 }
-*/
+
+std::unique_ptr<VertexAttributeBuffer> Model::create_vertex_attribute_buffer() const
+{
+	size_t vertex_count = 0;
+	size_t normal_count = 0;
+	size_t tangent_count = 0;
+	size_t uv0_count = 0;
+	size_t uv1_count = 0;
+	size_t vertex_color_count = 0;
+	size_t bone_indicies_count = 0;
+	size_t bone_weights_count = 0;
+	size_t index_count = 0;
+
+	for (const SingleModel& submodel : single_models) {
+		vertex_count		+=	submodel.verticies.size();
+		normal_count		+=	submodel.vertex_normals.size();
+		tangent_count		+=	submodel.vertex_tangents.size();
+		uv0_count			+=	submodel.texture_coordinates_0.size();
+		uv1_count			+=	submodel.texture_coordinates_1.size();
+		vertex_color_count	+=	submodel.vertex_colors.size();
+		bone_indicies_count +=	submodel.bone_indicies.size();
+		bone_weights_count	+=	submodel.bone_weights.size();
+		index_count			+=	submodel.indicies.size();
+	}
+
+	std::unique_ptr<VertexAttributeBuffer> vab = std::make_unique<VertexAttributeBuffer>();
+	
+	typedef glm::vec3  vertex_attribute_type;
+	typedef glm::vec3  normal_attribute_type;
+	typedef glm::vec3  tangent_attribute_type;
+	typedef glm::vec2  uv0_attribute_type;
+	typedef glm::vec2  uv1_attribute_type;
+	typedef glm::vec4  vertex_color_attribute_type;
+	typedef glm::ivec4 bone_indicies_attribute_type;
+	typedef glm::vec4  bone_weights_attribute_type;
+
+	if (vertex_count != 0)
+		vab->attach_vertex_buffer(vab_vertex_slot,			create_vertex_buffer(),			VertexAttributeBuffer::a_f32, 3, sizeof(vertex_attribute_type),			0, true);
+	if (normal_count != 0)
+		vab->attach_vertex_buffer(vab_normal_slot,			create_normal_buffer(),			VertexAttributeBuffer::a_f32, 3, sizeof(normal_attribute_type),			0, true);
+	if (tangent_count != 0)
+		vab->attach_vertex_buffer(vab_tangent_slot,			create_tangent_buffer(),		VertexAttributeBuffer::a_f32, 3, sizeof(tangent_attribute_type),		0, true);
+	if (uv0_count != 0)
+		vab->attach_vertex_buffer(vab_uv0_slot,				create_uv0_buffer(),			VertexAttributeBuffer::a_f32, 3, sizeof(uv0_attribute_type),			0, true);
+	if (uv1_count != 0)
+		vab->attach_vertex_buffer(vab_uv1_slot,				create_uv1_buffer(),			VertexAttributeBuffer::a_f32, 3, sizeof(uv1_attribute_type),			0, true);
+	if (vertex_color_count != 0)
+		vab->attach_vertex_buffer(vab_vertex_color_slot,	create_vertex_color_buffer(),	VertexAttributeBuffer::a_f32, 3, sizeof(vertex_color_attribute_type),	0, true);
+	if (bone_indicies_count != 0)
+		vab->attach_vertex_buffer(vab_bone_indicies_slot,	create_bone_indicies_buffer(),	VertexAttributeBuffer::a_i32, 3, sizeof(bone_indicies_attribute_type),	0, true);
+	if (bone_weights_count != 0)
+		vab->attach_vertex_buffer(vab_bone_weights_slot,	create_bone_weights_buffer(),	VertexAttributeBuffer::a_f32, 3, sizeof(bone_weights_attribute_type),	0, true);
+
+	return vab;
+}
+
+
+Model::Node::Node(Model* owner, uint32_t node_name, node_t parent, glm::mat4 transform) :
+	owner(owner), name(node_name), parent(parent), transform(transform)
+{
+	if (owner == nullptr) {
+		std::cout << "[Model Error] Model::Node is initialized with null referance to it's Model" << std::endl;
+		ASSERT(false);
+	}
+}
+
+node_t Model::Node::get_name()
+{
+	return name;
+}
+
+node_t Model::Node::get_parent()
+{
+	return parent;
+}
+
+void Model::Node::set_parent(node_t parent)
+{
+	this->parent = parent;
+}
+
+std::span<node_t> Model::Node::get_children()
+{
+	return std::span<node_t>(children);
+}
+
+void Model::Node::add_child(node_t child)
+{
+	if (!owner->does_node_exist(child)) {
+		std::cout << "[Model Error] Model::Node::add_child() is called with a child that doesn't exist" << std::endl;
+		ASSERT(false);
+	}
+
+	if (std::find(children.begin(), children.end(), child) == children.end()) {
+		children.push_back(child);
+	}
+}
+
+node_t Model::Node::create_child()
+{
+	return owner->add_node(name);
+}
+
+std::span<model_t> Model::Node::get_submodels()
+{
+	return std::span<model_t>(submodels);
+}
+
+void Model::Node::add_submodel(model_t model)
+{
+	if (!owner->does_model_exist(model)) {
+		std::cout << "[Model Error] Model::Node::add_submodel() is called with a model that doesn't exist" << std::endl;
+		ASSERT(false);
+	}
+
+	submodels.push_back(model);
+}
+
+glm::mat4 Model::Node::get_transform()
+{
+	return transform;
+}
+
+void Model::Node::set_transform(glm::mat4 transform)
+{
+	this->transform = transform;
+}
+
+Model* Model::Node::get_model()
+{
+	return owner;
+}

@@ -64,6 +64,7 @@ public:
 	void bind_as_storage_buffer(unsigned int buffer_slot, size_t offset, size_t size);
 	void bind_as_transform_feedback(unsigned int buffer_slot, size_t offset, size_t size);
 	void bind_as_vertex_buffer();
+	void bind_as_index_buffer();
 	void unbind();
 
 	bool wait_to_sycronize_download(int64_t timeout_ms);
@@ -167,12 +168,12 @@ private:
 
 	typedef uint32_t _bind_target;
 	
-	const _bind_target _target_download				= GL_PIXEL_PACK_BUFFER;
-	const _bind_target _target_upload				= GL_PIXEL_UNPACK_BUFFER;
-	const _bind_target _target_index_buffer			= GL_ELEMENT_ARRAY_BUFFER;
-	const _bind_target _target_vertex_buffer		= GL_ARRAY_BUFFER;
-	const _bind_target _target_storage_buffer		= GL_SHADER_STORAGE_BUFFER;
-	const _bind_target _target_transform_feedback	= GL_TRANSFORM_FEEDBACK_BUFFER;
+	static const _bind_target _target_download				= GL_PIXEL_PACK_BUFFER;
+	static const _bind_target _target_upload				= GL_PIXEL_UNPACK_BUFFER;
+	static const _bind_target _target_index_buffer			= GL_ELEMENT_ARRAY_BUFFER;
+	static const _bind_target _target_vertex_buffer			= GL_ARRAY_BUFFER;
+	static const _bind_target _target_storage_buffer		= GL_SHADER_STORAGE_BUFFER;
+	static const _bind_target _target_transform_feedback	= GL_TRANSFORM_FEEDBACK_BUFFER;
 
 	MemoryType _buffer_memory_type = MemoryType::GPU_BUFFER;
 	size_t _buffer_size = 0;

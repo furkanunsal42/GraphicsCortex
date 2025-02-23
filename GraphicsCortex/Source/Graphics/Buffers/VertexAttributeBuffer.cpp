@@ -128,26 +128,26 @@ void VertexAttributeBuffer::attach_vertex_buffer(int32_t slot, std::shared_ptr<B
     _vertex_buffers[slot]._offset = offset;
 }
 
-void VertexAttributeBuffer::attach_vertex_buffer(int32_t slot, std::shared_ptr<Buffer> vertex_buffer, AttributeType attribute_type, int32_t element_per_vertex, size_t stride, size_t offset, bool enabled)
+void VertexAttributeBuffer::attach_vertex_buffer(int32_t slot, std::shared_ptr<Buffer> vertex_buffer, AttributeType attribute_type, int32_t element_per_vertex, size_t stride, size_t offset_between_elements, bool enabled)
 {
-    attach_vertex_buffer(slot, vertex_buffer, stride, offset);
-    set_attribute_format(slot, attribute_type, element_per_vertex, offset);
+    attach_vertex_buffer(slot, vertex_buffer, stride, offset_between_elements);
+    set_attribute_format(slot, attribute_type, element_per_vertex, offset_between_elements);
     if (enabled) enable_attribute(slot);
     else disable_attribute(slot);
 }
 
-void VertexAttributeBuffer::set_attribute_format(int32_t slot, AttributeType attribute_type, int32_t element_per_vertex, size_t offset)
+void VertexAttributeBuffer::set_attribute_format(int32_t slot, AttributeType attribute_type, int32_t element_per_vertex, size_t offset_between_elements)
 {
     if (slot < 0 || slot >= _max_attribute_count) {
         std::cout << "[OpenGL Error] VertexAttributeBuffer tried to access slot: " << slot << " but only " << _max_attribute_count << " attributes are supported" << std::endl;
         ASSERT(false);
     }
 
-    GLCall(glVertexArrayAttribFormat(id, slot, element_per_vertex, _attribute_type_to_GL_type(attribute_type), _attribute_type_to_GL_normalized_flag(attribute_type), offset));
+    GLCall(glVertexArrayAttribFormat(id, slot, element_per_vertex, _attribute_type_to_GL_type(attribute_type), _attribute_type_to_GL_normalized_flag(attribute_type), offset_between_elements));
 
     _vertex_buffers[slot]._attribute_type = attribute_type;
     _vertex_buffers[slot]._element_per_vertex = element_per_vertex;
-    _vertex_buffers[slot]._offset = offset;
+    _vertex_buffers[slot]._offset = offset_between_elements;
 }
 
 void VertexAttributeBuffer::detach_vertex_buffer(int32_t slot)
