@@ -11,9 +11,9 @@ int main() {
 	
 	//WindowSystemTest().run();
 	//SingleMeshRenderingTest().run();
-	SingleMeshIndexedRenderingTest().run();
+	//SingleMeshIndexedRenderingTest().run();
 	//RenderPassClearTest().run();
 	//EntityComponentSystemTest().run();
 
-	//ModelConstructionTest().run();,
+	ModelConstructionTest().run();
 }

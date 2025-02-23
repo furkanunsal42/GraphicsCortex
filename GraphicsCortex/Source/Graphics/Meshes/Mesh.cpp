@@ -1,5 +1,25 @@
 #include "Mesh.h"
 
+void Mesh::set_index_buffer(std::shared_ptr<Buffer> index_buffer)
+{
+	_index_buffer = index_buffer;
+}
+
+void Mesh::set_vertex_attribute_buffer(std::shared_ptr<VertexAttributeBuffer> vertex_attribute_buffer)
+{
+	vab = vertex_attribute_buffer;
+}
+
+std::shared_ptr<Buffer> Mesh::get_index_buffer()
+{
+	return _index_buffer;
+}
+
+std::shared_ptr<VertexAttributeBuffer> Mesh::get_vertex_attribute_buffer()
+{
+	return vab;
+}
+
 size_t Mesh::get_submesh_count() {
 	return _name_to_singlemesh.size();
 }

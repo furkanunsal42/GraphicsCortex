@@ -84,10 +84,12 @@ public:
 	//void load_model(const std::filesystem::path& filepath);
 	
 	bool does_model_exist(model_t model_name);
+	size_t get_model_count();
 	model_t add_model(const SingleModel& single_model);
 	model_t add_model(SingleModel&& single_model);
 	SingleModel* get_model(model_t submodel_name);
 	std::span<SingleModel> get_models();
+	void clear_models();
 
 	void set_index_type(IndexType type);
 	IndexType get_index_type();
@@ -98,6 +100,7 @@ public:
 	node_t add_node(node_t parent);
 	Node* get_node(node_t node_name);
 	Node& operator[](node_t node_name); // error if given node name not found
+	void clear_nodes();
 
 	//void save_to_disk(const std::filesystem::path& output_filepath);
 

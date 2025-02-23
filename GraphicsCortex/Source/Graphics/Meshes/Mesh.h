@@ -9,33 +9,51 @@
 #include "Model.h"
 #include "IndexBufferEnums.h"
 
+typedef uint32_t mesh_t;
+
 class Mesh {
 public:
 
-	static const uint32_t null_submesh_name = -1;
 	static const uint32_t null_node_name = -1;
 	static const uint32_t root_node_name = 0;
 
-	struct SubmeshInfo {
-		SubmeshInfo(size_t vertex_buffers_offset, size_t vertex_buffers_size, size_t index_buffer_offset, size_t index_buffer_size, PrimitiveType primitive);
+	class SingleMesh {
+	public:
+		SingleMesh() = default;	// ?
 
-		size_t vertex_buffers_offset;
-		size_t vertex_buffers_size;
-		size_t index_buffer_offset;
-		size_t index_buffer_size;
+		size_t vertex_buffer_offset = 0;
+		size_t normal_buffer_offset = 0;
+		size_t tangent_buffer_offset = 0;
+		size_t uv0_buffer_offset = 0;
+		size_t uv1_buffer_offset = 0;
+		size_t vertex_color_buffer_offset = 0;
+		size_t bone_indicies_buffer_offset = 0;
+		size_t bone_weights_buffer_offset = 0;
+		size_t index_buffer_offset = 0;
 
-		PrimitiveType primitive;
+		size_t vertex_buffer_size = 0;
+		size_t normal_buffer_size = 0;
+		size_t tangent_buffer_size = 0;
+		size_t uv0_buffer_size = 0;
+		size_t uv1_buffer_size = 0;
+		size_t vertex_color_buffer_size = 0;
+		size_t bone_indicies_buffer_size = 0;
+		size_t bone_weights_buffer_size = 0;
+		size_t index_buffer_size = 0;
+
+		PrimitiveType primitive = PrimitiveType::triangle;
+
+	private:
+		friend Mesh;
+		SingleMesh(Mesh* owner);
+		Mesh* owner = nullptr;
 	};
 
-	struct Node {
+	class Node {
+	public:
 		uint32_t node_name;
 		std::vector<uint32_t> submeshes;
 		std::vector<uint32_t> childnodes;
-	};
-
-	struct _ProxyNode {
-		friend Mesh;
-	public:
 
 		bool load_model(const Model& model, uint32_t submeshes_begin);
 		bool load_model(const Model::Node& submodel, uint32_t submeshes_begin);
@@ -49,60 +67,62 @@ public:
 		bool add_childnode(uint32_t node_name);
 		bool remove_childnode(uint32_t node_name);
 
-		std::vector<uint32_t>& childnodes;
-		std::vector<uint32_t>& submeshes;
-
 		void clear();
 
 	private:
-		_ProxyNode();
+		friend Mesh;
 
-		Mesh& _owner_mesh;
-		uint32_t _node_name;
+		Mesh* owner;
 	};
 
+	Mesh() = default;
+	Mesh(const Model& model);
+	Mesh(const SingleModel single_model);
+
+	void load_model(const Model& model);
+	void load_model(const SingleModel& single_model);
+
 	// buffer management
-	void set_position_buffer(std::shared_ptr<Buffer> position_buffer);
-	void set_normal_buffer(std::shared_ptr<Buffer> normal_buffer);
-	void set_texture_coordinate_buffer(std::shared_ptr<Buffer> texture_coordinate_buffer);
-	void set_color_buffer(std::shared_ptr<Buffer> color_buffer);
 	void set_index_buffer(std::shared_ptr<Buffer> index_buffer);
 	void set_vertex_attribute_buffer(std::shared_ptr<VertexAttributeBuffer> vertex_attribute_buffer);
-	
-	std::shared_ptr<Buffer> get_position_buffer();
-	std::shared_ptr<Buffer> get_normal_buffer();
-	std::shared_ptr<Buffer> get_texture_coordinate_buffer();
-	std::shared_ptr<Buffer> get_color_buffer();
 	std::shared_ptr<Buffer> get_index_buffer();
 	std::shared_ptr<VertexAttributeBuffer> get_vertex_attribute_buffer();
+	void clear(); 
 
 	// submeshes
-	size_t get_submesh_count();
-	bool does_submesh_exist(uint32_t submesh_name);
-	uint32_t insert_submeshes(const Model& model);
-	uint32_t insert_submeshes(const Model::Node& submodel);
-	uint32_t insert_submesh(const SingleModel& single_model);
-	void erase_submesh(uint32_t submesh_name);
-	void erase_submesh(uint32_t submesh_name, size_t submesh_count);
-	SubmeshInfo& get_submesh(uint32_t submesh_name);
-	bool set_submesh(uint32_t submodel_name, SubmeshInfo submesh);
+	bool does_mesh_exist(mesh_t submesh_name);
+	size_t get_mesh_count();
+	mesh_t add_mesh(const SingleModel& single_model);
+	SingleMesh* get_mesh(mesh_t submesh_name);
+	std::span<SingleMesh> get_meshes();
+	void clear_meshes();
+	//mesh_t add_meshes(const Model& model);
+
+	void set_index_type(IndexType type);
+	IndexType get_index_type();
 
 	// nodes
 	size_t get_node_count();
-	bool does_node_exist(uint32_t node_name);
-	_ProxyNode operator[](uint32_t node_name);
-	void create_node(uint32_t node_name);
-	void delete_node(uint32_t node_name);
+	bool does_node_exist(node_t node_name);
+	node_t add_node(node_t parent);
+	Node* get_node(node_t node_name);
+	Node& operator[](uint32_t node_name);
+	void clear_nodes();
+
+	void merge_all_nodes();
 
 private:
 
-	std::shared_ptr<VertexAttributeBuffer> vao;
-	std::shared_ptr<Buffer> _index_buffer;
-	IndexType _index_buffer_type;
+	std::shared_ptr<VertexAttributeBuffer> vab = nullptr;
+	std::shared_ptr<Buffer> index_buffer = nullptr;
+	IndexType index_buffer_type;
 
-	size_t _vertex_size = 0;
-	size_t _index_size = 0;
+	size_t vertex_size = 0;
+	size_t index_size = 0;
 
-	std::unordered_map<uint32_t, SubmeshInfo> _name_to_singlemesh;
-	std::unordered_map<uint32_t, Node> _nodes;
+	node_t next_node_name = root_node_name;
+	node_t generate_node_name();
+
+	std::vector<SingleMesh> single_meshes;
+	std::unordered_map<node_t, Node> name_to_nodes;
 };
