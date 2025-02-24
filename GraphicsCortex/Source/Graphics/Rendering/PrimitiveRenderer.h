@@ -66,25 +66,20 @@ namespace primitive_renderer {
 	void render(
 		Framebuffer& framebuffer,
 		Program& program,
-		Mesh::_ProxyNode& mesh
+		Mesh::SingleMesh& single_mesh,
+		const RenderParameters& render_parameters = RenderParameters(),
+		size_t instance_count = 1,
+		size_t instance_offset = 0
 		);
 
 	void render(
-		Framebuffer& framebuffer,
 		Program& program,
-		Mesh& mesh
-	);
-
-	void render(
-		Program& program, 
-		Mesh::_ProxyNode& mesh
+		Mesh::SingleMesh& single_mesh,
+		const RenderParameters& render_parameters = RenderParameters(),
+		size_t instance_count = 1,
+		size_t instance_offset = 0
 	);
 	
-	void render(
-		Program& program, 
-		Mesh& mesh
-	);
-
 	void clear(Framebuffer& framebuffer, float red, float green, float blue, float alpha);
 	void clear(float red = 1, float green = 0, float blue = 1, float alpha = 1);
 }

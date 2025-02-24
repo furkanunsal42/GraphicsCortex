@@ -24,27 +24,16 @@ public:
 	public:
 		SingleMesh() = default;
 
-		size_t vertex_buffer_offset = 0;
-		size_t normal_buffer_offset = 0;
-		size_t tangent_buffer_offset = 0;
-		size_t uv0_buffer_offset = 0;
-		size_t uv1_buffer_offset = 0;
-		size_t vertex_color_buffer_offset = 0;
-		size_t bone_indicies_buffer_offset = 0;
-		size_t bone_weights_buffer_offset = 0;
-		size_t index_buffer_offset = 0;
-
-		size_t vertex_buffer_size = 0;
-		size_t normal_buffer_size = 0;
-		size_t tangent_buffer_size = 0;
-		size_t uv0_buffer_size = 0;
-		size_t uv1_buffer_size = 0;
-		size_t vertex_color_buffer_size = 0;
-		size_t bone_indicies_buffer_size = 0;
-		size_t bone_weights_buffer_size = 0;
-		size_t index_buffer_size = 0;
+		size_t vertex_offset = 0;
+		size_t vertex_count = 0;
+		
+		size_t index_offset = 0;
+		size_t index_count = 0;
 
 		PrimitiveType primitive = PrimitiveType::triangle;
+		IndexType index_type = IndexType::i_ui32;
+
+		Mesh* get_owner();
 
 	private:
 		friend Mesh;
@@ -68,7 +57,7 @@ public:
 		node_t create_child();
 
 		std::span<mesh_t> get_submeshes();
-		void add_submeshes(mesh_t submesh);
+		void add_submesh(mesh_t submesh);
 
 		glm::mat4 get_transform();
 		void set_transform(glm::mat4 transform);
@@ -77,6 +66,7 @@ public:
 
 	private:
 		friend Mesh;
+
 		Node(Mesh* owner, node_t node_name, node_t parent, glm::mat4 transform = glm::mat4(1));
 
 		Mesh* owner = nullptr;
@@ -92,7 +82,7 @@ public:
 	Mesh(const SingleModel single_model);
 
 	void load_model(const Model& model);
-	void load_model(const SingleModel& single_model);
+	void load_model(const SingleModel& single_model, IndexType type = IndexType::i_ui32);
 
 	// buffer management
 	void set_index_buffer(std::shared_ptr<Buffer> index_buffer);
@@ -113,8 +103,8 @@ public:
 	void clear_meshes();
 	//mesh_t add_meshes(const Model& model);
 
-	void set_index_type(IndexType type);
-	IndexType get_index_type();
+	//void set_index_type(IndexType type);
+	//IndexType get_index_type();
 
 	// nodes
 	size_t get_node_count();
@@ -144,10 +134,6 @@ private:
 
 	std::shared_ptr<VertexAttributeBuffer> vab = nullptr;
 	std::shared_ptr<Buffer> index_buffer = nullptr;
-	IndexType index_buffer_type;
-
-	//size_t vertex_size = 0;
-	//size_t index_size = 0;
 
 	std::vector<SingleMesh> single_meshes;
 	std::unordered_map<node_t, Node> name_to_nodes;

@@ -117,14 +117,13 @@ public:
 
 	std::unique_ptr<VertexAttributeBuffer> create_vertex_attribute_buffer() const;
 
-
 private:
+
 	node_t _next_node_name = root_node_name;
 	node_t _generate_node_name();
 	std::unordered_map<node_t, Node> _name_to_node;
 
 	std::vector<SingleModel> single_models;
 	IndexType index_buffer_type = IndexType::i_ui32;
-
 };
 

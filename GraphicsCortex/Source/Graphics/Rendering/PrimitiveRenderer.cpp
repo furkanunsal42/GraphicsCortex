@@ -130,6 +130,67 @@ void primitive_renderer::render(
 	GLCall(glDrawArraysInstancedBaseInstance(PrimitiveType_to_GL(primitive), attribute_offset, vertex_count, instance_count, instance_offset));
 }
 
+void primitive_renderer::render(Program& program, Mesh::SingleMesh& single_mesh, const RenderParameters& render_parameters, size_t instance_count, size_t instance_offset)
+{
+	Mesh* mesh = single_mesh.get_owner();
+	if (mesh == nullptr) {
+		std::cout << "[OpenGL Error] primitive_renderer::render() is called with a Mesh::SingleMesh& that doesn't have an owner Mesh" << std::endl;
+		ASSERT(false);
+	}
+
+	std::shared_ptr<VertexAttributeBuffer> vab = mesh->get_vertex_attribute_buffer();
+	if (vab == nullptr) {
+		std::cout << "[OpenGL Error] primitive_renderer::render() is called with a Mesh::SingleMesh& whose Mesh has a nullptr VertexAttributeBuffer" << std::endl;
+		ASSERT(false);
+	}
+
+	std::shared_ptr<Buffer> index_buffer = mesh->get_index_buffer();
+	if (index_buffer == nullptr && single_mesh.index_count != 0) {
+		std::cout << "[OpenGL Error] primitive_renderer::render() is called with a Mesh::SingleMesh& that is configured to be rendered with an index buffer but it's Mesh has a nullptr index buffer" << std::endl;
+		ASSERT(false);
+	}
+	
+	PrimitiveType primitive = single_mesh.primitive;
+	IndexType index_buffer_type = single_mesh.index_type;
+
+	vab->bind();
+	program.bind();
+
+	if (single_mesh.index_count == 0) {
+		// array rendering
+		
+		primitive_renderer::render(
+			program,
+			*vab,
+			primitive,
+			render_parameters,
+			0,	
+			0,
+			instance_count,
+			instance_offset
+		);
+	}
+	else {
+		// indexed rendering
+
+		primitive_renderer::render(
+			program,
+			*vab,
+			*index_buffer,
+			primitive,
+			index_buffer_type,
+			render_parameters,
+			0,
+			0,
+			0,
+			instance_count,
+			instance_offset
+		);
+	}
+
+
+}
+
 void primitive_renderer::clear(Framebuffer& framebuffer, float red, float green, float blue, float alpha)
 {
 	framebuffer.bind_draw();

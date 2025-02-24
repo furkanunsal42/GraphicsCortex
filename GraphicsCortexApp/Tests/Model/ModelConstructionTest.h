@@ -10,6 +10,8 @@ public:
 
 		default_init();
 
+		std::cout << VertexAttributeBuffer::get_max_buffer_count() << std::endl;
+
 		SingleModel plane;
 
 		plane.verticies = {

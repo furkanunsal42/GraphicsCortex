@@ -187,7 +187,7 @@ std::unique_ptr<Buffer> SingleModel::create_index_buffer(IndexType index_type, s
 
 std::unique_ptr<VertexAttributeBuffer> SingleModel::create_vertex_attribute_buffer(size_t vertex_offset_count, size_t buffer_offset_in_bytes, size_t vertex_count) const
 {
-	size_t	vertex_count		=	verticies.size();
+	size_t	verticies_count		=	verticies.size();
 	size_t	normal_count		=	vertex_normals.size();
 	size_t	tangent_count		=	vertex_tangents.size();
 	size_t	uv0_count			=	texture_coordinates_0.size();
@@ -208,7 +208,7 @@ std::unique_ptr<VertexAttributeBuffer> SingleModel::create_vertex_attribute_buff
 	typedef glm::ivec4 bone_indicies_attribute_type;
 	typedef glm::vec4  bone_weights_attribute_type;
 
-	if (vertex_count != 0)
+	if (verticies_count != 0)
 		vab->attach_vertex_buffer(Mesh::vab_vertex_slot,			create_vertex_buffer(vertex_offset_count, buffer_offset_in_bytes, vertex_count),		VertexAttributeBuffer::a_f32, 3, sizeof(vertex_attribute_type),			0, true);
 	if (normal_count != 0)
 		vab->attach_vertex_buffer(Mesh::vab_normal_slot,			create_normal_buffer(vertex_offset_count, buffer_offset_in_bytes, vertex_count),		VertexAttributeBuffer::a_f32, 3, sizeof(normal_attribute_type),			0, true);

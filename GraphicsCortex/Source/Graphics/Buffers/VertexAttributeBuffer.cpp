@@ -23,6 +23,13 @@ void VertexAttributeBuffer::release()
     _buffer_generated = false;
 }
 
+int32_t VertexAttributeBuffer::get_max_buffer_count()
+{
+    int32_t value;
+    GLCall(glGetIntegerv(GL_MAX_VERTEX_ATTRIB_BINDINGS, &value));
+    return value;
+}
+
 int32_t VertexAttributeBuffer::get_max_attribute_count()
 {
     int32_t value;
@@ -128,26 +135,26 @@ void VertexAttributeBuffer::attach_vertex_buffer(int32_t slot, std::shared_ptr<B
     _vertex_buffers[slot]._offset = offset;
 }
 
-void VertexAttributeBuffer::attach_vertex_buffer(int32_t slot, std::shared_ptr<Buffer> vertex_buffer, AttributeType attribute_type, int32_t element_per_vertex, size_t stride, size_t offset_between_elements, bool enabled)
+void VertexAttributeBuffer::attach_vertex_buffer(int32_t slot, std::shared_ptr<Buffer> vertex_buffer, AttributeType attribute_type, int32_t element_per_vertex, size_t stride, size_t offset, bool enabled)
 {
-    attach_vertex_buffer(slot, vertex_buffer, stride, offset_between_elements);
-    set_attribute_format(slot, attribute_type, element_per_vertex, offset_between_elements);
+    attach_vertex_buffer(slot, vertex_buffer, stride, offset);
+    set_attribute_format(slot, attribute_type, element_per_vertex, offset);
     if (enabled) enable_attribute(slot);
     else disable_attribute(slot);
 }
 
-void VertexAttributeBuffer::set_attribute_format(int32_t slot, AttributeType attribute_type, int32_t element_per_vertex, size_t offset_between_elements)
+void VertexAttributeBuffer::set_attribute_format(int32_t slot, AttributeType attribute_type, int32_t element_per_vertex, size_t offset)
 {
     if (slot < 0 || slot >= _max_attribute_count) {
         std::cout << "[OpenGL Error] VertexAttributeBuffer tried to access slot: " << slot << " but only " << _max_attribute_count << " attributes are supported" << std::endl;
         ASSERT(false);
     }
 
-    GLCall(glVertexArrayAttribFormat(id, slot, element_per_vertex, _attribute_type_to_GL_type(attribute_type), _attribute_type_to_GL_normalized_flag(attribute_type), offset_between_elements));
-
+    GLCall(glVertexArrayAttribFormat(id, slot, element_per_vertex, _attribute_type_to_GL_type(attribute_type), _attribute_type_to_GL_normalized_flag(attribute_type), offset));
+    
     _vertex_buffers[slot]._attribute_type = attribute_type;
     _vertex_buffers[slot]._element_per_vertex = element_per_vertex;
-    _vertex_buffers[slot]._offset = offset_between_elements;
+    _vertex_buffers[slot]._offset = offset;
 }
 
 void VertexAttributeBuffer::detach_vertex_buffer(int32_t slot)
@@ -215,6 +222,19 @@ size_t VertexAttributeBuffer::get_attribute_offset(int32_t slot)
     }
 
     return _vertex_buffers[slot]._offset;
+}
+
+size_t VertexAttributeBuffer::get_vertex_count(int32_t slot)
+{
+    if (slot < 0 || slot >= _max_attribute_count) {
+        std::cout << "[OpenGL Error] VertexAttributeBuffer tried to access slot: " << slot << " but only " << _max_attribute_count << " attributes are supported" << std::endl;
+        ASSERT(false);
+    }
+
+    if (_vertex_buffers[slot]._buffer == nullptr) return 0;
+    if (_vertex_buffers[slot]._stride == 0) return 0;
+    
+    return _vertex_buffers[slot]._buffer->get_buffer_size_in_bytes() / _vertex_buffers[slot]._stride;
 }
 
 void VertexAttributeBuffer::enable_attribute(int32_t slot)

@@ -44,16 +44,17 @@ public:
 	void bind();
 	void unbind();
 
-	void attach_vertex_buffer(int32_t slot, std::shared_ptr<Buffer> vertex_buffer, size_t stride, size_t offset_between_elements);
-	void attach_vertex_buffer(int32_t slot, std::shared_ptr<Buffer> vertex_buffer, AttributeType attribute_type, int32_t element_per_vertex, size_t stride, size_t offset_between_elements, bool enabled = true);
+	void attach_vertex_buffer(int32_t slot, std::shared_ptr<Buffer> vertex_buffer, size_t stride, size_t offset);
+	void attach_vertex_buffer(int32_t slot, std::shared_ptr<Buffer> vertex_buffer, AttributeType attribute_type, int32_t element_per_vertex, size_t stride, size_t offset, bool enabled = true);
 	void detach_vertex_buffer(int32_t slot);
 
-	void set_attribute_format(int32_t slot, AttributeType attribute_type, int32_t element_per_vertex, size_t offset_between_elements);
+	void set_attribute_format(int32_t slot, AttributeType attribute_type, int32_t element_per_vertex, size_t offset);
 	std::shared_ptr<Buffer> get_vertex_buffer(int32_t slot);
 	AttributeType get_attribute_type(int32_t slot);
 	int32_t get_attribute_element_per_vertex(int32_t slot);
 	size_t get_attribute_stride(int32_t slot);
 	size_t get_attribute_offset(int32_t slot);
+	size_t get_vertex_count(int32_t slot);	// todo
 
 	void enable_attribute(int32_t slot);
 	void disable_attribute(int32_t slot);
@@ -61,8 +62,17 @@ public:
 	void enabled_all_attached_attributes();
 	void disable_all_attributes();
 
-	int32_t get_max_attribute_count();
+	static int32_t get_max_buffer_count();
+	static int32_t get_max_attribute_count();
+
 	int32_t get_largest_active_buffer_slot();
+	int32_t get_largest_buffer_slot() { return 0; };
+
+	int32_t get_smallest_active_buffer_slot() { return 0; };
+	int32_t get_smallest_buffer_slot() { return 0; };
+	
+	int32_t get_max_vertex_count_slot() { return 0; };
+	int32_t get_min_vertex_count_slot() { return 0; };
 
 private:
 

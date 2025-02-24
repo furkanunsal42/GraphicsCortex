@@ -1,22 +1,28 @@
 #include "Mesh.h"
 
-void Mesh::load_model(const SingleModel& single_model)
+void Mesh::load_model(const SingleModel& single_model, IndexType type)
 {
-	vab = single_model.create_vertex_attribute_buffer();
-	index_buffer = single_model.create_index_buffer(index_buffer_type, 0);
-	
-	SingleMesh mesh;
-	mesh.vertex_buffer_size			= vab->get_vertex_buffer(vab_vertex_slot)			== nullptr ? 0 : vab->get_vertex_buffer(vab_vertex_slot			)->get_buffer_size_in_bytes();
-	mesh.normal_buffer_size			= vab->get_vertex_buffer(vab_normal_slot)			== nullptr ? 0 : vab->get_vertex_buffer(vab_normal_slot			)->get_buffer_size_in_bytes();
-	mesh.tangent_buffer_size		= vab->get_vertex_buffer(vab_tangent_slot)			== nullptr ? 0 : vab->get_vertex_buffer(vab_tangent_slot		)->get_buffer_size_in_bytes();
-	mesh.uv0_buffer_size			= vab->get_vertex_buffer(vab_uv0_slot)				== nullptr ? 0 : vab->get_vertex_buffer(vab_uv0_slot			)->get_buffer_size_in_bytes();
-	mesh.uv1_buffer_size			= vab->get_vertex_buffer(vab_uv1_slot)				== nullptr ? 0 : vab->get_vertex_buffer(vab_uv1_slot			)->get_buffer_size_in_bytes();
-	mesh.vertex_color_buffer_size	= vab->get_vertex_buffer(vab_vertex_color_slot)		== nullptr ? 0 : vab->get_vertex_buffer(vab_vertex_color_slot	)->get_buffer_size_in_bytes();
-	mesh.bone_indicies_buffer_size	= vab->get_vertex_buffer(vab_bone_indicies_slot)	== nullptr ? 0 : vab->get_vertex_buffer(vab_bone_indicies_slot	)->get_buffer_size_in_bytes();
-	mesh.bone_weights_buffer_size	= vab->get_vertex_buffer(vab_bone_weights_slot)		== nullptr ? 0 : vab->get_vertex_buffer(vab_bone_weights_slot	)->get_buffer_size_in_bytes();
-	mesh.index_buffer_size			= index_buffer->get_buffer_size_in_bytes();
+	clear();
 
-	add_mesh(mesh);
+	vab = single_model.create_vertex_attribute_buffer();
+	index_buffer = single_model.create_index_buffer(type, 0);
+	//index_buffer_type = type;
+
+	SingleMesh mesh_definition;
+
+	mesh_definition.index_count		= index_buffer->get_buffer_size_in_bytes() / get_IndexType_bytes_per_index(type);
+	mesh_definition.index_offset	= 0;
+
+	mesh_definition.vertex_count	= vab->get_vertex_count(vab->get_min_vertex_count_slot());
+	mesh_definition.vertex_offset	= 0;
+
+	mesh_definition.index_type = type;
+	mesh_definition.primitive = single_model.primitive;
+
+	mesh_t mesh = add_mesh(mesh_definition);
+	node_t root = add_node(null_node_name);
+	
+	get_node(root)->add_submesh(mesh);
 }
 
 void Mesh::set_index_buffer(std::shared_ptr<Buffer> index_buffer)
@@ -46,7 +52,7 @@ void Mesh::clear()
 	index_buffer = nullptr;
 	single_meshes.clear();
 	name_to_nodes.clear();
-	index_buffer_type = IndexType::i_ui32;
+	//index_buffer_type = IndexType::i_ui32;
 }
 
 
@@ -90,22 +96,22 @@ void Mesh::clear_meshes()
 	vab = nullptr;
 	index_buffer = nullptr;
 	single_meshes.clear();
-	index_buffer_type = IndexType::i_ui32;
+	//index_buffer_type = IndexType::i_ui32;
 	for (std::pair<const node_t, Mesh::Node>& pair : name_to_nodes) {
 		Mesh::Node& node = pair.second;
 		node.children.clear();
 	}
 }
 
-void Mesh::set_index_type(IndexType type)
-{
-	index_buffer_type = type;
-}
-
-IndexType Mesh::get_index_type()
-{
-	return index_buffer_type;
-}
+//void Mesh::set_index_type(IndexType type)
+//{
+//	index_buffer_type = type;
+//}
+//
+//IndexType Mesh::get_index_type()
+//{
+//	return index_buffer_type;
+//}
 
 size_t Mesh::get_node_count()
 {
@@ -218,7 +224,7 @@ std::span<model_t> Mesh::Node::get_submeshes()
 	return std::span<model_t>(submeshes);
 }
 
-void Mesh::Node::add_submeshes(mesh_t submesh)
+void Mesh::Node::add_submesh(mesh_t submesh)
 {
 	if (!owner->does_mesh_exist(submesh)) {
 		std::cout << "[Mesh Error] Mesh::Node::add_submeshes() is called with a submesh that doesn't exist" << std::endl;
@@ -239,6 +245,11 @@ void Mesh::Node::set_transform(glm::mat4 transform)
 }
 
 Mesh* Mesh::Node::get_mesh()
+{
+	return owner;
+}
+
+Mesh* Mesh::SingleMesh::get_owner()
 {
 	return owner;
 }
