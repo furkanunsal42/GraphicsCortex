@@ -660,22 +660,45 @@ std::unique_ptr<VertexAttributeBuffer> Model::create_vertex_attribute_buffer() c
 	typedef glm::ivec4 bone_indicies_attribute_type;
 	typedef glm::vec4  bone_weights_attribute_type;
 
-	if (vertex_count != 0)
-		vab->attach_vertex_buffer(Mesh::vab_vertex_slot,			create_vertex_buffer(),			VertexAttributeBuffer::a_f32, 3, sizeof(vertex_attribute_type),			0, true);
-	if (normal_count != 0)
-		vab->attach_vertex_buffer(Mesh::vab_normal_slot,			create_normal_buffer(),			VertexAttributeBuffer::a_f32, 3, sizeof(normal_attribute_type),			0, true);
-	if (tangent_count != 0)
-		vab->attach_vertex_buffer(Mesh::vab_tangent_slot,			create_tangent_buffer(),		VertexAttributeBuffer::a_f32, 3, sizeof(tangent_attribute_type),		0, true);
-	if (uv0_count != 0)
-		vab->attach_vertex_buffer(Mesh::vab_uv0_slot,				create_uv0_buffer(),			VertexAttributeBuffer::a_f32, 3, sizeof(uv0_attribute_type),			0, true);
-	if (uv1_count != 0)
-		vab->attach_vertex_buffer(Mesh::vab_uv1_slot,				create_uv1_buffer(),			VertexAttributeBuffer::a_f32, 3, sizeof(uv1_attribute_type),			0, true);
-	if (vertex_color_count != 0)
-		vab->attach_vertex_buffer(Mesh::vab_vertex_color_slot,		create_vertex_color_buffer(),	VertexAttributeBuffer::a_f32, 3, sizeof(vertex_color_attribute_type),	0, true);
-	if (bone_indicies_count != 0)
-		vab->attach_vertex_buffer(Mesh::vab_bone_indicies_slot,		create_bone_indicies_buffer(),	VertexAttributeBuffer::a_i32, 3, sizeof(bone_indicies_attribute_type),	0, true);
-	if (bone_weights_count != 0)
-		vab->attach_vertex_buffer(Mesh::vab_bone_weights_slot,		create_bone_weights_buffer(),	VertexAttributeBuffer::a_f32, 3, sizeof(bone_weights_attribute_type),	0, true);
+	if (vertex_count != 0){
+		vab->attach_vertex_buffer(Mesh::vab_vertex_slot, create_vertex_buffer(), sizeof(vertex_attribute_type), 0, 0);
+		vab->set_attribute_format(Mesh::vab_vertex_slot, Mesh::vab_vertex_slot, VertexAttributeBuffer::a_f32, 3, 0, true);
+	}
+
+	if (normal_count != 0) {
+		vab->attach_vertex_buffer(Mesh::vab_normal_slot, create_normal_buffer(), sizeof(normal_attribute_type), 0, 0);
+		vab->set_attribute_format(Mesh::vab_normal_slot, Mesh::vab_normal_slot, VertexAttributeBuffer::a_f32, 3, 0, true);
+	}
+
+	if (tangent_count != 0) {
+		vab->attach_vertex_buffer(Mesh::vab_tangent_slot, create_tangent_buffer(), sizeof(tangent_attribute_type), 0, 0);
+		vab->set_attribute_format(Mesh::vab_tangent_slot, Mesh::vab_tangent_slot, VertexAttributeBuffer::a_f32, 3, 0, true);
+	}
+
+	if (uv0_count != 0) {
+		vab->attach_vertex_buffer(Mesh::vab_uv0_slot, create_uv0_buffer(), sizeof(uv0_attribute_type), 0, 0);
+		vab->set_attribute_format(Mesh::vab_uv0_slot, Mesh::vab_uv0_slot, VertexAttributeBuffer::a_f32, 2, 0, true);
+	}
+
+	if (uv1_count != 0) {
+		vab->attach_vertex_buffer(Mesh::vab_uv1_slot, create_uv1_buffer(), sizeof(uv1_attribute_type), 0, 0);
+		vab->set_attribute_format(Mesh::vab_uv1_slot, Mesh::vab_uv1_slot, VertexAttributeBuffer::a_f32, 2, 0, true);
+	}
+
+	if (vertex_color_count != 0) {
+		vab->attach_vertex_buffer(Mesh::vab_vertex_color_slot, create_vertex_color_buffer(), sizeof(vertex_color_attribute_type), 0, 0);
+		vab->set_attribute_format(Mesh::vab_vertex_color_slot, Mesh::vab_vertex_color_slot, VertexAttributeBuffer::a_f32, 4, 0, true);
+	}
+
+	if (bone_indicies_count != 0) {
+		vab->attach_vertex_buffer(Mesh::vab_bone_indicies_slot, create_bone_indicies_buffer(), sizeof(bone_indicies_attribute_type), 0, 0);
+		vab->set_attribute_format(Mesh::vab_bone_indicies_slot, Mesh::vab_bone_indicies_slot, VertexAttributeBuffer::a_i32, 4, 0, true);
+	}
+
+	if (bone_weights_count != 0) {
+		vab->attach_vertex_buffer(Mesh::vab_bone_weights_slot, create_bone_weights_buffer(), sizeof(bone_weights_attribute_type), 0, 0);
+		vab->set_attribute_format(Mesh::vab_bone_weights_slot, Mesh::vab_bone_weights_slot, VertexAttributeBuffer::a_f32, 4, 0, true);
+	}
 
 	return vab;
 }

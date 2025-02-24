@@ -54,13 +54,10 @@ void primitive_renderer::render(
 	size_t instance_offset
 ) {
 
-	int32_t largest_slot = vab.get_largest_active_buffer_slot();
-	if (largest_slot == -1) {
+	if (vab.get_active_attribute_count() <= 0) {
 		std::cout << "[OpenGL Error] primitive_renderer::render() is called but no attribute of given VertexAttributeBuffer is enabled" << std::endl;
 		ASSERT(false);
 	}
-
-	Buffer& vertex_buffer = *vab.get_vertex_buffer(largest_slot);
 
 	vab.bind();
 	program.bind();
@@ -111,21 +108,16 @@ void primitive_renderer::render(
 	size_t instance_offset
 ) {
 	
-	int32_t largest_slot = vab.get_largest_active_buffer_slot();
-	if (largest_slot == -1) {
+	program.bind();
+	vab.bind();
+
+	if (vab.get_active_attribute_count() <= 0) {
 		std::cout << "[OpenGL Error] primitive_renderer::render() is called but no attribute of given VertexAttributeBuffer is enabled" << std::endl;
 		ASSERT(false);
 	}
-
-	Buffer& vertex_buffer = *vab.get_vertex_buffer(largest_slot);
-
-	vab.bind();
-	program.bind();
-
-	if (vertex_count == 0) {
-		int32_t stride = vab.get_attribute_stride(largest_slot);
-		vertex_count = vertex_buffer.get_buffer_size_in_bytes() / stride;
-	}
+	
+	if (vertex_count == 0)
+		vertex_count = vab.get_min_vertex_count();
 
 	GLCall(glDrawArraysInstancedBaseInstance(PrimitiveType_to_GL(primitive), attribute_offset, vertex_count, instance_count, instance_offset));
 }

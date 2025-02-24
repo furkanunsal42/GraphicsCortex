@@ -9,7 +9,7 @@ layout(std140) uniform textures{
 	sampler2D bindless_textures[1];
 };
 
-uniform vec4 color = glm::vec4(1, 0, 1, 1);
+uniform vec4 color;
 
 void main(){
 	frag_color = color;

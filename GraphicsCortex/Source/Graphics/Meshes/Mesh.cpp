@@ -13,7 +13,7 @@ void Mesh::load_model(const SingleModel& single_model, IndexType type)
 	mesh_definition.index_count		= index_buffer->get_buffer_size_in_bytes() / get_IndexType_bytes_per_index(type);
 	mesh_definition.index_offset	= 0;
 
-	mesh_definition.vertex_count	= vab->get_vertex_count(vab->get_min_vertex_count_slot());
+	mesh_definition.vertex_count	= vab->get_min_vertex_count();
 	mesh_definition.vertex_offset	= 0;
 
 	mesh_definition.index_type = type;

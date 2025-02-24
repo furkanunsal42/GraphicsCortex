@@ -10,10 +10,10 @@
 int main() {
 	
 	//WindowSystemTest().run();
-	//SingleMeshRenderingTest().run();
+	SingleMeshRenderingTest().run();
 	//SingleMeshIndexedRenderingTest().run();
 	//RenderPassClearTest().run();
 	//EntityComponentSystemTest().run();
 
-	ModelConstructionTest().run();
+	//ModelConstructionTest().run();
 }

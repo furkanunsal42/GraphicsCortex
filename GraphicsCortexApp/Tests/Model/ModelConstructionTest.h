@@ -10,8 +10,6 @@ public:
 
 		default_init();
 
-		std::cout << VertexAttributeBuffer::get_max_buffer_count() << std::endl;
-
 		SingleModel plane;
 
 		plane.verticies = {
@@ -22,18 +20,6 @@ public:
 			glm::vec3(+1, -1, 0) / 2.0f,
 			glm::vec3(+1, +1, 0) / 2.0f,
 		};
-
-		//plane.verticies = {
-		//	glm::vec3(-1, -1, 0) / 2.0f,
-		//	glm::vec3(-1, +1, 0) / 2.0f,
-		//	glm::vec3(+1, -1, 0) / 2.0f,
-		//	glm::vec3(+1, +1, 0) / 2.0f,
-		//};
-		//
-		//plane.indicies = {
-		//	1, 0, 2,
-		//	2, 3, 1,
-		//};
 
 		Model model;
 		model_t m_plane = model.add_model(plane);

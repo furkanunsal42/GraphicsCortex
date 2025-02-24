@@ -76,8 +76,9 @@ void GraphRenderer::render(Camera& camera)
 	point_cloud_renderer->update_uniform("color", glm::vec4(0, 0, 0, 1));
 	camera.update_default_uniforms(*point_cloud_renderer);
 
-	vab->attach_vertex_buffer(0, point_cloud, VertexAttributeBuffer::a_f32, 3, sizeof(glm::vec3), 0, true);
-	
+	vab->attach_vertex_buffer(0, point_cloud, sizeof(glm::vec3), 0, 0);
+	vab->set_attribute_format(0, 0, VertexAttributeBuffer::a_f32, 3, 0, true);
+
 	size_t line_count = (sample_rate.x * (region_max - region_min).x) * 2;
 	size_t line_size = (sample_rate.y * (region_max - region_min).y);
 
@@ -98,7 +99,8 @@ void GraphRenderer::_allocate_resources()
 	axis_lines->load_data(lines_data);
 
 	vab = std::make_shared<VertexAttributeBuffer>();
-	vab->attach_vertex_buffer(0, axis_lines, VertexAttributeBuffer::a_f32, 3, sizeof(glm::vec3), 0, true);
+	vab->attach_vertex_buffer(0, axis_lines, sizeof(glm::vec3), 0, 0);
+	vab->set_attribute_format(0, 0, VertexAttributeBuffer::a_f32, 3, 0, true);
 
 	axis_line_renderer = std::make_shared<Program>(
 		Shader(	"../GraphicsCortex/Source/GLSL/GraphRendering/basic.vert",
