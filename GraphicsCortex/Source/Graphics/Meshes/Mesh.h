@@ -3,6 +3,7 @@
 #include "gl/glew.h"
 #include <memory>
 #include <unordered_map>
+#include <functional>
 
 #include "mat4x4.hpp"
 
@@ -22,14 +23,19 @@ public:
 
 	class SingleMesh {
 	public:
-		SingleMesh() = default;
+		SingleMesh(
+			size_t vertex_offset = 0, 
+			size_t vertex_count = 0,  
+			size_t index_offset = 0, 
+			size_t index_count = 0, 
+			PrimitiveType primitive = PrimitiveType::triangle, 
+			IndexType index_type = IndexType::i_ui32
+			);
 
 		size_t vertex_offset = 0;
 		size_t vertex_count = 0;
-		
 		size_t index_offset = 0;
 		size_t index_count = 0;
-
 		PrimitiveType primitive = PrimitiveType::triangle;
 		IndexType index_type = IndexType::i_ui32;
 
@@ -78,10 +84,10 @@ public:
 	};
 
 	Mesh() = default;
-	Mesh(const Model& model);
-	Mesh(const SingleModel single_model);
+	Mesh(Model& model);
+	Mesh(const SingleModel single_model, IndexType type = IndexType::i_ui32);
 
-	void load_model(const Model& model);
+	void load_model(Model& model);
 	void load_model(const SingleModel& single_model, IndexType type = IndexType::i_ui32);
 
 	// buffer management
@@ -114,6 +120,8 @@ public:
 	Node& operator[](node_t node_name);
 	void clear_nodes();
 
+	void traverse(const std::function<void(Node&, glm::mat4&)>& lambda, node_t start_node = root_node_name);
+
 	// void merge_all_nodes();
 
 	//std::unique_ptr<Model> get_model();
@@ -128,6 +136,8 @@ public:
 	static const uint32_t vab_bone_weights_slot = 7;
 
 private:
+
+	void load_node_structure(Model::Node& start_node);
 
 	node_t next_node_name = root_node_name;
 	node_t generate_node_name();

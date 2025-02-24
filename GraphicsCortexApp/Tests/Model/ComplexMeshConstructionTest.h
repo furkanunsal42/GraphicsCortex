@@ -3,7 +3,7 @@
 #include "GraphicsCortex.h"
 #include "TestBench/TestBench.h"
 
-class SingleMeshIndexedRenderingTest : public TestBench {
+class ComplexMeshConstructionTest : public TestBench {
 public:
 
 	bool run() {
@@ -13,8 +13,6 @@ public:
 		SingleModel plane;
 
 		plane.verticies = {
-			glm::vec3(-1, -1, 0) * 2.0f,
-
 			glm::vec3(-1, -1, 0) / 2.0f,
 			glm::vec3(-1, +1, 0) / 2.0f,
 			glm::vec3(+1, -1, 0) / 2.0f,
@@ -25,13 +23,17 @@ public:
 			1, 0, 2,
 			2, 3, 1,
 		};
+		
+		Model model;
+		model_t m_plane = model.add_model(plane);
 
-		std::shared_ptr<Buffer> vertex_buffer = plane.create_vertex_buffer();
-		std::shared_ptr<Buffer> index_buffer = plane.create_index_buffer();
+		model[1].add_submodel(m_plane);
+		model[1].set_transform(glm::translate(glm::identity<glm::mat4>(), glm::vec3(0, 0, 1)));
 
-		std::shared_ptr<VertexAttributeBuffer> vab = std::make_shared<VertexAttributeBuffer>();
-		vab->attach_vertex_buffer(0, vertex_buffer, sizeof(glm::vec3), 1*sizeof(glm::vec3), 0);
-		vab->set_attribute_format(0, 0, VertexAttributeBuffer::a_f32, 3, 0);
+		model[2].add_submodel(m_plane);
+		model[2].set_transform(glm::scale(glm::translate(glm::identity<glm::mat4>(), glm::vec3(0, 0, -1)), glm::vec3(2.0f)));
+
+		Mesh mesh(model);
 
 		std::shared_ptr<Program> program_flat = default_program::flatcolor_program_s();
 		program_flat->update_uniform("model", glm::mat4(1));
@@ -48,17 +50,18 @@ public:
 			camera.update_matrixes();
 			camera.update_default_uniforms(*program_flat);
 
-			primitive_renderer::render(
-				*program_flat,
-				*vab,
-				*index_buffer,
-				PrimitiveType::triangle,
-				IndexType::i_ui32,
-				RenderParameters(),
-				0,
-				0,
-				6
-			);
+			mesh.traverse([&](Mesh::Node& node, glm::mat4& transform) {
+			
+				for (mesh_t submesh : node.get_submeshes()) {
+					program_flat->update_uniform("model", transform);
+					primitive_renderer::render(
+						*program_flat,
+						*mesh.get_mesh(submesh)
+					);
+				}
+				
+				});
+			
 		}
 
 		return true;

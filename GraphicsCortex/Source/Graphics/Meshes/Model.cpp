@@ -116,13 +116,93 @@ Model::Node* Model::get_node(node_t node_name)
 
 Model::Node& Model::operator[](node_t node_name)
 {
+	if (node_name == _next_node_name) {
+		add_node(node_name == root_node_name ? null_node_name : root_node_name);
+	}
+	else if (node_name == _next_node_name + 1 && _next_node_name == root_node_name) {
+		add_node(null_node_name);
+		add_node(root_node_name);
+	}
+
 	Node* node = get_node(node_name);
 	if (node == nullptr) {
+
 		std::cout << "[Model Error] Model::operator[]() is called with a node name that doesn't exist: " << node_name << std::endl;
 		ASSERT(false);
 	}
 
 	return *get_node(node_name);
+}
+
+void Model::traverse(const std::function<void(Node&, glm::mat4&)>& lambda, node_t start_node)
+{
+	if (!does_node_exist(start_node)) {
+		std::cout << "[OpenGL Error] Model::traverse() is called with a start_node that doesn't exist" << std::endl;
+		ASSERT(false);
+	}
+
+	std::queue<Model::Node*> nodes;
+	std::queue<glm::mat4> transforms;
+
+	nodes.push(get_node(start_node));
+	transforms.push(nodes.front()->transform);
+
+	while (nodes.size() != 0) {
+		Model::Node* node = nodes.front();
+		glm::mat4 transform = transforms.front();
+
+		lambda(*node, transform);
+
+		nodes.pop();
+		transforms.pop();
+
+		for (node_t child : node->get_children()) {
+			if (get_node(child)->get_name() != Model::null_node_name) {
+				nodes.push(get_node(child));
+				transforms.push(transform * get_node(child)->transform);
+			}
+		}
+	}
+}
+
+size_t Model::get_models_min_vertex_count_nonzero() const
+{
+	size_t count = 0;
+	for (const SingleModel& submodel : single_models)
+		count += submodel.get_min_vertex_count_nonzero();
+	return count;
+}
+
+size_t Model::get_models_min_vertex_count() const
+{
+	size_t count = 0;
+	for (const SingleModel& submodel : single_models)
+		count += submodel.get_min_vertex_count();
+	return count;
+}
+ 
+size_t Model::get_models_max_vertex_count() const
+{
+	size_t count = 0;
+	for (const SingleModel& submodel : single_models)
+		count += submodel.get_max_vertex_count();
+	return count;
+}
+
+size_t Model::get_models_index_count() const
+{
+	size_t count = 0;
+	for (const SingleModel& submodel : single_models)
+		count += submodel.get_index_count();
+	return count;
+}
+
+size_t Model::get_models_primitive_count() const
+{
+	size_t count = 0;
+	for (const SingleModel& submodel : single_models)
+		count += submodel.get_primitive_count();
+	return count;
 }
 
 node_t Model::_generate_node_name()
@@ -413,54 +493,60 @@ size_t Model2::_update_childnode_hash(uint32_t node_name) {
 */
 
 std::unique_ptr<Buffer> Model::create_vertex_buffer() const {
-	size_t vertex_count = 0;
-	for (const SingleModel& submodel : single_models)
-		vertex_count += submodel.verticies.size();
 	
+	size_t vertex_count = get_models_min_vertex_count_nonzero();
 	typedef glm::vec3 attribute_type;
 	std::unique_ptr<Buffer> buffer = std::make_unique<Buffer>(vertex_count * sizeof(attribute_type), Buffer::GPU_BUFFER);
 	
 	size_t vertex_begin_pointer = 0;
 	for (const SingleModel& submodel : single_models) {
+		
 		const std::vector<attribute_type>& data = submodel.verticies;
-		buffer->load_data(vertex_begin_pointer, 0, data.size(), data);
-		vertex_begin_pointer += data.size();
+		size_t uploading_count = std::min(data.size(), vertex_count - vertex_begin_pointer);
+		if (uploading_count <= 0) break;
+
+		buffer->load_data(vertex_begin_pointer, 0, uploading_count, data);
+		vertex_begin_pointer += uploading_count;
 	}
 
 	return buffer;
 }
 
 std::unique_ptr<Buffer> Model::create_normal_buffer() const {
-	size_t vertex_count = 0;
-	for (const SingleModel& submodel : single_models)
-		vertex_count += submodel.vertex_normals.size();
 
+	size_t vertex_count = get_models_min_vertex_count_nonzero();
 	typedef glm::vec3 attribute_type;
 	std::unique_ptr<Buffer> buffer = std::make_unique<Buffer>(vertex_count * sizeof(attribute_type), Buffer::GPU_BUFFER);
 
 	size_t vertex_begin_pointer = 0;
 	for (const SingleModel& submodel : single_models) {
+
 		const std::vector<attribute_type>& data = submodel.vertex_normals;
-		buffer->load_data(vertex_begin_pointer, 0, data.size(), data);
-		vertex_begin_pointer += data.size();
+		size_t uploading_count = std::min(data.size(), vertex_count - vertex_begin_pointer);
+		if (uploading_count <= 0) break;
+
+		buffer->load_data(vertex_begin_pointer, 0, uploading_count, data);
+		vertex_begin_pointer += uploading_count;
 	}
 
 	return buffer;
 }
 
 std::unique_ptr<Buffer> Model::create_tangent_buffer() const {
-	size_t vertex_count = 0;
-	for (const SingleModel& submodel : single_models)
-		vertex_count += submodel.vertex_tangents.size();
 
+	size_t vertex_count = get_models_min_vertex_count_nonzero();
 	typedef glm::vec3 attribute_type;
 	std::unique_ptr<Buffer> buffer = std::make_unique<Buffer>(vertex_count * sizeof(attribute_type), Buffer::GPU_BUFFER);
 
 	size_t vertex_begin_pointer = 0;
 	for (const SingleModel& submodel : single_models) {
+
 		const std::vector<attribute_type>& data = submodel.vertex_tangents;
-		buffer->load_data(vertex_begin_pointer, 0, data.size(), data);
-		vertex_begin_pointer += data.size();
+		size_t uploading_count = std::min(data.size(), vertex_count - vertex_begin_pointer);
+		if (uploading_count <= 0) break;
+
+		buffer->load_data(vertex_begin_pointer, 0, uploading_count, data);
+		vertex_begin_pointer += uploading_count;
 	}
 
 	return buffer;
@@ -468,18 +554,20 @@ std::unique_ptr<Buffer> Model::create_tangent_buffer() const {
 
 std::unique_ptr<Buffer> Model::create_uv0_buffer() const
 {
-	size_t vertex_count = 0;
-	for (const SingleModel& submodel : single_models)
-		vertex_count += submodel.texture_coordinates_0.size();
 
+	size_t vertex_count = get_models_min_vertex_count_nonzero();
 	typedef glm::vec2 attribute_type;
 	std::unique_ptr<Buffer> buffer = std::make_unique<Buffer>(vertex_count * sizeof(attribute_type), Buffer::GPU_BUFFER);
 
 	size_t vertex_begin_pointer = 0;
 	for (const SingleModel& submodel : single_models) {
+
 		const std::vector<attribute_type>& data = submodel.texture_coordinates_0;
-		buffer->load_data(vertex_begin_pointer, 0, data.size(), data);
-		vertex_begin_pointer += data.size();
+		size_t uploading_count = std::min(data.size(), vertex_count - vertex_begin_pointer);
+		if (uploading_count <= 0) break;
+
+		buffer->load_data(vertex_begin_pointer, 0, uploading_count, data);
+		vertex_begin_pointer += uploading_count;
 	}
 
 	return buffer;
@@ -487,18 +575,20 @@ std::unique_ptr<Buffer> Model::create_uv0_buffer() const
 
 std::unique_ptr<Buffer> Model::create_uv1_buffer() const
 {
-	size_t vertex_count = 0;
-	for (const SingleModel& submodel : single_models)
-		vertex_count += submodel.texture_coordinates_1.size();
 
+	size_t vertex_count = get_models_min_vertex_count_nonzero();
 	typedef glm::vec2 attribute_type;
 	std::unique_ptr<Buffer> buffer = std::make_unique<Buffer>(vertex_count * sizeof(attribute_type), Buffer::GPU_BUFFER);
 
 	size_t vertex_begin_pointer = 0;
 	for (const SingleModel& submodel : single_models) {
+
 		const std::vector<attribute_type>& data = submodel.texture_coordinates_1;
-		buffer->load_data(vertex_begin_pointer, 0, data.size(), data);
-		vertex_begin_pointer += data.size();
+		size_t uploading_count = std::min(data.size(), vertex_count - vertex_begin_pointer);
+		if (uploading_count <= 0) break;
+
+		buffer->load_data(vertex_begin_pointer, 0, uploading_count, data);
+		vertex_begin_pointer += uploading_count;
 	}
 
 	return buffer;
@@ -523,68 +613,72 @@ std::unique_ptr<Buffer> Model::create_uv1_buffer() const
 //}
 
 std::unique_ptr<Buffer> Model::create_vertex_color_buffer() const {
-	size_t vertex_count = 0;
-	for (const SingleModel& submodel : single_models)
-		vertex_count += submodel.vertex_colors.size();
 
+	size_t vertex_count = get_models_min_vertex_count_nonzero();
 	typedef glm::vec4 attribute_type;
 	std::unique_ptr<Buffer> buffer = std::make_unique<Buffer>(vertex_count * sizeof(attribute_type), Buffer::GPU_BUFFER);
 
 	size_t vertex_begin_pointer = 0;
 	for (const SingleModel& submodel : single_models) {
+
 		const std::vector<attribute_type>& data = submodel.vertex_colors;
-		buffer->load_data(vertex_begin_pointer, 0, data.size(), data);
-		vertex_begin_pointer += data.size();
+		size_t uploading_count = std::min(data.size(), vertex_count - vertex_begin_pointer);
+		if (uploading_count <= 0) break;
+
+		buffer->load_data(vertex_begin_pointer, 0, uploading_count, data);
+		vertex_begin_pointer += uploading_count;
 	}
 
 	return buffer;
 }
 
 std::unique_ptr<Buffer> Model::create_bone_indicies_buffer() const {
-	size_t vertex_count = 0;
-	for (const SingleModel& submodel : single_models)
-		vertex_count += submodel.bone_indicies.size();
 
+	size_t vertex_count = get_models_min_vertex_count_nonzero();
 	typedef glm::ivec4 attribute_type;
 	std::unique_ptr<Buffer> buffer = std::make_unique<Buffer>(vertex_count * sizeof(attribute_type), Buffer::GPU_BUFFER);
 
 	size_t vertex_begin_pointer = 0;
 	for (const SingleModel& submodel : single_models) {
+
 		const std::vector<attribute_type>& data = submodel.bone_indicies;
-		buffer->load_data(vertex_begin_pointer, 0, data.size(), data);
-		vertex_begin_pointer += data.size();
+		size_t uploading_count = std::min(data.size(), vertex_count - vertex_begin_pointer);
+		if (uploading_count <= 0) break;
+
+		buffer->load_data(vertex_begin_pointer, 0, uploading_count, data);
+		vertex_begin_pointer += uploading_count;
 	}
 
 	return buffer;
 }
 
 std::unique_ptr<Buffer> Model::create_bone_weights_buffer() const {
-	size_t vertex_count = 0;
-	for (const SingleModel& submodel : single_models)
-		vertex_count += submodel.bone_weights.size();
 
+	size_t vertex_count = get_models_min_vertex_count_nonzero();
 	typedef glm::vec4 attribute_type;
 	std::unique_ptr<Buffer> buffer = std::make_unique<Buffer>(vertex_count * sizeof(attribute_type), Buffer::GPU_BUFFER);
 
 	size_t vertex_begin_pointer = 0;
 	for (const SingleModel& submodel : single_models) {
+
 		const std::vector<attribute_type>& data = submodel.bone_weights;
-		buffer->load_data(vertex_begin_pointer, 0, data.size(), data);
-		vertex_begin_pointer += data.size();
+		size_t uploading_count = std::min(data.size(), vertex_count - vertex_begin_pointer);
+		if (uploading_count <= 0) break;
+
+		buffer->load_data(vertex_begin_pointer, 0, uploading_count, data);
+		vertex_begin_pointer += uploading_count;
 	}
 
 	return buffer;
 }
 
 std::unique_ptr<Buffer> Model::create_index_buffer() const {
-	size_t vertex_count = 0;
-	for (const SingleModel& submodel : single_models)
-		vertex_count += submodel.indicies.size();
 
+	size_t index_count = get_models_index_count();
 	uint32_t index_bytes_per_index = get_IndexType_bytes_per_index(index_buffer_type);
-	std::unique_ptr<Buffer> buffer = std::make_unique<Buffer>(vertex_count * index_bytes_per_index, Buffer::GPU_BUFFER);
+	std::unique_ptr<Buffer> buffer = std::make_unique<Buffer>(index_count * index_bytes_per_index, Buffer::GPU_BUFFER);
 
-	size_t vertex_begin_pointer = 0;
+	size_t index_begin_pointer = 0;
 	for (const SingleModel& submodel : single_models) {
 
 		if (index_buffer_type == IndexType::i_ui8) {
@@ -596,8 +690,11 @@ std::unique_ptr<Buffer> Model::create_index_buffer() const {
 			for (int i = 0; i < data.size(); i++)
 				data_refactored[i] = (uint8_t)data[i];
 
-			buffer->load_data(vertex_begin_pointer, 0, data_refactored.size(), data_refactored);
-			vertex_begin_pointer += data_refactored.size();
+			size_t uploading_count = std::min(data.size(), index_count - index_begin_pointer);
+			if (uploading_count <= 0) break;
+
+			buffer->load_data(index_begin_pointer, 0, uploading_count, data);
+			index_begin_pointer += uploading_count;
 		}
 
 		else if (index_buffer_type == IndexType::i_ui16) {
@@ -609,15 +706,21 @@ std::unique_ptr<Buffer> Model::create_index_buffer() const {
 			for (int i = 0; i < data.size(); i++)
 				data_refactored[i] = (uint16_t)data[i];
 
-			buffer->load_data(vertex_begin_pointer, 0, data_refactored.size(), data_refactored);
-			vertex_begin_pointer += data_refactored.size();
+			size_t uploading_count = std::min(data.size(), index_count - index_begin_pointer);
+			if (uploading_count <= 0) break;
+
+			buffer->load_data(index_begin_pointer, 0, uploading_count, data);
+			index_begin_pointer += uploading_count;
 		}
 
 		else if (index_buffer_type == IndexType::i_ui32) {
 
 			const std::vector<uint32_t>& data = submodel.indicies;
-			buffer->load_data(vertex_begin_pointer, 0, data.size(), data);
-			vertex_begin_pointer += data.size();
+			size_t uploading_count = std::min(data.size(), index_count - index_begin_pointer);
+			if (uploading_count <= 0) break;
+
+			buffer->load_data(index_begin_pointer, 0, uploading_count, data);
+			index_begin_pointer += uploading_count;
 
 		}
 	}
@@ -779,3 +882,4 @@ Model* Model::Node::get_model()
 {
 	return owner;
 }
+

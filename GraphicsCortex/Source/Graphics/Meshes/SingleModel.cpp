@@ -56,6 +56,66 @@ void SingleModel::clear()
 	indicies.clear();
 }
 
+size_t SingleModel::get_min_vertex_count_nonzero() const
+{
+	size_t count = -1;
+
+	if (verticies.size() != 0)				count = std::min(count, verticies.size());
+	if (vertex_normals.size() != 0)			count = std::min(count, vertex_normals.size());
+	if (vertex_tangents.size() != 0)		count = std::min(count, vertex_tangents.size());
+	if (texture_coordinates_0.size() != 0)	count = std::min(count, texture_coordinates_0.size());
+	if (texture_coordinates_1.size() != 0)	count = std::min(count, texture_coordinates_1.size());
+	if (vertex_colors.size() != 0)		  	count = std::min(count, vertex_colors.size());
+	if (bone_indicies.size() != 0)		  	count = std::min(count, bone_indicies.size());
+	if (bone_weights.size() != 0)		  	count = std::min(count, bone_weights.size());
+
+	if (count == -1) count = 0;
+
+	return count;
+}
+
+size_t SingleModel::get_min_vertex_count() const
+{
+	size_t count = -1;
+
+	count = std::min(count, verticies.size());
+	count = std::min(count, vertex_normals.size());
+	count = std::min(count, vertex_tangents.size());
+	count = std::min(count, texture_coordinates_0.size());
+	count = std::min(count, texture_coordinates_1.size());
+	count = std::min(count, vertex_colors.size());
+	count = std::min(count, bone_indicies.size());
+	count = std::min(count, bone_weights.size());
+
+	return count;
+}
+
+size_t SingleModel::get_max_vertex_count() const
+{
+	size_t count = 0;
+
+	count = std::max(count, verticies.size());
+	count = std::max(count, vertex_normals.size());
+	count = std::max(count, vertex_tangents.size());
+	count = std::max(count, texture_coordinates_0.size());
+	count = std::max(count, texture_coordinates_1.size());
+	count = std::max(count, vertex_colors.size());
+	count = std::max(count, bone_indicies.size());
+	count = std::max(count, bone_weights.size());
+
+	return count;
+}
+
+size_t SingleModel::get_index_count() const
+{
+	return indicies.size();
+}
+
+size_t SingleModel::get_primitive_count() const
+{
+	return indicies.size() / get_PrimitiveType_index_count(primitive);
+}
+
 std::unique_ptr<Buffer> SingleModel::create_vertex_buffer(size_t vertex_offset_count, size_t buffer_offset_in_bytes, size_t vertex_count) const
 {
 	typedef glm::vec3 attribute_type;
@@ -208,7 +268,7 @@ std::unique_ptr<VertexAttributeBuffer> SingleModel::create_vertex_attribute_buff
 	typedef glm::ivec4 bone_indicies_attribute_type;
 	typedef glm::vec4  bone_weights_attribute_type;
 
-	if (vertex_count != 0){
+	if (verticies_count != 0){
 		vab->attach_vertex_buffer(Mesh::vab_vertex_slot, create_vertex_buffer(), sizeof(vertex_attribute_type), 0, 0);
 		vab->set_attribute_format(Mesh::vab_vertex_slot, Mesh::vab_vertex_slot, VertexAttributeBuffer::a_f32, 3, 0, true);
 	}

@@ -122,6 +122,20 @@ void primitive_renderer::render(
 	GLCall(glDrawArraysInstancedBaseInstance(PrimitiveType_to_GL(primitive), attribute_offset, vertex_count, instance_count, instance_offset));
 }
 
+void primitive_renderer::render(Framebuffer& framebuffer, Program& program, Mesh::SingleMesh& single_mesh, const RenderParameters& render_parameters, size_t instance_count, size_t instance_offset)
+{
+	framebuffer.bind_draw();
+
+	render(
+		program,
+		single_mesh,
+		render_parameters,
+		instance_count,
+		instance_offset
+	);
+
+}
+
 void primitive_renderer::render(Program& program, Mesh::SingleMesh& single_mesh, const RenderParameters& render_parameters, size_t instance_count, size_t instance_offset)
 {
 	Mesh* mesh = single_mesh.get_owner();
@@ -156,8 +170,8 @@ void primitive_renderer::render(Program& program, Mesh::SingleMesh& single_mesh,
 			*vab,
 			primitive,
 			render_parameters,
-			0,	
-			0,
+			single_mesh.vertex_offset,	
+			single_mesh.vertex_count,
 			instance_count,
 			instance_offset
 		);
@@ -172,9 +186,9 @@ void primitive_renderer::render(Program& program, Mesh::SingleMesh& single_mesh,
 			primitive,
 			index_buffer_type,
 			render_parameters,
-			0,
-			0,
-			0,
+			single_mesh.vertex_offset,
+			single_mesh.index_offset,
+			single_mesh.index_count,
 			instance_count,
 			instance_offset
 		);

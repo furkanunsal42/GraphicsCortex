@@ -8,6 +8,7 @@
 #include <unordered_map>
 #include <stdint.h>
 #include <filesystem>
+#include <functional>
 
 #include "mat4x4.hpp"
 
@@ -102,7 +103,15 @@ public:
 	Node& operator[](node_t node_name); // error if given node name not found
 	void clear_nodes();
 
+	void traverse(const std::function<void(Node&, glm::mat4&)>& lambda, node_t start_node = root_node_name);
+
 	//void save_to_disk(const std::filesystem::path& output_filepath);
+
+	size_t get_models_min_vertex_count_nonzero() const;
+	size_t get_models_min_vertex_count() const;
+	size_t get_models_max_vertex_count() const;
+	size_t get_models_index_count() const;
+	size_t get_models_primitive_count() const;
 
 	std::unique_ptr<Buffer> create_vertex_buffer() const;
 	std::unique_ptr<Buffer> create_normal_buffer() const;

@@ -3,7 +3,7 @@
 #include "GraphicsCortex.h"
 #include "TestBench/TestBench.h"
 
-class SingleMeshIndexedRenderingTest : public TestBench {
+class MeshConstructionTest : public TestBench {
 public:
 
 	bool run() {
@@ -12,26 +12,30 @@ public:
 
 		SingleModel plane;
 
-		plane.verticies = {
-			glm::vec3(-1, -1, 0) * 2.0f,
+		//plane.verticies = {
+		//	glm::vec3(+1, +1, 0) / 2.0f,
+		//	glm::vec3(-1, +1, 0) / 2.0f,
+		//	glm::vec3(-1, -1, 0) / 2.0f,
+		//	glm::vec3(-1, -1, 0) / 2.0f,
+		//	glm::vec3(+1, -1, 0) / 2.0f,
+		//	glm::vec3(+1, +1, 0) / 2.0f,
+		//};
 
+		plane.verticies = {
 			glm::vec3(-1, -1, 0) / 2.0f,
 			glm::vec3(-1, +1, 0) / 2.0f,
 			glm::vec3(+1, -1, 0) / 2.0f,
 			glm::vec3(+1, +1, 0) / 2.0f,
 		};
-
+		
 		plane.indicies = {
 			1, 0, 2,
 			2, 3, 1,
 		};
 
-		std::shared_ptr<Buffer> vertex_buffer = plane.create_vertex_buffer();
-		std::shared_ptr<Buffer> index_buffer = plane.create_index_buffer();
 
-		std::shared_ptr<VertexAttributeBuffer> vab = std::make_shared<VertexAttributeBuffer>();
-		vab->attach_vertex_buffer(0, vertex_buffer, sizeof(glm::vec3), 1*sizeof(glm::vec3), 0);
-		vab->set_attribute_format(0, 0, VertexAttributeBuffer::a_f32, 3, 0);
+		Mesh mesh;
+		mesh.load_model(plane);
 
 		std::shared_ptr<Program> program_flat = default_program::flatcolor_program_s();
 		program_flat->update_uniform("model", glm::mat4(1));
@@ -50,14 +54,7 @@ public:
 
 			primitive_renderer::render(
 				*program_flat,
-				*vab,
-				*index_buffer,
-				PrimitiveType::triangle,
-				IndexType::i_ui32,
-				RenderParameters(),
-				0,
-				0,
-				6
+				*mesh.get_mesh(0)
 			);
 		}
 

@@ -39,6 +39,12 @@ public:
 	//void load_model(const std::filesystem::path& path, uint32_t submodels_begin_index, uint32_t submodel_count);
 	void clear();
 
+	size_t get_min_vertex_count_nonzero() const;
+	size_t get_min_vertex_count() const;
+	size_t get_max_vertex_count() const;
+	size_t get_index_count() const;
+	size_t get_primitive_count() const;
+
 	std::unique_ptr<Buffer> create_vertex_buffer(size_t vertex_offset_count, size_t buffer_offset_in_bytes, size_t vertex_count) const;
 	std::unique_ptr<Buffer> create_vertex_buffer(size_t vertex_offset_count = 0) const;
 	std::unique_ptr<Buffer> create_normal_buffer(size_t vertex_offset_count, size_t buffer_offset_in_bytes, size_t vertex_count) const;

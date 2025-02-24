@@ -1,5 +1,78 @@
 #include "Mesh.h"
 
+Mesh::Mesh(Model& model)
+{
+	load_model(model);
+}
+
+Mesh::Mesh(const SingleModel single_model, IndexType type) {
+	load_model(single_model, type);
+}
+
+void Mesh::load_model(Model& model)
+{
+	clear();
+
+	vab = model.create_vertex_attribute_buffer();
+	index_buffer = model.create_index_buffer();
+	IndexType type = model.index_buffer_type;
+
+	size_t index_begin_pointer = 0;
+	size_t vertex_begin_pointer = 0;
+	
+	for (auto& single_model : model.get_models()) {
+		
+		size_t index_count = single_model.get_index_count();
+		size_t vertex_count = single_model.get_min_vertex_count_nonzero();
+
+		SingleMesh mesh_definition;
+		mesh_definition.index_count = index_count;
+		mesh_definition.index_offset = index_begin_pointer;
+		mesh_definition.vertex_count = vertex_count;
+		mesh_definition.vertex_offset = vertex_begin_pointer;
+		mesh_definition.index_type = type;
+		mesh_definition.primitive = single_model.primitive;
+		mesh_t mesh = add_mesh(mesh_definition);
+
+		index_begin_pointer += index_count;
+		vertex_begin_pointer += vertex_count;
+	}
+	
+	load_node_structure(*model.get_node(Model::root_node_name));
+}
+
+void Mesh::load_node_structure(Model::Node& start_node)
+{
+	clear_nodes();
+
+	if (start_node.get_name() == Model::null_node_name)
+		return;
+
+	Model* model = start_node.get_model();
+	if (model == nullptr) {
+		std::cout << "[OpenGL Error] Mesh::load_node_structure() is called with a Model::Node that has a nullptr referance to it's Model" << std::endl;
+		ASSERT(false);
+	}
+
+	std::queue<Model::Node*> nodes;
+	nodes.push(&start_node);
+	while (nodes.size() != 0) {
+		Model::Node* node = nodes.front();
+
+		name_to_nodes[node->get_name()] = Node(this, node->get_name(), node->get_parent(), node->get_transform());
+		
+		name_to_nodes[node->get_name()].submeshes.assign(node->get_submodels().begin(), node->get_submodels().end());
+		name_to_nodes[node->get_name()].children.assign(node->get_children().begin(), node->get_children().end());
+
+		nodes.pop();
+		for (node_t child : node->get_children()) {
+			if (model->get_node(child)->get_name() != Model::null_node_name)
+				nodes.push(model->get_node(child));
+		}
+	}
+
+}
+
 void Mesh::load_model(const SingleModel& single_model, IndexType type)
 {
 	clear();
@@ -12,16 +85,14 @@ void Mesh::load_model(const SingleModel& single_model, IndexType type)
 
 	mesh_definition.index_count		= index_buffer->get_buffer_size_in_bytes() / get_IndexType_bytes_per_index(type);
 	mesh_definition.index_offset	= 0;
-
 	mesh_definition.vertex_count	= vab->get_min_vertex_count();
 	mesh_definition.vertex_offset	= 0;
-
 	mesh_definition.index_type = type;
 	mesh_definition.primitive = single_model.primitive;
 
 	mesh_t mesh = add_mesh(mesh_definition);
+
 	node_t root = add_node(null_node_name);
-	
 	get_node(root)->add_submesh(mesh);
 }
 
@@ -150,6 +221,14 @@ Mesh::Node* Mesh::get_node(node_t node_name)
 
 Mesh::Node& Mesh::operator[](node_t node_name)
 {
+	if (node_name == next_node_name) {
+		add_node(node_name == root_node_name ? null_node_name : root_node_name);
+	}
+	else if (node_name == next_node_name + 1 && next_node_name == root_node_name) {
+		add_node(null_node_name);
+		add_node(root_node_name);
+	}
+
 	Node* node = get_node(node_name);
 	if (node == nullptr) {
 		std::cout << "[Mesh Error] Mesh::operator[]() is called with a node name that doesn't exist: " << node_name << std::endl;
@@ -164,6 +243,38 @@ void Mesh::clear_nodes()
 	next_node_name = root_node_name;
 	name_to_nodes.clear();
 }
+
+void Mesh::traverse(const std::function<void(Node&, glm::mat4&)>& lambda, node_t start_node) {
+
+	if (!does_node_exist(start_node)) {
+		std::cout << "[OpenGL Error] Mesh::traverse() is called with a start_node that doesn't exist" << std::endl;
+		ASSERT(false);
+	}
+
+	std::queue<Mesh::Node*> nodes;
+	std::queue<glm::mat4> transforms;
+
+	nodes.push(get_node(start_node));
+	transforms.push(nodes.front()->transform);
+
+	while (nodes.size() != 0) {
+		Mesh::Node* node = nodes.front();
+		glm::mat4 transform = transforms.front();
+
+		lambda(*node, transform);
+
+		nodes.pop();
+		transforms.pop();
+
+		for (node_t child : node->get_children()) {
+			if (get_node(child)->get_name() != Mesh::null_node_name) {
+				nodes.push(get_node(child));
+				transforms.push(transform * get_node(child)->transform);
+			}
+		}
+	}
+}
+
 
 node_t Mesh::generate_node_name()
 {
@@ -248,6 +359,24 @@ Mesh* Mesh::Node::get_mesh()
 {
 	return owner;
 }
+
+Mesh::SingleMesh::SingleMesh(
+	size_t vertex_offset,
+	size_t vertex_count,
+	size_t index_offset,
+	size_t index_count,
+	PrimitiveType primitive,
+	IndexType index_type
+) :
+	vertex_offset(vertex_offset),
+	vertex_count(vertex_count),
+	index_offset(index_offset),
+	primitive(primitive),
+	index_type(index_type)
+{
+
+}
+
 
 Mesh* Mesh::SingleMesh::get_owner()
 {
