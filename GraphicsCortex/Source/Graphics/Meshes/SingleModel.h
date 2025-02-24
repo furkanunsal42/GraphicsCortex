@@ -11,6 +11,7 @@
 #include "IndexBufferEnums.h"
 
 class Buffer;
+class VertexAttributeBuffer;
 
 struct SingleModel {
 	friend Buffer;
@@ -56,6 +57,9 @@ public:
 	std::unique_ptr<Buffer> create_bone_indicies_buffer(size_t vertex_offset_count = 0) const;
 	std::unique_ptr<Buffer> create_bone_weights_buffer(size_t vertex_offset_count, size_t buffer_offset_in_bytes, size_t vertex_count) const;
 	std::unique_ptr<Buffer> create_bone_weights_buffer(size_t vertex_offset_count = 0) const;
-	std::unique_ptr<Buffer> create_index_buffer(size_t vertex_offset_count, size_t buffer_offset_in_bytes, size_t vertex_count) const;
-	std::unique_ptr<Buffer> create_index_buffer(size_t vertex_offset_count = 0) const;
+	std::unique_ptr<Buffer> create_index_buffer(IndexType index_type, size_t vertex_offset_count, size_t buffer_offset_in_bytes, size_t vertex_count) const;
+	std::unique_ptr<Buffer> create_index_buffer(IndexType index_type = IndexType::i_ui32, size_t vertex_offset_count = 0) const;
+
+	std::unique_ptr<VertexAttributeBuffer> create_vertex_attribute_buffer(size_t vertex_offset_count, size_t buffer_offset_in_bytes, size_t vertex_count) const;
+	std::unique_ptr<VertexAttributeBuffer> create_vertex_attribute_buffer(size_t vertex_offset_count = 0) const;
 };

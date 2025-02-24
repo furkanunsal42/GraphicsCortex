@@ -3,6 +3,8 @@
 #include "SingleModel.h"
 #include "Debuger.h"
 #include "Buffer.h"
+#include "VertexAttributeBuffer.h"
+#include "Mesh.h"
 
 #include <iostream>
 #include <fstream>
@@ -171,15 +173,62 @@ std::unique_ptr<Buffer> SingleModel::create_bone_weights_buffer(size_t vertex_of
 	return create_bone_weights_buffer(vertex_offset_count, 0, bone_weights.size());
 }
 
-std::unique_ptr<Buffer> SingleModel::create_index_buffer(size_t vertex_offset_count, size_t buffer_offset_in_bytes, size_t vertex_count) const
+std::unique_ptr<Buffer> SingleModel::create_index_buffer(IndexType index_type, size_t vertex_offset_count, size_t buffer_offset_in_bytes, size_t vertex_count) const
 {
-	typedef uint32_t attribute_type;
-	std::unique_ptr<Buffer> buffer = std::make_unique<Buffer>(vertex_count * sizeof(attribute_type), Buffer::GPU_BUFFER);
-	buffer->load_data(buffer_offset_in_bytes / sizeof(attribute_type), vertex_offset_count, vertex_count, indicies);
+	std::unique_ptr<Buffer> buffer = std::make_unique<Buffer>(vertex_count * get_IndexType_bytes_per_index(index_type), Buffer::GPU_BUFFER);
+	buffer->load_data(buffer_offset_in_bytes / get_IndexType_bytes_per_index(index_type), vertex_offset_count, vertex_count, indicies);
 	return buffer;
 }
 
-std::unique_ptr<Buffer> SingleModel::create_index_buffer(size_t vertex_offset_count) const
+std::unique_ptr<Buffer> SingleModel::create_index_buffer(IndexType index_type, size_t vertex_offset_count) const
 {
-	return create_index_buffer(vertex_offset_count, 0, indicies.size());
+	return create_index_buffer(index_type, vertex_offset_count, 0, indicies.size());
+}
+
+std::unique_ptr<VertexAttributeBuffer> SingleModel::create_vertex_attribute_buffer(size_t vertex_offset_count, size_t buffer_offset_in_bytes, size_t vertex_count) const
+{
+	size_t	vertex_count		=	verticies.size();
+	size_t	normal_count		=	vertex_normals.size();
+	size_t	tangent_count		=	vertex_tangents.size();
+	size_t	uv0_count			=	texture_coordinates_0.size();
+	size_t	uv1_count			=	texture_coordinates_1.size();
+	size_t	vertex_color_count	=	vertex_colors.size();
+	size_t	bone_indicies_count =	bone_indicies.size();
+	size_t	bone_weights_count	=	bone_weights.size();
+	size_t	index_count			=	indicies.size();
+
+	std::unique_ptr<VertexAttributeBuffer> vab = std::make_unique<VertexAttributeBuffer>();
+	
+	typedef glm::vec3  vertex_attribute_type;
+	typedef glm::vec3  normal_attribute_type;
+	typedef glm::vec3  tangent_attribute_type;
+	typedef glm::vec2  uv0_attribute_type;
+	typedef glm::vec2  uv1_attribute_type;
+	typedef glm::vec4  vertex_color_attribute_type;
+	typedef glm::ivec4 bone_indicies_attribute_type;
+	typedef glm::vec4  bone_weights_attribute_type;
+
+	if (vertex_count != 0)
+		vab->attach_vertex_buffer(Mesh::vab_vertex_slot,			create_vertex_buffer(vertex_offset_count, buffer_offset_in_bytes, vertex_count),		VertexAttributeBuffer::a_f32, 3, sizeof(vertex_attribute_type),			0, true);
+	if (normal_count != 0)
+		vab->attach_vertex_buffer(Mesh::vab_normal_slot,			create_normal_buffer(vertex_offset_count, buffer_offset_in_bytes, vertex_count),		VertexAttributeBuffer::a_f32, 3, sizeof(normal_attribute_type),			0, true);
+	if (tangent_count != 0)
+		vab->attach_vertex_buffer(Mesh::vab_tangent_slot,			create_tangent_buffer(vertex_offset_count, buffer_offset_in_bytes, vertex_count),		VertexAttributeBuffer::a_f32, 3, sizeof(tangent_attribute_type),		0, true);
+	if (uv0_count != 0)
+		vab->attach_vertex_buffer(Mesh::vab_uv0_slot,				create_uv0_buffer(vertex_offset_count, buffer_offset_in_bytes, vertex_count),			VertexAttributeBuffer::a_f32, 3, sizeof(uv0_attribute_type),			0, true);
+	if (uv1_count != 0)
+		vab->attach_vertex_buffer(Mesh::vab_uv1_slot,				create_uv1_buffer(vertex_offset_count, buffer_offset_in_bytes, vertex_count),			VertexAttributeBuffer::a_f32, 3, sizeof(uv1_attribute_type),			0, true);
+	if (vertex_color_count != 0)
+		vab->attach_vertex_buffer(Mesh::vab_vertex_color_slot,		create_vertex_color_buffer(vertex_offset_count, buffer_offset_in_bytes, vertex_count),	VertexAttributeBuffer::a_f32, 3, sizeof(vertex_color_attribute_type),	0, true);
+	if (bone_indicies_count != 0)
+		vab->attach_vertex_buffer(Mesh::vab_bone_indicies_slot,		create_bone_indicies_buffer(vertex_offset_count, buffer_offset_in_bytes, vertex_count),	VertexAttributeBuffer::a_i32, 3, sizeof(bone_indicies_attribute_type),	0, true);
+	if (bone_weights_count != 0)
+		vab->attach_vertex_buffer(Mesh::vab_bone_weights_slot,		create_bone_weights_buffer(vertex_offset_count, buffer_offset_in_bytes, vertex_count),	VertexAttributeBuffer::a_f32, 3, sizeof(bone_weights_attribute_type),	0, true);
+
+	return vab;
+}
+
+std::unique_ptr<VertexAttributeBuffer> SingleModel::create_vertex_attribute_buffer(size_t vertex_offset_count) const
+{
+	return create_vertex_attribute_buffer(vertex_offset_count, 0, indicies.size());
 }

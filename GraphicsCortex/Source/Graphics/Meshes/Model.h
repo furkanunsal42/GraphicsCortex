@@ -25,12 +25,12 @@ class Model {
 	friend Mesh;
 public:
 
-	static const uint32_t null_node_name = -1;
-	static const uint32_t root_node_name = 0;
+	static const node_t null_node_name = -1;
+	static const node_t root_node_name = 0;
 	
 	class Node {
 	public:
-		Node() = default;
+		Node() = default;	// ?
 
 		node_t get_name();
 		node_t get_parent();
@@ -63,7 +63,7 @@ public:
 
 	private:
 		friend Model;
-		Node(Model* owner, uint32_t node_name, node_t parent, glm::mat4 transform = glm::mat4(1));
+		Node(Model* owner, node_t node_name, node_t parent, glm::mat4 transform = glm::mat4(1));
 
 		Model* owner = nullptr;
 		node_t name = null_node_name;
@@ -117,14 +117,6 @@ public:
 
 	std::unique_ptr<VertexAttributeBuffer> create_vertex_attribute_buffer() const;
 
-	static const uint32_t vab_vertex_slot			= 0;
-	static const uint32_t vab_normal_slot			= 1;
-	static const uint32_t vab_tangent_slot			= 2;
-	static const uint32_t vab_uv0_slot				= 3;
-	static const uint32_t vab_uv1_slot				= 4;
-	static const uint32_t vab_vertex_color_slot		= 5;
-	static const uint32_t vab_bone_indicies_slot	= 6;
-	static const uint32_t vab_bone_weights_slot		= 7;
 
 private:
 	node_t _next_node_name = root_node_name;
