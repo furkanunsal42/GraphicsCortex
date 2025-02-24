@@ -49,6 +49,8 @@ public:
 
 		Model* get_model();
 
+		void traverse(const std::function<void(Node&, glm::mat4&)>& lambda);
+
 		//std::unique_ptr<Buffer> create_vertex_buffer() const;
 		//std::unique_ptr<Buffer> create_normal_buffer() const;
 		//std::unique_ptr<Buffer> create_tangent_buffer() const;

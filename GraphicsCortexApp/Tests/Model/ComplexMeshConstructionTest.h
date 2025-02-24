@@ -10,15 +10,20 @@ public:
 
 		default_init();
 
-		SingleModel plane;
-
-		plane.verticies = {
-			glm::vec3(-1, -1, 0) / 2.0f,
-			glm::vec3(-1, +1, 0) / 2.0f,
-			glm::vec3(+1, -1, 0) / 2.0f,
-			glm::vec3(+1, +1, 0) / 2.0f,
+		SingleModel triangle;
+		triangle.verticies = {
+			glm::vec3(-1, 1, +1),
+			glm::vec3(-1, 1, -1),
+			glm::vec3(+1, 1, +1),
 		};
 
+		SingleModel plane;
+		plane.verticies = {
+			glm::vec3(-1, -1, 0),
+			glm::vec3(-1, +1, 0),
+			glm::vec3(+1, -1, 0),
+			glm::vec3(+1, +1, 0),
+		};
 		plane.indicies = {
 			1, 0, 2,
 			2, 3, 1,
@@ -26,12 +31,16 @@ public:
 		
 		Model model;
 		model_t m_plane = model.add_model(plane);
+		model_t m_triangle = model.add_model(triangle);
 
 		model[1].add_submodel(m_plane);
 		model[1].set_transform(glm::translate(glm::identity<glm::mat4>(), glm::vec3(0, 0, 1)));
 
 		model[2].add_submodel(m_plane);
 		model[2].set_transform(glm::scale(glm::translate(glm::identity<glm::mat4>(), glm::vec3(0, 0, -1)), glm::vec3(2.0f)));
+
+		model[3].set_parent(1);
+		model[3].add_submodel(m_triangle);
 
 		Mesh mesh(model);
 
@@ -50,7 +59,7 @@ public:
 			camera.update_matrixes();
 			camera.update_default_uniforms(*program_flat);
 
-			mesh.traverse([&](Mesh::Node& node, glm::mat4& transform) {
+			mesh[0].traverse([&](Mesh::Node& node, glm::mat4& transform) {
 			
 				for (mesh_t submesh : node.get_submeshes()) {
 					program_flat->update_uniform("model", transform);

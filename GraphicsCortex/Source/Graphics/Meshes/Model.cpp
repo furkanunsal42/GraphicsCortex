@@ -828,6 +828,18 @@ node_t Model::Node::get_parent()
 
 void Model::Node::set_parent(node_t parent)
 {
+	if (this->parent == parent) return;
+
+	if (this->parent != null_node_name) {
+		Node* old_parent = owner->get_node(this->parent);
+		old_parent->children.erase(std::find(old_parent->children.begin(), old_parent->children.end(), name));
+	}
+
+	if (parent != null_node_name) {
+		Node* new_parent = owner->get_node(parent);
+		new_parent->children.push_back(name);
+	}
+	
 	this->parent = parent;
 }
 
@@ -881,5 +893,12 @@ void Model::Node::set_transform(glm::mat4 transform)
 Model* Model::Node::get_model()
 {
 	return owner;
+}
+
+
+void Model::Node::traverse(const std::function<void(Node&, glm::mat4&)>& lambda) {
+
+	owner->traverse(lambda, name);
+
 }
 

@@ -71,6 +71,7 @@ void Mesh::load_node_structure(Model::Node& start_node)
 		}
 	}
 
+	next_node_name = model->_next_node_name;
 }
 
 void Mesh::load_model(const SingleModel& single_model, IndexType type)
@@ -305,6 +306,18 @@ node_t Mesh::Node::get_parent()
 
 void Mesh::Node::set_parent(node_t parent)
 {
+	if (this->parent == parent) return;
+
+	if (this->parent != null_node_name) {
+		Node* old_parent = owner->get_node(this->parent);
+		old_parent->children.erase(std::find(old_parent->children.begin(), old_parent->children.end(), name));
+	}
+
+	if (parent != null_node_name) {
+		Node* new_parent = owner->get_node(parent);
+		new_parent->children.push_back(name);
+	}
+
 	this->parent = parent;
 }
 
@@ -353,6 +366,12 @@ glm::mat4 Mesh::Node::get_transform()
 void Mesh::Node::set_transform(glm::mat4 transform)
 {
 	this->transform = transform;
+}
+
+void Mesh::Node::traverse(const std::function<void(Node&, glm::mat4&)>& lambda) {
+
+	owner->traverse(lambda, name);
+
 }
 
 Mesh* Mesh::Node::get_mesh()

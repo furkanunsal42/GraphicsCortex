@@ -68,6 +68,7 @@ public:
 		glm::mat4 get_transform();
 		void set_transform(glm::mat4 transform);
 
+		void traverse(const std::function<void(Node&, glm::mat4&)>& lambda);
 		Mesh* get_mesh();
 
 	private:
