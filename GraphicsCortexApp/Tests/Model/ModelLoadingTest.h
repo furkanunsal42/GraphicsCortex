@@ -12,11 +12,11 @@ public:
 
 		//Asset asset("../GraphicsCortex/Models/boxes/boxes.obj");
 		//Asset asset("../GraphicsCortex/Models/medival/medival.fbx");
-		//Asset asset("../GraphicsCortex/Models/sculpture/scene.gltf");
+		Asset asset("../GraphicsCortex/Models/sculpture/scene.gltf");
 		//Asset asset("../GraphicsCortex/Models/dragon.obj");
 		//Asset asset("../GraphicsCortex/Models/Thinker/Rodin_Thinker.obj");
 		//Asset asset("../GraphicsCortex/Models/porsche.obj");
-		Asset asset("../GraphicsCortex/Models/teducar/teduCar.fbx");
+		//Asset asset("../GraphicsCortex/Models/teducar/teduCar.fbx");
 
 		Model model = asset.load_model();
 		Mesh mesh(model);
@@ -53,7 +53,7 @@ public:
 			mesh[0].traverse([&](Mesh::Node& node, glm::mat4& transform) {
 			
 				for (mesh_t submesh : node.get_submeshes()) {
-					program_uv->update_uniform("model", glm::scale(transform, glm::vec3(0.01)));
+					program_uv->update_uniform("model", transform);
 					primitive_renderer::render(
 						*program_uv,
 						*mesh.get_mesh(submesh)

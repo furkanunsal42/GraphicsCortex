@@ -4,6 +4,7 @@
 #include "PrimitiveRenderer.h"
 
 class RenderPass_Forward : public RenderPass {
+public:
 
 	RenderPass_Forward() = default;
 

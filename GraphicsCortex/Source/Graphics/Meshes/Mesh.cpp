@@ -5,6 +5,11 @@ Mesh::Mesh(Model& model)
 	load_model(model);
 }
 
+Mesh::Mesh(Model&& model)
+{
+	load_model(model);
+}
+
 Mesh::Mesh(const SingleModel single_model, IndexType type) {
 	load_model(single_model, type);
 }
@@ -39,6 +44,11 @@ void Mesh::load_model(Model& model)
 	}
 	
 	load_node_structure(*model.get_node(Model::root_node_name));
+}
+
+void Mesh::load_model(Model&& model)
+{
+	load_model((Model&)model);
 }
 
 void Mesh::load_node_structure(Model::Node& start_node)
@@ -155,11 +165,15 @@ Mesh::SingleMesh* Mesh::get_mesh(mesh_t submesh_name)
 	if (!does_mesh_exist(submesh_name))
 		return nullptr;
 
+	single_meshes[submesh_name].owner = this;
 	return &single_meshes[submesh_name];
 }
 
 std::span<Mesh::SingleMesh> Mesh::get_meshes()
 {
+	for (SingleMesh& mesh : single_meshes)
+		mesh.owner = this;
+
 	return std::span<SingleMesh>(single_meshes);
 }
 

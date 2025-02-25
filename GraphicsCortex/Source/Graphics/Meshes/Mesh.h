@@ -86,9 +86,11 @@ public:
 
 	Mesh() = default;
 	Mesh(Model& model);
+	Mesh(Model&& model);
 	Mesh(const SingleModel single_model, IndexType type = IndexType::i_ui32);
 
 	void load_model(Model& model);
+	void load_model(Model&& model);
 	void load_model(const SingleModel& single_model, IndexType type = IndexType::i_ui32);
 
 	// buffer management

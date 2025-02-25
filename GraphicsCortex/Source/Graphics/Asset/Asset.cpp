@@ -39,7 +39,14 @@ Asset::~Asset()
 }
 
 namespace {
-    SingleModel assimp_load_singlemesh(const aiScene* scene, uint32_t submodel_index, const std::filesystem::path& path) {
+    SingleModel assimp_load_singlemodel(const aiScene* scene, uint32_t submodel_index, const std::filesystem::path& path) {
+        
+        if (submodel_index < 0 || submodel_index >= scene->mNumMeshes) {
+            std::cout << "[AssetImporter Error] submodel_index (" << submodel_index << ") is not present in asset at : " << path << std::endl;
+            ASSERT(false);
+        }
+
+        
         SingleModel single_model;
 
         if (scene->mMeshes[submodel_index]->mVertices != nullptr)
@@ -165,12 +172,26 @@ namespace {
             }
         }
     }
+
+    //SingleMaterial assimp_load_single_material(const aiScene* scene, uint32_t submodel_index, const std::filesystem::path& path) {
+    //
+    //    if (submodel_index < 0 || submodel_index >= scene->mNumMeshes) {
+    //        std::cout << "[AssetImporter Error] submodel_index (" << submodel_index << ") is not present in asset at : " << path << std::endl;
+    //        ASSERT(false);
+    //    }
+    //    
+    //    SingleMaterial single_material;
+    //
+    //    //scene->mMaterials.
+    //
+    //}
+
 }
 
 SingleModel Asset::load_single_model(uint32_t submodel_index)
 {
     const aiScene* ai = (const aiScene*)scene;
-    return assimp_load_singlemesh(ai, submodel_index, filepath);
+    return assimp_load_singlemodel(ai, submodel_index, filepath);
 }
 
 Model Asset::load_model()
@@ -181,7 +202,7 @@ Model Asset::load_model()
     uint32_t submodel_count = assimp_scene->mNumMeshes;
     
     for (uint32_t submodel = 0; submodel < submodel_count; submodel++) {
-        model.add_model(assimp_load_singlemesh(assimp_scene, submodel, filepath));
+        model.add_model(assimp_load_singlemodel(assimp_scene, submodel, filepath));
     }
 
     if (assimp_scene->mRootNode == nullptr) {
@@ -222,3 +243,16 @@ Model Asset::load_model()
 
     return model;
 }
+
+Mesh Asset::load_mesh() {
+    return Mesh(load_model());
+}
+
+
+//SingleMaterial Asset::load_single_material(uint32_t submodel_index)
+//{
+//    const aiScene* assimp_scene = (const aiScene*)scene;
+//    uint32_t submodel_count = assimp_scene->mNumMeshes;
+//
+//
+//}

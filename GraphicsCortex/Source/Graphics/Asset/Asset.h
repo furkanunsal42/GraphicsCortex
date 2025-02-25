@@ -5,6 +5,7 @@
 #include "Mesh.h"
 #include "Model.h"
 #include "SingleModel.h"
+#include "SingleMaterial.h"
 
 struct AssetImportDescription {
 
@@ -25,8 +26,9 @@ public:
 	SingleModel load_single_model(uint32_t submodel_index);
 	Model load_model();
 	Mesh load_mesh();
-	// load_material();
-	// load_single_material();
+	
+	SingleMaterial load_single_material(uint32_t submodel_index);
+	std::vector<SingleMaterial> load_material();
 
 	//std::shared_ptr<Model> store_model_to_disk(const std::filesystem::path& asset_path);
 	//std::shared_ptr<Mesh> store_mesh(const std::filesystem::path& asset_path);

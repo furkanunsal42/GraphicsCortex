@@ -4,7 +4,10 @@
 #include "Rendering/SingleMeshRenderingTest.h"
 #include "Rendering/SingleMeshIndexedRenderingTest.h"
 #include "Rendering/RenderPassClearTest.h"
+
 #include "EntityComponent/EntityComponentTest.h"
+#include "EntityComponent/MeshRendererTest.h"
+
 #include "Model/ModelConstructionTest.h"
 #include "Model/MeshConstructionTest.h"
 #include "Model/ComplexMeshConstructionTest.h"
@@ -22,5 +25,7 @@ int main() {
 	//MeshConstructionTest().run();
 	//ComplexMeshConstructionTest().run();
 
-	ModelLoadingTest().run();
+	//ModelLoadingTest().run();
+
+	MeshRendererTest().run();
 }
