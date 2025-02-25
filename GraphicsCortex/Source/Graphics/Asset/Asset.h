@@ -18,12 +18,14 @@ class Asset {
 public:
 
 	Asset(const std::filesystem::path& asset_path, const AssetImportDescription& properties = AssetImportDescription());
-	Asset(Model& model);
+	~Asset();
+	//Asset(Model& model);
+	//Asset(SingleModel& single_model);
 
-	std::shared_ptr<Model> load_model();
-	std::shared_ptr<Mesh> load_mesh();
+	SingleModel load_single_model(uint32_t submodel_index);
+	Model load_model();
+	Mesh load_mesh();
 	// load_material();
-	std::shared_ptr<SingleModel> load_as_single_model();
 	// load_single_material();
 
 	//std::shared_ptr<Model> store_model_to_disk(const std::filesystem::path& asset_path);
@@ -33,4 +35,8 @@ public:
 	////store_single_material(const std::filesystem::path& asset_path);
 
 private:
+
+	void* importer = nullptr;
+	const void* scene = nullptr;
+	std::filesystem::path filepath;
 };

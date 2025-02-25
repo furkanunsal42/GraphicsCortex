@@ -18,6 +18,7 @@
 class Buffer;
 class Mesh;
 class VertexAttributeBuffer;
+class Asset;	// temp
 
 typedef uint32_t model_t;
 typedef uint32_t node_t;
@@ -129,6 +130,7 @@ public:
 	std::unique_ptr<VertexAttributeBuffer> create_vertex_attribute_buffer() const;
 
 private:
+	friend Asset;
 
 	node_t _next_node_name = root_node_name;
 	node_t _generate_node_name();

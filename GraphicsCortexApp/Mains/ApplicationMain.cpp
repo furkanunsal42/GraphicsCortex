@@ -8,7 +8,7 @@
 #include "Model/ModelConstructionTest.h"
 #include "Model/MeshConstructionTest.h"
 #include "Model/ComplexMeshConstructionTest.h"
-
+#include "Model/ModelLoadingTest.h"
 
 int main() {
 	
@@ -20,5 +20,7 @@ int main() {
 
 	//ModelConstructionTest().run();
 	//MeshConstructionTest().run();
-	ComplexMeshConstructionTest().run();
+	//ComplexMeshConstructionTest().run();
+
+	ModelLoadingTest().run();
 }
