@@ -3,11 +3,9 @@
 #include <string>
 #include "tiffio.h"
 
-class Texture;
 class Framebuffer;
 
 class Image {
-	friend Texture;
 	friend Framebuffer;
 public:
 	struct ImageParameters {
