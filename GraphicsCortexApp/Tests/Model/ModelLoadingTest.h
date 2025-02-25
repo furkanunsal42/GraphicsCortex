@@ -15,7 +15,7 @@ public:
 		//Asset asset("../GraphicsCortex/Models/sculpture/scene.gltf");
 		//Asset asset("../GraphicsCortex/Models/dragon.obj");
 		//Asset asset("../GraphicsCortex/Models/Thinker/Rodin_Thinker.obj");
-		//Asset asset("../GraphicsCortex/Models/porsche_chassis.obj");
+		//Asset asset("../GraphicsCortex/Models/porsche.obj");
 		Asset asset("../GraphicsCortex/Models/teducar/teduCar.fbx");
 
 		Model model = asset.load_model();
@@ -34,11 +34,8 @@ public:
 		Camera camera;
 		camera.mouse_sensitivity = 10;
 		
-		//mesh.traverse([&](Mesh::Node& node, glm::mat4& transform) {
-		//
-		//	std::cout << (transform == glm::mat4(1));
-		//
-		//	});
+		//glEnable(GL_CULL_FACE);
+		glEnable(GL_DEPTH_TEST);
 
 		while (true) {
 			double deltatime = default_window->handle_events(true);
@@ -47,26 +44,22 @@ public:
 			camera.handle_movements((GLFWwindow*)default_window->get_handle(), deltatime);
 			camera.update_matrixes();
 			camera.update_default_uniforms(*program_uv);
+			
+			//primitive_renderer::render(
+			//	*program_uv,
+			//	*mesh.get_mesh(0)
+			//);
 
 			mesh[0].traverse([&](Mesh::Node& node, glm::mat4& transform) {
-
-				glm::vec4 pos4 = transform * glm::vec4(0, 1, 0, 1);
-				glm::vec3 pos3 = glm::vec3(pos4) / pos4.w;
-
-				std::cout << node.get_name() << std::endl;
-				std::cout << pos3.x << " " << pos3.y << " " << pos3.z << std::endl;
-
-				//glEnable(GL_CULL_FACE);
-				glEnable(GL_DEPTH_TEST);
-
+			
 				for (mesh_t submesh : node.get_submeshes()) {
-					program_uv->update_uniform("model", transform);
+					program_uv->update_uniform("model", glm::scale(transform, glm::vec3(0.01)));
 					primitive_renderer::render(
 						*program_uv,
 						*mesh.get_mesh(submesh)
 					);
 				}
-
+			
 				});
 
 		}

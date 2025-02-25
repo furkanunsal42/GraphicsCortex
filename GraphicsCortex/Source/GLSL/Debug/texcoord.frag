@@ -12,6 +12,6 @@ layout(std140) uniform textures{
 in vec2 v_texcoord;
 
 void main(){
-	frag_color = vec4(v_texcoord, 0, 1);
+	frag_color = vec4(abs(v_texcoord), 0, 1);
  }
 

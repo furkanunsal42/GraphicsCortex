@@ -209,8 +209,8 @@ Model Asset::load_model()
         model[new_node].set_transform(mat4_assimp_to_glm(node->mTransformation));
 
         for (uint32_t i = 0; i < node->mNumMeshes; i++) {
-            if (model.does_model_exist(i)) {
-                model[new_node].add_submodel(i);
+            if (model.does_model_exist(node->mMeshes[i])) {
+                model[new_node].add_submodel(node->mMeshes[i]);
             }
             else {
                 std::cout << "[AssetImporter Error] Asset::load_model() is called but model but submodel index mismatch occured during node traversal at asset : " << std::filesystem::absolute(filepath) << std::endl;

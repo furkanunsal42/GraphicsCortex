@@ -16,6 +16,9 @@ public:
 			glm::vec3(-1, 1, -1),
 			glm::vec3(+1, 1, +1),
 		};
+		triangle.indicies = {
+			0, 1, 2
+		};
 
 		SingleModel plane;
 		plane.verticies = {
