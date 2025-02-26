@@ -22,7 +22,7 @@ Asset::Asset(const std::filesystem::path& asset_path, const AssetImportDescripti
 
     if (scene == nullptr ) {
         if (!std::filesystem::exists(filepath)) {
-            std::wcout << "[AssetImporter Error] loading failed for asset at beause file does not exist : " << std::filesystem::absolute(filepath) << std::endl;
+            std::wcout << "[AssetImporter Error] loading failed for asset because file does not exist at : " << std::filesystem::absolute(filepath) << std::endl;
             ASSERT(false);
         }
         
