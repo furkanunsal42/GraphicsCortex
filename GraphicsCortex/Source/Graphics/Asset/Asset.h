@@ -27,8 +27,8 @@ public:
 	Model load_model();
 	Mesh load_mesh();
 	
-	SingleMaterial load_single_material(uint32_t submodel_index);
-	std::vector<SingleMaterial> load_material();
+	//SingleMaterial load_single_material(uint32_t submodel_index);
+	//std::vector<SingleMaterial> load_material();
 
 	//std::shared_ptr<Model> store_model_to_disk(const std::filesystem::path& asset_path);
 	//std::shared_ptr<Mesh> store_mesh(const std::filesystem::path& asset_path);

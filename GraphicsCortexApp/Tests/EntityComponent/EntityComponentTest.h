@@ -25,7 +25,6 @@ public:
 		std::cout << mesh_r_comp.lock() << std::endl;
 		std::cout << "----------------------------" << std::endl;
 
-
 		auto print_state = [&]() {
 			std::cout << "Entitiy count: " << scene.get_entities().size() << std::endl;
 			std::cout << "MeshComponent count: " << scene.get_components<MeshComponent>().size() << std::endl;

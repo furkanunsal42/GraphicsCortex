@@ -1,38 +1,63 @@
 #include "Component_Material.h"
 
 MaterialComponent::MaterialComponent(std::shared_ptr<Program> program) :
-	_program(program) {}
+	program(program) {}
 
-void MaterialComponent::set_texture(const std::string& name, std::shared_ptr<Texture2D> texture, TexturePurpose texture_purpose)
+MaterialComponent::MaterialComponent(std::shared_ptr<Program> program, const MeshMaterial& material) :
+	program(program)
 {
-	_textures[name] = _texture_with_purpose(texture, texture_purpose);
+	load_mesh_material(material);
+}
+
+MaterialComponent::MaterialComponent(std::shared_ptr<Program> program, const MeshMaterial::SingleMaterial& material) :
+	program(program)
+{
+	load_mesh_material(material);
+}
+
+void MaterialComponent::set_texture(const std::string& name, std::shared_ptr<Texture2D> texture)
+{
+	textures[name] = texture;
 }
 
 std::shared_ptr<Texture2D> MaterialComponent::get_texture2d(const std::string& name)
 {
-	auto iterator = _textures.find(name);
-	if (iterator == _textures.end())
+	auto iterator = textures.find(name);
+	if (iterator == textures.end())
 		return nullptr;
 
-	return iterator->second._texture;
-}
-
-MaterialComponent::TexturePurpose MaterialComponent::get_texture2d_purpose(const std::string& name)
-{
-	auto iterator = _textures.find(name);
-	if (iterator == _textures.end())
-		return MaterialComponent::GeneralTexture;
-
-	return iterator->second._purpose;
+	return iterator->second;
 }
 
 void MaterialComponent::remove_texture(const std::string& name)
 {
-	_textures.erase(name);
+	textures.erase(name);
+}
+
+void MaterialComponent::clear_uniforms()
+{
+	textures.clear();
 }
 
 std::shared_ptr<Program> MaterialComponent::get_program()
 {
-	return _program;
+	return program;
+}
+
+void MaterialComponent::set_program(std::shared_ptr<Program> program)
+{
+	this->program = program;
+}
+
+void MaterialComponent::on_pre_render()
+{
+	if (program == nullptr) return;
+
+	for (auto& uniform : textures) {
+		
+		// always binds textures as sampler
+		program->update_uniform(uniform.first, uniform.second);
+
+	}
 }
 
