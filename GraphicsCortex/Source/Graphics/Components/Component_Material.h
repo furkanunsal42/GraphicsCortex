@@ -24,6 +24,7 @@ public:
 	void set_program(std::shared_ptr<Program> program);
 
 	void load_mesh_material(const MeshMaterial& mesh_material);
+	void load_mesh_material(const MeshMaterial::SingleMaterial& mesh_material);
 
 	void on_pre_render();
 
