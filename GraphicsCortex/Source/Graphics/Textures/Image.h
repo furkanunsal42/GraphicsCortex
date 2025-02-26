@@ -30,9 +30,9 @@ public:
 
 	//Image(const std::string& file_path, int desired_channels = 4, bool vertical_flip = true);
 	Image(const Image& copy_image) = delete;
-	Image(Image&& move_image) = delete;
+	Image(Image&& other);
 
-	unsigned char* get_image_data();
+	uint8_t* get_image_data();
 	int get_width() const;
 	int get_height() const;
 	int get_depth() const;
@@ -46,7 +46,7 @@ public:
 	void resize_stride(int target_bytes_per_channel);
 	void save_to_disc(const std::string& target_filename) const;
 
-	unsigned char* _image_data = nullptr;
+	uint8_t* _image_data = nullptr;
 
 	void _read_image_data(const ImageParameters& requested_parameters);
 	void _read_image_data_raw(const ImageParameters& requested_parameters);

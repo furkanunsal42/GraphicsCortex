@@ -13,8 +13,6 @@ public:
 		SingleModel plane;
 
 		plane.verticies = {
-			glm::vec3(-1, -1, 0) * 2.0f,
-
 			glm::vec3(-1, -1, 0) / 2.0f,
 			glm::vec3(-1, +1, 0) / 2.0f,
 			glm::vec3(+1, -1, 0) / 2.0f,
@@ -30,7 +28,7 @@ public:
 		std::shared_ptr<Buffer> index_buffer = plane.create_index_buffer();
 
 		std::shared_ptr<VertexAttributeBuffer> vab = std::make_shared<VertexAttributeBuffer>();
-		vab->attach_vertex_buffer(0, vertex_buffer, sizeof(glm::vec3), 1*sizeof(glm::vec3), 0);
+		vab->attach_vertex_buffer(0, vertex_buffer, sizeof(glm::vec3), 0, 0);
 		vab->set_attribute_format(0, 0, VertexAttributeBuffer::a_f32, 3, 0);
 
 		std::shared_ptr<Program> program_flat = default_program::flatcolor_program_s();

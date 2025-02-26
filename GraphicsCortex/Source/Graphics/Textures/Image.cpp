@@ -274,6 +274,26 @@ void Image::save_to_disc(const std::string& target_filename) const
 	}
 }
 
+
+
+Image::Image(Image&& other)
+{
+	_image_data = other._image_data;
+	other._image_data = nullptr;
+
+	_source_filepath = std::move(other._source_filepath);
+	_vertical_flip = other._vertical_flip;
+	_width = other._width;
+	_height = other._height;
+	_depth = other._depth;
+	_channel_count = other._channel_count;
+	_bytes_per_channel = other._bytes_per_channel;
+	_image_is_loaded_from_stbi = other._image_is_loaded_from_stbi;
+
+	_is_tiff = other._is_tiff;
+	_tiff_handle = other._tiff_handle;
+}
+
 unsigned char* Image::get_image_data() {
 	return _image_data;
 }
