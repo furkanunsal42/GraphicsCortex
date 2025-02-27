@@ -24,6 +24,6 @@ namespace default_program {
 	}
 
 
-	//Program solid_program();
-	//std::shared_ptr<Program> solid_program_s();
+	Program surface_program();
+	std::shared_ptr<Program> surface_program_s();
 }

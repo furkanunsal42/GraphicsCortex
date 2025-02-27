@@ -103,3 +103,23 @@ std::shared_ptr<Program> default_program::debug::texcoord_abs_program_s()
 	std::shared_ptr<Program> program = std::make_shared<Program>(default_shader);
 	return program;
 }
+
+Program default_program::surface_program()
+{
+	Shader default_shader(
+		"../GraphicsCortex/Source/GLSL/Surface/surface.vert",
+		"../GraphicsCortex/Source/GLSL/Surface/surface.frag"
+	);
+	Program program = Program(default_shader);
+	return program;
+}
+
+std::shared_ptr<Program> default_program::surface_program_s()
+{
+	Shader default_shader(
+		"../GraphicsCortex/Source/GLSL/Surface/surface.vert",
+		"../GraphicsCortex/Source/GLSL/Surface/surface.frag"
+	);
+	std::shared_ptr<Program> program = std::make_shared<Program>(default_shader);
+	return program;
+}
