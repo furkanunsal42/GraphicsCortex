@@ -21,8 +21,7 @@ public:
 		entity_a->add_component<TransformComponent>();
 		scene.add_entity(entity_a);
 
-		entity_a->get_component<MaterialComponent>().lock()
-			->get_program()->update_uniform("color", glm::vec4(1));
+		entity_a->get_component<MaterialComponent>()->set_uniform("color", glm::vec4(1, 1, 1, 1));
 
 		glm::ivec2 resolution = default_window->get_framebuffer_resolution();
 		RenderPipeline pipeline(resolution.x, resolution.y, Texture2D::ColorTextureFormat::RGBA8, 0);

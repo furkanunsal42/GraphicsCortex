@@ -30,22 +30,22 @@ void Entity::remove_component()
     if (_components.find(type) == _components.end()) return;
 
     for (Scene* scene : _scenes) {
-        std::vector<std::weak_ptr<Component>>& scene_components = scene->type_to_components[type];
-        scene_components.erase(std::find(scene_components.begin(), scene_components.end(), _components.at(type)));
+        std::vector<Component*>& scene_components = scene->type_to_components[type];
+        scene_components.erase(std::find(scene_components.begin(), scene_components.end(), _components.at(type).get()));
     }
 
+    _components.at(type)->entity = nullptr;
     _components.erase(type);
 }
 
 template<typename ComponentType>
-std::weak_ptr<ComponentType> Entity::get_component()
+std::shared_ptr<ComponentType> Entity::get_component()
 {
     component_type_id type = typeid(ComponentType).hash_code();
     auto iterator = _components.find(type);
     
     if (iterator == _components.end())
-        return std::weak_ptr<ComponentType>();
+        return nullptr;
 
-    std::weak_ptr<ComponentType> weak = std::dynamic_pointer_cast<ComponentType, Component>((*iterator).second);
-    return weak;
+    return std::dynamic_pointer_cast<ComponentType, Component>((*iterator).second);
 }

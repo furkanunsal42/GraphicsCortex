@@ -29,7 +29,8 @@ public:
 	void release();
 
 	//Image(const std::string& file_path, int desired_channels = 4, bool vertical_flip = true);
-	Image(const Image& copy_image) = delete;
+	Image() = default;
+	Image(const Image& copy_image);
 	Image(Image&& other);
 
 	uint8_t* get_image_data();
@@ -52,7 +53,7 @@ public:
 	void _read_image_data_raw(const ImageParameters& requested_parameters);
 	void _read_image_data_tiff(const ImageParameters& requested_parameters);
 
-	std::string _source_filepath;
+	std::string _source_filepath = "";
 	bool _vertical_flip = true;
 	int _width = 0;
 	int _height = 0;
@@ -62,7 +63,7 @@ public:
 	bool _image_is_loaded_from_stbi = false;
 
 	bool _is_tiff = false;
-	TIFF* _tiff_handle;
+	TIFF* _tiff_handle = nullptr;
 private:
 
 	//void _read_image(const std::string& file_path, int desired_channels = 4);

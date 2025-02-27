@@ -21,8 +21,8 @@ public:
 
 		auto mesh_comp = entity_b->get_component<MeshComponent>();
 		auto mesh_r_comp = entity_b->get_component<MeshRendererComponent>();
-		std::cout << mesh_comp.lock() << std::endl;
-		std::cout << mesh_r_comp.lock() << std::endl;
+		std::cout << mesh_comp << std::endl;
+		std::cout << mesh_r_comp << std::endl;
 		std::cout << "----------------------------" << std::endl;
 
 		auto print_state = [&]() {

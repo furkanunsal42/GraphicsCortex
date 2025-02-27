@@ -7,7 +7,7 @@
 
 #include "vec4.hpp"
 
-class Image;
+#include "Image.h"
 
 typedef uint32_t material_t;
 

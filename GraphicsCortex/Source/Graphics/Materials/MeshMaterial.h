@@ -8,6 +8,7 @@
 #include "ModelMaterial.h"
 
 class Texture2D;
+class Program;
 
 class MeshMaterial {
 public:
@@ -38,6 +39,14 @@ public:
 	MeshMaterial::SingleMaterial* get_material(material_t material);
 	std::span<MeshMaterial::SingleMaterial> get_materials();
 	void clear();
+
+	void update_uniforms(Program& program, material_t material_index);
+
+
+	static const std::string albedo_texture_uniform_name;
+	static const std::string normal_texture_uniform_name;
+	static const std::string roughness_texture_uniform_name;
+	static const std::string metalness_texture_uniform_name;
 
 private:
 	std::vector<SingleMaterial> materials;

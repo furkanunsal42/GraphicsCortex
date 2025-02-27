@@ -102,6 +102,8 @@ void Image::release() {
 	else
 		delete[] _image_data;
 
+	_image_data = nullptr;
+
 	_vertical_flip = true;
 	_width = 0;
 	_height = 0;
@@ -236,7 +238,14 @@ void Image::resize(int target_width, int target_height) {
 	if (_bytes_per_channel == 2)
 		stbir_resize_uint16_generic((unsigned short*)_image_data, _width, _height, _width * _channel_count * _bytes_per_channel, (unsigned short*)resized_image, target_width, target_height, target_width * _channel_count * _bytes_per_channel, _channel_count, -1, 0, STBIR_EDGE_CLAMP, STBIR_FILTER_DEFAULT, STBIR_COLORSPACE_LINEAR, 0);
 	
-	release();
+	if (_is_tiff) {
+		TIFFClose(_tiff_handle);
+
+	}
+	else if (_image_is_loaded_from_stbi)
+		stbi_image_free(_image_data);
+	else
+		delete[] _image_data;
 
 	_width = target_width;
 	_height = target_height;
@@ -275,6 +284,34 @@ void Image::save_to_disc(const std::string& target_filename) const
 }
 
 
+
+Image::Image(const Image& other)
+{
+	release();
+
+	if (other._image_data != nullptr && other.get_size() != 0) {
+		_image_data = (uint8_t*)malloc(other.get_size());
+		if (_image_data != nullptr) {
+			std::memcpy(_image_data, other._image_data, other.get_size());
+		}
+		else {
+			std::cout << "Image::Image() memory allocation failed" << std::endl;
+			ASSERT(false);
+		}
+	}
+
+	_source_filepath = other._source_filepath;
+	_vertical_flip = other._vertical_flip;
+	_width = other._width;
+	_height = other._height;
+	_depth = other._depth;
+	_channel_count = other._channel_count;
+	_bytes_per_channel = other._bytes_per_channel;
+	_image_is_loaded_from_stbi = other._image_is_loaded_from_stbi;
+
+	_is_tiff = other._is_tiff;
+	_tiff_handle = other._tiff_handle;
+}
 
 Image::Image(Image&& other)
 {

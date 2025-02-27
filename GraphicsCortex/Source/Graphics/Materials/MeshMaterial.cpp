@@ -1,11 +1,19 @@
 #include "MeshMaterial.h"
 
 #include <functional>
+#include <iostream>
 
 #include "glm.hpp"
 
+#include "Debuger.h"
 #include "Image.h"
 #include "Texture2D.h"
+#include "ShaderCompiler.h"
+
+const std::string MeshMaterial::albedo_texture_uniform_name = "albedo_texture";
+const std::string MeshMaterial::normal_texture_uniform_name = "normal_texture";
+const std::string MeshMaterial::roughness_texture_uniform_name = "roughness_texture";
+const std::string MeshMaterial::metalness_texture_uniform_name = "metalness_texture";
 
 namespace {
 
@@ -161,4 +169,21 @@ std::span<MeshMaterial::SingleMaterial> MeshMaterial::get_materials()
 void MeshMaterial::clear()
 {
     materials.clear();
+}
+
+void MeshMaterial::update_uniforms(Program& program, material_t material_index)
+{
+    if (!does_material_exist(material_index)) {
+        std::cout << "[OpenGL Error] MeshMaterial::update_uniforms() is called with material_index=" << material_index << " but given material doesn't exist" << std::endl;
+        ASSERT(false);
+    }
+
+    for (auto& material : get_materials()) {
+        program.update_uniform(albedo_texture_uniform_name, material.albedo_texture);
+        program.update_uniform(normal_texture_uniform_name, material.normal_texture);
+        program.update_uniform(roughness_texture_uniform_name, material.roughness_texture);
+        program.update_uniform(metalness_texture_uniform_name, material.metalness_texture);
+
+        //...
+    }
 }

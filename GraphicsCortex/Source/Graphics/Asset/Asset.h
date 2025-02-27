@@ -5,7 +5,7 @@
 #include "Mesh.h"
 #include "Model.h"
 #include "SingleModel.h"
-#include "SingleMaterial.h"
+#include "Materials/ModelMaterial.h"
 
 struct AssetImportDescription {
 

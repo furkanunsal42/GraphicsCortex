@@ -1,5 +1,11 @@
 #include "Entity.h"
 
+Entity::~Entity() {
+	for (auto& component : _components) {
+		component.second->entity = nullptr;
+	}
+}
+
 void Entity::update(Component::UpdateType type) {
 	for (auto& component_pair : _components) {
 		std::shared_ptr<Component> component = component_pair.second;

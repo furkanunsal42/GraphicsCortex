@@ -11,15 +11,14 @@ public:
 
 	Entity() = default;
 	Entity(const Entity& other) = delete;
-	
-	virtual ~Entity() = default;
+	~Entity();
 
 	template<typename ComponentType, typename... ArgType>
 	void add_component(ArgType... arguments);
 	template<typename ComponentType>
 	void remove_component();
 	template<typename ComponentType>
-	std::weak_ptr<ComponentType> get_component();
+	std::shared_ptr<ComponentType> get_component();
 
 private:
 	friend Scene;
