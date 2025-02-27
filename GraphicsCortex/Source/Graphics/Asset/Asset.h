@@ -2,10 +2,11 @@
 
 #include <filesystem>
 
-#include "Mesh.h"
-#include "Model.h"
 #include "SingleModel.h"
+#include "Model.h"
+#include "Mesh.h"
 #include "Materials/ModelMaterial.h"
+#include "Materials/MeshMaterial.h"
 
 struct AssetImportDescription {
 
@@ -27,14 +28,9 @@ public:
 	Model load_model();
 	Mesh load_mesh();
 	
-	//SingleMaterial load_single_material(uint32_t submodel_index);
-	//std::vector<SingleMaterial> load_material();
-
-	//std::shared_ptr<Model> store_model_to_disk(const std::filesystem::path& asset_path);
-	//std::shared_ptr<Mesh> store_mesh(const std::filesystem::path& asset_path);
-	//// store_material(const std::filesystem::path& asset_path);
-	//std::shared_ptr<SingleModel> store_as_single_model(const std::filesystem::path& asset_path);
-	////store_single_material(const std::filesystem::path& asset_path);
+	ModelMaterial::SingleMaterial load_single_model_material(uint32_t submodel_index);
+	ModelMaterial load_model_material();
+	MeshMaterial load_mesh_material();
 
 private:
 
