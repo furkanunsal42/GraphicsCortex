@@ -16,7 +16,7 @@ public:
 
 		Asset sculpture("../GraphicsCortex/Models/sculpture/scene.gltf");
 		entity_a->add_component<MeshComponent>(std::make_shared<Mesh>(sculpture.load_mesh()));
-		entity_a->add_component<MaterialComponent>(default_program::flatcolor_program_s());
+		entity_a->add_component<MaterialComponent>(default_program::debug::normal_abs_program_s());
 		entity_a->add_component<MeshRendererComponent>();
 		entity_a->add_component<TransformComponent>();
 		scene.add_entity(entity_a);
@@ -24,13 +24,15 @@ public:
 		entity_a->get_component<MaterialComponent>()->set_uniform("color", glm::vec4(1, 1, 1, 1));
 
 		glm::ivec2 resolution = default_window->get_framebuffer_resolution();
-		RenderPipeline pipeline(resolution.x, resolution.y, Texture2D::ColorTextureFormat::RGBA8, 0);
+		RenderPipeline pipeline(resolution.x, resolution.y, Texture2D::ColorTextureFormat::RGBA8, Texture2D::DepthStencilTextureFormat::DEPTH24_STENCIL8, 0);
 		pipeline.push_render_pass(std::make_shared<RenderPass_Clear>(glm::vec4(0, 0, 0, 1)));
 		pipeline.push_render_pass(std::make_shared<RenderPass_Forward>());
 
 		Camera camera;
 		camera.mouse_sensitivity = 10;
 		camera.fov = 100;
+
+		glEnable(GL_DEPTH_TEST);
 
 		while (true) {
 			double deltatime = default_window->handle_events(true);

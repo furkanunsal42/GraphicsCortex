@@ -21,7 +21,7 @@ public:
 		Model model = asset.load_model();
 		Mesh mesh(model);
 
-		std::shared_ptr<Program> program_flat = default_program::flatcolor_program_s();
+		std::shared_ptr<Program> program_flat = default_program::debug::flatcolor_program_s();
 		std::shared_ptr<Program> program_uv = std::make_shared<Program>(
 			Shader(
 				"../GraphicsCortex/Source/GLSL/Debug/basic.vert",

@@ -29,7 +29,6 @@ public:
 	Shader(const std::string& vertex_target_file, const std::string& fragment_target_file);
 	Shader(const std::string& vertex_target_file, const std::string& geometry_terget_file, const std::string& fragment_target_file);
 	void read_shader(const std::string& target_file);
-	
 };
 
 
@@ -204,6 +203,7 @@ public:
 	Program();
 	Program(const std::string& vertex_shader_code, const std::string& fragment_shader_code);
 	Program(const std::string& vertex_shader_code, const std::string& geometry_shader_code, const std::string& fragment_shader_code);
+	
 	explicit Program(const Shader& shader);
 	
 	void compile(const std::string& vertex_shader_code, const std::string& fragment_shader_code);

@@ -27,6 +27,7 @@ public:
 
 	RenderPipeline(const RenderPipeline& other) = delete;
 	RenderPipeline(int width, int height, Texture2D::ColorTextureFormat internal_format, int multisample);
+	RenderPipeline(int width, int height, Texture2D::ColorTextureFormat internal_format, Texture2D::DepthStencilTextureFormat depth_stencil_format, int multisample);
 	~RenderPipeline() = default;
 
 	void push_render_pass(std::shared_ptr<RenderPass> renderpass);
@@ -36,10 +37,17 @@ public:
 	std::vector<std::shared_ptr<RenderPass>> passes;
 
 	std::shared_ptr<Texture2D> texture = nullptr;
+	std::shared_ptr<Texture2D> depth = nullptr;
+	std::shared_ptr<Texture2D> stencil = nullptr;
+	std::shared_ptr<Texture2D> depth_stencil = nullptr;
+
+	static constexpr TextureBase2::DepthStencilTextureFormat invalid_depth_stencil_format = TextureBase2::DepthStencilTextureFormat(-1);
+
 	std::shared_ptr<Framebuffer> framebuffer = std::make_shared<Framebuffer>();
 	int width;
 	int height;
 	TextureBase2::ColorTextureFormat internal_format;
+	TextureBase2::DepthStencilTextureFormat depthstencil_internal_format;
 	int multisample;
 
 	std::vector<std::shared_ptr<Texture1D>>			stack_1d;

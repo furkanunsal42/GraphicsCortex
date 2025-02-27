@@ -6,6 +6,7 @@
 #include <optional>
 
 #include "vec4.hpp"
+#include "vec3.hpp"
 
 #include "Image.h"
 
@@ -21,20 +22,14 @@ public:
 		std::optional<Image> normal_image = std::nullopt;
 		std::optional<Image> roughness_image = std::nullopt;
 		std::optional<Image> metalness_image = std::nullopt;
-		std::optional<Image> specular_image = std::nullopt;
 		std::optional<Image> height_image = std::nullopt;
-		std::optional<Image> opacity_image = std::nullopt;
 		std::optional<Image> ambiant_occlusion_image = std::nullopt;
-		std::optional<Image> refrection_image = std::nullopt;
 		std::optional<Image> emissive_image = std::nullopt;
 
 		glm::vec4 albedo = glm::vec4(1);
 		float roughness = 1;
 		float metalness = 0;
-		glm::vec4 specular;
-		glm::vec4 opacity;
-		glm::vec4 refrection;
-		float emissive = 0;
+		glm::vec3 emissive = glm::vec3(0, 0, 0);
 	};
 
 	bool does_material_exist(material_t material);

@@ -122,6 +122,7 @@ int TextureBase2::DepthStencilTextureFormat_to_OpenGL(DepthStencilTextureFormat 
 		case DepthStencilTextureFormat::DEPTH_COMPONENT16	:	return GL_DEPTH_COMPONENT16;
 		case DepthStencilTextureFormat::DEPTH32F_STENCIL8	:	return GL_DEPTH32F_STENCIL8;
 		case DepthStencilTextureFormat::DEPTH24_STENCIL8	:	return GL_DEPTH24_STENCIL8;
+		case DepthStencilTextureFormat::STENCIL_INDEX8		:	return GL_STENCIL_INDEX8;
 	}
 	return 0;
 }

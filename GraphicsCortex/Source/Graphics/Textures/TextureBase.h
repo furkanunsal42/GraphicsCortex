@@ -120,6 +120,7 @@ public:
 		DEPTH_COMPONENT16,
 		DEPTH32F_STENCIL8,
 		DEPTH24_STENCIL8,
+		STENCIL_INDEX8
 	};
 
 	enum class Type {
