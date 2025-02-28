@@ -362,17 +362,37 @@ ModelMaterial Asset::load_model_material()
 
         if (assimp_scene->mMaterials[material_index]->GetTexture(aiTextureType_DIFFUSE, 0, &albedo_path) == aiReturn_SUCCESS) {
             std::filesystem::path image_path = std::filesystem::absolute(filepath.parent_path() /= albedo_path.C_Str()).string();
+            if (!std::filesystem::exists(image_path)) {
+                image_path = std::filesystem::absolute(filepath.parent_path() /= std::filesystem::path("textures/") /= std::filesystem::path(albedo_path.C_Str()).filename()).string();
+            }
+            if (!std::filesystem::exists(image_path)) {
+                image_path = std::filesystem::absolute(filepath.parent_path() /= std::filesystem::path("../textures/") /= std::filesystem::path(albedo_path.C_Str()).filename()).string();
+            }
+            if (!std::filesystem::exists(image_path)) {
+                image_path = std::filesystem::absolute(filepath.parent_path() /= std::filesystem::path(albedo_path.C_Str()).filename()).string();
+            }
+
             if (!std::filesystem::exists(image_path))
                 std::cout << "[AssetImporter Error] Image not found : " << image_path << std::endl;
             else {
                 _ImageParam params;
                 params.path = image_path.string();
-                params.channel_count = 3;
+                params.channel_count = 4;
                 path_to_index_param[image_path] = std::pair(0u, params);
             }
         }
         if (assimp_scene->mMaterials[material_index]->GetTexture(aiTextureType_NORMALS, 0, &normal_path) == aiReturn_SUCCESS) {
             std::filesystem::path image_path = std::filesystem::absolute(filepath.parent_path() /= normal_path.C_Str()).string();
+            if (!std::filesystem::exists(image_path)) {
+                image_path = std::filesystem::absolute(filepath.parent_path() /= std::filesystem::path("textures/") /= std::filesystem::path(normal_path.C_Str()).filename()).string();
+            }
+            if (!std::filesystem::exists(image_path)) {
+                image_path = std::filesystem::absolute(filepath.parent_path() /= std::filesystem::path("../textures/") /= std::filesystem::path(normal_path.C_Str()).filename()).string();
+            }
+            if (!std::filesystem::exists(image_path)) {
+                image_path = std::filesystem::absolute(filepath.parent_path() /= std::filesystem::path(normal_path.C_Str()).filename()).string();
+            }
+
             if (!std::filesystem::exists(image_path))
                 std::cout << "[AssetImporter Error] Image not found : " << image_path << std::endl;
             else {
@@ -385,6 +405,16 @@ ModelMaterial Asset::load_model_material()
         }
         if (assimp_scene->mMaterials[material_index]->GetTexture(aiTextureType_DIFFUSE_ROUGHNESS, 0, &roughness_path) == aiReturn_SUCCESS) {
             std::filesystem::path image_path = std::filesystem::absolute(filepath.parent_path() /= roughness_path.C_Str()).string();
+            if (!std::filesystem::exists(image_path)) {
+                image_path = std::filesystem::absolute(filepath.parent_path() /= std::filesystem::path("textures/") /= std::filesystem::path(roughness_path.C_Str()).filename()).string();
+            }
+            if (!std::filesystem::exists(image_path)) {
+                image_path = std::filesystem::absolute(filepath.parent_path() /= std::filesystem::path("../textures/") /= std::filesystem::path(roughness_path.C_Str()).filename()).string();
+            }
+            if (!std::filesystem::exists(image_path)) {
+                image_path = std::filesystem::absolute(filepath.parent_path() /= std::filesystem::path(roughness_path.C_Str()).filename()).string();
+            }
+
             if (!std::filesystem::exists(image_path))
                 std::cout << "[AssetImporter Error] Image not found : " << image_path << std::endl;
             else {
@@ -397,6 +427,16 @@ ModelMaterial Asset::load_model_material()
         }
         if (assimp_scene->mMaterials[material_index]->GetTexture(aiTextureType_METALNESS, 0, &metallic_path) == aiReturn_SUCCESS) {
             std::filesystem::path image_path = std::filesystem::absolute(filepath.parent_path() /= metallic_path.C_Str()).string();
+            if (!std::filesystem::exists(image_path)) {
+                image_path = std::filesystem::absolute(filepath.parent_path() /= std::filesystem::path("textures/") /= std::filesystem::path(metallic_path.C_Str()).filename()).string();
+            }
+            if (!std::filesystem::exists(image_path)) {
+                image_path = std::filesystem::absolute(filepath.parent_path() /= std::filesystem::path("../textures/") /= std::filesystem::path(metallic_path.C_Str()).filename()).string();
+            }
+            if (!std::filesystem::exists(image_path)) {
+                image_path = std::filesystem::absolute(filepath.parent_path() /= std::filesystem::path(metallic_path.C_Str()).filename()).string();
+            }
+
             if (!std::filesystem::exists(image_path))
                 std::cout << "[AssetImporter Error] Image not found : " << image_path << std::endl;
             else {
@@ -409,6 +449,16 @@ ModelMaterial Asset::load_model_material()
         }
         if (assimp_scene->mMaterials[material_index]->GetTexture(aiTextureType_AMBIENT_OCCLUSION, 0, &ambient_occlusion_path) == aiReturn_SUCCESS) {
             std::filesystem::path image_path = std::filesystem::absolute(filepath.parent_path() /= ambient_occlusion_path.C_Str()).string();
+            if (!std::filesystem::exists(image_path)) {
+                image_path = std::filesystem::absolute(filepath.parent_path() /= std::filesystem::path("textures/") /= std::filesystem::path(ambient_occlusion_path.C_Str()).filename()).string();
+            }
+            if (!std::filesystem::exists(image_path)) {
+                image_path = std::filesystem::absolute(filepath.parent_path() /= std::filesystem::path("../textures/") /= std::filesystem::path(ambient_occlusion_path.C_Str()).filename()).string();
+            }
+            if (!std::filesystem::exists(image_path)) {
+                image_path = std::filesystem::absolute(filepath.parent_path() /= std::filesystem::path(ambient_occlusion_path.C_Str()).filename()).string();
+            }
+
             if (!std::filesystem::exists(image_path))
                 std::cout << "[AssetImporter Error] Image not found : " << image_path << std::endl;
             else {
@@ -421,6 +471,16 @@ ModelMaterial Asset::load_model_material()
         }
         if (assimp_scene->mMaterials[material_index]->GetTexture(aiTextureType_HEIGHT, 0, &height_path) == aiReturn_SUCCESS) {
             std::filesystem::path image_path = std::filesystem::absolute(filepath.parent_path() /= height_path.C_Str()).string();
+            if (!std::filesystem::exists(image_path)) {
+                image_path = std::filesystem::absolute(filepath.parent_path() /= std::filesystem::path("textures/") /= std::filesystem::path(height_path.C_Str()).filename()).string();
+            }
+            if (!std::filesystem::exists(image_path)) {
+                image_path = std::filesystem::absolute(filepath.parent_path() /= std::filesystem::path("../textures/") /= std::filesystem::path(height_path.C_Str()).filename()).string();
+            }
+            if (!std::filesystem::exists(image_path)) {
+                image_path = std::filesystem::absolute(filepath.parent_path() /= std::filesystem::path(height_path.C_Str()).filename()).string();
+            }
+
             if (!std::filesystem::exists(image_path))
                 std::cout << "[AssetImporter Error] Image not found : " << image_path << std::endl;
             else {
@@ -433,6 +493,16 @@ ModelMaterial Asset::load_model_material()
         }
         if (assimp_scene->mMaterials[material_index]->GetTexture(aiTextureType_EMISSIVE, 0, &emmisive_path) == aiReturn_SUCCESS) {
             std::filesystem::path image_path = std::filesystem::absolute(filepath.parent_path() /= emmisive_path.C_Str()).string();
+            if (!std::filesystem::exists(image_path)) {
+                image_path = std::filesystem::absolute(filepath.parent_path() /= std::filesystem::path("textures/") /= std::filesystem::path(emmisive_path.C_Str()).filename()).string();
+            }
+            if (!std::filesystem::exists(image_path)) {
+                image_path = std::filesystem::absolute(filepath.parent_path() /= std::filesystem::path("../textures/") /= std::filesystem::path(emmisive_path.C_Str()).filename()).string();
+            }
+            if (!std::filesystem::exists(image_path)) {
+                image_path = std::filesystem::absolute(filepath.parent_path() /= std::filesystem::path(emmisive_path.C_Str()).filename()).string();
+            }
+
             if (!std::filesystem::exists(image_path))
                 std::cout << "[AssetImporter Error] Image not found : " << image_path << std::endl;
             else {
@@ -458,12 +528,9 @@ ModelMaterial Asset::load_model_material()
     std::mutex m;
 
     uint32_t texture_count = images.size();
-    #pragma omp parallel for
+    //#pragma omp parallel for
     for (int i = 0; i < texture_count; i++) {
-        m.lock();
-        std::cout << image_params[i].path << std::endl;
-        m.unlock();
-
+        std::cout << i << std::endl;
         images[i] = std::make_shared<Image>(image_params[i].path, image_params[i].channel_count, image_params[i].flip);
 
         m.lock();
@@ -473,6 +540,7 @@ ModelMaterial Asset::load_model_material()
     }
 
     for (uint32_t submodel_index = 0; submodel_index < submodel_count; submodel_index++) {
+        std::cout << submodel_index << std::endl;
 
         ModelMaterial::SingleMaterial single_material;
 
@@ -488,6 +556,16 @@ ModelMaterial Asset::load_model_material()
 
         if (assimp_scene->mMaterials[material_index]->GetTexture(aiTextureType_DIFFUSE, 0, &albedo_path) == aiReturn_SUCCESS) {
             std::filesystem::path image_path = std::filesystem::absolute(filepath.parent_path() /= albedo_path.C_Str()).string();
+            if (!std::filesystem::exists(image_path)) {
+                image_path = std::filesystem::absolute(filepath.parent_path() /= std::filesystem::path("textures/") /= std::filesystem::path(albedo_path.C_Str()).filename()).string();
+            }
+            if (!std::filesystem::exists(image_path)) {
+                image_path = std::filesystem::absolute(filepath.parent_path() /= std::filesystem::path("../textures/") /= std::filesystem::path(albedo_path.C_Str()).filename()).string();
+            }
+            if (!std::filesystem::exists(image_path)) {
+                image_path = std::filesystem::absolute(filepath.parent_path() /= std::filesystem::path(albedo_path.C_Str()).filename()).string();
+            }
+
             if (!std::filesystem::exists(image_path))
                 std::cout << "[AssetImporter Error] Image not found : " << image_path << std::endl;
             else {
@@ -497,6 +575,16 @@ ModelMaterial Asset::load_model_material()
         }
         if (assimp_scene->mMaterials[material_index]->GetTexture(aiTextureType_NORMALS, 0, &normal_path) == aiReturn_SUCCESS) {
             std::filesystem::path image_path = std::filesystem::absolute(filepath.parent_path() /= normal_path.C_Str()).string();
+            if (!std::filesystem::exists(image_path)) {
+                image_path = std::filesystem::absolute(filepath.parent_path() /= std::filesystem::path("textures/") /= std::filesystem::path(normal_path.C_Str()).filename()).string();
+            }
+            if (!std::filesystem::exists(image_path)) {
+                image_path = std::filesystem::absolute(filepath.parent_path() /= std::filesystem::path("../textures/") /= std::filesystem::path(normal_path.C_Str()).filename()).string();
+            }
+            if (!std::filesystem::exists(image_path)) {
+                image_path = std::filesystem::absolute(filepath.parent_path() /= std::filesystem::path(normal_path.C_Str()).filename()).string();
+            }
+
             if (!std::filesystem::exists(image_path))
                 std::cout << "[AssetImporter Error] Image not found : " << image_path << std::endl;
             else {
@@ -507,6 +595,16 @@ ModelMaterial Asset::load_model_material()
         }
         if (assimp_scene->mMaterials[material_index]->GetTexture(aiTextureType_DIFFUSE_ROUGHNESS, 0, &roughness_path) == aiReturn_SUCCESS) {
             std::filesystem::path image_path = std::filesystem::absolute(filepath.parent_path() /= roughness_path.C_Str()).string();
+            if (!std::filesystem::exists(image_path)) {
+                image_path = std::filesystem::absolute(filepath.parent_path() /= std::filesystem::path("textures/") /= std::filesystem::path(roughness_path.C_Str()).filename()).string();
+            }
+            if (!std::filesystem::exists(image_path)) {
+                image_path = std::filesystem::absolute(filepath.parent_path() /= std::filesystem::path("../textures/") /= std::filesystem::path(roughness_path.C_Str()).filename()).string();
+            }
+            if (!std::filesystem::exists(image_path)) {
+                image_path = std::filesystem::absolute(filepath.parent_path() /= std::filesystem::path(roughness_path.C_Str()).filename()).string();
+            }
+
             if (!std::filesystem::exists(image_path))
                 std::cout << "[AssetImporter Error] Image not found : " << image_path << std::endl;
             else {
@@ -517,6 +615,16 @@ ModelMaterial Asset::load_model_material()
         }
         if (assimp_scene->mMaterials[material_index]->GetTexture(aiTextureType_METALNESS, 0, &metallic_path) == aiReturn_SUCCESS) {
             std::filesystem::path image_path = std::filesystem::absolute(filepath.parent_path() /= metallic_path.C_Str()).string();
+            if (!std::filesystem::exists(image_path)) {
+                image_path = std::filesystem::absolute(filepath.parent_path() /= std::filesystem::path("textures/") /= std::filesystem::path(metallic_path.C_Str()).filename()).string();
+            }
+            if (!std::filesystem::exists(image_path)) {
+                image_path = std::filesystem::absolute(filepath.parent_path() /= std::filesystem::path("../textures/") /= std::filesystem::path(metallic_path.C_Str()).filename()).string();
+            }
+            if (!std::filesystem::exists(image_path)) {
+                image_path = std::filesystem::absolute(filepath.parent_path() /= std::filesystem::path(metallic_path.C_Str()).filename()).string();
+            }
+
             if (!std::filesystem::exists(image_path))
                 std::cout << "[AssetImporter Error] Image not found : " << image_path << std::endl;
             else {
@@ -527,6 +635,16 @@ ModelMaterial Asset::load_model_material()
         }
         if (assimp_scene->mMaterials[material_index]->GetTexture(aiTextureType_AMBIENT_OCCLUSION, 0, &ambient_occlusion_path) == aiReturn_SUCCESS) {
             std::filesystem::path image_path = std::filesystem::absolute(filepath.parent_path() /= ambient_occlusion_path.C_Str()).string();
+            if (!std::filesystem::exists(image_path)) {
+                image_path = std::filesystem::absolute(filepath.parent_path() /= std::filesystem::path("textures/") /= std::filesystem::path(ambient_occlusion_path.C_Str()).filename()).string();
+            }
+            if (!std::filesystem::exists(image_path)) {
+                image_path = std::filesystem::absolute(filepath.parent_path() /= std::filesystem::path("../textures/") /= std::filesystem::path(ambient_occlusion_path.C_Str()).filename()).string();
+            }
+            if (!std::filesystem::exists(image_path)) {
+                image_path = std::filesystem::absolute(filepath.parent_path() /= std::filesystem::path(ambient_occlusion_path.C_Str()).filename()).string();
+            }
+
             if (!std::filesystem::exists(image_path))
                 std::cout << "[AssetImporter Error] Image not found : " << image_path << std::endl;
             else {
@@ -537,6 +655,16 @@ ModelMaterial Asset::load_model_material()
         }
         if (assimp_scene->mMaterials[material_index]->GetTexture(aiTextureType_HEIGHT, 0, &height_path) == aiReturn_SUCCESS) {
             std::filesystem::path image_path = std::filesystem::absolute(filepath.parent_path() /= height_path.C_Str()).string();
+            if (!std::filesystem::exists(image_path)) {
+                image_path = std::filesystem::absolute(filepath.parent_path() /= std::filesystem::path("textures/") /= std::filesystem::path(height_path.C_Str()).filename()).string();
+            }
+            if (!std::filesystem::exists(image_path)) {
+                image_path = std::filesystem::absolute(filepath.parent_path() /= std::filesystem::path("../textures/") /= std::filesystem::path(height_path.C_Str()).filename()).string();
+            }
+            if (!std::filesystem::exists(image_path)) {
+                image_path = std::filesystem::absolute(filepath.parent_path() /= std::filesystem::path(height_path.C_Str()).filename()).string();
+            }
+
             if (!std::filesystem::exists(image_path))
                 std::cout << "[AssetImporter Error] Image not found : " << image_path << std::endl;
             else {
@@ -546,6 +674,16 @@ ModelMaterial Asset::load_model_material()
         }
         if (assimp_scene->mMaterials[material_index]->GetTexture(aiTextureType_EMISSIVE, 0, &emmisive_path) == aiReturn_SUCCESS) {
             std::filesystem::path image_path = std::filesystem::absolute(filepath.parent_path() /= emmisive_path.C_Str()).string();
+            if (!std::filesystem::exists(image_path)) {
+                image_path = std::filesystem::absolute(filepath.parent_path() /= std::filesystem::path("textures/") /= std::filesystem::path(emmisive_path.C_Str()).filename()).string();
+            }
+            if (!std::filesystem::exists(image_path)) {
+                image_path = std::filesystem::absolute(filepath.parent_path() /= std::filesystem::path("../textures/") /= std::filesystem::path(emmisive_path.C_Str()).filename()).string();
+            }
+            if (!std::filesystem::exists(image_path)) {
+                image_path = std::filesystem::absolute(filepath.parent_path() /= std::filesystem::path(emmisive_path.C_Str()).filename()).string();
+            }
+
             if (!std::filesystem::exists(image_path))
                 std::cout << "[AssetImporter Error] Image not found : " << image_path << std::endl;
             else {

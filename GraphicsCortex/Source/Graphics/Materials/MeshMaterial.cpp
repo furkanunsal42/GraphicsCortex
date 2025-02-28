@@ -39,8 +39,8 @@ namespace {
     MeshMaterial::SingleMaterial create_single_mesh_material(ModelMaterial::SingleMaterial& model_mat) {
         MeshMaterial::SingleMaterial material;
 
-        auto albedo_ctf = Texture2D::ColorTextureFormat::RGB8;
-        auto albedo_cf = Texture2D::ColorFormat::RGB;
+        auto albedo_ctf = Texture2D::ColorTextureFormat::RGBA8;
+        auto albedo_cf = Texture2D::ColorFormat::RGBA;
         auto albedo_t = Texture2D::Type::UNSIGNED_BYTE;
         material.albedo_texture = create_material_texture(model_mat.albedo_image, albedo_ctf, albedo_cf, albedo_t, model_mat.albedo);
 
@@ -119,7 +119,7 @@ void MeshMaterial::load_material(ModelMaterial& model_material)
 
 void MeshMaterial::load_material(ModelMaterial&& model_material)
 {
-        load_material((ModelMaterial&)model_material);
+    load_material((ModelMaterial&)model_material);
 }
 
 void MeshMaterial::load_material(ModelMaterial::SingleMaterial& model_mat)
@@ -182,12 +182,11 @@ void MeshMaterial::update_uniforms(Program& program, material_t material_index)
         ASSERT(false);
     }
 
-    for (auto& material : get_materials()) {
-        program.update_uniform(albedo_texture_uniform_name, *material.albedo_texture);
-        program.update_uniform(normal_texture_uniform_name, *material.normal_texture);
-        program.update_uniform(roughness_texture_uniform_name, *material.roughness_texture);
-        program.update_uniform(metallic_texture_uniform_name, *material.metallic_texture);
-
-        //...
-    }
+    SingleMaterial* single_material = get_material(material_index);
+    
+    program.update_uniform(albedo_texture_uniform_name, *single_material->albedo_texture);
+    program.update_uniform(normal_texture_uniform_name, *single_material->normal_texture);
+    program.update_uniform(roughness_texture_uniform_name, *single_material->roughness_texture);
+    program.update_uniform(metallic_texture_uniform_name, *single_material->metallic_texture);
+    //...
 }

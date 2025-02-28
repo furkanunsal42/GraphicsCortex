@@ -33,8 +33,6 @@ Image::Image(const std::string& file_path, int desired_channels, bool vertical_f
 		ASSERT(false);
 	}
 
-	std::cout << file_path.c_str() << std::endl;
-
 	int target_width, target_height, target_channel_count, target_bytes_per_channel;
 	stbi_info(file_path.c_str(), &target_width, &target_height, &target_channel_count);
 	target_bytes_per_channel = stbi_is_16_bit(_source_filepath.c_str()) ? 2 : 1;
@@ -47,6 +45,8 @@ Image::Image(const std::string& file_path, int desired_channels, bool vertical_f
 	target_parameters.bytes_per_channel = target_bytes_per_channel;
 	target_parameters.path = file_path;
 	target_parameters.vertical_flip = vertical_flip;
+
+	std::cout << target_width << " " << target_height << std::endl;
 
 	_read_image_data(target_parameters);
 }
@@ -145,7 +145,8 @@ void Image::_read_image_data(const ImageParameters& requested_parameters)
 		_image_data = (unsigned char*)stbi_load_16(requested_parameters.path.c_str(), &_width, &_height, &_channel_count, requested_parameters.channel_count);
 
 	if (_image_data == nullptr) {
-		std::cout << "here" << std::endl;
+		std::cout << "[OpenGL Error] Image read failed : " << requested_parameters.path << std::endl;
+		ASSERT(false);
 	}
 
 	_channel_count = requested_parameters.channel_count;

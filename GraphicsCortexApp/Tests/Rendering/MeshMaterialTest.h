@@ -12,7 +12,7 @@ public:
 		default_window_desc->w_resolution = glm::ivec2(1920, 1080);
 		default_init();
 
-		Asset sculpture("../GraphicsCortex/Models/Sponza/source/Sponza.fbx");
+		Asset sculpture("../GraphicsCortex/Models/circuit/nogaro.obj");
 
 		std::shared_ptr<MeshMaterial> mesh_material = std::make_shared<MeshMaterial>(sculpture.load_mesh_material());
 
@@ -25,7 +25,7 @@ public:
 		entity_a->add_component<TransformComponent>();
 		scene.add_entity(entity_a);
 
-		entity_a->get_component<TransformComponent>()->transform = glm::scale(glm::mat4(1), glm::vec3(1))
+		entity_a->get_component<TransformComponent>()->transform = glm::scale(glm::mat4(1), glm::vec3(0.01))
 			;
 		entity_a->get_component<MaterialComponent>()->set_uniform("light_colors[0]", glm::vec3(1, 1, 1));
 		entity_a->get_component<MaterialComponent>()->set_uniform("light_positions[0]", glm::vec3(0, 0.1, 0));
