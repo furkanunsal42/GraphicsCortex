@@ -89,7 +89,7 @@ namespace {
 
         material.albedo_texture = create_material_texture(model_mat.albedo_image, albedo_ctf, albedo_cf, albedo_t, model_mat.albedo);
 
-        material.normal_texture = create_material_texture(model_mat.normal_image, normal_ctf, normal_cf, normal_t, glm::vec3(0, 0, 0.5));
+        material.normal_texture = create_material_texture(model_mat.normal_image, normal_ctf, normal_cf, normal_t, glm::vec3(0.5));
 
         material.roughness_texture = create_material_texture(model_mat.roughness_image, roughness_ctf, roughness_cf, roughness_t, 1.0f);
 
@@ -186,7 +186,7 @@ void MeshMaterial::load_material(ModelMaterial& model_material)
         if (material.normal_texture != nullptr)
             material.normal_texture = image_to_texture[model_mat.normal_image].texture;
         else
-            material.normal_texture = create_material_texture(model_mat.normal_image, normal_ctf, normal_cf, normal_t, glm::vec3(0, 0, 0.5));
+            material.normal_texture = create_material_texture(model_mat.normal_image, normal_ctf, normal_cf, normal_t, glm::vec3(0.5));
 
         if (material.roughness_texture != nullptr)
             material.roughness_texture = image_to_texture[model_mat.roughness_image].texture;

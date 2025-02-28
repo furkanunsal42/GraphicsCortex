@@ -4,8 +4,8 @@
 out vec4 frag_color;
 
 in vec3 v_world_position;
-in vec3 v_normal;
 in vec2 v_texcoord;
+in vec3 v_normal;
 
 // material parameters
 layout (location = 0 ) uniform sampler2D albedo_texture;
@@ -86,11 +86,16 @@ vec3 fresnelSchlick(float cosTheta, vec3 F0)
 void main()
 {       
     vec4 albedo_full = texture(albedo_texture, v_texcoord);
-    vec3 albedo     = pow(albedo_full.rgb, vec3(1));
+    vec3 albedo     = pow(albedo_full.rgb, vec3(2.2));
     float alpha = albedo_full.a;
     float metallic  = texture(metallic_texture, v_texcoord).r;
+    metallic  = 0.1;
+
     float roughness = texture(roughness_texture, v_texcoord).r;
+    roughness = 0.8;
+
     float ao        = texture(ambiant_occlusion_texture, v_texcoord).r;
+    ao = 1;
 
     vec3 N = getNormalFromMap();
     vec3 V = normalize(camera_position - v_world_position);
@@ -102,8 +107,9 @@ void main()
 
     // reflectance equation
     vec3 Lo = vec3(0.0);
-    for(int i = 0; i < 4; ++i) 
-    {
+    //for(int i = 0; i < 4; ++i) 
+    //{
+    int i = 0;
         // calculate per-light radiance
         vec3 L = normalize(light_positions[i] - v_world_position);
         vec3 H = normalize(V + L);
@@ -136,7 +142,7 @@ void main()
 
         // add to outgoing radiance Lo
         Lo += (kD * albedo / PI + specular) * radiance * NdotL;  // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
-    }   
+    //}   
 
     // ambient lighting (note that the next IBL tutorial will replace 
     // this ambient lighting with environment lighting).
@@ -149,8 +155,8 @@ void main()
     // gamma correct
     color = pow(color, vec3(1.0/2.2)); 
 
-    if (alpha < 0.01)
+    if (alpha < 0.99)
         discard;
-    frag_color = vec4(color, 1.0);
-    frag_color = vec4(albedo, 1.0);
+
+    frag_color = vec4(vec3(Lo), 1);
 }

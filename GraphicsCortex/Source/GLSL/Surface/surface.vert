@@ -26,7 +26,7 @@ void main()
 {
     v_texcoord = a_texture_coordinates;
     v_world_position = vec3(model * vec4(a_position, 1.0));
-    v_normal = mat3(model) * a_normal;   
+    v_normal = normalize(mat3(model) * a_normal);   
 
     gl_Position =  projection * view * vec4(v_world_position, 1.0);
 }
