@@ -14,7 +14,7 @@ layout(location = vertex_slot)  in vec3 a_position;
 layout(location = normal_slot)  in vec3 a_normal;
 layout(location = uv0_slot)		in vec2 a_texture_coordinates;
 
-out vec3 v_position;
+out vec3 v_world_position;
 out vec2 v_texcoord;
 out vec3 v_normal;
 
@@ -22,10 +22,11 @@ uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 
-void main(){
-	v_position = a_position;
-	v_texcoord = a_texture_coordinates;
-	v_normal = a_normal;
-	
-	gl_Position = projection * view * model * vec4(a_position, 1.0f);
+void main()
+{
+    v_texcoord = a_texture_coordinates;
+    v_world_position = vec3(model * vec4(a_position, 1.0));
+    v_normal = mat3(model) * a_normal;   
+
+    gl_Position =  projection * view * vec4(v_world_position, 1.0);
 }

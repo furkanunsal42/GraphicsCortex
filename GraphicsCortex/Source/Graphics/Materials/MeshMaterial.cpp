@@ -13,7 +13,7 @@
 const std::string MeshMaterial::albedo_texture_uniform_name = "albedo_texture";
 const std::string MeshMaterial::normal_texture_uniform_name = "normal_texture";
 const std::string MeshMaterial::roughness_texture_uniform_name = "roughness_texture";
-const std::string MeshMaterial::metalness_texture_uniform_name = "metalness_texture";
+const std::string MeshMaterial::metallic_texture_uniform_name = "metallic_texture";
 
 namespace {
 
@@ -39,8 +39,8 @@ namespace {
     MeshMaterial::SingleMaterial create_single_mesh_material(ModelMaterial::SingleMaterial& model_mat) {
         MeshMaterial::SingleMaterial material;
 
-        auto albedo_ctf = Texture2D::ColorTextureFormat::RGBA8;
-        auto albedo_cf = Texture2D::ColorFormat::RGBA;
+        auto albedo_ctf = Texture2D::ColorTextureFormat::RGB8;
+        auto albedo_cf = Texture2D::ColorFormat::RGB;
         auto albedo_t = Texture2D::Type::UNSIGNED_BYTE;
         material.albedo_texture = create_material_texture(model_mat.albedo_image, albedo_ctf, albedo_cf, albedo_t, model_mat.albedo);
 
@@ -60,7 +60,7 @@ namespace {
         auto metalness_ctf = Texture2D::ColorTextureFormat::R8;
         auto metalness_cf = Texture2D::ColorFormat::RED;
         auto metalness_t = Texture2D::Type::UNSIGNED_BYTE;
-        material.metalness_texture = create_material_texture(model_mat.metalness_image, metalness_ctf, metalness_cf, metalness_t, glm::vec3(0));
+        material.metallic_texture = create_material_texture(model_mat.metallic_image, metalness_ctf, metalness_cf, metalness_t, glm::vec3(0));
 
 
         //auto specular_ctf   = Texture2D::ColorTextureFormat::R8;
@@ -179,10 +179,10 @@ void MeshMaterial::update_uniforms(Program& program, material_t material_index)
     }
 
     for (auto& material : get_materials()) {
-        program.update_uniform(albedo_texture_uniform_name, material.albedo_texture);
-        program.update_uniform(normal_texture_uniform_name, material.normal_texture);
-        program.update_uniform(roughness_texture_uniform_name, material.roughness_texture);
-        program.update_uniform(metalness_texture_uniform_name, material.metalness_texture);
+        program.update_uniform(albedo_texture_uniform_name, *material.albedo_texture);
+        program.update_uniform(normal_texture_uniform_name, *material.normal_texture);
+        program.update_uniform(roughness_texture_uniform_name, *material.roughness_texture);
+        program.update_uniform(metallic_texture_uniform_name, *material.metallic_texture);
 
         //...
     }

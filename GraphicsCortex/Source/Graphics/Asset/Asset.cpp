@@ -249,10 +249,55 @@ Mesh Asset::load_mesh() {
 }
 
 
-//SingleMaterial Asset::load_single_material(uint32_t submodel_index)
-//{
-//    const aiScene* assimp_scene = (const aiScene*)scene;
-//    uint32_t submodel_count = assimp_scene->mNumMeshes;
-//
-//
-//}
+ModelMaterial::SingleMaterial Asset::load_single_model_material(uint32_t submodel_index)
+{
+    const aiScene* assimp_scene = (const aiScene*)scene;
+    uint32_t submodel_count = assimp_scene->mNumMeshes;
+
+    ModelMaterial::SingleMaterial single_material;
+
+    if (submodel_index < 0 || submodel_index >= assimp_scene->mNumMeshes) {
+        std::cout << "[AssetImporter Error] submodel_index (" << submodel_index << ") is not present in asset at : " << filepath << std::endl;
+        ASSERT(false);
+    }
+
+    if (!assimp_scene->HasMeshes()) {
+        std::cout << "[AssetImporter Error] materials doesn't exist : " << filepath << std::endl;
+        ASSERT(false);
+    }
+
+
+    uint32_t material_index = assimp_scene->mMeshes[submodel_index]->mMaterialIndex;
+    
+    aiString albedo_path;
+    aiString normal_path;
+    aiString roughness_path;
+    aiString metallic_path;
+    aiString ambient_occlusion_path;
+    aiString height_path;
+    aiString emmisive_path;
+
+    if (assimp_scene->mMaterials[material_index]->GetTexture(aiTextureType_DIFFUSE, 0, &albedo_path)){
+        single_material.albedo_image = Image(albedo_path.C_Str(), 3, false);
+    }
+    if (assimp_scene->mMaterials[material_index]->GetTexture(aiTextureType_NORMALS, 0, &normal_path)) {
+        single_material.normal_image = Image(normal_path.C_Str(), 3, false);
+    }
+    if (assimp_scene->mMaterials[material_index]->GetTexture(aiTextureType_DIFFUSE_ROUGHNESS, 0, &roughness_path)) {
+        single_material.roughness_image = Image(roughness_path.C_Str(), 1, false);
+    }
+    if (assimp_scene->mMaterials[material_index]->GetTexture(aiTextureType_METALNESS, 0, &metallic_path)) {
+        single_material.metallic_image = Image(metallic_path.C_Str(), 1, false);
+    }
+    if (assimp_scene->mMaterials[material_index]->GetTexture(aiTextureType_AMBIENT_OCCLUSION, 0, &ambient_occlusion_path)) {
+        single_material.ambient_occlusion_image = Image(ambient_occlusion_path.C_Str(), 1, false);
+    }
+    if (assimp_scene->mMaterials[material_index]->GetTexture(aiTextureType_HEIGHT, 0, &height_path)) {
+        single_material.height_image = Image(height_path.C_Str(), 1, false);
+    }
+    if (assimp_scene->mMaterials[material_index]->GetTexture(aiTextureType_EMISSIVE, 0, &emmisive_path)) {
+        single_material.emissive_image = Image(emmisive_path.C_Str(), 3, false);
+    }
+    
+    return single_material;
+}

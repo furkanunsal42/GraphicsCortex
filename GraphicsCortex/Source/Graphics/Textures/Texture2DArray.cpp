@@ -909,10 +909,8 @@ std::shared_ptr<Image> Texture2DArray::get_image(ColorFormat format, Type type, 
 
 std::shared_ptr<Image> Texture2DArray::get_image(ColorFormat format, Type type, int mipmap_level, int x, int y, int z, int width, int height, int depth)
 {
-	if (!_texture_allocated) {
-		std::cout << "[OpenGL Error] Texture2DArray tried to get_image() but either not allocated any ram or didn't loaded any user data yet" << std::endl;
-		ASSERT(false);
-	}
+	if (!_texture_allocated)
+		_allocate_texture();
 
 	int r_channel = query_red_size(mipmap_level);
 	int g_channel = query_green_size(mipmap_level);
@@ -946,10 +944,8 @@ std::shared_ptr<Image> Texture2DArray::get_image(DepthStencilFormat format, Type
 
 std::shared_ptr<Image> Texture2DArray::get_image(DepthStencilFormat format, Type type, int mipmap_level, int x, int y, int z, int width, int height, int depth)
 {
-	if (!_texture_allocated) {
-		std::cout << "[OpenGL Error] Texture2DArray tried to get_image() but either not allocated any ram or didn't loaded any user data yet" << std::endl;
-		ASSERT(false);
-	}
+	if (!_texture_allocated)
+		_allocate_texture();
 
 	int d_channel = query_depth_size(mipmap_level);
 
@@ -990,10 +986,8 @@ std::shared_ptr<AsyncBuffer> Texture2DArray::get_image_async(ColorFormat format,
 	readback_buffer->wait_to_sycronize_upload();
 	readback_buffer->bind_download();
 
-	if (!_texture_allocated) {
-		std::cout << "[OpenGL Error] Texture2DArray tried to get_image_async() but Texture2DArray was not allocated yet" << std::endl;
-		ASSERT(false);
-	}
+	if (!_texture_allocated)
+		_allocate_texture();
 
 	int format_channels = ColorFormat_channels(format);
 	size_t image_size = (size_t)width * height * depth * pixel_size;
@@ -1032,10 +1026,9 @@ std::shared_ptr<AsyncBuffer> Texture2DArray::get_image_async(DepthStencilFormat 
 	readback_buffer->map();
 
 
-	if (!_texture_allocated) {
-		std::cout << "[OpenGL Error] Texture2DArray tried to get_image_async() but Texture2DArray was not allocated yet" << std::endl;
-		ASSERT(false);
-	}
+	if (!_texture_allocated) 		
+		_allocate_texture();
+
 
 	int mipmap_width = query_width(mipmap_level);
 	int mipmap_height = query_height(mipmap_level);
@@ -1085,10 +1078,9 @@ void Texture2DArray::clear(int texture_index, glm::vec4 clear_data, int mipmap_t
 
 void Texture2DArray::clear(int texture_index, unsigned char clear_data, int x, int y, int width, int height, int mipmap_target)
 {
-	if (!_texture_allocated) {
-		std::cout << "[OpenGL Error] Texture2D tried to clear() but Texture2DArray was not allocated yet" << std::endl;
-		ASSERT(false);
-	}
+	if (!_texture_allocated)
+		_allocate_texture();
+
 	
 	uint32_t type = GL_RED;
 	if (is_intager_ColorTextureFormat(get_internal_format_color()) || is_unsigned_intager_ColorTextureFormat(get_internal_format_color()))
@@ -1099,10 +1091,8 @@ void Texture2DArray::clear(int texture_index, unsigned char clear_data, int x, i
 
 void Texture2DArray::clear(int texture_index, float clear_data, int x, int y, int width, int height, int mipmap_target)
 {
-	if (!_texture_allocated) {
-		std::cout << "[OpenGL Error] Texture2D tried to clear() but Texture2DArray was not allocated yet" << std::endl;
-		ASSERT(false);
-	}
+	if (!_texture_allocated) 
+		_allocate_texture();
 
 	uint32_t type = GL_RED;
 	if (is_intager_ColorTextureFormat(get_internal_format_color()) || is_unsigned_intager_ColorTextureFormat(get_internal_format_color()))
@@ -1113,10 +1103,8 @@ void Texture2DArray::clear(int texture_index, float clear_data, int x, int y, in
 
 void Texture2DArray::clear(int texture_index, glm::vec2 clear_data, int x, int y, int width, int height, int mipmap_target)
 {
-	if (!_texture_allocated) {
-		std::cout << "[OpenGL Error] Texture2D tried to clear() but Texture2DArray was not allocated yet" << std::endl;
-		ASSERT(false);
-	}
+	if (!_texture_allocated) 
+		_allocate_texture();
 
 	uint32_t type = GL_RG;
 	if (is_intager_ColorTextureFormat(get_internal_format_color()) || is_unsigned_intager_ColorTextureFormat(get_internal_format_color()))
@@ -1127,10 +1115,8 @@ void Texture2DArray::clear(int texture_index, glm::vec2 clear_data, int x, int y
 
 void Texture2DArray::clear(int texture_index, glm::vec3 clear_data, int x, int y, int width, int height, int mipmap_target)
 {
-	if (!_texture_allocated) {
-		std::cout << "[OpenGL Error] Texture2D tried to clear() but Texture2DArray was not allocated yet" << std::endl;
-		ASSERT(false);
-	}
+	if (!_texture_allocated) 
+		_allocate_texture();
 
 	uint32_t type = GL_RGB;
 	if (is_intager_ColorTextureFormat(get_internal_format_color()) || is_unsigned_intager_ColorTextureFormat(get_internal_format_color()))
@@ -1141,10 +1127,8 @@ void Texture2DArray::clear(int texture_index, glm::vec3 clear_data, int x, int y
 
 void Texture2DArray::clear(int texture_index, glm::vec4 clear_data, int x, int y, int width, int height, int mipmap_target)
 {
-	if (!_texture_allocated) {
-		std::cout << "[OpenGL Error] Texture2D tried to clear() but Texture2DArray was not allocated yet" << std::endl;
-		ASSERT(false);
-	}
+	if (!_texture_allocated) 
+		_allocate_texture();
 
 	uint32_t type = GL_RGBA;
 	if (is_intager_ColorTextureFormat(get_internal_format_color()) || is_unsigned_intager_ColorTextureFormat(get_internal_format_color()))
@@ -1180,50 +1164,40 @@ void Texture2DArray::clear(glm::vec4 clear_data, int mipmap_target)
 
 void Texture2DArray::clear(unsigned char clear_data, int x, int y, int z, int width, int height, int depth, int mipmap_target)
 {
-	if (!_texture_allocated) {
-		std::cout << "[OpenGL Error] Texture2D tried to clear() but Texture2DArray was not allocated yet" << std::endl;
-		ASSERT(false);
-	}
+	if (!_texture_allocated) 
+		_allocate_texture();
 
 	GLCall(glClearTexSubImage(id, mipmap_target, x, y, z, width, height, depth, GL_RED, GL_UNSIGNED_BYTE, &clear_data));
 }
 
 void Texture2DArray::clear(float clear_data, int x, int y, int z, int width, int height, int depth, int mipmap_target)
 {
-	if (!_texture_allocated) {
-		std::cout << "[OpenGL Error] Texture2D tried to clear() but Texture2DArray was not allocated yet" << std::endl;
-		ASSERT(false);
-	}
+	if (!_texture_allocated) 
+		_allocate_texture();
 
 	GLCall(glClearTexSubImage(id, mipmap_target, x, y, z, width, height, depth, GL_RED, GL_FLOAT, &clear_data));
 }
 
 void Texture2DArray::clear(glm::vec2 clear_data, int x, int y, int z, int width, int height, int depth, int mipmap_target)
 {
-	if (!_texture_allocated) {
-		std::cout << "[OpenGL Error] Texture2D tried to clear() but Texture2DArray was not allocated yet" << std::endl;
-		ASSERT(false);
-	}
+	if (!_texture_allocated) 
+		_allocate_texture();
 
 	GLCall(glClearTexSubImage(id, mipmap_target, x, y, z, width, height, depth, GL_RG, GL_FLOAT, &clear_data));
 }
 
 void Texture2DArray::clear(glm::vec3 clear_data, int x, int y, int z, int width, int height, int depth, int mipmap_target)
 {
-	if (!_texture_allocated) {
-		std::cout << "[OpenGL Error] Texture2D tried to clear() but Texture2DArray was not allocated yet" << std::endl;
-		ASSERT(false);
-	}
+	if (!_texture_allocated) 
+		_allocate_texture();
 
 	GLCall(glClearTexSubImage(id, mipmap_target, x, y, z, width, height, depth, GL_RGB, GL_FLOAT, &clear_data));
 }
 
 void Texture2DArray::clear(glm::vec4 clear_data, int x, int y, int z, int width, int height, int depth, int mipmap_target)
 {
-	if (!_texture_allocated) {
-		std::cout << "[OpenGL Error] Texture2D tried to clear() but Texture2DArray was not allocated yet" << std::endl;
-		ASSERT(false);
-	}
+	if (!_texture_allocated) 
+		_allocate_texture();
 
 	GLCall(glClearTexSubImage(id, mipmap_target, x, y, z, width, height, depth, GL_RGBA, GL_FLOAT, &clear_data));
 }

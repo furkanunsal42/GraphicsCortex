@@ -694,10 +694,8 @@ std::shared_ptr<Image> Texture1D::get_image(ColorFormat format, Type type, int m
 
 std::shared_ptr<Image> Texture1D::get_image(ColorFormat format, Type type, int mipmap_level, int x, int width)
 {
-	if (!_texture_allocated) {
-		std::cout << "[OpenGL Error] Texture1D tried to get_image() but Texture was not allocated yet" << std::endl;
-		ASSERT(false);
-	}
+	if (!_texture_allocated) 
+		_allocate_texture();
 
 	int r_channel = query_red_size(mipmap_level);
 	int g_channel = query_green_size(mipmap_level);
@@ -730,10 +728,8 @@ std::shared_ptr<Image> Texture1D::get_image(DepthStencilFormat format, Type type
 
 std::shared_ptr<Image> Texture1D::get_image(DepthStencilFormat format, Type type, int mipmap_level, int x, int width)
 {
-	if (!_texture_allocated) {
-		std::cout << "[OpenGL Error] Texture1D tried to get_image() but Texture was not allocated yet" << std::endl;
-		ASSERT(false);
-	}
+	if (!_texture_allocated) 
+		_allocate_texture();
 
 	int d_channel = query_depth_size(mipmap_level);
 
@@ -772,10 +768,8 @@ std::shared_ptr<AsyncBuffer> Texture1D::get_image_async(ColorFormat format, Type
 	readback_buffer->wait_to_sycronize_upload();
 	readback_buffer->bind_download();
 
-	if (!_texture_allocated) {
-		std::cout << "[OpenGL Error] Texture1D tried to get_image_async() but Texture2D was not allocated yet" << std::endl;
-		ASSERT(false);
-	}
+	if (!_texture_allocated)
+		_allocate_texture();
 
 	int format_channels = ColorFormat_channels(format);
 	size_t image_size = width * pixel_size;
@@ -812,10 +806,8 @@ std::shared_ptr<AsyncBuffer> Texture1D::get_image_async(DepthStencilFormat forma
 	readback_buffer->map();
 
 
-	if (!_texture_allocated) {
-		std::cout << "[OpenGL Error] Texture1D tried to get_image_async() but Texture1D was not allocated yet" << std::endl;
-		ASSERT(false);
-	}
+	if (!_texture_allocated)
+		_allocate_texture();
 
 	int mipmap_width = query_width(mipmap_level);
 
@@ -864,11 +856,9 @@ void Texture1D::clear(glm::vec4 clear_data, int mipmap_target)
 
 void Texture1D::clear(unsigned char clear_data, int x, int width, int mipmap_target)
 {
-	if (!_texture_allocated) {
-		std::cout << "[OpenGL Error] Texture1D tried to get_image() but Texture was not allocated yet" << std::endl;
-		ASSERT(false);
-	}
-	
+	if (!_texture_allocated)
+		_allocate_texture();
+
 	uint32_t type = GL_RED;
 	if (is_intager_ColorTextureFormat(get_internal_format_color()) || is_unsigned_intager_ColorTextureFormat(get_internal_format_color()))
 		type = GL_RED_INTEGER;
@@ -878,10 +868,8 @@ void Texture1D::clear(unsigned char clear_data, int x, int width, int mipmap_tar
 
 void Texture1D::clear(float clear_data, int x, int width, int mipmap_target)
 {
-	if (!_texture_allocated) {
-		std::cout << "[OpenGL Error] Texture1D tried to get_image() but Texture was not allocated yet" << std::endl;
-		ASSERT(false);
-	}
+	if (!_texture_allocated)
+		_allocate_texture();
 
 	uint32_t type = GL_RED;
 	if (is_intager_ColorTextureFormat(get_internal_format_color()) || is_unsigned_intager_ColorTextureFormat(get_internal_format_color()))
@@ -892,10 +880,8 @@ void Texture1D::clear(float clear_data, int x, int width, int mipmap_target)
 
 void Texture1D::clear(glm::vec2 clear_data, int x, int width, int mipmap_target)
 {
-	if (!_texture_allocated) {
-		std::cout << "[OpenGL Error] Texture1D tried to get_image() but Texture was not allocated yet" << std::endl;
-		ASSERT(false);
-	}
+	if (!_texture_allocated)
+		_allocate_texture();
 
 	uint32_t type = GL_RG;
 	if (is_intager_ColorTextureFormat(get_internal_format_color()) || is_unsigned_intager_ColorTextureFormat(get_internal_format_color()))
@@ -907,10 +893,8 @@ void Texture1D::clear(glm::vec2 clear_data, int x, int width, int mipmap_target)
 
 void Texture1D::clear(glm::vec3 clear_data, int x, int width, int mipmap_target)
 {
-	if (!_texture_allocated) {
-		std::cout << "[OpenGL Error] Texture1D tried to get_image() but Texture was not allocated yet" << std::endl;
-		ASSERT(false);
-	}
+	if (!_texture_allocated)
+		_allocate_texture();
 
 	uint32_t type = GL_RGB;
 	if (is_intager_ColorTextureFormat(get_internal_format_color()) || is_unsigned_intager_ColorTextureFormat(get_internal_format_color()))
@@ -921,10 +905,8 @@ void Texture1D::clear(glm::vec3 clear_data, int x, int width, int mipmap_target)
 
 void Texture1D::clear(glm::vec4 clear_data, int x, int width, int mipmap_target)
 {
-	if (!_texture_allocated) {
-		std::cout << "[OpenGL Error] Texture1D tried to get_image() but Texture was not allocated yet" << std::endl;
-		ASSERT(false);
-	}
+	if (!_texture_allocated)
+		_allocate_texture();
 
 	uint32_t type = GL_RGBA;
 	if (is_intager_ColorTextureFormat(get_internal_format_color()) || is_unsigned_intager_ColorTextureFormat(get_internal_format_color()))

@@ -18,7 +18,7 @@ public:
 		std::shared_ptr<Texture2D> albedo_texture = nullptr;
 		std::shared_ptr<Texture2D> normal_texture = nullptr;
 		std::shared_ptr<Texture2D> roughness_texture = nullptr;
-		std::shared_ptr<Texture2D> metalness_texture = nullptr;
+		std::shared_ptr<Texture2D> metallic_texture = nullptr;
 		std::shared_ptr<Texture2D> specular_texture = nullptr;
 		std::shared_ptr<Texture2D> height_texture = nullptr;
 		std::shared_ptr<Texture2D> opacity_texture = nullptr;
@@ -46,7 +46,7 @@ public:
 	static const std::string albedo_texture_uniform_name;
 	static const std::string normal_texture_uniform_name;
 	static const std::string roughness_texture_uniform_name;
-	static const std::string metalness_texture_uniform_name;
+	static const std::string metallic_texture_uniform_name;
 
 private:
 	std::vector<SingleMaterial> materials;

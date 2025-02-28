@@ -951,10 +951,8 @@ void Texture2D::clear(glm::vec4 clear_data, int mipmap_target)
 
 void Texture2D::clear(unsigned char clear_data, int x, int y, int width, int height, int mipmap_target)
 {
-	if (!_texture_allocated) {
-		std::cout << "[OpenGL Error] Texture2D tried to clear() but Texture2D was not allocated yet" << std::endl;
-		ASSERT(false);
-	}
+	if (!_texture_allocated) 
+		_allocate_texture();
 	
 	uint32_t type = GL_RED;
 	if (is_intager_ColorTextureFormat(get_internal_format_color()) || is_unsigned_intager_ColorTextureFormat(get_internal_format_color()))
@@ -965,10 +963,8 @@ void Texture2D::clear(unsigned char clear_data, int x, int y, int width, int hei
 
 void Texture2D::clear(float clear_data, int x, int y, int width, int height, int mipmap_target)
 {
-	if (!_texture_allocated) {
-		std::cout << "[OpenGL Error] Texture2D tried to clear() but Texture2D wasn't allocated" << std::endl;
-		ASSERT(false);
-	}
+	if (!_texture_allocated) 
+		_allocate_texture();
 
 	uint32_t type = GL_RED;
 	if (is_intager_ColorTextureFormat(get_internal_format_color()) || is_unsigned_intager_ColorTextureFormat(get_internal_format_color()))
@@ -979,10 +975,8 @@ void Texture2D::clear(float clear_data, int x, int y, int width, int height, int
 
 void Texture2D::clear(glm::vec2 clear_data, int x, int y, int width, int height, int mipmap_target)
 {
-	if (!_texture_allocated) {
-		std::cout << "[OpenGL Error] Texture2D tried to clear() but Texture2D was not allocated yet" << std::endl;
-		ASSERT(false);
-	}
+	if (!_texture_allocated) 
+		_allocate_texture();
 
 	uint32_t type = GL_RG;
 	if (is_intager_ColorTextureFormat(get_internal_format_color()) || is_unsigned_intager_ColorTextureFormat(get_internal_format_color()))
@@ -993,10 +987,8 @@ void Texture2D::clear(glm::vec2 clear_data, int x, int y, int width, int height,
 
 void Texture2D::clear(glm::vec3 clear_data, int x, int y, int width, int height, int mipmap_target)
 {
-	if (!_texture_allocated) {
-		std::cout << "[OpenGL Error] Texture2D tried to clear() but Texture2D was not allocated yet" << std::endl;
-		ASSERT(false);
-	}
+	if (!_texture_allocated) 
+		_allocate_texture();
 
 	uint32_t type = GL_RGB;
 	if (is_intager_ColorTextureFormat(get_internal_format_color()) || is_unsigned_intager_ColorTextureFormat(get_internal_format_color()))
@@ -1007,10 +999,8 @@ void Texture2D::clear(glm::vec3 clear_data, int x, int y, int width, int height,
 
 void Texture2D::clear(glm::vec4 clear_data, int x, int y, int width, int height, int mipmap_target)
 {
-	if (!_texture_allocated) {
-		std::cout << "[OpenGL Error] Texture2D tried to clear() but Texture2D was not allocated yet" << std::endl;
-		ASSERT(false);
-	}
+	if (!_texture_allocated) 
+		_allocate_texture();
 
 	uint32_t type = GL_RGBA;
 	if (is_intager_ColorTextureFormat(get_internal_format_color()) || is_unsigned_intager_ColorTextureFormat(get_internal_format_color()))

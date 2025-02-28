@@ -410,11 +410,6 @@ void MaterialComponent::update_uniforms()
 	}
 }
 
-void MaterialComponent::on_pre_render()
-{
-	update_uniforms();
-}
-
 uint32_t MaterialComponent::get_UniformType_size_in_bytes(UniformType type)
 {
 

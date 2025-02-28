@@ -16,7 +16,7 @@ public:
 
 		Asset sculpture("../GraphicsCortex/Models/sculpture/scene.gltf");
 		entity_a->add_component<MeshComponent>(std::make_shared<Mesh>(sculpture.load_mesh()));
-		entity_a->add_component<MaterialComponent>(default_program::surface_program_s());
+		entity_a->add_component<MaterialComponent>(default_program::debug::texcoord_abs_program_s());
 		entity_a->add_component<MeshRendererComponent>();
 		entity_a->add_component<TransformComponent>();
 		scene.add_entity(entity_a);

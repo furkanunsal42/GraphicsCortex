@@ -62,9 +62,7 @@ public:
 	void set_render_parameters(RenderParameters params);
 	RenderParameters& get_render_parameters();
 
-
 	void update_uniforms();
-	void on_pre_render();
 
 private:
 

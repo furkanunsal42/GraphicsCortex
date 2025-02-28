@@ -67,6 +67,7 @@ void MeshRendererComponent::render(Camera& camera)
 		if (node.get_submeshes().size() == 0) return;
 
 		program->update_uniform("model", transform * transform_c->transform);
+		program->update_uniform("camera_position", camera.position);
 		for (mesh_t submesh : node.get_submeshes()) {
 
 			if (mesh_material_exists && mesh_material->does_material_exist((material_t)submesh))

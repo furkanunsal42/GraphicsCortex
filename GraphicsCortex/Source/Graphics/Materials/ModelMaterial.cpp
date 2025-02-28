@@ -10,7 +10,7 @@ size_t ModelMaterial::get_material_count()
     return materials.size();
 }
 
-material_t ModelMaterial::add_material(SingleMaterial single_material)
+material_t ModelMaterial::add_material(SingleMaterial& single_material)
 {
     materials.push_back(single_material);
     return materials.size() - 1;

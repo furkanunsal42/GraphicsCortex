@@ -487,10 +487,8 @@ void TextureCubeMap::clear(Face face, glm::vec4 clear_data, int mipmap_target)
 
 void TextureCubeMap::clear(Face face, unsigned char clear_data, int x, int y, int width, int height, int mipmap_target)
 {
-	if (!_texture_allocated || !_user_data_loaded) {
-		std::cout << "[OpenGL Error] TextureCubeMap tried to clear() but either not allocated any ram or didn't loaded any user data yet" << std::endl;
-		ASSERT(false);
-	}
+	if (!_texture_allocated)
+		_allocate_texture();
 
 	uint32_t type = GL_RED;
 	if (is_intager_ColorTextureFormat(get_internal_format_color()) || is_unsigned_intager_ColorTextureFormat(get_internal_format_color()))
@@ -501,10 +499,8 @@ void TextureCubeMap::clear(Face face, unsigned char clear_data, int x, int y, in
 
 void TextureCubeMap::clear(Face face, float clear_data, int x, int y, int width, int height, int mipmap_target)
 {
-	if (!_texture_allocated || !_user_data_loaded) {
-		std::cout << "[OpenGL Error] TextureCubeMap tried to clear() but either not allocated any ram or didn't loaded any user data yet" << std::endl;
-		ASSERT(false);
-	}
+	if (!_texture_allocated)
+		_allocate_texture();
 
 	uint32_t type = GL_RED;
 	if (is_intager_ColorTextureFormat(get_internal_format_color()) || is_unsigned_intager_ColorTextureFormat(get_internal_format_color()))
@@ -515,10 +511,8 @@ void TextureCubeMap::clear(Face face, float clear_data, int x, int y, int width,
 
 void TextureCubeMap::clear(Face face, glm::vec2 clear_data, int x, int y, int width, int height, int mipmap_target)
 {
-	if (!_texture_allocated || !_user_data_loaded) {
-		std::cout << "[OpenGL Error] TextureCubeMap tried to clear() but either not allocated any ram or didn't loaded any user data yet" << std::endl;
-		ASSERT(false);
-	}
+	if (!_texture_allocated)
+		_allocate_texture();
 
 	uint32_t type = GL_RG;
 	if (is_intager_ColorTextureFormat(get_internal_format_color()) || is_unsigned_intager_ColorTextureFormat(get_internal_format_color()))
@@ -530,10 +524,8 @@ void TextureCubeMap::clear(Face face, glm::vec2 clear_data, int x, int y, int wi
 
 void TextureCubeMap::clear(Face face, glm::vec3 clear_data, int x, int y, int width, int height, int mipmap_target)
 {
-	if (!_texture_allocated || !_user_data_loaded) {
-		std::cout << "[OpenGL Error] TextureCubeMap tried to clear() but either not allocated any ram or didn't loaded any user data yet" << std::endl;
-		ASSERT(false);
-	}
+	if (!_texture_allocated)
+		_allocate_texture();
 
 	uint32_t type = GL_RGB;
 	if (is_intager_ColorTextureFormat(get_internal_format_color()) || is_unsigned_intager_ColorTextureFormat(get_internal_format_color()))
@@ -544,10 +536,8 @@ void TextureCubeMap::clear(Face face, glm::vec3 clear_data, int x, int y, int wi
 
 void TextureCubeMap::clear(Face face, glm::vec4 clear_data, int x, int y, int width, int height, int mipmap_target)
 {
-	if (!_texture_allocated || !_user_data_loaded) {
-		std::cout << "[OpenGL Error] TextureCubeMap tried to clear() but either not allocated any ram or didn't loaded any user data yet" << std::endl;
-		ASSERT(false);
-	}
+	if (!_texture_allocated)
+		_allocate_texture();
 
 	uint32_t type = GL_RGBA;
 	if (is_intager_ColorTextureFormat(get_internal_format_color()) || is_unsigned_intager_ColorTextureFormat(get_internal_format_color()))

@@ -30,8 +30,10 @@ public:
 
 	//Image(const std::string& file_path, int desired_channels = 4, bool vertical_flip = true);
 	Image() = default;
-	Image(const Image& copy_image);
+	Image(const Image& other);
+	Image& operator=(const Image& other);
 	Image(Image&& other);
+	Image& operator=(Image&& other);
 
 	uint8_t* get_image_data();
 	int get_width() const;
