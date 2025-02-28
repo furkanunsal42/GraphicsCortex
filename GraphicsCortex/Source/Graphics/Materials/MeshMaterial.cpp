@@ -17,8 +17,23 @@ const std::string MeshMaterial::metallic_texture_uniform_name = "metallic_textur
 
 namespace {
 
-    template<typename T>
-    std::shared_ptr<Texture2D> create_material_texture(std::shared_ptr<Image> image, Texture2D::ColorTextureFormat ctf, Texture2D::ColorFormat cf, Texture2D::Type t, T clear_value) {
+    constexpr auto albedo_ctf = Texture2D::ColorTextureFormat::RGBA8;
+    constexpr auto albedo_cf = Texture2D::ColorFormat::RGBA;
+    constexpr auto albedo_t = Texture2D::Type::UNSIGNED_BYTE;
+
+    constexpr auto normal_ctf = Texture2D::ColorTextureFormat::RGB8;
+    constexpr auto normal_cf = Texture2D::ColorFormat::RGB;
+    constexpr auto normal_t = Texture2D::Type::UNSIGNED_BYTE;
+
+    constexpr auto roughness_ctf = Texture2D::ColorTextureFormat::R8;
+    constexpr auto roughness_cf = Texture2D::ColorFormat::RED;
+    constexpr auto roughness_t = Texture2D::Type::UNSIGNED_BYTE;
+
+    constexpr auto metallic_ctf = Texture2D::ColorTextureFormat::R8;
+    constexpr auto metallic_cf = Texture2D::ColorFormat::RED;
+    constexpr auto metallic_t = Texture2D::Type::UNSIGNED_BYTE;
+
+    std::shared_ptr<Texture2D> create_material_texture_without_clear(const std::shared_ptr<Image> image, Texture2D::ColorTextureFormat ctf, Texture2D::ColorFormat cf, Texture2D::Type t) {
 
         std::shared_ptr<Texture2D> texture;
 
@@ -26,42 +41,59 @@ namespace {
             const Image& albedo_image = *image;
             glm::ivec2 resolution = glm::ivec2(albedo_image.get_width(), albedo_image.get_height());
 
-            texture = std::make_shared<Texture2D>(resolution.x, resolution.y, ctf, 1, 0, 0);
-            texture->load_data(albedo_image, cf, t, 0);
+            uint32_t mipmap_count = std::max(1.0, std::min(std::log2(resolution.x), std::log2(resolution.y)));
+            texture = std::make_shared<Texture2D>(resolution.x, resolution.y, ctf, mipmap_count, 0, 0);
+            texture->wrap_u = Texture2D::WrapMode::REPEAT;
+            texture->wrap_v = Texture2D::WrapMode::REPEAT;
+            texture->load_data_with_mipmaps(albedo_image, cf, t);
         }
         else {
             texture = std::make_shared<Texture2D>(1, 1, ctf, 1, 0, 0);
+            texture->wrap_u = Texture2D::WrapMode::REPEAT;
+            texture->wrap_v = Texture2D::WrapMode::REPEAT;
+            //texture->clear(clear_value);
+        }
+
+
+        return texture;
+    }
+
+    template<typename T>
+    std::shared_ptr<Texture2D> create_material_texture(const std::shared_ptr<Image> image, Texture2D::ColorTextureFormat ctf, Texture2D::ColorFormat cf, Texture2D::Type t, T clear_value) {
+
+        std::shared_ptr<Texture2D> texture;
+
+        if (image != nullptr) {
+            const Image& albedo_image = *image;
+            glm::ivec2 resolution = glm::ivec2(albedo_image.get_width(), albedo_image.get_height());
+
+            uint32_t mipmap_count = std::max(1.0, std::min(std::log2(resolution.x), std::log2(resolution.y)));
+            texture = std::make_shared<Texture2D>(resolution.x, resolution.y, ctf, mipmap_count, 0, 0);
+            texture->wrap_u = Texture2D::WrapMode::REPEAT;
+            texture->wrap_v = Texture2D::WrapMode::REPEAT;
+            texture->load_data_with_mipmaps(albedo_image, cf, t);
+        }
+        else {
+            texture = std::make_shared<Texture2D>(1, 1, ctf, 1, 0, 0);
+            texture->wrap_u = Texture2D::WrapMode::REPEAT;
+            texture->wrap_v = Texture2D::WrapMode::REPEAT;
             texture->clear(clear_value);
         }
+
+
         return texture;
     }
 
     MeshMaterial::SingleMaterial create_single_mesh_material(ModelMaterial::SingleMaterial& model_mat) {
         MeshMaterial::SingleMaterial material;
 
-        auto albedo_ctf = Texture2D::ColorTextureFormat::RGBA8;
-        auto albedo_cf = Texture2D::ColorFormat::RGBA;
-        auto albedo_t = Texture2D::Type::UNSIGNED_BYTE;
         material.albedo_texture = create_material_texture(model_mat.albedo_image, albedo_ctf, albedo_cf, albedo_t, model_mat.albedo);
 
-
-        auto normal_ctf = Texture2D::ColorTextureFormat::RGB8;
-        auto normal_cf = Texture2D::ColorFormat::RGB;
-        auto normal_t = Texture2D::Type::UNSIGNED_BYTE;
         material.normal_texture = create_material_texture(model_mat.normal_image, normal_ctf, normal_cf, normal_t, glm::vec3(0, 0, 0.5));
 
-
-        auto roughness_ctf = Texture2D::ColorTextureFormat::R8;
-        auto roughness_cf = Texture2D::ColorFormat::RED;
-        auto roughness_t = Texture2D::Type::UNSIGNED_BYTE;
         material.roughness_texture = create_material_texture(model_mat.roughness_image, roughness_ctf, roughness_cf, roughness_t, 1.0f);
 
-
-        auto metalness_ctf = Texture2D::ColorTextureFormat::R8;
-        auto metalness_cf = Texture2D::ColorFormat::RED;
-        auto metalness_t = Texture2D::Type::UNSIGNED_BYTE;
-        material.metallic_texture = create_material_texture(model_mat.metallic_image, metalness_ctf, metalness_cf, metalness_t, glm::vec3(0));
-
+        material.metallic_texture = create_material_texture(model_mat.metallic_image, metallic_ctf, metallic_cf, metallic_t, glm::vec3(0));
 
         //auto specular_ctf   = Texture2D::ColorTextureFormat::R8;
         //auto specular_cf    = Texture2D::ColorFormat::RED;
@@ -109,11 +141,64 @@ namespace {
 
 void MeshMaterial::load_material(ModelMaterial& model_material)
 {
-    int i = 0;
-    for (auto& single_model_material : model_material.get_materials()) {
-        std::cout << i << std::endl;
-        i++;
-        add_material(create_single_mesh_material(single_model_material));
+
+    struct _TextureLoadParams {
+        Texture2D::ColorTextureFormat ctf   = Texture2D::ColorTextureFormat::RGB8;
+        Texture2D::ColorFormat cf           = Texture2D::ColorFormat::RGB;
+        Texture2D::Type t                   = Texture2D::Type::UNSIGNED_BYTE;
+        std::shared_ptr<Texture2D> texture  = nullptr;
+    };
+
+    std::unordered_map<std::shared_ptr<Image>, _TextureLoadParams> image_to_texture;
+
+    std::span<ModelMaterial::SingleMaterial> models = model_material.get_materials();
+    for (auto& model : models) {
+        if (model.albedo_image != nullptr)              
+            image_to_texture[model.albedo_image]            = { albedo_ctf, albedo_cf, albedo_t, nullptr};
+        if (model.normal_image != nullptr)              
+            image_to_texture[model.normal_image]            = { normal_ctf, normal_cf, normal_t, nullptr };
+        if (model.roughness_image != nullptr)           
+            image_to_texture[model.roughness_image]         = { roughness_ctf, roughness_cf, roughness_t, nullptr};
+        if (model.metallic_image != nullptr)            
+            image_to_texture[model.metallic_image]          = { metallic_ctf, metallic_cf, metallic_t, nullptr };
+        //if (model.height_image != nullptr)              
+        //    image_to_texture[model.height_image]            = { albedo_ctf, albedo_cf, albedo_t, nullptr };
+        //if (model.ambient_occlusion_image != nullptr)   
+        //    image_to_texture[model.ambient_occlusion_image] = { albedo_ctf, albedo_cf, albedo_t, nullptr };
+        //if (model.emissive_image != nullptr)            
+        //    image_to_texture[model.emissive_image]          = { albedo_ctf, albedo_cf, albedo_t, nullptr };
+    }
+
+    for (auto& image_texture : image_to_texture) {
+        const std::shared_ptr<Image> image = image_texture.first;
+        _TextureLoadParams& texture_params = image_texture.second;
+        texture_params.texture = create_material_texture_without_clear(image, texture_params.ctf, texture_params.cf, texture_params.t);
+    }
+
+    for (auto& model_mat : model_material.get_materials()) {
+        MeshMaterial::SingleMaterial material;
+        
+        if (material.albedo_texture != nullptr)
+            material.albedo_texture = image_to_texture[model_mat.albedo_image].texture;
+        else
+            material.albedo_texture = create_material_texture(model_mat.albedo_image, albedo_ctf, albedo_cf, albedo_t, glm::vec4(model_mat.albedo));
+
+        if (material.normal_texture != nullptr)
+            material.normal_texture = image_to_texture[model_mat.normal_image].texture;
+        else
+            material.normal_texture = create_material_texture(model_mat.normal_image, normal_ctf, normal_cf, normal_t, glm::vec3(0, 0, 0.5));
+
+        if (material.roughness_texture != nullptr)
+            material.roughness_texture = image_to_texture[model_mat.roughness_image].texture;
+        else
+            material.roughness_texture = create_material_texture(model_mat.roughness_image, roughness_ctf, roughness_cf, roughness_t, 1.0f);
+
+        if (material.metallic_texture != nullptr)
+            material.metallic_texture = image_to_texture[model_mat.metallic_image].texture;
+        else
+            material.metallic_texture = create_material_texture(model_mat.metallic_image, metallic_ctf, metallic_cf, metallic_t, 0.0f);
+
+        add_material(std::move(material));
     }
 }
 

@@ -50,6 +50,16 @@ Program default_program::debug::texcoord_abs_program()
 	return program;
 }
 
+Program default_program::debug::texcoord_pattern_program()
+{
+	Shader default_shader(
+		"../GraphicsCortex/Source/GLSL/Debug/basic.vert",
+		"../GraphicsCortex/Source/GLSL/Debug/texcoord_pattern.frag"
+	);
+	Program program(default_shader);
+	return program;
+}
+
 
 // ----------------------------------
 
@@ -99,6 +109,16 @@ std::shared_ptr<Program> default_program::debug::texcoord_abs_program_s()
 	Shader default_shader(
 		"../GraphicsCortex/Source/GLSL/Debug/basic.vert",
 		"../GraphicsCortex/Source/GLSL/Debug/texcoordabs.frag"
+	);
+	std::shared_ptr<Program> program = std::make_shared<Program>(default_shader);
+	return program;
+}
+
+std::shared_ptr<Program> default_program::debug::texcoord_pattern_program_s()
+{
+	Shader default_shader(
+		"../GraphicsCortex/Source/GLSL/Debug/basic.vert",
+		"../GraphicsCortex/Source/GLSL/Debug/texcoord_pattern.frag"
 	);
 	std::shared_ptr<Program> program = std::make_shared<Program>(default_shader);
 	return program;

@@ -416,7 +416,7 @@ struct WindowDescription {
 	glm::ivec2 f_resolution = glm::ivec2(0, 0);
 	glm::ivec4 f_color_bits = glm::ivec4(8, 8, 8, 8);
 	glm::ivec2 f_depth_stencil_bits = glm::ivec2(24, 8);
-	int32_t f_multisample_count = 1;
+	int32_t f_multisample_count = 0;
 	bool f_srgb_enabled = false;
 	bool f_double_buffered = true;
 	int32_t f_swap_interval = 0;

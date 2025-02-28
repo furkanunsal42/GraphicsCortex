@@ -16,8 +16,6 @@ RenderPipeline::RenderPipeline(int width, int height, TextureBase2::ColorTexture
 
 RenderPipeline::RenderPipeline(int width, int height, Texture2D::ColorTextureFormat internal_format, Texture2D::DepthStencilTextureFormat depth_stencil_format, int multisample) {
 
-	texture = std::make_shared<Texture2D>(width, height, internal_format, 1, 0, multisample);
-	
 	if (depth_stencil_format == Texture2D::DepthStencilTextureFormat::DEPTH_COMPONENT32F) {
 		depth = std::make_shared<Texture2D>(width, height, depth_stencil_format, 1, 0, multisample);
 		framebuffer->attach_depth(depth);

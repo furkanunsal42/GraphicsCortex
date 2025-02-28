@@ -432,8 +432,8 @@ void Texture2D::_allocate_texture()
 
 	if (width >> (mipmap_levels - 1) == 0 || height >> (mipmap_levels - 1) == 0 || mipmap_levels >= sizeof(int) * 8) {
 		int old_mipmap_levels = mipmap_levels;
-		if (width >> mipmap_levels == 0 || mipmap_levels >= sizeof(int) * 8) mipmap_levels = std::log2(width);
-		if (height >> mipmap_levels == 0 || mipmap_levels >= sizeof(int) * 8) mipmap_levels = std::log2(height);
+		if (width >> mipmap_levels == 0 || mipmap_levels >= sizeof(int) * 8) mipmap_levels = std::max(1.0, std::log2(width));
+		if (height >> mipmap_levels == 0 || mipmap_levels >= sizeof(int) * 8) mipmap_levels = std::max(1.0, std::log2(height));
 		std::cout << "[OpenGL Warning] Texture2D with size (" << width << ", " << height << ") tried to load " << old_mipmap_levels << " mipmap levels, mipmap levels reducing to " << mipmap_levels << std::endl;;
  	}
 	

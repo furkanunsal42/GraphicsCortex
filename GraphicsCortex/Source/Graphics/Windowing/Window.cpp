@@ -351,7 +351,7 @@ void Window::post_empty_event() {
 
 double Window::handle_events(bool print_performances) {
 
-	glfwWaitEventsTimeout(0.007);
+	glfwPollEvents();
 
 	if (last_handle_events_time == invalid_time) {
 		last_handle_events_time = std::chrono::system_clock::now();

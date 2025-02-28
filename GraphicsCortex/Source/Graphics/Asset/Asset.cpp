@@ -341,7 +341,7 @@ ModelMaterial Asset::load_model_material()
     struct _ImageParam {
         std::string path = "";
         uint32_t channel_count = 3;
-        bool flip = false;
+        bool flip = true;
     };
 
     std::vector<std::shared_ptr<Image>> images;
@@ -524,24 +524,13 @@ ModelMaterial Asset::load_model_material()
         i++;
     }
 
-    std::cout << "---------" << std::endl;
-    std::mutex m;
-
     uint32_t texture_count = images.size();
-    //#pragma omp parallel for
+    #pragma omp parallel for
     for (int i = 0; i < texture_count; i++) {
-        std::cout << i << std::endl;
         images[i] = std::make_shared<Image>(image_params[i].path, image_params[i].channel_count, image_params[i].flip);
-
-        m.lock();
-        std::cout << "loaded : " << image_params[i].path << "   " << images[i]->get_width() << ", " << images[i]->get_height() << std::endl;
-        m.unlock();
-
     }
 
     for (uint32_t submodel_index = 0; submodel_index < submodel_count; submodel_index++) {
-        std::cout << submodel_index << std::endl;
-
         ModelMaterial::SingleMaterial single_material;
 
         uint32_t material_index = assimp_scene->mMeshes[submodel_index]->mMaterialIndex;

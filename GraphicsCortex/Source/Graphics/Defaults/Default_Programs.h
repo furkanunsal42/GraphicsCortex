@@ -14,12 +14,14 @@ namespace default_program {
 		Program normal_abs_program();
 		Program texcoord_program();
 		Program texcoord_abs_program();
+		Program texcoord_pattern_program();
 
 		std::shared_ptr<Program> flatcolor_program_s();
 		std::shared_ptr<Program> normal_program_s();
 		std::shared_ptr<Program> normal_abs_program_s();
 		std::shared_ptr<Program> texcoord_program_s();
 		std::shared_ptr<Program> texcoord_abs_program_s();
+		std::shared_ptr<Program> texcoord_pattern_program_s();
 
 	}
 

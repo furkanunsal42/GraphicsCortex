@@ -85,7 +85,9 @@ vec3 fresnelSchlick(float cosTheta, vec3 F0)
 // ----------------------------------------------------------------------------
 void main()
 {       
-    vec3 albedo     = pow(texture(albedo_texture, v_texcoord).rgb, vec3(2.2));
+    vec4 albedo_full = texture(albedo_texture, v_texcoord);
+    vec3 albedo     = pow(albedo_full.rgb, vec3(1));
+    float alpha = albedo_full.a;
     float metallic  = texture(metallic_texture, v_texcoord).r;
     float roughness = texture(roughness_texture, v_texcoord).r;
     float ao        = texture(ambiant_occlusion_texture, v_texcoord).r;
@@ -147,6 +149,8 @@ void main()
     // gamma correct
     color = pow(color, vec3(1.0/2.2)); 
 
+    if (alpha < 0.01)
+        discard;
     frag_color = vec4(color, 1.0);
     frag_color = vec4(albedo, 1.0);
 }
