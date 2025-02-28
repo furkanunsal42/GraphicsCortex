@@ -18,13 +18,13 @@ public:
 	class SingleMaterial {
 	public:
 
-		std::optional<Image> albedo_image = std::nullopt;
-		std::optional<Image> normal_image = std::nullopt;
-		std::optional<Image> roughness_image = std::nullopt;
-		std::optional<Image> metallic_image = std::nullopt;
-		std::optional<Image> height_image = std::nullopt;
-		std::optional<Image> ambient_occlusion_image = std::nullopt;
-		std::optional<Image> emissive_image = std::nullopt;
+		std::shared_ptr<Image> albedo_image = nullptr;
+		std::shared_ptr<Image> normal_image = nullptr;
+		std::shared_ptr<Image> roughness_image = nullptr;
+		std::shared_ptr<Image> metallic_image = nullptr;
+		std::shared_ptr<Image> height_image = nullptr;
+		std::shared_ptr<Image> ambient_occlusion_image = nullptr;
+		std::shared_ptr<Image> emissive_image = nullptr;
 
 		glm::vec4 albedo = glm::vec4(1);
 		float roughness = 1;

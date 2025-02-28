@@ -8,6 +8,8 @@
 #include "assimp/scene.h"
 #include <assimp/postprocess.h>
 
+#include <mutex>
+
 Asset::Asset(const std::filesystem::path& asset_path, const AssetImportDescription& properties)
 {
     filepath = asset_path;
@@ -261,12 +263,10 @@ ModelMaterial::SingleMaterial Asset::load_single_model_material(uint32_t submode
         ASSERT(false);
     }
 
-    if (!assimp_scene->HasMeshes()) {
+    if (!assimp_scene->HasMaterials()) {
         std::cout << "[AssetImporter Error] materials doesn't exist : " << filepath << std::endl;
         ASSERT(false);
     }
-
-
     uint32_t material_index = assimp_scene->mMeshes[submodel_index]->mMaterialIndex;
     
     aiString albedo_path;
@@ -277,27 +277,292 @@ ModelMaterial::SingleMaterial Asset::load_single_model_material(uint32_t submode
     aiString height_path;
     aiString emmisive_path;
 
-    if (assimp_scene->mMaterials[material_index]->GetTexture(aiTextureType_DIFFUSE, 0, &albedo_path)){
-        single_material.albedo_image = Image(albedo_path.C_Str(), 3, false);
+    if (assimp_scene->mMaterials[material_index]->GetTexture(aiTextureType_DIFFUSE, 0, &albedo_path) == aiReturn_SUCCESS) {
+        std::filesystem::path image_path = std::filesystem::absolute(filepath.parent_path() /= albedo_path.C_Str()).string();
+        if (!std::filesystem::exists(image_path))
+            std::cout << "[AssetImporter Error] Image not found : " << image_path << std::endl;
+        else
+            single_material.albedo_image = std::make_shared<Image>(image_path.string(), 3, false);
     }
-    if (assimp_scene->mMaterials[material_index]->GetTexture(aiTextureType_NORMALS, 0, &normal_path)) {
-        single_material.normal_image = Image(normal_path.C_Str(), 3, false);
+    if (assimp_scene->mMaterials[material_index]->GetTexture(aiTextureType_NORMALS, 0, &normal_path) == aiReturn_SUCCESS) {
+        std::filesystem::path image_path = std::filesystem::absolute(filepath.parent_path() /= normal_path.C_Str()).string();
+        if (!std::filesystem::exists(image_path))
+            std::cout << "[AssetImporter Error] Image not found : " << image_path << std::endl;
+        else
+            single_material.normal_image = std::make_shared<Image>(image_path.string(), 3, false);
     }
-    if (assimp_scene->mMaterials[material_index]->GetTexture(aiTextureType_DIFFUSE_ROUGHNESS, 0, &roughness_path)) {
-        single_material.roughness_image = Image(roughness_path.C_Str(), 1, false);
+    if (assimp_scene->mMaterials[material_index]->GetTexture(aiTextureType_DIFFUSE_ROUGHNESS, 0, &roughness_path) == aiReturn_SUCCESS) {
+        std::filesystem::path image_path = std::filesystem::absolute(filepath.parent_path() /= roughness_path.C_Str()).string();
+        if (!std::filesystem::exists(image_path))
+            std::cout << "[AssetImporter Error] Image not found : " << image_path << std::endl;
+        else
+            single_material.roughness_image = std::make_shared<Image>(image_path.string(), 1, false);
     }
-    if (assimp_scene->mMaterials[material_index]->GetTexture(aiTextureType_METALNESS, 0, &metallic_path)) {
-        single_material.metallic_image = Image(metallic_path.C_Str(), 1, false);
+    if (assimp_scene->mMaterials[material_index]->GetTexture(aiTextureType_METALNESS, 0, &metallic_path) == aiReturn_SUCCESS) {
+        std::filesystem::path image_path = std::filesystem::absolute(filepath.parent_path() /= metallic_path.C_Str()).string();
+        if (!std::filesystem::exists(image_path))
+            std::cout << "[AssetImporter Error] Image not found : " << image_path << std::endl;
+        else
+            single_material.metallic_image = std::make_shared<Image>(image_path.string(), 1, false);
     }
-    if (assimp_scene->mMaterials[material_index]->GetTexture(aiTextureType_AMBIENT_OCCLUSION, 0, &ambient_occlusion_path)) {
-        single_material.ambient_occlusion_image = Image(ambient_occlusion_path.C_Str(), 1, false);
+    if (assimp_scene->mMaterials[material_index]->GetTexture(aiTextureType_AMBIENT_OCCLUSION, 0, &ambient_occlusion_path) == aiReturn_SUCCESS) {
+        std::filesystem::path image_path = std::filesystem::absolute(filepath.parent_path() /= ambient_occlusion_path.C_Str()).string();
+        if (!std::filesystem::exists(image_path))
+            std::cout << "[AssetImporter Error] Image not found : " << image_path << std::endl;
+        else
+            single_material.ambient_occlusion_image = std::make_shared<Image>(image_path.string(), 1, false);
     }
-    if (assimp_scene->mMaterials[material_index]->GetTexture(aiTextureType_HEIGHT, 0, &height_path)) {
-        single_material.height_image = Image(height_path.C_Str(), 1, false);
+    if (assimp_scene->mMaterials[material_index]->GetTexture(aiTextureType_HEIGHT, 0, &height_path) == aiReturn_SUCCESS) {
+        std::filesystem::path image_path = std::filesystem::absolute(filepath.parent_path() /= height_path.C_Str()).string();
+        if (!std::filesystem::exists(image_path))
+            std::cout << "[AssetImporter Error] Image not found : " << image_path << std::endl;
+        else
+            single_material.height_image = std::make_shared<Image>(image_path.string(), 1, false);
     }
-    if (assimp_scene->mMaterials[material_index]->GetTexture(aiTextureType_EMISSIVE, 0, &emmisive_path)) {
-        single_material.emissive_image = Image(emmisive_path.C_Str(), 3, false);
+    if (assimp_scene->mMaterials[material_index]->GetTexture(aiTextureType_EMISSIVE, 0, &emmisive_path) == aiReturn_SUCCESS) {
+        std::filesystem::path image_path = std::filesystem::absolute(filepath.parent_path() /= emmisive_path.C_Str()).string();
+        if (!std::filesystem::exists(image_path))
+            std::cout << "[AssetImporter Error] Image not found : " << image_path << std::endl;
+        else
+            single_material.emissive_image = std::make_shared<Image>(image_path.string(), 3, false);
     }
     
     return single_material;
+}
+
+ModelMaterial Asset::load_model_material()
+{
+    ModelMaterial material;
+
+    const aiScene* assimp_scene = (const aiScene*)scene;
+    uint32_t submodel_count = assimp_scene->mNumMeshes;
+
+
+    struct _ImageParam {
+        std::string path = "";
+        uint32_t channel_count = 3;
+        bool flip = false;
+    };
+
+    std::vector<std::shared_ptr<Image>> images;
+    std::vector<_ImageParam> image_params;
+    std::unordered_map<std::filesystem::path, std::pair<uint32_t, _ImageParam>> path_to_index_param;
+
+    for (uint32_t submodel_index = 0; submodel_index < submodel_count; submodel_index++) {
+
+        uint32_t material_index = assimp_scene->mMeshes[submodel_index]->mMaterialIndex;
+
+        aiString albedo_path;
+        aiString normal_path;
+        aiString roughness_path;
+        aiString metallic_path;
+        aiString ambient_occlusion_path;
+        aiString height_path;
+        aiString emmisive_path;
+
+        if (assimp_scene->mMaterials[material_index]->GetTexture(aiTextureType_DIFFUSE, 0, &albedo_path) == aiReturn_SUCCESS) {
+            std::filesystem::path image_path = std::filesystem::absolute(filepath.parent_path() /= albedo_path.C_Str()).string();
+            if (!std::filesystem::exists(image_path))
+                std::cout << "[AssetImporter Error] Image not found : " << image_path << std::endl;
+            else {
+                _ImageParam params;
+                params.path = image_path.string();
+                params.channel_count = 3;
+                path_to_index_param[image_path] = std::pair(0u, params);
+            }
+        }
+        if (assimp_scene->mMaterials[material_index]->GetTexture(aiTextureType_NORMALS, 0, &normal_path) == aiReturn_SUCCESS) {
+            std::filesystem::path image_path = std::filesystem::absolute(filepath.parent_path() /= normal_path.C_Str()).string();
+            if (!std::filesystem::exists(image_path))
+                std::cout << "[AssetImporter Error] Image not found : " << image_path << std::endl;
+            else {
+                _ImageParam params;
+                params.path = image_path.string();
+                params.channel_count = 3;
+                path_to_index_param[image_path] = std::pair(0u, params);
+
+            }
+        }
+        if (assimp_scene->mMaterials[material_index]->GetTexture(aiTextureType_DIFFUSE_ROUGHNESS, 0, &roughness_path) == aiReturn_SUCCESS) {
+            std::filesystem::path image_path = std::filesystem::absolute(filepath.parent_path() /= roughness_path.C_Str()).string();
+            if (!std::filesystem::exists(image_path))
+                std::cout << "[AssetImporter Error] Image not found : " << image_path << std::endl;
+            else {
+                _ImageParam params;
+                params.path = image_path.string();
+                params.channel_count = 1;
+                path_to_index_param[image_path] = std::pair(0u, params);
+
+            }
+        }
+        if (assimp_scene->mMaterials[material_index]->GetTexture(aiTextureType_METALNESS, 0, &metallic_path) == aiReturn_SUCCESS) {
+            std::filesystem::path image_path = std::filesystem::absolute(filepath.parent_path() /= metallic_path.C_Str()).string();
+            if (!std::filesystem::exists(image_path))
+                std::cout << "[AssetImporter Error] Image not found : " << image_path << std::endl;
+            else {
+                _ImageParam params;
+                params.path = image_path.string();
+                params.channel_count = 1;
+                path_to_index_param[image_path] = std::pair(0u, params);
+
+            }
+        }
+        if (assimp_scene->mMaterials[material_index]->GetTexture(aiTextureType_AMBIENT_OCCLUSION, 0, &ambient_occlusion_path) == aiReturn_SUCCESS) {
+            std::filesystem::path image_path = std::filesystem::absolute(filepath.parent_path() /= ambient_occlusion_path.C_Str()).string();
+            if (!std::filesystem::exists(image_path))
+                std::cout << "[AssetImporter Error] Image not found : " << image_path << std::endl;
+            else {
+                _ImageParam params;
+                params.path = image_path.string();
+                params.channel_count = 1;
+                path_to_index_param[image_path] = std::pair(0u, params);
+
+            }
+        }
+        if (assimp_scene->mMaterials[material_index]->GetTexture(aiTextureType_HEIGHT, 0, &height_path) == aiReturn_SUCCESS) {
+            std::filesystem::path image_path = std::filesystem::absolute(filepath.parent_path() /= height_path.C_Str()).string();
+            if (!std::filesystem::exists(image_path))
+                std::cout << "[AssetImporter Error] Image not found : " << image_path << std::endl;
+            else {
+                _ImageParam params;
+                params.path = image_path.string();
+                params.channel_count = 1;
+                path_to_index_param[image_path] = std::pair(0u, params);
+
+            }
+        }
+        if (assimp_scene->mMaterials[material_index]->GetTexture(aiTextureType_EMISSIVE, 0, &emmisive_path) == aiReturn_SUCCESS) {
+            std::filesystem::path image_path = std::filesystem::absolute(filepath.parent_path() /= emmisive_path.C_Str()).string();
+            if (!std::filesystem::exists(image_path))
+                std::cout << "[AssetImporter Error] Image not found : " << image_path << std::endl;
+            else {
+                _ImageParam params;
+                params.path = image_path.string();
+                params.channel_count = 3;
+                path_to_index_param[image_path] = std::pair(0u, params);
+
+            }
+        }
+    }
+
+    int i = 0;
+    for (auto& pair : path_to_index_param) {
+        auto& index_param = pair.second;
+        index_param.first = i;
+        images.push_back(nullptr);
+        image_params.push_back(index_param.second);
+        i++;
+    }
+
+    std::cout << "---------" << std::endl;
+    std::mutex m;
+
+    uint32_t texture_count = images.size();
+    #pragma omp parallel for
+    for (int i = 0; i < texture_count; i++) {
+        m.lock();
+        std::cout << image_params[i].path << std::endl;
+        m.unlock();
+
+        images[i] = std::make_shared<Image>(image_params[i].path, image_params[i].channel_count, image_params[i].flip);
+
+        m.lock();
+        std::cout << "loaded : " << image_params[i].path << "   " << images[i]->get_width() << ", " << images[i]->get_height() << std::endl;
+        m.unlock();
+
+    }
+
+    for (uint32_t submodel_index = 0; submodel_index < submodel_count; submodel_index++) {
+
+        ModelMaterial::SingleMaterial single_material;
+
+        uint32_t material_index = assimp_scene->mMeshes[submodel_index]->mMaterialIndex;
+
+        aiString albedo_path;
+        aiString normal_path;
+        aiString roughness_path;
+        aiString metallic_path;
+        aiString ambient_occlusion_path;
+        aiString height_path;
+        aiString emmisive_path;
+
+        if (assimp_scene->mMaterials[material_index]->GetTexture(aiTextureType_DIFFUSE, 0, &albedo_path) == aiReturn_SUCCESS) {
+            std::filesystem::path image_path = std::filesystem::absolute(filepath.parent_path() /= albedo_path.C_Str()).string();
+            if (!std::filesystem::exists(image_path))
+                std::cout << "[AssetImporter Error] Image not found : " << image_path << std::endl;
+            else {
+                uint32_t index = path_to_index_param[image_path].first;
+                single_material.albedo_image = images[index];
+            }
+        }
+        if (assimp_scene->mMaterials[material_index]->GetTexture(aiTextureType_NORMALS, 0, &normal_path) == aiReturn_SUCCESS) {
+            std::filesystem::path image_path = std::filesystem::absolute(filepath.parent_path() /= normal_path.C_Str()).string();
+            if (!std::filesystem::exists(image_path))
+                std::cout << "[AssetImporter Error] Image not found : " << image_path << std::endl;
+            else {
+                uint32_t index = path_to_index_param[image_path].first;
+                single_material.normal_image = images[index];
+
+            }
+        }
+        if (assimp_scene->mMaterials[material_index]->GetTexture(aiTextureType_DIFFUSE_ROUGHNESS, 0, &roughness_path) == aiReturn_SUCCESS) {
+            std::filesystem::path image_path = std::filesystem::absolute(filepath.parent_path() /= roughness_path.C_Str()).string();
+            if (!std::filesystem::exists(image_path))
+                std::cout << "[AssetImporter Error] Image not found : " << image_path << std::endl;
+            else {
+                uint32_t index = path_to_index_param[image_path].first;
+                single_material.roughness_image = images[index];
+
+            }
+        }
+        if (assimp_scene->mMaterials[material_index]->GetTexture(aiTextureType_METALNESS, 0, &metallic_path) == aiReturn_SUCCESS) {
+            std::filesystem::path image_path = std::filesystem::absolute(filepath.parent_path() /= metallic_path.C_Str()).string();
+            if (!std::filesystem::exists(image_path))
+                std::cout << "[AssetImporter Error] Image not found : " << image_path << std::endl;
+            else {
+                uint32_t index = path_to_index_param[image_path].first;
+                single_material.metallic_image = images[index];
+
+            }
+        }
+        if (assimp_scene->mMaterials[material_index]->GetTexture(aiTextureType_AMBIENT_OCCLUSION, 0, &ambient_occlusion_path) == aiReturn_SUCCESS) {
+            std::filesystem::path image_path = std::filesystem::absolute(filepath.parent_path() /= ambient_occlusion_path.C_Str()).string();
+            if (!std::filesystem::exists(image_path))
+                std::cout << "[AssetImporter Error] Image not found : " << image_path << std::endl;
+            else {
+                uint32_t index = path_to_index_param[image_path].first;
+                single_material.ambient_occlusion_image = images[index];
+
+            }
+        }
+        if (assimp_scene->mMaterials[material_index]->GetTexture(aiTextureType_HEIGHT, 0, &height_path) == aiReturn_SUCCESS) {
+            std::filesystem::path image_path = std::filesystem::absolute(filepath.parent_path() /= height_path.C_Str()).string();
+            if (!std::filesystem::exists(image_path))
+                std::cout << "[AssetImporter Error] Image not found : " << image_path << std::endl;
+            else {
+                uint32_t index = path_to_index_param[image_path].first;
+                single_material.height_image = images[index];
+            }
+        }
+        if (assimp_scene->mMaterials[material_index]->GetTexture(aiTextureType_EMISSIVE, 0, &emmisive_path) == aiReturn_SUCCESS) {
+            std::filesystem::path image_path = std::filesystem::absolute(filepath.parent_path() /= emmisive_path.C_Str()).string();
+            if (!std::filesystem::exists(image_path))
+                std::cout << "[AssetImporter Error] Image not found : " << image_path << std::endl;
+            else {
+                uint32_t index = path_to_index_param[image_path].first;
+                single_material.emissive_image = images[index];
+            }
+        }
+
+        material.add_material(std::move(single_material));
+    }
+
+    return material;
+}
+
+MeshMaterial Asset::load_mesh_material()
+{
+    MeshMaterial material;
+    material.load_material(load_model_material());
+    return material;
 }

@@ -18,12 +18,12 @@ const std::string MeshMaterial::metallic_texture_uniform_name = "metallic_textur
 namespace {
 
     template<typename T>
-    std::shared_ptr<Texture2D> create_material_texture(const std::optional<Image>& image, Texture2D::ColorTextureFormat ctf, Texture2D::ColorFormat cf, Texture2D::Type t, T clear_value) {
+    std::shared_ptr<Texture2D> create_material_texture(std::shared_ptr<Image> image, Texture2D::ColorTextureFormat ctf, Texture2D::ColorFormat cf, Texture2D::Type t, T clear_value) {
 
         std::shared_ptr<Texture2D> texture;
 
-        if (image.has_value()) {
-            const Image& albedo_image = image.value();
+        if (image != nullptr) {
+            const Image& albedo_image = *image;
             glm::ivec2 resolution = glm::ivec2(albedo_image.get_width(), albedo_image.get_height());
 
             texture = std::make_shared<Texture2D>(resolution.x, resolution.y, ctf, 1, 0, 0);
@@ -109,13 +109,17 @@ namespace {
 
 void MeshMaterial::load_material(ModelMaterial& model_material)
 {
-    for (auto& single_model_material : model_material.get_materials())
+    int i = 0;
+    for (auto& single_model_material : model_material.get_materials()) {
+        std::cout << i << std::endl;
+        i++;
         add_material(create_single_mesh_material(single_model_material));
+    }
 }
 
 void MeshMaterial::load_material(ModelMaterial&& model_material)
 {
-    load_material((ModelMaterial&)model_material);
+        load_material((ModelMaterial&)model_material);
 }
 
 void MeshMaterial::load_material(ModelMaterial::SingleMaterial& model_mat)
