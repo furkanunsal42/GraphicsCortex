@@ -14,6 +14,7 @@ const std::string MeshMaterial::albedo_texture_uniform_name = "albedo_texture";
 const std::string MeshMaterial::normal_texture_uniform_name = "normal_texture";
 const std::string MeshMaterial::roughness_texture_uniform_name = "roughness_texture";
 const std::string MeshMaterial::metallic_texture_uniform_name = "metallic_texture";
+const std::string MeshMaterial::ambient_occlusion_texture_uniform_name = "ambient_occlusion_texture";
 
 namespace {
 
@@ -32,6 +33,10 @@ namespace {
     constexpr auto metallic_ctf = Texture2D::ColorTextureFormat::R8;
     constexpr auto metallic_cf = Texture2D::ColorFormat::RED;
     constexpr auto metallic_t = Texture2D::Type::UNSIGNED_BYTE;
+
+    constexpr auto ambient_occlusion_ctf = Texture2D::ColorTextureFormat::R8;
+    constexpr auto ambient_occlusion_cf = Texture2D::ColorFormat::RED;
+    constexpr auto ambient_occlusion_t = Texture2D::Type::UNSIGNED_BYTE;
 
     std::shared_ptr<Texture2D> create_material_texture_without_clear(const std::shared_ptr<Image> image, Texture2D::ColorTextureFormat ctf, Texture2D::ColorFormat cf, Texture2D::Type t) {
 
@@ -89,46 +94,13 @@ namespace {
 
         material.albedo_texture = create_material_texture(model_mat.albedo_image, albedo_ctf, albedo_cf, albedo_t, model_mat.albedo);
 
-        material.normal_texture = create_material_texture(model_mat.normal_image, normal_ctf, normal_cf, normal_t, glm::vec3(0.5));
+        material.normal_texture = create_material_texture(model_mat.normal_image, normal_ctf, normal_cf, normal_t, glm::vec3(0.5, 0.5, 1));
 
-        material.roughness_texture = create_material_texture(model_mat.roughness_image, roughness_ctf, roughness_cf, roughness_t, 1.0f);
+        material.roughness_texture = create_material_texture(model_mat.roughness_image, roughness_ctf, roughness_cf, roughness_t, 0.9f);
 
-        material.metallic_texture = create_material_texture(model_mat.metallic_image, metallic_ctf, metallic_cf, metallic_t, glm::vec3(0));
+        material.metallic_texture = create_material_texture(model_mat.metallic_image, metallic_ctf, metallic_cf, metallic_t, 0.0f);
 
-        //auto specular_ctf   = Texture2D::ColorTextureFormat::R8;
-        //auto specular_cf    = Texture2D::ColorFormat::RED;
-        //auto specular_t     = Texture2D::Type::UNSIGNED_BYTE;
-        //material.specular_texture = create_material_texture(model_mat.specular_image, specular_ctf, specular_cf, specular_t, glm::vec3(0));
-        //
-        //
-        //auto height_ctf     = Texture2D::ColorTextureFormat::R8;
-        //auto height_cf      = Texture2D::ColorFormat::RED;
-        //auto height_t       = Texture2D::Type::UNSIGNED_BYTE;
-        //material.height_texture = create_material_texture(model_mat.height_image, height_ctf, height_cf, height_t, glm::vec3(0));
-        //
-        //
-        //auto opacity_ctf    = Texture2D::ColorTextureFormat::R8;
-        //auto opacity_cf     = Texture2D::ColorFormat::RED;
-        //auto opacity_t      = Texture2D::Type::UNSIGNED_BYTE;
-        //material.opacity_texture = create_material_texture(model_mat.opacity_image, opacity_ctf, opacity_cf, opacity_t, glm::vec3(0));
-        //
-        //
-        //auto ambiant_occlusion_ctf  = Texture2D::ColorTextureFormat::R8;
-        //auto ambiant_occlusion_cf   = Texture2D::ColorFormat::RED;
-        //auto ambiant_occlusion_t    = Texture2D::Type::UNSIGNED_BYTE;
-        //material.ambiant_occlusion_texture = create_material_texture(model_mat.ambiant_occlusion_image, ambiant_occlusion_ctf, ambiant_occlusion_cf, ambiant_occlusion_t, glm::vec3(0));
-        //
-        //
-        //auto refrection_ctf     = Texture2D::ColorTextureFormat::R8;
-        //auto refrection_cf      = Texture2D::ColorFormat::RED;
-        //auto refrection_t       = Texture2D::Type::UNSIGNED_BYTE;
-        //material.refrection_texture = create_material_texture(model_mat.refrection_image, refrection_ctf, refrection_cf, refrection_t, glm::vec3(0));
-        //
-        //
-        //auto emissive_ctf   = Texture2D::ColorTextureFormat::R8;
-        //auto emissive_cf    = Texture2D::ColorFormat::RED;
-        //auto emissive_t     = Texture2D::Type::UNSIGNED_BYTE;
-        //material.emissive_texture = create_material_texture(model_mat.emissive_image, emissive_ctf, emissive_cf, emissive_t, glm::vec3(0));
+        material.ambient_occlusion_texture = create_material_texture(model_mat.ambient_occlusion_image, ambient_occlusion_ctf, ambient_occlusion_cf, ambient_occlusion_t, 1.0f);
 
         return material;
     }
@@ -163,8 +135,8 @@ void MeshMaterial::load_material(ModelMaterial& model_material)
             image_to_texture[model.metallic_image]          = { metallic_ctf, metallic_cf, metallic_t, nullptr };
         //if (model.height_image != nullptr)              
         //    image_to_texture[model.height_image]            = { albedo_ctf, albedo_cf, albedo_t, nullptr };
-        //if (model.ambient_occlusion_image != nullptr)   
-        //    image_to_texture[model.ambient_occlusion_image] = { albedo_ctf, albedo_cf, albedo_t, nullptr };
+        if (model.ambient_occlusion_image != nullptr)   
+            image_to_texture[model.ambient_occlusion_image] = { ambient_occlusion_ctf, ambient_occlusion_cf, ambient_occlusion_t, nullptr };
         //if (model.emissive_image != nullptr)            
         //    image_to_texture[model.emissive_image]          = { albedo_ctf, albedo_cf, albedo_t, nullptr };
     }
@@ -186,19 +158,25 @@ void MeshMaterial::load_material(ModelMaterial& model_material)
         if (material.normal_texture != nullptr)
             material.normal_texture = image_to_texture[model_mat.normal_image].texture;
         else
-            material.normal_texture = create_material_texture(model_mat.normal_image, normal_ctf, normal_cf, normal_t, glm::vec3(0.5));
+            material.normal_texture = create_material_texture(model_mat.normal_image, normal_ctf, normal_cf, normal_t, glm::vec3(0.5, 0.5, 1));
 
         if (material.roughness_texture != nullptr)
             material.roughness_texture = image_to_texture[model_mat.roughness_image].texture;
         else
-            material.roughness_texture = create_material_texture(model_mat.roughness_image, roughness_ctf, roughness_cf, roughness_t, 1.0f);
+            material.roughness_texture = create_material_texture(model_mat.roughness_image, roughness_ctf, roughness_cf, roughness_t, 0.9f);
 
         if (material.metallic_texture != nullptr)
             material.metallic_texture = image_to_texture[model_mat.metallic_image].texture;
         else
             material.metallic_texture = create_material_texture(model_mat.metallic_image, metallic_ctf, metallic_cf, metallic_t, 0.0f);
+        
+        if (material.ambient_occlusion_texture != nullptr)
+            material.ambient_occlusion_texture = image_to_texture[model_mat.ambient_occlusion_image].texture;
+        else
+            material.ambient_occlusion_texture = create_material_texture(model_mat.ambient_occlusion_image, ambient_occlusion_ctf, ambient_occlusion_cf, ambient_occlusion_t, 1.0f);
 
-        add_material(std::move(material));
+
+        add_material(material);
     }
 }
 
@@ -273,5 +251,6 @@ void MeshMaterial::update_uniforms(Program& program, material_t material_index)
     program.update_uniform(normal_texture_uniform_name, *single_material->normal_texture);
     program.update_uniform(roughness_texture_uniform_name, *single_material->roughness_texture);
     program.update_uniform(metallic_texture_uniform_name, *single_material->metallic_texture);
+    program.update_uniform(ambient_occlusion_texture_uniform_name, *single_material->ambient_occlusion_texture);
     //...
 }

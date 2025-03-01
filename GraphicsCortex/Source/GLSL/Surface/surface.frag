@@ -1,18 +1,17 @@
 #<fragment shader>
 
-#version 460 core 
-out vec4 frag_color;
-
-in vec3 v_world_position;
-in vec2 v_texcoord;
-in vec3 v_normal;
+#version 460 core
+out vec4 FragColor;
+in vec2 TexCoords;
+in vec3 WorldPos;
+in vec3 Normal;
 
 // material parameters
-layout (location = 0 ) uniform sampler2D albedo_texture;
-layout (location = 1 ) uniform sampler2D normal_texture;
-layout (location = 2 ) uniform sampler2D metallic_texture;
-layout (location = 3 ) uniform sampler2D roughness_texture;
-layout (location = 4 ) uniform sampler2D ambiant_occlusion_texture;
+layout(binding = 0) uniform sampler2D albedo_texture;
+layout(binding = 1) uniform sampler2D normal_texture;
+layout(binding = 2) uniform sampler2D metallic_texture;
+layout(binding = 3) uniform sampler2D roughness_texture;
+layout(binding = 4) uniform sampler2D ambient_occlusion_texture;
 
 // lights
 uniform vec3 light_positions[4];
@@ -24,18 +23,18 @@ const float PI = 3.14159265359;
 // ----------------------------------------------------------------------------
 // Easy trick to get tangent-normals to world-space to keep PBR code simplified.
 // Don't worry if you don't get what's going on; you generally want to do normal 
-// mapping the usual way for performance anways; I do plan make a note of this 
+// mapping the usual way for performance anyways; I do plan make a note of this 
 // technique somewhere later in the normal mapping tutorial.
 vec3 getNormalFromMap()
 {
-    vec3 tangentNormal = texture(normal_texture, v_texcoord).xyz * 2.0 - 1.0;
+    vec3 tangentNormal = texture(normal_texture, TexCoords).xyz * 2.0 - 1.0;
+    
+    vec3 Q1  = dFdx(WorldPos);
+    vec3 Q2  = dFdy(WorldPos);
+    vec2 st1 = dFdx(TexCoords);
+    vec2 st2 = dFdy(TexCoords);
 
-    vec3 Q1  = dFdx(v_world_position);
-    vec3 Q2  = dFdy(v_world_position);
-    vec2 st1 = dFdx(v_texcoord);
-    vec2 st2 = dFdy(v_texcoord);
-
-    vec3 N   = normalize(v_normal);
+    vec3 N   = normalize(Normal);
     vec3 T  = normalize(Q1*st2.t - Q2*st1.t);
     vec3 B  = -normalize(cross(N, T));
     mat3 TBN = mat3(T, B, N);
@@ -80,25 +79,20 @@ float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness)
 // ----------------------------------------------------------------------------
 vec3 fresnelSchlick(float cosTheta, vec3 F0)
 {
-    return F0 + (1.0 - F0) * pow(1.0 - cosTheta, 5.0);
+    return F0 + (1.0 - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
 }
 // ----------------------------------------------------------------------------
 void main()
-{       
-    vec4 albedo_full = texture(albedo_texture, v_texcoord);
-    vec3 albedo     = pow(albedo_full.rgb, vec3(2.2));
-    float alpha = albedo_full.a;
-    float metallic  = texture(metallic_texture, v_texcoord).r;
-    metallic  = 0.1;
+{		
+    vec4 temp_albedo = texture(albedo_texture, TexCoords);
+    vec3 albedo     = temp_albedo.rgb;
+    float alpha     = temp_albedo.a;
+    float roughness = texture(roughness_texture, TexCoords).x;
+    float metallic  = texture(metallic_texture, TexCoords).x;
+    float ao        = texture(ambient_occlusion_texture, TexCoords).x;
 
-    float roughness = texture(roughness_texture, v_texcoord).r;
-    roughness = 0.8;
-
-    float ao        = texture(ambiant_occlusion_texture, v_texcoord).r;
-    ao = 1;
-
-    vec3 N = getNormalFromMap();
-    vec3 V = normalize(camera_position - v_world_position);
+    vec3 N = normalize(getNormalFromMap());
+    vec3 V = normalize(camera_position - WorldPos);
 
     // calculate reflectance at normal incidence; if dia-electric (like plastic) use F0 
     // of 0.04 and if it's a metal, use the albedo color as F0 (metallic workflow)    
@@ -107,25 +101,24 @@ void main()
 
     // reflectance equation
     vec3 Lo = vec3(0.0);
-    //for(int i = 0; i < 4; ++i) 
-    //{
-    int i = 0;
+    for(int i = 0; i < 1; ++i) 
+    {
         // calculate per-light radiance
-        vec3 L = normalize(light_positions[i] - v_world_position);
+        vec3 L = normalize(light_positions[i] - WorldPos);
         vec3 H = normalize(V + L);
-        float light_distance = length(light_positions[i] - v_world_position);
-        float attenuation = 1.0 / (light_distance * light_distance);
-        vec3 radiance = light_colors[i] * attenuation;
+        float distance = length(light_positions[i] - WorldPos);
+        float attenuation = 1.0 / (distance * distance);
+        vec3 radiance = 10 * light_colors[i] * attenuation;
 
         // Cook-Torrance BRDF
         float NDF = DistributionGGX(N, H, roughness);   
         float G   = GeometrySmith(N, V, L, roughness);      
-        vec3 F    = fresnelSchlick(max(dot(H, V), 0.0), F0);
-
-        vec3 nominator    = NDF * G * F; 
-        float denominator = 4 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0) + 0.001; // 0.001 to prevent divide by zero.
-        vec3 specular = nominator / denominator;
-
+        vec3 F    = fresnelSchlick(clamp(dot(H, V), 0.0, 1.0), F0);
+           
+        vec3 numerator    = NDF * G * F; 
+        float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0) + 0.0001; // + 0.0001 to prevent divide by zero
+        vec3 specular = numerator / denominator;
+        
         // kS is equal to Fresnel
         vec3 kS = F;
         // for energy conservation, the diffuse and specular light can't
@@ -135,15 +128,15 @@ void main()
         // multiply kD by the inverse metalness such that only non-metals 
         // have diffuse lighting, or a linear blend if partly metal (pure metals
         // have no diffuse light).
-        kD *= 1.0 - metallic;     
+        kD *= 1.0 - metallic;	  
 
         // scale light by NdotL
         float NdotL = max(dot(N, L), 0.0);        
 
         // add to outgoing radiance Lo
         Lo += (kD * albedo / PI + specular) * radiance * NdotL;  // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
-    //}   
-
+    }   
+    
     // ambient lighting (note that the next IBL tutorial will replace 
     // this ambient lighting with environment lighting).
     vec3 ambient = vec3(0.03) * albedo * ao;
@@ -154,9 +147,9 @@ void main()
     color = color / (color + vec3(1.0));
     // gamma correct
     color = pow(color, vec3(1.0/2.2)); 
+    
+    //if (alpha != 1)
+    //    discard;
 
-    if (alpha < 0.99)
-        discard;
-
-    frag_color = vec4(vec3(Lo), 1);
+    FragColor = vec4(color, 1.0);
 }

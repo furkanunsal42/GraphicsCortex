@@ -10,23 +10,23 @@ const int vertex_color_slot = 5;
 const int bone_indicies_slot = 6;
 const int bone_weights_slot = 7;
 
-layout(location = vertex_slot)  in vec3 a_position;
-layout(location = normal_slot)  in vec3 a_normal;
-layout(location = uv0_slot)		in vec2 a_texture_coordinates;
+layout (location = vertex_slot) in vec3 aPos;
+layout (location = normal_slot) in vec3 aNormal;
+layout (location = uv0_slot) in vec2 aTexCoords;
 
-out vec3 v_world_position;
-out vec2 v_texcoord;
-out vec3 v_normal;
+out vec2 TexCoords;
+out vec3 WorldPos;
+out vec3 Normal;
 
-uniform mat4 model;
-uniform mat4 view;
 uniform mat4 projection;
+uniform mat4 view;
+uniform mat4 model;
 
 void main()
 {
-    v_texcoord = a_texture_coordinates;
-    v_world_position = vec3(model * vec4(a_position, 1.0));
-    v_normal = normalize(mat3(model) * a_normal);   
+    TexCoords = aTexCoords;
+    WorldPos = vec3(model * vec4(aPos, 1.0));
+    Normal = transpose(inverse(mat3(model))) * aNormal;   
 
-    gl_Position =  projection * view * vec4(v_world_position, 1.0);
+    gl_Position =  projection * view * vec4(WorldPos, 1.0);
 }

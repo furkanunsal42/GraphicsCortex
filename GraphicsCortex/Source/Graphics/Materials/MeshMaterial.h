@@ -22,7 +22,7 @@ public:
 		std::shared_ptr<Texture2D> specular_texture = nullptr;
 		std::shared_ptr<Texture2D> height_texture = nullptr;
 		std::shared_ptr<Texture2D> opacity_texture = nullptr;
-		std::shared_ptr<Texture2D> ambiant_occlusion_texture = nullptr;
+		std::shared_ptr<Texture2D> ambient_occlusion_texture = nullptr;
 		std::shared_ptr<Texture2D> refrection_texture = nullptr;
 		std::shared_ptr<Texture2D> emissive_texture = nullptr;
 	};
@@ -47,6 +47,7 @@ public:
 	static const std::string normal_texture_uniform_name;
 	static const std::string roughness_texture_uniform_name;
 	static const std::string metallic_texture_uniform_name;
+	static const std::string ambient_occlusion_texture_uniform_name;
 
 private:
 	std::vector<SingleMaterial> materials;
