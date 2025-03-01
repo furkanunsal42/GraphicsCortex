@@ -1,10 +1,10 @@
 #<fragment shader>
 
 #version 460 core
-out vec4 FragColor;
-in vec2 TexCoords;
-in vec3 WorldPos;
-in vec3 Normal;
+out vec4 frag_color;
+in vec2 v_texture_coordinates;
+in vec3 v_world_position;
+in vec3 v_normal;
 
 // material parameters
 layout(binding = 0) uniform sampler2D albedo_texture;
@@ -25,21 +25,21 @@ const float PI = 3.14159265359;
 // Don't worry if you don't get what's going on; you generally want to do normal 
 // mapping the usual way for performance anyways; I do plan make a note of this 
 // technique somewhere later in the normal mapping tutorial.
-vec3 getNormalFromMap()
+vec3 get_normal_from_texture()
 {
-    vec3 tangentNormal = texture(normal_texture, TexCoords).xyz * 2.0 - 1.0;
+    vec3 tangent_normal = texture(normal_texture, v_texture_coordinates).xyz * 2.0 - 1.0;
     
-    vec3 Q1  = dFdx(WorldPos);
-    vec3 Q2  = dFdy(WorldPos);
-    vec2 st1 = dFdx(TexCoords);
-    vec2 st2 = dFdy(TexCoords);
+    vec3 Q1  = dFdx(v_world_position);
+    vec3 Q2  = dFdy(v_world_position);
+    vec2 st1 = dFdx(v_texture_coordinates);
+    vec2 st2 = dFdy(v_texture_coordinates);
 
-    vec3 N   = normalize(Normal);
+    vec3 N   = normalize(v_normal);
     vec3 T  = normalize(Q1*st2.t - Q2*st1.t);
     vec3 B  = -normalize(cross(N, T));
     mat3 TBN = mat3(T, B, N);
 
-    return normalize(TBN * tangentNormal);
+    return normalize(TBN * tangent_normal);
 }
 // ----------------------------------------------------------------------------
 float DistributionGGX(vec3 N, vec3 H, float roughness)
@@ -84,15 +84,15 @@ vec3 fresnelSchlick(float cosTheta, vec3 F0)
 // ----------------------------------------------------------------------------
 void main()
 {		
-    vec4 temp_albedo = texture(albedo_texture, TexCoords);
-    vec3 albedo     = temp_albedo.rgb;
+    vec4 temp_albedo = texture(albedo_texture, v_texture_coordinates);
+    vec3 albedo     = pow(temp_albedo.rgb, vec3(2.2));
     float alpha     = temp_albedo.a;
-    float roughness = texture(roughness_texture, TexCoords).x;
-    float metallic  = texture(metallic_texture, TexCoords).x;
-    float ao        = texture(ambient_occlusion_texture, TexCoords).x;
+    float roughness = texture(roughness_texture, v_texture_coordinates).x;
+    float metallic  = texture(metallic_texture, v_texture_coordinates).x;
+    float ao        = texture(ambient_occlusion_texture, v_texture_coordinates).x;
 
-    vec3 N = normalize(getNormalFromMap());
-    vec3 V = normalize(camera_position - WorldPos);
+    vec3 N = normalize(get_normal_from_texture());
+    vec3 V = normalize(camera_position - v_world_position);
 
     // calculate reflectance at normal incidence; if dia-electric (like plastic) use F0 
     // of 0.04 and if it's a metal, use the albedo color as F0 (metallic workflow)    
@@ -101,14 +101,14 @@ void main()
 
     // reflectance equation
     vec3 Lo = vec3(0.0);
-    for(int i = 0; i < 1; ++i) 
+    for(int i = 0; i < 4; ++i) 
     {
         // calculate per-light radiance
-        vec3 L = normalize(light_positions[i] - WorldPos);
+        vec3 L = normalize(light_positions[i] - v_world_position);
         vec3 H = normalize(V + L);
-        float distance = length(light_positions[i] - WorldPos);
+        float distance = length(light_positions[i] - v_world_position);
         float attenuation = 1.0 / (distance * distance);
-        vec3 radiance = 10 * light_colors[i] * attenuation;
+        vec3 radiance = 1000 * light_colors[i] * attenuation;
 
         // Cook-Torrance BRDF
         float NDF = DistributionGGX(N, H, roughness);   
@@ -145,11 +145,12 @@ void main()
 
     // HDR tonemapping
     color = color / (color + vec3(1.0));
-    // gamma correct
-    color = pow(color, vec3(1.0/2.2)); 
+    
+    //// gamma correct
+    //color = pow(color, vec3(1.0/2.2)); 
     
     //if (alpha != 1)
     //    discard;
 
-    FragColor = vec4(color, 1.0);
+    frag_color = vec4(vec3(N), alpha);
 }
