@@ -8,6 +8,13 @@ class Framebuffer;
 class Image {
 	friend Framebuffer;
 public:
+	enum Channel {
+		red = 1,
+		green = 2,
+		blue = 4,
+		alpha = 8
+	};
+	
 	struct ImageParameters {
 		int width;
 		int height;
@@ -34,6 +41,11 @@ public:
 	Image& operator=(const Image& other);
 	Image(Image&& other);
 	Image& operator=(Image&& other);
+
+	Image copy_channels(Channel new_red_source, Channel new_green_source, Channel new_blue_source, Channel new_alpha_source);
+	Image copy_channels(Channel new_red_source, Channel new_green_source, Channel new_blue_source);
+	Image copy_channels(Channel new_red_source, Channel new_green_source);
+	Image copy_channels(Channel new_red_source);
 
 	uint8_t* get_image_data();
 	int get_width() const;

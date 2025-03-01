@@ -68,3 +68,6 @@ GraphicsCortex/Dependencies/assimp/lib_debug/zlibstaticd.lib
 GraphicsCortex/Dependencies/assimp/lib_debug/zlibstaticd.pdb
 GraphicsCortex/Dependencies/assimp/lib/IrrXML.lib
 GraphicsCortex/Dependencies/assimp/lib_debug/IrrXMLd.lib
+/GraphicsCortex/ModelsKhronos
+/GraphicsCortex/Models/bmw
+/GraphicsCortex/Models/Sponza

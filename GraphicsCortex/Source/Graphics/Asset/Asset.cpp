@@ -17,10 +17,22 @@ Asset::Asset(const std::filesystem::path& asset_path, const AssetImportDescripti
     this->importer = new Assimp::Importer();
 
     scene = ((Assimp::Importer*)this->importer)->ReadFile(asset_path.string(),
-        aiProcess_CalcTangentSpace |
         aiProcess_Triangulate |
-        aiProcess_JoinIdenticalVertices |
-        aiProcess_SortByPType);
+        aiProcess_SortByPType |
+        aiProcess_CalcTangentSpace | // calculate tangents and bitangents if possible
+        aiProcess_JoinIdenticalVertices | // join identical vertices/ optimize indexing
+        aiProcess_ValidateDataStructure | // perform a full validation of the loader's output
+        aiProcess_ImproveCacheLocality | // improve the cache locality of the output vertices
+        aiProcess_RemoveRedundantMaterials | // remove redundant materials
+        aiProcess_FindDegenerates | // remove degenerated polygons from the import
+        aiProcess_FindInvalidData | // detect invalid model data, such as invalid normal vectors
+        aiProcess_GenUVCoords | // convert spherical, cylindrical, box and planar mapping to proper UVs
+        aiProcess_TransformUVCoords | // preprocess UV transformations (scaling, translation ...)
+        aiProcess_FindInstances | // search for instanced meshes and remove them by references to one master
+        aiProcess_LimitBoneWeights | // limit bone weights to 4 per vertex
+        aiProcess_OptimizeMeshes | // join small meshes, if possible;
+        aiProcess_SplitByBoneCount // split meshes with too many bones. Necessary for our (limited) hardware skinning shader
+    );
 
     if (scene == nullptr ) {
         if (!std::filesystem::exists(filepath)) {
@@ -47,7 +59,6 @@ namespace {
             std::cout << "[AssetImporter Error] submodel_index (" << submodel_index << ") is not present in asset at : " << path << std::endl;
             ASSERT(false);
         }
-
         
         SingleModel single_model;
 
@@ -62,19 +73,19 @@ namespace {
                 (glm::vec3*)scene->mMeshes[submodel_index]->mNormals,
                 (glm::vec3*)scene->mMeshes[submodel_index]->mNormals + scene->mMeshes[submodel_index]->mNumVertices
             );
-
+        
         if (scene->mMeshes[submodel_index]->mTangents != nullptr)
             single_model.vertex_tangents = std::vector<glm::vec3>(
                 (glm::vec3*)scene->mMeshes[submodel_index]->mTangents,
                 (glm::vec3*)scene->mMeshes[submodel_index]->mTangents + scene->mMeshes[submodel_index]->mNumVertices
             );
-
+        
         if (scene->mMeshes[submodel_index]->mBitangents != nullptr)
             single_model.vertex_bitangents = std::vector<glm::vec3>(
                 (glm::vec3*)scene->mMeshes[submodel_index]->mBitangents,
                 (glm::vec3*)scene->mMeshes[submodel_index]->mBitangents + scene->mMeshes[submodel_index]->mNumVertices
             );
-
+        
         if (scene->mMeshes[submodel_index]->mTextureCoords[0] != nullptr) {
             single_model.texture_coordinates_0.reserve(scene->mMeshes[submodel_index]->mNumVertices);
             for (size_t i = 0; i < scene->mMeshes[submodel_index]->mNumVertices; i++) {
@@ -86,7 +97,7 @@ namespace {
                 );
             }
         }
-
+        
         if (scene->mMeshes[submodel_index]->mTextureCoords[1] != nullptr) {
             single_model.texture_coordinates_1.reserve(scene->mMeshes[submodel_index]->mNumVertices);
             for (size_t i = 0; i < scene->mMeshes[submodel_index]->mNumVertices; i++) {
@@ -98,7 +109,7 @@ namespace {
                 );
             }
         }
-
+        
         if (scene->mMeshes[submodel_index]->mColors[0] != nullptr)
             single_model.vertex_colors = std::vector<glm::vec4>(
                 (glm::vec4*)scene->mMeshes[submodel_index]->mColors[0],

@@ -399,6 +399,8 @@ protected:
 
 	const std::chrono::system_clock::time_point invalid_time = std::chrono::system_clock::time_point(std::chrono::milliseconds::max());
 	std::chrono::system_clock::time_point last_handle_events_time = invalid_time;
+	std::chrono::system_clock::time_point last_perforamnce_print_time = invalid_time;
+	uint32_t frame_count_since_performance_print = 0;
 };
 
 

@@ -385,6 +385,210 @@ Image& Image::operator=(Image&& other) {
 	return *this;
 }
 
+namespace {
+	uint32_t Channel_to_offset(Image::Channel channel) {
+		switch (channel) {
+		case Image::red: return 0;
+		case Image::green: return 1;
+		case Image::blue: return 2;
+		case Image::alpha: return 3;
+		}
+		return 0;
+	}
+}
+
+Image Image::copy_channels(Channel new_red_source, Channel new_green_source, Channel new_blue_source, Channel new_alpha_source)
+{
+	const uint32_t new_channel_count = 4;
+
+	if (_image_data == nullptr) {
+		std::cout << "[OpenGL Error] Image::copy_channels() is called on an empty Image" << std::endl;
+		ASSERT(false);
+	}
+	
+	if (new_channel_count > _channel_count) {
+		std::cout << "[OpenGL Error] Image::copy_channels() is called with " << new_channel_count << " channels but the source image channel count is : " << _channel_count << std::endl;
+		ASSERT(false);
+	}
+
+	if (_bytes_per_channel == 0) {
+		std::cout << "[OpenGL Error] Image::copy_channels() is called but bytes_per_channel is 0" << std::endl;
+		ASSERT(false);
+	}
+
+	uint32_t target_red_offset = Channel_to_offset(new_red_source);
+	uint32_t target_green_offset = Channel_to_offset(new_green_source);
+	uint32_t target_blue_offset = Channel_to_offset(new_blue_source);
+	uint32_t target_alpha_offset = Channel_to_offset(new_alpha_source);
+
+	size_t pixel_count = _width * _height * _depth;
+	uint8_t* new_image_ptr = new uint8_t[_bytes_per_channel * new_channel_count * pixel_count];
+
+	if (_bytes_per_channel == 1) {
+		for (size_t pixel = 0; pixel < pixel_count; pixel++) {
+			new_image_ptr[pixel * 4 + 0] = this->_image_data[pixel * 4 + target_red_offset];
+			new_image_ptr[pixel * 4 + 1] = this->_image_data[pixel * 4 + target_green_offset];
+			new_image_ptr[pixel * 4 + 2] = this->_image_data[pixel * 4 + target_blue_offset];
+			new_image_ptr[pixel * 4 + 3] = this->_image_data[pixel * 4 + target_alpha_offset];
+		}
+	}
+
+	if (_bytes_per_channel == 2) {
+		for (size_t pixel = 0; pixel < pixel_count; pixel++) {
+			((uint16_t*)(new_image_ptr))[pixel * 4 + 0] = ((uint16_t*)this->_image_data)[pixel * 4 + target_red_offset];
+			((uint16_t*)(new_image_ptr))[pixel * 4 + 1] = ((uint16_t*)this->_image_data)[pixel * 4 + target_green_offset];
+			((uint16_t*)(new_image_ptr))[pixel * 4 + 2] = ((uint16_t*)this->_image_data)[pixel * 4 + target_blue_offset];
+			((uint16_t*)(new_image_ptr))[pixel * 4 + 3] = ((uint16_t*)this->_image_data)[pixel * 4 + target_alpha_offset];
+		}
+	}
+
+	return Image(new_image_ptr, _width, _height, _depth, new_channel_count, _bytes_per_channel, _vertical_flip);
+}
+
+Image Image::copy_channels(Channel new_red_source, Channel new_green_source, Channel new_blue_source)
+{
+	const uint32_t new_channel_count = 3;
+
+	if (_image_data == nullptr) {
+		std::cout << "[OpenGL Error] Image::copy_channels() is called on an empty Image" << std::endl;
+		ASSERT(false);
+	}
+
+	if (new_channel_count > _channel_count) {
+		std::cout << "[OpenGL Error] Image::copy_channels() is called with " << new_channel_count << " channels but the source image channel count is : " << _channel_count << std::endl;
+		ASSERT(false);
+	}
+
+	if (_bytes_per_channel == 0) {
+		std::cout << "[OpenGL Error] Image::copy_channels() is called but bytes_per_channel is 0" << std::endl;
+		ASSERT(false);
+	}
+
+	uint32_t target_red_offset = Channel_to_offset(new_red_source);
+	uint32_t target_green_offset = Channel_to_offset(new_green_source);
+	uint32_t target_blue_offset = Channel_to_offset(new_blue_source);
+
+	if (target_red_offset >= _channel_count || target_blue_offset >= _channel_count || target_green_offset >= _channel_count) {
+		uint32_t max_channel = std::max(target_red_offset, std::max(target_blue_offset, target_green_offset));
+		std::cout << "[OpenGL Error] Image::copy_channels() is called but indexed channel of " << max_channel << " is greater than source channel count " << _channel_count << std::endl;
+		ASSERT(false);
+	}
+
+	size_t pixel_count = _width * _height * _depth;
+	uint8_t* new_image_ptr = new uint8_t[_bytes_per_channel * new_channel_count * pixel_count];
+
+	if (_bytes_per_channel == 1) {
+		for (size_t pixel = 0; pixel < pixel_count; pixel++) {
+			new_image_ptr[pixel * new_channel_count + 0] = this->_image_data[pixel * _channel_count + target_red_offset];
+			new_image_ptr[pixel * new_channel_count + 1] = this->_image_data[pixel * _channel_count + target_green_offset];
+			new_image_ptr[pixel * new_channel_count + 2] = this->_image_data[pixel * _channel_count + target_blue_offset];
+		}
+	}
+
+	if (_bytes_per_channel == 2) {
+		for (size_t pixel = 0; pixel < pixel_count; pixel++) {
+			((uint16_t*)(new_image_ptr))[pixel * new_channel_count + 0] = ((uint16_t*)this->_image_data)[pixel * _channel_count + target_red_offset];
+			((uint16_t*)(new_image_ptr))[pixel * new_channel_count + 1] = ((uint16_t*)this->_image_data)[pixel * _channel_count + target_green_offset];
+			((uint16_t*)(new_image_ptr))[pixel * new_channel_count + 2] = ((uint16_t*)this->_image_data)[pixel * _channel_count + target_blue_offset];
+		}
+	}
+
+	return Image(new_image_ptr, _width, _height, _depth, new_channel_count, _bytes_per_channel, _vertical_flip);
+}
+
+Image Image::copy_channels(Channel new_red_source, Channel new_green_source)
+{
+	const uint32_t new_channel_count = 2;
+
+	if (_image_data == nullptr) {
+		std::cout << "[OpenGL Error] Image::copy_channels() is called on an empty Image" << std::endl;
+		ASSERT(false);
+	}
+
+	if (new_channel_count > _channel_count) {
+		std::cout << "[OpenGL Error] Image::copy_channels() is called with " << new_channel_count << " channels but the source image channel count is : " << _channel_count << std::endl;
+		ASSERT(false);
+	}
+
+	if (_bytes_per_channel == 0) {
+		std::cout << "[OpenGL Error] Image::copy_channels() is called but bytes_per_channel is 0" << std::endl;
+		ASSERT(false);
+	}
+
+	uint32_t target_red_offset = Channel_to_offset(new_red_source);
+	uint32_t target_green_offset = Channel_to_offset(new_green_source);
+
+	if (target_red_offset >= _channel_count || target_green_offset >= _channel_count) {
+		uint32_t max_channel = std::max(target_red_offset, target_green_offset);
+		std::cout << "[OpenGL Error] Image::copy_channels() is called but indexed channel of " << max_channel << " is greater than source channel count " << _channel_count << std::endl;
+		ASSERT(false);
+	}
+
+	size_t pixel_count = _width * _height * _depth;
+	uint8_t* new_image_ptr = new uint8_t[_bytes_per_channel * new_channel_count * pixel_count];
+
+	if (_bytes_per_channel == 1) {
+		for (size_t pixel = 0; pixel < pixel_count; pixel++) {
+			new_image_ptr[pixel * new_channel_count + 0] = this->_image_data[pixel * _channel_count + target_red_offset];
+			new_image_ptr[pixel * new_channel_count + 1] = this->_image_data[pixel * _channel_count + target_green_offset];
+		}
+	}
+
+	if (_bytes_per_channel == 2) {
+		for (size_t pixel = 0; pixel < pixel_count; pixel++) {
+			((uint16_t*)(new_image_ptr))[pixel * new_channel_count + 0] = ((uint16_t*)this->_image_data)[pixel * _channel_count + target_red_offset];
+			((uint16_t*)(new_image_ptr))[pixel * new_channel_count + 1] = ((uint16_t*)this->_image_data)[pixel * _channel_count + target_green_offset];
+		}
+	}
+
+	return Image(new_image_ptr, _width, _height, _depth, new_channel_count, _bytes_per_channel, _vertical_flip);
+}
+
+Image Image::copy_channels(Channel new_red_source)
+{
+	const uint32_t new_channel_count = 1;
+
+	if (_image_data == nullptr) {
+		std::cout << "[OpenGL Error] Image::copy_channels() is called on an empty Image" << std::endl;
+		ASSERT(false);
+	}
+
+	if (new_channel_count > _channel_count) {
+		std::cout << "[OpenGL Error] Image::copy_channels() is called with " << new_channel_count << " channels but the source image channel count is : " << _channel_count << std::endl;
+		ASSERT(false);
+	}
+
+	if (_bytes_per_channel == 0) {
+		std::cout << "[OpenGL Error] Image::copy_channels() is called but bytes_per_channel is 0" << std::endl;
+		ASSERT(false);
+	}
+
+	uint32_t target_red_offset = Channel_to_offset(new_red_source);
+
+	if (target_red_offset >= _channel_count ) {
+		uint32_t max_channel = target_red_offset;
+		std::cout << "[OpenGL Error] Image::copy_channels() is called but indexed channel of " << max_channel << " is greater than source channel count " << _channel_count << std::endl;
+		ASSERT(false);
+	}
+
+	size_t pixel_count = _width * _height * _depth;
+	uint8_t* new_image_ptr = new uint8_t[_bytes_per_channel * new_channel_count * pixel_count];
+
+	if (_bytes_per_channel == 1) {
+		for (size_t pixel = 0; pixel < pixel_count; pixel++) {
+			new_image_ptr[pixel * new_channel_count + 0] = this->_image_data[pixel * _channel_count + target_red_offset];
+		}
+	}
+
+	if (_bytes_per_channel == 2) {
+		for (size_t pixel = 0; pixel < pixel_count; pixel++) {
+			((uint16_t*)(new_image_ptr))[pixel * new_channel_count + 0] = ((uint16_t*)this->_image_data)[pixel * _channel_count + target_red_offset];
+		}
+	}
+
+	return Image(new_image_ptr, _width, _height, _depth, new_channel_count, _bytes_per_channel, _vertical_flip);
+}
+
 unsigned char* Image::get_image_data() {
 	return _image_data;
 }

@@ -14,6 +14,9 @@
 #include "Model/ComplexMeshConstructionTest.h"
 #include "Model/ModelLoadingTest.h"
 
+#include "Image/ChannelSplitingTest.h"
+
+
 int main() {
 	
 	//WindowSystemTest().run();
@@ -21,7 +24,7 @@ int main() {
 	//SingleMeshIndexedRenderingTest().run();
 	//RenderPassClearTest().run();
 	//EntityComponentSystemTest().run();
-	MeshMaterialTest().run();
+	//MeshMaterialTest().run();
 
 	//ModelConstructionTest().run();
 	//MeshConstructionTest().run();
@@ -30,4 +33,7 @@ int main() {
 	//ModelLoadingTest().run();
 
 	//MeshRendererTest().run();
+
+	ChannelSplitingTest().run();
+
 }

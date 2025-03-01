@@ -115,7 +115,7 @@ void main()
         vec3 H = normalize(V + L);
         float distance = length(light_positions[i] - v_world_position);
         float attenuation = 1.0 / (distance * distance);
-        vec3 radiance = 1000 * light_colors[i] * attenuation;
+        vec3 radiance = 100 * light_colors[i] * attenuation;
 
         // Cook-Torrance BRDF
         float NDF = DistributionGGX(N, H, roughness);   
@@ -156,8 +156,8 @@ void main()
     //// gamma correct
     //color = pow(color, vec3(1.0/2.2)); 
     
-    //if (alpha != 1)
-    //    discard;
+    if (alpha != 1)
+        discard;
 
     frag_color = vec4(color, alpha);
 }

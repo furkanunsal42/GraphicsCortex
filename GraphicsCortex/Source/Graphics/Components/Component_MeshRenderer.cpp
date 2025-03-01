@@ -59,17 +59,18 @@ void MeshRendererComponent::render(Camera& camera)
 
 	camera.update_matrixes();
 	camera.update_default_uniforms(*program);
-
+	
 	material_c->update_uniforms();
-
+	program->update_uniform("camera_position", camera.position);
+	
 	mesh->traverse([&](Mesh::Node& node, glm::mat4& transform) {
-
+		
 		if (node.get_submeshes().size() == 0) return;
-
+	
 		program->update_uniform("model", transform_c->transform * transform);
-		program->update_uniform("camera_position", camera.position);
+		
 		for (mesh_t submesh : node.get_submeshes()) {
-
+	
 			if (mesh_material_exists && mesh_material->does_material_exist((material_t)submesh))
 				mesh_material->update_uniforms(*program, submesh);
 			

@@ -146,6 +146,8 @@ void Window::_initialize(const WindowDescription& description)
 
 	handle = glfwCreateWindow(clipped_resolution.x, clipped_resolution.y, description.w_name.c_str(), (GLFWmonitor*)monitor_ptr, (GLFWwindow*)description.context_shared);
 	context_make_current();
+	
+	glfwSwapInterval(description.f_swap_interval);
 
 	if (description.n_create_newsletters) {
 		newsletters = new NewslettersBlock();
@@ -353,15 +355,33 @@ double Window::handle_events(bool print_performances) {
 
 	glfwPollEvents();
 
+	if (print_performances) {
+		if (last_perforamnce_print_time == invalid_time) {
+			last_perforamnce_print_time = std::chrono::system_clock::now();
+		}
+
+		double time_since_print = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - last_perforamnce_print_time).count();
+		frame_count_since_performance_print++;
+
+		if (time_since_print > 1000) {
+			std::cout << "[Info] FPS : " << frame_count_since_performance_print << " frametime : " << 1000.0f / frame_count_since_performance_print << std::endl;
+			last_perforamnce_print_time = std::chrono::system_clock::now();
+			frame_count_since_performance_print = 0;
+		}
+	}
+
+	double deltatime_ms;
 	if (last_handle_events_time == invalid_time) {
 		last_handle_events_time = std::chrono::system_clock::now();
-		return 0;
+		deltatime_ms = 0;
 	}
 	else {
 		std::chrono::system_clock::duration deltatime = std::chrono::system_clock::now() - last_handle_events_time;
 		last_handle_events_time = std::chrono::system_clock::now();
-		return std::chrono::duration_cast<std::chrono::milliseconds>(deltatime).count();
+		deltatime_ms = std::chrono::duration_cast<std::chrono::microseconds>(deltatime).count() / 1000.0f;
 	}
+	return deltatime_ms;
+
 }
 
 void* Window::get_handle() {

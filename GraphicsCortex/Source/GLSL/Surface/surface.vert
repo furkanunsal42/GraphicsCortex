@@ -31,9 +31,9 @@ void main()
 {
     v_texture_coordinates = a_texture_coordinates;
     v_world_position = vec3(model * vec4(a_verticies, 1.0));
-    v_normal = transpose(inverse(mat3(model))) * a_normal;   
-    v_tangent = transpose(inverse(mat3(model))) * a_tangent;   
-    v_bitangent = transpose(inverse(mat3(model))) * a_bitangent;   
+    v_normal = mat3(model) * a_normal;   
+    v_tangent = mat3(model) * a_tangent;   
+    v_bitangent = mat3(model) * a_bitangent;   
 
     gl_Position =  projection * view * vec4(v_world_position, 1.0);
 }
