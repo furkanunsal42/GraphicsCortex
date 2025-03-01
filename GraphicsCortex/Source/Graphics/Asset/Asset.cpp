@@ -69,6 +69,12 @@ namespace {
                 (glm::vec3*)scene->mMeshes[submodel_index]->mTangents + scene->mMeshes[submodel_index]->mNumVertices
             );
 
+        if (scene->mMeshes[submodel_index]->mBitangents != nullptr)
+            single_model.vertex_bitangents = std::vector<glm::vec3>(
+                (glm::vec3*)scene->mMeshes[submodel_index]->mBitangents,
+                (glm::vec3*)scene->mMeshes[submodel_index]->mBitangents + scene->mMeshes[submodel_index]->mNumVertices
+            );
+
         if (scene->mMeshes[submodel_index]->mTextureCoords[0] != nullptr) {
             single_model.texture_coordinates_0.reserve(scene->mMeshes[submodel_index]->mNumVertices);
             for (size_t i = 0; i < scene->mMeshes[submodel_index]->mNumVertices; i++) {
@@ -104,14 +110,14 @@ namespace {
 
         size_t primitive_count = scene->mMeshes[submodel_index]->mNumFaces;
 
-        PrimitiveType primitive_type;
+        PrimitiveType primitive_type = triangle;
         switch (scene->mMeshes[submodel_index]->mPrimitiveTypes) {
         case aiPrimitiveType::aiPrimitiveType_POINT:    primitive_type = point; break;
         case aiPrimitiveType::aiPrimitiveType_LINE:     primitive_type = line; break;
         case aiPrimitiveType::aiPrimitiveType_TRIANGLE: primitive_type = triangle; break;
         default:
             std::wcout << "[AssetImporter Error] primitive type is not supported for mesh at: " << path << std::endl;
-            ASSERT(false);
+            //ASSERT(false);
             break;
         }
 

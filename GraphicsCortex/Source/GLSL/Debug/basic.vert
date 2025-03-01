@@ -4,11 +4,13 @@
 const int vertex_slot = 0;
 const int normal_slot = 1;
 const int tangent_slot = 2;
-const int uv0_slot = 3;
-const int uv1_slot = 4;
-const int vertex_color_slot = 5;
-const int bone_indicies_slot = 6;
-const int bone_weights_slot = 7;
+const int bitangent_slot = 3;
+const int uv0_slot = 4;
+const int uv1_slot = 5;
+const int vertex_color_slot = 6;
+const int bone_indicies_slot = 7;
+const int bone_weights_slot = 8;
+
 
 layout(location = vertex_slot)	in vec3 a_position;
 layout(location = normal_slot)	in vec3 a_normal;

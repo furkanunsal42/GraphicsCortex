@@ -79,8 +79,8 @@ void Camera::handle_movements(GLFWwindow* window, glm::vec2 mouse_rest_position,
 	if (mouse_focus) {
 		double mouse_x, mouse_y;
 		glfwGetCursorPos(window, &mouse_x, &mouse_y);
-		float rotation_x = glm::radians((float)(mouse_sensitivity * -(mouse_y - mouse_rest_position.y) / screen_height));
-		float rotation_y = glm::radians((float)(mouse_sensitivity * -(mouse_x - mouse_rest_position.x) / screen_width));
+		float rotation_x = glm::radians((float)(mouse_sensitivity * -(mouse_y - mouse_rest_position.y)));
+		float rotation_y = glm::radians((float)(mouse_sensitivity * -(mouse_x - mouse_rest_position.x)));
 
 		rotation_quat = glm::quat(glm::vec3(0, rotation_y, 0)) * rotation_quat;
 		glm::vec3 forward_vector = rotation_quat * glm::vec3(0, 0, -1);

@@ -32,7 +32,7 @@ public:
 	float screen_width;
 	float screen_height;
 	float movement_speed = 0.0025f;
-	float mouse_sensitivity = 30.0f;
+	float mouse_sensitivity = 0.1;
 	bool mouse_focus = false;
 	Camera();
 	Camera(float width, float height);

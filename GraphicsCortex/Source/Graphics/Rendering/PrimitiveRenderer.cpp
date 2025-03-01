@@ -159,9 +159,6 @@ void primitive_renderer::render(Program& program, Mesh::SingleMesh& single_mesh,
 	PrimitiveType primitive = single_mesh.primitive;
 	IndexType index_buffer_type = single_mesh.index_type;
 
-	vab->bind();
-	program.bind();
-
 	if (single_mesh.index_count == 0) {
 		// array rendering
 		
