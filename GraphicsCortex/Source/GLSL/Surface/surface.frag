@@ -5,6 +5,8 @@ out vec4 frag_color;
 in vec2 v_texture_coordinates;
 in vec3 v_world_position;
 in vec3 v_normal;
+in vec3 v_tangent;
+in vec3 v_bitangent;
 
 // material parameters
 layout(binding = 0) uniform sampler2D albedo_texture;
@@ -29,14 +31,19 @@ vec3 get_normal_from_texture()
 {
     vec3 tangent_normal = texture(normal_texture, v_texture_coordinates).xyz * 2.0 - 1.0;
     
-    vec3 Q1  = dFdx(v_world_position);
-    vec3 Q2  = dFdy(v_world_position);
-    vec2 st1 = dFdx(v_texture_coordinates);
-    vec2 st2 = dFdy(v_texture_coordinates);
+    //vec3 Q1  = dFdx(v_world_position);
+    //vec3 Q2  = dFdy(v_world_position);
+    //vec2 st1 = dFdx(v_texture_coordinates);
+    //vec2 st2 = dFdy(v_texture_coordinates);
+    //
+    //vec3 N   = normalize(v_normal);
+    //vec3 T  = normalize(Q1*st2.t - Q2*st1.t);
+    //vec3 B  = -normalize(cross(N, T));
+    //mat3 TBN = mat3(T, B, N);
 
     vec3 N   = normalize(v_normal);
-    vec3 T  = normalize(Q1*st2.t - Q2*st1.t);
-    vec3 B  = -normalize(cross(N, T));
+    vec3 T   = normalize(v_tangent);
+    vec3 B   = normalize(v_bitangent);
     mat3 TBN = mat3(T, B, N);
 
     return normalize(TBN * tangent_normal);
@@ -152,5 +159,5 @@ void main()
     //if (alpha != 1)
     //    discard;
 
-    frag_color = vec4(vec3(N), alpha);
+    frag_color = vec4(vec3(metallic), alpha);
 }

@@ -155,6 +155,19 @@ std::unique_ptr<Buffer> SingleModel::create_tangent_buffer(size_t vertex_offset_
 	return create_tangent_buffer(vertex_offset_count, 0, vertex_tangents.size());
 }
 
+std::unique_ptr<Buffer> SingleModel::create_bitangent_buffer(size_t vertex_offset_count, size_t buffer_offset_in_bytes, size_t vertex_count) const
+{
+	typedef glm::vec3 attribute_type;
+	std::unique_ptr<Buffer> buffer = std::make_unique<Buffer>(vertex_count * sizeof(attribute_type), Buffer::GPU_BUFFER);
+	buffer->load_data(buffer_offset_in_bytes / sizeof(attribute_type), vertex_offset_count, vertex_count, vertex_bitangents);
+	return buffer;
+}
+
+std::unique_ptr<Buffer> SingleModel::create_bitangent_buffer(size_t vertex_offset_count) const
+{
+	return create_bitangent_buffer(vertex_offset_count, 0, vertex_tangents.size());
+}
+
 std::unique_ptr<Buffer> SingleModel::create_uv0_buffer(size_t vertex_offset_count, size_t buffer_offset_in_bytes, size_t vertex_count) const
 {
 	typedef glm::vec2 attribute_type;
@@ -250,6 +263,7 @@ std::unique_ptr<VertexAttributeBuffer> SingleModel::create_vertex_attribute_buff
 	size_t	verticies_count		=	verticies.size();
 	size_t	normal_count		=	vertex_normals.size();
 	size_t	tangent_count		=	vertex_tangents.size();
+	size_t	bitangent_count		=	vertex_bitangents.size();
 	size_t	uv0_count			=	texture_coordinates_0.size();
 	size_t	uv1_count			=	texture_coordinates_1.size();
 	size_t	vertex_color_count	=	vertex_colors.size();
@@ -262,6 +276,7 @@ std::unique_ptr<VertexAttributeBuffer> SingleModel::create_vertex_attribute_buff
 	typedef glm::vec3  vertex_attribute_type;
 	typedef glm::vec3  normal_attribute_type;
 	typedef glm::vec3  tangent_attribute_type;
+	typedef glm::vec3  bitangent_attribute_type;
 	typedef glm::vec2  uv0_attribute_type;
 	typedef glm::vec2  uv1_attribute_type;
 	typedef glm::vec4  vertex_color_attribute_type;
@@ -281,6 +296,11 @@ std::unique_ptr<VertexAttributeBuffer> SingleModel::create_vertex_attribute_buff
 	if (tangent_count != 0) {
 		vab->attach_vertex_buffer(Mesh::vab_tangent_slot, create_tangent_buffer(), sizeof(tangent_attribute_type), 0, 0);
 		vab->set_attribute_format(Mesh::vab_tangent_slot, Mesh::vab_tangent_slot, VertexAttributeBuffer::a_f32, 3, 0, true);
+	}
+
+	if (bitangent_count != 0) {
+		vab->attach_vertex_buffer(Mesh::vab_bitangent_slot, create_bitangent_buffer(), sizeof(bitangent_attribute_type), 0, 0);
+		vab->set_attribute_format(Mesh::vab_bitangent_slot, Mesh::vab_bitangent_slot, VertexAttributeBuffer::a_f32, 3, 0, true);
 	}
 
 	if (uv0_count != 0) {

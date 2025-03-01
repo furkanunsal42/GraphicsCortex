@@ -132,11 +132,12 @@ public:
 	static const uint32_t vab_vertex_slot = 0;
 	static const uint32_t vab_normal_slot = 1;
 	static const uint32_t vab_tangent_slot = 2;
-	static const uint32_t vab_uv0_slot = 3;
-	static const uint32_t vab_uv1_slot = 4;
-	static const uint32_t vab_vertex_color_slot = 5;
-	static const uint32_t vab_bone_indicies_slot = 6;
-	static const uint32_t vab_bone_weights_slot = 7;
+	static const uint32_t vab_bitangent_slot = 3;
+	static const uint32_t vab_uv0_slot = 4;
+	static const uint32_t vab_uv1_slot = 5;
+	static const uint32_t vab_vertex_color_slot = 6;
+	static const uint32_t vab_bone_indicies_slot = 7;
+	static const uint32_t vab_bone_weights_slot = 8;
 
 private:
 
