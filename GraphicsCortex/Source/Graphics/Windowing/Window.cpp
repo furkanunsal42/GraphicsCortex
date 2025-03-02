@@ -364,7 +364,7 @@ double Window::handle_events(bool print_performances) {
 		frame_count_since_performance_print++;
 
 		if (time_since_print > 1000) {
-			std::cout << "[Info] FPS : " << frame_count_since_performance_print << " frametime : " << 1000.0f / frame_count_since_performance_print << std::endl;
+			std::cout << "[Info] FPS : " << frame_count_since_performance_print << " frametime : " << time_since_print / frame_count_since_performance_print << std::endl;
 			last_perforamnce_print_time = std::chrono::system_clock::now();
 			frame_count_since_performance_print = 0;
 		}

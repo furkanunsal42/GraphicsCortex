@@ -5,12 +5,13 @@
 
 class Light {
 public:
-	glm::vec3 color;
 };
 
 class AmbiantLight : public Light{
 public:
 	AmbiantLight(const glm::vec3& color = glm::vec3(0.1, 0.1, 0.1));
+	
+	glm::vec3 color;
 };
 
 class DirectionalLight : public Light {
