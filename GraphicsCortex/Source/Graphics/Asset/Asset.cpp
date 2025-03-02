@@ -24,8 +24,8 @@ Asset::Asset(const std::filesystem::path& asset_path, const AssetImportDescripti
         aiProcess_ValidateDataStructure | // perform a full validation of the loader's output
         aiProcess_ImproveCacheLocality | // improve the cache locality of the output vertices
         aiProcess_RemoveRedundantMaterials | // remove redundant materials
-        aiProcess_FindDegenerates | // remove degenerated polygons from the import
-        aiProcess_FindInvalidData | // detect invalid model data, such as invalid normal vectors
+        //aiProcess_FindDegenerates  // remove degenerated polygons from the import
+        //aiProcess_FindInvalidData | // detect invalid model data, such as invalid normal vectors
         aiProcess_GenUVCoords | // convert spherical, cylindrical, box and planar mapping to proper UVs
         aiProcess_TransformUVCoords | // preprocess UV transformations (scaling, translation ...)
         aiProcess_FindInstances | // search for instanced meshes and remove them by references to one master

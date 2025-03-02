@@ -1,12 +1,21 @@
 #pragma once
 #include "Component/Component.h"
 
-#include "Lights/Lights.h"
+#include "vec3.hpp"
 
-class SpotLightComponent : public Component {
+class LightComponent : public Component {
 public:
 
-	SpotLightComponent(SpotLight spot_light = SpotLight()) { this->spot_light = spot_light; }
+	enum Type {
+		directional,
+		point, 
+		spot,
+	};
 
-	SpotLight spot_light = SpotLight();
+	LightComponent(Type type = Type::directional, glm::vec3 color = glm::vec3(1), float max_angle = 3.14 / 4):
+		type(type), color(color), max_angle(max_angle) {}
+
+	Type type;
+	glm::vec3 color;
+	float max_angle;
 };

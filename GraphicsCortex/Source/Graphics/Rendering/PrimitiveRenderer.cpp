@@ -62,7 +62,7 @@ void primitive_renderer::render(
 	vab.bind();
 	program.bind();
 	index_buffer.bind_as_index_buffer();
-
+	
 	size_t ib_index_count = index_buffer.get_buffer_size_in_bytes() / get_IndexType_bytes_per_index(index_type);
 
 	if (index_count == 0)

@@ -2,8 +2,6 @@
 #include "RenderPipeline.h"
 #include "Components/Component_MeshRenderer.h"
 
-#include "Components/Component_DirectionalLight.h"
-#include "Components/Component_PointLight.h"
 #include "Components/Component_SpotLight.h"
 //#include "Components/Component_Skylight.h"
 
@@ -38,57 +36,46 @@ public:
 	}
 
 	void update_light_buffers(Scene& scene) {
-		std::span<DirectionalLightComponent*> d_lights_comps = scene.get_components<DirectionalLightComponent>();
-		std::span<PointLightComponent*> p_lights_comps = scene.get_components<PointLightComponent>();
-		std::span<SpotLightComponent*> s_lights_comps = scene.get_components<SpotLightComponent>();
+		std::span<LightComponent*> lights_comps = scene.get_components<LightComponent>();
 
-		{
-			uint32_t d_light_count = std::min(d_lights_comps.size(), (size_t)directional_light_max_count);
-			for (uint32_t i = 0; i < std::min(d_lights_comps.size(), (size_t)directional_light_max_count); i++) {
-				DirectionalLight& light = d_lights_comps[i]->directional_light;
-				auto transform_c = d_lights_comps[i]->get_entity()->get_component<TransformComponent>();
-				if (transform_c == nullptr) continue;
-				glm::vec4 position_data = glm::vec4(glm::vec3(transform_c->transform[3]), 0);
+		uint32_t d_counter = 0;
+		uint32_t p_counter = 0;
+		uint32_t s_counter = 0;
 
-				glm::vec4 direction_data = glm::vec4(light.direction, 0);
-				glm::vec4 color_data = glm::vec4(light.color, 0);
-				directional_lights_buffer->set_data(sizeof(glm::vec4)*i, 0, sizeof(glm::vec4), &direction_data);
-				directional_lights_buffer->set_data(sizeof(glm::vec4)*directional_light_max_count + sizeof(glm::vec4) * i, 0, sizeof(glm::vec4), &color_data);
+		for (uint32_t comp_i = 0; comp_i < lights_comps.size(); comp_i++) {
+			
+			auto transform_c = lights_comps[comp_i]->get_entity()->get_component<TransformComponent>();
+			if (transform_c == nullptr) continue;
+
+			//std::cout << transform_c->transform[2].x << " " << transform_c->transform[2].y << " " << transform_c->transform[2].z << std::endl;
+
+			glm::vec4 position_data = glm::vec4(transform_c->get_position(), 0);
+			glm::vec4 direction_data = glm::vec4(glm::vec3(transform_c->get_z_direction()), glm::cos(lights_comps[comp_i]->max_angle));
+			glm::vec4 color_data = glm::vec4(lights_comps[comp_i]->color, 0);
+
+			switch (lights_comps[comp_i]->type) {
+			case LightComponent::directional:
+				directional_lights_buffer->set_data(sizeof(glm::vec4) * d_counter, 0, sizeof(glm::vec4), &direction_data);
+				directional_lights_buffer->set_data(sizeof(glm::vec4) * directional_light_max_count + sizeof(glm::vec4) * d_counter, 0, sizeof(glm::vec4), &color_data);
+				d_counter++;
+				break;
+			case LightComponent::point:
+				point_lights_buffer->set_data(sizeof(glm::vec4) * p_counter, 0, sizeof(glm::vec4), &position_data);
+				point_lights_buffer->set_data(sizeof(glm::vec4) * point_light_max_count + sizeof(glm::vec4) * p_counter, 0, sizeof(glm::vec4), &color_data);
+				p_counter++;
+				break;
+			case LightComponent::spot:
+				spot_lights_buffer->set_data(sizeof(glm::vec4) * s_counter, 0, sizeof(glm::vec4), &position_data);
+				spot_lights_buffer->set_data(sizeof(glm::vec4) * spot_light_max_count + sizeof(glm::vec4) * s_counter, 0, sizeof(glm::vec4), &direction_data);
+				spot_lights_buffer->set_data(sizeof(glm::vec4) * 2 * spot_light_max_count + sizeof(glm::vec4) * s_counter, 0, sizeof(glm::vec4), &color_data);
+				s_counter++;
+				break;
 			}
-			directional_lights_buffer->set_data(sizeof(glm::vec4)*2*directional_light_max_count, 0, sizeof(int32_t), &d_light_count);
 		}
+		directional_lights_buffer->set_data(sizeof(glm::vec4) * 2 * directional_light_max_count, 0, sizeof(int32_t), &d_counter);
+		point_lights_buffer->set_data(sizeof(glm::vec4) * 2 * point_light_max_count, 0, sizeof(int32_t), &p_counter);
+		spot_lights_buffer->set_data(sizeof(glm::vec4) * 3 * spot_light_max_count, 0, sizeof(int32_t), &s_counter);
 
-		{
-			uint32_t p_light_count = std::min(p_lights_comps.size(), (size_t)point_light_max_count);
-			for (uint32_t i = 0; i < std::min(p_lights_comps.size(), (size_t)point_light_max_count); i++) {
-				PointLight& light = p_lights_comps[i]->point_light;
-				auto transform_c = p_lights_comps[i]->get_entity()->get_component<TransformComponent>();
-				if (transform_c == nullptr) continue;
-
-				glm::vec4 position_data = glm::vec4(glm::vec3(transform_c->transform[3]), 0);
-				glm::vec4 color_data = glm::vec4(light.color, 0);
-				point_lights_buffer->set_data(sizeof(glm::vec4)*i, 0, sizeof(glm::vec4), &position_data);
-				point_lights_buffer->set_data(sizeof(glm::vec4)*point_light_max_count + sizeof(glm::vec4) * i, 0, sizeof(glm::vec4), &color_data);
-			}
-			point_lights_buffer->set_data(sizeof(glm::vec4)*2*point_light_max_count, 0, sizeof(int32_t), &p_light_count);
-		}
-
-		{
-			uint32_t s_light_count = std::min(s_lights_comps.size(), (size_t)spot_light_max_count);
-			for (uint32_t i = 0; i < std::min(s_lights_comps.size(), (size_t)spot_light_max_count); i++) {
-				SpotLight& light = s_lights_comps[i]->spot_light;
-				auto transform_c = s_lights_comps[i]->get_entity()->get_component<TransformComponent>();
-				if (transform_c == nullptr) continue;
-				glm::vec4 position_data = glm::vec4(glm::vec3(transform_c->transform[3]), 0);
-
-				glm::vec4 direction_data = glm::vec4(light.direction, glm::cos(light.angle_radian));
-				glm::vec4 color_data = glm::vec4(light.color, 0);
-				spot_lights_buffer->set_data(sizeof(glm::vec4)*i, 0, sizeof(glm::vec4), &position_data);
-				spot_lights_buffer->set_data(sizeof(glm::vec4)*spot_light_max_count + sizeof(glm::vec4) * i, 0, sizeof(glm::vec4), &direction_data);
-				spot_lights_buffer->set_data(sizeof(glm::vec4)*2*spot_light_max_count + sizeof(glm::vec4) * i, 0, sizeof(glm::vec4), &color_data);
-			}
-			spot_lights_buffer->set_data(sizeof(glm::vec4)*3*spot_light_max_count, 0, sizeof(int32_t), &s_light_count);
-		}
 
 		directional_lights_buffer->upload_data();
 		point_lights_buffer->upload_data();

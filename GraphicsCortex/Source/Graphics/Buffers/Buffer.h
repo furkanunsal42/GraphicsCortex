@@ -38,7 +38,7 @@ public:
 			Temporary,
 		};
 
-		MapInfo(Direction direction = Bothways, Lifetime lifetime = Persistant);
+		MapInfo(Direction direction = Bothways, Lifetime lifetime = Temporary);
 
 		Direction direction;
 		Lifetime lifetime;

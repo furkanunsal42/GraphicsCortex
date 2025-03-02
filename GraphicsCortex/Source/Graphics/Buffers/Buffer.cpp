@@ -408,6 +408,7 @@ void Buffer::_allocate_buffer(size_t buffer_size)
 	unsigned int flag = GL_DYNAMIC_STORAGE_BIT;
 	flag |= GL_MAP_WRITE_BIT;
 	flag |= GL_MAP_READ_BIT;
+	
 	if (_buffer_memory_type == MemoryType::CPU_BUFFER) flag |= GL_CLIENT_STORAGE_BIT;
 	if (_map_description.lifetime == MapInfo::Persistant) flag |= GL_MAP_PERSISTENT_BIT;
 	
