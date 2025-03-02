@@ -113,7 +113,6 @@ namespace {
 
 void MeshMaterial::load_material(ModelMaterial& model_material)
 {
-
     struct _TextureLoadParams {
         Texture2D::ColorTextureFormat ctf   = Texture2D::ColorTextureFormat::RGB8;
         Texture2D::ColorFormat cf           = Texture2D::ColorFormat::RGB;
@@ -123,58 +122,56 @@ void MeshMaterial::load_material(ModelMaterial& model_material)
 
     std::unordered_map<std::shared_ptr<Image>, _TextureLoadParams> image_to_texture;
 
-    std::span<ModelMaterial::SingleMaterial> models = model_material.get_materials();
-    for (auto& model : models) {
-        if (model.albedo_image != nullptr)              
-            image_to_texture[model.albedo_image]            = { albedo_ctf, albedo_cf, albedo_t, nullptr};
-        if (model.normal_image != nullptr)              
-            image_to_texture[model.normal_image]            = { normal_ctf, normal_cf, normal_t, nullptr };
-        if (model.roughness_image != nullptr)           
-            image_to_texture[model.roughness_image]         = { roughness_ctf, roughness_cf, roughness_t, nullptr};
-        if (model.metallic_image != nullptr)            
-            image_to_texture[model.metallic_image]          = { metallic_ctf, metallic_cf, metallic_t, nullptr };
-        //if (model.height_image != nullptr)              
-        //    image_to_texture[model.height_image]            = { albedo_ctf, albedo_cf, albedo_t, nullptr };
-        if (model.ambient_occlusion_image != nullptr)   
-            image_to_texture[model.ambient_occlusion_image] = { ambient_occlusion_ctf, ambient_occlusion_cf, ambient_occlusion_t, nullptr };
+    std::span<ModelMaterial::SingleMaterial> materials = model_material.get_materials();
+    for (auto& material : materials) {
+        if (material.albedo_image != nullptr)              
+            image_to_texture[material.albedo_image]            = { albedo_ctf, albedo_cf, albedo_t, nullptr};
+        if (material.normal_image != nullptr)              
+            image_to_texture[material.normal_image]            = { normal_ctf, normal_cf, normal_t, nullptr };
+        if (material.roughness_image != nullptr)           
+            image_to_texture[material.roughness_image]         = { roughness_ctf, roughness_cf, roughness_t, nullptr};
+        if (material.metallic_image != nullptr)            
+            image_to_texture[material.metallic_image]          = { metallic_ctf, metallic_cf, metallic_t, nullptr };
+        //if (material.height_image != nullptr)              
+        //    image_to_texture[material.height_image]            = { albedo_ctf, albedo_cf, albedo_t, nullptr };
+        if (material.ambient_occlusion_image != nullptr)   
+            image_to_texture[material.ambient_occlusion_image] = { ambient_occlusion_ctf, ambient_occlusion_cf, ambient_occlusion_t, nullptr };
         //if (model.emissive_image != nullptr)            
         //    image_to_texture[model.emissive_image]          = { albedo_ctf, albedo_cf, albedo_t, nullptr };
     }
 
     for (auto& image_texture : image_to_texture) {
-        const std::shared_ptr<Image> image = image_texture.first;
         _TextureLoadParams& texture_params = image_texture.second;
-        texture_params.texture = create_material_texture_without_clear(image, texture_params.ctf, texture_params.cf, texture_params.t);
+        texture_params.texture = create_material_texture_without_clear(image_texture.first, texture_params.ctf, texture_params.cf, texture_params.t);
     }
 
     for (auto& model_mat : model_material.get_materials()) {
         MeshMaterial::SingleMaterial material;
         
-        if (material.albedo_texture != nullptr)
+        if (model_mat.albedo_image != nullptr)
             material.albedo_texture = image_to_texture[model_mat.albedo_image].texture;
         else
             material.albedo_texture = create_material_texture(model_mat.albedo_image, albedo_ctf, albedo_cf, albedo_t, glm::vec4(model_mat.albedo));
 
-        if (material.normal_texture != nullptr)
+        if (model_mat.normal_image != nullptr)
             material.normal_texture = image_to_texture[model_mat.normal_image].texture;
         else
             material.normal_texture = create_material_texture(model_mat.normal_image, normal_ctf, normal_cf, normal_t, glm::vec3(0.5, 0.5, 1));
 
-        if (material.roughness_texture != nullptr)
+        if (model_mat.roughness_image != nullptr)
             material.roughness_texture = image_to_texture[model_mat.roughness_image].texture;
         else
             material.roughness_texture = create_material_texture(model_mat.roughness_image, roughness_ctf, roughness_cf, roughness_t, 0.9f);
 
-        if (material.metallic_texture != nullptr)
+        if (model_mat.metallic_image != nullptr)
             material.metallic_texture = image_to_texture[model_mat.metallic_image].texture;
         else
             material.metallic_texture = create_material_texture(model_mat.metallic_image, metallic_ctf, metallic_cf, metallic_t, 0.0f);
         
-        if (material.ambient_occlusion_texture != nullptr)
+        if (model_mat.ambient_occlusion_image != nullptr)
             material.ambient_occlusion_texture = image_to_texture[model_mat.ambient_occlusion_image].texture;
         else
             material.ambient_occlusion_texture = create_material_texture(model_mat.ambient_occlusion_image, ambient_occlusion_ctf, ambient_occlusion_cf, ambient_occlusion_t, 1.0f);
-
 
         add_material(material);
     }
@@ -182,7 +179,76 @@ void MeshMaterial::load_material(ModelMaterial& model_material)
 
 void MeshMaterial::load_material(ModelMaterial&& model_material)
 {
-    load_material((ModelMaterial&)model_material);
+    struct _TextureLoadParams {
+        Texture2D::ColorTextureFormat ctf = Texture2D::ColorTextureFormat::RGB8;
+        Texture2D::ColorFormat cf = Texture2D::ColorFormat::RGB;
+        Texture2D::Type t = Texture2D::Type::UNSIGNED_BYTE;
+        std::shared_ptr<Texture2D> texture = nullptr;
+    };
+
+    std::unordered_map<std::shared_ptr<Image>, _TextureLoadParams> image_to_texture;
+
+    std::span<ModelMaterial::SingleMaterial> materials = model_material.get_materials();
+    for (auto& material : materials) {
+        if (material.albedo_image != nullptr)
+            image_to_texture[material.albedo_image] = { albedo_ctf, albedo_cf, albedo_t, nullptr };
+        if (material.normal_image != nullptr)
+            image_to_texture[material.normal_image] = { normal_ctf, normal_cf, normal_t, nullptr };
+        if (material.roughness_image != nullptr)
+            image_to_texture[material.roughness_image] = { roughness_ctf, roughness_cf, roughness_t, nullptr };
+        if (material.metallic_image != nullptr)
+            image_to_texture[material.metallic_image] = { metallic_ctf, metallic_cf, metallic_t, nullptr };
+        //if (material.height_image != nullptr)              
+        //    image_to_texture[material.height_image]            = { albedo_ctf, albedo_cf, albedo_t, nullptr };
+        if (material.ambient_occlusion_image != nullptr)
+            image_to_texture[material.ambient_occlusion_image] = { ambient_occlusion_ctf, ambient_occlusion_cf, ambient_occlusion_t, nullptr };
+        //if (model.emissive_image != nullptr)            
+        //    image_to_texture[model.emissive_image]          = { albedo_ctf, albedo_cf, albedo_t, nullptr };
+    }
+
+    for (auto& image_texture : image_to_texture) {
+        _TextureLoadParams& texture_params = image_texture.second;
+        texture_params.texture = create_material_texture_without_clear(image_texture.first, texture_params.ctf, texture_params.cf, texture_params.t);
+    }
+
+    for (auto& model_mat : model_material.get_materials()) {
+        MeshMaterial::SingleMaterial material;
+
+        if (model_mat.albedo_image != nullptr)
+            material.albedo_texture = image_to_texture[model_mat.albedo_image].texture;
+        else
+            material.albedo_texture = create_material_texture(model_mat.albedo_image, albedo_ctf, albedo_cf, albedo_t, glm::vec4(model_mat.albedo));
+
+        if (model_mat.normal_image != nullptr)
+            material.normal_texture = image_to_texture[model_mat.normal_image].texture;
+        else
+            material.normal_texture = create_material_texture(model_mat.normal_image, normal_ctf, normal_cf, normal_t, glm::vec3(0.5, 0.5, 1));
+
+        if (model_mat.roughness_image != nullptr)
+            material.roughness_texture = image_to_texture[model_mat.roughness_image].texture;
+        else
+            material.roughness_texture = create_material_texture(model_mat.roughness_image, roughness_ctf, roughness_cf, roughness_t, 0.9f);
+
+        if (model_mat.metallic_image != nullptr)
+            material.metallic_texture = image_to_texture[model_mat.metallic_image].texture;
+        else
+            material.metallic_texture = create_material_texture(model_mat.metallic_image, metallic_ctf, metallic_cf, metallic_t, 0.0f);
+
+        if (model_mat.ambient_occlusion_image != nullptr)
+            material.ambient_occlusion_texture = image_to_texture[model_mat.ambient_occlusion_image].texture;
+        else
+            material.ambient_occlusion_texture = create_material_texture(model_mat.ambient_occlusion_image, ambient_occlusion_ctf, ambient_occlusion_cf, ambient_occlusion_t, 1.0f);
+
+        model_mat.albedo_image = nullptr;
+        model_mat.normal_image = nullptr;
+        model_mat.roughness_image = nullptr;
+        model_mat.metallic_image = nullptr;
+        model_mat.height_image = nullptr;
+        model_mat.ambient_occlusion_image = nullptr;
+        model_mat.emissive_image = nullptr;
+
+        add_material(material);
+    }
 }
 
 void MeshMaterial::load_material(ModelMaterial::SingleMaterial& model_mat)

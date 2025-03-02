@@ -552,6 +552,26 @@ std::unique_ptr<Buffer> Model::create_tangent_buffer() const {
 	return buffer;
 }
 
+std::unique_ptr<Buffer> Model::create_bitangent_buffer() const
+{
+	size_t vertex_count = get_models_min_vertex_count_nonzero();
+	typedef glm::vec3 attribute_type;
+	std::unique_ptr<Buffer> buffer = std::make_unique<Buffer>(vertex_count * sizeof(attribute_type), Buffer::GPU_BUFFER);
+
+	size_t vertex_begin_pointer = 0;
+	for (const SingleModel& submodel : single_models) {
+
+		const std::vector<attribute_type>& data = submodel.vertex_bitangents;
+		size_t uploading_count = std::min(data.size(), vertex_count - vertex_begin_pointer);
+		if (uploading_count <= 0) break;
+
+		buffer->load_data(vertex_begin_pointer, 0, uploading_count, data);
+		vertex_begin_pointer += uploading_count;
+	}
+
+	return buffer;
+}
+
 std::unique_ptr<Buffer> Model::create_uv0_buffer() const
 {
 
@@ -733,6 +753,7 @@ std::unique_ptr<VertexAttributeBuffer> Model::create_vertex_attribute_buffer() c
 	size_t vertex_count = 0;
 	size_t normal_count = 0;
 	size_t tangent_count = 0;
+	size_t bitangent_count = 0;
 	size_t uv0_count = 0;
 	size_t uv1_count = 0;
 	size_t vertex_color_count = 0;
@@ -744,6 +765,7 @@ std::unique_ptr<VertexAttributeBuffer> Model::create_vertex_attribute_buffer() c
 		vertex_count		+=	submodel.verticies.size();
 		normal_count		+=	submodel.vertex_normals.size();
 		tangent_count		+=	submodel.vertex_tangents.size();
+		bitangent_count		+=	submodel.vertex_bitangents.size();
 		uv0_count			+=	submodel.texture_coordinates_0.size();
 		uv1_count			+=	submodel.texture_coordinates_1.size();
 		vertex_color_count	+=	submodel.vertex_colors.size();
@@ -757,6 +779,7 @@ std::unique_ptr<VertexAttributeBuffer> Model::create_vertex_attribute_buffer() c
 	typedef glm::vec3  vertex_attribute_type;
 	typedef glm::vec3  normal_attribute_type;
 	typedef glm::vec3  tangent_attribute_type;
+	typedef glm::vec3  bitangent_attribute_type;
 	typedef glm::vec2  uv0_attribute_type;
 	typedef glm::vec2  uv1_attribute_type;
 	typedef glm::vec4  vertex_color_attribute_type;
@@ -776,6 +799,11 @@ std::unique_ptr<VertexAttributeBuffer> Model::create_vertex_attribute_buffer() c
 	if (tangent_count != 0) {
 		vab->attach_vertex_buffer(Mesh::vab_tangent_slot, create_tangent_buffer(), sizeof(tangent_attribute_type), 0, 0);
 		vab->set_attribute_format(Mesh::vab_tangent_slot, Mesh::vab_tangent_slot, VertexAttributeBuffer::a_f32, 3, 0, true);
+	}
+
+	if (bitangent_count != 0) {
+		vab->attach_vertex_buffer(Mesh::vab_bitangent_slot, create_bitangent_buffer(), sizeof(bitangent_attribute_type), 0, 0);
+		vab->set_attribute_format(Mesh::vab_bitangent_slot, Mesh::vab_bitangent_slot, VertexAttributeBuffer::a_f32, 3, 0, true);
 	}
 
 	if (uv0_count != 0) {

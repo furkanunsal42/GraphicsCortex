@@ -119,6 +119,7 @@ public:
 	std::unique_ptr<Buffer> create_vertex_buffer() const;
 	std::unique_ptr<Buffer> create_normal_buffer() const;
 	std::unique_ptr<Buffer> create_tangent_buffer() const;
+	std::unique_ptr<Buffer> create_bitangent_buffer() const;
 	std::unique_ptr<Buffer> create_uv0_buffer() const;
 	std::unique_ptr<Buffer> create_uv1_buffer() const;
 	//std::unique_ptr<Buffer> create_uv_merged_buffer() const;

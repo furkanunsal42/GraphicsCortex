@@ -9,7 +9,7 @@ public:
 	bool run() {
 
 		default_window_desc = new WindowDescription();
-		default_window_desc->w_resolution = glm::ivec2(2560, 1440);
+		default_window_desc->w_resolution = glm::ivec2(1920, 1080);
 		default_window_desc->f_swap_interval = 0;
 
 		default_init();
@@ -24,8 +24,9 @@ public:
 		//Asset sculpture("../GraphicsCortex/Models/sculpture/scene.gltf");
 		//Asset sculpture("../GraphicsCortex/Models/medival/source/medival.fbx");
 		//Asset sculpture("../GraphicsCortex/Models/bmw/scene.gltf");
-		Asset sculpture("../GraphicsCortex/Models/Sponza/scene.gltf");
-		//Asset sculpture("../GraphicsCortex/ModelsKhronos/2.0/Sponza/glTF/Sponza.gltf");
+		//Asset sculpture("../GraphicsCortex/Models/Sponza/scene.gltf");
+		//Asset sculpture("../GraphicsCortex/Models/circuit/nogaro.obj");
+		Asset sculpture("../GraphicsCortex/ModelsKhronos/2.0/Sponza/glTF/Sponza.gltf");
 		
 		std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(sculpture.load_mesh());
 		std::shared_ptr<MeshMaterial> mesh_material = std::make_shared<MeshMaterial>(sculpture.load_mesh_material());
@@ -47,6 +48,7 @@ public:
 		
 		Camera camera;
 		camera.fov = 100;
+		camera.max_distance = 1000.0f;
 		camera.screen_width = resolution.x;
 		camera.screen_height = resolution.y;
 
@@ -55,10 +57,7 @@ public:
 		glEnable(GL_CULL_FACE);
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glEnable(GL_SCISSOR_TEST);
 		//glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
-
-		
 
 		while (true) {
 

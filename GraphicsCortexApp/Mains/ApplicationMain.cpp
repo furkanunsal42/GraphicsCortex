@@ -24,7 +24,7 @@ int main() {
 	//SingleMeshIndexedRenderingTest().run();
 	//RenderPassClearTest().run();
 	//EntityComponentSystemTest().run();
-	//MeshMaterialTest().run();
+	MeshMaterialTest().run();
 
 	//ModelConstructionTest().run();
 	//MeshConstructionTest().run();
@@ -34,6 +34,6 @@ int main() {
 
 	//MeshRendererTest().run();
 
-	ChannelSplitingTest().run();
+	//ChannelSplitingTest().run();
 
 }

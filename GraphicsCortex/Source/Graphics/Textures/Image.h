@@ -1,6 +1,7 @@
 #pragma once 
 
 #include <string>
+#include <filesystem>
 #include "tiffio.h"
 
 class Framebuffer;
@@ -41,6 +42,8 @@ public:
 	Image& operator=(const Image& other);
 	Image(Image&& other);
 	Image& operator=(Image&& other);
+
+	static ImageParameters detect_image_parameters(const std::filesystem::path& path);
 
 	Image copy_channels(Channel new_red_source, Channel new_green_source, Channel new_blue_source, Channel new_alpha_source);
 	Image copy_channels(Channel new_red_source, Channel new_green_source, Channel new_blue_source);

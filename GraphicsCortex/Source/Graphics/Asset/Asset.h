@@ -28,7 +28,7 @@ public:
 	Model load_model();
 	Mesh load_mesh();
 	
-	ModelMaterial::SingleMaterial load_single_model_material(uint32_t submodel_index);
+	ModelMaterial::SingleMaterial load_single_model_material(uint32_t submodel_index);	// TODO sync with load_model_material()
 	ModelMaterial load_model_material();
 	MeshMaterial load_mesh_material();
 

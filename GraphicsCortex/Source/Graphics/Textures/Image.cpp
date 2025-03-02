@@ -385,6 +385,35 @@ Image& Image::operator=(Image&& other) {
 	return *this;
 }
 
+Image::ImageParameters Image::detect_image_parameters(const std::filesystem::path& path)
+{
+	if (!std::filesystem::exists(path)) {
+		ImageParameters params;
+		params.width = 0;
+		params.height = 0;
+		params.depth = 0;
+		params.channel_count = 0;
+		params.bytes_per_channel = 0;
+		params.path = "";
+		params.vertical_flip = false;
+		return params;
+	}
+
+	int image_width, image_height, iamge_channel_count, image_bytes_per_channel;
+	stbi_info(path.string().c_str(), &image_width, &image_height, &iamge_channel_count);
+	image_bytes_per_channel = stbi_is_16_bit(path.string().c_str()) ? 2 : 1;
+
+	ImageParameters params;
+	params.width = image_width;
+	params.height = image_height;
+	params.depth = 1;
+	params.channel_count = iamge_channel_count;
+	params.bytes_per_channel = image_bytes_per_channel;
+	params.path = path.string();
+	params.vertical_flip = false;
+	return params;
+}
+
 namespace {
 	uint32_t Channel_to_offset(Image::Channel channel) {
 		switch (channel) {

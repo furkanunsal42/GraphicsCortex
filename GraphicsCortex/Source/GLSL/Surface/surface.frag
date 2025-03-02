@@ -16,11 +16,60 @@ layout(binding = 3) uniform sampler2D roughness_texture;
 layout(binding = 4) uniform sampler2D ambient_occlusion_texture;
 
 // lights
-uniform vec3 light_positions[4];
-uniform vec3 light_colors[4];
+layout (binding = 5) uniform samplerCube environment_texture;
+
+#define POINT_LIGHT_MAX_COUNT 32
+#define DIRECTIONAL_LIGHT_MAX_COUNT 32
+#define SPOT_LIGHT_MAX_COUNT 32
+
+#define POINT_SHADOWMAP_MAX_COUNT 32
+#define DIRECTIONAL_SHADOWMAP_MAX_COUNT 32
+#define SPOT_SHADOWMAP_MAX_COUNT 32
+
+layout(std140, binding = 0) buffer p_lights {
+    vec4 p_light_positions[POINT_LIGHT_MAX_COUNT];
+    vec4 p_light_colors[POINT_LIGHT_MAX_COUNT];
+    int p_light_count;
+} p_lights_buffer;
+
+layout(std140, binding = 1) buffer d_lights {
+    vec4 d_light_direction[DIRECTIONAL_LIGHT_MAX_COUNT];
+    vec4 d_light_colors[DIRECTIONAL_LIGHT_MAX_COUNT];
+    int d_light_count;
+} d_lights_buffer;
+
+layout(std140, binding = 2) buffer s_lights {
+    vec4 s_light_positions[SPOT_LIGHT_MAX_COUNT];
+    vec4 s_light_direction_angle[SPOT_LIGHT_MAX_COUNT];
+    vec4 s_light_colors[SPOT_LIGHT_MAX_COUNT];
+    int s_light_count;
+} s_lights_buffer;
+
+// shadowmaps
+layout(std140, binding = 0) buffer p_shadowmaps {
+    mat4 p_mvp[POINT_SHADOWMAP_MAX_COUNT];
+    int p_shadowmap_count;
+} p_shadowmaps_buffer;
+
+layout(std140, binding = 1) buffer d_shadowmaps {
+    mat4 d_mvp[DIRECTIONAL_SHADOWMAP_MAX_COUNT];
+    int d_shadowmap_count;
+} d_shadowmaps_buffer;
+
+layout(std140, binding = 2) buffer s_shadowmaps {
+    mat4 s_mvp[SPOT_SHADOWMAP_MAX_COUNT];
+    int s_shadowmap_count;
+} s_shadowmaps_buffer;
+
+layout (binding = 6) uniform samplerCubeArray p_shadowmap_textures;
+layout (binding = 7) uniform sampler2DArray d_shadowmap_textures;
+layout (binding = 8) uniform sampler2DArray s_shadowmap_textures;
+
+// lights
+uniform vec3 light_positions[32];
+uniform vec3 light_colors[32];
 
 uniform vec3 camera_position;
-
 const float PI = 3.14159265359;
 // ----------------------------------------------------------------------------
 // Easy trick to get tangent-normals to world-space to keep PBR code simplified.
@@ -108,7 +157,7 @@ void main()
 
     // reflectance equation
     vec3 Lo = vec3(0.0);
-    for(int i = 0; i < 4; ++i) 
+    for(int i = 0; i < 32; ++i) 
     {
         // calculate per-light radiance
         vec3 L = normalize(light_positions[i] - v_world_position);
@@ -159,5 +208,5 @@ void main()
     if (alpha != 1)
         discard;
 
-    frag_color = vec4(color, alpha);
+    frag_color = vec4(vec3(color), 1);
 }
