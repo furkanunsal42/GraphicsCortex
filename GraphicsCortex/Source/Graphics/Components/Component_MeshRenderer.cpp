@@ -53,7 +53,7 @@ void MeshRendererComponent::render(Camera& camera)
 	std::shared_ptr<MeshMaterial> mesh_material = material_c->get_mesh_material();
 	bool mesh_material_exists = mesh_material != nullptr;
 	RenderParameters& render_parameters = material_c->get_render_parameters();
-
+	
 	std::shared_ptr<Mesh> mesh = mesh_c->mesh;
 	if (mesh == nullptr) return;
 

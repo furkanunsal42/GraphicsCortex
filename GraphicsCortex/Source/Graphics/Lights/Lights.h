@@ -26,19 +26,17 @@ public:
 class PointLight : public Light {
 public:
 	
-	PointLight(const glm::vec3& position, const glm::vec3& color);
+	PointLight(const glm::vec3& color = glm::vec3(1));
 	
 	glm::vec3 color;
-	glm::vec3 position;
 };
 
 class SpotLight : public Light {
 public:
 	
-	SpotLight(const glm::vec3& position, const glm::vec3& direction, const glm::vec3& color, float angle);
+	SpotLight(const glm::vec3& direction = glm::vec3(0, -1, 0), const glm::vec3& color = glm::vec3(1), float angle_radian = 3.14 / 2);
 
 	glm::vec3 color;
-	glm::vec3 position;
 	glm::vec3 direction;
-	float cos_angle;
+	float angle_radian;
 };

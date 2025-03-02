@@ -12,8 +12,6 @@ class Texture2D;
 class UniformBuffer {
 public:
 	unsigned int id;
-	unsigned int bound_slot = 0;
-	bool ever_bound = false;
 
 	UniformBuffer();
 	UniformBuffer(const UniformBuffer& other) = delete;
@@ -36,7 +34,7 @@ public:
 	void set_data(int managed_buffer_offset_in_bytes, int uploading_data_offset_in_bytes, int size_in_bytes, const std::vector<T>& data);
 	
 	void clear();
-
+	size_t get_buffer_size_in_bytes();
 	void upload_data();
 
 	void* cpu_data = nullptr;

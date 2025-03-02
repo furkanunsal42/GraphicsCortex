@@ -1,4 +1,4 @@
-#include "ShaderCompiler.h"
+﻿#include "ShaderCompiler.h"
 
 #include <fstream>
 #include <iostream>
@@ -517,6 +517,44 @@ void Program::unbind() {
 	GLCall(glUseProgram(0));
 }
 
+void Program::update_uniform(const std::string& name, UniformBuffer& uniform_buffer, size_t offset, size_t size)
+{
+	uniform_buffer.upload_data();
+
+	GLCall(unsigned int index = glGetUniformBlockIndex(id, name.c_str()));
+	if (index == GL_INVALID_INDEX) {
+		std::cout << "[OpenGL Error] Program tried to update_uniform_buffer_slots() but uniform block named: \"" + name + "\" wasn't found in the shader" << std::endl;
+	}
+
+	int32_t binding = -1;
+	GLCall(glGetActiveUniformBlockiv(id, index, GL_UNIFORM_BLOCK_BINDING, &binding));
+
+	if (binding == -1) {	// maybe
+		ASSERT(false);
+	}
+
+	uniform_buffer.bind(binding, offset, size);
+}
+
+void Program::update_uniform(const std::string& name, UniformBuffer& uniform_buffer, size_t offset)
+{
+	uniform_buffer.upload_data(); 
+
+	GLCall(unsigned int index = glGetUniformBlockIndex(id, name.c_str()));
+	if (index == GL_INVALID_INDEX) {
+		std::cout << "[OpenGL Error] Program tried to update_uniform_buffer_slots() but uniform block named: \"" + name + "\" wasn't found in the shader" << std::endl;
+	}
+
+	int32_t binding = -1;
+	GLCall(glGetActiveUniformBlockiv(id, index, GL_UNIFORM_BLOCK_BINDING, &binding));
+
+	if (binding == -1) {	// maybe
+		ASSERT(false);
+	}
+	
+	uniform_buffer.bind(binding, offset, uniform_buffer.get_buffer_size_in_bytes());
+}
+
 void Program::update_uniform(const std::string& name, Texture1D& texture1d)
 {
 	texture1d.wait_async_load();
@@ -788,48 +826,6 @@ void Program::update_uniform(unsigned int uniform_id, glm::vec3& a) {
 void Program::update_uniform(unsigned int uniform_id, glm::vec2& a) {
 	bind();
 	GLCall(glUniform2fv(uniform_id, 1, glm::value_ptr(a)));
-}
-
-void Program::attach_uniform_buffer(const std::string& name, std::shared_ptr<UniformBuffer> uniform_buffer){
-	_uniform_buffers[name] = uniform_buffer;
-}
-
-void Program::deattach_uniform_buffer(const std::string& name){
-	_uniform_buffers.erase(name);
-}
-
-void Program::update_uniform_buffer_slots(){
-	bind();
-	std::unordered_set<int> used_buffer_slots;
-	int slot_iterator = 0;
-	for (auto iterator = _uniform_buffers.begin(); iterator != _uniform_buffers.end(); iterator++) {
-		const std::string& name = iterator->first;
-		const std::shared_ptr<UniformBuffer>& uniform_buffer = iterator->second;
-		uniform_buffer->upload_data();
-
-		if (!uniform_buffer->ever_bound) {
-			uniform_buffer->bind(slot_iterator);
-		}
-
-		GLCall(unsigned int location = glGetUniformBlockIndex(id, name.c_str()));
-		if (location == GL_INVALID_INDEX) {
-			std::cout << "[OpenGL Error] Program tried to update_uniform_buffer_slots() but uniform block named: \"" + name + "\" wasn't found in the shader" << std::endl;
-			continue;
-			ASSERT(false);
-		}
-		if (used_buffer_slots.find(uniform_buffer->bound_slot) == used_buffer_slots.end()) {	// uniform buffer's currently bound position is free
-			used_buffer_slots.insert(uniform_buffer->bound_slot);
-			uniform_buffer->bind(uniform_buffer->bound_slot);
-			GLCall(glUniformBlockBinding(id, location, uniform_buffer->bound_slot));
-		}
-		else {	// if not, search for a free spot and bind both buffer and uniform to that spot
-			while (used_buffer_slots.find(slot_iterator) != used_buffer_slots.end())
-				slot_iterator++;
-			uniform_buffer->bind(slot_iterator);
-			used_buffer_slots.insert(slot_iterator);
-			GLCall(glUniformBlockBinding(id, location, uniform_buffer->bound_slot));
-		}
-	}
 }
 
 bool Program::_does_uniform_exist(const std::string& name)

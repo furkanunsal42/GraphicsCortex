@@ -47,5 +47,6 @@ std::shared_ptr<ComponentType> Entity::get_component()
     if (iterator == _components.end())
         return nullptr;
 
+    iterator->second->entity = this;
     return std::dynamic_pointer_cast<ComponentType, Component>((*iterator).second);
 }

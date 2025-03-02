@@ -255,6 +255,8 @@ public:
 		return;
 	}
 
+	void update_uniform(const std::string& name, UniformBuffer& uniform_buffer, size_t offset, size_t size);
+	void update_uniform(const std::string& name, UniformBuffer& uniform_buffer, size_t offset = 0);
 
 	void update_uniform(const std::string& name, Texture1D& texture1d);
 	void update_uniform(const std::string& name, Texture2D& texture2d);
@@ -301,11 +303,9 @@ public:
 	void update_uniform(unsigned int uniform_id, glm::vec3& a);
 	void update_uniform(unsigned int uniform_id, glm::vec2& a);
 
-	void attach_uniform_buffer(const std::string& name, std::shared_ptr<UniformBuffer> uniform_buffer);
-	void deattach_uniform_buffer(const std::string& name);
-		
-	void update_uniform_buffer_slots();
-
+	//void attach_uniform_buffer(const std::string& name, std::shared_ptr<UniformBuffer> uniform_buffer);
+	//void deattach_uniform_buffer(const std::string& name);
+	//void update_uniform_buffer_slots();
 
 	template<typename T>
 	static std::string get_glsl_primitive_name();
@@ -324,7 +324,7 @@ public:
 	template<> static std::string get_glsl_primitive_name<glm::uvec4>()	{ return "uvec4"; }
 
 private:
-	std::unordered_map<std::string, std::shared_ptr<UniformBuffer>> _uniform_buffers;
+	//std::unordered_map<std::string, std::shared_ptr<UniformBuffer>> _uniform_buffers;
 
 	std::unordered_map<std::string, int> _uniform_location_table;
 	bool _does_uniform_exist(const std::string& name);

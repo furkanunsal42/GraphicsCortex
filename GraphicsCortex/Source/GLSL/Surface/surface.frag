@@ -18,56 +18,52 @@ layout(binding = 4) uniform sampler2D ambient_occlusion_texture;
 // lights
 layout (binding = 5) uniform samplerCube environment_texture;
 
-#define POINT_LIGHT_MAX_COUNT 32
 #define DIRECTIONAL_LIGHT_MAX_COUNT 32
+#define POINT_LIGHT_MAX_COUNT 32
 #define SPOT_LIGHT_MAX_COUNT 32
 
-#define POINT_SHADOWMAP_MAX_COUNT 32
 #define DIRECTIONAL_SHADOWMAP_MAX_COUNT 32
+#define POINT_SHADOWMAP_MAX_COUNT 32
 #define SPOT_SHADOWMAP_MAX_COUNT 32
 
-layout(std140, binding = 0) buffer p_lights {
-    vec4 p_light_positions[POINT_LIGHT_MAX_COUNT];
-    vec4 p_light_colors[POINT_LIGHT_MAX_COUNT];
-    int p_light_count;
-} p_lights_buffer;
-
-layout(std140, binding = 1) buffer d_lights {
+layout(std140, binding = 0) uniform d_lights_buffer {
     vec4 d_light_direction[DIRECTIONAL_LIGHT_MAX_COUNT];
     vec4 d_light_colors[DIRECTIONAL_LIGHT_MAX_COUNT];
     int d_light_count;
-} d_lights_buffer;
+} d_lights;
 
-layout(std140, binding = 2) buffer s_lights {
+layout(std140, binding = 1) uniform p_lights_buffer {
+    vec4 p_light_positions[POINT_LIGHT_MAX_COUNT];
+    vec4 p_light_colors[POINT_LIGHT_MAX_COUNT];
+    int p_light_count;
+} p_lights;
+
+layout(std140, binding = 2) uniform s_lights_buffer {
     vec4 s_light_positions[SPOT_LIGHT_MAX_COUNT];
-    vec4 s_light_direction_angle[SPOT_LIGHT_MAX_COUNT];
+    vec4 s_light_direction_and_angle[SPOT_LIGHT_MAX_COUNT];
     vec4 s_light_colors[SPOT_LIGHT_MAX_COUNT];
     int s_light_count;
-} s_lights_buffer;
+} s_lights;
 
 // shadowmaps
-layout(std140, binding = 0) buffer p_shadowmaps {
-    mat4 p_mvp[POINT_SHADOWMAP_MAX_COUNT];
-    int p_shadowmap_count;
-} p_shadowmaps_buffer;
-
-layout(std140, binding = 1) buffer d_shadowmaps {
+layout(std140, binding = 3) uniform d_shadowmaps_buffer {
     mat4 d_mvp[DIRECTIONAL_SHADOWMAP_MAX_COUNT];
     int d_shadowmap_count;
-} d_shadowmaps_buffer;
+} d_shadowmaps;
 
-layout(std140, binding = 2) buffer s_shadowmaps {
+layout(std140, binding = 4) uniform p_shadowmaps_buffer {
+    mat4 p_mvp[POINT_SHADOWMAP_MAX_COUNT];
+    int p_shadowmap_count;
+} p_shadowmaps;
+
+layout(std140, binding = 5) uniform s_shadowmaps_buffer {
     mat4 s_mvp[SPOT_SHADOWMAP_MAX_COUNT];
     int s_shadowmap_count;
-} s_shadowmaps_buffer;
+} s_shadowmaps;
 
-layout (binding = 6) uniform samplerCubeArray p_shadowmap_textures;
-layout (binding = 7) uniform sampler2DArray d_shadowmap_textures;
+layout (binding = 6) uniform sampler2DArray d_shadowmap_textures;
+layout (binding = 7) uniform samplerCubeArray p_shadowmap_textures;
 layout (binding = 8) uniform sampler2DArray s_shadowmap_textures;
-
-// lights
-uniform vec3 light_positions[32];
-uniform vec3 light_colors[32];
 
 uniform vec3 camera_position;
 const float PI = 3.14159265359;
@@ -138,6 +134,36 @@ vec3 fresnelSchlick(float cosTheta, vec3 F0)
     return F0 + (1.0 - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
 }
 // ----------------------------------------------------------------------------
+vec3 brdf(vec3 albedo, float roughness, float metallic, vec3 N, vec3 V, vec3 L, vec3 F0, vec3 radiance){
+    vec3 H = normalize(V + L);
+
+    float NDF = DistributionGGX(N, H, roughness);   
+    float G   = GeometrySmith(N, V, L, roughness);      
+    vec3 F    = fresnelSchlick(clamp(dot(H, V), 0.0, 1.0), F0);
+       
+    vec3 numerator    = NDF * G * F; 
+    float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0) + 0.0001; // + 0.0001 to prevent divide by zero
+    vec3 specular = numerator / denominator;
+    
+    // kS is equal to Fresnel
+    vec3 kS = F;
+    // for energy conservation, the diffuse and specular light can't
+    // be above 1.0 (unless the surface emits light); to preserve this
+    // relationship the diffuse component (kD) should equal 1.0 - kS.
+    vec3 kD = vec3(1.0) - kS;
+    // multiply kD by the inverse metalness such that only non-metals 
+    // have diffuse lighting, or a linear blend if partly metal (pure metals
+    // have no diffuse light).
+    kD *= 1.0 - metallic;	  
+
+    // scale light by NdotL
+    float NdotL = max(dot(N, L), 0.0);        
+
+    // add to outgoing radiance Lo
+    vec3 Lo = (kD * albedo / PI + specular) * radiance * NdotL;  // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
+    return Lo;
+}
+// ----------------------------------------------------------------------------
 void main()
 {		
     vec4 temp_albedo = texture(albedo_texture, v_texture_coordinates);
@@ -157,53 +183,60 @@ void main()
 
     // reflectance equation
     vec3 Lo = vec3(0.0);
-    for(int i = 0; i < 32; ++i) 
+    
+    // directional lights
+    for(int i = 0; i < d_lights.d_light_count; ++i) 
     {
         // calculate per-light radiance
-        vec3 L = normalize(light_positions[i] - v_world_position);
-        vec3 H = normalize(V + L);
-        float distance = length(light_positions[i] - v_world_position);
-        float attenuation = 1.0 / (distance * distance);
-        vec3 radiance = 100 * light_colors[i] * attenuation;
+        vec3 L = normalize(vec3(-d_lights.d_light_direction[i]));
+        float distance = 1;
+        float attenuation = 1.0;
+        vec3 radiance = vec3(d_lights.d_light_colors[i]) * attenuation;
 
-        // Cook-Torrance BRDF
-        float NDF = DistributionGGX(N, H, roughness);   
-        float G   = GeometrySmith(N, V, L, roughness);      
-        vec3 F    = fresnelSchlick(clamp(dot(H, V), 0.0, 1.0), F0);
-           
-        vec3 numerator    = NDF * G * F; 
-        float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0) + 0.0001; // + 0.0001 to prevent divide by zero
-        vec3 specular = numerator / denominator;
-        
-        // kS is equal to Fresnel
-        vec3 kS = F;
-        // for energy conservation, the diffuse and specular light can't
-        // be above 1.0 (unless the surface emits light); to preserve this
-        // relationship the diffuse component (kD) should equal 1.0 - kS.
-        vec3 kD = vec3(1.0) - kS;
-        // multiply kD by the inverse metalness such that only non-metals 
-        // have diffuse lighting, or a linear blend if partly metal (pure metals
-        // have no diffuse light).
-        kD *= 1.0 - metallic;	  
-
-        // scale light by NdotL
-        float NdotL = max(dot(N, L), 0.0);        
-
-        // add to outgoing radiance Lo
-        Lo += (kD * albedo / PI + specular) * radiance * NdotL;  // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
+        Lo += brdf(albedo, roughness, metallic, N, V, L, F0, radiance);
     }   
+
+    // point lights
+    for(int i = 0; i < p_lights.p_light_count; ++i) 
+    {
+        // calculate per-light radiance
+        vec3 L = normalize(vec3(p_lights.p_light_positions[i]) - v_world_position);
+        float distance = length(vec3(p_lights.p_light_positions[i]) - v_world_position);
+        float attenuation = 1.0 / (distance * distance);
+        vec3 radiance = vec3(p_lights.p_light_colors[i]) * attenuation;
+
+        Lo += brdf(albedo, roughness, metallic, N, V, L, F0, radiance);
+    }   
+    
+    // spot lights
+    for(int i = 0; i < s_lights.s_light_count; ++i) 
+    {
+        // calculate per-light radiance
+        vec3 L = normalize(vec3(s_lights.s_light_positions[i]) - v_world_position);
+        vec3 D = normalize(vec3(-s_lights.s_light_direction_and_angle[i]));
+        float max_cos_angle = s_lights.s_light_direction_and_angle[i].a;
+        float LdotD = dot(L, D);
+        if (LdotD <= max_cos_angle)
+            continue;
+        float distance = length(vec3(s_lights.s_light_positions[i]) - v_world_position);
+        float attenuation = 1.0 / (distance * distance);
+        vec3 radiance = vec3(s_lights.s_light_colors[i]) * attenuation;
+
+        Lo += brdf(albedo, roughness, metallic, N, V, L, F0, radiance);
+    }   
+
     
     // ambient lighting (note that the next IBL tutorial will replace 
     // this ambient lighting with environment lighting).
-    vec3 ambient = vec3(0.1) * albedo * ao;
+    vec3 ambient = vec3(0.03) * albedo * ao;
 
     vec3 color = ambient + Lo;
 
     // HDR tonemapping
     color = color / (color + vec3(1.0));
     
-    //// gamma correct
-    //color = pow(color, vec3(1.0/2.2)); 
+    // gamma correct
+    color = pow(color, vec3(1.0/2.2)); 
     
     if (alpha != 1)
         discard;

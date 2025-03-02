@@ -21,31 +21,47 @@ public:
 		pipeline.push_render_pass(std::make_shared<RenderPass_Clear>(glm::vec4(0, 0, 0, 1)));
 		pipeline.push_render_pass(std::make_shared<RenderPass_Forward>());
 
-		//Asset sculpture("../GraphicsCortex/Models/sculpture/scene.gltf");
-		//Asset sculpture("../GraphicsCortex/Models/medival/source/medival.fbx");
-		//Asset sculpture("../GraphicsCortex/Models/bmw/scene.gltf");
-		//Asset sculpture("../GraphicsCortex/Models/Sponza/scene.gltf");
-		//Asset sculpture("../GraphicsCortex/Models/circuit/nogaro.obj");
-		Asset sculpture("../GraphicsCortex/ModelsKhronos/2.0/Sponza/glTF/Sponza.gltf");
+		//Asset asset("../GraphicsCortex/Models/asset/scene.gltf");
+		//Asset asset("../GraphicsCortex/Models/medival/source/medival.fbx");
+		//Asset asset("../GraphicsCortex/Models/bmw/scene.gltf");
+		//Asset asset("../GraphicsCortex/Models/Sponza/scene.gltf");
+		//Asset asset("../GraphicsCortex/Models/circuit/nogaro.obj");
+		Asset asset("../GraphicsCortex/ModelsKhronos/2.0/Sponza/glTF/Sponza.gltf");
 		
-		std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(sculpture.load_mesh());
-		std::shared_ptr<MeshMaterial> mesh_material = std::make_shared<MeshMaterial>(sculpture.load_mesh_material());
+		std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(asset.load_mesh());
+		std::shared_ptr<MeshMaterial> mesh_material = std::make_shared<MeshMaterial>(asset.load_mesh_material());
 		std::shared_ptr<Program> program = default_program::surface_program_s();
 
-		std::shared_ptr<Entity> entity_a = std::make_shared<Entity>();
-
-		entity_a->add_component<MeshComponent>(mesh);
-		entity_a->add_component<MaterialComponent>(program);
-		entity_a->add_component<MeshRendererComponent>();
-		entity_a->add_component<TransformComponent>();
-
-		entity_a->get_component<TransformComponent>()->transform = glm::scale(glm::mat4(1), glm::vec3(1));
-		entity_a->get_component<MaterialComponent>()->set_uniform("light_colors[0]", glm::vec3(1, 1, 1));
-		entity_a->get_component<MaterialComponent>()->set_uniform("light_positions[0]", glm::vec3(0, 4, 0));
-		entity_a->get_component<MaterialComponent>()->set_mesh_material(mesh_material);
-
-		scene.add_entity(entity_a);
+		std::shared_ptr<Entity> sponza = std::make_shared<Entity>();
+		sponza->add_component<MeshComponent>(mesh);
+		sponza->add_component<MaterialComponent>(program);
+		sponza->add_component<MeshRendererComponent>();
+		sponza->add_component<TransformComponent>();
+		sponza->get_component<TransformComponent>()->transform = glm::scale(glm::mat4(1), glm::vec3(1));
+		sponza->get_component<MaterialComponent>()->set_mesh_material(mesh_material);
+		scene.add_entity(sponza);
 		
+		std::shared_ptr<Entity> entity_p_light = std::make_shared<Entity>();
+		entity_p_light->add_component<TransformComponent>();
+		entity_p_light->add_component<PointLightComponent>();
+		entity_p_light->get_component<PointLightComponent>()->point_light = PointLight(glm::vec3(1, 0, 0) * 100.0f);
+		entity_p_light->get_component<TransformComponent>()->transform = glm::translate(glm::mat4(1), glm::vec3(0, 4, 0));
+		scene.add_entity(entity_p_light);
+		
+		std::shared_ptr<Entity> entity_d_light = std::make_shared<Entity>();
+		entity_d_light->add_component<TransformComponent>();
+		entity_d_light->add_component<DirectionalLightComponent>();
+		entity_d_light->get_component<DirectionalLightComponent>()->directional_light = DirectionalLight(glm::normalize(glm::vec3(-1, -1, +1)), glm::vec3(1)*10.0f);
+		entity_d_light->get_component<TransformComponent>()->transform = glm::translate(glm::mat4(1), glm::vec3(0, 4, 0));
+		scene.add_entity(entity_d_light);
+
+		std::shared_ptr<Entity> entity_s_light = std::make_shared<Entity>();
+		entity_s_light->add_component<TransformComponent>();
+		entity_s_light->add_component<SpotLightComponent>();
+		entity_s_light->get_component<SpotLightComponent>()->spot_light = SpotLight(glm::normalize(glm::vec3(0, -1, +1)), glm::vec3(1, 1, 1) * 30.0f);
+		entity_s_light->get_component<TransformComponent>()->transform = glm::translate(glm::mat4(1), glm::vec3(0, 4, 0));
+		scene.add_entity(entity_s_light);
+
 		Camera camera;
 		camera.fov = 100;
 		camera.max_distance = 1000.0f;
