@@ -4,10 +4,7 @@
 #include <filesystem>
 #include "tiffio.h"
 
-class Framebuffer;
-
 class Image {
-	friend Framebuffer;
 public:
 	enum Channel {
 		red = 1,
@@ -69,6 +66,7 @@ public:
 	void _read_image_data(const ImageParameters& requested_parameters);
 	void _read_image_data_raw(const ImageParameters& requested_parameters);
 	void _read_image_data_tiff(const ImageParameters& requested_parameters);
+	void _read_image_data_hdr(const ImageParameters& requested_parameters);
 
 	std::string _source_filepath = "";
 	bool _vertical_flip = true;
@@ -78,6 +76,8 @@ public:
 	int _channel_count = 0;
 	int _bytes_per_channel = 0;
 	bool _image_is_loaded_from_stbi = false;
+
+	bool _float_image = false;
 
 	bool _is_tiff = false;
 	TIFF* _tiff_handle = nullptr;

@@ -102,6 +102,7 @@ void Image::release() {
 	else
 		delete[] _image_data;
 
+	_tiff_handle = nullptr;
 	_image_data = nullptr;
 
 	_vertical_flip = true;
@@ -111,11 +112,15 @@ void Image::release() {
 	_channel_count = 0;
 	_bytes_per_channel = 0;
 	_image_is_loaded_from_stbi = false;
+	_float_image = false;
+	_is_tiff = false;
 }
 
 void Image::_read_image_data(const ImageParameters& requested_parameters)
 {
 	ASSERT(_image_data == nullptr);
+
+	std::filesystem::path extension = std::filesystem::path(requested_parameters.path).extension();
 
 	if (requested_parameters.path.size() >= 4) {
 		std::string image_type = compute_filetype(requested_parameters.path);
@@ -132,12 +137,18 @@ void Image::_read_image_data(const ImageParameters& requested_parameters)
 			return;
 		}
 	}
+	
+	std::cout << extension << std::endl;
+	if (extension == ".hdr" || extension == ".HDR"){
+		_read_image_data_hdr(requested_parameters);
+		return;
+	}
 
 	//_bytes_per_channel = stbi_is_16_bit(requested_parameters.path.c_str()) ? 2 : 1;
 	_bytes_per_channel = requested_parameters.bytes_per_channel;
 	
 	stbi_set_flip_vertically_on_load_thread(_vertical_flip);
-	if (_bytes_per_channel== 1)
+	if (_bytes_per_channel == 1)
 		_image_data = stbi_load(requested_parameters.path.c_str(), &_width, &_height, &_channel_count, requested_parameters.channel_count);
 	if (_bytes_per_channel == 2)
 		_image_data = (unsigned char*)stbi_load_16(requested_parameters.path.c_str(), &_width, &_height, &_channel_count, requested_parameters.channel_count);
@@ -202,7 +213,7 @@ void Image::_read_image_data_tiff(const ImageParameters& requested_parameters)
 
 	void* temp_image_data = _TIFFmalloc(_width * _height * sizeof(uint32_t));
 	TIFFReadRGBAImage(_tiff_handle, _width, _height, (uint32_t*)temp_image_data, true);
-
+	
 	//std::cout << _width << " " << _height << " " << bits_per_channel << " " << (unsigned int*)_image_data << std::endl;
 
 	_channel_count = 1;
@@ -215,6 +226,26 @@ void Image::_read_image_data_tiff(const ImageParameters& requested_parameters)
 
 	_TIFFfree(temp_image_data);
 	_is_tiff = false;
+}
+
+void Image::_read_image_data_hdr(const ImageParameters& requested_parameters)
+{
+	_bytes_per_channel = 4;
+	stbi_set_flip_vertically_on_load_thread(_vertical_flip);
+	
+	_image_data = (uint8_t*)stbi_loadf(requested_parameters.path.c_str(), &_width, &_height, &_channel_count, requested_parameters.channel_count);
+	std::cout << "channel count : " << _channel_count << std::endl;
+	if (_image_data == nullptr) {
+		std::cout << "[OpenGL Error] Image read failed : " << requested_parameters.path << std::endl;
+		ASSERT(false);
+	}
+
+	_channel_count = requested_parameters.channel_count;
+	_depth = 1;
+	_image_is_loaded_from_stbi = true;
+	_float_image = true;
+
+	resize(requested_parameters.width, requested_parameters.height);
 }
 
 void Image::swap_endian()
@@ -235,12 +266,17 @@ void Image::swap_endian()
 }
 
 void Image::resize(int target_width, int target_height) {
+	
 	if (_width == target_width && _height == target_height)
 		return;
+
 	unsigned char* resized_image = new unsigned char[target_width * target_height * _channel_count * _bytes_per_channel];
-	if(_bytes_per_channel == 1)
+	
+	if (_float_image)
+		stbir_resize_float((float*)_image_data, _width, _height, _width * _channel_count * _bytes_per_channel, (float*)resized_image, target_width, target_height, target_width * _channel_count * _bytes_per_channel, _channel_count);
+	if(!_float_image && _bytes_per_channel == 1)
 		stbir_resize_uint8(_image_data, _width, _height, _width * _channel_count * _bytes_per_channel, resized_image, target_width, target_height, target_width * _channel_count * _bytes_per_channel, _channel_count);
-	if (_bytes_per_channel == 2)
+	if (!_float_image && _bytes_per_channel == 2)
 		stbir_resize_uint16_generic((unsigned short*)_image_data, _width, _height, _width * _channel_count * _bytes_per_channel, (unsigned short*)resized_image, target_width, target_height, target_width * _channel_count * _bytes_per_channel, _channel_count, -1, 0, STBIR_EDGE_CLAMP, STBIR_FILTER_DEFAULT, STBIR_COLORSPACE_LINEAR, 0);
 	
 	if (_is_tiff) {

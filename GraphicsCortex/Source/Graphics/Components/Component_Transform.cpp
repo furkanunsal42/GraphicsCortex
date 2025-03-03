@@ -3,30 +3,33 @@
 #include "gtx/transform.hpp"
 #include "gtx/matrix_decompose.hpp"
 
+glm::mat4 TransformComponent::get_matrix()
+{
+	glm::mat4 matrix = glm::scale(glm::mat4(1), _scale);
+	matrix = glm::mat4_cast(_rotation) * matrix;
+	matrix = glm::translate(matrix, _position);
+	return matrix;
+}
+
 glm::vec3 TransformComponent::multiply_point(glm::vec3 point)
 {
 	glm::vec4 point4 = glm::vec4(point, 1);
-	point4 = transform * point4;
+	point4 = get_matrix() * point4;
 	point4 = point4 / point4.a;
 	return glm::vec3(point4);
 }
 
 glm::vec3 TransformComponent::multiply_vector(glm::vec3 vector)
 {
-	return glm::mat3(transform) * vector;
+	return glm::mat3(get_matrix()) * vector;
 }
 
-void TransformComponent::translate(glm::vec3 translation)
-{
-	transform = glm::translate(transform, translation);
-}
-
-void TransformComponent::set_positon(glm::vec3 position){
-	transform = glm::translate(glm::mat4(glm::mat3(transform)), position);
+void TransformComponent::set_position(glm::vec3 position){
+	_position = position;
 }
 
 glm::vec3 TransformComponent::get_position(){
-	return multiply_point(glm::vec3(0, 0, 0));
+	return _position;
 }
 
 glm::vec3 TransformComponent::get_x_direction()
@@ -44,47 +47,16 @@ glm::vec3 TransformComponent::get_z_direction()
 	return multiply_vector(glm::vec3(0, 0, 1));
 }
 
-void TransformComponent::scale(glm::vec3 scale)
-{
-	transform = glm::scale(transform, scale);
-}
-
 void TransformComponent::set_scale(glm::vec3 scale){
-	transform[0] = transform[0] / glm::length(transform[0]) * scale.x;
-	transform[1] = transform[1] / glm::length(transform[1]) * scale.y;
-	transform[2] = transform[2] / glm::length(transform[2]) * scale.z;
+	_scale = scale;
 }
 
 glm::vec3 TransformComponent::get_scale(){
-	glm::vec3 scale = glm::vec3(
-		glm::length(glm::vec3(transform[0])),
-		glm::length(glm::vec3(transform[1])),
-		glm::length(glm::vec3(transform[2]))
-	);
-	return scale;
-}
-
-void TransformComponent::rotate(glm::quat rotation)
-{
-	transform = glm::mat4_cast(rotation) * transform;
-}
-
-void TransformComponent::rotate(glm::vec3 euler_angle)
-{
-	rotate(glm::quat(euler_angle));
+	return _scale;
 }
 
 void TransformComponent::set_rotation(glm::quat rotation){
-	const glm::mat3 scale3(
-		glm::vec3(glm::length(transform[0]), 0, 0),
-		glm::vec3(0, glm::length(transform[0]), 0),
-		glm::vec3(0, 0, glm::length(transform[0])));
-
-	glm::vec3 translate = get_position();
-	glm::mat4 rotation_m = glm::mat4_cast(rotation);
-	glm::vec3 scale = get_scale();
-
-	transform = glm::translate(rotation_m * glm::scale(glm::mat4(1), scale), translate);
+	_rotation = rotation;
 }
 
 void TransformComponent::set_rotation(glm::vec3 euler_angles_radian)
@@ -93,34 +65,46 @@ void TransformComponent::set_rotation(glm::vec3 euler_angles_radian)
 }
 
 glm::quat TransformComponent::get_rotation(){
-	return glm::quat_cast(transform);
+	return _rotation;
 }
 
 glm::vec3 TransformComponent::get_rotation_euler(){
-	return glm::eulerAngles(get_rotation());
+	return glm::eulerAngles(_rotation);
 }
 
-void TransformComponent::set_direction(glm::vec3 direction){
-	if (direction == glm::vec3(0, 1, 0) || direction == glm::vec3(0, -1, 0))
-		direction += glm::vec3(0.01, 0, 0.01);
+void TransformComponent::set_x_direction(glm::vec3 direction)
+{
+}
 
-	glm::vec3 position = get_position();
-	std::cout << position.x << " " << position.y << " " << position.z << std::endl;
-	
-	glm::vec3 up = glm::vec3(0, 1, 0);
+void TransformComponent::set_y_direction(glm::vec3 direction)
+{
+	direction = glm::normalize(direction);
 
-	//glm::vec3 rotation_axis = glm::normalize(glm::cross(glm::vec3(1, 0, 0), direction));
-	//float cosandle = glm::dot(direction, glm::vec3(1, 0, 0));
-	//glm::quat rotation = glm::rotate(glm::quat(), glm::acos(cosandle), rotation_axis);
+}
 
-	glm::quat rotation(direction, glm::vec3(0, 1, 0));
+void TransformComponent::set_z_direction(glm::vec3 direction)
+{
+	direction = glm::normalize(direction);
 
-	set_rotation(rotation);
-	
-	position = get_position();
-	glm::vec3 d = get_z_direction();
-	std::cout << position.x << " " << position.y << " " << position.z << std::endl;
-	std::cout << d.x << " " << d.y << " " << d.z << std::endl;
+	glm::vec3 rotation_vector;
+	float angle;
+	if (direction == glm::vec3(0, 0, 1)) {
+		rotation_vector = glm::vec3(0, 1, 0);
+		angle = 0;
+	}
+	else if (direction == glm::vec3(0, 0, -1)) {
+		rotation_vector = glm::vec3(0, 1, 0);
+		angle = glm::pi<float>();
+	}
+	else {
+		rotation_vector = glm::cross(glm::vec3(0, 0, 1), direction);
+		angle = glm::acos(glm::dot(glm::vec3(0, 0, 1), direction));
+	}
+
+	std::cout << "rotation_vector : " << rotation_vector.x << " " << rotation_vector.y << " " << rotation_vector.z << std::endl;
+	std::cout << "angle : " << angle * 180 / 3.14 << std::endl;
+
+	set_rotation(glm::rotate(angle, rotation_vector));
 }
 
 //void TransformComponent::look_at(glm::vec3 self_position, glm::vec3 target_position){
@@ -139,7 +123,7 @@ TransformComponent::Decomposition TransformComponent::decompose()
 	decomposition.skew;
 	decomposition.perspective;
 	glm::decompose(
-		transform, 
+		get_matrix(),
 		decomposition.scale, 
 		decomposition.rotation, 
 		decomposition.translation, 
@@ -151,5 +135,7 @@ TransformComponent::Decomposition TransformComponent::decompose()
 
 
 void TransformComponent::clear(){
-	transform = glm::mat4(1);
+	_position = glm::vec3(0);
+	_rotation = glm::quat();
+	_scale = glm::vec3(1);
 }

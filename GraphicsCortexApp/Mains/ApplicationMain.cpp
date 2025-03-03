@@ -15,7 +15,7 @@
 #include "Model/ModelLoadingTest.h"
 
 #include "Image/ChannelSplitingTest.h"
-
+#include "Image/HDRLoadingTest.h"
 
 int main() {
 	
@@ -24,7 +24,7 @@ int main() {
 	//SingleMeshIndexedRenderingTest().run();
 	//RenderPassClearTest().run();
 	//EntityComponentSystemTest().run();
-	MeshMaterialTest().run();
+	//MeshMaterialTest().run();
 
 	//ModelConstructionTest().run();
 	//MeshConstructionTest().run();
@@ -35,5 +35,5 @@ int main() {
 	//MeshRendererTest().run();
 
 	//ChannelSplitingTest().run();
-
+	HDRLoadingTest().run();
 }

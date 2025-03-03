@@ -24,9 +24,9 @@ public:
 		//Asset asset("../GraphicsCortex/Models/asset/scene.gltf");
 		//Asset asset("../GraphicsCortex/Models/medival/source/medival.fbx");
 		//Asset asset("../GraphicsCortex/Models/bmw/scene.gltf");
-		Asset asset("../GraphicsCortex/Models/Sponza/scene.gltf");
+		//Asset asset("../GraphicsCortex/Models/Sponza/scene.gltf");
 		//Asset asset("../GraphicsCortex/Models/circuit/nogaro.obj");
-		//Asset asset("../GraphicsCortex/ModelsKhronos/2.0/Sponza/glTF/Sponza.gltf");
+		Asset asset("../GraphicsCortex/ModelsKhronos/2.0/Sponza/glTF/Sponza.gltf");
 		
 		std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(asset.load_mesh());
 		std::shared_ptr<MeshMaterial> mesh_material = std::make_shared<MeshMaterial>(asset.load_mesh_material());
@@ -37,28 +37,28 @@ public:
 		sponza->add_component<MaterialComponent>(program);
 		sponza->add_component<MeshRendererComponent>();
 		sponza->add_component<TransformComponent>();
-		sponza->get_component<TransformComponent>()->transform = glm::scale(glm::mat4(1), glm::vec3(1));
+		sponza->get_component<TransformComponent>()->set_scale(glm::vec3(1));
 		sponza->get_component<MaterialComponent>()->set_mesh_material(mesh_material);
 		scene.add_entity(sponza);
 		
 		//std::shared_ptr<Entity> entity_p_light = std::make_shared<Entity>();
 		//entity_p_light->add_component<TransformComponent>();
 		//entity_p_light->add_component<LightComponent>(LightComponent::point, glm::vec3(1, 0, 0)*30.0f);
-		//entity_p_light->get_component<TransformComponent>()->transform = glm::translate(glm::mat4(1), glm::vec3(0, 4, 0));
+		//entity_p_light->get_component<TransformComponent>()->set_position(glm::vec3(0, 4, 0));
 		//scene.add_entity(entity_p_light);
 		
-		//std::shared_ptr<Entity> entity_d_light = std::make_shared<Entity>();
-		//entity_d_light->add_component<TransformComponent>();
-		//entity_d_light->add_component<LightComponent>(LightComponent::directional, glm::vec3(1) * 10.0f);
-		//entity_d_light->get_component<TransformComponent>()->look_at_rotation_only(glm::vec3(0, -1, 0));
-		//scene.add_entity(entity_d_light);
+		std::shared_ptr<Entity> entity_d_light = std::make_shared<Entity>();
+		entity_d_light->add_component<TransformComponent>();
+		entity_d_light->add_component<LightComponent>(LightComponent::directional, glm::vec3(1) * 6.0f);
+		entity_d_light->get_component<TransformComponent>()->set_z_direction(glm::vec3(+0.5, -1, -0.5));
+		scene.add_entity(entity_d_light);
 		
-		std::shared_ptr<Entity> entity_s_light = std::make_shared<Entity>();
-		entity_s_light->add_component<TransformComponent>();
-		entity_s_light->add_component<LightComponent>(LightComponent::spot, glm::vec3(1, 1, 1) * 30.0f, 3.14/4);
-		entity_s_light->get_component<TransformComponent>()->set_positon(glm::vec3(0, 4, 0));
-		//entity_s_light->get_component<TransformComponent>()->set_direction(glm::vec3(0, 0, 1));
-		scene.add_entity(entity_s_light);
+		//std::shared_ptr<Entity> entity_s_light = std::make_shared<Entity>();
+		//entity_s_light->add_component<TransformComponent>();
+		//entity_s_light->add_component<LightComponent>(LightComponent::spot, glm::vec3(1, 1, 1) * 60.0f, 3.14/4);
+		//entity_s_light->get_component<TransformComponent>()->set_position(glm::vec3(0, 4, 0));
+		//entity_s_light->get_component<TransformComponent>()->set_z_direction(glm::vec3(0, 0, -1));
+		//scene.add_entity(entity_s_light);
 
 		Camera camera;
 		camera.fov = 100;

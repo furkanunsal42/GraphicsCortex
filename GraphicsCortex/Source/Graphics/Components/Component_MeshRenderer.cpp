@@ -43,7 +43,8 @@ void MeshRendererComponent::render(Camera& camera)
 
 	TransformComponent* transform_c = get_transform();
 	if (transform_c == nullptr) return;
-	
+	glm::mat4 model_matrix = transform_c->get_matrix();
+
 	MaterialComponent* material_c = get_material();
 	if (material_c == nullptr) return;
 
@@ -67,7 +68,7 @@ void MeshRendererComponent::render(Camera& camera)
 		
 		if (node.get_submeshes().size() == 0) return;
 	
-		program->update_uniform("model", transform_c->transform * transform);
+		program->update_uniform("model", model_matrix * transform);
 		
 		for (mesh_t submesh : node.get_submeshes()) {
 	
