@@ -8,9 +8,7 @@
 namespace {
 
     void render_to_cubemap(Framebuffer& framebuffer, Program& program, Mesh& unit_cube, TextureCubeMap& target_cubemap) {
-        // TODO !!!
-        std::shared_ptr<TextureCubeMap> shared_cubemap_texture = std::make_shared<TextureCubeMap>(std::move(target_cubemap));
-
+        
         Camera cam;
         cam.projection_matrix = glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 10.0f);
         cam.view_matrix = glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f));
@@ -18,9 +16,9 @@ namespace {
 
         framebuffer.bind_draw();
         glm::ivec4 old_viewport = primitive_renderer::get_viewport_position_size();
-        primitive_renderer::set_viewport(glm::ivec2(0), glm::ivec2(shared_cubemap_texture->get_size()));
+        primitive_renderer::set_viewport(glm::ivec2(0), glm::ivec2(target_cubemap.get_size()));
 
-        framebuffer.attach_color(0, shared_cubemap_texture, TextureCubeMap::RIGHT, 0);
+        framebuffer.attach_color(0, target_cubemap, TextureCubeMap::RIGHT, 0);
         framebuffer.activate_draw_buffer(0);
         primitive_renderer::render(
             framebuffer,
@@ -31,7 +29,7 @@ namespace {
 
         cam.view_matrix = glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f));
         cam.update_default_uniforms(program);
-        framebuffer.attach_color(0, shared_cubemap_texture, TextureCubeMap::LEFT, 0);
+        framebuffer.attach_color(0, target_cubemap, TextureCubeMap::LEFT, 0);
         framebuffer.activate_draw_buffer(0);
         primitive_renderer::render(
             framebuffer,
@@ -42,7 +40,7 @@ namespace {
 
         cam.view_matrix = glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
         cam.update_default_uniforms(program);
-        framebuffer.attach_color(0, shared_cubemap_texture, TextureCubeMap::UP, 0);
+        framebuffer.attach_color(0, target_cubemap, TextureCubeMap::UP, 0);
         framebuffer.activate_draw_buffer(0);
         primitive_renderer::render(
             framebuffer,
@@ -53,7 +51,7 @@ namespace {
 
         cam.view_matrix = glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f));
         cam.update_default_uniforms(program);
-        framebuffer.attach_color(0, shared_cubemap_texture, TextureCubeMap::DOWN, 0);
+        framebuffer.attach_color(0, target_cubemap, TextureCubeMap::DOWN, 0);
         framebuffer.activate_draw_buffer(0);
         primitive_renderer::render(
             framebuffer,
@@ -64,7 +62,7 @@ namespace {
 
         cam.view_matrix = glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, -1.0f, 0.0f));
         cam.update_default_uniforms(program);
-        framebuffer.attach_color(0, shared_cubemap_texture, TextureCubeMap::FRONT, 0);
+        framebuffer.attach_color(0, target_cubemap, TextureCubeMap::FRONT, 0);
         framebuffer.activate_draw_buffer(0);
         primitive_renderer::render(
             framebuffer,
@@ -75,7 +73,7 @@ namespace {
 
         cam.view_matrix = glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, -1.0f, 0.0f));
         cam.update_default_uniforms(program);
-        framebuffer.attach_color(0, shared_cubemap_texture, TextureCubeMap::BACK, 0);
+        framebuffer.attach_color(0, target_cubemap, TextureCubeMap::BACK, 0);
         primitive_renderer::render(
             framebuffer,
             program,
@@ -85,8 +83,6 @@ namespace {
 
         primitive_renderer::set_viewport(old_viewport);
         framebuffer.deattach_color(0);
-        target_cubemap = std::move(*shared_cubemap_texture);
-        shared_cubemap_texture = nullptr;
     }
 }
 

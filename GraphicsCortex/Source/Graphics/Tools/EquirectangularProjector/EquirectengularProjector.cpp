@@ -14,9 +14,6 @@ void EquirectangularProjector::project_to_cubemap(Texture2D& equirectangular_tex
 	Program& program = *to_cubemap_projection_program;
 	program.update_uniform("equirectangular_texture", equirectangular_texture);
 
-	// TODO !!!
-	std::shared_ptr<TextureCubeMap> shared_cubemap_texture = std::make_shared<TextureCubeMap>(std::move(cubemap_texture));
-
 	Camera cam;
 	cam.projection_matrix = glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 10.0f);
 	cam.view_matrix = glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f));
@@ -24,9 +21,9 @@ void EquirectangularProjector::project_to_cubemap(Texture2D& equirectangular_tex
 
 	framebuffer->bind_draw();
 	glm::ivec4 old_viewport = primitive_renderer::get_viewport_position_size();
-	primitive_renderer::set_viewport(glm::ivec2(0), glm::ivec2(shared_cubemap_texture->get_size()));
+	primitive_renderer::set_viewport(glm::ivec2(0), glm::ivec2(cubemap_texture.get_size()));
 
-	framebuffer->attach_color(0, shared_cubemap_texture, TextureCubeMap::RIGHT, 0);
+	framebuffer->attach_color(0, cubemap_texture, TextureCubeMap::RIGHT, 0);
 	framebuffer->activate_draw_buffer(0);
 	primitive_renderer::render(
 		*framebuffer,
@@ -37,7 +34,7 @@ void EquirectangularProjector::project_to_cubemap(Texture2D& equirectangular_tex
 
 	cam.view_matrix = glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f));
 	cam.update_default_uniforms(program);
-	framebuffer->attach_color(0, shared_cubemap_texture, TextureCubeMap::LEFT, 0);
+	framebuffer->attach_color(0, cubemap_texture, TextureCubeMap::LEFT, 0);
 	framebuffer->activate_draw_buffer(0);
 	primitive_renderer::render(
 		*framebuffer,
@@ -48,7 +45,7 @@ void EquirectangularProjector::project_to_cubemap(Texture2D& equirectangular_tex
 	
 	cam.view_matrix = glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 	cam.update_default_uniforms(program);
-	framebuffer->attach_color(0, shared_cubemap_texture, TextureCubeMap::UP, 0);
+	framebuffer->attach_color(0, cubemap_texture, TextureCubeMap::UP, 0);
 	framebuffer->activate_draw_buffer(0);
 	primitive_renderer::render(
 		*framebuffer,
@@ -59,7 +56,7 @@ void EquirectangularProjector::project_to_cubemap(Texture2D& equirectangular_tex
 	
 	cam.view_matrix = glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f));
 	cam.update_default_uniforms(program);
-	framebuffer->attach_color(0, shared_cubemap_texture, TextureCubeMap::DOWN, 0);
+	framebuffer->attach_color(0, cubemap_texture, TextureCubeMap::DOWN, 0);
 	framebuffer->activate_draw_buffer(0);
 	primitive_renderer::render(
 		*framebuffer,
@@ -70,7 +67,7 @@ void EquirectangularProjector::project_to_cubemap(Texture2D& equirectangular_tex
 	
 	cam.view_matrix = glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, -1.0f, 0.0f));
 	cam.update_default_uniforms(program);
-	framebuffer->attach_color(0, shared_cubemap_texture, TextureCubeMap::FRONT, 0);
+	framebuffer->attach_color(0, cubemap_texture, TextureCubeMap::FRONT, 0);
 	framebuffer->activate_draw_buffer(0);
 	primitive_renderer::render(
 		*framebuffer,
@@ -81,7 +78,7 @@ void EquirectangularProjector::project_to_cubemap(Texture2D& equirectangular_tex
 	
 	cam.view_matrix = glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, -1.0f, 0.0f));
 	cam.update_default_uniforms(program);
-	framebuffer->attach_color(0, shared_cubemap_texture, TextureCubeMap::BACK, 0);
+	framebuffer->attach_color(0, cubemap_texture, TextureCubeMap::BACK, 0);
 	primitive_renderer::render(
 		*framebuffer,
 		program,
@@ -91,8 +88,6 @@ void EquirectangularProjector::project_to_cubemap(Texture2D& equirectangular_tex
 
 	primitive_renderer::set_viewport(old_viewport);
 	framebuffer->deattach_color(0);
-	cubemap_texture = std::move(*shared_cubemap_texture);
-	shared_cubemap_texture = nullptr;
 }
 
 void EquirectangularProjector::init()
