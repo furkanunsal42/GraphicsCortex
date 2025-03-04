@@ -148,6 +148,10 @@ std::shared_ptr<TextureCubeMap> SkylightComponent::get_sky_texture_convoluted()
 }
 
 void SkylightComponent::calculate_sky_texture_convoluted(uint32_t convoluted_resolution) {
+    
+    if (sky_texture == nullptr)
+        return;
+
     Program& program = *active_global_resources->SkylightComponent_convolver;
 
     if (sky_texture_convoluted == nullptr || sky_texture_convoluted->get_size().x != convoluted_resolution) {
@@ -177,7 +181,7 @@ void SkylightComponent::render(Camera& camera)
 
     camera.update_matrixes();
     camera.update_default_uniforms(program);
-    program.update_uniform("cubemap_texture", *sky_texture_convoluted);
+    program.update_uniform("cubemap_texture", *sky_texture);
 
     // TEMP
     glDepthMask(GL_FALSE);

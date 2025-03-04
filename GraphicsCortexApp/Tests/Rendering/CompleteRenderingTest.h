@@ -28,23 +28,24 @@ public:
 		//Asset asset("../GraphicsCortex/Models/Thinker/source/Rodin_Thinker.obj");
 		//Asset asset("../GraphicsCortex/Models/medival/source/medival.fbx");
 		//Asset asset("../GraphicsCortex/Models/bmw/scene.gltf");
-		//Asset asset("../GraphicsCortex/Models/Sponza/scene.gltf");
+		Asset asset("../GraphicsCortex/Models/Sponza/scene.gltf");
 		//Asset asset("../GraphicsCortex/Models/circuit/nogaro.obj");
-		Asset asset("../GraphicsCortex/ModelsKhronos/2.0/Sponza/glTF/Sponza.gltf");
+		//Asset asset("../GraphicsCortex/ModelsKhronos/2.0/Sponza/glTF/Sponza.gltf");
 
 		std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(asset.load_mesh());
 		std::shared_ptr<MeshMaterial> mesh_material = std::make_shared<MeshMaterial>(asset.load_mesh_material());
 		std::shared_ptr<Program> program = default_program::surface_program_s();
 
-		Image image_hdr("../GraphicsCortex/Images/HDR/sunflowers_puresky_4k.hdr", 4, true);
+		//Image image_hdr("../GraphicsCortex/Images/HDR/sunflowers_puresky_4k.hdr", 4, true);
+		//Image image_hdr("../GraphicsCortex/Images/HDR/warm_bar_4k.hdr", 4, true);
+		Image image_hdr("../GraphicsCortex/Images/HDR/qwantani_night_4k.hdr", 4, true);
 		std::shared_ptr<Texture2D> texture_hdr = std::make_shared<Texture2D>(image_hdr.get_width(), image_hdr.get_height(), Texture2D::ColorTextureFormat::RGB16F, 1, 0, 0);
 		texture_hdr->load_data(image_hdr, Texture2D::ColorFormat::RGBA, Texture2D::Type::FLOAT, 0);
 		image_hdr.release();
 
 		std::shared_ptr<Entity> sky = std::make_shared<Entity>();
 		sky->add_component<SkylightComponent>();
-		sky->get_component<SkylightComponent>()->set_sky_texture(*texture_hdr, 2048, TextureCubeMap::ColorTextureFormat::RGB16F);
-		sky->get_component<SkylightComponent>()->calculate_sky_texture_convoluted(512);
+		sky->get_component<SkylightComponent>()->set_sky_texture(*texture_hdr, 2048, TextureCubeMap::ColorTextureFormat::RGB32F);
 		scene.add_entity(sky);
 
 		texture_hdr->release();
@@ -64,11 +65,11 @@ public:
 		//entity_p_light->get_component<TransformComponent>()->set_position(glm::vec3(0, 4, 0));
 		//scene.add_entity(entity_p_light);
 
-		std::shared_ptr<Entity> entity_d_light = std::make_shared<Entity>();
-		entity_d_light->add_component<TransformComponent>();
-		entity_d_light->add_component<LightComponent>(LightComponent::directional, glm::vec3(1) * 6.0f);
-		entity_d_light->get_component<TransformComponent>()->set_z_direction(glm::vec3(+0.5, -1, -0.5));
-		scene.add_entity(entity_d_light);
+		//std::shared_ptr<Entity> entity_d_light = std::make_shared<Entity>();
+		//entity_d_light->add_component<TransformComponent>();
+		//entity_d_light->add_component<LightComponent>(LightComponent::directional, glm::vec3(1) * 6.0f);
+		//entity_d_light->get_component<TransformComponent>()->set_z_direction(glm::vec3(+0.5, -1, -0.5));
+		//scene.add_entity(entity_d_light);
 
 		//std::shared_ptr<Entity> entity_s_light = std::make_shared<Entity>();
 		//entity_s_light->add_component<TransformComponent>();

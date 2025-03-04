@@ -16,7 +16,8 @@ layout(binding = 3) uniform sampler2D roughness_texture;
 layout(binding = 4) uniform sampler2D ambient_occlusion_texture;
 
 // lights
-layout (binding = 5) uniform samplerCube environment_texture;
+//layout (binding = 5) uniform samplerCube environment_texture;
+layout (binding = 5) uniform samplerCube irradiance_texture;
 
 #define DIRECTIONAL_LIGHT_MAX_COUNT 32
 #define POINT_LIGHT_MAX_COUNT 32
@@ -134,6 +135,11 @@ vec3 fresnelSchlick(float cosTheta, vec3 F0)
     return F0 + (1.0 - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
 }
 // ----------------------------------------------------------------------------
+vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)
+{
+    return F0 + (max(vec3(1.0 - roughness), F0) - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
+}   
+// ----------------------------------------------------------------------------
 vec3 brdf(vec3 albedo, float roughness, float metallic, vec3 N, vec3 V, vec3 L, vec3 F0, vec3 radiance){
     vec3 H = normalize(V + L);
 
@@ -172,6 +178,7 @@ void main()
     float roughness = texture(roughness_texture, v_texture_coordinates).x;
     float metallic  = texture(metallic_texture, v_texture_coordinates).x;
     float ao        = texture(ambient_occlusion_texture, v_texture_coordinates).x;
+
 
     vec3 N = normalize(get_normal_from_texture());
     vec3 V = normalize(camera_position - v_world_position);
@@ -228,7 +235,12 @@ void main()
     
     // ambient lighting (note that the next IBL tutorial will replace 
     // this ambient lighting with environment lighting).
-    vec3 ambient = vec3(0.03) * albedo * ao;
+    //vec3 ambient = vec3(0.03) * albedo * ao;
+    vec3 kS = fresnelSchlickRoughness(max(dot(N, V), 0.0), F0, roughness); 
+    vec3 kD = 1.0 - kS;
+    vec3 irradiance = texture(irradiance_texture, N).rgb;
+    vec3 diffuse    = irradiance * albedo;
+    vec3 ambient    = (kD * diffuse) * ao; 
 
     vec3 color = ambient + Lo;
 

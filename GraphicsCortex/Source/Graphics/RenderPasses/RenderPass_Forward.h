@@ -3,7 +3,7 @@
 #include "Components/Component_MeshRenderer.h"
 
 #include "Components/Component_Light.h"
-//#include "Components/Component_Skylight.h"
+#include "Components/Component_Skylight.h"
 
 #include "UniformBuffer.h"
 #include "PrimitiveRenderer.h"
@@ -35,6 +35,21 @@ public:
 
 	}
 
+	SkylightComponent* find_primary_skylight(Scene& scene) {
+		std::span<SkylightComponent*> sky_components = scene.get_components<SkylightComponent>();
+		if (sky_components.size() == 0)
+			return nullptr;
+
+		SkylightComponent* primary_skylight = nullptr;
+		for (SkylightComponent* sky_component : sky_components) {
+			if (!sky_component->is_primary()) continue;
+			primary_skylight = sky_component;
+			break;
+		}
+
+		return primary_skylight;
+	}
+
 	void update_light_buffers(Scene& scene) {
 		std::span<LightComponent*> lights_comps = scene.get_components<LightComponent>();
 
@@ -43,7 +58,7 @@ public:
 		uint32_t s_counter = 0;
 
 		for (uint32_t comp_i = 0; comp_i < lights_comps.size(); comp_i++) {
-			
+
 			auto transform_c = lights_comps[comp_i]->get_entity()->get_component<TransformComponent>();
 			if (transform_c == nullptr) continue;
 
@@ -85,10 +100,26 @@ public:
 	void on_render(int pass_index, RenderPipeline& pipeline, Scene& scene, Camera& camera) {
 
 		std::span<MeshRendererComponent*> mesh_renderers = scene.get_components<MeshRendererComponent>();
-		if (mesh_renderers.size() == 0) 
+		if (mesh_renderers.size() == 0)
 			return;
 
 		update_light_buffers(scene);
+
+		bool irradiance_map_exists = false;
+		std::shared_ptr<TextureCubeMap> irradiance_texture = nullptr;
+		SkylightComponent* skylight = find_primary_skylight(scene);
+		if (skylight != nullptr) {
+			irradiance_texture = skylight->get_sky_texture_convoluted();
+			if (irradiance_texture != nullptr)
+				irradiance_map_exists = true;
+			else if (skylight->get_sky_texture() != nullptr) {
+				skylight->calculate_sky_texture_convoluted(32);
+				irradiance_texture = skylight->get_sky_texture_convoluted();
+				irradiance_map_exists = irradiance_texture != nullptr;
+			}
+			else
+				irradiance_map_exists = false;
+		}
 
 		for (MeshRendererComponent* mesh_renderer : mesh_renderers) {
 			MaterialComponent* material_c = nullptr;
@@ -101,7 +132,10 @@ public:
 				program->update_uniform(point_light_buffer_name, *point_lights_buffer);
 				program->update_uniform(spot_light_buffer_name, *spot_lights_buffer);
 			}
+			if (irradiance_map_exists)
+				program->update_uniform("irradiance_texture", *irradiance_texture);
 
+			pipeline.framebuffer->bind_draw();
 			mesh_renderer->render(camera);
 		}
 	}
