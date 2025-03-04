@@ -30,8 +30,8 @@ public:
 		//Asset asset("../GraphicsCortex/Models/bmw/scene.gltf");
 		//Asset asset("../GraphicsCortex/Models/Sponza/scene.gltf");
 		//Asset asset_curtains("../GraphicsCortex/Models/Sponza/NewSponza_Curtains_glTF.gltf");
-		Asset asset("../GraphicsCortex/Models/circuit/nogaro.obj");
-		//Asset asset("../GraphicsCortex/ModelsKhronos/2.0/Sponza/glTF/Sponza.gltf");
+		//Asset asset("../GraphicsCortex/Models/circuit/nogaro.obj");
+		Asset asset("../GraphicsCortex/ModelsKhronos/2.0/Sponza/glTF/Sponza.gltf");
 
 		std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(asset.load_mesh());
 		//std::shared_ptr<Mesh> mesh_curtains = std::make_shared<Mesh>(asset_curtains.load_mesh());
