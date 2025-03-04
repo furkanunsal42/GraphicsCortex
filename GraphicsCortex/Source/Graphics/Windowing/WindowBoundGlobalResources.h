@@ -12,6 +12,7 @@ public:
 
 	std::unique_ptr<EquirectangularProjector> SkylightComponent_projector = nullptr;
 	std::unique_ptr<Program> SkylightComponent_render = nullptr;
+	std::unique_ptr<Program> SkylightComponent_convolver = nullptr;
 
 };
 

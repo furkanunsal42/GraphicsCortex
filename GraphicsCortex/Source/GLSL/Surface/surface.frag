@@ -238,7 +238,7 @@ void main()
     // gamma correct
     color = pow(color, vec3(1.0/2.2)); 
     
-    if (alpha < 0.1)
+    if (alpha < 0.9)
         discard;
 
     frag_color = vec4(color, 1);

@@ -5,6 +5,7 @@
 #include "Rendering/SingleMeshIndexedRenderingTest.h"
 #include "Rendering/RenderPassClearTest.h"
 #include "Rendering/MeshMaterialTest.h"
+#include "Rendering/CompleteRenderingTest.h"
 
 #include "EntityComponent/EntityComponentTest.h"
 #include "EntityComponent/MeshRendererTest.h"
@@ -36,10 +37,11 @@ int main() {
 	//ModelLoadingTest().run();
 
 	//MeshRendererTest().run();
+	CompleteRenderingTest().run();
 
 	//ChannelSplitingTest().run();
 	//HDRLoadingTest().run();
 
 	//SkyboxRenderingTest().run();
-	EquirectangularProjectionTest().run();
+	//EquirectangularProjectionTest().run();
 }

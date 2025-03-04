@@ -138,7 +138,6 @@ void Image::_read_image_data(const ImageParameters& requested_parameters)
 		}
 	}
 	
-	std::cout << extension << std::endl;
 	if (extension == ".hdr" || extension == ".HDR"){
 		_read_image_data_hdr(requested_parameters);
 		return;

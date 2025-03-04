@@ -23,13 +23,16 @@ public:
 		pipeline.push_render_pass(std::make_shared<RenderPass_Skybox>());
 
 		Image image_hdr("../GraphicsCortex/Images/HDR/sunflowers_puresky_4k.hdr", 4, true);
-		std::shared_ptr<Texture2D> texture_hdr = std::make_shared<Texture2D>(image_hdr.get_width(), image_hdr.get_height(), Texture2D::ColorTextureFormat::RGBA16F, 1, 0, 0);
+		std::shared_ptr<Texture2D> texture_hdr = std::make_shared<Texture2D>(image_hdr.get_width(), image_hdr.get_height(), Texture2D::ColorTextureFormat::RGB16F, 1, 0, 0);
 		texture_hdr->load_data(image_hdr, Texture2D::ColorFormat::RGBA, Texture2D::Type::FLOAT, 0);
+		image_hdr.release();
 
 		std::shared_ptr<Entity> sky = std::make_shared<Entity>();
 		sky->add_component<SkylightComponent>();
-		sky->get_component<SkylightComponent>()->set_sky_texture(*texture_hdr, 4096, TextureCubeMap::ColorTextureFormat::RGB16F);
+		sky->get_component<SkylightComponent>()->set_sky_texture(*texture_hdr, 2048, TextureCubeMap::ColorTextureFormat::RGB16F);
 		scene.add_entity(sky);
+
+		texture_hdr->release();
 
 		Camera camera;
 		camera.fov = 100;

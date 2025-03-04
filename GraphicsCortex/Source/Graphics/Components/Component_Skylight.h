@@ -21,7 +21,7 @@ public:
 	void set_sky_texture_convoluted(std::shared_ptr<TextureCubeMap> sky_texture_convoluted);
 	std::shared_ptr<TextureCubeMap> get_sky_texture_convoluted();
 
-	void calculate_sky_texture_convoluted();
+	void calculate_sky_texture_convoluted(uint32_t convoluted_resolution = 32);
 
 	void render(Framebuffer& framebuffer, Camera& camera);
 	void render(Camera& camera);
@@ -31,9 +31,11 @@ public:
 	Mesh unit_cube;
 	std::shared_ptr<TextureCubeMap> sky_texture = nullptr;
 	std::shared_ptr<TextureCubeMap> sky_texture_convoluted = nullptr;
-	
+	Framebuffer framebuffer;
+
 	// owns Global Resource SkylightComponent_projector
 	// owns Global Resource SkylightComponent_render
+	// owns Global Resource SkylightComponent_convolver
 
 private:
 	bool is_primary_skylight = false;
