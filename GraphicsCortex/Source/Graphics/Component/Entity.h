@@ -20,6 +20,8 @@ public:
 	template<typename ComponentType>
 	std::shared_ptr<ComponentType> get_component();
 
+	std::span<Scene*> get_scenes();
+
 private:
 	friend Scene;
 

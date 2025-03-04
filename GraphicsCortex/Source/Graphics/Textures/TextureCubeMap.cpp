@@ -28,6 +28,65 @@ namespace {
 	}
 }
 
+TextureCubeMap::TextureCubeMap(TextureCubeMap&& other)
+{
+	std::swap(id, other.id);
+	std::swap(texture_handle, other.texture_handle);
+	std::swap(mipmap_begin_level, other.mipmap_begin_level);
+	std::swap(mipmap_bias, other.mipmap_bias);
+	std::swap(wrap_u, other.wrap_u);
+	std::swap(wrap_v, other.wrap_v);
+	std::swap(mipmap_min_filter, other.mipmap_min_filter);
+	std::swap(min_filter, other.min_filter);
+	std::swap(mag_filter, other.mag_filter);
+	std::swap(target, other.target);
+	std::swap(width, other.width);
+	std::swap(height, other.height);
+	std::swap(color_texture_format, other.color_texture_format);
+	std::swap(mipmap_levels, other.mipmap_levels);
+	std::swap(is_color_texture, other.is_color_texture);
+	std::swap(_texture_generated, other._texture_generated);
+	std::swap(_texture_allocated, other._texture_allocated);
+	std::swap(_texture_handle_created, other._texture_handle_created);
+	std::swap(_user_data_loaded, other._user_data_loaded);
+	std::swap(_mipmap_generated, other._mipmap_generated);
+	std::swap(async_load_happening, other.async_load_happening);
+	std::swap(async_load_happening_per_face, other.async_load_happening_per_face);
+	std::swap(post_async_load_functions, other.post_async_load_functions);
+	std::swap(async_loading_threads, other.async_loading_threads);
+	std::swap(async_images, other.async_images);
+}
+
+TextureCubeMap& TextureCubeMap::operator=(TextureCubeMap&& other)
+{
+	std::swap(this->id, other.id);
+	std::swap(this->texture_handle, other.texture_handle);
+	std::swap(this->mipmap_begin_level, other.mipmap_begin_level);
+	std::swap(this->mipmap_bias, other.mipmap_bias);
+	std::swap(this->wrap_u, other.wrap_u);
+	std::swap(this->wrap_v, other.wrap_v);
+	std::swap(this->mipmap_min_filter, other.mipmap_min_filter);
+	std::swap(this->min_filter, other.min_filter);
+	std::swap(this->mag_filter, other.mag_filter);
+	std::swap(this->target, other.target);
+	std::swap(this->width, other.width);
+	std::swap(this->height, other.height);
+	std::swap(this->color_texture_format, other.color_texture_format);
+	std::swap(this->mipmap_levels, other.mipmap_levels);
+	std::swap(this->is_color_texture, other.is_color_texture);
+	std::swap(this->_texture_generated, other._texture_generated);
+	std::swap(this->_texture_allocated, other._texture_allocated);
+	std::swap(this->_texture_handle_created, other._texture_handle_created);
+	std::swap(this->_user_data_loaded, other._user_data_loaded);
+	std::swap(this->_mipmap_generated, other._mipmap_generated);
+	std::swap(this->async_load_happening, other.async_load_happening);
+	std::swap(this->async_load_happening_per_face, other.async_load_happening_per_face);
+	std::swap(this->post_async_load_functions, other.post_async_load_functions);
+	std::swap(this->async_loading_threads, other.async_loading_threads);
+	std::swap(this->async_images, other.async_images);
+	return *this;
+}
+
 TextureCubeMap::TextureCubeMap(int size, ColorTextureFormat internal_format, int mipmap_levels, float mipmap_bias) :
 	width(size), height(size), color_texture_format(internal_format), is_color_texture(true), mipmap_levels(mipmap_levels), mipmap_bias(mipmap_bias)
 {

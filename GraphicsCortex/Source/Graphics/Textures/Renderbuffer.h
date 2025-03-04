@@ -13,6 +13,9 @@ public:
 
 	Renderbuffer() = delete;
 	Renderbuffer(const Renderbuffer& other) = delete;
+	Renderbuffer(Renderbuffer&& other) = default;
+	Renderbuffer& operator=(const Renderbuffer& other) = delete;
+	Renderbuffer& operator=(Renderbuffer&& other) = default;
 
 	Renderbuffer(int width, int height, ColorTextureFormat internal_format, int multisample = 0);
 	Renderbuffer(int width, int height, DepthStencilTextureFormat internal_format, int multisample = 0);

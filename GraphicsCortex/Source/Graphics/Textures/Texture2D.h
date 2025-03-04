@@ -30,6 +30,9 @@ public:
 
 	Texture2D() = delete;
 	Texture2D(const Texture2D& other) = delete;
+	Texture2D(Texture2D&& other) = default;
+	Texture2D& operator=(const Texture2D& other) = delete;
+	Texture2D& operator=(Texture2D&& other) = default;
 
 	Texture2D(const Image& image, ColorTextureFormat internal_format, ColorFormat format, Type type, int mipmap_levels = 1, float mipmap_bias = 0.0f, int multisample = 0);
 	Texture2D(const std::string& image_filepath, ColorTextureFormat internal_format, ColorFormat format, Type type, int mipmap_levels = 1, float mipmap_bias = 0.0f, int multisample = 0);

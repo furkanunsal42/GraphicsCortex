@@ -248,6 +248,19 @@ void Framebuffer::attach_color(int slot, std::shared_ptr<Renderbuffer> render_bu
 	_draw_buffers_are_updated = false;
 }
 
+void Framebuffer::deattach_color(int slot)
+{
+	if (slot < 0 || slot >= _color_attachments.size()) {
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_color() to slot " << slot << " but there are maximum of " << _color_attachments.size() << " attacment slots in a Framebuffer" << std::endl;
+		ASSERT(false);
+	}
+
+	deactivate_draw_buffer(slot);
+	_color_attachments[slot] = nullptr;
+	GLCall(glNamedFramebufferTexture(id, GL_COLOR_ATTACHMENT0 + slot, 0, 0));
+	_draw_buffers_are_updated = false;
+}
+
 void Framebuffer::attach_depth(std::shared_ptr<Texture2D> texture2d, int mipmap_level)
 {
 	if (texture2d == nullptr) {
@@ -282,6 +295,12 @@ void Framebuffer::attach_depth(std::shared_ptr<Renderbuffer> render_buffer)
 	_depth_attachment = render_buffer;
 	render_buffer->_allocate_texture();
 	GLCall(glNamedFramebufferRenderbuffer(id, GL_DEPTH_ATTACHMENT, render_buffer->target, render_buffer->id));
+}
+
+void Framebuffer::deattach_depth()
+{
+	_depth_attachment = nullptr;
+	GLCall(glNamedFramebufferTexture(id, GL_DEPTH_ATTACHMENT, 0, 0));
 }
 
 void Framebuffer::attach_stencil(std::shared_ptr<Texture2D> texture2d, int mipmap_level)
@@ -320,6 +339,12 @@ void Framebuffer::attach_stencil(std::shared_ptr<Renderbuffer> render_buffer)
 	GLCall(glNamedFramebufferRenderbuffer(id, GL_STENCIL_ATTACHMENT, render_buffer->target, render_buffer->id));
 }
 
+void Framebuffer::deattach_stencil()
+{
+	_stencil_attachment = nullptr;
+	GLCall(glNamedFramebufferTexture(id, GL_STENCIL_ATTACHMENT, 0, 0));
+}
+
 void Framebuffer::attach_depth_stencil(std::shared_ptr<Texture2D> texture2d, int mipmap_level)
 {
 	if (texture2d == nullptr) {
@@ -356,6 +381,21 @@ void Framebuffer::attach_depth_stencil(std::shared_ptr<Renderbuffer> render_buff
 	_depth_stencil_attachment = render_buffer;
 	render_buffer->_allocate_texture();
 	GLCall(glNamedFramebufferRenderbuffer(id, GL_DEPTH_STENCIL_ATTACHMENT, render_buffer->target, render_buffer->id));
+}
+
+void Framebuffer::deattach_depth_stencil()
+{
+	_depth_stencil_attachment = nullptr;
+	GLCall(glNamedFramebufferTexture(id, GL_DEPTH_STENCIL_ATTACHMENT, 0, 0));
+}
+
+void Framebuffer::clear()
+{
+	deattach_depth();
+	deattach_stencil();
+	deattach_depth_stencil();
+	for (int i = 0; i < _color_attachments.size(); i++)
+		deattach_color(i);
 }
 
 void Framebuffer::set_read_buffer(int slot)
@@ -409,7 +449,7 @@ void Framebuffer::update_activated_draw_buffers()
 	if (_draw_buffers_are_updated) return;
 
 	int count = _active_draw_buffers.size();
-	unsigned int* buffer_enums = new unsigned int[count];
+	unsigned int buffer_enums[16];
 	int i = 0;
 	for (auto iterator = _active_draw_buffers.begin(); iterator != _active_draw_buffers.end(); iterator++) {
 		int slot = *iterator;

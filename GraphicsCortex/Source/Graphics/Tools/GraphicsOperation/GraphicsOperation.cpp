@@ -58,6 +58,19 @@ void GraphicsOperation::clear_constants()
 	pushed_constants.clear();
 }
 
+void GraphicsOperation::clear_all_state()
+{
+	clear_operands();
+	clear_constants();
+	clear_precomputation_statements();
+}
+
+void GraphicsOperation::clear()
+{
+	clear_all_state();
+	_preprocessors_to_shaders.clear();
+}
+
 std::shared_ptr<ComputeProgram> GraphicsOperation::_compile_shaders(const std::vector<std::pair<std::string, std::string>>& arithmatic_preprocessing_defines) {
 	std::string concatinated_value = concatinate_preprocessor_values(arithmatic_preprocessing_defines);
 

@@ -31,6 +31,9 @@ public:
 
 	Texture3D() = delete;
 	Texture3D(const Texture3D& other) = delete;
+	Texture3D(Texture3D&& other) = default;
+	Texture3D& operator=(const Texture3D& other) = delete;
+	Texture3D& operator=(Texture3D&& other) = default;
 
 	Texture3D(int width, int height, int depth, ColorTextureFormat internal_format, int mipmap_levels = 1, float mipmap_bias = 0.0f);
 	Texture3D(int width, int height, int depth, DepthStencilTextureFormat internal_format, int mipmap_levels = 1, float mipmap_bias = 0.0f);

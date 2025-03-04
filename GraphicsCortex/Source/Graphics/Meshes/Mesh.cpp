@@ -89,16 +89,27 @@ void Mesh::load_model(const SingleModel& single_model, IndexType type)
 	clear();
 
 	vab = single_model.create_vertex_attribute_buffer();
-	index_buffer = single_model.create_index_buffer(type, 0);
-	//index_buffer_type = type;
+	
+	bool index_buffer_exists = single_model.indicies.size() != 0;
+
+	if (index_buffer_exists)
+		index_buffer = single_model.create_index_buffer(type, 0);
+		//index_buffer_type = type;
 
 	SingleMesh mesh_definition;
 
-	mesh_definition.index_count		= index_buffer->get_buffer_size_in_bytes() / get_IndexType_bytes_per_index(type);
-	mesh_definition.index_offset	= 0;
+	if (index_buffer_exists) {
+		mesh_definition.index_count		= index_buffer->get_buffer_size_in_bytes() / get_IndexType_bytes_per_index(type);
+		mesh_definition.index_offset	= 0;
+		mesh_definition.index_type		= type;
+	}
+	else {
+		mesh_definition.index_count		= 0;
+		mesh_definition.index_offset	= 0;
+		mesh_definition.index_type		= type;
+	}
 	mesh_definition.vertex_count	= vab->get_min_vertex_count();
 	mesh_definition.vertex_offset	= 0;
-	mesh_definition.index_type = type;
 	mesh_definition.primitive = single_model.primitive;
 
 	mesh_t mesh = add_mesh(mesh_definition);

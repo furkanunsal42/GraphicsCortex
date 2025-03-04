@@ -8,6 +8,49 @@
 #include "VertexAttributeBuffer.h"
 #include "FrameBuffer.h"
 
+glm::ivec2 primitive_renderer::get_viewport_position()
+{
+	glm::ivec4 old;
+	glGetIntegerv(GL_VIEWPORT, (int32_t*)&old);
+	return glm::vec2(old.x, old.y);
+}
+
+glm::ivec2 primitive_renderer::get_viewport_size()
+{
+	glm::ivec4 old;
+	glGetIntegerv(GL_VIEWPORT, (int32_t*)&old);
+	return glm::vec2(old.z, old.a);
+}
+
+glm::ivec4 primitive_renderer::get_viewport_position_size()
+{
+	glm::ivec4 old;
+	glGetIntegerv(GL_VIEWPORT, (int32_t*)&old);
+	return glm::vec4(old.x, old.y, old.z, old.a);
+}
+
+void primitive_renderer::set_viewport_position(glm::ivec2 position)
+{
+	glm::ivec4 old;
+	glGetIntegerv(GL_VIEWPORT, (int32_t*)&old);
+	GLCall(glViewport(position.x, position.y, old.z, old.a));
+}
+
+void primitive_renderer::set_viewport_size(glm::ivec2 viewport)
+{
+	glm::ivec4 old;
+	glGetIntegerv(GL_VIEWPORT, (int32_t*)&old);
+	GLCall(glViewport(old.x, old.y, viewport.x, viewport.y));
+}
+
+void primitive_renderer::set_viewport(glm::ivec2 position, glm::ivec2 size)
+{
+	GLCall(glViewport(position.x, position.y, size.x, size.y));
+}
+
+void primitive_renderer::set_viewport(glm::ivec4 position_size) {
+	GLCall(glViewport(position_size.x, position_size.y, position_size.z, position_size.a));
+}
 
 void primitive_renderer::render(
 	Framebuffer& framebuffer, 

@@ -17,6 +17,7 @@ void Entity::add_component(ArgType... arguments)
 
     for (Scene* scene : _scenes) {
         scene->type_to_components[type].push_back(component.get());
+        component->on_added_to_scene(*scene);
     }
 
     _components[type] = component;
@@ -32,6 +33,7 @@ void Entity::remove_component()
     for (Scene* scene : _scenes) {
         std::vector<Component*>& scene_components = scene->type_to_components[type];
         scene_components.erase(std::find(scene_components.begin(), scene_components.end(), _components.at(type).get()));
+        _components.at(type)->on_removed_from_scene(*scene);
     }
 
     _components.at(type)->entity = nullptr;

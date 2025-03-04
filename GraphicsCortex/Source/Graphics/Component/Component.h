@@ -3,15 +3,14 @@
 
 typedef size_t component_type_id;
 class Entity;
+class Scene;
 
 class Component {
 public:
 
 	enum UpdateType {
-		Activated,
-		Deactivated,
-		Initialized,
-		Destructed,
+		AddedToScene,
+		RemovedFromScene,
 
 		Begin,
 
@@ -31,10 +30,8 @@ public:
 	Component() = default;
 	virtual ~Component() = default;
 
-	virtual void on_activated() {};
-	virtual void on_deactivated() {};
-	virtual void on_initialized() {};
-	virtual void on_destructed() {};
+	virtual void on_added_to_scene(Scene& scene) {};
+	virtual void on_removed_from_scene(Scene& scene) {};
 
 	virtual void on_begin() {};
 	virtual void on_update() {};

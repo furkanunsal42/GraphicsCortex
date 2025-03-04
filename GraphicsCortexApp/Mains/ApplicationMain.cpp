@@ -17,6 +17,9 @@
 #include "Image/ChannelSplitingTest.h"
 #include "Image/HDRLoadingTest.h"
 
+#include "Skybox/SkyboxRenderingTest.h"
+#include "Skybox/EquirectangularProjectionTest.h"
+
 int main() {
 	
 	//WindowSystemTest().run();
@@ -35,5 +38,8 @@ int main() {
 	//MeshRendererTest().run();
 
 	//ChannelSplitingTest().run();
-	HDRLoadingTest().run();
+	//HDRLoadingTest().run();
+
+	//SkyboxRenderingTest().run();
+	EquirectangularProjectionTest().run();
 }

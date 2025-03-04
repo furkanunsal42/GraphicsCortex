@@ -30,6 +30,9 @@ public:
 
 	Texture2DArray() = delete;
 	Texture2DArray(const Texture2DArray& other) = delete;
+	Texture2DArray(Texture2DArray&& other) = default;
+	Texture2DArray& operator=(const Texture2DArray& other) = delete;
+	Texture2DArray& operator=(Texture2DArray&& other) = default;
 
 	Texture2DArray(int width, int height, int texture_count, ColorTextureFormat internal_format, int mipmap_levels = 1, float mipmap_bias = 0.0f, int multisample = 0);
 	Texture2DArray(int width, int height, int texture_count, DepthStencilTextureFormat internal_format, int mipmap_levels = 1, float mipmap_bias = 0.0f, int multisample = 0);

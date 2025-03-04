@@ -50,15 +50,21 @@ public:
 	void attach_color(int slot, std::shared_ptr<TextureCubeMap> texture_cube_map, TextureCubeMap::Face face, int mipmap = 0);
 	void attach_color(int slot, std::shared_ptr<Texture3D> texture3d, int z, int mipmap = 0);
 	void attach_color(int slot, std::shared_ptr<Renderbuffer> render_buffer);
+	void deattach_color(int slot);
 
 	void attach_depth(std::shared_ptr<Texture2D> texture2d, int mipmap_level = 0);
 	void attach_depth(std::shared_ptr<Renderbuffer> render_buffer);
+	void deattach_depth();
 
 	void attach_stencil(std::shared_ptr<Texture2D> texture2d, int mipmap_level = 0);
 	void attach_stencil(std::shared_ptr<Renderbuffer> render_buffer);
+	void deattach_stencil();
 
 	void attach_depth_stencil(std::shared_ptr<Texture2D> texture2d, int mipmap_level = 0);
 	void attach_depth_stencil(std::shared_ptr<Renderbuffer> render_buffer);
+	void deattach_depth_stencil();
+
+	void clear();
 
 	void set_read_buffer(int slot);
 

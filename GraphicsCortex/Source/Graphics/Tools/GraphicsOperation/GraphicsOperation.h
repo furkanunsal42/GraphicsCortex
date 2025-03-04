@@ -119,6 +119,9 @@ public:
 	void push_constant(const std::string& name, const T& value);
 	void clear_constants();
 
+	void clear_all_state();
+	void clear();
+
 	enum _ConstantType {
 		c_int32,
 		c_uint32,

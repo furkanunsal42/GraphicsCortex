@@ -19,21 +19,21 @@
 
 Shader::Shader() { ; }
 
-Shader::Shader(const std::string& target_file)
+Shader::Shader(const std::filesystem::path& target_file)
 {
-	read_shader(target_file);
-	filename = compute_filename(target_file);
+	read_shader(target_file.string());
+	filename = compute_filename(target_file.string());
 }
-Shader::Shader(const std::string& vertex_target_file, const std::string& fragment_target_file) {
-	read_shader(vertex_target_file);
-	read_shader(fragment_target_file);
-	filename = compute_filename(vertex_target_file)+ " | " + compute_filename(fragment_target_file);
+Shader::Shader(const std::filesystem::path& vertex_target_file, const std::filesystem::path& fragment_target_file) {
+	read_shader(vertex_target_file.string());
+	read_shader(fragment_target_file.string());
+	filename = compute_filename(vertex_target_file.string()) + " | " + compute_filename(fragment_target_file.string());
 }
-Shader::Shader(const std::string& vertex_target_file, const std::string& geometry_terget_file, const std::string& fragment_target_file) {
-	read_shader(vertex_target_file);
-	read_shader(geometry_terget_file);
-	read_shader(fragment_target_file);
-	filename = compute_filename(vertex_target_file) + " | " + compute_filename(geometry_terget_file) + " | " + compute_filename(fragment_target_file);
+Shader::Shader(const std::filesystem::path& vertex_target_file, const std::filesystem::path& geometry_terget_file, const std::filesystem::path& fragment_target_file) {
+	read_shader(vertex_target_file.string());
+	read_shader(geometry_terget_file.string());
+	read_shader(fragment_target_file.string());
+	filename = compute_filename(vertex_target_file.string()) + " | " + compute_filename(geometry_terget_file.string()) + " | " + compute_filename(fragment_target_file.string());
 }
 
 void Shader::read_shader(const std::string& target_file) {

@@ -37,6 +37,9 @@ public:
 
 	TextureCubeMap() = delete;
 	TextureCubeMap(const TextureCubeMap& other) = delete;
+	TextureCubeMap(TextureCubeMap&& other);
+	TextureCubeMap& operator=(const TextureCubeMap& other) = delete;
+	TextureCubeMap& operator=(TextureCubeMap&& other);
 
 	TextureCubeMap(int size, ColorTextureFormat internal_format, int mipmap_levels = 1, float mipmap_bias = 0.0f);
 	TextureCubeMap(int size, DepthStencilTextureFormat internal_format, int mipmap_levels = 1, float mipmap_bias = 0.0f);

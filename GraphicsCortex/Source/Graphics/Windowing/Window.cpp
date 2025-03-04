@@ -8,6 +8,8 @@
 #include "Image.h"
 #include "Monitor.h"
 
+#include "WindowBoundGlobalResources.h"
+
 Window::Window(const WindowDescription& description)
 {
 	_initialize(description);
@@ -78,6 +80,7 @@ std::shared_ptr<Window> Window::create_from_current()
 {
 	GLFWwindow* current_handle = glfwGetCurrentContext();
 	auto window = std::shared_ptr<Window>(new Window((void*)current_handle));
+	window->context_make_current(); // to set global resources
 	return window;
 };
 
@@ -145,8 +148,13 @@ void Window::_initialize(const WindowDescription& description)
 		monitor_ptr = (GLFWmonitor*)(description.w_fullscreen_monitor_ptr->monitor_ptr);
 
 	handle = glfwCreateWindow(clipped_resolution.x, clipped_resolution.y, description.w_name.c_str(), (GLFWmonitor*)monitor_ptr, (GLFWwindow*)description.context_shared);
-	context_make_current();
+
+	// global resoureces
+	// if (description.context_shared != nullptr) {
+	// even if context is shared a unique GlobalResources() is created for each new context
+	// }
 	
+	context_make_current();
 	glfwSwapInterval(description.f_swap_interval);
 
 	if (description.n_create_newsletters) {
@@ -308,11 +316,18 @@ void Window::release()
 		glfwDestroyWindow((GLFWwindow*)handle);
 		handle = nullptr;
 	}
+
+	GlobalResources* owned_global_resources = &(context_to_global_resources[handle]);
+	context_to_global_resources.erase(handle);
+	if (active_global_resources == owned_global_resources)
+		active_global_resources = nullptr;
 }
 
 void Window::context_make_current()
 {
 	glfwMakeContextCurrent((GLFWwindow*)handle);
+
+	active_global_resources = &(context_to_global_resources[handle]);
 }
 
 // event handling

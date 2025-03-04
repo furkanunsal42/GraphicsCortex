@@ -23,10 +23,11 @@ void Scene::add_entity(std::shared_ptr<Entity> entity)
 			component_type_id type = pair.first;
 			std::shared_ptr<Component> component = pair.second;
 			type_to_components[type].push_back(component.get());
+			component->on_added_to_scene(*this);
 		}
 	}
 
-	entity->update(Component::Begin);
+	//entity->update(Component::Begin);
 }
 
 void Scene::remove_entity(std::shared_ptr<Entity> entity)
@@ -39,6 +40,7 @@ void Scene::remove_entity(std::shared_ptr<Entity> entity)
 		std::shared_ptr<Component> component = pair.second;
 		auto& vector = type_to_components[type];
 		vector.erase(std::find(vector.begin(), vector.end(), component.get()));
+		component->on_removed_from_scene(*this);
 	}
 
 	std::vector<Scene*>& e_scenes = entity->_scenes;

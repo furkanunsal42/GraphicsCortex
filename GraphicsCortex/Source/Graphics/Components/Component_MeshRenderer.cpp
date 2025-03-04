@@ -36,6 +36,12 @@ TransformComponent* MeshRendererComponent::get_transform()
 	else return nullptr;
 }
 
+void MeshRendererComponent::render(Framebuffer& framebuffer, Camera& camera)
+{
+	framebuffer.bind_draw();
+	render(camera);
+}
+
 void MeshRendererComponent::render(Camera& camera)
 {
 	MeshComponent* mesh_c = get_mesh();

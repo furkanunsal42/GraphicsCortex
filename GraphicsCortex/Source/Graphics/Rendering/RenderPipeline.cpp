@@ -81,6 +81,8 @@ void RenderPipeline::render(Scene& scene, Camera& camera)
 	
 	for (int32_t i = 0; i < passes.size(); i++) {
 		std::shared_ptr<RenderPass>& pass = passes[i];
+		framebuffer->activate_draw_buffer(0);
+		framebuffer->bind_draw();
 		pass->on_render(i, *this, scene, camera);
 	}
 }

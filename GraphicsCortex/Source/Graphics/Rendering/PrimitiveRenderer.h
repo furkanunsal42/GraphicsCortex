@@ -2,6 +2,7 @@
 
 #include "RenderParameters.h"
 #include "Mesh.h"
+#include <vec2.hpp>
 
 class Framebuffer;
 class Program;
@@ -10,6 +11,14 @@ class VertexAttributeBuffer;
 class Framebuffer;
 
 namespace primitive_renderer {
+
+	glm::ivec2 get_viewport_position();
+	glm::ivec2 get_viewport_size();
+	glm::ivec4 get_viewport_position_size();
+	void set_viewport_position(glm::ivec2 position);
+	void set_viewport_size(glm::ivec2 viewport);
+	void set_viewport(glm::ivec2 position, glm::ivec2 size);
+	void set_viewport(glm::ivec4 position_size);
 
 	void render(
 		Framebuffer& framebuffer,

@@ -2,7 +2,7 @@
 #include "RenderPipeline.h"
 #include "Components/Component_MeshRenderer.h"
 
-#include "Components/Component_SpotLight.h"
+#include "Components/Component_Light.h"
 //#include "Components/Component_Skylight.h"
 
 #include "UniformBuffer.h"

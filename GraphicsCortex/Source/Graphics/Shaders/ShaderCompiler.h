@@ -1,19 +1,20 @@
 #pragma once
 #include "Config.h"
 
+#include <iostream>
+#include <filesystem>
+#include <string>
+#include <map>
+#include <unordered_map>
+
 #include <GL/glew.h>
 
 #include <glm.hpp>
 #include "gtc/matrix_transform.hpp"
 #include "gtc/type_ptr.hpp"
 
-#include <string>
-#include <map>
-#include <unordered_map>
 #include "Debuger.h"
 #include <UniformBuffer.h>
-
-#include <iostream>
 
 class Shader {
 public:
@@ -25,9 +26,9 @@ public:
 	std::string filename = "";
 
 	Shader();
-	Shader(const std::string& target_file);
-	Shader(const std::string& vertex_target_file, const std::string& fragment_target_file);
-	Shader(const std::string& vertex_target_file, const std::string& geometry_terget_file, const std::string& fragment_target_file);
+	Shader(const std::filesystem::path& target_file);
+	Shader(const std::filesystem::path& vertex_target_file, const std::filesystem::path& fragment_target_file);
+	Shader(const std::filesystem::path& vertex_target_file, const std::filesystem::path& geometry_target_file, const std::filesystem::path& fragment_target_file);
 	void read_shader(const std::string& target_file);
 };
 

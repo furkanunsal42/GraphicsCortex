@@ -29,6 +29,9 @@ public:
 
 	Texture1D() = delete;
 	Texture1D(const Texture1D& other) = delete;
+	Texture1D(Texture1D&& other) = default;
+	Texture1D& operator=(const Texture1D& other) = delete;
+	Texture1D& operator=(Texture1D&& other) = default;
 
 	Texture1D(int width, ColorTextureFormat internal_format, int mipmap_levels = 1, float mipmap_bias = 0.0f);
 	Texture1D(int width, DepthStencilTextureFormat internal_format, int mipmap_levels = 1, float mipmap_bias = 0.0f);
