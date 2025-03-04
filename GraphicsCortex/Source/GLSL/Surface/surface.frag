@@ -16,7 +16,6 @@ layout(binding = 3) uniform sampler2D roughness_texture;
 layout(binding = 4) uniform sampler2D ambient_occlusion_texture;
 
 // lights
-//layout (binding = 5) uniform samplerCube environment_texture;
 layout (binding = 5) uniform samplerCube irradiance_texture;
 
 #define DIRECTIONAL_LIGHT_MAX_COUNT 32
@@ -179,7 +178,6 @@ void main()
     float metallic  = texture(metallic_texture, v_texture_coordinates).x;
     float ao        = texture(ambient_occlusion_texture, v_texture_coordinates).x;
 
-
     vec3 N = normalize(get_normal_from_texture());
     vec3 V = normalize(camera_position - v_world_position);
 
@@ -250,7 +248,7 @@ void main()
     // gamma correct
     color = pow(color, vec3(1.0/2.2)); 
     
-    if (alpha < 0.9)
+    if (alpha < 0.1)
         discard;
 
     frag_color = vec4(color, 1);

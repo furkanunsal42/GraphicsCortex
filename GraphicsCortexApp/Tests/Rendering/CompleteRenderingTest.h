@@ -28,17 +28,20 @@ public:
 		//Asset asset("../GraphicsCortex/Models/Thinker/source/Rodin_Thinker.obj");
 		//Asset asset("../GraphicsCortex/Models/medival/source/medival.fbx");
 		//Asset asset("../GraphicsCortex/Models/bmw/scene.gltf");
-		Asset asset("../GraphicsCortex/Models/Sponza/scene.gltf");
-		//Asset asset("../GraphicsCortex/Models/circuit/nogaro.obj");
+		//Asset asset("../GraphicsCortex/Models/Sponza/scene.gltf");
+		//Asset asset_curtains("../GraphicsCortex/Models/Sponza/NewSponza_Curtains_glTF.gltf");
+		Asset asset("../GraphicsCortex/Models/circuit/nogaro.obj");
 		//Asset asset("../GraphicsCortex/ModelsKhronos/2.0/Sponza/glTF/Sponza.gltf");
 
 		std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(asset.load_mesh());
+		//std::shared_ptr<Mesh> mesh_curtains = std::make_shared<Mesh>(asset_curtains.load_mesh());
+		//std::shared_ptr<MeshMaterial> mesh_curtains_material = std::make_shared<MeshMaterial>(asset_curtains.load_mesh_material());
 		std::shared_ptr<MeshMaterial> mesh_material = std::make_shared<MeshMaterial>(asset.load_mesh_material());
 		std::shared_ptr<Program> program = default_program::surface_program_s();
 
-		//Image image_hdr("../GraphicsCortex/Images/HDR/sunflowers_puresky_4k.hdr", 4, true);
+		Image image_hdr("../GraphicsCortex/Images/HDR/sunflowers_puresky_4k.hdr", 4, true);
 		//Image image_hdr("../GraphicsCortex/Images/HDR/warm_bar_4k.hdr", 4, true);
-		Image image_hdr("../GraphicsCortex/Images/HDR/qwantani_night_4k.hdr", 4, true);
+		//Image image_hdr("../GraphicsCortex/Images/HDR/qwantani_night_4k.hdr", 4, true);
 		std::shared_ptr<Texture2D> texture_hdr = std::make_shared<Texture2D>(image_hdr.get_width(), image_hdr.get_height(), Texture2D::ColorTextureFormat::RGB16F, 1, 0, 0);
 		texture_hdr->load_data(image_hdr, Texture2D::ColorFormat::RGBA, Texture2D::Type::FLOAT, 0);
 		image_hdr.release();
@@ -59,17 +62,26 @@ public:
 		sponza->get_component<MaterialComponent>()->set_mesh_material(mesh_material);
 		scene.add_entity(sponza);
 
+		//std::shared_ptr<Entity> curtains = std::make_shared<Entity>();
+		//curtains->add_component<MeshComponent>(mesh_curtains);
+		//curtains->add_component<MaterialComponent>(program);
+		//curtains->add_component<MeshRendererComponent>();
+		//curtains->add_component<TransformComponent>();
+		//curtains->get_component<TransformComponent>()->set_scale(glm::vec3(1));
+		//curtains->get_component<MaterialComponent>()->set_mesh_material(mesh_curtains_material);
+		//scene.add_entity(curtains);
+
 		//std::shared_ptr<Entity> entity_p_light = std::make_shared<Entity>();
 		//entity_p_light->add_component<TransformComponent>();
 		//entity_p_light->add_component<LightComponent>(LightComponent::point, glm::vec3(1, 0, 0)*30.0f);
 		//entity_p_light->get_component<TransformComponent>()->set_position(glm::vec3(0, 4, 0));
 		//scene.add_entity(entity_p_light);
 
-		//std::shared_ptr<Entity> entity_d_light = std::make_shared<Entity>();
-		//entity_d_light->add_component<TransformComponent>();
-		//entity_d_light->add_component<LightComponent>(LightComponent::directional, glm::vec3(1) * 6.0f);
-		//entity_d_light->get_component<TransformComponent>()->set_z_direction(glm::vec3(+0.5, -1, -0.5));
-		//scene.add_entity(entity_d_light);
+		std::shared_ptr<Entity> entity_d_light = std::make_shared<Entity>();
+		entity_d_light->add_component<TransformComponent>();
+		entity_d_light->add_component<LightComponent>(LightComponent::directional, glm::vec3(1) * 6.0f);
+		entity_d_light->get_component<TransformComponent>()->set_z_direction(glm::vec3(+0.5, -1, -0.5));
+		scene.add_entity(entity_d_light);
 
 		//std::shared_ptr<Entity> entity_s_light = std::make_shared<Entity>();
 		//entity_s_light->add_component<TransformComponent>();
@@ -86,7 +98,7 @@ public:
 
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_MULTISAMPLE);
-		glEnable(GL_CULL_FACE);
+		//glEnable(GL_CULL_FACE);
 		glEnable(GL_BLEND);
 		glDepthMask(GL_TRUE);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

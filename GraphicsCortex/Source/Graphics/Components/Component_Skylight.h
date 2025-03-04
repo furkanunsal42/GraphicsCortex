@@ -22,7 +22,7 @@ public:
 	std::shared_ptr<TextureCubeMap> get_sky_texture_convoluted();
 
 	void calculate_sky_texture_convoluted(uint32_t convoluted_resolution = 32);
-
+	
 	void render(Framebuffer& framebuffer, Camera& camera);
 	void render(Camera& camera);
 

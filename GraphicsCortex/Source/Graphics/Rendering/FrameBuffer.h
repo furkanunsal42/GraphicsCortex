@@ -26,24 +26,39 @@ public:
 		LINEAR,
 	};
 	
-	unsigned int id;
+	uint32_t id;
+
+	static Framebuffer& get_screen();
 
 	Framebuffer();
 	Framebuffer(const Framebuffer& other) = delete;
 	~Framebuffer();
 	void release();
 
-	static void bind_screen_read_draw();
-	static void bind_screen_read();
-	static void bind_screen_draw();
-
-	void clear_bound_drawbuffer();
-	void clear_bound_drawbuffer(float r, float g, float b, float a);
-
 	void bind_read_draw();
 	void bind_read();
 	void bind_draw();
 	
+	// doesn't assume ownership
+
+	void attach_color(int slot, Texture1D& texture1d, int mipmap_level = 0);
+	void attach_color(int slot, Texture2D& texture2d, int mipmap_level = 0);
+	void attach_color(int slot, Texture2DArray& texture_array, int z, int mipmap = 0);
+	void attach_color(int slot, TextureCubeMap& texture_cube_map, TextureCubeMap::Face face, int mipmap = 0);
+	void attach_color(int slot, Texture3D& texture3d, int z, int mipmap = 0);
+	void attach_color(int slot, Renderbuffer& render_buffer);
+	
+	void atatch_depth(Texture2D& texture2d, int mipmap_level = 0);
+	void atatch_depth(Renderbuffer& render_buffer2d, int mipmap_level = 0);
+	
+	void attach_stencil(Texture2D& texture2d, int mipmap_level = 0);
+	void attach_stencil(Renderbuffer& render_buffer2d, int mipmap_level = 0);
+	
+	void attach_depth_stencil(Texture2D& texture2d, int mipmap_level = 0);
+	void attach_depth_stencil(Renderbuffer& render_buffer2d, int mipmap_level = 0);
+
+	// assumes ownership
+
 	void attach_color(int slot, std::shared_ptr<Texture1D> texture1d, int mipmap_level = 0);
 	void attach_color(int slot, std::shared_ptr<Texture2D> texture2d, int mipmap_level = 0);
 	void attach_color(int slot, std::shared_ptr<Texture2DArray> texture_array, int z, int mipmap = 0);
@@ -67,31 +82,38 @@ public:
 	void clear();
 
 	void set_read_buffer(int slot);
-
 	void activate_draw_buffer(int slot);
 	void deactivate_draw_buffer(int slot);
-	void update_activated_draw_buffers();
 	void deactivate_all_draw_buffers();
+	
+	//void update_activated_draw_buffers();
 
 	void blit(Framebuffer& target, int self_x0, int self_y0, int self_x1, int self_y1, int target_x0, int target_y0, int target_x1, int target_y1, Channel channel, Filter filter);
 	void blit_to_screen(int self_x0, int self_y0, int self_x1, int self_y1, int target_x0, int target_y0, int target_x1, int target_y1, Channel channel, Filter filter);
 
 private:
 	
+	static constexpr uint32_t null_slot = -1;
+	static constexpr uint32_t slot_count = 16;
+
+	Framebuffer(uint32_t id);
+
+	void generate_framebuffer();
+
+	bool framebuffer_generated = false;
+	int active_read_buffer = 0;
+	std::unordered_set<int> active_draw_buffers;
+	//bool draw_buffers_are_updated = false;
+	
+	std::array<std::shared_ptr<TextureBase2>, slot_count> owned_color_attachments;
+	std::shared_ptr<TextureBase2> owned_depth_attachment;
+	std::shared_ptr<TextureBase2> owned_stencil_attachment;
+	std::shared_ptr<TextureBase2> owned_depth_stencil_attachment;
+
 	static unsigned int Channel_to_OpenGL(Channel channel);
 	static unsigned int Filter_to_OpenGL(Filter filter);
 
-	bool _framebuffer_generated = false;
-	bool _draw_buffers_are_updated = false;
-
-	std::unordered_set<int> _active_draw_buffers;
-	int _active_read_buffer = 0;
-	bool _active_read_buffer_ever_set = false;
-
-	std::array<std::shared_ptr<TextureBase2>, 16> _color_attachments;
-	std::shared_ptr<TextureBase2> _depth_attachment;
-	std::shared_ptr<TextureBase2> _stencil_attachment;
-	std::shared_ptr<TextureBase2> _depth_stencil_attachment;
+	//bool _active_read_buffer_ever_set = false;
 
 	void _check_framebuffer_status(unsigned int gl_bind_target);
 };
