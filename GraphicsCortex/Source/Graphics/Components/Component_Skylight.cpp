@@ -14,12 +14,13 @@ namespace {
         cam.view_matrix = glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f));
         cam.update_default_uniforms(program);
 
-        framebuffer.bind_draw();
         glm::ivec4 old_viewport = primitive_renderer::get_viewport_position_size();
         primitive_renderer::set_viewport(glm::ivec2(0), glm::ivec2(target_cubemap.get_size()));
 
         framebuffer.attach_color(0, target_cubemap, TextureCubeMap::RIGHT, 0);
         framebuffer.activate_draw_buffer(0);
+        framebuffer.bind_draw();
+
         primitive_renderer::render(
             framebuffer,
             program,

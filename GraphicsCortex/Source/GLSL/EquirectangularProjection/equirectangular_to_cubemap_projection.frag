@@ -2,7 +2,7 @@
 
 #version 460 core
 out vec4 FragColor;
-in vec3 local_position;
+in vec3 g_local_position;
 
 uniform sampler2D equirectangular_texture;
 
@@ -17,8 +17,8 @@ vec2 cube_to_equirectangular(vec3 v)
 
 void main()
 {		
-    vec2 uv = cube_to_equirectangular(normalize(local_position)); // make sure to normalize localPos
+    vec2 uv = cube_to_equirectangular(normalize(g_local_position)); // make sure to normalize localPos
     vec3 color = texture(equirectangular_texture, uv).rgb;
     
-    FragColor = vec4(color, 1.0);
+    FragColor = vec4(g_local_position, 1.0);
 }

@@ -137,7 +137,7 @@ Program::Program(const Shader& shader)
 }
 
 void Program::_define_all_uniforms() {
-	int uniform_amount;
+	int uniform_amount = 0;
 	GLCall(glGetProgramiv(id, GL_ACTIVE_UNIFORMS, &uniform_amount));
 
 	for (int i = 0; i < uniform_amount; i++)
@@ -502,6 +502,18 @@ void Program::compile(const std::string& vertex_shader_code, const std::string& 
 	GLCall(glAttachShader(id, geometry_shader));
 	GLCall(glAttachShader(id, fragment_shader));
 	GLCall(glLinkProgram(id));
+
+	int32_t link_result;
+	GLCall(glGetProgramiv(id, GL_LINK_STATUS, &link_result));
+
+	if (link_result != GL_TRUE) {
+		char buff[1024];
+		int32_t length;
+		glGetProgramInfoLog(id, 1024, &length, buff);
+
+		std::cout << "[OpenGL Error] program failed to link with error message : \n\"" << buff << "\"" << std::endl;
+		ASSERT(false);
+	}
 
 	GLCall(glDeleteShader(vertex_shader));
 	GLCall(glDeleteShader(geometry_shader));

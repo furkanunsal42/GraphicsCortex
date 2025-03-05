@@ -783,3 +783,24 @@ void Framebuffer::_check_framebuffer_status(unsigned int gl_bind_target)
 	case GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS:		{std::cout << "[OpenGL Error] Framebuffer failed to create : GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS" << std::endl;			return;}
 	}
 }
+
+void Framebuffer::attach_color_layered(int32_t slot, TextureCubeMap& texture_cube_map, int32_t mipmap_level)
+{
+	if (id.value == 0) {
+		std::cout << "[OpenGL Error] Screen Framebuffer tried to attach_color_layered() but Screen is not allowed to call this function" << std::endl;
+		ASSERT(false);
+	}
+	if (slot < 0 || slot >= slot_count) {
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_color_layered() to slot " << slot << " but there are maximum of " << slot_count << " attacment slots in a Framebuffer" << std::endl;
+		ASSERT(false);
+	}
+	if (!texture_cube_map._texture_generated) {
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_color_layered() but TextureCubeMap was released" << std::endl;
+		ASSERT(false);
+	}
+
+	owned_color_attachments[slot] = nullptr;
+	texture_cube_map._allocate_texture();
+
+	GLCall(glNamedFramebufferTexture(id.value, GL_COLOR_ATTACHMENT0 + slot, texture_cube_map.id, mipmap_level));
+}

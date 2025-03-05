@@ -51,6 +51,9 @@ public:
 	void attach_color(int32_t slot, Texture2DArray& texture_array, int32_t z, int32_t mipmap_level = 0);
 	void attach_color(int32_t slot, TextureCubeMap& texture_cube_map, TextureCubeMap::Face face, int32_t mipmap_level = 0);
 	void attach_color(int32_t slot, Texture3D& texture3d, int32_t z, int32_t mipmap_level = 0);
+	void attach_color_layered(int32_t slot, Texture2DArray& texture_array, int32_t mipmap_level = 0);
+	void attach_color_layered(int32_t slot, TextureCubeMap& texture_cube_map, int32_t mipmap_level = 0);
+	void attach_color_layered(int32_t slot, Texture3D& texture3d, int32_t mipmap_level = 0);
 	void attach_color(int32_t slot, Renderbuffer& render_buffer);
 	
 	void attach_depth(Texture2D& texture2d, int32_t mipmap_level = 0);
