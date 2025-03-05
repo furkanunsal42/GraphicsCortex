@@ -9,7 +9,7 @@ uniform samplerCube cubemap_texture;
 
 void main()
 {    
-    vec3 color = texture(cubemap_texture, normalize(texture_coordinates)).rgb;
+    vec3 color = textureLod(cubemap_texture, normalize(texture_coordinates), 1.2).rgb;
 
     // HDR tonemapping
     float exposure = 1.7;

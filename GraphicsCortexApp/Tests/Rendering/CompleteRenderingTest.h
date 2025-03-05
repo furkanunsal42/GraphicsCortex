@@ -15,6 +15,7 @@ public:
 		default_init();
 
 		Scene scene;
+		glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
 		glm::ivec2 resolution = default_window->get_framebuffer_resolution();
 		RenderPipeline pipeline(resolution.x, resolution.y, Texture2D::ColorTextureFormat::RGBA8, Texture2D::DepthStencilTextureFormat::DEPTH24_STENCIL8, 4);
@@ -27,11 +28,12 @@ public:
 		//Asset asset("../GraphicsCortex/Models/teducar/source/teduCar.fbx");
 		//Asset asset("../GraphicsCortex/Models/Thinker/source/Rodin_Thinker.obj");
 		//Asset asset("../GraphicsCortex/Models/medival/source/medival.fbx");
-		//Asset asset("../GraphicsCortex/Models/bmw/scene.gltf");
+		Asset asset("../GraphicsCortex/Models/bmw/scene.gltf");
 		//Asset asset("../GraphicsCortex/Models/Sponza/scene.gltf");
 		//Asset asset_curtains("../GraphicsCortex/Models/Sponza/NewSponza_Curtains_glTF.gltf");
 		//Asset asset("../GraphicsCortex/Models/circuit/nogaro.obj");
-		Asset asset("../GraphicsCortex/ModelsKhronos/2.0/Sponza/glTF/Sponza.gltf");
+		//Asset asset("../GraphicsCortex/ModelsKhronos/2.0/Sponza/glTF/Sponza.gltf");
+		//Asset asset("../GraphicsCortex/Models/gun/Cerberus_LP.FBX");
 
 		std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(asset.load_mesh());
 		//std::shared_ptr<Mesh> mesh_curtains = std::make_shared<Mesh>(asset_curtains.load_mesh());
@@ -48,7 +50,7 @@ public:
 
 		std::shared_ptr<Entity> sky = std::make_shared<Entity>();
 		sky->add_component<SkylightComponent>();
-		sky->get_component<SkylightComponent>()->set_sky_texture(*texture_hdr, 2048, TextureCubeMap::ColorTextureFormat::RGB32F);
+		sky->get_component<SkylightComponent>()->set_sky_texture(*texture_hdr, 2048, TextureCubeMap::ColorTextureFormat::RGBA32F);
 		scene.add_entity(sky);
 
 		texture_hdr->release();
@@ -58,7 +60,7 @@ public:
 		sponza->add_component<MaterialComponent>(program);
 		sponza->add_component<MeshRendererComponent>();
 		sponza->add_component<TransformComponent>();
-		sponza->get_component<TransformComponent>()->set_scale(glm::vec3(1));
+		sponza->get_component<TransformComponent>()->set_scale(glm::vec3(100));
 		sponza->get_component<MaterialComponent>()->set_mesh_material(mesh_material);
 		scene.add_entity(sponza);
 
@@ -104,13 +106,15 @@ public:
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		//glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
 
+		Framebuffer fb;
+
 		while (true) {
 
 			double deltatime = default_window->handle_events(true);
 			camera.handle_movements((GLFWwindow*)default_window->get_handle(), deltatime);
 
 			pipeline.render(scene, camera);
-
+			
 			pipeline.framebuffer->blit_to_screen(
 				0, 0, resolution.x, resolution.y,
 				0, 0, resolution.x, resolution.y,

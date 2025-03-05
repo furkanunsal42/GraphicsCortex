@@ -437,20 +437,17 @@ ModelMaterial Asset::load_model_material()
             switch (type) {
             case aiTextureType_DIFFUSE: {
                 image = std::make_shared<Image>(image_params[i].path, 4, image_params[i].flip);
-                image->resize(1024, 1024);
                 single_materials[submodel_index].albedo_image = image;
                 break;
             }
             case aiTextureType_NORMALS: {
                 image = std::make_shared<Image>(image_params[i].path, 3, image_params[i].flip);
-                image->resize(1024, 1024);
                 single_materials[submodel_index].normal_image = image;
                 break;
             }
             case aiTextureType_DIFFUSE_ROUGHNESS: {
                 if (image == nullptr) {
                     image = std::make_shared<Image>(image_params[i].path, param.channel_count, image_params[i].flip);
-                    image->resize(1024, 1024);
                 }
 
                 if (param.channel_count != 1)
@@ -463,7 +460,6 @@ ModelMaterial Asset::load_model_material()
             case aiTextureType_METALNESS: {
                 if (image == nullptr) {
                     image = std::make_shared<Image>(image_params[i].path, param.channel_count, image_params[i].flip);
-                    image->resize(1024, 1024);
                 }
 
                 if (param.channel_count != 1)
@@ -475,19 +471,16 @@ ModelMaterial Asset::load_model_material()
             }
             case aiTextureType_AMBIENT_OCCLUSION: {
                 image = std::make_shared<Image>(image_params[i].path, 1, image_params[i].flip);
-                image->resize(1024, 1024);
                 single_materials[submodel_index].ambient_occlusion_image = image;
                 break;
             }
             case aiTextureType_HEIGHT: {
                 image = std::make_shared<Image>(image_params[i].path, 1, image_params[i].flip);
-                image->resize(1024, 1024);
                 single_materials[submodel_index].height_image = image;
                 break;
             }
             case aiTextureType_EMISSIVE: {
                 auto image = std::make_shared<Image>(image_params[i].path, 3, image_params[i].flip);
-                image->resize(1024, 1024);
                 single_materials[submodel_index].emissive_image = image;
                 break;
             }

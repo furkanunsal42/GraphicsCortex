@@ -91,10 +91,7 @@ void Texture2DArray::bind_as_slice(int texture_slot, int mipmap_level, int layer
 		ASSERT(false);
 	}
 
-	if (!_texture_allocated) {
-		std::cout << "[OpenGL Warning] Texture2DArray tried to bind_as_image() but no user data was loaded yet" << std::endl;
-		_allocate_texture();
-	}
+	_allocate_texture();
 
 	GLCall(glBindImageTexture(texture_slot, id, mipmap_level, GL_FALSE, layer_index, GL_READ_WRITE, _get_gl_internal_format()));
 }
@@ -125,8 +122,6 @@ void Texture2DArray::load_data(int texture_index, const void* image, ColorFormat
 	_allocate_texture();
 
 	GLCall(glTextureSubImage3D(id, mipmap_target, 0, 0, texture_index, this->width >> mipmap_target, this->height >> mipmap_target, 1, TextureBase2::ColorFormat_to_OpenGL(format), TextureBase2::Type_to_OpenGL(type), image));
-
-	_user_data_loaded = true;
 }
 
 void Texture2DArray::load_data(int texture_index, const void* image, ColorFormat format, Type type, int x, int y, int custom_width, int custom_height, int mipmap_target)
@@ -138,8 +133,6 @@ void Texture2DArray::load_data(int texture_index, const void* image, ColorFormat
 	_allocate_texture();
 
 	GLCall(glTextureSubImage3D(id, mipmap_target, x, y, texture_index, width, height, 1, TextureBase2::ColorFormat_to_OpenGL(format), TextureBase2::Type_to_OpenGL(type), image));
-
-	_user_data_loaded = true;
 }
 
 void Texture2DArray::load_data(int texture_index, const Image& image, ColorFormat format, Type type, int mipmap_target)
@@ -208,8 +201,6 @@ void Texture2DArray::load_data(int texture_index, const void* image, DepthStenci
 	_allocate_texture();
 
 	GLCall(glTextureSubImage3D(id, mipmap_target, 0, 0, texture_index, this->width >> mipmap_target, this->height >> mipmap_target, 1, TextureBase2::DepthStencilFormat_to_OpenGL(format), TextureBase2::Type_to_OpenGL(type), image));
-
-	_user_data_loaded = true;
 }
 
 void Texture2DArray::load_data(int texture_index, const void* image, DepthStencilFormat format, Type type, int x, int y, int custom_width, int custom_height, int mipmap_target)
@@ -221,8 +212,6 @@ void Texture2DArray::load_data(int texture_index, const void* image, DepthStenci
 	_allocate_texture();
 
 	GLCall(glTextureSubImage3D(id, mipmap_target, x, y, texture_index, custom_width, custom_height, 1, TextureBase2::DepthStencilFormat_to_OpenGL(format), TextureBase2::Type_to_OpenGL(type), image));
-
-	_user_data_loaded = true;
 }
 
 void Texture2DArray::load_data(int texture_index, const Image& image, DepthStencilFormat format, Type type, int mipmap_target)
@@ -270,8 +259,6 @@ void Texture2DArray::load_data(const void* image, ColorFormat format, Type type,
 	_allocate_texture();
 
 	GLCall(glTextureSubImage3D(id, mipmap_target, x, y, z, width, height, depth, TextureBase2::ColorFormat_to_OpenGL(format), TextureBase2::Type_to_OpenGL(type), image));
-
-	_user_data_loaded = true;
 }
 
 void Texture2DArray::load_data(const Image& image, ColorFormat format, Type type, int mipmap_target)
@@ -312,8 +299,6 @@ void Texture2DArray::load_data(AsyncBuffer& async_buffer, ColorFormat format, Ty
 
 	async_buffer.unbind();
 	async_buffer.set_fence_upload();
-
-	_user_data_loaded = true;
 }
 
 void Texture2DArray::load_data(const void* image, DepthStencilFormat format, Type type, int mipmap_target)
@@ -330,8 +315,6 @@ void Texture2DArray::load_data(const void* image, DepthStencilFormat format, Typ
 	_allocate_texture();
 
 	GLCall(glTextureSubImage3D(id, mipmap_target, x, y, z, width, height, depth, TextureBase2::DepthStencilFormat_to_OpenGL(format), TextureBase2::Type_to_OpenGL(type), image));
-
-	_user_data_loaded = true;
 }
 
 void Texture2DArray::load_data(const Image& image, DepthStencilFormat format, Type type, int mipmap_target)
@@ -385,21 +368,14 @@ void Texture2DArray::load_data(AsyncBuffer& async_buffer, DepthStencilFormat for
 
 	async_buffer.unbind();
 	async_buffer.set_fence_upload();
-
-	_user_data_loaded = true;
 }
 
 void Texture2DArray::generate_mipmap()
 {
 	if (!_texture_generated) return;
 	if (!_texture_allocated) return;
-	if (!_user_data_loaded)  return;
-
-	if (_mipmap_generated) return;
 
 	GLCall(glGenerateTextureMipmap(id));
-
-	_mipmap_generated = true;
 }
 
 void Texture2DArray::load_data_with_mipmaps(int texture_index, const void* image, ColorFormat format, Type type)
@@ -785,6 +761,11 @@ void Texture2DArray::force_allocation() {
 bool Texture2DArray::is_allocated()
 {
 	return _texture_allocated;
+}
+
+uint32_t Texture2DArray::get_mipmap_count()
+{
+	return mipmap_levels;
 }
 
 Texture2DArray::ColorTextureFormat Texture2DArray::get_internal_format_color()

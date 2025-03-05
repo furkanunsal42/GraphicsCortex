@@ -7,7 +7,7 @@ EquirectangularProjector::EquirectangularProjector()
 
 }
 
-void EquirectangularProjector::project_to_cubemap(Texture2D& equirectangular_texture, TextureCubeMap& cubemap_texture)
+void EquirectangularProjector::project_to_cubemap(Texture2D& equirectangular_texture, TextureCubeMap& cubemap_texture, uint32_t mipmap)
 {
 	init();
 
@@ -15,9 +15,9 @@ void EquirectangularProjector::project_to_cubemap(Texture2D& equirectangular_tex
 	program.update_uniform("equirectangular_texture", equirectangular_texture);
 
 	glm::ivec4 old_viewport = primitive_renderer::get_viewport_position_size();
-	primitive_renderer::set_viewport_size(glm::ivec2(cubemap_texture.get_size()));
+	primitive_renderer::set_viewport(glm::ivec2(0), glm::ivec2(cubemap_texture.get_size().x >> (mipmap)));
 
-	framebuffer->attach_color_layered(0, cubemap_texture, 0);
+	framebuffer->attach_color_layered(0, cubemap_texture, mipmap);
 	framebuffer->activate_draw_buffer(0);
 	framebuffer->bind_draw();
 

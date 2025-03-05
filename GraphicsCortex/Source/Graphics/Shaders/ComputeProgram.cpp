@@ -479,6 +479,22 @@ void ComputeProgram::update_uniform_as_image(const std::string& name, Texture2DA
 	GLCall(glProgramUniform1i(id, _get_uniform_location(name), slot));
 }
 
+void ComputeProgram::update_uniform_as_image(const std::string& name, TextureCubeMap& texturecubemap, int mipmap_level) {
+	texturecubemap.wait_async_load();
+	if (!texturecubemap._texture_allocated) texturecubemap._allocate_texture();
+	if (!_does_uniform_exist(name)) return;
+
+	int slot = -1;
+	GLCall(glGetUniformiv(id, _get_uniform_location(name), &slot));
+
+	if (slot == -1) {
+		ASSERT(false);
+	}
+
+	texturecubemap.bind_as_image(slot, mipmap_level);
+	GLCall(glProgramUniform1i(id, _get_uniform_location(name), slot));
+}
+
 void ComputeProgram::update_uniform(const std::string& name, const int& a)
 {
 	if (!_does_uniform_exist(name)) return;

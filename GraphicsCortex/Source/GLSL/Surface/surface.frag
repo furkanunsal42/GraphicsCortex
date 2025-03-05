@@ -17,6 +17,8 @@ layout(binding = 4) uniform sampler2D ambient_occlusion_texture;
 
 // lights
 layout (binding = 5) uniform samplerCube irradiance_texture;
+layout (binding = 6) uniform samplerCube sky_prefiltered_texture;
+layout (binding = 7) uniform sampler2D sky_brdf_texture;
 
 #define DIRECTIONAL_LIGHT_MAX_COUNT 32
 #define POINT_LIGHT_MAX_COUNT 32
@@ -61,9 +63,9 @@ layout(std140, binding = 5) uniform s_shadowmaps_buffer {
     int s_shadowmap_count;
 } s_shadowmaps;
 
-layout (binding = 6) uniform sampler2DArray d_shadowmap_textures;
-layout (binding = 7) uniform samplerCubeArray p_shadowmap_textures;
-layout (binding = 8) uniform sampler2DArray s_shadowmap_textures;
+layout (binding = 8) uniform sampler2DArray d_shadowmap_textures;
+layout (binding = 9) uniform samplerCubeArray p_shadowmap_textures;
+layout (binding = 10) uniform sampler2DArray s_shadowmap_textures;
 
 uniform vec3 camera_position;
 const float PI = 3.14159265359;
@@ -145,7 +147,7 @@ vec3 brdf(vec3 albedo, float roughness, float metallic, vec3 N, vec3 V, vec3 L, 
     float NDF = DistributionGGX(N, H, roughness);   
     float G   = GeometrySmith(N, V, L, roughness);      
     vec3 F    = fresnelSchlick(clamp(dot(H, V), 0.0, 1.0), F0);
-       
+
     vec3 numerator    = NDF * G * F; 
     float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0) + 0.0001; // + 0.0001 to prevent divide by zero
     vec3 specular = numerator / denominator;
@@ -178,8 +180,13 @@ void main()
     float metallic  = texture(metallic_texture, v_texture_coordinates).x;
     float ao        = texture(ambient_occlusion_texture, v_texture_coordinates).x;
 
+    metallic = 1;
+    roughness = 0.1;
+
     vec3 N = normalize(get_normal_from_texture());
     vec3 V = normalize(camera_position - v_world_position);
+
+    vec3 R = reflect(-V, N);   
 
     // calculate reflectance at normal incidence; if dia-electric (like plastic) use F0 
     // of 0.04 and if it's a metal, use the albedo color as F0 (metallic workflow)    
@@ -234,11 +241,20 @@ void main()
     // ambient lighting (note that the next IBL tutorial will replace 
     // this ambient lighting with environment lighting).
     //vec3 ambient = vec3(0.03) * albedo * ao;
-    vec3 kS = fresnelSchlickRoughness(max(dot(N, V), 0.0), F0, roughness); 
+
+    vec3 F = fresnelSchlickRoughness(max(dot(N, V), 0.0), F0, roughness);
+
+    vec3 kS = F; 
     vec3 kD = 1.0 - kS;
     vec3 irradiance = texture(irradiance_texture, N).rgb;
     vec3 diffuse    = irradiance * albedo;
-    vec3 ambient    = (kD * diffuse) * ao; 
+
+    const float MAX_REFLECTION_LOD = 4.0;
+    vec3 prefiltered_color = textureLod(sky_prefiltered_texture, R,  roughness * MAX_REFLECTION_LOD).rgb;   
+    vec2 sky_brdf  = texture(sky_brdf_texture, vec2(max(dot(N, V), 0.0), roughness)).rg;
+    vec3 specular = prefiltered_color * (F * sky_brdf.x + sky_brdf.y);
+
+    vec3 ambient = (kD * diffuse + specular) * ao; 
 
     vec3 color = ambient + Lo;
 

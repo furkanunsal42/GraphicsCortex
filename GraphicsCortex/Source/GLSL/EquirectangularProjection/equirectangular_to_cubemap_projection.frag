@@ -18,7 +18,7 @@ vec2 cube_to_equirectangular(vec3 v)
 void main()
 {		
     vec2 uv = cube_to_equirectangular(normalize(g_local_position)); // make sure to normalize localPos
-    vec3 color = texture(equirectangular_texture, uv).rgb;
+    vec3 color = min(texture(equirectangular_texture, uv).rgb, vec3(10000));
     
     FragColor = vec4(color, 1.0);
 }

@@ -77,10 +77,7 @@ void Texture1D::bind_as_image(int texture_slot, int mipmap_level)
 		ASSERT(false);
 	}
 
-	if (!_texture_allocated) {
-		std::cout << "[OpenGL Warning] Texture1D tried to bind_as_image() but no user data was loaded yet" << std::endl;
-		_allocate_texture();
-	}
+	_allocate_texture();
 
 	GLCall(glBindImageTexture(texture_slot, id, mipmap_level, GL_FALSE, 0, GL_READ_WRITE, _get_gl_internal_format()));
 }
@@ -111,8 +108,6 @@ void Texture1D::load_data(const void* image, ColorFormat format, Type type, int 
 	_allocate_texture();
 
 	GLCall(glTextureSubImage1D(id, mipmap_target, 0, this->width >> mipmap_target, TextureBase2::ColorFormat_to_OpenGL(format), TextureBase2::Type_to_OpenGL(type), image));
-
-	_user_data_loaded = true;
 }
 
 void Texture1D::load_data(const void* image, ColorFormat format, Type type, int x, int custom_width, int mipmap_target)
@@ -124,8 +119,6 @@ void Texture1D::load_data(const void* image, ColorFormat format, Type type, int 
 	_allocate_texture();
 
 	GLCall(glTextureSubImage1D(id, mipmap_target, x, custom_width, TextureBase2::ColorFormat_to_OpenGL(format), TextureBase2::Type_to_OpenGL(type), image));
-
-	_user_data_loaded = true;
 }
 
 void Texture1D::load_data(const Image& image, ColorFormat format, Type type, int mipmap_target)
@@ -179,8 +172,6 @@ void Texture1D::load_data(AsyncBuffer& async_buffer, ColorFormat format, Type ty
 
 	async_buffer.unbind();
 	async_buffer.set_fence_upload();
-
-	_user_data_loaded = true;
 }
 
 void Texture1D::load_data_async(const std::string& image_filepath, ColorFormat format, Type type, int mipmap_target)
@@ -214,8 +205,6 @@ void Texture1D::load_data(const void* image, DepthStencilFormat format, Type typ
 	_allocate_texture();
 
 	GLCall(glTextureSubImage1D(id, mipmap_target, 0, this->width >> mipmap_target, TextureBase2::DepthStencilFormat_to_OpenGL(format), TextureBase2::Type_to_OpenGL(type), image));
-
-	_user_data_loaded = true;
 }
 
 void Texture1D::load_data(const void* image, DepthStencilFormat format, Type type, int x, int custom_width, int mipmap_target)
@@ -227,8 +216,6 @@ void Texture1D::load_data(const void* image, DepthStencilFormat format, Type typ
 	_allocate_texture();
 
 	GLCall(glTextureSubImage1D(id, mipmap_target, x, custom_width, TextureBase2::DepthStencilFormat_to_OpenGL(format), TextureBase2::Type_to_OpenGL(type), image));
-
-	_user_data_loaded = true;
 }
 
 void Texture1D::load_data(const Image& image, DepthStencilFormat format, Type type, int mipmap_target)
@@ -280,21 +267,14 @@ void Texture1D::load_data(AsyncBuffer& async_buffer, DepthStencilFormat format, 
 
 	async_buffer.unbind();
 	async_buffer.set_fence_upload();
-
-	_user_data_loaded = true;
 }
 
 void Texture1D::generate_mipmap()
 {
 	if (!_texture_generated) return;
 	if (!_texture_allocated) return;
-	if (!_user_data_loaded)  return;
-
-	if (_mipmap_generated) return;
 
 	GLCall(glGenerateTextureMipmap(id));
-
-	_mipmap_generated = true;
 }
 
 void Texture1D::load_data_with_mipmaps(const void* image, ColorFormat format, Type type)
@@ -927,6 +907,11 @@ void Texture1D::force_allocation() {
 bool Texture1D::is_allocated()
 {
 	return _texture_allocated;
+}
+
+uint32_t Texture1D::get_mipmap_count()
+{
+	return mipmap_levels;
 }
 
 Texture1D::ColorTextureFormat Texture1D::get_internal_format_color()

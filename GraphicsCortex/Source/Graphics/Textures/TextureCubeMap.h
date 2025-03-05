@@ -47,6 +47,8 @@ public:
 	void release();
 
 	void bind(int texture_slot);
+	void bind_as_image(int texture_slot, int mipmap_level);
+	void bind_as_slice(int texture_slot, int mipmap_level, int layer_index);
 
 	void bind();
 	void unbind();
@@ -143,6 +145,8 @@ public:
 	void force_allocation();
 	bool is_allocated();
 
+	uint32_t get_mipmap_count();
+
 	ColorTextureFormat get_internal_format_color();
 	DepthStencilTextureFormat get_internal_format_depthstencil();
 
@@ -165,8 +169,6 @@ private:
 	bool _texture_generated = false;
 	bool _texture_allocated = false;
 	bool _texture_handle_created = false;
-	bool _user_data_loaded = false;
-	bool _mipmap_generated = false;
 
 	void _set_texture_parameters();
 
@@ -179,5 +181,7 @@ private:
 	std::array<std::function<void()>, 6> post_async_load_functions = { [](){},[](){},[](){},[](){},[](){},[](){} };
 	std::array<std::thread*, 6> async_loading_threads = { nullptr,nullptr,nullptr,nullptr,nullptr,nullptr };
 	std::array<Image*, 6> async_images = { nullptr,nullptr,nullptr,nullptr,nullptr,nullptr };
+
+	int _get_gl_internal_format();
 };
 

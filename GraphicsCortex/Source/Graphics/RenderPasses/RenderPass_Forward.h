@@ -105,20 +105,51 @@ public:
 
 		update_light_buffers(scene);
 
+		SkylightComponent* skylight = find_primary_skylight(scene);
+
 		bool irradiance_map_exists = false;
 		std::shared_ptr<TextureCubeMap> irradiance_texture = nullptr;
-		SkylightComponent* skylight = find_primary_skylight(scene);
 		if (skylight != nullptr) {
-			irradiance_texture = skylight->get_sky_texture_convoluted();
+			irradiance_texture = skylight->get_sky_irradiance_texture();
 			if (irradiance_texture != nullptr)
 				irradiance_map_exists = true;
 			else if (skylight->get_sky_texture() != nullptr) {
-				skylight->calculate_sky_texture_convoluted(32);
-				irradiance_texture = skylight->get_sky_texture_convoluted();
+				skylight->calculate_sky_irradiance_texture(32);
+				irradiance_texture = skylight->get_sky_irradiance_texture();
 				irradiance_map_exists = irradiance_texture != nullptr;
 			}
 			else
 				irradiance_map_exists = false;
+		}
+
+		bool sky_prefiltered_map_exists = false;
+		std::shared_ptr<TextureCubeMap> sky_prefiltered_texture = nullptr;
+		if (skylight != nullptr) {
+			sky_prefiltered_texture = skylight->get_sky_prefiltered_texture();
+			if (sky_prefiltered_texture != nullptr)
+				sky_prefiltered_map_exists = true;
+			else if (skylight->get_sky_texture() != nullptr) {
+				skylight->calculate_sky_prefiltered_texture(128, 6);
+				sky_prefiltered_texture = skylight->get_sky_prefiltered_texture();
+				sky_prefiltered_map_exists = sky_prefiltered_texture != nullptr;
+			}
+			else
+				sky_prefiltered_map_exists = false;
+		}
+
+		bool sky_brdf_map_exists = false;
+		std::shared_ptr<Texture2D> sky_brdf_texture = nullptr;
+		if (skylight != nullptr) {
+			sky_brdf_texture = skylight->get_sky_brdf_texture();
+			if (sky_brdf_texture != nullptr)
+				sky_brdf_map_exists = true;
+			else if (skylight->get_sky_texture() != nullptr) {
+				skylight->calculate_sky_brdf_texture(512, 512);
+				sky_brdf_texture = skylight->get_sky_brdf_texture();
+				sky_brdf_map_exists = sky_brdf_texture != nullptr;
+			}
+			else
+				sky_brdf_map_exists = false;
 		}
 
 		for (MeshRendererComponent* mesh_renderer : mesh_renderers) {
@@ -134,7 +165,11 @@ public:
 			}
 			if (irradiance_map_exists)
 				program->update_uniform("irradiance_texture", *irradiance_texture);
-
+			if (sky_prefiltered_map_exists)
+				program->update_uniform("sky_prefiltered_texture", *sky_prefiltered_texture);
+			if (sky_brdf_map_exists)
+				program->update_uniform("sky_brdf_texture", *sky_brdf_texture);
+		
 			pipeline.framebuffer->bind_draw();
 			mesh_renderer->render(camera);
 		}

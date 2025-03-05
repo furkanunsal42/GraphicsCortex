@@ -48,8 +48,6 @@ TextureCubeMap::TextureCubeMap(TextureCubeMap&& other)
 	std::swap(_texture_generated, other._texture_generated);
 	std::swap(_texture_allocated, other._texture_allocated);
 	std::swap(_texture_handle_created, other._texture_handle_created);
-	std::swap(_user_data_loaded, other._user_data_loaded);
-	std::swap(_mipmap_generated, other._mipmap_generated);
 	std::swap(async_load_happening, other.async_load_happening);
 	std::swap(async_load_happening_per_face, other.async_load_happening_per_face);
 	std::swap(post_async_load_functions, other.post_async_load_functions);
@@ -77,8 +75,6 @@ TextureCubeMap& TextureCubeMap::operator=(TextureCubeMap&& other)
 	std::swap(this->_texture_generated, other._texture_generated);
 	std::swap(this->_texture_allocated, other._texture_allocated);
 	std::swap(this->_texture_handle_created, other._texture_handle_created);
-	std::swap(this->_user_data_loaded, other._user_data_loaded);
-	std::swap(this->_mipmap_generated, other._mipmap_generated);
 	std::swap(this->async_load_happening, other.async_load_happening);
 	std::swap(this->async_load_happening_per_face, other.async_load_happening_per_face);
 	std::swap(this->post_async_load_functions, other.post_async_load_functions);
@@ -128,6 +124,30 @@ void TextureCubeMap::bind(int texture_slot)
 	GLCall(glBindTextureUnit(texture_slot, id));
 }
 
+void TextureCubeMap::bind_as_image(int texture_slot, int mipmap_level)
+{
+	if (!_texture_generated) {
+		std::cout << "[OpenGL Error] released TextureCubeMap tried to bind_as_image()" << std::endl;
+		ASSERT(false);
+	}
+	
+	_allocate_texture();
+
+	GLCall(glBindImageTexture(texture_slot, id, mipmap_level, GL_TRUE, 0, GL_READ_WRITE, _get_gl_internal_format()));
+}
+
+void TextureCubeMap::bind_as_slice(int texture_slot, int mipmap_level, int layer_index)
+{
+	if (!_texture_generated) {
+		std::cout << "[OpenGL Error] released TextureCubeMap tried to bind_as_image()" << std::endl;
+		ASSERT(false);
+	}
+
+	_allocate_texture();
+
+	GLCall(glBindImageTexture(texture_slot, id, mipmap_level, GL_FALSE, layer_index, GL_READ_WRITE, _get_gl_internal_format()));
+}
+
 void TextureCubeMap::bind()
 {
 	if (!_texture_generated) {
@@ -155,7 +175,6 @@ void TextureCubeMap::load_data(Face face, const void* image, ColorFormat format,
 
 	GLCall(glTextureSubImage3D(id, mipmap_target, 0, 0, get_gl_face_index(face), this->width >> mipmap_target, this->height >> mipmap_target, 1, TextureBase2::ColorFormat_to_OpenGL(format), TextureBase2::Type_to_OpenGL(type), image));
 
-	_user_data_loaded = true;
 }
 
 void TextureCubeMap::load_data(Face face, const void* image, ColorFormat format, Type type, int x, int y, int custom_width, int custom_height, int mipmap_target)
@@ -168,7 +187,6 @@ void TextureCubeMap::load_data(Face face, const void* image, ColorFormat format,
 	
 	GLCall(glTextureSubImage3D(id, mipmap_target, x, y, get_gl_face_index(face), custom_width, custom_height, 1, TextureBase2::ColorFormat_to_OpenGL(format), TextureBase2::Type_to_OpenGL(type), image));
 
-	_user_data_loaded = true;
 }
 
 void TextureCubeMap::load_data(Face face, const Image& image, ColorFormat format, Type type, int mipmap_target)
@@ -235,7 +253,6 @@ void TextureCubeMap::load_data(Face face, const void* image, DepthStencilFormat 
 
 	GLCall(glTextureSubImage3D(id, mipmap_target, 0, 0, get_gl_face_index(face), this->width >> mipmap_target, this->height >> mipmap_target, 1, TextureBase2::DepthStencilFormat_to_OpenGL(format), TextureBase2::Type_to_OpenGL(type), image));
 
-	_user_data_loaded = true;
 }
 
 void TextureCubeMap::load_data(Face face, const void* image, DepthStencilFormat format, Type type, int x, int y, int custom_width, int custom_height, int mipmap_target)
@@ -248,7 +265,6 @@ void TextureCubeMap::load_data(Face face, const void* image, DepthStencilFormat 
 
 	GLCall(glTextureSubImage3D(id, mipmap_target, x, y, get_gl_face_index(face), custom_width, custom_height, 1, TextureBase2::DepthStencilFormat_to_OpenGL(format), TextureBase2::Type_to_OpenGL(type), image));
 
-	_user_data_loaded = true;
 }
 
 void TextureCubeMap::load_data(Face face, const Image& image, DepthStencilFormat format, Type type, int mipmap_target)
@@ -286,13 +302,9 @@ void TextureCubeMap::generate_mipmap()
 {
 	if (!_texture_generated) return;
 	if (!_texture_allocated) return;
-	if (!_user_data_loaded)  return;
-
-	if (_mipmap_generated) return;
 
 	GLCall(glGenerateTextureMipmap(id));
 
-	_mipmap_generated = true;
 }
 
 void TextureCubeMap::load_data_with_mipmaps(Face face, const void* image, ColorFormat format, Type type)
@@ -431,6 +443,11 @@ void TextureCubeMap::_create_handle()
 	_texture_handle_created = true;
 }
 
+int TextureCubeMap::_get_gl_internal_format()
+{
+	return is_color_texture ? ColorTextureFormat_to_OpenGL(color_texture_format) : DepthStencilTextureFormat_to_OpenGL(depth_stencil_texture_format);
+}
+
 int TextureCubeMap::get_gl_face_index(Face face)
 {
 	switch (face) {
@@ -450,10 +467,10 @@ std::shared_ptr<Image> TextureCubeMap::get_image(Face face, ColorFormat format, 
 	return get_image(face, format, type, mipmap_level, 0, 0, query_width(mipmap_level), query_height(mipmap_level));
 }
 
-std::shared_ptr<Image>  TextureCubeMap::get_image(Face face, ColorFormat format, Type type, int mipmap_level, int x, int y, int width, int height)
+std::shared_ptr<Image> TextureCubeMap::get_image(Face face, ColorFormat format, Type type, int mipmap_level, int x, int y, int width, int height)
 {
-	if (!_texture_allocated || !_user_data_loaded) {
-		std::cout << "[OpenGL Error] TextureCubeMap tried to get_image() but either not allocated any ram or didn't loaded any user data yet" << std::endl;
+	if (!_texture_allocated) {
+		std::cout << "[OpenGL Error] TextureCubeMap tried to get_image() but TextureCubeMap was not allocated yet" << std::endl;
 		ASSERT(false);
 	}
 
@@ -489,8 +506,8 @@ std::shared_ptr<Image>  TextureCubeMap::get_image(Face face, DepthStencilFormat 
 
 std::shared_ptr<Image>  TextureCubeMap::get_image(Face face, DepthStencilFormat format, Type type, int mipmap_level, int x, int y, int width, int height)
 {
-	if (!_texture_allocated || !_user_data_loaded) {
-		std::cout << "[OpenGL Error] TextureCubeMap tried to get_image() but either not allocated any ram or didn't loaded any user data yet" << std::endl;
+	if (!_texture_allocated) {
+		std::cout << "[OpenGL Error] TextureCubeMap tried to get_image() but TextureCubeMap was not allocated yet" << std::endl;
 		ASSERT(false);
 	}
 
@@ -873,6 +890,11 @@ void TextureCubeMap::force_allocation() {
 bool TextureCubeMap::is_allocated()
 {
 	return _texture_allocated;
+}
+
+uint32_t TextureCubeMap::get_mipmap_count()
+{
+	return mipmap_levels;
 }
 
 TextureCubeMap::ColorTextureFormat TextureCubeMap::get_internal_format_color()

@@ -3,7 +3,7 @@
 #version 460 core
 out vec4 fragment_color;
 
-in vec3 local_position;
+in vec3 g_local_position;
 
 uniform samplerCube source_texture;
 
@@ -15,7 +15,7 @@ void main()
     // incoming radiance of the environment. The result of this radiance
     // is the radiance of light coming from -Normal direction, which is what
     // we use in the PBR shader to sample irradiance.
-    vec3 N = normalize(local_position);
+    vec3 N = normalize(g_local_position);
 
     vec3 irradiance = vec3(0.0);   
     
