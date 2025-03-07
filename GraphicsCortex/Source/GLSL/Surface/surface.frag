@@ -180,9 +180,6 @@ void main()
     float metallic  = texture(metallic_texture, v_texture_coordinates).x;
     float ao        = texture(ambient_occlusion_texture, v_texture_coordinates).x;
 
-    metallic = 1;
-    roughness = 0.1;
-
     vec3 N = normalize(get_normal_from_texture());
     vec3 V = normalize(camera_position - v_world_position);
 

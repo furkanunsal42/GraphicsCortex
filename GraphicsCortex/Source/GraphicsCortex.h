@@ -51,6 +51,7 @@
 #include "RenderPasses/RenderPass_Clear.h"
 #include "RenderPasses/RenderPass_Forward.h"
 #include "RenderPasses/RenderPass_Skybox.h"
+#include "RenderPasses/RenderPass_Shadowmaps.h"
 //#include "RenderPasses/RenderPass_GBuffer.h"
 //#include "RenderPasses/RenderPass_Deferred.h"
 
