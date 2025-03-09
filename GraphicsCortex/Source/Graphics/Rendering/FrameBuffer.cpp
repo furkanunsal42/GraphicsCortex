@@ -296,6 +296,114 @@ void Framebuffer::attach_depth(Texture2D& texture2d, int32_t mipmap_level) {
 	GLCall(glNamedFramebufferTexture(id.value, GL_DEPTH_ATTACHMENT, texture2d.id, mipmap_level));
 }
 
+void Framebuffer::attach_depth(Texture2DArray& texture_array, int32_t z, int32_t mipmap_level)
+{
+	if (id.value == 0) {
+		std::cout << "[OpenGL Error] Screen Framebuffer tried to attach_depth() but Screen is not allowed to call this function" << std::endl;
+		ASSERT(false);
+	}
+	if (!texture_array._texture_generated) {
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_depth() but Texture2DArray was released" << std::endl;
+		ASSERT(false);
+	}
+
+	owned_depth_stencil_attachment = nullptr;
+
+	owned_depth_attachment = nullptr;
+	texture_array._allocate_texture();
+	GLCall(glNamedFramebufferTextureLayer(id.value, GL_DEPTH_ATTACHMENT, texture_array.id, mipmap_level, z));
+}
+
+void Framebuffer::attach_depth(TextureCubeMap& texture_cube_map, TextureCubeMap::Face face, int32_t mipmap_level)
+{
+	if (id.value == 0) {
+		std::cout << "[OpenGL Error] Screen Framebuffer tried to attach_depth() but Screen is not allowed to call this function" << std::endl;
+		ASSERT(false);
+	}
+	if (!texture_cube_map._texture_generated) {
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_depth() but TextureCubeMap was released" << std::endl;
+		ASSERT(false);
+	}
+
+	owned_depth_stencil_attachment = nullptr;
+
+	owned_depth_attachment = nullptr;
+	texture_cube_map._allocate_texture();
+	GLCall(glNamedFramebufferTextureLayer(id.value, GL_DEPTH_ATTACHMENT, texture_cube_map.id, mipmap_level, TextureCubeMap::get_gl_face_index(face)));
+}
+
+void Framebuffer::attach_depth(Texture3D& texture3d, int32_t z, int32_t mipmap_level)
+{
+	if (id.value == 0) {
+		std::cout << "[OpenGL Error] Screen Framebuffer tried to attach_depth() but Screen is not allowed to call this function" << std::endl;
+		ASSERT(false);
+	}
+	if (!texture3d._texture_generated) {
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_depth() but Texture3D was released" << std::endl;
+		ASSERT(false);
+	}
+
+	owned_depth_stencil_attachment = nullptr;
+
+	owned_depth_attachment = nullptr;
+	texture3d._allocate_texture();
+	GLCall(glNamedFramebufferTextureLayer(id.value, GL_DEPTH_ATTACHMENT, texture3d.id, mipmap_level, z));
+}
+
+void Framebuffer::attach_depth_layered(Texture2DArray& texture_array, int32_t mipmap_level)
+{
+	if (id.value == 0) {
+		std::cout << "[OpenGL Error] Screen Framebuffer tried to attach_depth_layered() but Screen is not allowed to call this function" << std::endl;
+		ASSERT(false);
+	}
+	if (!texture_array._texture_generated) {
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_depth_layered() but Texture2DArray was released" << std::endl;
+		ASSERT(false);
+	}
+
+	owned_depth_stencil_attachment = nullptr;
+	
+	owned_depth_attachment = nullptr;
+	texture_array._allocate_texture();
+	GLCall(glNamedFramebufferTexture(id.value, GL_DEPTH_ATTACHMENT, texture_array.id, mipmap_level));
+}
+
+void Framebuffer::attach_depth_layered(TextureCubeMap& texture_cube_map, int32_t mipmap_level)
+{
+	if (id.value == 0) {
+		std::cout << "[OpenGL Error] Screen Framebuffer tried to attach_depth_layered() but Screen is not allowed to call this function" << std::endl;
+		ASSERT(false);
+	}
+	if (!texture_cube_map._texture_generated) {
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_depth_layered() but TextureCubeMap was released" << std::endl;
+		ASSERT(false);
+	}
+
+	owned_depth_stencil_attachment = nullptr;
+
+	owned_depth_attachment = nullptr;
+	texture_cube_map._allocate_texture();
+	GLCall(glNamedFramebufferTexture(id.value, GL_DEPTH_ATTACHMENT, texture_cube_map.id, mipmap_level));
+}
+
+void Framebuffer::attach_depth_layered(Texture3D& texture3d, int32_t mipmap_level)
+{
+	if (id.value == 0) {
+		std::cout << "[OpenGL Error] Screen Framebuffer tried to attach_depth_layered() but Screen is not allowed to call this function" << std::endl;
+		ASSERT(false);
+	}
+	if (!texture3d._texture_generated) {
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_depth_layered() but Texture3D was released" << std::endl;
+		ASSERT(false);
+	}
+
+	owned_depth_stencil_attachment = nullptr;
+
+	owned_depth_attachment = nullptr;
+	texture3d._allocate_texture();
+	GLCall(glNamedFramebufferTexture(id.value, GL_DEPTH_ATTACHMENT, texture3d.id, mipmap_level));
+}
+
 void Framebuffer::attach_depth(Renderbuffer& render_buffer2d, int32_t mipmap_level){
 	if (id.value == 0) {
 		std::cout << "[OpenGL Error] Screen Framebuffer tried to attach_depth() but Screen is not allowed to call this function" << std::endl;
@@ -330,6 +438,114 @@ void Framebuffer::attach_stencil(Texture2D& texture2d, int32_t mipmap_level){
 	GLCall(glNamedFramebufferTexture(id.value, GL_STENCIL_ATTACHMENT, texture2d.id, mipmap_level));
 }
 
+void Framebuffer::attach_stencil(Texture2DArray& texture_array, int32_t z, int32_t mipmap_level)
+{
+	if (id.value == 0) {
+		std::cout << "[OpenGL Error] Screen Framebuffer tried to attach_stencil() but Screen is not allowed to call this function" << std::endl;
+		ASSERT(false);
+	}
+	if (!texture_array._texture_generated) {
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_stencil() but Texture2DArray was released" << std::endl;
+		ASSERT(false);
+	}
+
+	owned_depth_stencil_attachment = nullptr;
+
+	owned_stencil_attachment = nullptr;
+	texture_array._allocate_texture();
+	GLCall(glNamedFramebufferTextureLayer(id.value, GL_STENCIL_ATTACHMENT, texture_array.id, mipmap_level, z));
+}
+
+void Framebuffer::attach_stencil(TextureCubeMap& texture_cube_map, TextureCubeMap::Face face, int32_t mipmap_level)
+{
+	if (id.value == 0) {
+		std::cout << "[OpenGL Error] Screen Framebuffer tried to attach_stencil() but Screen is not allowed to call this function" << std::endl;
+		ASSERT(false);
+	}
+	if (!texture_cube_map._texture_generated) {
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_stencil() but TextureCubeMap was released" << std::endl;
+		ASSERT(false);
+	}
+
+	owned_depth_stencil_attachment = nullptr;
+
+	owned_stencil_attachment = nullptr;
+	texture_cube_map._allocate_texture();
+	GLCall(glNamedFramebufferTextureLayer(id.value, GL_STENCIL_ATTACHMENT, texture_cube_map.id, mipmap_level, TextureCubeMap::get_gl_face_index(face)));
+}
+
+void Framebuffer::attach_stencil(Texture3D& texture3d, int32_t z, int32_t mipmap_level)
+{
+	if (id.value == 0) {
+		std::cout << "[OpenGL Error] Screen Framebuffer tried to attach_stencil() but Screen is not allowed to call this function" << std::endl;
+		ASSERT(false);
+	}
+	if (!texture3d._texture_generated) {
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_stencil() but Texture3D was released" << std::endl;
+		ASSERT(false);
+	}
+
+	owned_depth_stencil_attachment = nullptr;
+
+	owned_stencil_attachment = nullptr;
+	texture3d._allocate_texture();
+	GLCall(glNamedFramebufferTextureLayer(id.value, GL_STENCIL_ATTACHMENT, texture3d.id, mipmap_level, z));
+}
+
+
+void Framebuffer::attach_stencil_layered(Texture2DArray& texture_array, int32_t mipmap_level)
+{
+	if (id.value == 0) {
+		std::cout << "[OpenGL Error] Screen Framebuffer tried to attach_stencil_layered() but Screen is not allowed to call this function" << std::endl;
+		ASSERT(false);
+	}
+	if (!texture_array._texture_generated) {
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_stencil_layered() but Texture2DArray was released" << std::endl;
+		ASSERT(false);
+	}
+
+	owned_depth_stencil_attachment = nullptr;
+
+	owned_stencil_attachment = nullptr;
+	texture_array._allocate_texture();
+	GLCall(glNamedFramebufferTexture(id.value, GL_STENCIL_ATTACHMENT, texture_array.id, mipmap_level));
+}
+
+void Framebuffer::attach_stencil_layered(TextureCubeMap& texture_cube_map, int32_t mipmap_level)
+{
+	if (id.value == 0) {
+		std::cout << "[OpenGL Error] Screen Framebuffer tried to attach_stencil_layered() but Screen is not allowed to call this function" << std::endl;
+		ASSERT(false);
+	}
+	if (!texture_cube_map._texture_generated) {
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_stencil_layered() but TextureCubeMap was released" << std::endl;
+		ASSERT(false);
+	}
+
+	owned_depth_stencil_attachment = nullptr;
+
+	owned_stencil_attachment = nullptr;
+	texture_cube_map._allocate_texture();
+	GLCall(glNamedFramebufferTexture(id.value, GL_STENCIL_ATTACHMENT, texture_cube_map.id, mipmap_level));
+}
+
+void Framebuffer::attach_stencil_layered(Texture3D& texture3d, int32_t mipmap_level)
+{
+	if (id.value == 0) {
+		std::cout << "[OpenGL Error] Screen Framebuffer tried to attach_stencil_layered() but Screen is not allowed to call this function" << std::endl;
+		ASSERT(false);
+	}
+	if (!texture3d._texture_generated) {
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_stencil_layered() but Texture3D was released" << std::endl;
+		ASSERT(false);
+	}
+
+	owned_depth_stencil_attachment = nullptr;
+
+	owned_stencil_attachment = nullptr;
+	texture3d._allocate_texture();
+	GLCall(glNamedFramebufferTexture(id.value, GL_STENCIL_ATTACHMENT, texture3d.id, mipmap_level));
+}
 void Framebuffer::attach_stencil(Renderbuffer& render_buffer2d, int32_t mipmap_level){
 	if (id.value == 0) {
 		std::cout << "[OpenGL Error] Screen Framebuffer tried to attach_stencil() but Screen is not allowed to call this function" << std::endl;
@@ -363,6 +579,120 @@ void Framebuffer::attach_depth_stencil(Texture2D& texture2d, int32_t mipmap_leve
 	owned_depth_stencil_attachment = nullptr;
 	texture2d._allocate_texture();
 	GLCall(glNamedFramebufferTexture(id.value, GL_DEPTH_STENCIL_ATTACHMENT, texture2d.id, mipmap_level));
+}
+
+void Framebuffer::attach_depth_stencil(Texture2DArray& texture_array, int32_t z, int32_t mipmap_level)
+{
+	if (id.value == 0) {
+		std::cout << "[OpenGL Error] Screen Framebuffer tried to attach_depth_stencil() but Screen is not allowed to call this function" << std::endl;
+		ASSERT(false);
+	}
+	if (!texture_array._texture_generated) {
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_depth_stencil() but Texture2DArray was released" << std::endl;
+		ASSERT(false);
+	}
+
+	owned_stencil_attachment = nullptr;
+	owned_depth_attachment = nullptr;
+
+	owned_depth_stencil_attachment = nullptr;
+	texture_array._allocate_texture();
+	GLCall(glNamedFramebufferTextureLayer(id.value, GL_DEPTH_STENCIL_ATTACHMENT, texture_array.id, mipmap_level, z));
+}
+
+void Framebuffer::attach_depth_stencil(TextureCubeMap& texture_cube_map, TextureCubeMap::Face face, int32_t mipmap_level)
+{
+	if (id.value == 0) {
+		std::cout << "[OpenGL Error] Screen Framebuffer tried to attach_depth_stencil() but Screen is not allowed to call this function" << std::endl;
+		ASSERT(false);
+	}
+	if (!texture_cube_map._texture_generated) {
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_depth_stencil() but TextureCubeMap was released" << std::endl;
+		ASSERT(false);
+	}
+
+	owned_stencil_attachment = nullptr;
+	owned_depth_attachment = nullptr;
+
+	owned_depth_stencil_attachment = nullptr;
+	texture_cube_map._allocate_texture();
+	GLCall(glNamedFramebufferTextureLayer(id.value, GL_DEPTH_STENCIL_ATTACHMENT, texture_cube_map.id, mipmap_level, TextureCubeMap::get_gl_face_index(face)));
+}
+
+void Framebuffer::attach_depth_stencil(Texture3D& texture3d, int32_t z, int32_t mipmap_level)
+{
+	if (id.value == 0) {
+		std::cout << "[OpenGL Error] Screen Framebuffer tried to attach_depth_stencil() but Screen is not allowed to call this function" << std::endl;
+		ASSERT(false);
+	}
+	if (!texture3d._texture_generated) {
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_depth_stencil() but Texture3D was released" << std::endl;
+		ASSERT(false);
+	}
+
+	owned_stencil_attachment = nullptr;
+	owned_depth_attachment = nullptr;
+
+	owned_depth_stencil_attachment = nullptr;
+	texture3d._allocate_texture();
+	GLCall(glNamedFramebufferTextureLayer(id.value, GL_DEPTH_STENCIL_ATTACHMENT, texture3d.id, mipmap_level, z));
+}
+
+void Framebuffer::attach_depth_stencil_layered(Texture2DArray& texture_array, int32_t mipmap_level)
+{
+	if (id.value == 0) {
+		std::cout << "[OpenGL Error] Screen Framebuffer tried to attach_depth_stencil_layered() but Screen is not allowed to call this function" << std::endl;
+		ASSERT(false);
+	}
+	if (!texture_array._texture_generated) {
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_depth_stencil_layered() but Texture2DArray was released" << std::endl;
+		ASSERT(false);
+	}
+
+	owned_stencil_attachment = nullptr;
+	owned_depth_attachment = nullptr;
+
+	owned_depth_stencil_attachment = nullptr;
+	texture_array._allocate_texture();
+	GLCall(glNamedFramebufferTexture(id.value, GL_DEPTH_STENCIL_ATTACHMENT, texture_array.id, mipmap_level));
+}
+
+void Framebuffer::attach_depth_stencil_layered(TextureCubeMap& texture_cube_map, int32_t mipmap_level)
+{
+	if (id.value == 0) {
+		std::cout << "[OpenGL Error] Screen Framebuffer tried to attach_depth_stencil_layered() but Screen is not allowed to call this function" << std::endl;
+		ASSERT(false);
+	}
+	if (!texture_cube_map._texture_generated) {
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_depth_stencil_layered() but TextureCubeMap was released" << std::endl;
+		ASSERT(false);
+	}
+
+	owned_stencil_attachment = nullptr;
+	owned_depth_attachment = nullptr;
+
+	owned_depth_stencil_attachment = nullptr;
+	texture_cube_map._allocate_texture();
+	GLCall(glNamedFramebufferTexture(id.value, GL_DEPTH_STENCIL_ATTACHMENT, texture_cube_map.id, mipmap_level));
+}
+
+void Framebuffer::attach_depth_stencil_layered(Texture3D& texture3d, int32_t mipmap_level)
+{
+	if (id.value == 0) {
+		std::cout << "[OpenGL Error] Screen Framebuffer tried to attach_depth_stencil_layered() but Screen is not allowed to call this function" << std::endl;
+		ASSERT(false);
+	}
+	if (!texture3d._texture_generated) {
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_depth_stencil_layered() but Texture3D was released" << std::endl;
+		ASSERT(false);
+	}
+
+	owned_stencil_attachment = nullptr;
+	owned_depth_attachment = nullptr;
+
+	owned_depth_stencil_attachment = nullptr;
+	texture3d._allocate_texture();
+	GLCall(glNamedFramebufferTexture(id.value, GL_DEPTH_STENCIL_ATTACHMENT, texture3d.id, mipmap_level));
 }
 
 void Framebuffer::attach_depth_stencil(Renderbuffer& render_buffer2d, int32_t mipmap_level){
@@ -509,6 +839,102 @@ void Framebuffer::attach_depth(std::shared_ptr<Texture2D> texture2d, int32_t mip
 	owned_depth_attachment = texture2d;
 }
 
+void Framebuffer::attach_depth(std::shared_ptr<Texture2DArray> texture_array, int32_t z, int32_t mipmap_level)
+{
+	if (id.value == 0) {
+		std::cout << "[OpenGL Error] Screen Framebuffer tried to attach_depth() but Screen is not allowed to call this function" << std::endl;
+		ASSERT(false);
+	}
+	if (texture_array == nullptr) {
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_depth() but Texture2DArray was nullptr" << std::endl;
+		ASSERT(false);
+	}
+
+	attach_depth(*texture_array, z, mipmap_level);
+
+	owned_depth_attachment = texture_array;
+}
+
+void Framebuffer::attach_depth(std::shared_ptr<TextureCubeMap> texture_cube_map, TextureCubeMap::Face face, int32_t mipmap_level)
+{
+	if (id.value == 0) {
+		std::cout << "[OpenGL Error] Screen Framebuffer tried to attach_depth() but Screen is not allowed to call this function" << std::endl;
+		ASSERT(false);
+	}
+	if (texture_cube_map == nullptr) {
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_depth() but TextureCubeMap was nullptr" << std::endl;
+		ASSERT(false);
+	}
+
+	attach_depth(*texture_cube_map, face, mipmap_level);
+
+	owned_depth_attachment = texture_cube_map;
+}
+
+void Framebuffer::attach_depth(std::shared_ptr<Texture3D> texture3d, int32_t z, int32_t mipmap_level = 0) 
+{
+	if (id.value == 0) {
+		std::cout << "[OpenGL Error] Screen Framebuffer tried to attach_depth() but Screen is not allowed to call this function" << std::endl;
+		ASSERT(false);
+	}
+	if (texture3d == nullptr) {
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_depth() but Texture3D was nullptr" << std::endl;
+		ASSERT(false);
+	}
+
+	attach_depth(*texture3d, z, mipmap_level);
+
+	owned_depth_attachment = texture3d;
+}
+
+void Framebuffer::attach_depth_layered(std::shared_ptr<Texture2DArray> texture_array, int32_t mipmap_level)
+{
+	if (id.value == 0) {
+		std::cout << "[OpenGL Error] Screen Framebuffer tried to attach_depth_layered() but Screen is not allowed to call this function" << std::endl;
+		ASSERT(false);
+	}
+	if (texture_array == nullptr) {
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_depth_layered() but Texture2DArray was nullptr" << std::endl;
+		ASSERT(false);
+	}
+
+	attach_depth_layered(*texture_array, mipmap_level);
+
+	owned_depth_attachment = texture_array;
+}
+
+void Framebuffer::attach_depth_layered(std::shared_ptr<TextureCubeMap> texture_cube_map, int32_t mipmap_level = 0)
+{
+	if (id.value == 0) {
+		std::cout << "[OpenGL Error] Screen Framebuffer tried to attach_depth_layered() but Screen is not allowed to call this function" << std::endl;
+		ASSERT(false);
+	}
+	if (texture_cube_map == nullptr) {
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_depth_layered() but TextureCubeMap was nullptr" << std::endl;
+		ASSERT(false);
+	}
+
+	attach_depth_layered(*texture_cube_map, mipmap_level);
+
+	owned_depth_attachment = texture_cube_map;
+}
+
+void Framebuffer::attach_depth_layered(std::shared_ptr<Texture3D> texture3d, int32_t mipmap_level = 0)
+{
+	if (id.value == 0) {
+		std::cout << "[OpenGL Error] Screen Framebuffer tried to attach_depth_layered() but Screen is not allowed to call this function" << std::endl;
+		ASSERT(false);
+	}
+	if (texture3d == nullptr) {
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_depth_layered() but Texture3D was nullptr" << std::endl;
+		ASSERT(false);
+	}
+
+	attach_depth_layered(*texture3d, mipmap_level);
+
+	owned_depth_attachment = texture3d;
+}
+
 void Framebuffer::attach_depth(std::shared_ptr<Renderbuffer> render_buffer)
 {
 	if (id.value == 0) {
@@ -552,6 +978,102 @@ void Framebuffer::attach_stencil(std::shared_ptr<Texture2D> texture2d, int32_t m
 	owned_stencil_attachment = texture2d;
 }
 
+void Framebuffer::attach_stencil(std::shared_ptr<Texture2DArray> texture_array, int32_t z, int32_t mipmap_level)
+{
+	if (id.value == 0) {
+		std::cout << "[OpenGL Error] Screen Framebuffer tried to attach_stencil() but Screen is not allowed to call this function" << std::endl;
+		ASSERT(false);
+	}
+	if (texture_array == nullptr) {
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_stencil() but Texture2DArray was nullptr" << std::endl;
+		ASSERT(false);
+	}
+
+	attach_stencil(*texture_array, z, mipmap_level);
+
+	owned_stencil_attachment = texture_array;
+}
+
+void Framebuffer::attach_stencil(std::shared_ptr<TextureCubeMap> texture_cube_map, TextureCubeMap::Face face, int32_t mipmap_level)
+{
+	if (id.value == 0) {
+		std::cout << "[OpenGL Error] Screen Framebuffer tried to attach_stencil() but Screen is not allowed to call this function" << std::endl;
+		ASSERT(false);
+	}
+	if (texture_cube_map == nullptr) {
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_stencil() but TextureCubeMap was nullptr" << std::endl;
+		ASSERT(false);
+	}
+
+	attach_stencil(*texture_cube_map, face, mipmap_level);
+
+	owned_stencil_attachment = texture_cube_map;
+}
+
+void Framebuffer::attach_stencil(std::shared_ptr<Texture3D> texture3d, int32_t z, int32_t mipmap_level = 0)
+{
+	if (id.value == 0) {
+		std::cout << "[OpenGL Error] Screen Framebuffer tried to attach_stencil() but Screen is not allowed to call this function" << std::endl;
+		ASSERT(false);
+	}
+	if (texture3d == nullptr) {
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_stencil() but Texture3D was nullptr" << std::endl;
+		ASSERT(false);
+	}
+
+	attach_stencil(*texture3d, z, mipmap_level);
+
+	owned_stencil_attachment = texture3d;
+}
+
+void Framebuffer::attach_stencil_layered(std::shared_ptr<Texture2DArray> texture_array, int32_t mipmap_level)
+{
+	if (id.value == 0) {
+		std::cout << "[OpenGL Error] Screen Framebuffer tried to attach_stencil_layered() but Screen is not allowed to call this function" << std::endl;
+		ASSERT(false);
+	}
+	if (texture_array == nullptr) {
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_stencil_layered() but Texture2DArray was nullptr" << std::endl;
+		ASSERT(false);
+	}
+
+	attach_stencil_layered(*texture_array, mipmap_level);
+
+	owned_stencil_attachment = texture_array;
+}
+
+void Framebuffer::attach_stencil_layered(std::shared_ptr<TextureCubeMap> texture_cube_map, int32_t mipmap_level)
+{
+	if (id.value == 0) {
+		std::cout << "[OpenGL Error] Screen Framebuffer tried to attach_stencil_layered() but Screen is not allowed to call this function" << std::endl;
+		ASSERT(false);
+	}
+	if (texture_cube_map == nullptr) {
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_stencil_layered() but TextureCubeMap was nullptr" << std::endl;
+		ASSERT(false);
+	}
+
+	attach_stencil_layered(*texture_cube_map, mipmap_level);
+
+	owned_stencil_attachment = texture_cube_map;
+}
+
+void Framebuffer::attach_stencil_layered(std::shared_ptr<Texture3D> texture3d, int32_t mipmap_level)
+{
+	if (id.value == 0) {
+		std::cout << "[OpenGL Error] Screen Framebuffer tried to attach_stencil_layered() but Screen is not allowed to call this function" << std::endl;
+		ASSERT(false);
+	}
+	if (texture3d == nullptr) {
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_stencil_layered() but Texture3D was nullptr" << std::endl;
+		ASSERT(false);
+	}
+
+	attach_stencil_layered(*texture3d, mipmap_level);
+
+	owned_stencil_attachment = texture3d;
+}
+
 void Framebuffer::attach_stencil(std::shared_ptr<Renderbuffer> render_buffer)
 {
 	if (id.value == 0) {
@@ -592,8 +1114,105 @@ void Framebuffer::attach_depth_stencil(std::shared_ptr<Texture2D> texture2d, int
 
 	attach_depth_stencil(*texture2d, mipmap_level);
 
-	owned_stencil_attachment = texture2d;
+	owned_depth_stencil_attachment = texture2d;
 }
+
+void Framebuffer::attach_depth_stencil(std::shared_ptr<Texture2DArray> texture_array, int32_t z, int32_t mipmap_level = 0)
+{
+	if (id.value == 0) {
+		std::cout << "[OpenGL Error] Screen Framebuffer tried to attach_depth_stencil() but Screen is not allowed to call this function" << std::endl;
+		ASSERT(false);
+	}
+	if (texture_array == nullptr) {
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_depth_stencil() but Texture2DArray was nullptr" << std::endl;
+		ASSERT(false);
+	}
+
+	attach_depth_stencil(*texture_array, z, mipmap_level);
+
+	owned_depth_stencil_attachment = texture_array;
+}
+
+void Framebuffer::attach_depth_stencil(std::shared_ptr<TextureCubeMap> texture_cube_map, TextureCubeMap::Face face, int32_t mipmap_level = 0)
+{
+	if (id.value == 0) {
+		std::cout << "[OpenGL Error] Screen Framebuffer tried to attach_depth_stencil() but Screen is not allowed to call this function" << std::endl;
+		ASSERT(false);
+	}
+	if (texture_cube_map == nullptr) {
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_depth_stencil() but TextureCubeMap was nullptr" << std::endl;
+		ASSERT(false);
+	}
+
+	attach_depth_stencil(*texture_cube_map, face, mipmap_level);
+
+	owned_depth_stencil_attachment = texture_cube_map;
+}
+
+void Framebuffer::attach_depth_stencil(std::shared_ptr<Texture3D> texture3d, int32_t z, int32_t mipmap_level = 0)
+{
+	if (id.value == 0) {
+		std::cout << "[OpenGL Error] Screen Framebuffer tried to attach_depth_stencil() but Screen is not allowed to call this function" << std::endl;
+		ASSERT(false);
+	}
+	if (texture3d == nullptr) {
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_depth_stencil() but Texture3D was nullptr" << std::endl;
+		ASSERT(false);
+	}
+
+	attach_depth_stencil(*texture3d, z, mipmap_level);
+
+	owned_depth_stencil_attachment = texture3d;
+}
+
+void Framebuffer::attach_depth_stencil_layered(std::shared_ptr<Texture2DArray> texture_array, int32_t mipmap_level = 0)
+{
+	if (id.value == 0) {
+		std::cout << "[OpenGL Error] Screen Framebuffer tried to attach_depth_stencil_layered() but Screen is not allowed to call this function" << std::endl;
+		ASSERT(false);
+	}
+	if (texture_array == nullptr) {
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_depth_stencil_layered() but Texture2DArray was nullptr" << std::endl;
+		ASSERT(false);
+	}
+
+	attach_depth_stencil_layered(*texture_array, mipmap_level);
+
+	owned_depth_stencil_attachment = texture_array;
+}
+
+void Framebuffer::attach_depth_stencil_layered(std::shared_ptr<TextureCubeMap> texture_cube_map, int32_t mipmap_level = 0)
+{
+	if (id.value == 0) {
+		std::cout << "[OpenGL Error] Screen Framebuffer tried to attach_depth_stencil_layered() but Screen is not allowed to call this function" << std::endl;
+		ASSERT(false);
+	}
+	if (texture_cube_map == nullptr) {
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_depth_stencil_layered() but TextureCubeMap was nullptr" << std::endl;
+		ASSERT(false);
+	}
+
+	attach_depth_stencil_layered(*texture_cube_map, mipmap_level);
+
+	owned_depth_stencil_attachment = texture_cube_map;
+}
+
+void Framebuffer::attach_depth_stencil_layered(std::shared_ptr<Texture3D> texture3d, int32_t mipmap_level = 0)
+{
+	if (id.value == 0) {
+		std::cout << "[OpenGL Error] Screen Framebuffer tried to attach_depth_stencil_layered() but Screen is not allowed to call this function" << std::endl;
+		ASSERT(false);
+	}
+	if (texture3d == nullptr) {
+		std::cout << "[OpenGL Error] Framebuffer tried to attach_depth_stencil_layered() but Texture3D was nullptr" << std::endl;
+		ASSERT(false);
+	}
+
+	attach_depth_stencil_layered(*texture3d, mipmap_level);
+
+	owned_depth_stencil_attachment = texture3d;
+}
+
 
 void Framebuffer::attach_depth_stencil(std::shared_ptr<Renderbuffer> render_buffer)
 {
@@ -608,7 +1227,7 @@ void Framebuffer::attach_depth_stencil(std::shared_ptr<Renderbuffer> render_buff
 
 	attach_depth_stencil(*render_buffer);
 
-	owned_stencil_attachment = render_buffer;
+	owned_depth_stencil_attachment = render_buffer;
 }
 
 void Framebuffer::deattach_depth_stencil()

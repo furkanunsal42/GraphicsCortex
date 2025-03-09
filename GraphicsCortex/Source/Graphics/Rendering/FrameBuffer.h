@@ -55,14 +55,32 @@ public:
 	void attach_color_layered(int32_t slot, TextureCubeMap& texture_cube_map, int32_t mipmap_level = 0);
 	void attach_color_layered(int32_t slot, Texture3D& texture3d, int32_t mipmap_level = 0);
 	void attach_color(int32_t slot, Renderbuffer& render_buffer);
-	
+
 	void attach_depth(Texture2D& texture2d, int32_t mipmap_level = 0);
+	void attach_depth(Texture2DArray& texture_array, int32_t z, int32_t mipmap_level = 0);
+	void attach_depth(TextureCubeMap& texture_cube_map, TextureCubeMap::Face face, int32_t mipmap_level = 0);
+	void attach_depth(Texture3D& texture3d, int32_t z, int32_t mipmap_level = 0);
+	void attach_depth_layered(Texture2DArray& texture_array, int32_t mipmap_level = 0);
+	void attach_depth_layered(TextureCubeMap& texture_cube_map, int32_t mipmap_level = 0);
+	void attach_depth_layered(Texture3D& texture3d, int32_t mipmap_level = 0);
 	void attach_depth(Renderbuffer& render_buffer2d, int32_t mipmap_level = 0);
 	
 	void attach_stencil(Texture2D& texture2d, int32_t mipmap_level = 0);
+	void attach_stencil(Texture2DArray& texture_array, int32_t z, int32_t mipmap_level = 0);
+	void attach_stencil(TextureCubeMap& texture_cube_map, TextureCubeMap::Face face, int32_t mipmap_level = 0);
+	void attach_stencil(Texture3D& texture3d, int32_t z, int32_t mipmap_level = 0);
+	void attach_stencil_layered(Texture2DArray& texture_array, int32_t mipmap_level = 0);
+	void attach_stencil_layered(TextureCubeMap& texture_cube_map, int32_t mipmap_level = 0);
+	void attach_stencil_layered(Texture3D& texture3d, int32_t mipmap_level = 0);
 	void attach_stencil(Renderbuffer& render_buffer2d, int32_t mipmap_level = 0);
 	
 	void attach_depth_stencil(Texture2D& texture2d, int32_t mipmap_level = 0);
+	void attach_depth_stencil(Texture2DArray& texture_array, int32_t z, int32_t mipmap_level = 0);
+	void attach_depth_stencil(TextureCubeMap& texture_cube_map, TextureCubeMap::Face face, int32_t mipmap_level = 0);
+	void attach_depth_stencil(Texture3D& texture3d, int32_t z, int32_t mipmap_level = 0);
+	void attach_depth_stencil_layered(Texture2DArray& texture_array, int32_t mipmap_level = 0);
+	void attach_depth_stencil_layered(TextureCubeMap& texture_cube_map, int32_t mipmap_level = 0);
+	void attach_depth_stencil_layered(Texture3D& texture3d, int32_t mipmap_level = 0);
 	void attach_depth_stencil(Renderbuffer& render_buffer2d, int32_t mipmap_level = 0);
 
 	// assumes ownership
@@ -76,14 +94,32 @@ public:
 	void deattach_color(int32_t slot);
 
 	void attach_depth(std::shared_ptr<Texture2D> texture2d, int32_t mipmap_level = 0);
+	void attach_depth(std::shared_ptr<Texture2DArray> texture_array, int32_t z, int32_t mipmap_level = 0);
+	void attach_depth(std::shared_ptr<TextureCubeMap> texture_cube_map, TextureCubeMap::Face face, int32_t mipmap_level = 0);
+	void attach_depth(std::shared_ptr<Texture3D> texture3d, int32_t z, int32_t mipmap_level = 0);
+	void attach_depth_layered(std::shared_ptr<Texture2DArray> texture_array, int32_t mipmap_level = 0);
+	void attach_depth_layered(std::shared_ptr<TextureCubeMap> texture_cube_map, int32_t mipmap_level = 0);
+	void attach_depth_layered(std::shared_ptr<Texture3D> texture3d, int32_t mipmap_level = 0);
 	void attach_depth(std::shared_ptr<Renderbuffer> render_buffer);
 	void deattach_depth();
 
 	void attach_stencil(std::shared_ptr<Texture2D> texture2d, int32_t mipmap_level = 0);
+	void attach_stencil(std::shared_ptr<Texture2DArray> texture_array, int32_t z, int32_t mipmap_level = 0);
+	void attach_stencil(std::shared_ptr<TextureCubeMap> texture_cube_map, TextureCubeMap::Face face, int32_t mipmap_level = 0);
+	void attach_stencil(std::shared_ptr<Texture3D> texture3d, int32_t z, int32_t mipmap_level = 0);
+	void attach_stencil_layered(std::shared_ptr<Texture2DArray> texture_array, int32_t mipmap_level = 0);
+	void attach_stencil_layered(std::shared_ptr<TextureCubeMap> texture_cube_map, int32_t mipmap_level = 0);
+	void attach_stencil_layered(std::shared_ptr<Texture3D> texture3d, int32_t mipmap_level = 0);
 	void attach_stencil(std::shared_ptr<Renderbuffer> render_buffer);
 	void deattach_stencil();
 
 	void attach_depth_stencil(std::shared_ptr<Texture2D> texture2d, int32_t mipmap_level = 0);
+	void attach_depth_stencil(std::shared_ptr<Texture2DArray> texture_array, int32_t z, int32_t mipmap_level = 0);
+	void attach_depth_stencil(std::shared_ptr<TextureCubeMap> texture_cube_map, TextureCubeMap::Face face, int32_t mipmap_level = 0);
+	void attach_depth_stencil(std::shared_ptr<Texture3D> texture3d, int32_t z, int32_t mipmap_level = 0);
+	void attach_depth_stencil_layered(std::shared_ptr<Texture2DArray> texture_array, int32_t mipmap_level = 0);
+	void attach_depth_stencil_layered(std::shared_ptr<TextureCubeMap> texture_cube_map, int32_t mipmap_level = 0);
+	void attach_depth_stencil_layered(std::shared_ptr<Texture3D> texture3d, int32_t mipmap_level = 0);
 	void attach_depth_stencil(std::shared_ptr<Renderbuffer> render_buffer);
 	void deattach_depth_stencil();
 
