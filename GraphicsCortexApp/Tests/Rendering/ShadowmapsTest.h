@@ -20,9 +20,9 @@ public:
 		glm::ivec2 resolution = default_window->get_framebuffer_resolution();
 		RenderPipeline pipeline(resolution.x, resolution.y, Texture2D::ColorTextureFormat::RGBA8, Texture2D::DepthStencilTextureFormat::DEPTH24_STENCIL8, 4);
 		pipeline.push_render_pass(std::make_shared<RenderPass_Clear>(glm::vec4(0, 0, 0, 1)));
-		pipeline.push_render_pass(std::make_shared<RenderPass_Forward>());
 		auto shadowmap_renderpass = std::make_shared<RenderPass_Shadowmaps>();
 		pipeline.push_render_pass(shadowmap_renderpass);
+		pipeline.push_render_pass(std::make_shared<RenderPass_Forward>());
 
 		//Asset asset("../GraphicsCortex/Models/sculpture/scene.gltf");
 		//Asset asset("../GraphicsCortex/Models/City/edited_city.obj");
@@ -58,7 +58,7 @@ public:
 		std::shared_ptr<Entity> entity_d_light = std::make_shared<Entity>();
 		entity_d_light->add_component<TransformComponent>();
 		entity_d_light->add_component<LightComponent>(LightComponent::directional, glm::vec3(1) * 10.0f);
-		entity_d_light->get_component<TransformComponent>()->set_z_direction(glm::vec3(-0.5, -1, -0.5));
+		entity_d_light->get_component<TransformComponent>()->set_z_direction(glm::vec3(1, -1, 1));
 		scene.add_entity(entity_d_light);
 
 		//std::shared_ptr<Entity> entity_s_light = std::make_shared<Entity>();
@@ -70,13 +70,13 @@ public:
 
 		Camera camera;
 		camera.fov = 100;
-		camera.max_distance = 1000.0f;
+		camera.max_distance = 50.0f;
 		camera.screen_width = resolution.x;
 		camera.screen_height = resolution.y;
 
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_MULTISAMPLE);
-		//glEnable(GL_CULL_FACE);
+		glEnable(GL_CULL_FACE);
 		glEnable(GL_BLEND);
 		glDepthMask(GL_TRUE);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -84,18 +84,29 @@ public:
 
 		Framebuffer fb;
 
+		pipeline.render(scene, camera);
+
 		while (true) {
 
 			double deltatime = default_window->handle_events(true);
 			camera.handle_movements((GLFWwindow*)default_window->get_handle(), deltatime);
 
-			pipeline.render(scene, camera);
+			//pipeline.render(scene, camera);
 
-			pipeline.framebuffer->blit_to_screen(
+			shadowmap_renderpass->framebuffer->attach_color(0, *shadowmap_renderpass->d_shadowmaps_color, 5, 0);
+			shadowmap_renderpass->framebuffer->activate_draw_buffer(0);
+			shadowmap_renderpass->framebuffer->blit_to_screen(
 				0, 0, resolution.x, resolution.y,
 				0, 0, resolution.x, resolution.y,
 				Framebuffer::Channel::COLOR, Framebuffer::Filter::LINEAR
 			);
+			
+			//pipeline.framebuffer->activate_draw_buffer(0);
+			//pipeline.framebuffer->blit_to_screen(
+			//	0, 0, resolution.x, resolution.y,
+			//	0, 0, resolution.x, resolution.y,
+			//	Framebuffer::Channel::COLOR, Framebuffer::Filter::LINEAR
+			//);
 
 			default_window->swap_buffers();
 			//glFinish();

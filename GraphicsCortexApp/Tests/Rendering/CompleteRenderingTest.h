@@ -48,13 +48,13 @@ public:
 		texture_hdr->load_data(image_hdr, Texture2D::ColorFormat::RGBA, Texture2D::Type::FLOAT, 0);
 		image_hdr.release();
 
-		//std::shared_ptr<Entity> sky = std::make_shared<Entity>();
-		//sky->add_component<SkylightComponent>();
-		//sky->get_component<SkylightComponent>()->set_sky_texture(*texture_hdr, 2048, TextureCubeMap::ColorTextureFormat::RGBA32F);
-		//scene.add_entity(sky);
+		std::shared_ptr<Entity> sky = std::make_shared<Entity>();
+		sky->add_component<SkylightComponent>();
+		sky->get_component<SkylightComponent>()->set_sky_texture(*texture_hdr, 2048, TextureCubeMap::ColorTextureFormat::RGBA32F);
+		scene.add_entity(sky);
 
 		texture_hdr->release();
-
+		
 		std::shared_ptr<Entity> sponza = std::make_shared<Entity>();
 		sponza->add_component<MeshComponent>(mesh);
 		sponza->add_component<MaterialComponent>(program);

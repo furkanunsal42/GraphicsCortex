@@ -24,7 +24,8 @@ layout (binding = 7) uniform sampler2D sky_brdf_texture;
 #define POINT_LIGHT_MAX_COUNT 32
 #define SPOT_LIGHT_MAX_COUNT 32
 
-#define DIRECTIONAL_SHADOWMAP_MAX_COUNT 32
+// MAX_COUNT = cascade count * light source count
+#define DIRECTIONAL_SHADOWMAP_MAX_COUNT 6
 #define POINT_SHADOWMAP_MAX_COUNT 32
 #define SPOT_SHADOWMAP_MAX_COUNT 32
 
@@ -49,7 +50,8 @@ layout(std140, binding = 2) uniform s_lights_buffer {
 
 // shadowmaps
 layout(std140, binding = 3) uniform d_shadowmaps_buffer {
-    mat4 d_mvp[DIRECTIONAL_SHADOWMAP_MAX_COUNT];
+    mat4 d_projection_view[DIRECTIONAL_SHADOWMAP_MAX_COUNT];
+    float d_distances[DIRECTIONAL_SHADOWMAP_MAX_COUNT];
     int d_shadowmap_count;
 } d_shadowmaps;
 
@@ -69,6 +71,20 @@ layout (binding = 10) uniform sampler2DArray s_shadowmap_textures;
 
 uniform vec3 camera_position;
 const float PI = 3.14159265359;
+// ----------------------------------------------------------------------------
+float linearize_depth(float d,float zNear,float zFar)
+{
+    float z_n = 2.0 * d - 1.0;
+    return 2.0 * zNear * zFar / (zFar + zNear - z_n * (zFar - zNear));
+}
+// ----------------------------------------------------------------------------
+int get_directional_light_cascade(float distance) {
+    for (int i = 0; i < d_shadowmaps.d_shadowmap_count; i++){
+        if (d_shadowmaps.d_distances[i] >= distance)
+            return i;
+    }
+    return d_shadowmaps.d_shadowmap_count;
+}
 // ----------------------------------------------------------------------------
 // Easy trick to get tangent-normals to world-space to keep PBR code simplified.
 // Don't worry if you don't get what's going on; you generally want to do normal 
@@ -173,6 +189,16 @@ vec3 brdf(vec3 albedo, float roughness, float metallic, vec3 N, vec3 V, vec3 L, 
 // ----------------------------------------------------------------------------
 void main()
 {		
+    float linear_distance = linearize_depth(gl_FragCoord.z, 0.1f, 50.0f);
+    int cascade = get_directional_light_cascade(linear_distance);
+
+    vec4 d_frag_ligth_space = d_shadowmaps.d_projection_view[cascade] * vec4(v_world_position, 1.0);
+    d_frag_ligth_space = vec4(d_frag_ligth_space.xyz / d_frag_ligth_space.w, 1);
+    d_frag_ligth_space.xyz = d_frag_ligth_space.xyz * 0.5 + 0.5;
+    float d_light_space_distance = d_frag_ligth_space.z;
+    float d_shadowmap_distance = texture(d_shadowmap_textures, vec3(d_frag_ligth_space.xy, cascade)).r;
+    int in_shadow = int(d_shadowmap_distance < d_light_space_distance);
+
     vec4 temp_albedo = texture(albedo_texture, v_texture_coordinates);
     vec3 albedo     = pow(temp_albedo.rgb, vec3(2.2));
     float alpha     = temp_albedo.a;
@@ -264,5 +290,5 @@ void main()
     if (alpha < 0.9)
         discard;
 
-    frag_color = vec4(color, 1);
+    frag_color = vec4(vec3(d_shadowmap_distance), 1);
 }

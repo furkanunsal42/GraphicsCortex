@@ -51,6 +51,7 @@ public:
 	int multisample;
 
 	std::unordered_map<std::string, std::shared_ptr<TextureBase2>> textures_map;
+	std::unordered_map<std::string, std::shared_ptr<UniformBuffer>> uniform_buffers_map;
 
 	bool initialized = false;
 };

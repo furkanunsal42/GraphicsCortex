@@ -166,6 +166,19 @@ public:
 				}
 			}
 		}
+
+		bool d_shadowmap_buffer_exists = false;
+		std::shared_ptr<UniformBuffer> d_shadowmap_buffer = nullptr;
+		{
+			auto iterator = pipeline.uniform_buffers_map.find(RenderPass_Shadowmaps::directional_shadowmap_buffer_name);
+			d_shadowmap_buffer_exists = iterator != pipeline.uniform_buffers_map.end();
+			if (d_shadowmap_buffer_exists) {
+				if (d_shadowmap_textures == nullptr) {
+					ASSERT(false);
+				}
+				d_shadowmap_buffer = iterator->second;
+			}
+		}
 		
 		for (MeshRendererComponent* mesh_renderer : mesh_renderers) {
 			MaterialComponent* material_c = nullptr;
@@ -177,15 +190,17 @@ public:
 				program->update_uniform(directional_light_buffer_name, *directional_lights_buffer);
 				program->update_uniform(point_light_buffer_name, *point_lights_buffer);
 				program->update_uniform(spot_light_buffer_name, *spot_lights_buffer);
+				if (irradiance_map_exists)
+					program->update_uniform("irradiance_texture", *irradiance_texture);
+				if (sky_prefiltered_map_exists)
+					program->update_uniform("sky_prefiltered_texture", *sky_prefiltered_texture);
+				if (sky_brdf_map_exists)
+					program->update_uniform("sky_brdf_texture", *sky_brdf_texture);
+				if (d_shadowmap_exists)
+					program->update_uniform("d_shadowmap_textures", *d_shadowmap_textures);
+				if (d_shadowmap_buffer_exists)
+					program->update_uniform("d_shadowmaps_buffer", *d_shadowmap_buffer);
 			}
-			if (irradiance_map_exists)
-				program->update_uniform("irradiance_texture", *irradiance_texture);
-			if (sky_prefiltered_map_exists)
-				program->update_uniform("sky_prefiltered_texture", *sky_prefiltered_texture);
-			if (sky_brdf_map_exists)
-				program->update_uniform("sky_brdf_texture", *sky_brdf_texture);
-			if (d_shadowmap_exists)
-				program->update_uniform("d_shadowmap_textures", *d_shadowmap_textures);
 
 			pipeline.framebuffer->bind_draw();
 			mesh_renderer->render(camera);

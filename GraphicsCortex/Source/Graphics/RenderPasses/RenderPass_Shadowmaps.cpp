@@ -9,6 +9,7 @@
 #include "Constants.h"
 
 const std::string RenderPass_Shadowmaps::directional_shadowmap_texture_name = "__d_shadowmaps";
+const std::string RenderPass_Shadowmaps::directional_shadowmap_buffer_name = "__d_shadowmaps_buffer";
 
 void RenderPass_Shadowmaps::on_initialize(int pass_index, RenderPipeline& pipeline, Scene& scene) {
 
@@ -29,6 +30,8 @@ void RenderPass_Shadowmaps::on_initialize(int pass_index, RenderPipeline& pipeli
 
 	if (framebuffer == nullptr)
 		framebuffer = std::make_shared<Framebuffer>();
+
+	
 }
 
 void RenderPass_Shadowmaps::init_shadowmaps() {
@@ -38,13 +41,31 @@ void RenderPass_Shadowmaps::init_shadowmaps() {
 	if (d_shadowmaps == nullptr ||
 		d_shadowmap_resolution != d_shadowmaps->get_size().x ||
 		d_shadowmap_cascade_count != d_shadowmaps->get_size().z ||
-		shadowmap_format != d_shadowmaps->get_internal_format_color()
+		shadowmap_format != d_shadowmaps->get_internal_format_depthstencil()
 		) {
 		d_shadowmaps = std::make_shared<Texture2DArray>(
 			d_shadowmap_resolution, d_shadowmap_resolution,
 			d_shadowmap_cascade_count,
 			shadowmap_format, 1, 0, 0
 		);
+	}
+	if (d_shadowmaps_color == nullptr ||
+		d_shadowmap_resolution != d_shadowmaps_color->get_size().x ||
+		d_shadowmap_cascade_count != d_shadowmaps_color->get_size().z
+		) {
+		d_shadowmaps_color = std::make_shared<Texture2DArray>(
+			d_shadowmap_resolution, d_shadowmap_resolution,
+			d_shadowmap_cascade_count,
+			Texture2D::ColorTextureFormat::RGBA8, 1, 0, 0
+		);
+	}
+
+	if (d_shadowmaps_buffer == nullptr) {
+		d_shadowmaps_buffer = std::make_shared<UniformBuffer>();
+		for (int i = 0; i < d_shadowmap_max_count * d_shadowmap_cascade_count; i++)
+			d_shadowmaps_buffer->push_variable<glm::mat4>();
+		d_shadowmaps_buffer->push_variable_array(d_shadowmap_max_count * d_shadowmap_cascade_count); // distances
+		d_shadowmaps_buffer->push_variable<int32_t>();
 	}
 
 }
@@ -67,10 +88,6 @@ void RenderPass_Shadowmaps::render_scene(std::span<MeshRendererComponent*> mesh_
 
 		std::shared_ptr<Mesh> mesh = mesh_c->mesh;
 		if (mesh == nullptr) continue;
-
-		Camera camera;
-		camera.update_matrixes();
-		camera.update_default_uniforms(program);
 
 		RenderParameters render_parameters;
 
@@ -202,6 +219,14 @@ void RenderPass_Shadowmaps::on_render(int pass_index, RenderPipeline& pipeline, 
 
 	init_shadowmaps();
 
+	int32_t d_light_count_times_cascade = d_light_count * d_shadowmap_cascade_count;
+	d_shadowmaps_buffer->set_data(
+		d_shadowmap_cascade_count * d_shadowmap_max_count * sizeof(glm::mat4) +
+		d_shadowmap_max_count * d_shadowmap_cascade_count * sizeof(glm::vec4),
+		0,
+		sizeof(int32_t),
+		&d_light_count_times_cascade);
+
 	for (LightComponent* light : light_components) {
 		Entity* entity = light->get_entity();
 		if (entity == nullptr) {
@@ -220,7 +245,7 @@ void RenderPass_Shadowmaps::on_render(int pass_index, RenderPipeline& pipeline, 
 
 				float z_percentage = 1.0f / d_shadowmap_cascade_count;
 
-				std::array<glm::vec3, 8> frustum_corners = get_frustum_corners(camera, 0.25f, 1);
+				std::array<glm::vec3, 8> frustum_corners = get_frustum_corners(camera, 1, 0);
 				glm::vec3 frustum_center = get_frustum_center(frustum_corners);
 
 				glm::mat4 light_view_matrix = glm::lookAt(
@@ -230,14 +255,36 @@ void RenderPass_Shadowmaps::on_render(int pass_index, RenderPipeline& pipeline, 
 				);
 
 				glm::mat4 light_projection_ortho = get_projection_matrix_from_frustum_ortho(frustum_corners, light_view_matrix, 100);
+				
+				glm::mat4 projection_view = light_projection_ortho * light_view_matrix;
+				float cascade_distance = camera.max_distance * (cascade+1) * z_percentage;
+				d_shadowmaps_buffer->set_data(
+					sizeof(glm::mat4) * cascade, 
+					0, 
+					sizeof(glm::mat4),
+					&projection_view
+				);
+				d_shadowmaps_buffer->set_data(
+					d_shadowmap_cascade_count * d_shadowmap_max_count * sizeof(glm::mat4) +
+					cascade * sizeof(glm::vec4),
+					0, 
+					sizeof(float), 
+					&cascade_distance
+				);
 
-				framebuffer->attach_color(0, *d_shadowmaps, cascade, 0);
+				framebuffer->attach_color(0, *d_shadowmaps_color, cascade, 0);
+				framebuffer->attach_depth(*d_shadowmaps, cascade, 0);
 				framebuffer->activate_draw_buffer(0);
 				framebuffer->bind_draw();
 
+				glEnable(GL_DEPTH_TEST);
+				
 				primitive_renderer::clear(0, 0, 0, 1);
 
 				render_scene(mesh_renderer_components, *depth_program, light_view_matrix, light_projection_ortho);
+				
+				framebuffer->deattach_color(0);
+				framebuffer->deattach_depth();
 			}
 
 			break;
@@ -246,7 +293,10 @@ void RenderPass_Shadowmaps::on_render(int pass_index, RenderPipeline& pipeline, 
 		case LightComponent::spot:
 			break;
 		}
-	}
 
+	}
+	
+	d_shadowmaps_buffer->upload_data();
+	pipeline.uniform_buffers_map[directional_shadowmap_buffer_name] = d_shadowmaps_buffer;
 	pipeline.textures_map[directional_shadowmap_texture_name] = d_shadowmaps;
 }
