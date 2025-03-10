@@ -755,7 +755,7 @@ void Framebuffer::attach_color(int32_t slot, std::shared_ptr<Texture2DArray> tex
 		ASSERT(false);
 	}
 
-	attach_color(slot, *texture_array, mipmap_level);
+	attach_color(slot, *texture_array, z, mipmap_level);
 	
 	owned_color_attachments[slot] = texture_array;
 }

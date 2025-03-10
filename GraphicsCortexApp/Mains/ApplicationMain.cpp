@@ -38,8 +38,8 @@ int main() {
 	//ModelLoadingTest().run();
 
 	//MeshRendererTest().run();
-	ShadowmapsTest().run();
-	//CompleteRenderingTest().run();
+	//ShadowmapsTest().run();
+	CompleteRenderingTest().run();
 
 	//ChannelSplitingTest().run();
 	//HDRLoadingTest().run();

@@ -20,9 +20,12 @@ public:
 		glm::ivec2 resolution = default_window->get_framebuffer_resolution();
 		RenderPipeline pipeline(resolution.x, resolution.y, Texture2D::ColorTextureFormat::RGBA8, Texture2D::DepthStencilTextureFormat::DEPTH24_STENCIL8, 4);
 		pipeline.push_render_pass(std::make_shared<RenderPass_Clear>(glm::vec4(0, 0, 0, 1)));
+		pipeline.push_render_pass(std::make_shared<RenderPass_Shadowmaps>());
 		pipeline.push_render_pass(std::make_shared<RenderPass_Forward>());
 		pipeline.push_render_pass(std::make_shared<RenderPass_Skybox>());
 
+		//Asset asset("../GraphicsCortex/Models/sibenik/sibenik.obj");
+		//Asset asset("../GraphicsCortex/Models/sanmiguel/san-miguel.obj");
 		//Asset asset("../GraphicsCortex/Models/sculpture/scene.gltf");
 		//Asset asset("../GraphicsCortex/Models/City/edited_city.obj");
 		//Asset asset("../GraphicsCortex/Models/teducar/source/teduCar.fbx");
@@ -81,7 +84,7 @@ public:
 
 		std::shared_ptr<Entity> entity_d_light = std::make_shared<Entity>();
 		entity_d_light->add_component<TransformComponent>();
-		entity_d_light->add_component<LightComponent>(LightComponent::directional, glm::vec3(1) * 10.0f);
+		entity_d_light->add_component<LightComponent>(LightComponent::directional, glm::vec3(1) * 30.0f);
 		entity_d_light->get_component<TransformComponent>()->set_z_direction(glm::vec3(-0.5, -1, -0.5));
 		scene.add_entity(entity_d_light);
 
@@ -94,7 +97,7 @@ public:
 
 		Camera camera;
 		camera.fov = 100;
-		camera.max_distance = 1000.0f;
+		camera.max_distance = 200.0f;
 		camera.screen_width = resolution.x;
 		camera.screen_height = resolution.y;
 

@@ -49,16 +49,16 @@ void RenderPass_Shadowmaps::init_shadowmaps() {
 			shadowmap_format, 1, 0, 0
 		);
 	}
-	if (d_shadowmaps_color == nullptr ||
-		d_shadowmap_resolution != d_shadowmaps_color->get_size().x ||
-		d_shadowmap_cascade_count != d_shadowmaps_color->get_size().z
-		) {
-		d_shadowmaps_color = std::make_shared<Texture2DArray>(
-			d_shadowmap_resolution, d_shadowmap_resolution,
-			d_shadowmap_cascade_count,
-			Texture2D::ColorTextureFormat::RGBA8, 1, 0, 0
-		);
-	}
+	//if (d_shadowmaps_color == nullptr ||
+	//	d_shadowmap_resolution != d_shadowmaps_color->get_size().x ||
+	//	d_shadowmap_cascade_count != d_shadowmaps_color->get_size().z
+	//	) {
+	//	d_shadowmaps_color = std::make_shared<Texture2DArray>(
+	//		d_shadowmap_resolution, d_shadowmap_resolution,
+	//		d_shadowmap_cascade_count,
+	//		Texture2D::ColorTextureFormat::RGBA8, 1, 0, 0
+	//	);
+	//}
 
 	if (d_shadowmaps_buffer == nullptr) {
 		d_shadowmaps_buffer = std::make_shared<UniformBuffer>();
@@ -112,9 +112,10 @@ void RenderPass_Shadowmaps::render_scene(std::span<MeshRendererComponent*> mesh_
 	}
 }
 
-std::array<glm::vec3, 8> RenderPass_Shadowmaps::get_frustum_corners(Camera& camera, float z_percentage, int32_t index) {
+std::array<glm::vec3, 8> RenderPass_Shadowmaps::get_frustum_corners(Camera& camera, float near_plane, float far_plane) {
 
-	const glm::mat4 inverse_matrix = glm::inverse(camera.projection_matrix * camera.view_matrix);
+	const auto clipped_projection = glm::perspective(glm::radians(camera.fov), camera.screen_width / camera.screen_height, near_plane, far_plane);
+	const glm::mat4 inverse_matrix = glm::inverse(clipped_projection * camera.view_matrix);
 
 	std::array<glm::vec3, 8> frustum_corners;
 
@@ -125,7 +126,7 @@ std::array<glm::vec3, 8> RenderPass_Shadowmaps::get_frustum_corners(Camera& came
 					inverse_matrix * glm::vec4(
 						2.0f * x - 1.0f,
 						2.0f * y - 1.0f,
-						2.0f * ((z_percentage * index) + (z * z_percentage)) - 1.0f,
+						2.0f * z - 1.0f,
 						1.0f);
 				frustum_corners[z * 2 * 2 + y * 2 + x] = glm::vec3(corner4) / corner4.w;
 			}
@@ -218,6 +219,7 @@ void RenderPass_Shadowmaps::on_render(int pass_index, RenderPipeline& pipeline, 
 	uint32_t s_light_index = 0;
 
 	init_shadowmaps();
+	camera.update_matrixes();
 
 	int32_t d_light_count_times_cascade = d_light_count * d_shadowmap_cascade_count;
 	d_shadowmaps_buffer->set_data(
@@ -226,6 +228,8 @@ void RenderPass_Shadowmaps::on_render(int pass_index, RenderPipeline& pipeline, 
 		0,
 		sizeof(int32_t),
 		&d_light_count_times_cascade);
+
+	std::vector<float> cascade_far_planes{ camera.max_distance / 50.0f, camera.max_distance / 25.0f, camera.max_distance / 10.0f, camera.max_distance / 5.0f, camera.max_distance / 2.0f };
 
 	for (LightComponent* light : light_components) {
 		Entity* entity = light->get_entity();
@@ -238,14 +242,27 @@ void RenderPass_Shadowmaps::on_render(int pass_index, RenderPipeline& pipeline, 
 
 		TransformComponent& light_transform = *light_transform_c;
 
+
 		switch (light->type) {
 		case LightComponent::directional:
 
 			for (int32_t cascade = 0; cascade < d_shadowmap_cascade_count; cascade++) {
 
-				float z_percentage = 1.0f / d_shadowmap_cascade_count;
-
-				std::array<glm::vec3, 8> frustum_corners = get_frustum_corners(camera, 1, 0);
+				std::array<glm::vec3, 8> frustum_corners;
+				float cascade_max_distance;
+				if (cascade == 0) {
+					cascade_max_distance = cascade_far_planes[cascade];
+					frustum_corners = get_frustum_corners(camera, camera.min_distance, cascade_max_distance);
+				}
+				else if (cascade < cascade_far_planes.size()) {
+					cascade_max_distance = cascade_far_planes[cascade];
+					frustum_corners = get_frustum_corners(camera, cascade_far_planes[cascade-1], cascade_max_distance);
+				}
+				else if (cascade >= cascade_far_planes.size()) {
+					cascade_max_distance = camera.max_distance;
+					frustum_corners = get_frustum_corners(camera, cascade_far_planes[cascade_far_planes.size()-1], cascade_max_distance);
+				}
+				
 				glm::vec3 frustum_center = get_frustum_center(frustum_corners);
 
 				glm::mat4 light_view_matrix = glm::lookAt(
@@ -255,12 +272,11 @@ void RenderPass_Shadowmaps::on_render(int pass_index, RenderPipeline& pipeline, 
 				);
 
 				glm::mat4 light_projection_ortho = get_projection_matrix_from_frustum_ortho(frustum_corners, light_view_matrix, 100);
-				
+
 				glm::mat4 projection_view = light_projection_ortho * light_view_matrix;
-				float cascade_distance = camera.max_distance * (cascade+1) * z_percentage;
 				d_shadowmaps_buffer->set_data(
 					sizeof(glm::mat4) * cascade, 
-					0, 
+					0,
 					sizeof(glm::mat4),
 					&projection_view
 				);
@@ -269,22 +285,30 @@ void RenderPass_Shadowmaps::on_render(int pass_index, RenderPipeline& pipeline, 
 					cascade * sizeof(glm::vec4),
 					0, 
 					sizeof(float), 
-					&cascade_distance
+					&cascade_max_distance
 				);
 
-				framebuffer->attach_color(0, *d_shadowmaps_color, cascade, 0);
+				//framebuffer->attach_color(0, *d_shadowmaps_color, cascade, 0);
 				framebuffer->attach_depth(*d_shadowmaps, cascade, 0);
 				framebuffer->activate_draw_buffer(0);
 				framebuffer->bind_draw();
 
-				glEnable(GL_DEPTH_TEST);
-				
+				glm::vec4 viewport = primitive_renderer::get_viewport_position_size();
+				primitive_renderer::set_viewport_size(glm::ivec2(d_shadowmap_resolution));
+				primitive_renderer::set_viewport_position(glm::ivec2(0));
+
 				primitive_renderer::clear(0, 0, 0, 1);
 
+				glEnable(GL_DEPTH_TEST);
+				glCullFace(GL_BACK);
+				//glCullFace(GL_FRONT);
 				render_scene(mesh_renderer_components, *depth_program, light_view_matrix, light_projection_ortho);
+				glCullFace(GL_BACK);
 				
 				framebuffer->deattach_color(0);
 				framebuffer->deattach_depth();
+
+				primitive_renderer::set_viewport(viewport);
 			}
 
 			break;

@@ -4,6 +4,7 @@
 out vec4 frag_color;
 in vec2 v_texture_coordinates;
 in vec3 v_world_position;
+in vec3 v_view_position;
 in vec3 v_normal;
 in vec3 v_tangent;
 in vec3 v_bitangent;
@@ -79,11 +80,27 @@ float linearize_depth(float d,float zNear,float zFar)
 }
 // ----------------------------------------------------------------------------
 int get_directional_light_cascade(float distance) {
-    for (int i = 0; i < d_shadowmaps.d_shadowmap_count; i++){
-        if (d_shadowmaps.d_distances[i] >= distance)
-            return i;
+    //for (int i = 0; i < d_shadowmaps.d_shadowmap_count; i++){
+    //    if (d_shadowmaps.d_distances[i] >= distance)
+    //        return i;
+    //}
+    //return d_shadowmaps.d_shadowmap_count;
+
+    int layer = -1;
+    for (int i = 0; i < d_shadowmaps.d_shadowmap_count; ++i)
+    {
+        if (distance < d_shadowmaps.d_distances[i])
+        {
+            layer = i;
+            break;
+        }
     }
-    return d_shadowmaps.d_shadowmap_count;
+    if (layer == -1)
+    {
+        layer = d_shadowmaps.d_shadowmap_count;
+    }
+
+    return layer;
 }
 // ----------------------------------------------------------------------------
 // Easy trick to get tangent-normals to world-space to keep PBR code simplified.
@@ -187,18 +204,58 @@ vec3 brdf(vec3 albedo, float roughness, float metallic, vec3 N, vec3 V, vec3 L, 
     return Lo;
 }
 // ----------------------------------------------------------------------------
-void main()
-{		
-    float linear_distance = linearize_depth(gl_FragCoord.z, 0.1f, 50.0f);
-    int cascade = get_directional_light_cascade(linear_distance);
+float get_directional_light_shadow(int directional_light_index){
+    //float linear_distance = linearize_depth(abs(v_view_position.z), 0.1f, 200.0f);
+    float far_plane = 200.0;
+    int cascade = get_directional_light_cascade(abs(v_view_position.z));
 
     vec4 d_frag_ligth_space = d_shadowmaps.d_projection_view[cascade] * vec4(v_world_position, 1.0);
     d_frag_ligth_space = vec4(d_frag_ligth_space.xyz / d_frag_ligth_space.w, 1);
     d_frag_ligth_space.xyz = d_frag_ligth_space.xyz * 0.5 + 0.5;
     float d_light_space_distance = d_frag_ligth_space.z;
-    float d_shadowmap_distance = texture(d_shadowmap_textures, vec3(d_frag_ligth_space.xy, cascade)).r;
-    int in_shadow = int(d_shadowmap_distance < d_light_space_distance);
+    if (d_light_space_distance > 1.0)
+    {
+        d_light_space_distance = 0.0;
+    }
 
+    vec3 normal = normalize(v_normal);
+    float bias = max(0.05 * (1.0 - dot(normal, normalize(vec3(d_lights.d_light_direction[0])))), 0.005);
+    if (cascade == d_shadowmaps.d_shadowmap_count)
+    {
+        bias *= 1 / (far_plane * 0.5f);
+    }
+    else
+    {
+        bias *= 1 / (d_shadowmaps.d_distances[cascade] * 0.5f);
+    }
+    // PCF
+    float shadow = 0.0;
+    vec2 texelSize = 1.0 / textureSize(d_shadowmap_textures, 0).xy;
+    for(int x = -1; x <= 1; ++x)
+    {
+        for(int y = -1; y <= 1; ++y)
+        {
+            float pcfDepth = texture(
+                        d_shadowmap_textures,
+                        vec3(d_frag_ligth_space.xy + vec2(x, y) * texelSize,
+                        cascade)
+                        ).r; 
+            shadow += (d_light_space_distance /*- bias*/ - 0.0001) > pcfDepth ? 1.0 : 0.0;        
+        }    
+    }
+    shadow /= 9.0;
+    
+    // keep the shadow at 0.0 when outside the far_plane region of the light's frustum.
+    if(d_light_space_distance > 1.0)
+    {
+        shadow = 0.0;
+    }
+
+    return shadow;
+}
+// ----------------------------------------------------------------------------
+void main()
+{		
     vec4 temp_albedo = texture(albedo_texture, v_texture_coordinates);
     vec3 albedo     = pow(temp_albedo.rgb, vec3(2.2));
     float alpha     = temp_albedo.a;
@@ -208,7 +265,6 @@ void main()
 
     vec3 N = normalize(get_normal_from_texture());
     vec3 V = normalize(camera_position - v_world_position);
-
     vec3 R = reflect(-V, N);   
 
     // calculate reflectance at normal incidence; if dia-electric (like plastic) use F0 
@@ -222,13 +278,14 @@ void main()
     // directional lights
     for(int i = 0; i < d_lights.d_light_count; ++i) 
     {
+        float shadow = get_directional_light_shadow(i);
         // calculate per-light radiance
         vec3 L = normalize(vec3(-d_lights.d_light_direction[i]));
         float distance = 1;
         float attenuation = 1.0;
         vec3 radiance = vec3(d_lights.d_light_colors[i]) * attenuation;
 
-        Lo += brdf(albedo, roughness, metallic, N, V, L, F0, radiance);
+        Lo += brdf(albedo, roughness, metallic, N, V, L, F0, radiance) * (1-shadow);
     }   
 
     // point lights
@@ -277,18 +334,20 @@ void main()
     vec2 sky_brdf  = texture(sky_brdf_texture, vec2(max(dot(N, V), 0.0), roughness)).rg;
     vec3 specular = prefiltered_color * (F * sky_brdf.x + sky_brdf.y);
 
-    vec3 ambient = (kD * diffuse + specular) * ao; 
+    vec3 ambient = (kD * diffuse + specular) * ao * 0.6; 
 
     vec3 color = ambient + Lo;
 
     // HDR tonemapping
-    color = color / (color + vec3(1.0));
-    
+    //color = color / (color + vec3(1.0));
+    float exposure = 1.0;
+    color = vec3(1.0) - exp(-color * exposure);
+
     // gamma correct
     color = pow(color, vec3(1.0/2.2)); 
     
     if (alpha < 0.9)
         discard;
-
-    frag_color = vec4(vec3(d_shadowmap_distance), 1);
+    
+    frag_color = vec4(vec3(color), 1);
 }

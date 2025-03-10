@@ -19,6 +19,7 @@ layout (location = uv0_slot) in vec2 a_texture_coordinates;
 
 out vec2 v_texture_coordinates;
 out vec3 v_world_position;
+out vec3 v_view_position;
 out vec3 v_normal;
 out vec3 v_tangent;
 out vec3 v_bitangent;
@@ -34,6 +35,7 @@ void main()
     v_normal = normalize(mat3(model) * a_normal);   
     v_tangent = normalize(mat3(model) * a_tangent);   
     v_bitangent = normalize(mat3(model) * a_bitangent);   
+    v_view_position = vec3(view * model * vec4(a_verticies, 1.0));
 
     gl_Position =  projection * view * vec4(v_world_position, 1.0);
 }

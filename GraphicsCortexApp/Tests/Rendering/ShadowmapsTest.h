@@ -58,7 +58,7 @@ public:
 		std::shared_ptr<Entity> entity_d_light = std::make_shared<Entity>();
 		entity_d_light->add_component<TransformComponent>();
 		entity_d_light->add_component<LightComponent>(LightComponent::directional, glm::vec3(1) * 10.0f);
-		entity_d_light->get_component<TransformComponent>()->set_z_direction(glm::vec3(1, -1, 1));
+		entity_d_light->get_component<TransformComponent>()->set_z_direction(glm::vec3(0.1, -1, 0.1));
 		scene.add_entity(entity_d_light);
 
 		//std::shared_ptr<Entity> entity_s_light = std::make_shared<Entity>();
@@ -70,7 +70,7 @@ public:
 
 		Camera camera;
 		camera.fov = 100;
-		camera.max_distance = 50.0f;
+		camera.max_distance = 200.0f;
 		camera.screen_width = resolution.x;
 		camera.screen_height = resolution.y;
 
@@ -84,29 +84,42 @@ public:
 
 		Framebuffer fb;
 
-		pipeline.render(scene, camera);
+		bool view_mode = false;
+		int32_t cascade = 5;
+		default_window->newsletters->on_key_events.subscribe([&](const Window::KeyPressResult& key_result) {
+			if (key_result.key == Window::Key::P && key_result.action == Window::PressAction::RELEASE)
+				view_mode = !view_mode;
+			if (key_result.key == Window::Key::UP && key_result.action == Window::PressAction::RELEASE)
+				cascade++;
+			if (key_result.key == Window::Key::DOWN && key_result.action == Window::PressAction::RELEASE)
+				cascade--;
+			cascade = std::max(std::min(cascade, 5), 0);
+			});
 
 		while (true) {
 
 			double deltatime = default_window->handle_events(true);
 			camera.handle_movements((GLFWwindow*)default_window->get_handle(), deltatime);
 
-			//pipeline.render(scene, camera);
+			pipeline.render(scene, camera);
 
-			shadowmap_renderpass->framebuffer->attach_color(0, *shadowmap_renderpass->d_shadowmaps_color, 5, 0);
-			shadowmap_renderpass->framebuffer->activate_draw_buffer(0);
-			shadowmap_renderpass->framebuffer->blit_to_screen(
-				0, 0, resolution.x, resolution.y,
-				0, 0, resolution.x, resolution.y,
-				Framebuffer::Channel::COLOR, Framebuffer::Filter::LINEAR
-			);
-			
-			//pipeline.framebuffer->activate_draw_buffer(0);
-			//pipeline.framebuffer->blit_to_screen(
-			//	0, 0, resolution.x, resolution.y,
-			//	0, 0, resolution.x, resolution.y,
-			//	Framebuffer::Channel::COLOR, Framebuffer::Filter::LINEAR
-			//);
+			if (view_mode) {
+				//shadowmap_renderpass->framebuffer->attach_color(0, *shadowmap_renderpass->d_shadowmaps_color, cascade, 0);
+				//shadowmap_renderpass->framebuffer->activate_draw_buffer(0);
+				//shadowmap_renderpass->framebuffer->blit_to_screen(
+				//	0, 0, 1024, 1024,
+				//	0, 0, resolution.x, resolution.y,
+				//	Framebuffer::Channel::COLOR, Framebuffer::Filter::LINEAR
+				//);
+			}
+			else {
+				pipeline.framebuffer->activate_draw_buffer(0);
+				pipeline.framebuffer->blit_to_screen(
+					0, 0, resolution.x, resolution.y,
+					0, 0, resolution.x, resolution.y,
+					Framebuffer::Channel::COLOR, Framebuffer::Filter::LINEAR
+				);
+			}
 
 			default_window->swap_buffers();
 			//glFinish();
