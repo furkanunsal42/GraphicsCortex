@@ -50,11 +50,7 @@ public:
 	TextureBase2::DepthStencilTextureFormat depthstencil_internal_format;
 	int multisample;
 
-	std::vector<std::shared_ptr<Texture1D>>			stack_1d;
-	std::vector<std::shared_ptr<Texture2D>>			stack_2d;
-	std::vector<std::shared_ptr<Texture2DArray>>	stack_2d_array;
-	std::vector<std::shared_ptr<Texture3D>>			stack_3d;
-	std::vector<std::shared_ptr<TextureCubeMap>>	stack_cubemap;
+	std::unordered_map<std::string, std::shared_ptr<TextureBase2>> textures_map;
 
 	bool initialized = false;
 };

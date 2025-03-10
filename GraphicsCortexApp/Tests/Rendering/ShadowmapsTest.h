@@ -21,7 +21,8 @@ public:
 		RenderPipeline pipeline(resolution.x, resolution.y, Texture2D::ColorTextureFormat::RGBA8, Texture2D::DepthStencilTextureFormat::DEPTH24_STENCIL8, 4);
 		pipeline.push_render_pass(std::make_shared<RenderPass_Clear>(glm::vec4(0, 0, 0, 1)));
 		pipeline.push_render_pass(std::make_shared<RenderPass_Forward>());
-		pipeline.push_render_pass(std::make_shared<RenderPass_Shadowmaps>());
+		auto shadowmap_renderpass = std::make_shared<RenderPass_Shadowmaps>();
+		pipeline.push_render_pass(shadowmap_renderpass);
 
 		//Asset asset("../GraphicsCortex/Models/sculpture/scene.gltf");
 		//Asset asset("../GraphicsCortex/Models/City/edited_city.obj");

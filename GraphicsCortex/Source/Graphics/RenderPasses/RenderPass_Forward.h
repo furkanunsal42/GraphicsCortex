@@ -1,4 +1,6 @@
 #pragma once
+#include "RenderPass_Shadowmaps.h"
+
 #include "RenderPipeline.h"
 #include "Components/Component_MeshRenderer.h"
 
@@ -152,6 +154,19 @@ public:
 				sky_brdf_map_exists = false;
 		}
 
+		bool d_shadowmap_exists = false;
+		std::shared_ptr<Texture2DArray> d_shadowmap_textures = nullptr;
+		{
+			auto iterator = pipeline.textures_map.find(RenderPass_Shadowmaps::directional_shadowmap_texture_name);
+			d_shadowmap_exists = iterator != pipeline.textures_map.end();
+			if (d_shadowmap_exists) {
+				d_shadowmap_textures = std::dynamic_pointer_cast<Texture2DArray, TextureBase2>(iterator->second);
+				if (d_shadowmap_textures == nullptr) {
+					ASSERT(false);
+				}
+			}
+		}
+		
 		for (MeshRendererComponent* mesh_renderer : mesh_renderers) {
 			MaterialComponent* material_c = nullptr;
 			std::shared_ptr<Program> program = nullptr;
@@ -169,7 +184,9 @@ public:
 				program->update_uniform("sky_prefiltered_texture", *sky_prefiltered_texture);
 			if (sky_brdf_map_exists)
 				program->update_uniform("sky_brdf_texture", *sky_brdf_texture);
-		
+			if (d_shadowmap_exists)
+				program->update_uniform("d_shadowmap_textures", *d_shadowmap_textures);
+
 			pipeline.framebuffer->bind_draw();
 			mesh_renderer->render(camera);
 		}
