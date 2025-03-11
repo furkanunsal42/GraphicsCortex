@@ -5,10 +5,14 @@
 int main() {
 	int window_width = 1024;
 
-	Frame frame(window_width, window_width, "CTReconstructor GraphRenderer", 0, 0, true, true, false, Frame::CallbackLevel::LOW, false);
-	Scene scene(frame);
-	scene.camera->fov = 90;
-	scene.camera->max_distance = 1000;
+	WindowDescription desc;
+	desc.w_scale_framebuffer_size = false;
+	desc.w_scale_window_size = false;
+	desc.w_resolution = glm::ivec2(window_width);
+	Window window(desc);
+	Camera camera;
+	camera.fov = 90;
+	camera.max_distance = 1000;
 
 	GraphicsOperation op;
 
@@ -45,16 +49,14 @@ int main() {
 	fb.attach_color(0, render_target);
 
 	float phase = 0;
-	while (frame.is_running()) {
-		double deltatime = frame.handle_window();
-		frame.display_performance();
+	while (!window.should_close()) {
+		double deltatime = window.handle_events(true);
 
-		scene.camera->handle_movements(frame.window, deltatime);
+		camera.handle_movements((GLFWwindow*)window.get_handle(), deltatime);
 
 		fb.activate_draw_buffer(0);
 		fb.bind_draw();
-		fb.clear_bound_drawbuffer(1, 1, 1, 1);
-
+		primitive_renderer::clear(1, 1, 1, 1);
 		phase += 2.0 * deltatime / 1000;
 		op.set_constant("phase", phase);
 		op.set_constant("mean", std::fmod(phase, 36.0f) - 18);
@@ -69,11 +71,12 @@ int main() {
 
 		graph_renderer.load_data(*function_texture, glm::vec2(-range / 2, -range / 2), glm::vec2(range / 2, range / 2));
 
-		graph_renderer.render(*scene.camera);
+		graph_renderer.render(camera);
 
 		fb.deactivate_all_draw_buffers();
-		Framebuffer::bind_screen_draw();
 
 		fb.blit_to_screen(0, 0, render_target->get_size().x, render_target->get_size().y, 0, 0, window_width, window_width, Framebuffer::Channel::COLOR, Framebuffer::Filter::LINEAR);
+		
+		window.swap_buffers();
 	}
 }
