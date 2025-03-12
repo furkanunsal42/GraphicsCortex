@@ -269,6 +269,45 @@ void ComputeProgram::update_uniform_as_storage_buffer(const std::string& name, B
 	buffer.bind_as_storage_buffer(slot, offset, buffer.get_buffer_size_in_bytes());
 }
 
+void ComputeProgram::update_uniform_as_uniform_buffer(const std::string& name, UniformBuffer& uniform_buffer, size_t offset, size_t size)
+{
+	uniform_buffer.upload_data();
+
+	GLCall(unsigned int index = glGetUniformBlockIndex(id, name.c_str()));
+	if (index == GL_INVALID_INDEX) {
+		std::cout << "[OpenGL Error] ComputeProgram tried to update_uniform_as_uniform_buffer() but uniform block named: \"" + name + "\" wasn't found in the shader" << std::endl;
+	}
+
+	int32_t binding = -1;
+	GLCall(glGetActiveUniformBlockiv(id, index, GL_UNIFORM_BLOCK_BINDING, &binding));
+
+	if (binding == -1) {	// maybe
+		ASSERT(false);
+	}
+
+	uniform_buffer.bind(binding, offset, size);
+}
+
+void ComputeProgram::update_uniform_as_uniform_buffer(const std::string& name, UniformBuffer& uniform_buffer, size_t offset)
+{
+
+	uniform_buffer.upload_data();
+
+	GLCall(unsigned int index = glGetUniformBlockIndex(id, name.c_str()));
+	if (index == GL_INVALID_INDEX) {
+		std::cout << "[OpenGL Error] ComputeProgram tried to update_uniform_as_uniform_buffer() but uniform block named: \"" + name + "\" wasn't found in the shader" << std::endl;
+	}
+
+	int32_t binding = -1;
+	GLCall(glGetActiveUniformBlockiv(id, index, GL_UNIFORM_BLOCK_BINDING, &binding));
+
+	if (binding == -1) {	// maybe
+		ASSERT(false);
+	}
+
+	uniform_buffer.bind(binding, offset, uniform_buffer.get_buffer_size_in_bytes());
+}
+
 void ComputeProgram::update_uniform(const std::string& name, Texture1D& texture1d)
 {
 	texture1d.wait_async_load();

@@ -51,6 +51,9 @@ public:
 	void update_uniform_as_storage_buffer(const std::string& name, Buffer& buffer, size_t offset, size_t size);
 	void update_uniform_as_storage_buffer(const std::string& name, Buffer& buffer, size_t offset = 0);
 
+	void update_uniform_as_uniform_buffer(const std::string& name, UniformBuffer& uniform_buffer, size_t offset, size_t size);
+	void update_uniform_as_uniform_buffer(const std::string& name, UniformBuffer& uniform_buffer, size_t offset = 0);
+
 	void update_uniform(const std::string& name, Texture1D& texture1d);
 	void update_uniform(const std::string& name, Texture2D& texture2d);
 	void update_uniform(const std::string& name, Texture3D& texture3d);

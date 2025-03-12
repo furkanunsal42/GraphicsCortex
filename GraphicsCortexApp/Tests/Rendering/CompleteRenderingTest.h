@@ -111,7 +111,11 @@ public:
 
 		Framebuffer fb;
 
+		float t = 0;
+
 		while (true) {
+
+			entity_d_light->get_component<TransformComponent>()->set_z_direction(glm::vec3(-0.5 + t, -1, -0.5 + t));
 
 			double deltatime = default_window->handle_events(true);
 			camera.handle_movements((GLFWwindow*)default_window->get_handle(), deltatime);
