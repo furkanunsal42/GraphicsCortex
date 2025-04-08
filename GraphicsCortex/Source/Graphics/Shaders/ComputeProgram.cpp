@@ -245,12 +245,16 @@ void ComputeProgram::update_uniform_as_storage_buffer(const std::string& name, B
 
 	if (!buffer._buffer_allocated) buffer._allocate_buffer(buffer._buffer_size);
 
-	GLCall(int slot = glGetProgramResourceIndex(id, GL_SHADER_STORAGE_BLOCK, name.c_str()));
-	if (slot == -1) {	// maybe
+	GLCall(int index = glGetProgramResourceIndex(id, GL_SHADER_STORAGE_BLOCK, name.c_str()));
+	if (index == -1) {	// maybe
 		ASSERT(false);
 	}
 
-	buffer.bind_as_storage_buffer(slot, offset, size);
+	uint32_t properties[] = { GL_BUFFER_BINDING };
+	int32_t binding;
+	GLCall(glGetProgramResourceiv(id, GL_SHADER_STORAGE_BLOCK, index, 1, properties, 1, NULL, &binding));
+
+	buffer.bind_as_storage_buffer(binding, offset, size);
 }
 
 void ComputeProgram::update_uniform_as_storage_buffer(const std::string& name, Buffer& buffer, size_t offset)
@@ -261,12 +265,16 @@ void ComputeProgram::update_uniform_as_storage_buffer(const std::string& name, B
 
 	if (!buffer._buffer_allocated) buffer._allocate_buffer(buffer._buffer_size);
 
-	GLCall(int slot = glGetProgramResourceIndex(id, GL_SHADER_STORAGE_BLOCK, name.c_str()));
-	if (slot == -1) {	// maybe
+	GLCall(int index = glGetProgramResourceIndex(id, GL_SHADER_STORAGE_BLOCK, name.c_str()));
+	if (index == -1) {	// maybe
 		ASSERT(false);
 	}
 	
-	buffer.bind_as_storage_buffer(slot, offset, buffer.get_buffer_size_in_bytes());
+	uint32_t properties[] = { GL_BUFFER_BINDING };
+	int32_t binding;
+	GLCall(glGetProgramResourceiv(id, GL_SHADER_STORAGE_BLOCK, index, 1, properties, 1, NULL, &binding));
+
+	buffer.bind_as_storage_buffer(binding, offset, buffer.get_buffer_size_in_bytes());
 }
 
 void ComputeProgram::update_uniform_as_uniform_buffer(const std::string& name, UniformBuffer& uniform_buffer, size_t offset, size_t size)
