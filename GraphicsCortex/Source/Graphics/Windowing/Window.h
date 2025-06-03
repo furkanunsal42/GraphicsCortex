@@ -360,6 +360,7 @@ public:
 	bool get_raw_mouse_movement();
 	void set_raw_mouse_movement(bool value);
 	glm::dvec2 get_cursor_position();
+	void set_cursor_position(glm::dvec2 position);
 	void set_cursor_mode(CursorMode mode);
 	CursorMode get_cursor_mode();
 

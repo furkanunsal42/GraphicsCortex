@@ -1440,7 +1440,11 @@ void Framebuffer::blit_to_screen(
 }
 
 Framebuffer::Framebuffer(uint32_t id) : 
-	id(id) { }
+	id(id) 
+{ 
+	if (id == 0)
+		framebuffer_generated = true;
+}
 
 void Framebuffer::generate_framebuffer()
 {

@@ -788,6 +788,11 @@ glm::dvec2 Window::get_cursor_position()
 	return position;
 }
 
+void Window::set_cursor_position(glm::dvec2 position)
+{
+	glfwSetCursorPos((GLFWwindow*)handle, position.x, position.y);
+}
+
 void Window::set_cursor_mode(CursorMode mode)
 {
 	glfwSetInputMode((GLFWwindow*)handle, GLFW_CURSOR, int32_t(mode));
