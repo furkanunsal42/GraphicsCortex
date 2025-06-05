@@ -307,20 +307,21 @@ Window::~Window()
 
 void Window::release()
 {
+	
 	if (newsletters != nullptr) {
 		delete newsletters;
 		newsletters = nullptr;
-	}
-
-	if (handle != nullptr) {
-		glfwDestroyWindow((GLFWwindow*)handle);
-		handle = nullptr;
 	}
 
 	GlobalResources* owned_global_resources = &(context_to_global_resources[handle]);
 	context_to_global_resources.erase(handle);
 	if (active_global_resources == owned_global_resources)
 		active_global_resources = nullptr;
+
+	if (handle != nullptr) {
+		glfwDestroyWindow((GLFWwindow*)handle);
+		handle = nullptr;
+	}
 }
 
 void Window::context_make_current()

@@ -22,10 +22,12 @@ namespace default_program {
 		std::shared_ptr<Program> texcoord_program_s();
 		std::shared_ptr<Program> texcoord_abs_program_s();
 		std::shared_ptr<Program> texcoord_pattern_program_s();
-
 	}
 
 
 	Program surface_program();
+	Program text_program();
+
 	std::shared_ptr<Program> surface_program_s();
+	std::shared_ptr<Program> text_program_s();
 }

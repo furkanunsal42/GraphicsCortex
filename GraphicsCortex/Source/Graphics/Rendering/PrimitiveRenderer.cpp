@@ -7,6 +7,7 @@
 #include "Mesh.h"
 #include "VertexAttributeBuffer.h"
 #include "FrameBuffer.h"
+#include "Text.h"
 
 glm::ivec2 primitive_renderer::get_viewport_position()
 {
@@ -234,7 +235,42 @@ void primitive_renderer::render(Program& program, Mesh::SingleMesh& single_mesh,
 		);
 	}
 
+	
+}
 
+void primitive_renderer::render(
+	Framebuffer& framebuffer,
+	Program& program,
+	Text& text,
+	const RenderParameters& render_parameters,
+	size_t instance_count,
+	size_t instance_offset
+) {
+	framebuffer.bind_draw();
+	render(
+		program,
+		text,
+		render_parameters,
+		instance_count,
+		instance_offset
+	);
+}
+
+void primitive_renderer::render(
+	Program& program,
+	Text& text,
+	const RenderParameters& render_parameters,
+	size_t instance_count,
+	size_t instance_offset
+) {
+	text._update_mesh();
+	render(
+		program,
+		*text.mesh->get_mesh(0),
+		render_parameters,
+		instance_count,
+		instance_offset
+	);
 }
 
 void primitive_renderer::clear(Framebuffer& framebuffer, float red, float green, float blue, float alpha)

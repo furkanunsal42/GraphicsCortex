@@ -6,6 +6,7 @@
 #include "Tools/EquirectangularProjector/EquirectengularProjector.h"
 #include "ShaderCompiler.h";
 #include "Tools/GraphicsOperation/GraphicsOperation.h";
+#include "Font.h"
 
 class Window;
 class GlobalResources {
@@ -16,6 +17,7 @@ public:
 	std::unique_ptr<Program> SkylightComponent_irradiance_convolver = nullptr;
 	std::unique_ptr<Program> SkylightComponent_prefiltered_convolver = nullptr;
 	std::unique_ptr<GraphicsOperation> SkylightComponent_operation = nullptr;
+	std::unique_ptr<FontBank> FontBank = nullptr;
 
 };
 

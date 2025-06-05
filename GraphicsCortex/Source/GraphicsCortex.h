@@ -44,6 +44,9 @@
 #include "Default_Programs.h"
 //#include "SkyBox.h"
 
+#include "Font.h"
+#include "Text.h"
+
 #include "RenderParameters.h"
 #include "PrimitiveRenderer.h"
 
@@ -79,4 +82,4 @@
 #include "PhysicsObject.h"
 #include "PhysicsLink.h"
 #include "PhysicsVehicle.h"
-//#include "Object.h"
+//#include "Object.h

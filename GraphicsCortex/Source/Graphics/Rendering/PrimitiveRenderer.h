@@ -9,6 +9,7 @@ class Program;
 class Buffer;
 class VertexAttributeBuffer;
 class Framebuffer;
+class Text;
 
 namespace primitive_renderer {
 
@@ -84,6 +85,23 @@ namespace primitive_renderer {
 	void render(
 		Program& program,
 		Mesh::SingleMesh& single_mesh,
+		const RenderParameters& render_parameters = RenderParameters(),
+		size_t instance_count = 1,
+		size_t instance_offset = 0
+	);
+
+	void render(
+		Framebuffer& framebuffer,
+		Program& program,
+		Text& text,
+		const RenderParameters& render_parameters = RenderParameters(),
+		size_t instance_count = 1,
+		size_t instance_offset = 0
+	);
+
+	void render(
+		Program& program,
+		Text& text,
 		const RenderParameters& render_parameters = RenderParameters(),
 		size_t instance_count = 1,
 		size_t instance_offset = 0

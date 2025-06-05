@@ -134,11 +134,31 @@ Program default_program::surface_program()
 	return program;
 }
 
+Program default_program::text_program()
+{
+	Shader default_shader(
+		"../GraphicsCortex/Source/GLSL/Text/text.vert",
+		"../GraphicsCortex/Source/GLSL/Text/text.frag"
+	);
+	Program program = Program(default_shader);
+	return program;
+}
+
 std::shared_ptr<Program> default_program::surface_program_s()
 {
 	Shader default_shader(
 		"../GraphicsCortex/Source/GLSL/Surface/surface.vert",
 		"../GraphicsCortex/Source/GLSL/Surface/surface.frag"
+	);
+	std::shared_ptr<Program> program = std::make_shared<Program>(default_shader);
+	return program;
+}
+
+std::shared_ptr<Program> default_program::text_program_s()
+{
+	Shader default_shader(
+		"../GraphicsCortex/Source/GLSL/Text/text.vert",
+		"../GraphicsCortex/Source/GLSL/Text/text.frag"
 	);
 	std::shared_ptr<Program> program = std::make_shared<Program>(default_shader);
 	return program;
