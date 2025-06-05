@@ -8,14 +8,14 @@
 class Text : public UpdatesDefaultUniforms {
 public:
 	Text(const std::u32string& text = U"");
-	Text(const std::string& text);
+	//Text(const std::string& text);
 	~Text() = default;
 
 	void set_font(font_id font);
 	font_id get_font();
 
 	void set_text(const std::u32string& text);
-	void set_text(const std::string& text);
+	//void set_text(const std::string& text);
 
 	void set_scale(float scale);
 	float get_scale();

@@ -84,6 +84,23 @@ std::shared_ptr<Window> Window::create_from_current()
 	return window;
 };
 
+namespace {
+	
+	void error_callback(
+		GLenum source,
+		GLenum type,
+		GLuint id,
+		GLenum severity,
+		GLsizei length,
+		const GLchar* message,
+		const void* userParam
+	) {
+		fprintf(stderr, "GL CALLBACK: %s type = 0x%x, severity = 0x%x, message = %s\n",
+			(type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : ""),
+			type, severity, message);
+	}
+}
+
 void Window::_initialize(const WindowDescription& description)
 {
 	OpenGLBackend::_init_glfw();
@@ -298,6 +315,9 @@ void Window::_initialize(const WindowDescription& description)
 	glfwSetInputMode((GLFWwindow*)handle, GLFW_LOCK_KEY_MODS, GLFW_TRUE);
 
 	OpenGLBackend::_init_glew();
+
+	glEnable(GL_DEBUG_OUTPUT);
+	glDebugMessageCallback(error_callback, 0);
 }
 
 Window::~Window()

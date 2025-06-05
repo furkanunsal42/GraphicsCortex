@@ -7,8 +7,8 @@ Text::Text(const std::u32string& text)
 	set_text(text);
 }
 
-Text::Text(const std::string& text) :
-	Text(to_utf32(text)) {}
+//Text::Text(const std::string& text) :
+//	Text(to_utf32(text)) {}
 
 void Text::set_font(font_id font)
 {
@@ -26,10 +26,10 @@ void Text::set_text(const std::u32string& text)
 	_mesh_needs_update = true;
 }
 
-void Text::set_text(const std::string& text)
-{
-	set_text(to_utf32(text));
-}
+//void Text::set_text(const std::string& text)
+//{
+//	set_text(to_utf32(text));
+//}
 
 void Text::_update_mesh() {
 	
@@ -133,7 +133,12 @@ void Text::_update_mesh() {
 	_mesh_needs_update = false;
 }
 
-std::u32string Text::to_utf32(const std::string& string_utf8) {
-	std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> conv;
-	return conv.from_bytes(string_utf8);
+//std::u32string Text::to_utf32(const std::string& string_utf8) {
+//	std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> conv;
+//	return conv.from_bytes(string_utf8);
+//}
+
+void Text::update_default_uniforms(Program& program)
+{
+
 }

@@ -178,7 +178,7 @@ std::unique_ptr<Buffer> SingleModel::create_uv0_buffer(size_t vertex_offset_coun
 
 std::unique_ptr<Buffer> SingleModel::create_uv0_buffer(size_t vertex_offset_count) const
 {
-	return create_uv0_buffer(vertex_offset_count, 0, vertex_tangents.size());
+	return create_uv0_buffer(vertex_offset_count, 0, texture_coordinates_0.size());
 }
 
 std::unique_ptr<Buffer> SingleModel::create_uv1_buffer(size_t vertex_offset_count, size_t buffer_offset_in_bytes, size_t vertex_count) const
@@ -191,7 +191,7 @@ std::unique_ptr<Buffer> SingleModel::create_uv1_buffer(size_t vertex_offset_coun
 
 std::unique_ptr<Buffer> SingleModel::create_uv1_buffer(size_t vertex_offset_count) const
 {
-	return create_uv1_buffer(vertex_offset_count, 0, vertex_tangents.size());
+	return create_uv1_buffer(vertex_offset_count, 0, texture_coordinates_1.size());
 }
 
 // std::unique_ptr<Buffer> SingleModel::create_uv_merged_buffer(size_t vertex_offset_count, size_t buffer_offset_in_bytes, size_t vertex_count) const
