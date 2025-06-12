@@ -79,6 +79,8 @@ public:
 	double handle_events(bool print_performance = true);
 	void* get_handle();
 
+	double get_and_reset_deltatime();
+
 	// graphics context
 	void context_make_current();
 

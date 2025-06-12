@@ -406,6 +406,16 @@ double Window::handle_events(bool print_performances) {
 		}
 	}
 
+	
+	return get_and_reset_deltatime();
+
+}
+
+void* Window::get_handle() {
+	return handle;
+}
+
+double Window::get_and_reset_deltatime() {
 	double deltatime_ms;
 	if (last_handle_events_time == invalid_time) {
 		last_handle_events_time = std::chrono::system_clock::now();
@@ -417,12 +427,8 @@ double Window::handle_events(bool print_performances) {
 		deltatime_ms = std::chrono::duration_cast<std::chrono::microseconds>(deltatime).count() / 1000.0f;
 	}
 	return deltatime_ms;
-
 }
 
-void* Window::get_handle() {
-	return handle;
-}
 
 // context
 
