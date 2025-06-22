@@ -102,6 +102,8 @@ void primitive_renderer::render(
 		std::cout << "[OpenGL Error] primitive_renderer::render() is called but no attribute of given VertexAttributeBuffer is enabled" << std::endl;
 		ASSERT(false);
 	}
+	
+	render_parameters.apply();
 
 	vab.bind();
 	program.bind();
@@ -151,7 +153,8 @@ void primitive_renderer::render(
 	size_t instance_count, 
 	size_t instance_offset
 ) {
-	
+	render_parameters.apply();
+
 	program.bind();
 	vab.bind();
 
