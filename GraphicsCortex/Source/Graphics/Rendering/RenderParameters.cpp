@@ -23,9 +23,28 @@ void RenderParameters::apply() const
 		GLCall(glDisable(GL_BLEND));
 	}
 
-	GLCall(glBlendFunc(
-		blend_source_function, 
-		blend_target_function
+	(glBlendFunc(
+		blend_source_function == BlendFunction::ZERO						? GL_ZERO					: 
+		blend_source_function == BlendFunction::ONE							? GL_ONE					: 
+		blend_source_function == BlendFunction::SOURCE_COLOR			   	? GL_SRC_COLOR				: 
+		blend_source_function == BlendFunction::ONE_MINUS_SOURCE_COLOR	   	? GL_ONE_MINUS_SRC_COLOR	:	 
+		blend_source_function == BlendFunction::DESTINATION_COLOR		   	? GL_DST_COLOR				: 
+		blend_source_function == BlendFunction::ONE_MINUS_DESTINATION_COLOR	? GL_ONE_MINUS_DST_COLOR	: 
+		blend_source_function == BlendFunction::SOURCE_ALPHA			   	? GL_SRC_ALPHA				: 
+		blend_source_function == BlendFunction::ONE_MINUS_SOURCE_ALPHA	   	? GL_ONE_MINUS_SRC_ALPHA	: 
+		blend_source_function == BlendFunction::DESTINATION_ALPHA		   	? GL_DST_ALPHA				: 
+		blend_source_function == BlendFunction::ONE_MINUS_DESTINATION_ALPHA	? GL_ONE_MINUS_DST_ALPHA	: GL_ZERO,
+		
+		blend_target_function == BlendFunction::ZERO						? GL_ZERO					: 
+		blend_target_function == BlendFunction::ONE							? GL_ONE					: 
+		blend_target_function == BlendFunction::SOURCE_COLOR			   	? GL_SRC_COLOR				: 
+		blend_target_function == BlendFunction::ONE_MINUS_SOURCE_COLOR	   	? GL_ONE_MINUS_SRC_COLOR	:	 
+		blend_target_function == BlendFunction::DESTINATION_COLOR		   	? GL_DST_COLOR				: 
+		blend_target_function == BlendFunction::ONE_MINUS_DESTINATION_COLOR	? GL_ONE_MINUS_DST_COLOR	: 
+		blend_target_function == BlendFunction::SOURCE_ALPHA			   	? GL_SRC_ALPHA				: 
+		blend_target_function == BlendFunction::ONE_MINUS_SOURCE_ALPHA	   	? GL_ONE_MINUS_SRC_ALPHA	: 
+		blend_target_function == BlendFunction::DESTINATION_ALPHA		   	? GL_DST_ALPHA				: 
+		blend_target_function == BlendFunction::ONE_MINUS_DESTINATION_ALPHA	? GL_ONE_MINUS_DST_ALPHA	: GL_ZERO
 	));
 
 	for (int32_t i = 0; i < maximum_clip_plane_count; i++) {
@@ -46,9 +65,9 @@ void RenderParameters::apply() const
 	}
 
 	GLCall(glCullFace(
-		cull_face_direction == BACK ? GL_BACK :
-		cull_face_direction == FRONT ? GL_FRONT :
-		cull_face_direction == FRONT_AND_BACK ? GL_FRONT_AND_BACK : GL_BACK
+		cull_face_direction == CullDirection::BACK ? GL_BACK :
+		cull_face_direction == CullDirection::FRONT ? GL_FRONT :
+		cull_face_direction == CullDirection::FRONT_AND_BACK ? GL_FRONT_AND_BACK : GL_BACK
 	));
 
 	if (depth_test) {
@@ -115,44 +134,44 @@ void RenderParameters::apply() const
 	}
 
 	GLCall(glStencilFunc(
-		stencil_function == NEVER		? GL_NEVER		:
-		stencil_function == LESS		? GL_LESS		:
-		stencil_function == LEQUAL		? GL_LEQUAL		:
-		stencil_function == GREATER		? GL_GREATER	:
-		stencil_function == GEQUAL		? GL_GEQUAL		:
-		stencil_function == EQUAL		? GL_EQUAL		:
-		stencil_function == NOTEQUAL	? GL_NOTEQUAL	:
-		stencil_function == ALWAYS		? GL_ALWAYS		: GL_NEVER,
+		stencil_function == StencilFunction::NEVER		? GL_NEVER		:
+		stencil_function == StencilFunction::LESS		? GL_LESS		:
+		stencil_function == StencilFunction::LEQUAL		? GL_LEQUAL		:
+		stencil_function == StencilFunction::GREATER	? GL_GREATER	:
+		stencil_function == StencilFunction::GEQUAL		? GL_GEQUAL		:
+		stencil_function == StencilFunction::EQUAL		? GL_EQUAL		:
+		stencil_function == StencilFunction::NOTEQUAL	? GL_NOTEQUAL	:
+		stencil_function == StencilFunction::ALWAYS		? GL_ALWAYS		: GL_NEVER,
 		stencil_referance,
 		stencil_mask
 		));
 
 	GLCall(glStencilOp(
-		stencil_operation_on_stencil_fail == KEEP			? GL_KEEP		:
-		stencil_operation_on_stencil_fail == ZERO			? GL_ZERO		:
-		stencil_operation_on_stencil_fail == REPLACE		? GL_REPLACE	:
-		stencil_operation_on_stencil_fail == INCR			? GL_INCR		:
-		stencil_operation_on_stencil_fail == INCR_WRAP		? GL_INCR_WRAP	:
-		stencil_operation_on_stencil_fail == DECR			? GL_DECR		:
-		stencil_operation_on_stencil_fail == DECR_WRAP		? GL_DECR_WRAP	:
-		stencil_operation_on_stencil_fail == INVERT			? GL_INVERT		: GL_KEEP,
+		stencil_operation_on_stencil_fail == StencilOperation::KEEP			? GL_KEEP		:
+		stencil_operation_on_stencil_fail == StencilOperation::ZERO			? GL_ZERO		:
+		stencil_operation_on_stencil_fail == StencilOperation::REPLACE		? GL_REPLACE	:
+		stencil_operation_on_stencil_fail == StencilOperation::INCR			? GL_INCR		:
+		stencil_operation_on_stencil_fail == StencilOperation::INCR_WRAP	? GL_INCR_WRAP	:
+		stencil_operation_on_stencil_fail == StencilOperation::DECR			? GL_DECR		:
+		stencil_operation_on_stencil_fail == StencilOperation::DECR_WRAP	? GL_DECR_WRAP	:
+		stencil_operation_on_stencil_fail == StencilOperation::INVERT		? GL_INVERT		: GL_KEEP,
 
-		stencil_operation_on_depth_fail == KEEP				? GL_KEEP		:
-		stencil_operation_on_depth_fail == ZERO				? GL_ZERO		:
-		stencil_operation_on_depth_fail == REPLACE			? GL_REPLACE	:
-		stencil_operation_on_depth_fail == INCR				? GL_INCR		:
-		stencil_operation_on_depth_fail == INCR_WRAP		? GL_INCR_WRAP	:
-		stencil_operation_on_depth_fail == DECR				? GL_DECR		:
-		stencil_operation_on_depth_fail == DECR_WRAP		? GL_DECR_WRAP	:
-		stencil_operation_on_depth_fail == INVERT			? GL_INVERT		: GL_KEEP,
+		stencil_operation_on_depth_fail == StencilOperation::KEEP			? GL_KEEP		:
+		stencil_operation_on_depth_fail == StencilOperation::ZERO			? GL_ZERO		:
+		stencil_operation_on_depth_fail == StencilOperation::REPLACE		? GL_REPLACE	:
+		stencil_operation_on_depth_fail == StencilOperation::INCR			? GL_INCR		:
+		stencil_operation_on_depth_fail == StencilOperation::INCR_WRAP		? GL_INCR_WRAP	:
+		stencil_operation_on_depth_fail == StencilOperation::DECR			? GL_DECR		:
+		stencil_operation_on_depth_fail == StencilOperation::DECR_WRAP		? GL_DECR_WRAP	:
+		stencil_operation_on_depth_fail == StencilOperation::INVERT			? GL_INVERT		: GL_KEEP,
 
-		stencil_operation_on_pass == KEEP					? GL_KEEP		:
-		stencil_operation_on_pass == ZERO					? GL_ZERO		:
-		stencil_operation_on_pass == REPLACE				? GL_REPLACE	:
-		stencil_operation_on_pass == INCR					? GL_INCR		:
-		stencil_operation_on_pass == INCR_WRAP				? GL_INCR_WRAP	:
-		stencil_operation_on_pass == DECR					? GL_DECR		:
-		stencil_operation_on_pass == DECR_WRAP				? GL_DECR_WRAP	:
-		stencil_operation_on_pass == INVERT					? GL_INVERT		: GL_KEEP
+		stencil_operation_on_pass == StencilOperation::KEEP					? GL_KEEP		:
+		stencil_operation_on_pass == StencilOperation::ZERO					? GL_ZERO		:
+		stencil_operation_on_pass == StencilOperation::REPLACE				? GL_REPLACE	:
+		stencil_operation_on_pass == StencilOperation::INCR					? GL_INCR		:
+		stencil_operation_on_pass == StencilOperation::INCR_WRAP			? GL_INCR_WRAP	:
+		stencil_operation_on_pass == StencilOperation::DECR					? GL_DECR		:
+		stencil_operation_on_pass == StencilOperation::DECR_WRAP			? GL_DECR_WRAP	:
+		stencil_operation_on_pass == StencilOperation::INVERT				? GL_INVERT		: GL_KEEP
 	));
 }
