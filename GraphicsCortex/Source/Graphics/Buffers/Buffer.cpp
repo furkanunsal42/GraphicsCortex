@@ -248,7 +248,6 @@ void Buffer::map(size_t offset_in_bytes, size_t size_in_bytes, MapInfo map_descr
 	if (_map_description.direction == MapInfo::Bothways || _map_description.direction == MapInfo::Download) flag |= GL_MAP_READ_BIT;
 
 	size_t map_size = std::min(_buffer_size - offset_in_bytes, size_in_bytes);
-	std::cout << offset_in_bytes << " " << map_size << " " << flag << std::endl;
 	GLCall(_buffer_data = (char*)glMapNamedBufferRange(id, offset_in_bytes, map_size, flag));
 	_mapped_pointer_size = map_size;
 }

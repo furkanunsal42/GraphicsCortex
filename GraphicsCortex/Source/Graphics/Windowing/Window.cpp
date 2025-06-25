@@ -74,6 +74,7 @@ Window::Window(glm::ivec2 window_resolution, const std::string& window_name, Gra
 Window::Window(void* context)
 {
 	this->handle = context;
+    OpenGLBackend::_init_glew();
 }
 
 std::shared_ptr<Window> Window::create_from_current()
@@ -95,9 +96,9 @@ namespace {
 		const GLchar* message,
 		const void* userParam
 	) {
-		fprintf(stderr, "GL CALLBACK: %s type = 0x%x, severity = 0x%x, message = %s\n",
-			(type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : ""),
-			type, severity, message);
+		//fprintf(stderr, "GL CALLBACK: %s type = 0x%x, severity = 0x%x, message = %s\n",
+		//	(type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : ""),
+		//	type, severity, message);
 	}
 }
 
@@ -406,16 +407,15 @@ double Window::handle_events(bool print_performances) {
 		}
 	}
 
-	
 	return get_and_reset_deltatime();
-
 }
 
 void* Window::get_handle() {
 	return handle;
 }
 
-double Window::get_and_reset_deltatime() {
+double Window::get_and_reset_deltatime()
+{
 	double deltatime_ms;
 	if (last_handle_events_time == invalid_time) {
 		last_handle_events_time = std::chrono::system_clock::now();
@@ -428,7 +428,6 @@ double Window::get_and_reset_deltatime() {
 	}
 	return deltatime_ms;
 }
-
 
 // context
 

@@ -31,6 +31,12 @@ public:
 	~ComputeProgram();
 	void release();
 
+	void clear_preprocessor();
+	void set_preprocessor(const std::string& key, const std::string& value);
+	void set_preprocessor(const std::vector<std::pair<std::string, std::string>>& preprocessing_key_values);
+	std::string get_preprocessor(const std::string& key);
+	void compile_shader(const Shader& shader);
+
 	void dispatch(int workgroup_size_x, int workgroup_size_y, int workgroup_size_z);
 	void dispatch_thread(int thread_count_x, int thread_count_y, int thread_count_z);
 	void dispatch_without_barrier(int workgroup_size_x, int workgroup_size_y, int workgroup_size_z);
@@ -39,12 +45,6 @@ public:
 
 	void bind();
 	void unbind();
-
-	void clear_preprocessor();
-	void set_preprocessor(const std::string& key, const std::string& value);
-	void set_preprocessor(const std::vector<std::pair<std::string, std::string>>& preprocessing_key_values);
-	std::string get_preprocessor(const std::string& key);
-	void compile_shader(const Shader& shader);
 	
 	glm::ivec3 get_work_group_size();
 

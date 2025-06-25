@@ -29,8 +29,8 @@ public:
 	float fov = 45.0f;
 	float min_distance = 0.1f;
 	float max_distance = 100.0f;
-	float screen_width;
-	float screen_height;
+	float screen_width = 1;
+	float screen_height = 1;
 	float movement_speed = 0.0025f;
 	float mouse_sensitivity = 0.1;
 	bool mouse_focus = false;

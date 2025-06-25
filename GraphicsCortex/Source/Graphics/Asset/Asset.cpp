@@ -122,6 +122,7 @@ namespace {
         size_t primitive_count = scene->mMeshes[submodel_index]->mNumFaces;
 
         PrimitiveType primitive_type = triangle;
+
         switch (scene->mMeshes[submodel_index]->mPrimitiveTypes) {
         case aiPrimitiveType::aiPrimitiveType_POINT:    primitive_type = point; break;
         case aiPrimitiveType::aiPrimitiveType_LINE:     primitive_type = line; break;

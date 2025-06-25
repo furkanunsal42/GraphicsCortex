@@ -57,7 +57,8 @@ void Framebuffer::release()
 
 void Framebuffer::bind_read_draw()
 {
-	_check_framebuffer_status(GL_FRAMEBUFFER);
+    if (!is_screen())
+        _check_framebuffer_status(GL_FRAMEBUFFER);
 
 	if (!framebuffer_generated) {
 		std::cout << "[OpenGL Error] Framebuffer tried to bind_read_draw() but resource was released" << std::endl;
@@ -81,7 +82,8 @@ void Framebuffer::bind_read()
 
 void Framebuffer::bind_draw()
 {
-	_check_framebuffer_status(GL_DRAW_FRAMEBUFFER);
+    if (!is_screen())
+        _check_framebuffer_status(GL_DRAW_FRAMEBUFFER);
 
 	if (!framebuffer_generated) {
 		std::cout << "[OpenGL Error] Framebuffer tried to bind_draw() but resource was released" << std::endl;
