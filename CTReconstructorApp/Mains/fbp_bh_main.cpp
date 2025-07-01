@@ -18,10 +18,17 @@ int main() {
 	int slice_index_number_length = 6;
 	std::string reconstruction_path = "reconstruction";
 
-	Frame frame(window_width, window_width, "CTReconstructor", 0, 0, true, true, false, Frame::CallbackLevel::DISABLED, false);
-	Scene scene(frame);
-	scene.camera->fov = 90;
-	scene.camera->max_distance = 1000;
+	WindowDescription desc;
+	desc.w_resolution = glm::ivec2(window_width);
+	desc.w_name = "CTReconstructor";
+	desc.w_scale_framebuffer_size = false;
+	desc.w_scale_window_size = false;
+	
+	Window window(desc);
+
+	//Scene scene(frame);
+	//scene.camera->fov = 90;
+	//scene.camera->max_distance = 1000;
 
 	int floating_point_precision = 16;
 	std::vector<std::pair<std::string, std::string>> fbp_shader_defines_to_use =
@@ -56,7 +63,7 @@ int main() {
 	std::shared_ptr<Texture1D> max_texture = std::make_shared<Texture1D>(1, solver->histogram_int_texture_internal_format, 1, 0);
 	max_texture->is_bindless = false;
 
-	solver->read_projections("C:/Users/FurkanPC/Desktop/Projektionen", 2048, 2048, 1, 2, volume_dimentions.x, volume_dimentions.y, projection_count);
+	solver->read_projections("C:/Users/furkan.unsal/Desktop/Projektionen", 2048, 2048, 1, 2, volume_dimentions.x, volume_dimentions.y, projection_count);
 
 	fbp_segmented_memory::iterate_horizontal_projection_segments(*solver, false, true, [&](glm::ivec3 projection_segment_index) {
 		solver->log_normalize_projections(95.0 / 255);
@@ -84,7 +91,7 @@ int main() {
 		//solver->normalize_histogram(*min_texture, *max_texture);
 		});
 
-	solver->generate_blank_distanced_projections(volume_dimentions.x, volume_dimentions.y, volume_dimentions.y/*projection_count*/);
+	solver->generate_blank_distanced_projections(volume_dimentions.x, volume_dimentions.y, volume_dimentions.y/*projection_count*/, 2);
 	solver->bh_project_forward_parallel_to_distanced_projections({ 2, 15 }, 1, volume_dimentions.y/*projection_count*/, 0);
 
 	ReconstructionInfo info;
@@ -106,21 +113,20 @@ int main() {
 
 	std::shared_ptr<Framebuffer> framebuffer = std::make_shared<Framebuffer>();
 
-	frame.set_visibility(true);
+	//frame.set_visibility(true);
 	while (true) {
 		fbp_segmented_memory::iterate_horizontal_volume_segments(*solver, false, false, [&](glm::ivec3 volume_segment_index) {
 
 			int segment_height = solver->get_volume_max_segment_size().y;
 			for (int slice_id = volume_segment_index.y * segment_height; slice_id < (volume_segment_index.y + 1) * segment_height; slice_id++) {
-				if (!frame.is_running()) exit(0);
-				double delta_time = frame.handle_window();
-				frame.clear_window();
-				frame.display_performance(180);
+				if (window.should_close()) exit(0);
+				double delta_time = window.handle_events(true);
+				primitive_renderer::clear();
 
 				//solver->load_volume_slice_y(slice_id, *slice);
 				//solver->load_projection(slice_id, *slice);
 				//solver->load_sinogram(slice_id, *slice);
-				solver->load_distanced_projection(slice_id, *slice_distanced);
+				solver->load_distanced_projection(slice_id, 0, *slice_distanced);
 
 				//solver->fbp_solver->_texture_blit_float1_to_float4(*slice, *slice_white);
 

@@ -814,6 +814,31 @@ void Texture1D::clear(unsigned char clear_data, int mipmap_target)
 	clear(clear_data, 0, width, mipmap_target);
 }
 
+void Texture1D::clear(uint16_t clear_data, int mipmap_target)
+{
+	clear(clear_data, 0, width, mipmap_target);
+}
+
+void Texture1D::clear(uint32_t clear_data, int mipmap_target)
+{
+	clear(clear_data, 0, width, mipmap_target);
+}
+
+void Texture1D::clear(char clear_data, int mipmap_target)
+{
+	clear(clear_data, 0, width, mipmap_target);
+}
+
+void Texture1D::clear(int16_t clear_data, int mipmap_target)
+{
+	clear(clear_data, 0, width, mipmap_target);
+}
+
+void Texture1D::clear(int32_t clear_data, int mipmap_target)
+{
+	clear(clear_data, 0, width, mipmap_target);
+}
+
 void Texture1D::clear(float clear_data, int mipmap_target)
 {
 	clear(clear_data, 0, width, mipmap_target);
@@ -844,6 +869,67 @@ void Texture1D::clear(unsigned char clear_data, int x, int width, int mipmap_tar
 		type = GL_RED_INTEGER;
 
 	GLCall(glClearTexSubImage(id, mipmap_target, x, 0, 0, width, 1, 1, type, GL_UNSIGNED_BYTE, &clear_data));
+}
+
+void Texture1D::clear(uint16_t clear_data, int x, int width, int mipmap_target)
+{
+	if (!_texture_allocated)
+		_allocate_texture();
+
+	uint32_t type = GL_RED;
+	if (is_intager_ColorTextureFormat(get_internal_format_color()) || is_unsigned_intager_ColorTextureFormat(get_internal_format_color()))
+		type = GL_RED_INTEGER;
+
+	GLCall(glClearTexSubImage(id, mipmap_target, x, 0, 0, width, 1, 1, type, GL_UNSIGNED_SHORT, &clear_data));
+}
+
+void Texture1D::clear(uint32_t clear_data, int x, int width, int mipmap_target)
+{
+	if (!_texture_allocated)
+		_allocate_texture();
+
+	uint32_t type = GL_RED;
+	if (is_intager_ColorTextureFormat(get_internal_format_color()) || is_unsigned_intager_ColorTextureFormat(get_internal_format_color()))
+		type = GL_RED_INTEGER;
+
+	GLCall(glClearTexSubImage(id, mipmap_target, x, 0, 0, width, 1, 1, type, GL_UNSIGNED_INT, &clear_data));
+}
+
+void Texture1D::clear(char clear_data, int x, int width, int mipmap_target)
+{
+	if (!_texture_allocated)
+		_allocate_texture();
+
+	uint32_t type = GL_RED;
+	if (is_intager_ColorTextureFormat(get_internal_format_color()) || is_unsigned_intager_ColorTextureFormat(get_internal_format_color()))
+		type = GL_RED_INTEGER;
+
+	GLCall(glClearTexSubImage(id, mipmap_target, x, 0, 0, width, 1, 1, type, GL_BYTE, &clear_data));
+
+}
+
+void Texture1D::clear(int16_t clear_data, int x, int width, int mipmap_target)
+{
+	if (!_texture_allocated)
+		_allocate_texture();
+
+	uint32_t type = GL_RED;
+	if (is_intager_ColorTextureFormat(get_internal_format_color()) || is_unsigned_intager_ColorTextureFormat(get_internal_format_color()))
+		type = GL_RED_INTEGER;
+
+	GLCall(glClearTexSubImage(id, mipmap_target, x, 0, 0, width, 1, 1, type, GL_SHORT, &clear_data));
+}
+
+void Texture1D::clear(int32_t clear_data, int x, int width, int mipmap_target)
+{
+	if (!_texture_allocated)
+		_allocate_texture();
+
+	uint32_t type = GL_RED;
+	if (is_intager_ColorTextureFormat(get_internal_format_color()) || is_unsigned_intager_ColorTextureFormat(get_internal_format_color()))
+		type = GL_RED_INTEGER;
+
+	GLCall(glClearTexSubImage(id, mipmap_target, x, 0, 0, width, 1, 1, type, GL_INT, &clear_data));
 }
 
 void Texture1D::clear(float clear_data, int x, int width, int mipmap_target)

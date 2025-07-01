@@ -4,112 +4,158 @@
 #include "Application/ProgramSourcePaths.h"
 #include "Application/ReconstructionInfo.h"
 #include "DirectoryUtils.h"
+#include "FileParser/ParameterParser.h"
+
+#include <limits>
 
 using namespace shader_directory;
 
-
 int main() {
 
-	glm::ivec3 volume_dimentions(512, 512, 512);
-	glm::vec3 voxel_size(200.0f / volume_dimentions.x, 200.0f / volume_dimentions.y, 200.0f / volume_dimentions.z);
-	int projection_count = 1440;
-	int window_width = 1024;
+	ParameterParser parser;
 
+	parser.parse("C:/Users/furkan.unsal/Desktop/deneme_21_03_2023.txt");
+	std::filesystem::path source_projections_path = "C:/Users/furkan.unsal/Desktop/Projektionen";
+
+	glm::ivec2 projections_resolution = glm::ivec2(parser.query<int32_t>(ParameterParser::input_projection_resolution));
+	int32_t projection_count = parser.query<float>(ParameterParser::input_projection_count);
+	int32_t projections_channel_count = 1;
+	int32_t projections_byte_per_channel = 2;
+	glm::vec2 volume_dimensitons = 
+		glm::ivec2(
+			parser.query<int32_t>(ParameterParser::volume_width),
+			parser.query<int32_t>(ParameterParser::volume_height)
+		);
+	float xray_source_distance = parser.query<float>(ParameterParser::xray_distance);
+	float detector_plane_distance = parser.query<float>(ParameterParser::detector_plane_distance);
+	float detector_width = parser.query<float>(ParameterParser::detector_plane_width);
+
+	//glm::ivec2 projections_resolution = glm::ivec2(2048);
+	//int32_t projections_channel_count = 1;
+	//int32_t projections_byte_per_channel = 2;
+	//glm::vec2 volume_dimensitons = glm::vec2(213.84f, 213.84f);
+	//float xray_source_distance = 730.87f;
+	//float detector_panel_distance = 669.04f;
+	//float detector_width = 409.60f;
+	//int projection_count = 1440;
+	
 	int slice_index_number_length = 6;
 	std::string reconstruction_path = "reconstruction";
-
-	Frame frame(window_width, window_width, "CTReconstructor", 0, 0, true, true, false, Frame::CallbackLevel::DISABLED, false);
-	Scene scene(frame);
-	scene.camera->fov = 90;
-	scene.camera->max_distance = 1000;
-
-	int floating_point_precision = 16;
-	std::vector<std::pair<std::string, std::string>> fbp_shader_defines_to_use =
-		floating_point_precision == 16 ? _fbp_shader_defines_f16 : _fbp_shader_defines_f32;
-
-	std::vector<std::pair<std::string, std::string>> ffft_shader_defines_to_use =
-		floating_point_precision == 16 ? _ffft_shader_defines_f16 : _ffft_shader_defines_f32;
-
-	Texture2D::ColorTextureFormat fbp_volume_format_to_use = floating_point_precision == 16 ? Texture2D::ColorTextureFormat::R16F : Texture2D::ColorTextureFormat::R32F;
-	Texture2D::ColorTextureFormat fbp_projection_format_to_use = floating_point_precision == 16 ? Texture2D::ColorTextureFormat::R16F : Texture2D::ColorTextureFormat::R32F;
-	Texture2D::ColorTextureFormat fbp_projection_complex_format_to_use = floating_point_precision == 16 ? Texture2D::ColorTextureFormat::RG16F : Texture2D::ColorTextureFormat::RG32F;
+	glm::ivec3 volume_resolution(1024, 1024, 1024);
+	int window_width = 1024;
 
 	fbp_shader_directory = "../CTReconstructor/Source/GLSL/Compute/FBP/";
 	ffft_shader_directory = "../CTReconstructor/Source/GLSL/Compute/FFT/";
 	util_shader_directory = "../CTReconstructor/Source/GLSL/Compute/Util/";
 
-	std::shared_ptr<FBP3D> solver = std::make_shared<FBP3D>(fbp_shader_defines_to_use, ffft_shader_defines_to_use);
-	solver->set_projections_max_segment_size(glm::ivec3(volume_dimentions.x, volume_dimentions.y / 1, projection_count));
-	solver->set_volume_max_segment_size(glm::ivec3(volume_dimentions.x, volume_dimentions.y / 1, volume_dimentions.z));
+	WindowDescription desc;
+	desc.w_resolution = glm::ivec2(window_width);
+	desc.w_name = "CTReconstructor";
+	desc.w_scale_framebuffer_size = false;
+	desc.w_scale_window_size = false;
+	desc.w_visible = false;
 
-	solver->set_volume_format(fbp_volume_format_to_use);
-	solver->set_projection_format(fbp_projection_format_to_use);
-	solver->set_projection_complex_format(fbp_projection_complex_format_to_use);
+	Window window(desc);
+
+	std::shared_ptr<FBP3D> solver = std::make_shared<FBP3D>(
+		FBP3D::FloatingPointPrecision::fp16,
+		glm::ivec3(volume_resolution.x, volume_resolution.y / 1, projection_count),
+		glm::ivec3(volume_resolution.x, volume_resolution.y / 1, volume_resolution.z)
+	);
 
 	solver->set_display_progress(true, 128);
 
-	std::shared_ptr<Texture1D> min_texture = std::make_shared<Texture1D>(1, solver->histogram_int_texture_internal_format, 1, 0);
-	min_texture->is_bindless = false;
-	std::shared_ptr<Texture1D> max_texture = std::make_shared<Texture1D>(1, solver->histogram_int_texture_internal_format, 1, 0);
-	max_texture->is_bindless = false;
-	
-	solver->read_projections("C:/Users/FurkanPC/Desktop/Projektionen", 2048, 2048, 1, 2, volume_dimentions.x, volume_dimentions.y, projection_count);
+	std::shared_ptr<Texture1D> volume_min_texture = std::make_shared<Texture1D>(1, solver->histogram_int_texture_internal_format, 1, 0);
+	std::shared_ptr<Texture1D> volume_max_texture = std::make_shared<Texture1D>(1, solver->histogram_int_texture_internal_format, 1, 0);
+	std::shared_ptr<Texture1D> projections_min_texture = std::make_shared<Texture1D>(1, solver->histogram_int_texture_internal_format, 1, 0);
+	std::shared_ptr<Texture1D> projections_max_texture = std::make_shared<Texture1D>(1, solver->histogram_int_texture_internal_format, 1, 0);
+
+	volume_min_texture->clear(std::numeric_limits<int32_t>::max());
+	volume_max_texture->clear(std::numeric_limits<int32_t>::min());
+	projections_min_texture->clear(std::numeric_limits<int32_t>::max());
+	projections_max_texture->clear(std::numeric_limits<int32_t>::min());
+
+	solver->read_projections(
+		source_projections_path.string(),
+		projections_resolution.x, projections_resolution.y,
+		projections_channel_count,
+		projections_byte_per_channel,
+		volume_resolution.x, volume_resolution.y,
+		projection_count
+	);
 
 	fbp_segmented_memory::iterate_horizontal_projection_segments(*solver, false, true, [&](glm::ivec3 projection_segment_index) {
-		solver->log_normalize_projections(95.0 / 255);
-		solver->apply_fdk_weights_to_projections(730.87f, 669.04f, 409.60f);
+		solver->compute_min_value_of_projections(*projections_min_texture);
+		solver->compute_max_value_of_projections(*projections_max_texture);
+		});
+
+	float projections_min_value;
+	float projections_max_value;
+	{
+		int32_t sensitivity = 256 * 256 * 256;
+		auto projections_min_image = projections_min_texture->get_image(Texture1D::ColorFormat::RED_INTEGER, Texture1D::Type::INT, 0);
+		projections_min_value = *(int32_t*)projections_min_image->get_image_data() / (float)sensitivity;
+
+		auto projections_max_image = projections_max_texture->get_image(Texture1D::ColorFormat::RED_INTEGER, Texture1D::Type::INT, 0);
+		projections_max_value = *(int32_t*)projections_max_image->get_image_data() / (float)sensitivity;
+	}
+
+	fbp_segmented_memory::iterate_horizontal_projection_segments(*solver, false, false, [&](glm::ivec3 projection_segment_index) {
+		solver->log_normalize_projections(projections_max_value);
+		solver->apply_fdk_weights_to_projections(xray_source_distance, detector_plane_distance, detector_width);
 		solver->apply_filter_to_projections(FBP2D::FilterType::RAM_LAK);
 		});
 
-	solver->generate_blank_volume(volume_dimentions.x, volume_dimentions.y, volume_dimentions.y);
-
+	solver->generate_blank_volume(volume_resolution.x, volume_resolution.y, volume_resolution.y);
+	
 	fbp_segmented_memory::iterate_horizontal_projection_segments(*solver, true, false, [&](glm::ivec3 projection_index) {
 		fbp_segmented_memory::iterate_horizontal_volume_segments_per_projection(*solver, projection_index.y, [&](glm::ivec3 volume_segment_index) {
 			if (solver->get_volume_segment_count() == glm::ivec3(1, 1, 1))
 				solver->projections_clear_ram();
-			solver->project_backward_cone_fdk_from_projections_matrix(730.87f, 669.04f, 409.60f, 213.84f, 213.84f, 1, volume_dimentions.x, volume_dimentions.y, 0);
-			solver->compute_min_value_of_volume(*min_texture);
-			solver->compute_max_value_of_volume(*max_texture);
+			solver->project_backward_cone_fdk_from_projections_matrix(xray_source_distance, detector_plane_distance, detector_width, volume_dimensitons.x, volume_dimensitons.y, 1, volume_resolution.x, volume_resolution.y, 0);
 			});
 		});
-
+	
 	solver->projections_clear_ram();
 	solver->projections_clear_vram();
-
+	
 	fbp_segmented_memory::iterate_horizontal_volume_segments(*solver, false, false, [&](glm::ivec3 volume_segment_index) {
 		solver->clip_negatives_of_volume();
-		solver->normalize_histogram(*min_texture, *max_texture);
+		solver->compute_min_value_of_volume(*volume_min_texture);
+		solver->compute_max_value_of_volume(*volume_max_texture);
 		});
 	
+	fbp_segmented_memory::iterate_horizontal_volume_segments(*solver, false, false, [&](glm::ivec3 volume_segment_index) {
+		solver->normalize_min_max_values_of_volume(*volume_min_texture, *volume_max_texture);
+		});
+
 	ReconstructionInfo info;
 	info.name = compute_filename(reconstruction_path);
-	info.volume_resolution = volume_dimentions;
-	info.voxel_size_mm = voxel_size;
-	info.save_to_disc(reconstruction_path);
+	info.volume_resolution = volume_resolution;
+	info.voxel_size_mm = glm::vec3(volume_dimensitons.x, volume_dimensitons.y, volume_dimensitons.x) / glm::vec3(volume_resolution);
 
+	info.save_to_disc(reconstruction_path);
+	
 	//solver->project_forward_parallel(1, projection_count, 0);
 
-	std::shared_ptr<Texture2D> slice = std::make_shared<Texture2D>(volume_dimentions.x, volume_dimentions.z, solver->get_volume_format(), 1, 0, 0);
-	slice->is_bindless = false;
-	std::shared_ptr<Texture2D> slice_complex = std::make_shared<Texture2D>(volume_dimentions.x, volume_dimentions.z, solver->get_projection_complex_format(), 1, 0, 0);
-	slice_complex->is_bindless = false;
-	std::shared_ptr<Texture2D> slice_white = std::make_shared<Texture2D>(volume_dimentions.x, volume_dimentions.z, Texture2D::ColorTextureFormat::RGBA32F, 1, 0, 0);
-	slice_white->is_bindless = false;
+	std::shared_ptr<Texture2D> slice = std::make_shared<Texture2D>(volume_resolution.x, volume_resolution.z, solver->get_volume_format(), 1, 0, 0);
+	std::shared_ptr<Texture2D> slice_complex = std::make_shared<Texture2D>(volume_resolution.x, volume_resolution.z, solver->get_projection_complex_format(), 1, 0, 0);
+	std::shared_ptr<Texture2D> slice_white = std::make_shared<Texture2D>(volume_resolution.x, volume_resolution.z, Texture2D::ColorTextureFormat::RGBA32F, 1, 0, 0);
 
 	std::shared_ptr<Framebuffer> framebuffer = std::make_shared<Framebuffer>();
 
-	frame.set_visibility(true);
+	window.set_window_visibility(true);
+
 	while (true) {
 		fbp_segmented_memory::iterate_horizontal_volume_segments(*solver, false, false, [&](glm::ivec3 volume_segment_index) {
 		
 			int segment_height = solver->get_volume_max_segment_size().y;
-			for (int slice_id = volume_segment_index.y * segment_height; slice_id < (volume_segment_index.y + 1) * segment_height; slice_id++) {
-				if (!frame.is_running()) exit(0);
-				double delta_time = frame.handle_window();
-				frame.clear_window();
-				frame.display_performance(180);
+			for (int projection_id = volume_segment_index.y * segment_height; projection_id < (volume_segment_index.y + 1) * segment_height; projection_id++) {
+				if (window.should_close()) exit(0);
+				double delta_time = window.handle_events(true);
+				primitive_renderer::clear(0, 0, 0, 1);
 
-				solver->load_volume_slice_y(slice_id, *slice);
+				solver->load_volume_slice_y(projection_id, *slice);
 				//solver->load_projection(slice_id, *slice);
 				//solver->load_sinogram(slice_id, *slice);
 
@@ -117,8 +163,10 @@ int main() {
 
 				framebuffer->attach_color(0, slice_white);
 				framebuffer->set_read_buffer(0);
-				framebuffer->blit_to_screen(0, 0, volume_dimentions.x, volume_dimentions.z, 0, 0, window_width, window_width, Framebuffer::Channel::COLOR, Framebuffer::Filter::LINEAR);
-				std::this_thread::sleep_for(std::chrono::milliseconds(16));
+				framebuffer->blit_to_screen(0, 0, volume_resolution.x, volume_resolution.z, 0, 0, window_width, window_width, Framebuffer::Channel::COLOR, Framebuffer::Filter::LINEAR);
+
+				window.swap_buffers();
+				std::this_thread::sleep_for(std::chrono::milliseconds(8));
 			}
 			});
 	}
