@@ -14,21 +14,53 @@ int main() {
 
 	ParameterParser parser;
 
-	parser.parse("C:/Users/furkan.unsal/Desktop/deneme_21_03_2023.txt");
-	std::filesystem::path source_projections_path = "C:/Users/furkan.unsal/Desktop/Projektionen";
+	// pipe
+	//std::filesystem::path source_projections_path = "C:/Users/furkan.unsal/Desktop/Data2/projektion";
+	//if (!parser.parse("C:/Users/furkan.unsal/Desktop/Data2/rekonstruktion.ini", true)) {
+	//	std::cout << "[CTAnalyzer Error] parsing failed" << std::endl;
+	//	ASSERT(false);
+	//}
+	//std::filesystem::path reconstruction_path = "C:/Users/furkan.unsal/Desktop/CTReconstruction1";
 
-	glm::ivec2 projections_resolution = glm::ivec2(parser.query<int32_t>(ParameterParser::input_projection_resolution));
-	int32_t projection_count = parser.query<float>(ParameterParser::input_projection_count);
-	int32_t projections_channel_count = 1;
-	int32_t projections_byte_per_channel = 2;
-	glm::vec2 volume_dimensitons = 
-		glm::ivec2(
-			parser.query<int32_t>(ParameterParser::volume_width),
-			parser.query<int32_t>(ParameterParser::volume_height)
-		);
-	float xray_source_distance = parser.query<float>(ParameterParser::xray_distance);
-	float detector_plane_distance = parser.query<float>(ParameterParser::detector_plane_distance);
-	float detector_width = parser.query<float>(ParameterParser::detector_plane_width);
+	// pen
+	//std::filesystem::path source_projections_path = "C:/Users/furkan.unsal/Desktop/Data3/[vg-data]20240802111906.478/projektion";
+	//if (!parser.parse("C:/Users/furkan.unsal/Desktop/Data3/[vg-data]20240802111906.478/rekonstruktion.ini", true)) {
+	//	std::cout << "[CTAnalyzer Error] parsing failed" << std::endl;
+	//	ASSERT(false);
+	//}
+	//std::filesystem::path reconstruction_path = "C:/Users/furkan.unsal/Desktop/CTReconstruction2";
+
+	// sage
+	parser.parse("C:/Users/furkan.unsal/Desktop/deneme_21_03_2023.txt", true);
+	std::filesystem::path source_projections_path = "C:/Users/furkan.unsal/Desktop/Projektionen";
+	std::filesystem::path reconstruction_path = "C:/Users/furkan.unsal/Desktop/CTReconstruction3";
+
+	bool save = true;
+	glm::ivec3 volume_resolution(1024);
+	int window_width = 1024;
+	int slice_index_number_length = 6;
+
+	glm::ivec2 projections_resolution		= glm::ivec2(parser.query<int32_t>(ParameterParser::input_projection_resolution));
+	int32_t projection_count				= parser.query<float>(ParameterParser::input_projection_count);
+	int32_t projections_channel_count		= 1;
+	int32_t projections_byte_per_channel	= 2;
+	
+	FBP3D::ReconstructionGeometry_Conebeam geometry;
+	geometry.volume_width					= parser.query<int32_t>(ParameterParser::volume_width);
+	geometry.volume_height					= parser.query<int32_t>(ParameterParser::volume_height);
+	geometry.xray_source_distance			= parser.query<float>(	ParameterParser::xray_distance);
+	geometry.detector_plane_distance		= parser.query<float>(	ParameterParser::detector_plane_distance);
+	geometry.detector_plane_width			= parser.query<float>(	ParameterParser::detector_plane_width);
+	geometry.rotation_radian				= parser.query<float>(	ParameterParser::rotation_radian);
+	geometry.rotation_offset_radian			= parser.query<float>(	ParameterParser::rotation_offset_radian);
+	geometry.detector_plane_offset_u		= parser.query<float>(	ParameterParser::detector_plane_offset_u);
+	geometry.detector_plane_offset_v		= parser.query<float>(	ParameterParser::detector_plane_offset_v);
+	geometry.detector_plane_tilt_radian		= parser.query<float>(	ParameterParser::detector_plane_tilt_radian);
+	geometry.rotation_plane_offset_x		= parser.query<float>(	ParameterParser::rotation_plane_offset_x);
+	geometry.rotation_plane_tilt_z			= parser.query<float>(	ParameterParser::rotation_plane_tilt_z);
+	geometry.clockwise_rotation				= parser.query<bool>(	ParameterParser::clockwise_rotation);
+	geometry.mirror_input_projections_u		= parser.query<bool>(	ParameterParser::input_projection_mirror_u);
+	geometry.mirror_input_projections_v		= parser.query<bool>(	ParameterParser::input_projection_mirror_v);
 
 	//glm::ivec2 projections_resolution = glm::ivec2(2048);
 	//int32_t projections_channel_count = 1;
@@ -38,11 +70,6 @@ int main() {
 	//float detector_panel_distance = 669.04f;
 	//float detector_width = 409.60f;
 	//int projection_count = 1440;
-	
-	int slice_index_number_length = 6;
-	std::string reconstruction_path = "reconstruction";
-	glm::ivec3 volume_resolution(1024, 1024, 1024);
-	int window_width = 1024;
 
 	fbp_shader_directory = "../CTReconstructor/Source/GLSL/Compute/FBP/";
 	ffft_shader_directory = "../CTReconstructor/Source/GLSL/Compute/FFT/";
@@ -81,10 +108,13 @@ int main() {
 		projections_channel_count,
 		projections_byte_per_channel,
 		volume_resolution.x, volume_resolution.y,
+		geometry.mirror_input_projections_v,
 		projection_count
 	);
 
 	fbp_segmented_memory::iterate_horizontal_projection_segments(*solver, false, true, [&](glm::ivec3 projection_segment_index) {
+		if (geometry.mirror_input_projections_u)
+			solver->mirror_projections_along_x();
 		solver->compute_min_value_of_projections(*projections_min_texture);
 		solver->compute_max_value_of_projections(*projections_max_texture);
 		});
@@ -102,22 +132,22 @@ int main() {
 
 	fbp_segmented_memory::iterate_horizontal_projection_segments(*solver, false, false, [&](glm::ivec3 projection_segment_index) {
 		solver->log_normalize_projections(projections_max_value);
-		solver->apply_fdk_weights_to_projections(xray_source_distance, detector_plane_distance, detector_width);
+		solver->apply_fdk_weights_to_projections(geometry);
 		solver->apply_filter_to_projections(FBP2D::FilterType::RAM_LAK);
 		});
-
+	
 	solver->generate_blank_volume(volume_resolution.x, volume_resolution.y, volume_resolution.y);
 	
 	fbp_segmented_memory::iterate_horizontal_projection_segments(*solver, true, false, [&](glm::ivec3 projection_index) {
-		fbp_segmented_memory::iterate_horizontal_volume_segments_per_projection(*solver, projection_index.y, [&](glm::ivec3 volume_segment_index) {
+		fbp_segmented_memory::iterate_horizontal_volume_segments_per_projection(*solver, projection_index.y, geometry, [&](glm::ivec3 volume_segment_index) {
 			if (solver->get_volume_segment_count() == glm::ivec3(1, 1, 1))
 				solver->projections_clear_ram();
-			solver->project_backward_cone_fdk_from_projections_matrix(xray_source_distance, detector_plane_distance, detector_width, volume_dimensitons.x, volume_dimensitons.y, 1, volume_resolution.x, volume_resolution.y, 0);
+			solver->project_backward(geometry);
 			});
 		});
 	
-	solver->projections_clear_ram();
-	solver->projections_clear_vram();
+	//solver->projections_clear_ram();
+	//solver->projections_clear_vram();
 	
 	fbp_segmented_memory::iterate_horizontal_volume_segments(*solver, false, false, [&](glm::ivec3 volume_segment_index) {
 		solver->clip_negatives_of_volume();
@@ -127,17 +157,18 @@ int main() {
 	
 	fbp_segmented_memory::iterate_horizontal_volume_segments(*solver, false, false, [&](glm::ivec3 volume_segment_index) {
 		solver->normalize_min_max_values_of_volume(*volume_min_texture, *volume_max_texture);
+		if (save)
+			solver->write_volume(reconstruction_path / reconstruction_path.filename());
 		});
-
-	ReconstructionInfo info;
-	info.name = compute_filename(reconstruction_path);
-	info.volume_resolution = volume_resolution;
-	info.voxel_size_mm = glm::vec3(volume_dimensitons.x, volume_dimensitons.y, volume_dimensitons.x) / glm::vec3(volume_resolution);
-
-	info.save_to_disc(reconstruction_path);
 	
-	//solver->project_forward_parallel(1, projection_count, 0);
-
+	ReconstructionInfo info;
+	info.name = reconstruction_path.filename().string();
+	info.volume_resolution = volume_resolution;
+	info.voxel_size_mm = glm::vec3(geometry.volume_width, geometry.volume_height, geometry.volume_width) / glm::vec3(volume_resolution);
+	
+	if (save)
+		info.save_to_disc(reconstruction_path);
+	
 	std::shared_ptr<Texture2D> slice = std::make_shared<Texture2D>(volume_resolution.x, volume_resolution.z, solver->get_volume_format(), 1, 0, 0);
 	std::shared_ptr<Texture2D> slice_complex = std::make_shared<Texture2D>(volume_resolution.x, volume_resolution.z, solver->get_projection_complex_format(), 1, 0, 0);
 	std::shared_ptr<Texture2D> slice_white = std::make_shared<Texture2D>(volume_resolution.x, volume_resolution.z, Texture2D::ColorTextureFormat::RGBA32F, 1, 0, 0);
@@ -156,7 +187,7 @@ int main() {
 				primitive_renderer::clear(0, 0, 0, 1);
 
 				solver->load_volume_slice_y(projection_id, *slice);
-				//solver->load_projection(slice_id, *slice);
+				//solver->load_projection_z(projection_id, *slice);
 				//solver->load_sinogram(slice_id, *slice);
 
 				solver->fbp_solver->_texture_blit_float1_to_float4(*slice, *slice_white);

@@ -12,7 +12,7 @@ int main() {
 	int32_t projection_count = 1440;
 	glm::ivec2 projection_size = glm::ivec2(2048, 2048);
 
-	Frame frame(frame_size.x, frame_size.y, "CTReconstructor Rendering", 0, 0, true, true, true, Frame::CallbackLevel::NOTIFICATION, 0);
+	Window frame(frame_size.x, frame_size.y, "CTReconstructor Rendering", 0, 0, true, true, true, Frame::CallbackLevel::NOTIFICATION, 0);
 	Scene scene(frame);
 
 	std::shared_ptr<Program> volumetric_program = std::make_shared<Program>(
