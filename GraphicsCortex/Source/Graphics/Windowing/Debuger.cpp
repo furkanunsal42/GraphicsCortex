@@ -11,6 +11,7 @@
 bool log_errors(const char* function, int line, const char* file) {
     int32_t error_count = 0;
     bool error_safe = true;
+	std::stringstream ss;
 	while (unsigned int error = glGetError()) {
 		std::string error_name = std::to_string(error);
 		switch (error) {
@@ -21,20 +22,22 @@ bool log_errors(const char* function, int line, const char* file) {
 		case 0x0504: error_name = "GL_STACK_UNDERFLOW"; break;
 		case 0x0505: error_name = "GL_OUT_OF_MEMORY"; break;
 		}
-		std::cout << "[OpenGL ERROR] on " << function << " line: " << line << " file: " << file << " Error:" << error_name << '\n';
+		ss << "[OpenGL ERROR] on " << function << " line: " << line << " file: " << file << " Error:" << error_name << '\n';
 		error_safe = false;
 
         if (error_count >= 4){
-            std::cout << "glGetError() cannot flush all errors, OpenGL wasn't probably released correctly";
-            return error_safe;
+            //std::cout << "glGetError() cannot flush all errors, OpenGL wasn't probably released correctly";
+            return true;
         }
         error_count++;
 	}
+	std::cout << ss.str();
 	return error_safe;
 }
 
 void clear_errors(const char* function, int line, const char* file) {
     int32_t error_count = 0;
+	std::stringstream ss;
 	while (unsigned int error = glGetError()) {
         std::string error_name = std::to_string(error);
 		switch (error) {
@@ -45,14 +48,15 @@ void clear_errors(const char* function, int line, const char* file) {
 		case 0x0504: error_name = "GL_STACK_UNDERFLOW"; break;
 		case 0x0505: error_name = "GL_OUT_OF_MEMORY"; break;
 		}
-		std::cout << "there was a previous error on: " << function << " line: " << line << " file : " << file << " Error : " << error_name << '\n';
+		ss << "there was a previous error on: " << function << " line: " << line << " file : " << file << " Error : " << error_name << '\n';
 
         if (error_count >= 4){
-            std::cout << "glGetError() cannot flush all errors, OpenGL wasn't probably released correctly";
+            //std::cout << "glGetError() cannot flush all errors, OpenGL wasn't probably released correctly";
             return;
         }
         error_count++;
     }
+	std::cout << ss.str();
 }
 
 void opengl_debug_callback(unsigned int source, unsigned int type, unsigned int id, unsigned int severity, int length, char const* message, void const* user_param) {

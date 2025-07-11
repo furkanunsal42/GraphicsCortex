@@ -6,9 +6,10 @@
 #define ASSERT(x) if (!(x)) __debugbreak();
 
 #ifdef ENABLE_OPENGL_DEBUGING
-#define GLCall(x) clear_errors(#x, __LINE__, __FILE__);\
-	x;\
-	ASSERT(log_errors(#x, __LINE__, __FILE__));
+#define GLCall(x)								\
+	clear_errors(#x, __LINE__, __FILE__);		\
+	x;											\
+	ASSERT(log_errors(#x, __LINE__, __FILE__));	\
 
 #else
 #define GLCall(x) x;
