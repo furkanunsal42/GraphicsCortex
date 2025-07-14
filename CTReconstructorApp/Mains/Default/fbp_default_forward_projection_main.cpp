@@ -1,7 +1,5 @@
 #include "CTReconstructor.h"
 
-#include <mutex>
-
 int main() {
 
 	// pipe
@@ -29,6 +27,7 @@ int main() {
 	parameters.volume_path = volume_path;
 	parameters.projections_path = projections_path;
 	parameters.volume_resolution = glm::ivec3(1024);
+	parameters.projection_count = 1024;
 
 	FBP3D solver(
 		FBP3D::FloatingPointPrecision::fp16,
@@ -36,10 +35,13 @@ int main() {
 		parameters.volume_segment_max_height
 	);
 
-	solver.read_projections(parameters);
-	ct_reconstructor::back_project(solver, geometry, parameters, CTOption::save_ouptut_to_disk);
-	
-	ct_reconstructor::launch_debug_window(solver);
+	solver.generate_blank_volume(parameters);
+	fbp_segmented_memory::iterate_horizontal_volume_segments(solver, false, false, [&](glm::ivec3 volume_segment_index) {
+		solver.generate_shepplogan();
+		});
 
+	ct_reconstructor::forward_project(solver, geometry, parameters, 0);
+
+	ct_reconstructor::launch_debug_window(solver);
 	ct_reconstructor::release();
 }
