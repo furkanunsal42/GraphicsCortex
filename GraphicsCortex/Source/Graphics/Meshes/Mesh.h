@@ -138,6 +138,7 @@ public:
 	static const uint32_t vab_vertex_color_slot = 6;
 	static const uint32_t vab_bone_indicies_slot = 7;
 	static const uint32_t vab_bone_weights_slot = 8;
+	static const uint32_t vab_custom_slot0 = 9;
 
 private:
 

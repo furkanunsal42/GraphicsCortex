@@ -174,4 +174,6 @@ void RenderParameters::apply() const
 		stencil_operation_on_pass == StencilOperation::DECR_WRAP			? GL_DECR_WRAP	:
 		stencil_operation_on_pass == StencilOperation::INVERT				? GL_INVERT		: GL_KEEP
 	));
+
+	GLCall(glPointSize(point_size));
 }

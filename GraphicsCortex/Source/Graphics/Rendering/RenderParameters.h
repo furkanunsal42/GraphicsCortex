@@ -86,6 +86,8 @@ public:
 	StencilOperation stencil_operation_on_depth_fail = StencilOperation::KEEP;
 	StencilOperation stencil_operation_on_pass = StencilOperation::KEEP;
 	
+	float point_size = 1;
+
 	//bool stencil_test_seperate = false;
 	//StencilOperation stencil_operation_backface_on_stencil_fail = KEEP;
 	//StencilOperation stencil_operation_backface_on_depth_fail = KEEP;
