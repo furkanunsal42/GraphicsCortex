@@ -17,6 +17,12 @@ int main() {
 	std::filesystem::path projections_path		= "C:/Users/furkan.unsal/Desktop/Projektionen";
 	std::filesystem::path volume_path			= "C:/Users/furkan.unsal/Desktop/CTReconstruction3";
 
+	// protezler
+	//std::filesystem::path descriptor_file_path	= "C:/Users/furkan.unsal/Desktop/Protezler/Ornek/20250217164519.485-acetabelum/[vg-data] 20250217164519.485/rekonstruktion.ini";
+	//std::filesystem::path projections_path		= "C:/Users/furkan.unsal/Desktop/Protezler/Ornek/20250217164519.485-acetabelum/[vg-data] 20250217164519.485/projektion";
+	//std::filesystem::path volume_path			= "C:/Users/furkan.unsal/Desktop/CTReconstruction5";
+
+
 	ct_reconstructor::init();
 
 	ParameterParser parser;
