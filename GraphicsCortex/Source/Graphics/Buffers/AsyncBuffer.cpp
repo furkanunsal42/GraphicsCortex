@@ -212,7 +212,11 @@ void AsyncBuffer::unmap()
 		ASSERT(false);
 	}
 
-	GLCall(ASSERT(glUnmapNamedBuffer(id) == GL_TRUE));
+	GLCall(bool success = glUnmapNamedBuffer(id) == GL_TRUE);
+	if (!success) {
+		std::cout << "[OpenGL Error] AsyncBuffer unmap() content corrupted" << std::endl;
+	}
+
 	_buffer_data = nullptr;
 }
 

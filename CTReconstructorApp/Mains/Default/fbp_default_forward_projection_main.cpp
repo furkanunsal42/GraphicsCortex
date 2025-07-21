@@ -26,8 +26,6 @@ int main() {
 	FBP3D::ReconstructionParameters parameters(parser);
 	parameters.volume_path = volume_path;
 	parameters.projections_path = projections_path;
-	parameters.volume_resolution = glm::ivec3(1024);
-	parameters.projection_count = 1024;
 
 	FBP3D solver(
 		FBP3D::FloatingPointPrecision::fp16,

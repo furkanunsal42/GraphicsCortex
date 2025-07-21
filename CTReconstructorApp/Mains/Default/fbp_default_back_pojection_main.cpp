@@ -15,13 +15,12 @@ int main() {
 	// sage
 	std::filesystem::path descriptor_file_path	= "C:/Users/furkan.unsal/Desktop/deneme_21_03_2023.txt";
 	std::filesystem::path projections_path		= "C:/Users/furkan.unsal/Desktop/Projektionen";
-	std::filesystem::path volume_path			= "C:/Users/furkan.unsal/Desktop/CTReconstruction3";
+	std::filesystem::path volume_path			= "C:/Users/furkan.unsal/Desktop/CTReconstruction3/CTReconstruction36";
 
 	// protezler
 	//std::filesystem::path descriptor_file_path	= "C:/Users/furkan.unsal/Desktop/Protezler/Ornek/20250217164519.485-acetabelum/[vg-data] 20250217164519.485/rekonstruktion.ini";
 	//std::filesystem::path projections_path		= "C:/Users/furkan.unsal/Desktop/Protezler/Ornek/20250217164519.485-acetabelum/[vg-data] 20250217164519.485/projektion";
 	//std::filesystem::path volume_path			= "C:/Users/furkan.unsal/Desktop/CTReconstruction5";
-
 
 	ct_reconstructor::init();
 
@@ -32,23 +31,25 @@ int main() {
 	FBP3D::ReconstructionParameters parameters(parser);
 	parameters.volume_path = volume_path;
 	parameters.projections_path = projections_path;
-	//parameters.volume_resolution = glm::ivec3(1024);
+	//parameters.volume_resolution = glm::ivec3(512);
+	parameters.volume_segment_max_height = 64;
+	parameters.projection_segment_max_height = 64;
 
 	FBP3D solver(
 		FBP3D::FloatingPointPrecision::fp16,
 		parameters.projection_segment_max_height,
 		parameters.volume_segment_max_height
 	);
-
+	
 	solver.read_projections(parameters);
-	//solver.projections_transfer_ram_to_vram();
 	ct_reconstructor::back_project(solver, geometry, parameters, 
-		save_ouptut_to_disk						|
+		transfer_inputs_from_ram_on_begin		|
 		apply_filter_to_projections				|
 		apply_log_normalization_to_projections	|
 		apply_minmax_normalization_to_volume	|
 		clip_negatives_of_volume				|
-		transfer_inputs_from_ram_on_begin);
+		save_ouptut_to_disk
+		);
 
 	ct_reconstructor::launch_debug_window(solver);
 	ct_reconstructor::release();
