@@ -44,8 +44,8 @@ public:
 		std::shared_ptr<MeshMaterial> mesh_material = std::make_shared<MeshMaterial>(asset.load_mesh_material());
 		std::shared_ptr<Program> program = default_program::surface_program_s();
 
-		//Image image_hdr("../GraphicsCortex/Images/HDR/sunflowers_puresky_4k.hdr", 4, true);
-		Image image_hdr("../GraphicsCortex/Images/HDR/warm_bar_4k.hdr", 4, true);
+		Image image_hdr("../GraphicsCortex/Images/HDR/sunflowers_puresky_4k.hdr", 4, true);
+		//Image image_hdr("../GraphicsCortex/Images/HDR/warm_bar_4k.hdr", 4, true);
 		//Image image_hdr("../GraphicsCortex/Images/HDR/qwantani_night_4k.hdr", 4, true);
 		std::shared_ptr<Texture2D> texture_hdr = std::make_shared<Texture2D>(image_hdr.get_width(), image_hdr.get_height(), Texture2D::ColorTextureFormat::RGB16F, 1, 0, 0);
 		texture_hdr->load_data(image_hdr, Texture2D::ColorFormat::RGBA, Texture2D::Type::FLOAT, 0);
