@@ -126,6 +126,6 @@ int main() {
 	
 	//launch_distance_projections_window(solver, parameters);
 	launch_distance_atteunation_graph_points_window(solver);
-
+	
 	ct_reconstructor::release();
 }

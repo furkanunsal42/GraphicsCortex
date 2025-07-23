@@ -35,6 +35,12 @@ public:
 	std::shared_ptr<Image> get_image();
 	size_t get_buffer_size();
 	
+	void get_data(size_t managed_buffer_offset_in_bytes, size_t downloading_data_offset_in_bytes, size_t size_in_bytes, void* data_out);
+	void get_data(size_t managed_buffer_offset_in_bytes, size_t downloading_data_offset_in_bytes, void* data_out);
+	void* get_data(size_t managed_buffer_offset_in_bytes, size_t size_in_bytes);
+	void* get_data(size_t managed_buffer_offset_in_bytes);
+	void* get_data();
+	
 	void bind_download();
 	void bind_upload();
 	void unbind();

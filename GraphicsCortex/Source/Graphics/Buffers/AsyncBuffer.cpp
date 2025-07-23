@@ -152,6 +152,43 @@ std::shared_ptr<Image> AsyncBuffer::get_image()
 	return image;
 }
 
+void AsyncBuffer::get_data(size_t managed_buffer_offset_in_bytes, size_t downloading_data_offset_in_bytes, size_t size_in_bytes, void* data_out)
+{
+	if (!_buffer_generated) {
+		std::cout << "[OpenGL Error] released AsyncBuffer tried to get_data()" << std::endl;
+		ASSERT(false);
+	}
+
+	_allocate_buffer(_buffer_size);
+
+	GLCall(glGetNamedBufferSubData(id, managed_buffer_offset_in_bytes, size_in_bytes, (char*)data_out + downloading_data_offset_in_bytes));
+
+}
+
+void AsyncBuffer::get_data(size_t managed_buffer_offset_in_bytes, size_t downloading_data_offset_in_bytes, void* data_out)
+{
+	get_data(managed_buffer_offset_in_bytes, downloading_data_offset_in_bytes, _buffer_size, data_out);
+}
+
+void* AsyncBuffer::get_data(size_t managed_buffer_offset_in_bytes, size_t size_in_bytes)
+{
+	char* buffer = new char[size_in_bytes];
+
+	get_data(managed_buffer_offset_in_bytes, 0, size_in_bytes, buffer);
+
+	return buffer;
+}
+
+void* AsyncBuffer::get_data(size_t managed_buffer_offset_in_bytes)
+{
+	return get_data(managed_buffer_offset_in_bytes, _buffer_size);
+}
+
+void* AsyncBuffer::get_data()
+{
+	return get_data(0);
+}
+
 size_t AsyncBuffer::get_buffer_size()
 {
 	return _buffer_size;
@@ -254,5 +291,5 @@ void AsyncBuffer::_allocate_buffer(size_t buffer_size)
 	_buffer_size = buffer_size;
 	_buffer_allocated = true;
 
-	map();
+	//map();
 }
