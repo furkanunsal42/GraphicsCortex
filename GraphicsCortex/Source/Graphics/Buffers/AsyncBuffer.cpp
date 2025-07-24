@@ -15,7 +15,8 @@ AsyncBuffer::~AsyncBuffer()
 
 void AsyncBuffer::release()
 {
-	unmap();
+	if (is_mapped())
+		unmap();
 	
 	if (_buffer_generated) {
 		GLCall(glDeleteBuffers(1, &id));
@@ -255,6 +256,11 @@ void AsyncBuffer::unmap()
 	}
 
 	_buffer_data = nullptr;
+}
+
+bool AsyncBuffer::is_mapped()
+{
+	return _buffer_data != nullptr;
 }
 
 void AsyncBuffer::force_allocation() {

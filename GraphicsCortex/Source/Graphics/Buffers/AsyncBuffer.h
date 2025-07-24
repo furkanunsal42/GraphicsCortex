@@ -47,6 +47,7 @@ public:
 	
 	void map();
 	void unmap();
+	bool is_mapped();
 
 	void force_allocation();
 
