@@ -302,7 +302,14 @@ void Image::save_to_disc(const std::string& target_filename) const
 		if (target_filename.substr(target_filename.size() - 4, 4) == ".raw" || target_filename.substr(target_filename.size() - 4, 4) == ".RAW") {
 			std::filesystem::create_directories(std::filesystem::path(compute_directory(target_filename)));
 			std::fstream file(target_filename, std::fstream::out | std::fstream::binary);
-			file.write((const char*)_image_data, get_size());
+			for (int32_t z = 0; z < get_depth(); z++) {
+				for (int32_t y = 0; y < get_height(); y++) {
+					size_t y_to_use = get_vertical_flip() ? get_height() - 1 - y : y;
+					size_t pixel_stride = get_channel_count() * get_byte_per_channel();
+					size_t begin = (z * get_width() * get_height() + y_to_use * get_width()) * pixel_stride;
+					file.write((const char*)_image_data + begin, get_width() * pixel_stride);
+				}
+			}
 			return;
 		}
 	}
