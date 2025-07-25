@@ -5,7 +5,7 @@ int main() {
 	// synthetic projections
 	std::filesystem::path descriptor_file_path	= "C:/Users/furkan.unsal/Desktop/deneme_21_03_2023.txt";
 	std::filesystem::path input_path			= "C:/Users/furkan.unsal/Desktop/CTReconstruction3/CTReconstructionProjections3F/CTReconstructionProjections3F";
-	std::filesystem::path output_path			= "C:/Users/furkan.unsal/Desktop/CTReconstruction3/CTReconstructionSegmentedTestS";
+	std::filesystem::path output_path			= "C:/Users/furkan.unsal/Desktop/CTReconstruction3/CTReconstructionSegmentedTestSF";
 
 	ct_reconstructor::init();
 
@@ -23,8 +23,8 @@ int main() {
 	parameters.output_data_type = FBP3D::Volume;
 	parameters.output_resolution = glm::ivec3(1440, 1440, 1440);
 
-	parameters.volume_segment_max_height = 0;
-	parameters.projection_segment_max_height = 0;
+	parameters.volume_segment_max_height = 64;
+	parameters.projection_segment_max_height = 64;
 
 	parameters.input_files_path = input_path;
 	parameters.output_files_path = output_path;
@@ -42,8 +42,8 @@ int main() {
 		transfer_inputs_from_ram_on_begin		|
 		//apply_filter_to_projections				|
 		//apply_log_normalization_to_projections	|
-		//apply_minmax_normalization_to_volume	|
-		//clip_negatives_of_volume				|
+		apply_minmax_normalization_to_volume	|
+		clip_negatives_of_volume				|
 		save_output_to_disk
 		);
 
