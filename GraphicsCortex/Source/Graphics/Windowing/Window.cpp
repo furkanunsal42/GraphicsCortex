@@ -166,6 +166,7 @@ void Window::_initialize(const WindowDescription& description)
 		monitor_ptr = (GLFWmonitor*)(description.w_fullscreen_monitor_ptr->monitor_ptr);
 
 	handle = glfwCreateWindow(clipped_resolution.x, clipped_resolution.y, description.w_name.c_str(), (GLFWmonitor*)monitor_ptr, (GLFWwindow*)description.context_shared);
+	window_name = description.w_name;
 
 	// global resoureces
 	// if (description.context_shared != nullptr) {
@@ -317,8 +318,10 @@ void Window::_initialize(const WindowDescription& description)
 
 	OpenGLBackend::_init_glew();
 
-	glEnable(GL_DEBUG_OUTPUT);
-	glDebugMessageCallback(error_callback, 0);
+	if (description.ctx_enable_debug_callback_print) {
+		glEnable(GL_DEBUG_OUTPUT);
+		glDebugMessageCallback(error_callback, 0);
+	}
 }
 
 Window::~Window()
@@ -601,16 +604,19 @@ glm::ivec2 Window::get_window_position()
 	return position;
 }
 
-//std::string Window::get_window_name()
-//{
-//	const char* title = glfwGetWindowTitle((GLFWwindow*)handle);
-//	std::string title_str(title);
-//	return title_str;
-//}
+std::string Window::get_window_name()
+{
+	//const char* title = glfwGetWindowTitle((GLFWwindow*)handle);
+	//std::string title_str(title);
+	//return title_str;
+
+	return window_name;
+}
 
 void Window::set_window_name(const std::string window_name)
 {
 	glfwSetWindowTitle((GLFWwindow*)handle, window_name.c_str());
+	this->window_name = window_name;
 }
 
 void Window::set_window_icon(Image& icon)

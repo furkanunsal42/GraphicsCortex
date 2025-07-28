@@ -399,6 +399,7 @@ protected:
 
 	void _initialize(const WindowDescription& description);
 	void* handle = nullptr;
+	std::string window_name;
 
 	const std::chrono::system_clock::time_point invalid_time = std::chrono::system_clock::time_point(std::chrono::milliseconds::max());
 	std::chrono::system_clock::time_point last_handle_events_time = invalid_time;
@@ -416,6 +417,7 @@ struct WindowDescription {
 	bool ctx_forward_compatibility = false;
 	bool ctx_debug_mode = true;
 	Window::OpenGLProfile ctx_profile = Window::Compatibility;
+	bool ctx_enable_debug_callback_print = false;
 
 	// default framebuffer
 	glm::ivec2 f_resolution = glm::ivec2(0, 0);

@@ -1,10 +1,10 @@
 #include "CTReconstructor.h"
 
 void launch_distance_projections_window(FBP3D& solver, FBP3D::ReconstructionParameters& parameters) {
-	std::shared_ptr<Texture2D> slice = std::make_shared<Texture2D>(parameters.output_resolution.x, parameters.output_resolution.z, solver.get_volume_format(), 1, 0, 0);
-	std::shared_ptr<Texture2D> slice_complex = std::make_shared<Texture2D>(parameters.output_resolution.x, parameters.output_resolution.z, solver.get_projection_complex_format(), 1, 0, 0);
-	std::shared_ptr<Texture2D> slice_white = std::make_shared<Texture2D>(parameters.output_resolution.x, parameters.output_resolution.z, Texture2D::ColorTextureFormat::RGBA32F, 1, 0, 0);
-	std::shared_ptr<Texture2D> slice_distanced = std::make_shared<Texture2D>(parameters.output_resolution.x, parameters.output_resolution.z, solver.get_distanced_projection_format(), 1, 0, 0);
+	std::shared_ptr<Texture2D> slice			= std::make_shared<Texture2D>(parameters.output_resolution.x, parameters.output_resolution.z, solver.get_volume_format(), 1, 0, 0);
+	std::shared_ptr<Texture2D> slice_complex	= std::make_shared<Texture2D>(parameters.output_resolution.x, parameters.output_resolution.z, solver.get_projection_complex_format(), 1, 0, 0);
+	std::shared_ptr<Texture2D> slice_white		= std::make_shared<Texture2D>(parameters.output_resolution.x, parameters.output_resolution.z, Texture2D::ColorTextureFormat::RGBA32F, 1, 0, 0);
+	std::shared_ptr<Texture2D> slice_distanced	= std::make_shared<Texture2D>(parameters.output_resolution.x, parameters.output_resolution.z, solver.get_distanced_projection_format(), 1, 0, 0);
 
 	std::shared_ptr<Framebuffer> framebuffer = std::make_shared<Framebuffer>();
 
@@ -73,7 +73,7 @@ void launch_distance_atteunation_graph_points_window(FBP3D& solver) {
 }
 
 int main() {
-
+	
 	// pipe
 	//std::filesystem::path descriptor_file_path		= "C:/Users/furkan.unsal/Desktop/Data2/rekonstruktion.ini";
 	//std::filesystem::path projections_path			= "C:/Users/furkan.unsal/Desktop/Data2/projektion";
@@ -85,9 +85,9 @@ int main() {
 	//std::filesystem::path volume_path			= "C:/Users/furkan.unsal/Desktop/CTReconstruction2";
 
 	// sage
-	std::filesystem::path descriptor_file_path = "C:/Users/furkan.unsal/Desktop/deneme_21_03_2023.txt";
-	std::filesystem::path projections_path = "C:/Users/furkan.unsal/Desktop/Projektionen";
-	std::filesystem::path volume_path = "C:/Users/furkan.unsal/Desktop/CTReconstruction3";
+	std::filesystem::path descriptor_file_path	= "C:/Users/furkan.unsal/Desktop/deneme_21_03_2023.txt";
+	std::filesystem::path projections_path		= "C:/Users/furkan.unsal/Desktop/Projektionen";
+	std::filesystem::path volume_path			= "C:/Users/furkan.unsal/Desktop/CTReconstruction3/MAR";
 
 	ct_reconstructor::init();
 
@@ -99,8 +99,6 @@ int main() {
 	parameters.input_files_path = projections_path;
 	parameters.output_files_path = volume_path;
 	parameters.output_resolution = glm::ivec3(512);
-	//parameters.projection_resolution = glm::ivec2(512);
-	//parameters.projection_count = 1440;
 
 	FBP3D solver(
 		FBP3D::FloatingPointPrecision::fp16,
@@ -112,19 +110,69 @@ int main() {
 	ct_reconstructor::back_project(solver, geometry, parameters,
 		transfer_inputs_from_ram_on_begin |
 		apply_filter_to_projections |
-		apply_log_normalization_to_projections
+		apply_log_normalization_to_projections |
+		clip_negatives_of_volume
 		//apply_minmax_normalization_to_volume |
-		//clip_negatives_of_volume
+	);
+	
+	solver.read_projections(parameters);
+	solver.projections_transfer_ram_to_vram();
+	solver.compute_min_value_of_projections();
+	solver.log_normalize_projections();
+
+	float metal_threshold = 30;
+	float prior_image_threshold = 14;
+	
+	FBP3D solver_metal(
+		FBP3D::FloatingPointPrecision::fp16,
+		parameters.projection_segment_max_height,
+		parameters.volume_segment_max_height
 	);
 
-	solver.generate_blank_distanced_projections(parameters.output_resolution.x, parameters.output_resolution.y, parameters.output_resolution.y/*projection_count*/, 2);
-	solver.bh_project_forward_parallel_to_distanced_projections({ 2, 11, 50, 150 }, 1, parameters.output_resolution.y/*projection_count*/, 0);
-	solver.bh_compute_distance_attenuation_graph_from_distanced_projections({ 2, 11, 50, 150 });
+	FBP3D::ReconstructionParameters parameters_metal;
+	parameters_metal.input_data_type = FBP3D::Volume;
+	parameters_metal.output_data_type = FBP3D::Projections;
+	parameters_metal.output_resolution = solver.get_projections_size();
 
-	//solver->project_forward_parallel(1, projection_count, 0);
+	solver.move_volume(solver_metal);
+	solver_metal.generate_blank_projections(parameters_metal);
+	solver_metal.project_forward(geometry, glm::vec2(metal_threshold, std::numeric_limits<int16_t>::max()));
+	solver_metal.move_volume(solver);
 
-	launch_distance_projections_window(solver, parameters);
-	//launch_distance_atteunation_graph_points_window(solver);
+	ct_reconstructor::launch_debug_window(solver_metal, "MAR Metal Image");
+
+	FBP3D solver_prior(
+		FBP3D::FloatingPointPrecision::fp16,
+		parameters.projection_segment_max_height,
+		parameters.volume_segment_max_height
+	);
+
+	FBP3D::ReconstructionParameters parameters_prior;
+	parameters_prior.input_data_type = FBP3D::Volume;
+	parameters_prior.output_data_type = FBP3D::Projections;
+	parameters_prior.output_resolution = solver.get_projections_size();
+
+	solver.move_volume(solver_prior);
+	solver_prior.generate_blank_projections(parameters_prior);
+	solver_prior.project_forward(geometry, glm::vec2(std::numeric_limits<int16_t>::min(), prior_image_threshold));
+	solver_prior.move_volume(solver);
+
+	ct_reconstructor::launch_debug_window(solver_prior, "MAR Prior Image");
+
+	solver.mar_normalize_projections(solver_prior);
+	solver.mar_interpolate_projections(solver_metal);
+	solver.mar_denormalize_projections(solver_prior);
+
+	ct_reconstructor::back_project(solver, geometry, parameters,
+		transfer_inputs_from_ram_on_begin		|
+		apply_filter_to_projections				|
+		apply_log_normalization_to_projections	|
+		clip_negatives_of_volume				|
+		apply_minmax_normalization_to_volume	|
+		save_output_to_disk
+	);
+
+	ct_reconstructor::launch_debug_window(solver, "MAR Reconstruction");
 
 	ct_reconstructor::release();
 }
