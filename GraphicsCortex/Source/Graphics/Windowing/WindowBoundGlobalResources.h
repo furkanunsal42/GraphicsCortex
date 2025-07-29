@@ -18,7 +18,8 @@ public:
 	std::unique_ptr<Program> SkylightComponent_prefiltered_convolver = nullptr;
 	std::unique_ptr<GraphicsOperation> SkylightComponent_operation = nullptr;
 	std::unique_ptr<FontBank> FontBank = nullptr;
-
+	uint32_t Framebuffer_current_draw = 0;
+	uint32_t Framebuffer_current_read = 0;
 };
 
 extern std::unordered_map<void*, GlobalResources> context_to_global_resources;

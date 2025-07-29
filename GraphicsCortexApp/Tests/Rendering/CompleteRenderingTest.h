@@ -96,7 +96,7 @@ public:
 		//scene.add_entity(entity_s_light);
 
 		Camera camera;
-		camera.fov = 100;
+		camera.fov = 70;
 		camera.max_distance = 200.0f;
 		camera.screen_width = resolution.x;
 		camera.screen_height = resolution.y;
@@ -114,8 +114,6 @@ public:
 		float t = 0;
 
 		while (true) {
-
-			entity_d_light->get_component<TransformComponent>()->set_z_direction(glm::vec3(-0.5 + t, -1, -0.5 + t));
 
 			double deltatime = default_window->handle_events(true);
 			camera.handle_movements((GLFWwindow*)default_window->get_handle(), deltatime);

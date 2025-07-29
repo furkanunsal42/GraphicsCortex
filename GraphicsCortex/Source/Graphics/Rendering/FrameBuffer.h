@@ -38,7 +38,10 @@ public:
 	void release();
 
 	static Framebuffer& get_screen();
+	static Framebuffer get_current_read();
+	static Framebuffer get_current_draw();
 	bool is_screen();
+	bool is_unique();
 
 	void bind_read_draw();
 	void bind_read();
@@ -160,6 +163,34 @@ public:
 		Channel channel, Filter filter
 	);
 
+	void blit(
+		Framebuffer&& target,
+		int32_t self_x0, int32_t self_y0, int32_t self_x1, int32_t self_y1,
+		int32_t target_x0, int32_t target_y0, int32_t target_x1, int32_t target_y1,
+		Channel channel, Filter filter
+	);
+
+	void blit(
+		Framebuffer&& target,
+		glm::ivec4 self_offset_size,
+		glm::ivec4 target_offset_size,
+		Channel channel, Filter filter
+	);
+
+	void blit(
+		Framebuffer&& target,
+		glm::ivec2 self_offset, glm::ivec2 self_size,
+		glm::ivec2 target_offset, glm::ivec2 target_size,
+		Channel channel, Filter filter
+	);
+
+	void blit(
+		Framebuffer&& target,
+		glm::ivec2 self_size,
+		glm::ivec2 target_size,
+		Channel channel, Filter filter
+	);
+
 	void blit_to_screen(
 		int32_t self_x0, int32_t self_y0, int32_t self_x1, int32_t self_y1,
 		int32_t target_x0, int32_t target_y0, int32_t target_x1, int32_t target_y1,
@@ -184,16 +215,18 @@ public:
 		Channel channel, Filter filter
 	);
 
-private:
+//private:
 	
 	static constexpr uint32_t null_slot = -1;
 	static constexpr uint32_t slot_count = 16;
 
-	Framebuffer(uint32_t id);
+	Framebuffer(uint32_t id, bool is_framebuffer_unique = false);
 
 	void generate_framebuffer();
 
 	gl_handle id;
+	bool is_framebuffer_unique = true;
+
 	bool framebuffer_generated = false;
 	std::unordered_set<int32_t> active_draw_buffers;
 	bool draw_buffers_are_updated = false;

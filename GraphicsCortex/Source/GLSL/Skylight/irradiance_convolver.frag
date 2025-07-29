@@ -41,5 +41,5 @@ void main()
     }
     irradiance = PI * irradiance * (1.0 / float(nrSamples));
     
-    fragment_color = vec4(irradiance, 1.0);
+    fragment_color = vec4(irradiance, 1.0) * 0.6;
 }
