@@ -1,6 +1,8 @@
 #<fragment shader>
 
 #version 460 core
+#extension GL_ARB_bindless_texture : require
+
 out vec4 frag_color;
 in vec2 v_texture_coordinates;
 in vec3 v_world_position;
@@ -10,6 +12,10 @@ in vec3 v_tangent;
 in vec3 v_bitangent;
 
 // material parameters
+layout(std430) buffer texture_buffer {
+    uvec2 bindless[1024];
+};
+
 layout(binding = 0) uniform sampler2D albedo_texture;
 layout(binding = 1) uniform sampler2D normal_texture;
 layout(binding = 2) uniform sampler2D metallic_texture;
@@ -26,7 +32,7 @@ layout (binding = 7) uniform sampler2D sky_brdf_texture;
 #define SPOT_LIGHT_MAX_COUNT 32
 
 // MAX_COUNT = cascade count * light source count
-#define DIRECTIONAL_SHADOWMAP_MAX_COUNT 6
+#define DIRECTIONAL_SHADOWMAP_MAX_COUNT 10
 #define POINT_SHADOWMAP_MAX_COUNT 32
 #define SPOT_SHADOWMAP_MAX_COUNT 32
 

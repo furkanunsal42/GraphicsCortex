@@ -104,7 +104,7 @@ void primitive_renderer::render(
 	}
 	
 	render_parameters.apply();
-
+	
 	vab.bind();
 	program.bind();
 	index_buffer.bind_as_index_buffer();

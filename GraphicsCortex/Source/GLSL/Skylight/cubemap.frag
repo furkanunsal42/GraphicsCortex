@@ -12,7 +12,7 @@ void main()
     vec3 color = textureLod(cubemap_texture, normalize(texture_coordinates), 1.2).rgb;
 
     // HDR tonemapping
-    float exposure = 1.7;
+    float exposure = 2.2;
     color = vec3(1) - exp(-color * exposure);
     
     // gamma correct

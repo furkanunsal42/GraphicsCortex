@@ -280,7 +280,7 @@ void SkylightComponent::render(Framebuffer& framebuffer, Camera& camera)
 
 void SkylightComponent::render(Camera& camera)
 {
-    if (sky_prefiltered_texture == nullptr) return;
+    if (sky_texture == nullptr) return;
     
     init();
 

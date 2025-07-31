@@ -20,7 +20,7 @@ public:
 	static const std::string directional_shadowmap_buffer_name;
 
 	uint32_t d_shadowmap_max_count = 1;
-	uint32_t d_shadowmap_cascade_count = 6;
+	uint32_t d_shadowmap_cascade_count = 10;
 	uint32_t d_shadowmap_resolution = 4096;
 	std::shared_ptr<Texture2DArray> d_shadowmaps = nullptr;
 	std::shared_ptr<UniformBuffer> d_shadowmaps_buffer = nullptr;

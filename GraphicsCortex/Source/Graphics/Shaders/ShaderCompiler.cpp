@@ -713,60 +713,46 @@ void Program::update_uniform_bindless(const std::string& name, TextureCubeMap& t
 }
 
 void Program::update_uniform(const std::string& name, const int& a, const int& b, const int& c, const int& d) {
-	bind();
-	GLCall(glUniform4i(uniforms[name].index, a, b, c, d));
+	GLCall(glProgramUniform4i(id, uniforms[name].index, a, b, c, d));
 }
 void Program::update_uniform(const std::string& name, const float& a, const float& b, const float& c, const float& d) {
-	bind();
-	GLCall(glUniform4f(uniforms[name].index, a, b, c, d));
+	GLCall(glProgramUniform4f(id, uniforms[name].index, a, b, c, d));
 }
 void Program::update_uniform(const std::string& name, const int& a, const int& b, const int& c) {
-	bind();
-	GLCall(glUniform3i(uniforms[name].index, a, b, c));
+	GLCall(glProgramUniform3i(id, uniforms[name].index, a, b, c));
 }
 void Program::update_uniform(const std::string& name, const float& a, const float& b, const float& c) {
-	bind();
-	GLCall(glUniform3f(uniforms[name].index, a, b, c));
+	GLCall(glProgramUniform3f(id, uniforms[name].index, a, b, c));
 }
 void Program::update_uniform(const std::string& name, const int& a, const int& b) {
-	bind();
-	GLCall(glUniform2i(uniforms[name].index, a, b));
+	GLCall(glProgramUniform2i(id, uniforms[name].index, a, b));
 }
 void Program::update_uniform(const std::string& name, const float& a, const float& b) {
-	bind();
-	GLCall(glUniform2f(uniforms[name].index, a, b));
+	GLCall(glProgramUniform2f(id, uniforms[name].index, a, b));
 }
 void Program::update_uniform(const std::string& name, const int& a) {
-	bind();
-	GLCall(glUniform1i(uniforms[name].index, a));
+	GLCall(glProgramUniform1i(id, uniforms[name].index, a));
 }
 void Program::update_uniform(const std::string& name, const float& a) {
-	bind();
-	GLCall(glUniform1f(uniforms[name].index, a));
+	GLCall(glProgramUniform1f(id, uniforms[name].index, a));
 }
 void Program::update_uniform(const std::string& name, const glm::mat4& a) {
-	bind();
-	GLCall(glUniformMatrix4fv(glGetUniformLocation(id, name.c_str()), 1, GL_FALSE, glm::value_ptr(a)));
+	GLCall(glProgramUniformMatrix4fv(id, uniforms[name].index, 1, GL_FALSE, glm::value_ptr(a)));
 }
 void Program::update_uniform(const std::string& name, const glm::mat3& a) {
-	bind();
-	GLCall(glUniformMatrix3fv(uniforms[name].index, 1, GL_FALSE, glm::value_ptr(a)));
+	GLCall(glProgramUniformMatrix3fv(id, uniforms[name].index, 1, GL_FALSE, glm::value_ptr(a)));
 }
 void Program::update_uniform(const std::string& name, const glm::mat2& a) {
-	bind();
-	GLCall(glUniformMatrix2fv(uniforms[name].index, 1, GL_FALSE, glm::value_ptr(a)));
+	GLCall(glProgramUniformMatrix2fv(id, uniforms[name].index, 1, GL_FALSE, glm::value_ptr(a)));
 }
 void Program::update_uniform(const std::string& name, const glm::vec4& a) {
-	bind();
-	GLCall(glUniform4fv(uniforms[name].index, 1, glm::value_ptr(a)));
+	GLCall(glProgramUniform4fv(id, uniforms[name].index, 1, glm::value_ptr(a)));
 }
 void Program::update_uniform(const std::string& name, const glm::vec3& a) {
-	bind();
-	GLCall(glUniform3fv(uniforms[name].index, 1, glm::value_ptr(a)));
+	GLCall(glProgramUniform3fv(id, uniforms[name].index, 1, glm::value_ptr(a)));
 }
 void Program::update_uniform(const std::string& name, const glm::vec2& a) {
-	bind();
-	GLCall(glUniform2fv(uniforms[name].index, 1, glm::value_ptr(a)));
+	GLCall(glProgramUniform2fv(id, uniforms[name].index, 1, glm::value_ptr(a)));
 }
 
 // ------------------------------------
@@ -784,60 +770,46 @@ void Program::update_uniform(unsigned int uniform_id, TextureCubeMap& texturecub
 }
 
 void Program::update_uniform(unsigned int uniform_id, const int& a, const int& b, const int& c, const int& d) {
-	bind();
-	GLCall(glUniform4i(uniform_id, a, b, c, d));
+	GLCall(glProgramUniform4i(id, uniform_id, a, b, c, d));
 }
 void Program::update_uniform(unsigned int uniform_id, const float& a, const float& b, const float& c, const float& d) {
-	bind();
-	GLCall(glUniform4f(uniform_id, a, b, c, d));
+	GLCall(glProgramUniform4f(id, uniform_id, a, b, c, d));
 }
 void Program::update_uniform(unsigned int uniform_id, const int& a, const int& b, const int& c) {
-	bind();
-	GLCall(glUniform3i(uniform_id, a, b, c));
+	GLCall(glProgramUniform3i(id, uniform_id, a, b, c));
 }
 void Program::update_uniform(unsigned int uniform_id, const float& a, const float& b, const float& c) {
-	bind();
-	GLCall(glUniform3f(uniform_id, a, b, c));
+	GLCall(glProgramUniform3f(id, uniform_id, a, b, c));
 }
 void Program::update_uniform(unsigned int uniform_id, const int& a, const int& b) {
-	bind();
-	GLCall(glUniform2i(uniform_id, a, b));
+	GLCall(glProgramUniform2i(id, uniform_id, a, b));
 }
 void Program::update_uniform(unsigned int uniform_id, const float& a, const float& b) {
-	bind();
-	GLCall(glUniform2f(uniform_id, a, b));
+	GLCall(glProgramUniform2f(id, uniform_id, a, b));
 }
 void Program::update_uniform(unsigned int uniform_id, const int& a) {
-	bind();
-	GLCall(glUniform1i(uniform_id, a));
+	GLCall(glProgramUniform1i(id, uniform_id, a));
 }
 void Program::update_uniform(unsigned int uniform_id, const float& a) {
-	bind();
-	GLCall(glUniform1f(uniform_id, a));
+	GLCall(glProgramUniform1f(id, uniform_id, a));
 }
 void Program::update_uniform(unsigned int uniform_id, glm::mat4& a) {
-	bind();
-	GLCall(glUniformMatrix4fv(uniform_id, 1, GL_FALSE, glm::value_ptr(a)));
+	GLCall(glProgramUniformMatrix4fv(id, uniform_id, 1, GL_FALSE, glm::value_ptr(a)));
 }
 void Program::update_uniform(unsigned int uniform_id, glm::mat3& a) {
-	bind();
-	GLCall(glUniformMatrix3fv(uniform_id, 1, GL_FALSE, glm::value_ptr(a)));
+	GLCall(glProgramUniformMatrix3fv(id, uniform_id, 1, GL_FALSE, glm::value_ptr(a)));
 }
 void Program::update_uniform(unsigned int uniform_id, glm::mat2& a) {
-	bind();
-	GLCall(glUniformMatrix2fv(uniform_id, 1, GL_FALSE, glm::value_ptr(a)));
+	GLCall(glProgramUniformMatrix2fv(id, uniform_id, 1, GL_FALSE, glm::value_ptr(a)));
 }
 void Program::update_uniform(unsigned int uniform_id, glm::vec4& a) {
-	bind();
-	GLCall(glUniform4fv(uniform_id, 1, glm::value_ptr(a)));
+	GLCall(glProgramUniform4fv(id, uniform_id, 1, glm::value_ptr(a)));
 }
 void Program::update_uniform(unsigned int uniform_id, glm::vec3& a) {
-	bind();
-	GLCall(glUniform3fv(uniform_id, 1, glm::value_ptr(a)));
+	GLCall(glProgramUniform3fv(id, uniform_id, 1, glm::value_ptr(a)));
 }
 void Program::update_uniform(unsigned int uniform_id, glm::vec2& a) {
-	bind();
-	GLCall(glUniform2fv(uniform_id, 1, glm::value_ptr(a)));
+	GLCall(glProgramUniform2fv(id, uniform_id, 1, glm::value_ptr(a)));
 }
 
 bool Program::_does_uniform_exist(const std::string& name)

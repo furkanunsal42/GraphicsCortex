@@ -104,11 +104,11 @@ public:
 		std::span<MeshRendererComponent*> mesh_renderers = scene.get_components<MeshRendererComponent>();
 		if (mesh_renderers.size() == 0)
 			return;
-
+		
 		update_light_buffers(scene);
-
+		
 		SkylightComponent* skylight = find_primary_skylight(scene);
-
+		
 		bool irradiance_map_exists = false;
 		std::shared_ptr<TextureCubeMap> irradiance_texture = nullptr;
 		if (skylight != nullptr) {
@@ -123,7 +123,7 @@ public:
 			else
 				irradiance_map_exists = false;
 		}
-
+		
 		bool sky_prefiltered_map_exists = false;
 		std::shared_ptr<TextureCubeMap> sky_prefiltered_texture = nullptr;
 		if (skylight != nullptr) {
@@ -138,7 +138,7 @@ public:
 			else
 				sky_prefiltered_map_exists = false;
 		}
-
+		
 		bool sky_brdf_map_exists = false;
 		std::shared_ptr<Texture2D> sky_brdf_texture = nullptr;
 		if (skylight != nullptr) {
@@ -153,7 +153,7 @@ public:
 			else
 				sky_brdf_map_exists = false;
 		}
-
+		
 		bool d_shadowmap_exists = false;
 		std::shared_ptr<Texture2DArray> d_shadowmap_textures = nullptr;
 		{
@@ -166,7 +166,7 @@ public:
 				}
 			}
 		}
-
+		
 		bool d_shadowmap_buffer_exists = false;
 		std::shared_ptr<UniformBuffer> d_shadowmap_buffer = nullptr;
 		{
@@ -180,6 +180,8 @@ public:
 			}
 		}
 		
+		pipeline.framebuffer->bind_draw();
+
 		for (MeshRendererComponent* mesh_renderer : mesh_renderers) {
 			MaterialComponent* material_c = nullptr;
 			std::shared_ptr<Program> program = nullptr;
@@ -201,8 +203,7 @@ public:
 				if (d_shadowmap_buffer_exists)
 					program->update_uniform("d_shadowmaps_buffer", *d_shadowmap_buffer);
 			}
-
-			pipeline.framebuffer->bind_draw();
+		
 			mesh_renderer->render(camera);
 		}
 	}

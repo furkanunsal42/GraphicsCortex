@@ -140,7 +140,7 @@ public:
 	static const uint32_t vab_bone_weights_slot = 8;
 	static const uint32_t vab_custom_slot0 = 9;
 
-private:
+//private:
 
 	void load_node_structure(Model::Node& start_node);
 

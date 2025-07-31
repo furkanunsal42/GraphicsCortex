@@ -324,7 +324,7 @@ public:
 	template<> static std::string get_glsl_primitive_name<glm::uvec3>()	{ return "uvec3"; }
 	template<> static std::string get_glsl_primitive_name<glm::uvec4>()	{ return "uvec4"; }
 
-private:
+//private:
 	//std::unordered_map<std::string, std::shared_ptr<UniformBuffer>> _uniform_buffers;
 
 	std::unordered_map<std::string, int> _uniform_location_table;

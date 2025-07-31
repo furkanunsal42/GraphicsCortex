@@ -36,6 +36,8 @@
 #include "TextureCubeMap.h"
 #include "Texture3D.h"
 #include "Renderbuffer.h"
+#include "BindlessTextureBank.h"
+
 //#include "BindlessMaterial.h"
 #include "Framebuffer.h"
 #include "Camera.h"

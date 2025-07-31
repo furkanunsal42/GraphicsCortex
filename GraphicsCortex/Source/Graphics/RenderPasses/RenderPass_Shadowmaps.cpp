@@ -229,7 +229,18 @@ void RenderPass_Shadowmaps::on_render(int pass_index, RenderPipeline& pipeline, 
 		sizeof(int32_t),
 		&d_light_count_times_cascade);
 
-	std::vector<float> cascade_far_planes{ camera.max_distance / 50.0f, camera.max_distance / 25.0f, camera.max_distance / 10.0f, camera.max_distance / 5.0f, camera.max_distance / 2.0f };
+	std::vector<float> cascade_far_planes{
+		camera.max_distance / 80.0f, 
+		camera.max_distance / 70.0f, 
+		camera.max_distance / 60.0f, 
+		camera.max_distance / 50.0f,
+		camera.max_distance / 40.0f,
+		camera.max_distance / 30.0f,
+		camera.max_distance / 20.0f,
+		camera.max_distance / 10.0f,
+		camera.max_distance / 5.0f,
+		camera.max_distance / 3.0f 
+	};
 
 	for (LightComponent* light : light_components) {
 		Entity* entity = light->get_entity();

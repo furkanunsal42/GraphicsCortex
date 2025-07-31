@@ -18,7 +18,7 @@ public:
 		glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
 		glm::ivec2 resolution = default_window->get_framebuffer_resolution();
-		RenderPipeline pipeline(resolution.x, resolution.y, Texture2D::ColorTextureFormat::RGBA8, Texture2D::DepthStencilTextureFormat::DEPTH24_STENCIL8, 4);
+		RenderPipeline pipeline(resolution.x, resolution.y, Texture2D::ColorTextureFormat::RGBA8, Texture2D::DepthStencilTextureFormat::DEPTH24_STENCIL8, 16);
 		pipeline.push_render_pass(std::make_shared<RenderPass_Clear>(glm::vec4(0, 0, 0, 1)));
 		pipeline.push_render_pass(std::make_shared<RenderPass_Shadowmaps>());
 		pipeline.push_render_pass(std::make_shared<RenderPass_Forward>());
