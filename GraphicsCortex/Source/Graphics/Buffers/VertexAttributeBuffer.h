@@ -77,10 +77,24 @@ public:
 
 	//void attach_vertex_buffer(int32_t attribute_slot, int32_t buffer_slot, std::shared_ptr<Buffer> vertex_buffer, size_t stride, size_t buffer_offset, size_t divisor, AttributeType attribute_type, int32_t element_per_vertex, size_t relative_offset, bool enabled = true);
 	
-	void attach_vertex_buffer(buffer_slot_t buffer_slot, std::shared_ptr<Buffer> vertex_buffer, size_t stride_in_bytes, size_t buffer_offset_in_bytes = 0, uint32_t divisor_for_instancing = 0);
+	void attach_vertex_buffer(
+		buffer_slot_t buffer_slot, 
+		std::shared_ptr<Buffer> vertex_buffer, 
+		size_t stride_in_bytes, 
+		size_t buffer_offset_in_bytes = 0, 
+		uint32_t divisor_for_instancing = 0
+	);
+	
 	void detach_vertex_buffer(buffer_slot_t buffer_slot);
 
-	void set_attribute_format(attribute_slot_t attribute_slot, buffer_slot_t buffer_slot, AttributeType attribute_type, uint32_t element_count_per_vertex, size_t relative_offset_in_bytes, bool enabled = true);
+	void set_attribute_format(
+		attribute_slot_t attribute_slot, 
+		buffer_slot_t buffer_slot, 
+		AttributeType attribute_type, 
+		uint32_t element_count_per_vertex, 
+		size_t relative_offset_in_bytes, 
+		bool enabled = true
+	);
 	
 	BufferSlotInfo& get_buffer_slot(buffer_slot_t buffer_slot);
 	AttributeSlotInfo& get_attribute_slot(attribute_slot_t attribute_slot);

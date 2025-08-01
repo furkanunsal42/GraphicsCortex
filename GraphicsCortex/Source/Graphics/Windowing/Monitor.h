@@ -7,7 +7,6 @@
 #include "vec2.hpp"
 #include "vec3.hpp"
 
-class Frame2;
 class Window;
 
 class Monitor {
@@ -35,6 +34,5 @@ private:
 	static int32_t monitor_count;
 	static void** all_monitors;
 
-	friend Frame2;
 	friend Window;
 };

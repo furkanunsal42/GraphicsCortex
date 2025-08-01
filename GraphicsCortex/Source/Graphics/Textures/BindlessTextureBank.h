@@ -16,6 +16,8 @@ public:
 
 private:
 	
+	BindlessTextureBank();
+
 	struct TextureInfo {
 		uint32_t id = 0;
 		uint64_t handle = 0;

@@ -24,5 +24,28 @@ public:
 	static void _release_glfw();
 	static void _release_glew();
 	
+
+	struct OpenGLResource{
+		enum Type {
+			Texture1D,
+			Texture2D,
+			Renderbuffer,
+			Texture2DArray,
+			Texture3D,
+			Framebuffer,
+			Buffer,
+			VertexArray
+		};
+		int32_t id;
+		Type type;
+	};
+
+	std::hash<OpenGLResource> {
+		int64_t hash(const OpenGLResource& resource) {
+
+		}
+	}
+
+	std::unordered_map<OpenGLResource, size_t> opengl_id_referance_counter;
 };
 

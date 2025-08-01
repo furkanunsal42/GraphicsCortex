@@ -16,7 +16,7 @@ VertexAttributeBuffer::~VertexAttributeBuffer()
 void VertexAttributeBuffer::release()
 {
     if (buffer_generated) {
-        GLCall(glDeleteBuffers(1, &id));
+        GLCall(glDeleteVertexArrays(1, &id));
     }
 
     buffer_generated = false;

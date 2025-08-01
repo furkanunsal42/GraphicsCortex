@@ -34,7 +34,7 @@ int main() {
 	parameters.input_files_path = projections_path;
 	parameters.output_files_path = volume_path;
 	parameters.volume_segment_max_height = 0;
-	parameters.projection_segment_max_height = 64;
+	parameters.projection_segment_max_height = 0;
 
 	FBP3D solver(
 		FBP3D::FloatingPointPrecision::fp16,
