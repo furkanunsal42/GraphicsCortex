@@ -22,6 +22,9 @@
 #include "Skybox/SkyboxRenderingTest.h"
 #include "Skybox/EquirectangularProjectionTest.h"
 
+#include "OpenGLBackend/OpenGLResourceSystemTest.h"
+#include "OpenGLBackend/OpenGLDeviceResourceSystemTest.h"
+
 int main() {
 	
 	//WindowSystemTest().run();
@@ -39,11 +42,15 @@ int main() {
 
 	//MeshRendererTest().run();
 	//ShadowmapsTest().run();
-	CompleteRenderingTest().run();
+	//CompleteRenderingTest().run();
 
 	//ChannelSplitingTest().run();
 	//HDRLoadingTest().run();
 
 	//SkyboxRenderingTest().run();
 	//EquirectangularProjectionTest().run();
+
+	//OpenGLResourceSystemTest().run();
+	OpenGLDeviceResourceSystemTest().run();
+
 }
