@@ -82,9 +82,9 @@ int main() {
 
 	solver.move_volume(solver_prior);
 	solver_prior.generate_blank_projections(parameters_prior);
-	solver_prior.project_forward(geometry, glm::vec2(std::numeric_limits<int16_t>::min(), prior_image_threshold));
+	solver_prior.project_forward(geometry, glm::vec2(0, prior_image_threshold));
 	solver_prior.move_volume(solver);
-
+	
 	ct_reconstructor::launch_debug_window(solver_prior, "MAR Prior Image");
 	ct_reconstructor::launch_debug_window(solver, "original projections");
 
