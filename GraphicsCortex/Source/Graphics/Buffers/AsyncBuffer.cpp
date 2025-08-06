@@ -297,5 +297,5 @@ void AsyncBuffer::_allocate_buffer(size_t buffer_size)
 	_buffer_size = buffer_size;
 	_buffer_allocated = true;
 
-	//map();
+	map();
 }

@@ -43,17 +43,19 @@ int main() {
 	);
 	
 	solver.read_projections(parameters);
+	solver.projections_transfer_ram_to_vram();
+
 	//solver.generate_blank_volume(parameters);
 	//solver.generate_shepplogan();
 
-	ct_reconstructor::back_project(solver, geometry, parameters, 
-		transfer_inputs_from_ram_on_begin		|
-		apply_filter_to_projections				|
-		apply_log_normalization_to_projections	|
-		apply_minmax_normalization_to_volume	|
-		clip_negatives_of_volume				|
-		save_output_to_disk
-		);
+	//ct_reconstructor::back_project(solver, geometry, parameters, 
+	//	transfer_inputs_from_ram_on_begin		|
+	//	apply_filter_to_projections				|
+	//	apply_log_normalization_to_projections	|
+	//	apply_minmax_normalization_to_volume	|
+	//	clip_negatives_of_volume				|
+	//	save_output_to_disk
+	//	);
 
 	ct_reconstructor::launch_debug_window(solver);
 	ct_reconstructor::release();

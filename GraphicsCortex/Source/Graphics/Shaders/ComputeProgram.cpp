@@ -38,18 +38,18 @@ void ComputeProgram::release()
 	}
 }
 
-void ComputeProgram::dispatch(int workgroup_size_x, int workgroup_size_y, int workgroup_size_z)
+void ComputeProgram::dispatch(int32_t workgroup_size_x, int32_t workgroup_size_y, int32_t workgroup_size_z)
 {
 	dispatch_without_barrier(workgroup_size_x, workgroup_size_y, workgroup_size_z);
 	memory_barrier(MemoryBarrierType::ALL_BARRIER_BITS);
 }
 
-void ComputeProgram::dispatch_thread(int thread_count_x, int thread_count_y, int thread_count_z)
+void ComputeProgram::dispatch_thread(int32_t thread_count_x, int32_t thread_count_y, int32_t thread_count_z)
 {
 	dispatch(std::ceil(thread_count_x / (float)_work_group_size.x), std::ceil(thread_count_y / (float)_work_group_size.y), std::ceil(thread_count_z / (float)_work_group_size.z));
 }
 
-void ComputeProgram::dispatch_without_barrier(int workgroup_size_x, int workgroup_size_y, int workgroup_size_z)
+void ComputeProgram::dispatch_without_barrier(int32_t workgroup_size_x, int32_t workgroup_size_y, int32_t workgroup_size_z)
 {
 	if (!_program_generated) {
 		std::cout << "[OpenGL Error] ComputeProgram tried to dispatch() but it was released" << std::endl;
@@ -65,9 +65,25 @@ void ComputeProgram::dispatch_without_barrier(int workgroup_size_x, int workgrou
 	GLCall(glDispatchCompute(workgroup_size_x, workgroup_size_y, workgroup_size_z));
 }
 
-void ComputeProgram::dispatch_thread_without_barrier(int thread_count_x, int thread_count_y, int thread_count_z)
+void ComputeProgram::dispatch_thread_without_barrier(int32_t thread_count_x, int32_t thread_count_y, int32_t thread_count_z)
 {
 	dispatch_without_barrier(std::ceil(thread_count_x / (float)_work_group_size.x), std::ceil(thread_count_y / (float)_work_group_size.y), std::ceil(thread_count_z / (float)_work_group_size.z));
+}
+
+void ComputeProgram::dispatch(glm::ivec3 workgroup_size) {
+	dispatch(workgroup_size.x, workgroup_size.y, workgroup_size.z);
+}
+
+void ComputeProgram::dispatch_thread(glm::ivec3 thread_count) {
+	dispatch_thread(thread_count.x, thread_count.y, thread_count.z);
+}
+
+void ComputeProgram::dispatch_without_barrier(glm::ivec3 workgroup_size) {
+	dispatch_without_barrier(workgroup_size.x, workgroup_size.y, workgroup_size.z);
+}
+
+void ComputeProgram::dispatch_thread_without_barrier(glm::ivec3 thread_count) {
+	dispatch_thread_without_barrier(thread_count.x, thread_count.y, thread_count.z);
 }
 
 void ComputeProgram::memory_barrier(MemoryBarrierType barrier)

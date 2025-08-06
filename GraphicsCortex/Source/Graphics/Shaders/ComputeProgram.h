@@ -37,10 +37,16 @@ public:
 	std::string get_preprocessor(const std::string& key);
 	void compile_shader(const Shader& shader);
 
-	void dispatch(int workgroup_size_x, int workgroup_size_y, int workgroup_size_z);
-	void dispatch_thread(int thread_count_x, int thread_count_y, int thread_count_z);
-	void dispatch_without_barrier(int workgroup_size_x, int workgroup_size_y, int workgroup_size_z);
-	void dispatch_thread_without_barrier(int thread_count_x, int thread_count_y, int thread_count_z);
+	void dispatch(int32_t workgroup_size_x, int32_t workgroup_size_y, int32_t workgroup_size_z);
+	void dispatch_thread(int32_t thread_count_x, int32_t thread_count_y, int32_t thread_count_z);
+	void dispatch_without_barrier(int32_t workgroup_size_x, int32_t workgroup_size_y, int32_t workgroup_size_z);
+	void dispatch_thread_without_barrier(int32_t thread_count_x, int32_t thread_count_y, int32_t thread_count_z);
+
+	void dispatch(glm::ivec3 workgroup_size);
+	void dispatch_thread(glm::ivec3 thread_count);
+	void dispatch_without_barrier(glm::ivec3 workgroup_size);
+	void dispatch_thread_without_barrier(glm::ivec3 thread_count);
+
 	static void memory_barrier(MemoryBarrierType barrier = MemoryBarrierType::ALL_BARRIER_BITS);
 
 	void bind();
