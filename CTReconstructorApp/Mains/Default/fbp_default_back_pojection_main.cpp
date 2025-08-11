@@ -15,7 +15,7 @@ int main() {
 	// sage
 	std::filesystem::path descriptor_file_path	= "C:/Users/furkan.unsal/Desktop/deneme_21_03_2023.txt";
 	std::filesystem::path projections_path		= "C:/Users/furkan.unsal/Desktop/Projektionen";
-	std::filesystem::path volume_path			= "C:/Users/furkan.unsal/Desktop/CTReconstruction3/CTReconstruction46";
+	std::filesystem::path volume_path			= "C:/Users/furkan.unsal/Desktop/CTReconstruction3/CTReconstruction47";
 
 	// protezler
 	//std::filesystem::path descriptor_file_path	= "C:/Users/furkan.unsal/Desktop/Protezler/Ornek/20250217164519.485-acetabelum/[vg-data] 20250217164519.485/rekonstruktion.ini";
@@ -34,7 +34,7 @@ int main() {
 	parameters.input_files_path = projections_path;
 	parameters.output_files_path = volume_path;
 	parameters.volume_segment_max_height = 0;
-	parameters.projection_segment_max_height = 0;
+	parameters.projection_segment_max_height = 64;
 
 	FBP3D solver(
 		FBP3D::FloatingPointPrecision::fp16,
@@ -48,14 +48,14 @@ int main() {
 	//solver.generate_blank_volume(parameters);
 	//solver.generate_shepplogan();
 
-	//ct_reconstructor::back_project(solver, geometry, parameters, 
-	//	transfer_inputs_from_ram_on_begin		|
-	//	apply_filter_to_projections				|
-	//	apply_log_normalization_to_projections	|
-	//	apply_minmax_normalization_to_volume	|
-	//	clip_negatives_of_volume				|
-	//	save_output_to_disk
-	//	);
+	ct_reconstructor::back_project(solver, geometry, parameters, 
+		transfer_inputs_from_ram_on_begin		|
+		apply_log_normalization_to_projections	|
+		apply_filter_to_projections				|
+		apply_minmax_normalization_to_volume	|
+		clip_negatives_of_volume				|	
+		save_output_to_disk
+		);
 
 	ct_reconstructor::launch_debug_window(solver);
 	ct_reconstructor::release();
