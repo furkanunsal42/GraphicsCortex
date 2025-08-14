@@ -3,14 +3,14 @@
 int main() {
 
 	// pipe
-	//std::filesystem::path descriptor_file_path		= "C:/Users/furkan.unsal/Desktop/Data2/rekonstruktion.ini";
-	//std::filesystem::path projections_path			= "C:/Users/furkan.unsal/Desktop/Data2/projektion";
-	//std::filesystem::path volume_path				= "C:/Users/furkan.unsal/Desktop/CTReconstruction1";
+	std::filesystem::path descriptor_file_path		= "C:/Users/furkan.unsal/Desktop/Data2/rekonstruktion.ini";
+	std::filesystem::path projections_path			= "C:/Users/furkan.unsal/Desktop/Data2/projektion";
+	std::filesystem::path volume_path				= "C:/Users/furkan.unsal/Desktop/CTReconstruction13";
 
 	// pen
-	std::filesystem::path descriptor_file_path	= "C:/Users/furkan.unsal/Desktop/Data3/[vg-data]20240802111906.478/rekonstruktion.ini";
-	std::filesystem::path projections_path		= "C:/Users/furkan.unsal/Desktop/Data3/[vg-data]20240802111906.478/projektion";
-	std::filesystem::path volume_path			= "C:/Users/furkan.unsal/Desktop/CTReconstruction2";
+	//std::filesystem::path descriptor_file_path	= "C:/Users/furkan.unsal/Desktop/Data3/[vg-data]20240802111906.478/rekonstruktion.ini";
+	//std::filesystem::path projections_path		= "C:/Users/furkan.unsal/Desktop/Data3/[vg-data]20240802111906.478/projektion";
+	//std::filesystem::path volume_path			= "C:/Users/furkan.unsal/Desktop/CTReconstruction2";
 
 	// sage
 	//std::filesystem::path descriptor_file_path	= "C:/Users/furkan.unsal/Desktop/deneme_21_03_2023.txt";
@@ -37,9 +37,10 @@ int main() {
 	parameters.projection_segment_max_height = 0;
 
 	//geometry.rotation_offset_radian = glm::pi<float>() / 2.0f;
-	geometry.clockwise_rotation = false;
-	geometry.detector_plane_offset_u = -2.29;
-	geometry.detector_plane_tilt_radian = glm::radians(0.29);
+	parameters.mirror_outputs.z = true;
+	geometry.clockwise_rotation = true;
+	geometry.detector_plane_offset_u = 1.04;
+	geometry.detector_plane_tilt_radian = 0;
 	geometry.rotation_plane_offset_x = 0;
 	geometry.rotation_plane_tilt_z = 0;
 
