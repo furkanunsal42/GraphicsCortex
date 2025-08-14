@@ -38,8 +38,8 @@ int main() {
 
 	//geometry.rotation_offset_radian = glm::pi<float>() / 2.0f;
 	geometry.clockwise_rotation = false;
-	geometry.detector_plane_offset_u = 2.29;
-	geometry.detector_plane_tilt_radian = -glm::radians(0.29);
+	geometry.detector_plane_offset_u = -2.29;
+	geometry.detector_plane_tilt_radian = glm::radians(0.29);
 	geometry.rotation_plane_offset_x = 0;
 	geometry.rotation_plane_tilt_z = 0;
 
