@@ -5,7 +5,7 @@ int main() {
 	// pipe
 	std::filesystem::path descriptor_file_path		= "C:/Users/furkan.unsal/Desktop/Data2/rekonstruktion.ini";
 	std::filesystem::path projections_path			= "C:/Users/furkan.unsal/Desktop/Data2/projektion";
-	std::filesystem::path volume_path				= "C:/Users/furkan.unsal/Desktop/CTReconstruction13";
+	std::filesystem::path volume_path				= "C:/Users/furkan.unsal/Desktop/CTReconstructionPipe";
 
 	// pen
 	//std::filesystem::path descriptor_file_path	= "C:/Users/furkan.unsal/Desktop/Data3/[vg-data]20240802111906.478/rekonstruktion.ini";
