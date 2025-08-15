@@ -1,21 +1,25 @@
 #include "CTReconstructor.h"
+#include "Application/ProceduresInterface.h"
 
 int main() {
 
 	// pipe
-	std::filesystem::path descriptor_file_path		= "C:/Users/furkan.unsal/Desktop/Data2/rekonstruktion.ini";
-	std::filesystem::path projections_path			= "C:/Users/furkan.unsal/Desktop/Data2/projektion";
-	std::filesystem::path volume_path				= "C:/Users/furkan.unsal/Desktop/CTReconstruction13";
-
+	//std::filesystem::path descriptor_file_path		= "C:/Users/furkan.unsal/Desktop/Data2/rekonstruktion.ini";
+	//std::filesystem::path projections_path			= "C:/Users/furkan.unsal/Desktop/Data2/projektion";
+	//std::filesystem::path volume_path				= "C:/Users/furkan.unsal/Desktop/CTReconstruction13";
+	
 	// pen
 	//std::filesystem::path descriptor_file_path	= "C:/Users/furkan.unsal/Desktop/Data3/[vg-data]20240802111906.478/rekonstruktion.ini";
 	//std::filesystem::path projections_path		= "C:/Users/furkan.unsal/Desktop/Data3/[vg-data]20240802111906.478/projektion";
 	//std::filesystem::path volume_path			= "C:/Users/furkan.unsal/Desktop/CTReconstruction2";
 
 	// sage
-	//std::filesystem::path descriptor_file_path	= "C:/Users/furkan.unsal/Desktop/deneme_21_03_2023.txt";
-	//std::filesystem::path projections_path		= "C:/Users/furkan.unsal/Desktop/Projektionen";
-	//std::filesystem::path volume_path			= "C:/Users/furkan.unsal/Desktop/CTReconstruction3/CTReconstruction47";
+	std::filesystem::path descriptor_file_path	= "C:/Users/furkan.unsal/Desktop/deneme_21_03_2023.txt";
+	std::filesystem::path projections_path		= "C:/Users/furkan.unsal/Desktop/Projektionen";
+	std::filesystem::path volume_path			= "C:/Users/furkan.unsal/Desktop/CTReconstruction3/CTReconstruction47";
+	descriptor_file_path		= "C:/Users/FurkanPC/Desktop/deneme_21_03_2023.txt";
+	projections_path			= "C:/Users/FurkanPC/Desktop/Projektionen";
+	volume_path					= "C:/Users/FurkanPC/Desktop/CTReconstructionSage";
 
 	// protezler
 	//std::filesystem::path descriptor_file_path	= "C:/Users/furkan.unsal/Desktop/Protezler/Ornek/20250217164519.485-acetabelum/[vg-data] 20250217164519.485/rekonstruktion.ini";
@@ -24,11 +28,13 @@ int main() {
 
 	ct_reconstructor::init();
 
-	ParameterParser parser;
-	ASSERT(parser.parse(descriptor_file_path, true));
+	std::cout << create_descriptor_file(descriptor_file_path.string().c_str()) << std::endl;
+	std::cout << get_input_projection_resolution() << std::endl;
 
-	FBP3D::ReconstructionGeometry_Conebeam geometry(parser);
-	FBP3D::ReconstructionParameters parameters(parser);
+	//ASSERT(parser.parse(descriptor_file_path, true));
+
+	FBP3D::ReconstructionGeometry_Conebeam geometry(*(ParameterParser*)loaded_parameters);
+	FBP3D::ReconstructionParameters parameters(*(ParameterParser*)loaded_parameters);
 	parameters.input_data_type = FBP3D::Projections;
 	parameters.output_data_type = FBP3D::Volume;
 	parameters.input_files_path = projections_path;
