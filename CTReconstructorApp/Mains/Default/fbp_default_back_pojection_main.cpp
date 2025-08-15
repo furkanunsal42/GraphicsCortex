@@ -1,5 +1,4 @@
 #include "CTReconstructor.h"
-#include "Application/ProceduresInterface.h"
 
 int main() {
 
@@ -14,12 +13,9 @@ int main() {
 	//std::filesystem::path volume_path			= "C:/Users/furkan.unsal/Desktop/CTReconstruction2";
 
 	// sage
-	std::filesystem::path descriptor_file_path	= "C:/Users/furkan.unsal/Desktop/deneme_21_03_2023.txt";
-	std::filesystem::path projections_path		= "C:/Users/furkan.unsal/Desktop/Projektionen";
-	std::filesystem::path volume_path			= "C:/Users/furkan.unsal/Desktop/CTReconstruction3/CTReconstruction47";
-	descriptor_file_path		= "C:/Users/FurkanPC/Desktop/deneme_21_03_2023.txt";
-	projections_path			= "C:/Users/FurkanPC/Desktop/Projektionen";
-	volume_path					= "C:/Users/FurkanPC/Desktop/CTReconstructionSage";
+	//std::filesystem::path descriptor_file_path	= "C:/Users/furkan.unsal/Desktop/deneme_21_03_2023.txt";
+	//std::filesystem::path projections_path		= "C:/Users/furkan.unsal/Desktop/Projektionen";
+	//std::filesystem::path volume_path			= "C:/Users/furkan.unsal/Desktop/CTReconstruction3/CTReconstruction47";
 
 	// protezler
 	//std::filesystem::path descriptor_file_path	= "C:/Users/furkan.unsal/Desktop/Protezler/Ornek/20250217164519.485-acetabelum/[vg-data] 20250217164519.485/rekonstruktion.ini";
@@ -28,17 +24,16 @@ int main() {
 
 	ct_reconstructor::init();
 
-	std::cout << create_descriptor_file(descriptor_file_path.string().c_str()) << std::endl;
-	std::cout << get_input_projection_resolution() << std::endl;
+	ParameterParser parser;
+	ASSERT(parser.parse(descriptor_file_path, true));
 
-	//ASSERT(parser.parse(descriptor_file_path, true));
-
-	FBP3D::ReconstructionGeometry_Conebeam geometry(*(ParameterParser*)loaded_parameters);
-	FBP3D::ReconstructionParameters parameters(*(ParameterParser*)loaded_parameters);
+	FBP3D::ReconstructionGeometry_Conebeam geometry(parser);
+	FBP3D::ReconstructionParameters parameters(parser);
 	parameters.input_data_type = FBP3D::Projections;
 	parameters.output_data_type = FBP3D::Volume;
 	parameters.input_files_path = projections_path;
 	parameters.output_files_path = volume_path;
+	parameters.output_resolution = glm::ivec3(1440);
 	parameters.volume_segment_max_height = 0;
 	parameters.projection_segment_max_height = 0;
 
