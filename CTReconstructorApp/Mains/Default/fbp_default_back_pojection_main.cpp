@@ -21,11 +21,13 @@ int main() {
 	//std::filesystem::path descriptor_file_path	= "C:/Users/furkan.unsal/Desktop/Protezler/Ornek/20250217164519.485-acetabelum/[vg-data] 20250217164519.485/rekonstruktion.ini";
 	//std::filesystem::path projections_path		= "C:/Users/furkan.unsal/Desktop/Protezler/Ornek/20250217164519.485-acetabelum/[vg-data] 20250217164519.485/projektion";
 	//std::filesystem::path volume_path			= "C:/Users/furkan.unsal/Desktop/CTReconstruction5";
+	
 
 	ct_reconstructor::init();
 
 	ParameterParser parser;
-	ASSERT(parser.parse(descriptor_file_path, true));
+	descriptor_file_path = "C:/Users/furkan.unsal/Desktop/CTReconstructor Parameters 1.2.0 Example.txt";
+	ASSERT(parser.read(descriptor_file_path, true));
 
 	FBP3D::ReconstructionGeometry_Conebeam geometry(parser);
 	FBP3D::ReconstructionParameters parameters(parser);
@@ -37,12 +39,11 @@ int main() {
 	parameters.volume_segment_max_height = 0;
 	parameters.projection_segment_max_height = 0;
 
-	//geometry.rotation_offset_radian = glm::pi<float>() / 2.0f;
-	parameters.mirror_outputs.z = true;
-	geometry.detector_plane_offset_u = 1.04;
-	geometry.detector_plane_tilt_radian = 0;
-	geometry.rotation_plane_offset_x = 0;
-	geometry.source_detector_tilt_x_radian = 0;
+	//parameters.mirror_outputs.z = true;
+	//geometry.detector_plane_offset_u = 1.04;
+	//geometry.detector_plane_tilt_radian = 0;
+	//geometry.rotation_plane_offset_x = 0;
+	//geometry.source_detector_tilt_x_radian = 0;
 
 	//geometry.detector_plane_offset_u = 3.71;
 	//geometry.detector_plane_tilt_radian = glm::radians(0.30);
