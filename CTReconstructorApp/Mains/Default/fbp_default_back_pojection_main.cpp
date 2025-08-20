@@ -28,6 +28,7 @@ int main() {
 	ParameterParser parser;
 	descriptor_file_path = "C:/Users/furkan.unsal/Desktop/CTReconstructor Parameters 1.2.0 Example.txt";
 	ASSERT(parser.read(descriptor_file_path, true));
+	parser.write_to_disk("C:/Users/furkan.unsal/Desktop/Generated Parameters 1.2.0.txt");
 
 	FBP3D::ReconstructionGeometry_Conebeam geometry(parser);
 	FBP3D::ReconstructionParameters parameters(parser);
