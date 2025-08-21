@@ -3,14 +3,10 @@
 int main() {
 
 	// pipe
-	std::filesystem::path descriptor_file_path		= "C:/Users/furkan.unsal/Desktop/Data2/rekonstruktion.ini";
-	std::filesystem::path projections_path			= "C:/Users/furkan.unsal/Desktop/Data2/projektion";
-	std::filesystem::path volume_path				= "C:/Users/furkan.unsal/Desktop/CTReconstructionPipe";
-
+	//std::filesystem::path descriptor_file_path		= "C:/Users/furkan.unsal/Desktop/Data2/scaninfo.ini";
+	 
 	// pen
-	//std::filesystem::path descriptor_file_path	= "C:/Users/furkan.unsal/Desktop/Data3/[vg-data]20240802111906.478/rekonstruktion.ini";
-	//std::filesystem::path projections_path		= "C:/Users/furkan.unsal/Desktop/Data3/[vg-data]20240802111906.478/projektion";
-	//std::filesystem::path volume_path			= "C:/Users/furkan.unsal/Desktop/CTReconstruction2";
+	std::filesystem::path descriptor_file_path	= "C:/Users/furkan.unsal/Desktop/Data3/[vg-data]20240802111906.478/scaninfo.ini";
 
 	// sage
 	//std::filesystem::path descriptor_file_path	= "C:/Users/furkan.unsal/Desktop/deneme_21_03_2023.txt";
@@ -22,50 +18,18 @@ int main() {
 	//std::filesystem::path projections_path		= "C:/Users/furkan.unsal/Desktop/Protezler/Ornek/20250217164519.485-acetabelum/[vg-data] 20250217164519.485/projektion";
 	//std::filesystem::path volume_path			= "C:/Users/furkan.unsal/Desktop/CTReconstruction5";
 	
+	//descriptor_file_path = "C:/Users/furkan.unsal/Desktop/CTReconstructor Parameters 1.2.0 Example.txt";
 
 	ct_reconstructor::init();
 
 	ParameterParser parser;
-	//descriptor_file_path = "C:/Users/furkan.unsal/Desktop/CTReconstructor Parameters 1.2.0 Example.txt";
 	ASSERT(parser.read(descriptor_file_path, true));
-	parser.write_to_disk("C:/Users/furkan.unsal/Desktop/Generated Parameters 1.2.0.txt");
 
-	FBP3D::ReconstructionGeometry_Conebeam geometry(parser);
-	FBP3D::ReconstructionParameters parameters(parser);
-	parameters.input_data_type = FBP3D::Projections;
-	parameters.output_data_type = FBP3D::Volume;
-	parameters.input_files_path = projections_path;
-	parameters.output_files_path = volume_path;
-	parameters.output_resolution = glm::ivec3(1440);
-	parameters.volume_segment_max_height = 0;
-	parameters.projection_segment_max_height = 0;
-
-	//parameters.mirror_outputs.z = true;
-	//geometry.detector_plane_offset_u = 1.04;
-	//geometry.detector_plane_tilt_radian = 0;
-	//geometry.rotation_plane_offset_x = 0;
-	//geometry.source_detector_tilt_x_radian = 0;
-
-	//geometry.detector_plane_offset_u = 3.71;
-	//geometry.detector_plane_tilt_radian = glm::radians(0.30);
-	//geometry.rotation_plane_offset_x = -1.86;
-	//geometry.rotation_plane_tilt_z = 0;
-
-	//parameters.output_resolution = glm::ivec3(512);
-
-	FBP3D solver(
-		FBP3D::FloatingPointPrecision::fp16,
-		parameters.projection_segment_max_height,
-		parameters.volume_segment_max_height
-	);
+	FBP3D solver(parser);
 	
-	solver.read_projections(parameters);
-	//solver.projections_transfer_ram_to_vram();
+	solver.read_projections(parser);
 
-	//solver.generate_blank_volume(parameters);
-	//solver.generate_shepplogan();
-
-	ct_reconstructor::back_project(solver, geometry, parameters, 
+	ct_reconstructor::back_project(solver, parser, 
 		transfer_inputs_from_ram_on_begin		|
 		apply_log_normalization_to_projections	|
 		apply_filter_to_projections				|
