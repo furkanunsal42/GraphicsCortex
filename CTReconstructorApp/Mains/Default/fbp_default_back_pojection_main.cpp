@@ -18,12 +18,10 @@ int main() {
 	//std::filesystem::path projections_path		= "C:/Users/furkan.unsal/Desktop/Protezler/Ornek/20250217164519.485-acetabelum/[vg-data] 20250217164519.485/projektion";
 	//std::filesystem::path volume_path			= "C:/Users/furkan.unsal/Desktop/CTReconstruction5";
 	
-	//descriptor_file_path = "C:/Users/furkan.unsal/Desktop/CTReconstructor Parameters 1.2.0 Example.txt";
-
 	ct_reconstructor::init();
 
 	ParameterParser parser;
-	ASSERT(parser.read(descriptor_file_path, true));
+	ASSERT(parser.read(descriptor_file_path));
 
 	FBP3D solver(parser);
 	
