@@ -3,10 +3,10 @@
 int main() {
 
 	// pipe
-	std::filesystem::path descriptor_file_path		= "C:/Users/FurkanPC/Desktop/drive/CTAnalyzer/Data/Data2/scaninfo.ini";
+	//std::filesystem::path descriptor_file_path		= "C:/Users/furkan.unsal/Desktop/Data2/scaninfo.ini";
 	 
 	// pen
-	//std::filesystem::path descriptor_file_path	= "C:/Users/FurkanPC/Desktop/drive/CTAnalyzer/Data/Data3/[vg-data]20240802111906.478";
+	std::filesystem::path descriptor_file_path	= "C:/Users/furkan.unsal/Desktop/Data3/[vg-data]20240802111906.478";
 
 	// sage
 	//std::filesystem::path descriptor_file_path	= "C:/Users/furkan.unsal/Desktop/deneme_21_03_2023.txt";
@@ -32,10 +32,15 @@ int main() {
 
 	ParameterParser parser;
 	ASSERT(parser.read(descriptor_file_path));
-
-	parser.parameters.output_resolution = glm::ivec3(1024);
+	
+	parser.parameters.output_resolution = glm::ivec3(1022);
+	//parser.parameters.output_resolution = glm::ivec3(1024);
 	//parser.geometry.rotation_plane_offset_x = 1.859;
 	//parser.geometry.rotation_plane_offset_x = 0.016;
+
+	// clip border pixels
+	//parser.geometry.detector_plane_offset = glm::vec2(2.402);
+
 
 	FBP3D solver(parser);
 
