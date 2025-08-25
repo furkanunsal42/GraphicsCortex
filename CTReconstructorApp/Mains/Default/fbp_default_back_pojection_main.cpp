@@ -3,15 +3,25 @@
 int main() {
 
 	// pipe
-	//std::filesystem::path descriptor_file_path		= "C:/Users/furkan.unsal/Desktop/Data2/scaninfo.ini";
+	std::filesystem::path descriptor_file_path		= "C:/Users/FurkanPC/Desktop/drive/CTAnalyzer/Data/Data2/scaninfo.ini";
 	 
 	// pen
-	std::filesystem::path descriptor_file_path	= "C:/Users/furkan.unsal/Desktop/Data3/[vg-data]20240802111906.478/scaninfo.ini";
+	//std::filesystem::path descriptor_file_path	= "C:/Users/FurkanPC/Desktop/drive/CTAnalyzer/Data/Data3/[vg-data]20240802111906.478";
 
 	// sage
 	//std::filesystem::path descriptor_file_path	= "C:/Users/furkan.unsal/Desktop/deneme_21_03_2023.txt";
 	//std::filesystem::path projections_path		= "C:/Users/furkan.unsal/Desktop/Projektionen";
 	//std::filesystem::path volume_path			= "C:/Users/furkan.unsal/Desktop/CTReconstruction3/CTReconstruction47";
+
+	// demlik (tiltless)
+	//std::filesystem::path descriptor_file_path = "C:/Users/FurkanPC/Desktop/drive/new_data/Demlik/[vg-data] 20250818145043.850";
+
+	// bardak (tiltless)
+	//std::filesystem::path descriptor_file_path = "C:/Users/FurkanPC/Desktop/drive/new_data/Bardak tilt 0/[vg-data] 20250818135056.904";
+
+	// xbox (tiltless)
+	//std::filesystem::path descriptor_file_path = "C:/Users/FurkanPC/Desktop/drive/new_data/xbox/[vg-data] 20250818150439.488";
+
 
 	// protezler
 	//std::filesystem::path descriptor_file_path	= "C:/Users/furkan.unsal/Desktop/Protezler/Ornek/20250217164519.485-acetabelum/[vg-data] 20250217164519.485/rekonstruktion.ini";
@@ -23,19 +33,35 @@ int main() {
 	ParameterParser parser;
 	ASSERT(parser.read(descriptor_file_path));
 
+	parser.parameters.output_resolution = glm::ivec3(1024);
+	//parser.geometry.rotation_plane_offset_x = 1.859;
+	//parser.geometry.rotation_plane_offset_x = 0.016;
+
 	FBP3D solver(parser);
-	
+
 	solver.read_projections(parser);
 
 	ct_reconstructor::back_project(solver, parser, 
 		transfer_inputs_from_ram_on_begin		|
 		apply_log_normalization_to_projections	|
 		apply_filter_to_projections				|
-		//apply_minmax_normalization_to_volume	|
-		//clip_negatives_of_volume				|	
-		save_output_to_disk
+		apply_minmax_normalization_to_volume	|
+		clip_negatives_of_volume				
+		//save_output_to_disk
 		);
 
+	//FBP3D solver_projections(parser);
+	//
+	//ct_reconstructor::forward_project(solver, parser, 0);
+	//
+	//solver_projections.read_projections(parser);
+	//solver_projections.projections_transfer_ram_to_vram();
+	//solver_projections.compute_min_value_of_projections();
+	//solver_projections.compute_max_value_of_projections();
+	//solver_projections.log_normalize_projections();
+	//
+	//ct_reconstructor::launch_debug_window(solver_projections);
 	ct_reconstructor::launch_debug_window(solver);
+
 	ct_reconstructor::release();
 }
