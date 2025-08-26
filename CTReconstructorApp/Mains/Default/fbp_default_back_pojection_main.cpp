@@ -33,7 +33,7 @@ int main() {
 	ParameterParser parser;
 	ASSERT(parser.read(descriptor_file_path));
 	
-	parser.parameters.output_resolution = glm::ivec3(1024);
+	parser.parameters.output_resolution = glm::ivec3(1000);
 	//parser.parameters.output_resolution = glm::ivec3(1024);
 	//parser.geometry.rotation_plane_offset_x = 1.859;
 	//parser.geometry.rotation_plane_offset_x = 0.016;
