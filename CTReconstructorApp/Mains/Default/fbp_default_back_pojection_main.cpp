@@ -49,9 +49,9 @@ int main() {
 	ct_reconstructor::back_project(solver, parser, 
 		transfer_inputs_from_ram_on_begin		|
 		apply_log_normalization_to_projections	|
-		apply_filter_to_projections				
-		//apply_minmax_normalization_to_volume	|
-		//clip_negatives_of_volume				
+		apply_filter_to_projections				|
+		apply_minmax_normalization_to_volume	|
+		clip_negatives_of_volume				
 		//save_output_to_disk
 		);
 

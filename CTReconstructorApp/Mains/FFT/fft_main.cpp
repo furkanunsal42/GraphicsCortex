@@ -8,7 +8,7 @@ int main() {
 	desc.w_resolution = glm::ivec2(2);
 	Window window(desc);
 
-	glm::ivec2 texture_resolution = glm::ivec2(600);
+	glm::ivec2 texture_resolution = glm::ivec2(600, 600);
 
 	Image image("../CTReconstructor/Images/lenna.png", 4, true);
 	Texture2D texture = Texture2D(texture_resolution.x, texture_resolution.y, Texture2D::ColorTextureFormat::R16F, 1, 0, 0);
@@ -19,7 +19,7 @@ int main() {
 	//GraphicsOperation op;
 	//
 	//op.push_constant("texture_resolution", texture_resolution);
-	//op.push_constant("frequency", glm::vec2(42, 0));
+	//op.push_constant("frequency", glm::vec2(42, 42));
 	//
 	//op.compute(
 	//	texture,
@@ -46,8 +46,10 @@ int main() {
 
 	//fft_solver.fft(*complex_texture);
 	
-	fft_solver.dft(*complex_texture);
-	fft_solver.fft_shift(*complex_texture);
+	fft_solver.dft(*complex_texture, FFFT::XY);
+	fft_solver.inverse_dft(*complex_texture, FFFT::XY);
+	
+	//fft_solver.shift(*complex_texture);
 
 	//fft_solver.inverse_dft(*complex_texture);
 
