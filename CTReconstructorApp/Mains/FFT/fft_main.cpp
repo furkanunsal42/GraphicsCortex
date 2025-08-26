@@ -8,23 +8,23 @@ int main() {
 	desc.w_resolution = glm::ivec2(2);
 	Window window(desc);
 
-	glm::ivec2 texture_resolution = glm::ivec2(1024);
+	glm::ivec2 texture_resolution = glm::ivec2(600);
 
 	Image image("../CTReconstructor/Images/lenna.png", 4, true);
 	Texture2D texture = Texture2D(texture_resolution.x, texture_resolution.y, Texture2D::ColorTextureFormat::R16F, 1, 0, 0);
 	
-	//image.resize(texture_resolution.x, texture_resolution.y);
-	//texture.load_data(image, Texture2D::ColorFormat::RGBA, Texture2D::Type::UNSIGNED_BYTE, 0);
+	image.resize(texture_resolution.x, texture_resolution.y);
+	texture.load_data(image, Texture2D::ColorFormat::RGBA, Texture2D::Type::UNSIGNED_BYTE, 0);
 
-	GraphicsOperation op;
-	
-	op.push_constant("texture_resolution", texture_resolution);
-	op.push_constant("frequency", glm::vec2(12, 0));
-	
-	op.compute(
-		texture,
-		"imageStore(target_data, ivec2(id.xy), vec4(cos((id.x / float(texture_resolution.x) * frequency.x + id.y / float(texture_resolution.y) * frequency.y) * 2 * 3.14159265358979323846)));"
-	);
+	//GraphicsOperation op;
+	//
+	//op.push_constant("texture_resolution", texture_resolution);
+	//op.push_constant("frequency", glm::vec2(42, 0));
+	//
+	//op.compute(
+	//	texture,
+	//	"imageStore(target_data, ivec2(id.xy), vec4(cos((id.x / float(texture_resolution.x) * frequency.x + id.y / float(texture_resolution.y) * frequency.y) * 2 * 3.14159265358979323846)));"
+	//);
 
 	FFFT fft_solver;
 
@@ -44,9 +44,11 @@ int main() {
 	//	f << signal_v[i].r << std::endl;
 	//f.close();
 
-	//fft_solver.fft(*padded_complex_texture, *padded_complex_texture);
+	//fft_solver.fft(*complex_texture);
 	
-	fft_solver.fft(*complex_texture);
+	fft_solver.dft(*complex_texture);
+	fft_solver.fft_shift(*complex_texture);
+
 	//fft_solver.inverse_dft(*complex_texture);
 
 	//op.clear();
