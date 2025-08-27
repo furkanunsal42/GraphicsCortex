@@ -6,7 +6,7 @@ int main() {
 	//std::filesystem::path descriptor_file_path		= "C:/Users/furkan.unsal/Desktop/Data2/scaninfo.ini";
 	 
 	// pen
-	std::filesystem::path descriptor_file_path	= "C:/Users/furkan.unsal/Desktop/Data3/[vg-data]20240802111906.478";
+	//std::filesystem::path descriptor_file_path	= "C:/Users/FurkanPC/Desktop/drive/CTAnalyzer/Data/Data3/[vg-data]20240802111906.478";
 
 	// sage
 	//std::filesystem::path descriptor_file_path	= "C:/Users/furkan.unsal/Desktop/deneme_21_03_2023.txt";
@@ -14,7 +14,7 @@ int main() {
 	//std::filesystem::path volume_path			= "C:/Users/furkan.unsal/Desktop/CTReconstruction3/CTReconstruction47";
 
 	// demlik (tiltless)
-	//std::filesystem::path descriptor_file_path = "C:/Users/FurkanPC/Desktop/drive/new_data/Demlik/[vg-data] 20250818145043.850";
+	std::filesystem::path descriptor_file_path = "C:/Users/FurkanPC/Desktop/drive/new_data/Demlik/[vg-data] 20250818145043.850";
 
 	// bardak (tiltless)
 	//std::filesystem::path descriptor_file_path = "C:/Users/FurkanPC/Desktop/drive/new_data/Bardak tilt 0/[vg-data] 20250818135056.904";
@@ -33,10 +33,10 @@ int main() {
 	ParameterParser parser;
 	ASSERT(parser.read(descriptor_file_path));
 	
-	parser.parameters.output_resolution = glm::ivec3(1000);
-	parser.geometry.detector_plane_tilt_radian = 0;
-	parser.geometry.detector_plane_offset.x = 1.2;
-	parser.parameters.filter_type = FBP2D::COSINE;
+	//parser.parameters.output_resolution = glm::ivec3(1000);
+	//parser.geometry.detector_plane_tilt_radian = 0;
+	//parser.geometry.detector_plane_offset.x = 0;
+	//parser.parameters.filter_type = FBP2D::COSINE;
 
 	//parser.parameters.output_resolution = glm::ivec3(1024);
 	//parser.geometry.rotation_plane_offset_x = 1.859;
@@ -60,7 +60,7 @@ int main() {
 	ct_reconstructor::launch_preview_window(solver, parser);
 
 	ct_reconstructor::back_project(solver, parser,
-		//apply_minmax_normalization_to_volume	|
+		apply_minmax_normalization_to_volume	|
 		clip_negatives_of_volume |
 		save_output_to_disk
 	);
