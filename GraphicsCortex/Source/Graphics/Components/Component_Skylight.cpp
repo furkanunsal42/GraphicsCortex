@@ -171,7 +171,7 @@ void SkylightComponent::calculate_sky_brdf_texture(uint32_t view_direction_resol
     operation.push_constant("SAMPLE_COUNT", 1024);
 
     operation.set_precomputation_statement(
-        "const float PI = 3.14159265359;"
+        "const float PI = 3.14159265358979323846;"
         "float GeometrySchlickGGX(float NdotV, float roughness)"
         "{"
         "    float a = roughness;"

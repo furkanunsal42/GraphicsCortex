@@ -4,6 +4,7 @@
 #include "gl/glew.h"
 #include <functional>
 #include <thread>
+#include "cstdint"
 
 class Program;
 class ComputeProgram;
@@ -75,11 +76,9 @@ public:
 
 	void wait_async_load();
 
-	/*
-	void copy_to_texture(Texture2D& target_texture, int self_mipmap, int target_mipmap);
-	void copy_to_texture(Texture2D& target_texture, int self_mipmap, int target_mipmap, int self_x, int self_y, int width, int height, int target_x, int target_y);
-	*/
-
+	void copy_to_texture(Texture2D& target_texture, int32_t self_mipmap = 0, int32_t target_mipmap = 0);
+	void copy_to_texture(Texture2D& target_texture, int32_t self_mipmap, int32_t target_mipmap, glm::ivec2 copy_size, glm::ivec2 self_offset = glm::ivec2(0), glm::ivec2 target_offset = glm::ivec2(0));
+	
 	std::shared_ptr<Image> get_image(ColorFormat format, Type type, int mipmap_level);
 	std::shared_ptr<Image> get_image(ColorFormat format, Type type, int mipmap_level, int x, int y, int width, int height);
 	std::shared_ptr<Image> get_image(DepthStencilFormat format, Type type, int mipmap_level);

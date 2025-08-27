@@ -34,6 +34,10 @@ int main() {
 	ASSERT(parser.read(descriptor_file_path));
 	
 	parser.parameters.output_resolution = glm::ivec3(1000);
+	parser.geometry.detector_plane_tilt_radian = 0;
+	parser.geometry.detector_plane_offset.x = 1.2;
+	parser.parameters.filter_type = FBP2D::COSINE;
+
 	//parser.parameters.output_resolution = glm::ivec3(1024);
 	//parser.geometry.rotation_plane_offset_x = 1.859;
 	//parser.geometry.rotation_plane_offset_x = 0.016;
@@ -41,24 +45,29 @@ int main() {
 	// clip border pixels
 	//parser.geometry.detector_plane_offset = glm::vec2(2.402);
 
-
 	FBP3D solver(parser);
 
 	solver.read_projections(parser);
 
-	ct_reconstructor::back_project(solver, parser, 
+	ct_reconstructor::filter(solver, parser, 
 		transfer_inputs_from_ram_on_begin		|
 		apply_log_normalization_to_projections	|
-		apply_filter_to_projections				|
-		apply_minmax_normalization_to_volume	|
-		clip_negatives_of_volume				
-		//save_output_to_disk
+		apply_filter_to_projections				
 		);
+	
+	solver.generate_blank_volume(parser.parameters);
 
-	//FBP3D solver_projections(parser);
-	//
+	ct_reconstructor::launch_preview_window(solver, parser);
+
+	ct_reconstructor::back_project(solver, parser,
+		//apply_minmax_normalization_to_volume	|
+		clip_negatives_of_volume |
+		save_output_to_disk
+	);
+
 	//ct_reconstructor::forward_project(solver, parser, 0);
-	//
+	
+	//FBP3D solver_projections(parser);
 	//solver_projections.read_projections(parser);
 	//solver_projections.projections_transfer_ram_to_vram();
 	//solver_projections.compute_min_value_of_projections();

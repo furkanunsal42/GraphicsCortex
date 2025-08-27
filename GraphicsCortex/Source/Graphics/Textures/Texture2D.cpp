@@ -370,6 +370,27 @@ void Texture2D::wait_async_load()
 	async_load_happening = false;
 }
 
+void Texture2D::copy_to_texture(Texture2D& target_texture, int32_t self_mipmap, int32_t target_mipmap)
+{
+	glm::ivec2 copy_size = glm::ivec2(0);
+	copy_to_texture(target_texture, self_mipmap, target_mipmap, copy_size, glm::ivec2(0), glm::ivec2(0));
+}
+
+void Texture2D::copy_to_texture(Texture2D& target_texture, int32_t self_mipmap, int32_t target_mipmap, glm::ivec2 copy_size, glm::ivec2 self_offset, glm::ivec2 target_offset)
+{
+	glm::ivec3 self_offset3 = glm::ivec3(self_offset, 0);
+	glm::ivec3 target_offset3 = glm::ivec3(target_offset, 0);
+	glm::ivec3 copy_size3 = glm::ivec3(copy_size, 0);
+
+	GLCall(glCopyImageSubData(
+		id, target, self_mipmap,
+		self_offset3.x, self_offset3.y, self_offset3.z,
+		target_texture.id, target_texture.target, target_mipmap,
+		target_offset3.x, target_offset3.y, target_offset3.z,
+		copy_size3.x, copy_size3.y, copy_size3.z
+	));
+}
+
 void Texture2D::_set_texture_parameters()
 {
 	if (_texture_handle_created) {
@@ -756,6 +777,8 @@ std::shared_ptr<Texture2D> Texture2D::create_texture_with_same_parameters()
 
 	return new_texture;
 }
+
+
 
 std::shared_ptr<Image> Texture2D::get_image(ColorFormat format, Type type, int mipmap_level)
 {

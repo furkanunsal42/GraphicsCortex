@@ -47,9 +47,12 @@ int main() {
 	//fft_solver.fft(*complex_texture);
 	
 	fft_solver.dft(*complex_texture, FFFT::XY);
+	fft_solver.shift(*complex_texture, FFFT::XY);
+	fft_solver.inverse_shift(*complex_texture, FFFT::XY);
 	fft_solver.inverse_dft(*complex_texture, FFFT::XY);
+
+	//fft_solver.inverse_dft(*complex_texture, FFFT::XY);
 	
-	//fft_solver.shift(*complex_texture);
 
 	//fft_solver.inverse_dft(*complex_texture);
 
