@@ -14,13 +14,18 @@ int main() {
 	//std::filesystem::path volume_path			= "C:/Users/furkan.unsal/Desktop/CTReconstruction3/CTReconstruction47";
 
 	// demlik (tiltless)
-	std::filesystem::path descriptor_file_path = "C:/Users/FurkanPC/Desktop/drive/new_data/Demlik/[vg-data] 20250818145043.850";
+	//std::filesystem::path descriptor_file_path = "C:/Users/FurkanPC/Desktop/drive/new_data/Demlik/[vg-data] 20250818145043.850";
+
+	//std::filesystem::path descriptor_file_path = "C:/Users/furkan.unsal/Desktop/drive/Demlik Çivili/[vg-data] 20250818145716.417";
 
 	// bardak (tiltless)
 	//std::filesystem::path descriptor_file_path = "C:/Users/FurkanPC/Desktop/drive/new_data/Bardak tilt 0/[vg-data] 20250818135056.904";
 
 	// xbox (tiltless)
-	//std::filesystem::path descriptor_file_path = "C:/Users/FurkanPC/Desktop/drive/new_data/xbox/[vg-data] 20250818150439.488";
+	//std::filesystem::path descriptor_file_path = "C:/Users/furkan.unsal/Desktop/drive/xbox/[vg-data] 20250818150439.488";
+
+	// usb
+	std::filesystem::path descriptor_file_path = "C:/Users/furkan.unsal/Desktop/drive/20250716111737.002/[vg-data] 20250716111737.002";
 
 
 	// protezler
