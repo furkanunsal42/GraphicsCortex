@@ -22,10 +22,10 @@ int main() {
 	//std::filesystem::path descriptor_file_path = "C:/Users/FurkanPC/Desktop/drive/new_data/Bardak tilt 0/[vg-data] 20250818135056.904";
 
 	// xbox (tiltless)
-	//std::filesystem::path descriptor_file_path = "C:/Users/furkan.unsal/Desktop/drive/xbox/[vg-data] 20250818150439.488";
+	std::filesystem::path descriptor_file_path = "C:/Users/FurkanPC/Desktop/drive/new_data/xbox/[vg-data] 20250818150439.488";
 
 	// usb
-	std::filesystem::path descriptor_file_path = "C:/Users/furkan.unsal/Desktop/drive/20250716111737.002/[vg-data] 20250716111737.002";
+	//std::filesystem::path descriptor_file_path = "C:/Users/FurkanPC/Desktop/drive/new_data/20250716111737.002/[vg-data] 20250716111737.002";
 
 
 	// protezler
@@ -62,7 +62,11 @@ int main() {
 	
 	solver.generate_blank_volume(parser.parameters);
 
-	ct_reconstructor::launch_preview_window(solver, parser);
+	bool canceled = !ct_reconstructor::launch_preview_window(solver, parser);
+	if (canceled) {
+		ct_reconstructor::release();
+		return 0;
+	}
 
 	ct_reconstructor::back_project(solver, parser,
 		apply_minmax_normalization_to_volume	|
