@@ -6,6 +6,7 @@
 #include "Texture3D.h"
 #include "Texture2DArray.h"
 #include "TextureCubeMap.h"
+#include "Buffer.h"
 
 #include "ComputeProgram.h"
 #include <type_traits>
@@ -14,8 +15,11 @@
 #include <unordered_map>
 #include <tuple>
 
+extern std::filesystem::path graphics_operation_shader_path;
+
 class GraphicsOperation {
 public:
+
 
 	GraphicsOperation(GraphicsOperation& other) = delete;
 	GraphicsOperation() = default;

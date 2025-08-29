@@ -1,5 +1,7 @@
 #include "GraphicsOperation.h"
 
+std::filesystem::path graphics_operation_shader_path = "../GraphicsCortex/Source/GLSL/TextureArithmatic/graphics_operation.comp";
+
 namespace {
 	
 	std::string concatinate_preprocessor_values(const std::vector<std::pair<std::string, std::string>>& preprocessor) {
@@ -78,7 +80,7 @@ std::shared_ptr<ComputeProgram> GraphicsOperation::_compile_shaders(const std::v
 	if (iterator == _preprocessors_to_shaders.end()) {
 		std::shared_ptr<ComputeProgram>cp_data_arithmatic = 
 			std::make_shared<ComputeProgram>
-			(Shader("../GraphicsCortex/Source/GLSL/TextureArithmatic/graphics_operation.comp"), arithmatic_preprocessing_defines);
+			(Shader(graphics_operation_shader_path), arithmatic_preprocessing_defines);
 		
 		_preprocessors_to_shaders[concatinated_value] = cp_data_arithmatic;
 		return cp_data_arithmatic;
