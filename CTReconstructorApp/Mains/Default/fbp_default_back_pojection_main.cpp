@@ -3,18 +3,24 @@
 #include "Windows.h"
 
 std::filesystem::path get_executable_path_windows() {
-	wchar_t ownPth[MAX_PATH];
+	wchar_t own_path[MAX_PATH];
 	HMODULE hModule = GetModuleHandle(NULL);
-	GetModuleFileName(hModule, ownPth, (sizeof(ownPth)));
+	GetModuleFileName(hModule, own_path, (sizeof(own_path)));
 	
-	return std::filesystem::path(ownPth);
+	return std::filesystem::path(own_path);
 }
 
 int main() {
 
 	std::filesystem::path working_directory = std::filesystem::absolute(".");
 	std::filesystem::path executable_directory = get_executable_path_windows().parent_path();
+
+	if (working_directory == "C:\\Users\\furkan.unsal\\dev\\GraphicsCortex\\CTReconstructorApp")
+		working_directory = "C:\\Users\\furkan.unsal\\Desktop\\Data3\\[vg-data]20240802111906.478";
 	
+	if (executable_directory == "C:\\Users\\furkan.unsal\\dev\\GraphicsCortex\\build\\windows-Release-x86_64CTReconstructorApp")
+		executable_directory = "C:\\Users\\furkan.unsal\\dev\\GraphicsCortex\\CTReconstructorApp";
+
 	std::filesystem::path kernels_directory_ct = std::filesystem::canonical(executable_directory / "../CTReconstructor/Source/GLSL/");
 	std::filesystem::path kernels_directory_cortex = std::filesystem::canonical(executable_directory / "../GraphicsCortex/Source/GLSL/");
 
@@ -31,7 +37,7 @@ int main() {
 	FBP3D solver(parser);
 
 	solver.read_projections(parser);
-
+	
 	ct_reconstructor::filter(solver, parser, 
 		transfer_inputs_from_ram_on_begin		|
 		apply_log_normalization_to_projections	|
@@ -51,6 +57,10 @@ int main() {
 		clip_negatives_of_volume |
 		save_output_to_disk
 	);
+
+	//solver.generate_blank_volume(parser);
+	//solver.generate_shepplogan();
+	//ct_reconstructor::save_to_disk(solver, parser);
 
 	ct_reconstructor::launch_debug_window(solver);
 
