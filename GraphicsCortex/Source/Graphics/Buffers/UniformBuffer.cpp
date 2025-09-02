@@ -101,6 +101,8 @@ void UniformBuffer::set_data(int varible_index, void* const data)
 
 void UniformBuffer::clear()
 {
+	_allocate_buffer();
+
 	for (int i = 0; i < _buffer_size; i++)
 		((char*)cpu_data)[i] = 0;
 	_updated_ranges.push_back(_range(0, _buffer_size));
