@@ -9,36 +9,52 @@
 class Package {
 public:
 
+	Package();
+
 	constexpr static size_t invalid_index = std::numeric_limits<size_t>::max();
 
-	void add_content(const std::string& header, const std::string& content);
-	bool add_content(const std::filesystem::path& path);
+	void add(const std::string& header, const std::string& content);
+	bool add(const std::filesystem::path& path);
 
-	std::string get_content(const char* const header) const;
-	std::string get_content(const std::string& header) const;
-	std::string get_content(const std::filesystem::path& path) const;
+	std::string get(const char* const header) const;
+	std::string get(const std::string& header) const;
+	std::string get(const std::filesystem::path& path) const;
 
 	bool does_exist(const std::string& header) const;
 	void clear();
 
-	void read_from_memory(const std::string& packeged_stirng);
+	void read_from_memory(std::string packeged_stirng);
 	void read_from_disk(const std::filesystem::path& path);
 	void save_to_disk(const std::filesystem::path& path) const;
-	std::string get_packaged_file() const;
+	std::string get_packaged_file(bool obfuscate = true) const;
 
 	void clear_obfuscation_seeds();
 	void push_obfuscation_seed(size_t seed);
 	void set_default_obfuscation();
 
-//private:
+	std::vector<size_t>& get_obfuscation_seeds();
+	std::map<std::string, std::string>& get_header_to_content_table();
 
-	std::string _obfuscate(const std::string& str);
-	std::string _obfuscate_inverse(const std::string& str);
+	// debug
+	void print_headers();
+	void print_content();
+	void print_concatenated_file();
+	void print_obfuscated_file();
+
+private:
+
+	static constexpr int32_t _obfuscation_swap_count_min_string_size_multiplier = 4;
+	static constexpr int32_t _obfuscation_swap_count_max_string_size_multiplier = 5;
+
+	static std::vector<std::filesystem::path> _get_all_fitting_filepaths(std::filesystem::path path);
+	static void _obfuscate(std::string& str, size_t obfuscation_seed, bool inverse = false);
+	
+	bool _add_file(const std::filesystem::path& path);
 
 	std::string _get_concatenated_file() const;
 	void _read_from_concatenated_file(const std::string& file);
 
-	void _println(const std::string& message, const std::string& endline = "\n") const;
+	static void _println(const std::string& message, const std::string& endline = "\n");
 	static std::string _convert_path_to_header(const std::filesystem::path& path);
 	
 	std::vector<size_t> obfuscation_seeds;
