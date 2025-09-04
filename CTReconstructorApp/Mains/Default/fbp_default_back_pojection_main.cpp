@@ -1,7 +1,6 @@
 #include "CTReconstructor.h"
 
 int main() {
-
 	std::filesystem::path working_directory = std::filesystem::absolute(".");
 
 	ct_reconstructor::init_from_package();
@@ -32,7 +31,7 @@ int main() {
 		clip_negatives_of_volume |
 		save_output_to_disk
 	);
-
+	
 	ct_reconstructor::launch_debug_window(solver);
 
 	ct_reconstructor::release();
