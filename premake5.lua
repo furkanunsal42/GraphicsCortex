@@ -1060,6 +1060,7 @@ project "RubiksCube"
 	{
 		"%{prj.name}/Source",
 		"%{prj.name}/Tests",
+		"CortexPackager/Source",
 		"GraphicsCortex/Source/Graphics/RenderPasses",
 		"GraphicsCortex/Source/System",
 		"GraphicsCortex/Source/Physics",

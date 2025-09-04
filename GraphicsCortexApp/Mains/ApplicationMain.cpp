@@ -42,7 +42,7 @@ int main() {
 
 	//MeshRendererTest().run();
 	//ShadowmapsTest().run();
-	//CompleteRenderingTest().run();
+	CompleteRenderingTest().run();
 
 	//ChannelSplitingTest().run();
 	//HDRLoadingTest().run();
@@ -51,6 +51,6 @@ int main() {
 	//EquirectangularProjectionTest().run();
 
 	//OpenGLResourceSystemTest().run();
-	OpenGLDeviceResourceSystemTest().run();
+	//OpenGLDeviceResourceSystemTest().run();
 
 }

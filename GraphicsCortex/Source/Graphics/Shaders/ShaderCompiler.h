@@ -32,8 +32,6 @@ public:
 	Shader(const std::filesystem::path& vertex_target_file, const std::filesystem::path& geometry_target_file, const std::filesystem::path& fragment_target_file);
 	void read_shader(const std::filesystem::path& path);
 	void read_shader_source(const std::string& source_code);
-
-
 };
 
 
