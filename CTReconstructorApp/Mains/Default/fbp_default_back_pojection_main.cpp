@@ -3,13 +3,11 @@
 int main() {
 
 	std::filesystem::path working_directory = std::filesystem::absolute(".");
-	working_directory = "C:/Users/furkan.unsal/Desktop/Data3/[vg-data]20240802111906.478";
 
 	ct_reconstructor::init_from_package();
 
 	ParameterParser parser;
 	ASSERT(parser.read(working_directory));
-	//parser.parameters.volume_segment_max_height = 256;
 
 	FBP3D solver(parser);
 
@@ -34,10 +32,6 @@ int main() {
 		clip_negatives_of_volume |
 		save_output_to_disk
 	);
-
-	//solver.generate_blank_volume(parser);
-	//solver.generate_shepplogan();
-	//ct_reconstructor::save_to_disk(solver, parser);
 
 	ct_reconstructor::launch_debug_window(solver);
 
