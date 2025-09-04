@@ -17,32 +17,10 @@
 #include "Texture2DArray.h"
 #include "TextureCubeMap.h"
 
-std::unique_ptr<Package> Shader::package = nullptr;
-
-bool Shader::load_package(const std::filesystem::path& package_path)
-{
-	package = std::make_unique<Package>();
-	return package->read_from_disk(package_path);
-}
-
-void Shader::unload_package()
-{
-	package = nullptr;
-}
-
-bool Shader::is_package_loaded()
-{
-	return package != nullptr;
-}
-
 Shader::Shader() { ; }
 
 Shader::Shader(const std::filesystem::path& target_file)
 {
-	if (is_package_loaded()) {
-
-	}
-
 	read_shader(target_file.string());
 	filename = compute_filename(target_file.string());
 }
@@ -60,14 +38,14 @@ Shader::Shader(const std::filesystem::path& vertex_target_file, const std::files
 
 void Shader::read_shader(const std::filesystem::path& path) {
 
-	if (is_package_loaded()) {
-		if (!package->does_exist(path)) {
+	if (Package::is_package_loaded()) {
+		if (!Package::loaded_package->does_exist(path)) {
 			std::cout << "[Filepath Error] Shader tried to read_shader() with package but " << path << " couldn't found" << std::endl;
 			std::cout << path << std::endl;
 			ASSERT(false);
 		}
 
-		std::string source_code = package->get(path);
+		std::string source_code = Package::loaded_package->get(path);
 
 		read_shader_source(source_code);
 		return;

@@ -5,6 +5,7 @@
 #include <string>
 #include <filesystem>
 #include <map>
+#include <memory>
 
 class Package {
 public:
@@ -16,11 +17,11 @@ public:
 	void add(const std::string& header, const std::string& content);
 	bool add(const std::filesystem::path& path);
 
-	std::string get(const char* const header) const;
-	std::string get(const std::string& header) const;
-	std::string get(const std::filesystem::path& path) const;
+	const std::string& get(const char* const header) const;
+	const std::string& get(const std::string& header) const;
+	const std::string& get(const std::filesystem::path& path) const;
 
-	bool does_exist(const std::filesystem::path& path) const;
+	bool does_exist(const std::filesystem::path& path, std::string* out_match = nullptr) const;
 	bool does_exist(const std::string& header) const;
 	void clear();
 
@@ -36,11 +37,20 @@ public:
 	std::vector<size_t>& get_obfuscation_seeds();
 	std::map<std::string, std::string>& get_header_to_content_table();
 
+	bool is_weak_matching_accepted();
+	void set_weak_matching_policy(bool accepted);
+
 	// debug
 	void print_headers();
 	void print_content();
 	void print_concatenated_file();
 	void print_obfuscated_file();
+
+	// loading package
+	static bool load_package(const std::filesystem::path& package_path);
+	static void unload_package();
+	static bool is_package_loaded();
+	static std::unique_ptr<Package> loaded_package;
 
 private:
 
@@ -57,7 +67,9 @@ private:
 
 	static void _println(const std::string& message, const std::string& endline = "\n");
 	static std::string _convert_path_to_header(const std::filesystem::path& path);
+	static std::string _convert_path_to_header_weak(const std::filesystem::path& path);
 	
 	std::vector<size_t> obfuscation_seeds;
 	std::map<std::string, std::string> header_to_content_table;
+	bool accept_weak_matching_paths = true;
 };

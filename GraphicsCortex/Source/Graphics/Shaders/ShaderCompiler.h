@@ -33,10 +33,7 @@ public:
 	void read_shader(const std::filesystem::path& path);
 	void read_shader_source(const std::string& source_code);
 
-	static bool load_package(const std::filesystem::path& package_path);
-	static void unload_package();
-	static bool is_package_loaded();
-	static std::unique_ptr<Package> package;
+
 };
 
 

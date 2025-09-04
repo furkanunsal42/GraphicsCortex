@@ -7,6 +7,24 @@
 
 #include <random>
 
+std::unique_ptr<Package> Package::loaded_package = nullptr;
+
+bool Package::load_package(const std::filesystem::path& package_path)
+{
+	loaded_package = std::make_unique<Package>();
+	return loaded_package->read_from_disk(package_path);
+}
+
+void Package::unload_package()
+{
+	loaded_package = nullptr;
+}
+
+bool Package::is_package_loaded()
+{
+	return loaded_package != nullptr;
+}
+
 void Package::clear()
 {
 	header_to_content_table.clear();
@@ -50,9 +68,43 @@ void Package::save_to_disk(const std::filesystem::path& path) const
 	file.write(&file_string[0], file_string.size());
 }
 
-bool Package::does_exist(const std::filesystem::path& path) const
+bool Package::does_exist(const std::filesystem::path& path, std::string* out_match) const
 {
-	return does_exist(_convert_path_to_header(path));
+	bool strong_matching = does_exist(_convert_path_to_header(path));
+	if (strong_matching) {
+		if (out_match != nullptr) *out_match = _convert_path_to_header(path);
+		return true;
+	}
+	if (!accept_weak_matching_paths)
+		return false;
+
+	std::string weak_header = _convert_path_to_header_weak(path);
+
+	bool found_once = false;
+	bool found_multiple = false;
+
+	std::vector<std::string> matches;
+
+	for (auto& entry : header_to_content_table) {
+		if (entry.first.find(weak_header) != std::string::npos) {
+			if (found_once)
+				found_multiple = true;
+			found_once = true;
+			matches.push_back(entry.first);
+		}
+	}
+
+	if (found_multiple) {
+		_println("[Package Warning] Package::does_exist() is called with weak matching policy but given header had multiple weak matches");
+		_println("\theader : " + path.string());
+		for (int32_t i = 0; i < matches.size(); i++)
+			_println("\tmatch" + std::to_string(i) + " : " + matches[i]);
+	}
+
+	if (found_once && !found_multiple && out_match != nullptr)
+		*out_match = matches[0];
+
+	return found_once && !found_multiple;
 }
 
 bool Package::does_exist(const std::string& header) const
@@ -229,12 +281,12 @@ bool Package::_add_file(const std::filesystem::path& path)
 	return true;
 }
 
-std::string Package::get(const char* const header) const
+const std::string& Package::get(const char* const header) const
 {
 	return get(std::filesystem::path(header));
 }
 
-std::string Package::get(const std::string& header) const
+const std::string& Package::get(const std::string& header) const
 {
 	if (!does_exist(header))
 	{
@@ -245,10 +297,16 @@ std::string Package::get(const std::string& header) const
 	return header_to_content_table.at(header);
 }
 
-std::string Package::get(const std::filesystem::path& path) const
+const std::string& Package::get(const std::filesystem::path& path) const
 {
-	std::string header = _convert_path_to_header(path);
-	return get(header);
+	std::string match;
+	if (!does_exist(path, &match))
+	{
+		_println("[Package Warning] Package::get() is called with an header that isn't registered yet");
+		return "";
+	}
+
+	return header_to_content_table.at(match);
 }
 
 void Package::_obfuscate(std::string& str, size_t obfuscation_seed, bool inverse)
@@ -405,6 +463,11 @@ std::string Package::_convert_path_to_header(const std::filesystem::path& path)
 	return path.generic_string();
 }
 
+std::string Package::_convert_path_to_header_weak(const std::filesystem::path& path)
+{
+	return path.filename().generic_string();
+}
+
 std::string Package::get_packaged_file(bool obfuscate) const
 {
 	std::string concatenated_file = _get_concatenated_file();
@@ -441,6 +504,14 @@ std::vector<size_t>& Package::get_obfuscation_seeds()
 std::map<std::string, std::string>& Package::get_header_to_content_table()
 {
 	return header_to_content_table;
+}
+
+bool Package::is_weak_matching_accepted() {
+	return accept_weak_matching_paths;
+}
+
+void Package::set_weak_matching_policy(bool accepted) {
+	accept_weak_matching_paths = accepted;
 }
 
 void Package::print_headers(){

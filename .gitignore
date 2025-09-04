@@ -78,3 +78,6 @@ GraphicsCortex/Dependencies/assimp/lib_debug/IrrXMLd.lib
 CortexPackagerApp/bank.txt
 bank.txt
 CTReconstructorApp/reconstruct.exe
+/CortexPackager
+CTReconstructorApp/ctanalyzer.hbv
+CTReconstructorApp/imgui.ini

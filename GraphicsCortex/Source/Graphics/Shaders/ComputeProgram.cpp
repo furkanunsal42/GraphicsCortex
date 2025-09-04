@@ -131,6 +131,16 @@ void ComputeProgram::unbind()
 	GLCall(glUseProgram(0));
 }
 
+namespace {
+	bool is_char_whitespace(char c) {
+		return
+			c == ' ' ||
+			c == '\t' ||
+			c == '\r' ||
+			c == '\n';
+	}
+}
+
 void ComputeProgram::compile_shader(const Shader& shader)
 {
 	Shader shader_to_use = shader;
@@ -142,20 +152,20 @@ void ComputeProgram::compile_shader(const Shader& shader)
 			if (int define_begin = line.find("#define") != std::string::npos) {
 				
 				int name_position_begin = define_begin + 7;
-				while (name_position_begin < line.size() && line.at(name_position_begin) == ' ') { name_position_begin++; }
+				while (name_position_begin < line.size() && is_char_whitespace(line.at(name_position_begin))) { name_position_begin++; }
 				
 				int name_position_end = name_position_begin;
-				while (name_position_end < line.size() && line.at(name_position_end) != ' ') { name_position_end++; }
+				while (name_position_end < line.size() && !is_char_whitespace(line.at(name_position_end))) { name_position_end++; }
 
 				int value_position_begin = name_position_end;
-				while (value_position_begin < line.size() && line.at(value_position_begin) == ' ') { value_position_begin++; }
+				while (value_position_begin < line.size() && is_char_whitespace(line.at(value_position_begin))) { value_position_begin++; }
 
 				int value_position_end = value_position_begin;
-				while (value_position_end < line.size() && line.at(value_position_end) != ' ') { value_position_end++; }
+				while (value_position_end < line.size() && !is_char_whitespace(line.at(value_position_end))) { value_position_end++; }
 
 				std::string define_name = line.substr(name_position_begin, name_position_end-name_position_begin);
 				bool has_key = value_position_begin != value_position_end;
-				
+
 				if (_preprocessing_defines.find(define_name) != _preprocessing_defines.end()) {
 					if (!has_key) line = line.substr(0, name_position_end) + " " + _preprocessing_defines[define_name];
 					else line.replace(value_position_begin, value_position_end, _preprocessing_defines[define_name]);

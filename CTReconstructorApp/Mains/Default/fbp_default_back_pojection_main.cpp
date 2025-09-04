@@ -1,29 +1,14 @@
 #include "CTReconstructor.h"
 
-#include "Windows.h"
-
 int main() {
 
 	std::filesystem::path working_directory = std::filesystem::absolute(".");
-	std::filesystem::path executable_directory = ct_reconstructor::get_executable_path_windows().parent_path();
+	working_directory = "C:/Users/furkan.unsal/Desktop/Data3/[vg-data]20240802111906.478";
 
-	if (working_directory == "C:\\Users\\furkan.unsal\\dev\\GraphicsCortex\\CTReconstructorApp")
-		working_directory = "C:\\Users\\furkan.unsal\\Desktop\\Data3\\[vg-data]20240802111906.478";
-	
-	if (executable_directory == "C:\\Users\\furkan.unsal\\dev\\GraphicsCortex\\build\\windows-Release-x86_64CTReconstructorApp")
-		executable_directory = "C:\\Users\\furkan.unsal\\dev\\GraphicsCortex\\CTReconstructorApp";
-
-	//std::filesystem::path kernels_directory_ct = std::filesystem::canonical(executable_directory / "../CTReconstructor/Source/GLSL/");
-	//std::filesystem::path kernels_directory_cortex = std::filesystem::canonical(executable_directory / "../GraphicsCortex/Source/GLSL/");
-
-	std::filesystem::path descriptor_file_path = working_directory;
-
-	ct_reconstructor::init_from_package(true);
+	ct_reconstructor::init_from_package();
 
 	ParameterParser parser;
-	ASSERT(parser.read(descriptor_file_path));
-	
-	parser.parameters.output_resolution = glm::ivec3(1440);
+	ASSERT(parser.read(working_directory));
 	//parser.parameters.volume_segment_max_height = 256;
 
 	FBP3D solver(parser);
@@ -38,11 +23,11 @@ int main() {
 	
 	solver.generate_blank_volume(parser.parameters);
 	
-	//bool canceled = !ct_reconstructor::launch_preview_window(solver, parser, executable_directory);
-	//if (canceled) {
-	//	ct_reconstructor::release();
-	//	return 0;
-	//}
+	bool canceled = !ct_reconstructor::launch_preview_window(solver, parser);
+	if (canceled) {
+		ct_reconstructor::release();
+		return 0;
+	}
 	
 	ct_reconstructor::back_project(solver, parser,
 		apply_minmax_normalization_to_volume	|
