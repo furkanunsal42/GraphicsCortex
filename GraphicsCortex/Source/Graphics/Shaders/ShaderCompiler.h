@@ -13,6 +13,7 @@
 #include "gtc/matrix_transform.hpp"
 #include "gtc/type_ptr.hpp"
 
+#include "Package.h"
 #include "Debuger.h"
 #include <UniformBuffer.h>
 
@@ -29,7 +30,13 @@ public:
 	Shader(const std::filesystem::path& target_file);
 	Shader(const std::filesystem::path& vertex_target_file, const std::filesystem::path& fragment_target_file);
 	Shader(const std::filesystem::path& vertex_target_file, const std::filesystem::path& geometry_target_file, const std::filesystem::path& fragment_target_file);
-	void read_shader(const std::string& target_file);
+	void read_shader(const std::filesystem::path& path);
+	void read_shader_source(const std::string& source_code);
+
+	static bool load_package(const std::filesystem::path& package_path);
+	static void unload_package();
+	static bool is_package_loaded();
+	static std::unique_ptr<Package> package;
 };
 
 

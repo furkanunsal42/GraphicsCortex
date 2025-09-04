@@ -2,18 +2,10 @@
 
 #include "Windows.h"
 
-std::filesystem::path get_executable_path_windows() {
-	wchar_t own_path[MAX_PATH];
-	HMODULE hModule = GetModuleHandle(NULL);
-	GetModuleFileName(hModule, own_path, (sizeof(own_path)));
-	
-	return std::filesystem::path(own_path);
-}
-
 int main() {
 
 	std::filesystem::path working_directory = std::filesystem::absolute(".");
-	std::filesystem::path executable_directory = get_executable_path_windows().parent_path();
+	std::filesystem::path executable_directory = ct_reconstructor::get_executable_path_windows().parent_path();
 
 	if (working_directory == "C:\\Users\\furkan.unsal\\dev\\GraphicsCortex\\CTReconstructorApp")
 		working_directory = "C:\\Users\\furkan.unsal\\Desktop\\Data3\\[vg-data]20240802111906.478";
@@ -21,15 +13,12 @@ int main() {
 	if (executable_directory == "C:\\Users\\furkan.unsal\\dev\\GraphicsCortex\\build\\windows-Release-x86_64CTReconstructorApp")
 		executable_directory = "C:\\Users\\furkan.unsal\\dev\\GraphicsCortex\\CTReconstructorApp";
 
-	std::filesystem::path kernels_directory_ct = std::filesystem::canonical(executable_directory / "../CTReconstructor/Source/GLSL/");
-	std::filesystem::path kernels_directory_cortex = std::filesystem::canonical(executable_directory / "../GraphicsCortex/Source/GLSL/");
+	//std::filesystem::path kernels_directory_ct = std::filesystem::canonical(executable_directory / "../CTReconstructor/Source/GLSL/");
+	//std::filesystem::path kernels_directory_cortex = std::filesystem::canonical(executable_directory / "../GraphicsCortex/Source/GLSL/");
 
 	std::filesystem::path descriptor_file_path = working_directory;
 
-	ct_reconstructor::init(
-		kernels_directory_ct,
-		kernels_directory_cortex
-	);
+	ct_reconstructor::init_from_package(true);
 
 	ParameterParser parser;
 	ASSERT(parser.read(descriptor_file_path));

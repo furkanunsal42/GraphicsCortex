@@ -20,11 +20,12 @@ public:
 	std::string get(const std::string& header) const;
 	std::string get(const std::filesystem::path& path) const;
 
+	bool does_exist(const std::filesystem::path& path) const;
 	bool does_exist(const std::string& header) const;
 	void clear();
 
 	void read_from_memory(std::string packeged_stirng);
-	void read_from_disk(const std::filesystem::path& path);
+	bool read_from_disk(const std::filesystem::path& path);
 	void save_to_disk(const std::filesystem::path& path) const;
 	std::string get_packaged_file(bool obfuscate = true) const;
 

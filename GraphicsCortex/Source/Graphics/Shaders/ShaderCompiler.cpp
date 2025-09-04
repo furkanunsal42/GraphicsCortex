@@ -17,10 +17,32 @@
 #include "Texture2DArray.h"
 #include "TextureCubeMap.h"
 
+std::unique_ptr<Package> Shader::package = nullptr;
+
+bool Shader::load_package(const std::filesystem::path& package_path)
+{
+	package = std::make_unique<Package>();
+	return package->read_from_disk(package_path);
+}
+
+void Shader::unload_package()
+{
+	package = nullptr;
+}
+
+bool Shader::is_package_loaded()
+{
+	return package != nullptr;
+}
+
 Shader::Shader() { ; }
 
 Shader::Shader(const std::filesystem::path& target_file)
 {
+	if (is_package_loaded()) {
+
+	}
+
 	read_shader(target_file.string());
 	filename = compute_filename(target_file.string());
 }
@@ -36,18 +58,39 @@ Shader::Shader(const std::filesystem::path& vertex_target_file, const std::files
 	filename = compute_filename(vertex_target_file.string()) + " | " + compute_filename(geometry_terget_file.string()) + " | " + compute_filename(fragment_target_file.string());
 }
 
-void Shader::read_shader(const std::string& target_file) {
+void Shader::read_shader(const std::filesystem::path& path) {
 
-	filename = target_file;
+	if (is_package_loaded()) {
+		if (!package->does_exist(path)) {
+			std::cout << "[Filepath Error] Shader tried to read_shader() with package but " << path << " couldn't found" << std::endl;
+			std::cout << path << std::endl;
+			ASSERT(false);
+		}
 
-	std::string type = "";
-	std::ifstream file(target_file);
-	std::string line;
+		std::string source_code = package->get(path);
 
-	if (!file){
-		std::cout << "[Filepath Error] Shader tried to read_shader() but \"" << target_file << "\" couldn't found" << std::endl;
-		ASSERT(false);
+		read_shader_source(source_code);
+		return;
 	}
+	else {
+		std::ifstream file(path);
+		if (!file) {
+			std::cout << "[Filepath Error] Shader tried to read_shader() but " << path << " couldn't found" << std::endl;
+			ASSERT(false);
+		}
+		std::string file_content(std::filesystem::file_size(path), '\0');
+		file.read(&file_content[0], file_content.size());
+
+		read_shader_source(file_content);
+		return;
+	}
+}
+
+void Shader::read_shader_source(const std::string& source_code)
+{
+	std::string type = "";
+	std::stringstream file(source_code);
+	std::string line;
 
 	while (std::getline(file, line)) {
 		if (line.find("#<vertex shader>") != std::string::npos) {

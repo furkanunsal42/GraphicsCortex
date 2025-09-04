@@ -15,20 +15,21 @@ void Package::clear()
 
 void Package::read_from_memory(std::string packeged_stirng)
 {
-	for (int32_t i = obfuscation_seeds.size() - 1; i >= 0; i--)
+	for (int32_t i = obfuscation_seeds.size() - 1; i >= 0; i--) {
 		_obfuscate(packeged_stirng, obfuscation_seeds[i], true);
+	}
 
 	_read_from_concatenated_file(packeged_stirng);
 }
 
-void Package::read_from_disk(const std::filesystem::path& path)
+bool Package::read_from_disk(const std::filesystem::path& path)
 {
 	clear();
 
 	std::ifstream file(path, std::ios::binary);
 	if (!file) {
 		_println("[Package Warning] Package::read_from_disk() is called but specified file couldn't found");
-		return;
+		return false;
 	}
 
 	auto size = std::filesystem::file_size(path);
@@ -36,14 +37,22 @@ void Package::read_from_disk(const std::filesystem::path& path)
 	file.read(&file_string[0], size);
 
 	read_from_memory(file_string);
+	return true;
 }
 
 void Package::save_to_disk(const std::filesystem::path& path) const
 {
-	std::string file_string = get_packaged_file();
+	if (header_to_content_table.size() == 0)
+		return;
 
+	std::string file_string = get_packaged_file();
 	std::ofstream file(path, std::ios::binary);
 	file.write(&file_string[0], file_string.size());
+}
+
+bool Package::does_exist(const std::filesystem::path& path) const
+{
+	return does_exist(_convert_path_to_header(path));
 }
 
 bool Package::does_exist(const std::string& header) const
@@ -420,6 +429,7 @@ void Package::push_obfuscation_seed(size_t seed)
 
 void Package::set_default_obfuscation()
 {
+	clear_obfuscation_seeds();
 	push_obfuscation_seed(128937986851);
 }
 

@@ -22,6 +22,12 @@ bool process_command(Package& package, const std::string& command) {
 	if (argument.size() > 2 && argument[0] == '"' && argument[argument.size() - 1] == '"')
 		argument = argument.substr(1, argument.size() - 2);
 
+	if (command_type.size() > 1 && command_type[0] != '-') {
+		std::cout << "[CortexPackager Error] following command failed because commands must begin with '-' character" << std::endl;
+		std::cout << "\t" << command << std::endl;
+		return false;
+	}
+
 	if (command_type == "-add") {
 		bool success = package.add(std::filesystem::path(argument));
 		if (!success && verbose) {
@@ -68,7 +74,7 @@ int main(int32_t argc, const char* argv[]) {
 	Package p;
 
 	for (int32_t i = 1; i < argc; i++) {
-		success |= process_command(p, argv[i]);
+		success &= process_command(p, argv[i]);
 	}
 
 	//success |= process_command(p, "-verbose=true");
@@ -76,20 +82,24 @@ int main(int32_t argc, const char* argv[]) {
 	//success |= process_command(p, "-output_dir=C:/Users/furkan.unsal/dev/GraphicsCortex/CortexPackagerApp");
 	//success |= process_command(p, "-add=C:/Users/furkan.unsal/dev/GraphicsCortex/**.comp");
 
-	if (verbose)
-		p.print_headers();
 	
-	p.save_to_disk(output_directory / output_filename);
-	
-	if (verbose)
-		std::cout << "[CortexPackager Info] writing to disk finished" << std::endl;
+	if (success) {
 
-	if (verbose && success) {
-		std::cout << "[CortexPackager Info] all commands was successful" << std::endl;
-		return 0;
+		if (verbose)
+			p.print_headers();
+
+		p.save_to_disk(output_directory / output_filename);
+	
+		if (verbose)
+			std::cout << "[CortexPackager Info] writing to disk finished" << std::endl;
+
+		if (verbose) {
+			std::cout << "[CortexPackager Info] all commands was successful" << std::endl;
+			return 0;
+		}
 	}
-	else if (verbose && !success) {
+
+	if (verbose)
 		std::cout << "[CortexPackager Error] at least a command failed" << std::endl;
-		return 1;
-	}
+	return 1;
 }

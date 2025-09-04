@@ -8,6 +8,7 @@
 #include "Tools/GraphicsOperation/GraphicsOperation.h";
 #include "Font.h"
 #include "BindlessTextureBank.h"
+#include "Package.h"
 
 class Window;
 class GlobalResources {
@@ -20,7 +21,6 @@ public:
 	std::unique_ptr<GraphicsOperation> SkylightComponent_operation = nullptr;
 	std::unique_ptr<FontBank> FontBank = nullptr;
 	std::unique_ptr<BindlessTextureBank> BindlessTextureBank = nullptr;
-
 };
 
 extern std::unordered_map<void*, GlobalResources> context_to_global_resources;
