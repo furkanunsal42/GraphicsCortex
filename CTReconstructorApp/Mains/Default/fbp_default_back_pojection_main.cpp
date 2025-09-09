@@ -2,8 +2,9 @@
 
 int main() {
 	std::filesystem::path working_directory = std::filesystem::absolute(".");
+	working_directory = "C:\\Users\\furkan.unsal\\Desktop\\drive\\20250716111737.002\\[vg-data] 20250716111737.002";
 
-	ct_reconstructor::init_from_package();
+	ct_reconstructor::init();
 
 	ParameterParser parser;
 	ASSERT(parser.read(working_directory));
@@ -15,6 +16,7 @@ int main() {
 	ct_reconstructor::filter(solver, parser, 
 		transfer_inputs_from_ram_on_begin		|
 		apply_log_normalization_to_projections	|
+		apply_fdk_weights_to_projections		|
 		apply_filter_to_projections				
 		);
 	

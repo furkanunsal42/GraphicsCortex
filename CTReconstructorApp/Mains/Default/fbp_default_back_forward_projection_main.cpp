@@ -13,30 +13,34 @@ int main() {
 	
 	parser.parameters.input_data_type = FBP3D::Projections;
 	parser.parameters.output_data_type = FBP3D::Volume;
-	parser.geometry.detector_plane_offset.x = 0;
-	parser.geometry.detector_plane_offset.y = 0;
-	parser.geometry.rotation_plane_offset_x = 0;
-	parser.geometry.source_detector_tilt_x_radian = 0;
-	parser.geometry.rotation_radian_for_each_scan = glm::pi<float>() * 2;
+	//parser.geometry.detector_plane_offset.x = 0;
+	//parser.geometry.detector_plane_offset.y = 0;
+	//parser.geometry.rotation_plane_offset_x = 0;
+	//parser.geometry.source_detector_tilt_x_radian = 0;
+	//parser.geometry.rotation_radian_for_each_scan = glm::pi<float>() * 2;
 
 	FBP3D solver(parser);
 
-	solver.generate_blank_volume(parser.parameters);
-	solver.render_sphere_to_volume(glm::vec3(0), 0.5, 0.5, false);
+	//solver.generate_blank_volume(parser.parameters);
+	//solver.render_sphere_to_volume(glm::vec3(0), 0.5, 0.5, false);
+	//
+	//parser.parameters.input_data_type = FBP3D::Volume;
+	//parser.parameters.output_data_type = FBP3D::Projections;
+	//
+	//ct_reconstructor::forward_project(solver, parser,
+	//	0
+	//);
+
+	solver.read_projections(parser);
+	solver.projections_transfer_ram_to_vram();
+	solver.compute_min_value_of_projections();
+	solver.compute_max_value_of_projections();
+	solver.log_normalize_projections();
 
 	ct_reconstructor::launch_debug_window(solver);
 
-	parser.parameters.input_data_type = FBP3D::Volume;
-	parser.parameters.output_data_type = FBP3D::Projections;
-
-	ct_reconstructor::forward_project(solver, parser,
-		0
-	);
-
-	ct_reconstructor::launch_debug_window(solver);
-
-	parser.parameters.input_data_type = FBP3D::Projections;
-	parser.parameters.output_data_type = FBP3D::Volume;
+	//parser.parameters.input_data_type = FBP3D::Projections;
+	//parser.parameters.output_data_type = FBP3D::Volume;
 
 	ct_reconstructor::filter(solver, parser,
 		//transfer_inputs_from_ram_on_begin |
@@ -46,12 +50,12 @@ int main() {
 	
 	ct_reconstructor::launch_debug_window(solver);
 
-	//solver.generate_blank_volume(parser.parameters);
-	//bool canceled = !ct_reconstructor::launch_preview_window(solver, parser);
-	//if (canceled) {
-	//	ct_reconstructor::release();
-	//	return 0;
-	//}
+	solver.generate_blank_volume(parser.parameters);
+	bool canceled = !ct_reconstructor::launch_preview_window(solver, parser);
+	if (canceled) {
+		ct_reconstructor::release();
+		return 0;
+	}
 
 	ct_reconstructor::back_project(solver, parser,
 		0
@@ -66,14 +70,14 @@ int main() {
 
 	ct_reconstructor::launch_debug_window(solver);
 	
-	//parser.parameters.input_data_type = FBP3D::Volume;
-	//parser.parameters.output_data_type = FBP3D::Projections;
-	//parser.parameters.input_resolution = glm::ivec3(1000);
-	//parser.parameters.output_resolution = glm::ivec3(1000);
-	//
-	//ct_reconstructor::forward_project(solver, parser,
-	//	0
-	//);
+	parser.parameters.input_data_type = FBP3D::Volume;
+	parser.parameters.output_data_type = FBP3D::Projections;
+	parser.parameters.input_resolution = glm::ivec3(1000);
+	parser.parameters.output_resolution = glm::ivec3(1000);
+	
+	ct_reconstructor::forward_project(solver, parser,
+		0
+	);
 
 
 	ct_reconstructor::launch_debug_window(solver);
