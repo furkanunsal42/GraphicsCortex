@@ -51,8 +51,7 @@ int main() {
 	ct_reconstructor::launch_debug_window(solver);
 
 	solver.generate_blank_volume(parser.parameters);
-	bool canceled = !ct_reconstructor::launch_preview_window(solver, parser);
-	if (canceled) {
+	if (!ct_reconstructor::launch_preview_window_back(solver, parser)) {
 		ct_reconstructor::release();
 		return 0;
 	}
@@ -72,9 +71,12 @@ int main() {
 	
 	parser.parameters.input_data_type = FBP3D::Volume;
 	parser.parameters.output_data_type = FBP3D::Projections;
-	parser.parameters.input_resolution = glm::ivec3(1000);
-	parser.parameters.output_resolution = glm::ivec3(1000);
 	
+	if (!ct_reconstructor::launch_preview_window_forward(solver, parser)) {
+		ct_reconstructor::release();
+		return 0;
+	}
+
 	ct_reconstructor::forward_project(solver, parser,
 		0
 	);
