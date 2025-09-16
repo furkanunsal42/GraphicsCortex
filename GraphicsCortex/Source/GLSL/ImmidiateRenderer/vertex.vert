@@ -16,6 +16,9 @@ out vec4 v_line_color;
 out float v_line_thickness;
 out vec4 v_position;
 
+uniform mat4 view;
+uniform mat4 projection;
+
 void main(){
 	
 	v_fill_color = a_fill_color;
@@ -23,5 +26,5 @@ void main(){
 	v_line_thickness = a_line_thickness.x;
 	v_position = a_position;
 
-	gl_Position = a_position;
+	gl_Position = projection * view * a_position;
 }

@@ -9,6 +9,7 @@
 #include "VertexAttributeBuffer.h"
 #include "FrameBuffer.h"
 #include "ShaderCompiler.h"
+#include "Camera.h"
 
 extern std::filesystem::path immidiate_renderer_shader_parent_path;
 
@@ -31,9 +32,13 @@ public:
 
 	void render(Framebuffer& target_framebuffer);
 	void render();
-
 	void render_without_clear(Framebuffer& target_framebuffer);
 	void render_without_clear();
+
+	void render(Framebuffer& target_framebuffer, Camera& camera);
+	void render(Camera& camera);
+	void render_without_clear(Framebuffer& target_framebuffer, Camera& camera);
+	void render_without_clear(Camera& camera);
 
 private:
 

@@ -1,0 +1,44 @@
+#<compute shader>
+
+#version 460
+
+#define id gl_GlobalInvocationID
+#define curved_surface_height_map_internal_format R32F
+
+layout (local_size_x = 8, local_size_y = 8, local_size_z = 1) in;
+ 
+layout(curved_surface_height_map_internal_format, binding = 0) uniform image2D curve_heightmap;
+ 
+layout(std430, binding = 0) buffer vertex_buffer {
+	float[] verticies;
+};
+
+layout(std430, binding = 1) buffer index_buffer {
+	int[] indicies;
+};
+
+uniform ivec2 resolution;
+
+void main(){
+	if (any(greaterThanEqual(id.xy, resolution.xy)))
+		return;
+	
+	int vertex_index = int(id.y * resolution.x + id.x);
+
+	float height = imageLoad(curve_heightmap, ivec2(id.xy)).x;
+
+	verticies[3*vertex_index + 0] = id.x / float(resolution.x) - 0.5;
+	verticies[3*vertex_index + 1] = height;
+	verticies[3*vertex_index + 2] = id.y / float(resolution.y) - 0.5;
+
+	if (any(greaterThanEqual(id.xy, resolution.xy - 1)))
+		return;
+
+	indicies[6*vertex_index + 0] = vertex_index + 0;
+	indicies[6*vertex_index + 1] = vertex_index + 1;
+	indicies[6*vertex_index + 2] = vertex_index + resolution.x + 1;
+
+	indicies[6*vertex_index + 3] = vertex_index + 0;
+	indicies[6*vertex_index + 4] = vertex_index + resolution.x + 1;
+	indicies[6*vertex_index + 5] = vertex_index + resolution.x;
+}
