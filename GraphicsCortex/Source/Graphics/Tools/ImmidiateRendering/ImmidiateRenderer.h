@@ -37,7 +37,7 @@ public:
 
 private:
 
-	int32_t buffer_max_command_count = 1024;
+	const int32_t buffer_max_command_count;
 	constexpr static size_t _draw_command_size_in_bytes =
 		sizeof(glm::vec4) * 2 + // fill_color, line_color,
 		sizeof(glm::vec4) +		// line_thickness(x)
