@@ -240,6 +240,27 @@ void VertexAttributeBuffer::set_attribute_format(attribute_slot_t attribute_slot
     is_validity_checked = false;
 }
 
+size_t VertexAttributeBuffer::push_attribute_format(attribute_slot_t attribute_slot, buffer_slot_t buffer_slot, AttributeType attribute_type, uint32_t element_count_per_vertex, bool enabled)
+{
+    size_t relative_offset = 0;
+
+    for (AttributeSlotInfo& attribute : attributes) {
+        if (attribute.buffer_slot == buffer_slot)
+            relative_offset += attribute.element_count_per_vertex * VertexAttributeBuffer::get_attribute_size_in_bytes(attribute.type);
+    }
+
+    set_attribute_format(
+        attribute_slot,
+        buffer_slot,
+        attribute_type,
+        element_count_per_vertex,
+        relative_offset,
+        enabled
+    );
+
+    return relative_offset;
+}
+
 VertexAttributeBuffer::BufferSlotInfo& VertexAttributeBuffer::get_buffer_slot(buffer_slot_t buffer_slot)
 {
     if (buffer_slot < 0 || buffer_slot >= get_max_buffer_count()) {
@@ -507,6 +528,33 @@ uint32_t VertexAttributeBuffer::get_attribute_type_to_GL_normalized_flag(VertexA
     case VertexAttributeBuffer::AttributeType::a_i_2_10_10_10_normalized: return GL_TRUE;
     case VertexAttributeBuffer::AttributeType::a_ui_2_10_10_10_normalized: return GL_TRUE;
     case VertexAttributeBuffer::AttributeType::a_ui_10f_11f_11f: return GL_FALSE;
+    }
+}
+
+size_t VertexAttributeBuffer::get_attribute_size_in_bytes(VertexAttributeBuffer::AttributeType type)
+{
+    switch (type) {
+    case VertexAttributeBuffer::AttributeType::a_f16_fixed:                 return 2;
+    case VertexAttributeBuffer::AttributeType::a_f16:                       return 2;
+    case VertexAttributeBuffer::AttributeType::a_f32:                       return 4;
+    case VertexAttributeBuffer::AttributeType::a_f64:                       return 8;
+    case VertexAttributeBuffer::AttributeType::a_i8:                        return 1;
+    case VertexAttributeBuffer::AttributeType::a_ui8:                       return 1;
+    case VertexAttributeBuffer::AttributeType::a_i16:                       return 2;
+    case VertexAttributeBuffer::AttributeType::a_ui16:                      return 2;
+    case VertexAttributeBuffer::AttributeType::a_i32:                       return 4;
+    case VertexAttributeBuffer::AttributeType::a_ui32:                      return 4;
+    case VertexAttributeBuffer::AttributeType::a_i_2_10_10_10:              return 4;
+    case VertexAttributeBuffer::AttributeType::a_ui_2_10_10_10:             return 4;
+    case VertexAttributeBuffer::AttributeType::a_i8_normalized:             return 1;
+    case VertexAttributeBuffer::AttributeType::a_ui8_normalized:            return 1;
+    case VertexAttributeBuffer::AttributeType::a_i16_normalized:            return 2;
+    case VertexAttributeBuffer::AttributeType::a_ui16_normalized:           return 2;
+    case VertexAttributeBuffer::AttributeType::a_i32_normalized:            return 4;
+    case VertexAttributeBuffer::AttributeType::a_ui32_normalized:           return 4;
+    case VertexAttributeBuffer::AttributeType::a_i_2_10_10_10_normalized:   return 4;
+    case VertexAttributeBuffer::AttributeType::a_ui_2_10_10_10_normalized:  return 4;
+    case VertexAttributeBuffer::AttributeType::a_ui_10f_11f_11f:            return 4;
     }
 }
 

@@ -39,8 +39,9 @@ public:
 		a_ui_10f_11f_11f,
 	};
 
-	uint32_t get_attribute_type_to_GL_type(VertexAttributeBuffer::AttributeType type);
-	uint32_t get_attribute_type_to_GL_normalized_flag(VertexAttributeBuffer::AttributeType type);
+	static uint32_t get_attribute_type_to_GL_type(VertexAttributeBuffer::AttributeType type);
+	static uint32_t get_attribute_type_to_GL_normalized_flag(VertexAttributeBuffer::AttributeType type);
+	static size_t get_attribute_size_in_bytes(VertexAttributeBuffer::AttributeType type);
 
 	struct BufferSlotInfo {
 	public:
@@ -93,6 +94,14 @@ public:
 		AttributeType attribute_type, 
 		uint32_t element_count_per_vertex, 
 		size_t relative_offset_in_bytes, 
+		bool enabled = true
+	);
+
+	size_t push_attribute_format(
+		attribute_slot_t attribute_slot,
+		buffer_slot_t buffer_slot,
+		AttributeType attribute_type,
+		uint32_t element_count_per_vertex,
 		bool enabled = true
 	);
 	

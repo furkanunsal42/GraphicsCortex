@@ -25,6 +25,8 @@
 #include "OpenGLBackend/OpenGLResourceSystemTest.h"
 #include "OpenGLBackend/OpenGLDeviceResourceSystemTest.h"
 
+#include "ImmidiateRenderer/ImmidiateRendererTest.h"
+
 int main() {
 	
 	//WindowSystemTest().run();
@@ -42,7 +44,7 @@ int main() {
 
 	//MeshRendererTest().run();
 	//ShadowmapsTest().run();
-	CompleteRenderingTest().run();
+	//CompleteRenderingTest().run();
 
 	//ChannelSplitingTest().run();
 	//HDRLoadingTest().run();
@@ -53,4 +55,5 @@ int main() {
 	//OpenGLResourceSystemTest().run();
 	//OpenGLDeviceResourceSystemTest().run();
 
+	ImmidiateRendererTest().run();
 }

@@ -61,7 +61,7 @@ void primitive_renderer::render(
 	PrimitiveType primitive, 
 	IndexType index_type, 
 	const RenderParameters& render_parameters, 
-	size_t attribute_offset, 
+	size_t vertex_offset, 
 	size_t index_offset, 
 	size_t index_count, 
 	size_t instance_count, 
@@ -76,7 +76,7 @@ void primitive_renderer::render(
 		primitive,
 		index_type,
 		render_parameters,
-		attribute_offset,
+		vertex_offset,
 		index_offset,
 		index_count,
 		instance_count,
@@ -91,7 +91,7 @@ void primitive_renderer::render(
 	PrimitiveType primitive,
 	IndexType index_type,
 	const RenderParameters& render_parameters,
-	size_t attribute_offset,
+	size_t vertex_offset,
 	size_t index_offset,
 	size_t index_count,
 	size_t instance_count,
@@ -114,7 +114,7 @@ void primitive_renderer::render(
 	if (index_count == 0)
 		index_count = ib_index_count;
 
-	GLCall(glDrawElementsInstancedBaseVertexBaseInstance(PrimitiveType_to_GL(primitive), index_count, IndexType_to_GL(index_type), (void*)(index_offset * get_IndexType_bytes_per_index(index_type)), instance_count, attribute_offset, instance_offset));
+	GLCall(glDrawElementsInstancedBaseVertexBaseInstance(PrimitiveType_to_GL(primitive), index_count, IndexType_to_GL(index_type), (void*)(index_offset * get_IndexType_bytes_per_index(index_type)), instance_count, vertex_offset, instance_offset));
 }
 
 
@@ -124,7 +124,7 @@ void primitive_renderer::render(
 	VertexAttributeBuffer& vab,
 	PrimitiveType primitive, 
 	const RenderParameters& render_parameters, 
-	size_t attribute_offset, 
+	size_t vertex_offset, 
 	size_t vertex_count, 
 	size_t instance_count, 
 	size_t instance_offset	
@@ -136,7 +136,7 @@ void primitive_renderer::render(
 		vab,
 		primitive,
 		render_parameters,
-		attribute_offset,
+		vertex_offset,
 		vertex_count,
 		instance_count,
 		instance_offset
@@ -148,7 +148,7 @@ void primitive_renderer::render(
 	VertexAttributeBuffer& vab, 
 	PrimitiveType primitive, 
 	const RenderParameters& render_parameters, 
-	size_t attribute_offset, 
+	size_t vertex_offset, 
 	size_t vertex_count, 
 	size_t instance_count, 
 	size_t instance_offset
@@ -166,7 +166,7 @@ void primitive_renderer::render(
 	if (vertex_count == 0)
 		vertex_count = vab.get_min_vertex_count();
 
-	GLCall(glDrawArraysInstancedBaseInstance(PrimitiveType_to_GL(primitive), attribute_offset, vertex_count, instance_count, instance_offset));
+	GLCall(glDrawArraysInstancedBaseInstance(PrimitiveType_to_GL(primitive), vertex_offset, vertex_count, instance_count, instance_offset));
 }
 
 void primitive_renderer::render(Framebuffer& framebuffer, Program& program, Mesh::SingleMesh& single_mesh, const RenderParameters& render_parameters, size_t instance_count, size_t instance_offset)
