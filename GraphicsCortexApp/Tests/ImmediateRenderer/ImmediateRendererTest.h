@@ -3,9 +3,9 @@
 #include "GraphicsCortex.h"
 #include "TestBench/TestBench.h"
 
-#include "Tools/ImmidiateRendering/ImmidiateRenderer.h"
+#include "Tools/ImmediateRendering/ImmediateRenderer.h"
 
-class ImmidiateRendererTest : public TestBench {
+class ImmediateRendererTest : public TestBench {
 public:
 
 	bool run() {
@@ -17,7 +17,7 @@ public:
 
 		default_init();
 
-		ImmidiateRenderer immidiate;
+		ImmediateRenderer immidiate;
 
 		while (!default_window->should_close()) {
 			double deltatime = default_window->handle_events(true);

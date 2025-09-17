@@ -12,10 +12,10 @@
 
 extern std::filesystem::path immidiate_renderer_shader_parent_path;
 
-class ImmidiateRenderer {
+class ImmediateRenderer {
 public:
 
-	ImmidiateRenderer(size_t max_command_count = 1024);
+	ImmediateRenderer(size_t max_command_count = 1024);
 
 	struct DrawProperties;
 
