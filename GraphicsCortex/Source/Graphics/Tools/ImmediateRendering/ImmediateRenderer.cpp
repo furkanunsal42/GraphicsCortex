@@ -154,13 +154,54 @@ void ImmediateRenderer::render_without_clear()
 	}
 }
 
-void ImmediateRenderer::_compile_shaders()
+void ImmidiateRenderer::render(Framebuffer& target_framebuffer, Camera& camera){
+	render_without_clear(target_framebuffer, camera);
+	_clear();
+}
+
+void ImmidiateRenderer::render(Camera& camera){
+	render_without_clear(camera);
+	_clear();
+}
+
+void ImmidiateRenderer::render_without_clear(Framebuffer& target_framebuffer, Camera& camera)
+{
+	Framebuffer previous_framebuffer = Framebuffer::get_current_draw();
+	target_framebuffer.bind_draw();
+	render_without_clear(camera);
+	previous_framebuffer.bind_draw();
+}
+
+void ImmidiateRenderer::render_without_clear(Camera& camera)
+{
+	_compile_shaders();
+
+	camera.update_matrixes();
+	line_program->update_uniform("view", camera.view_matrix);
+	line_program->update_uniform("projection", camera.projection_matrix);
+	triangle_program->update_uniform("view", camera.view_matrix);
+	triangle_program->update_uniform("projection", camera.projection_matrix);
+	
+	render_without_clear();
+
+	line_program->update_uniform("view", glm::identity<glm::mat4>());
+	line_program->update_uniform("projection", glm::identity<glm::mat4>());
+	triangle_program->update_uniform("view", glm::identity<glm::mat4>());
+	triangle_program->update_uniform("projection", glm::identity<glm::mat4>());
+}
+
+void ImmidiateRenderer::_compile_shaders()
 {
 	if (line_program != nullptr && triangle_program != nullptr)
 		return;
 	
 	line_program		= std::make_shared<Program>(Shader(immidiate_renderer_shader_parent_path / "vertex.vert", immidiate_renderer_shader_parent_path / "line.frag"));
 	triangle_program	= std::make_shared<Program>(Shader(immidiate_renderer_shader_parent_path / "vertex.vert", immidiate_renderer_shader_parent_path / "triangle.frag"));
+
+	line_program->update_uniform("view", glm::identity<glm::mat4>());
+	line_program->update_uniform("projection", glm::identity<glm::mat4>());
+	triangle_program->update_uniform("view", glm::identity<glm::mat4>());
+	triangle_program->update_uniform("projection", glm::identity<glm::mat4>());
 }
 
 void ImmediateRenderer::_init_vab()
