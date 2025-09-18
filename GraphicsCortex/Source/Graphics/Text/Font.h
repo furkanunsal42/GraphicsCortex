@@ -28,9 +28,10 @@ public:
 	struct Font {
 		std::shared_ptr<Texture2D> atlas = nullptr;
 		std::unordered_map<uint32_t, glyph_info> glyph_table;
+		int32_t font_size;
 	};
 
-	font_id load_font(const std::filesystem::path& font_file_path);
+	font_id load_font(const std::filesystem::path& font_file_path, int32_t font_size = 32);
 	Font get_font(font_id font);
 	bool does_font_exist(font_id font);
 
@@ -40,7 +41,7 @@ private:
 
 	FontBank() = default;
 
-	Font _load(const std::filesystem::path& font_file_path);
+	Font _load(const std::filesystem::path& font_file_path, int32_t font_size = 32);
 
 	font_id _next_id = 1;
 	std::unordered_map<std::filesystem::path, font_id> _path_to_id;

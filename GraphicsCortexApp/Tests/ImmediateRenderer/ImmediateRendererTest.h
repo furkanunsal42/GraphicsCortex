@@ -17,6 +17,8 @@ public:
 
 		default_init();
 
+		FontBank& fontbank = FontBank::get();
+
 		ImmediateRenderer immidiate;
 
 		while (!default_window->should_close()) {

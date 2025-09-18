@@ -18,7 +18,7 @@ public:
 	//void set_text(const std::string& text);
 
 	void set_scale(float scale);
-	float get_scale();
+	float get_scale() const;
 	void set_max_width(float max_width);
 	float get_max_width();
 	void set_wait_for_words(bool wait_for_words);

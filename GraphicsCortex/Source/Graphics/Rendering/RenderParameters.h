@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <vec4.hpp>
 
 struct RenderParameters {
 public:
@@ -76,7 +77,8 @@ public:
 	bool primitive_restart_fixed_index = false;
 	uint32_t primitive_restart_index = -1;
 
-	//bool scissor_test = false;
+	bool scissor_test = false;
+	glm::ivec4 scissor_viewport;
 
 	bool stencil_test = false;
 	StencilFunction stencil_function = StencilFunction::ALWAYS;
@@ -87,6 +89,7 @@ public:
 	StencilOperation stencil_operation_on_pass = StencilOperation::KEEP;
 	
 	float point_size = 1;
+	float line_width = 1;
 
 	//bool stencil_test_seperate = false;
 	//StencilOperation stencil_operation_backface_on_stencil_fail = KEEP;

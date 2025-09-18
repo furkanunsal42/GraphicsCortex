@@ -10,6 +10,7 @@
 #include "FrameBuffer.h"
 #include "ShaderCompiler.h"
 #include "Camera.h"
+#include "RenderParameters.h"
 
 extern std::filesystem::path immidiate_renderer_shader_parent_path;
 
@@ -30,15 +31,15 @@ public:
 	void draw_triangle(glm::vec3 position0, glm::vec3 position1, glm::vec3 position2);
 	void draw_quad(glm::vec3 position0, glm::vec3 position1, glm::vec3 position2, glm::vec3 position3);
 
-	void render(Framebuffer& target_framebuffer);
-	void render();
-	void render_without_clear(Framebuffer& target_framebuffer);
-	void render_without_clear();
+	void render(Framebuffer& target_framebuffer, RenderParameters render_parameters = RenderParameters(false));
+	void render(RenderParameters render_parameters = RenderParameters(false));
+	void render_without_clear(Framebuffer& target_framebuffer, RenderParameters render_parameters = RenderParameters(false));
+	void render_without_clear(RenderParameters render_parameters = RenderParameters(false));
 
-	void render(Framebuffer& target_framebuffer, Camera& camera);
-	void render(Camera& camera);
-	void render_without_clear(Framebuffer& target_framebuffer, Camera& camera);
-	void render_without_clear(Camera& camera);
+	void render(Framebuffer& target_framebuffer, Camera& camera, RenderParameters render_parameters = RenderParameters(false));
+	void render(Camera& camera, RenderParameters render_parameters = RenderParameters(false));
+	void render_without_clear(Framebuffer& target_framebuffer, Camera& camera, RenderParameters render_parameters = RenderParameters(false));
+	void render_without_clear(Camera& camera, RenderParameters render_parameters = RenderParameters(false));
 
 private:
 

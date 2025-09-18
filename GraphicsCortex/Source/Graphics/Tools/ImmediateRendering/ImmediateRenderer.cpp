@@ -79,27 +79,27 @@ void ImmediateRenderer::draw_quad(glm::vec3 position0, glm::vec3 position1, glm:
 	attribute_buffer_corrupted = true;
 }
 
-void ImmediateRenderer::render(Framebuffer& target_framebuffer)
+void ImmediateRenderer::render(Framebuffer& target_framebuffer, RenderParameters render_parameters)
 {
-	render_without_clear(target_framebuffer);
+	render_without_clear(target_framebuffer, render_parameters);
 	_clear();
 }
 
-void ImmediateRenderer::render()
+void ImmediateRenderer::render(RenderParameters render_parameters)
 {
-	render_without_clear();
+	render_without_clear(render_parameters);
 	_clear();
 }
 
-void ImmediateRenderer::render_without_clear(Framebuffer& target_framebuffer)
+void ImmediateRenderer::render_without_clear(Framebuffer& target_framebuffer, RenderParameters render_parameters)
 {
 	Framebuffer previous_framebuffer = Framebuffer::get_current_draw();
 	target_framebuffer.bind_draw();
-	render_without_clear();
+	render_without_clear(render_parameters);
 	previous_framebuffer.bind_draw();
 }
 
-void ImmediateRenderer::render_without_clear()
+void ImmediateRenderer::render_without_clear(RenderParameters render_parameters)
 {
 	_compile_shaders();
 
@@ -112,7 +112,7 @@ void ImmediateRenderer::render_without_clear()
 			*line_program,
 			*vab,
 			PrimitiveType::line,
-			RenderParameters(),
+			render_parameters,
 			previous_vertex_count,
 			point_commands_vertex_count,
 			1,
@@ -128,7 +128,7 @@ void ImmediateRenderer::render_without_clear()
 			*line_program,
 			*vab,
 			PrimitiveType::line,
-			RenderParameters(),
+			render_parameters,
 			previous_vertex_count,
 			line_commands_vertex_count,
 			1,
@@ -143,7 +143,7 @@ void ImmediateRenderer::render_without_clear()
 			*triangle_program,
 			*vab,
 			PrimitiveType::triangle,
-			RenderParameters(),
+			render_parameters,
 			previous_vertex_count,
 			triangle_commands_vertex_count,
 			1,
@@ -154,25 +154,25 @@ void ImmediateRenderer::render_without_clear()
 	}
 }
 
-void ImmediateRenderer::render(Framebuffer& target_framebuffer, Camera& camera){
-	render_without_clear(target_framebuffer, camera);
+void ImmediateRenderer::render(Framebuffer& target_framebuffer, Camera& camera, RenderParameters render_parameters){
+	render_without_clear(target_framebuffer, camera, render_parameters);
 	_clear();
 }
 
-void ImmediateRenderer::render(Camera& camera){
-	render_without_clear(camera);
+void ImmediateRenderer::render(Camera& camera, RenderParameters render_parameters){
+	render_without_clear(camera, render_parameters);
 	_clear();
 }
 
-void ImmediateRenderer::render_without_clear(Framebuffer& target_framebuffer, Camera& camera)
+void ImmediateRenderer::render_without_clear(Framebuffer& target_framebuffer, Camera& camera, RenderParameters render_parameters)
 {
 	Framebuffer previous_framebuffer = Framebuffer::get_current_draw();
 	target_framebuffer.bind_draw();
-	render_without_clear(camera);
+	render_without_clear(camera, render_parameters);
 	previous_framebuffer.bind_draw();
 }
 
-void ImmediateRenderer::render_without_clear(Camera& camera)
+void ImmediateRenderer::render_without_clear(Camera& camera, RenderParameters render_parameters)
 {
 	_compile_shaders();
 
@@ -182,7 +182,7 @@ void ImmediateRenderer::render_without_clear(Camera& camera)
 	triangle_program->update_uniform("view", camera.view_matrix);
 	triangle_program->update_uniform("projection", camera.projection_matrix);
 	
-	render_without_clear();
+	render_without_clear(render_parameters);
 
 	line_program->update_uniform("view", glm::identity<glm::mat4>());
 	line_program->update_uniform("projection", glm::identity<glm::mat4>());

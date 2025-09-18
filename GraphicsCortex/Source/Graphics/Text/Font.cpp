@@ -13,14 +13,14 @@ FontBank& FontBank::get()
 	return *active_global_resources->FontBank;
 }
 
-font_id FontBank::load_font(const std::filesystem::path& font_file_path)
+font_id FontBank::load_font(const std::filesystem::path& font_file_path, int32_t font_size)
 {
 	auto iterator = _path_to_id.find(font_file_path);
 	if (iterator != _path_to_id.end())
 		return _path_to_id[font_file_path];
 	else {
 		_path_to_id[font_file_path] = _next_id;
-		_id_to_font[_next_id] = _load(font_file_path);
+		_id_to_font[_next_id] = _load(font_file_path, font_size);
 		_next_id++;
 		return _next_id - 1;
 	}
@@ -47,7 +47,7 @@ void FontBank::clear()
 	_next_id = 1;
 }
 
-FontBank::Font FontBank::_load(const std::filesystem::path& font_file_path)
+FontBank::Font FontBank::_load(const std::filesystem::path& font_file_path, int32_t font_size)
 {
 	Font font;
 
@@ -55,32 +55,53 @@ FontBank::Font FontBank::_load(const std::filesystem::path& font_file_path)
 	FT_Face    face;
 
 	FT_Init_FreeType(&ft);
-	FT_New_Face(ft, (const char*)font_file_path.u8string().c_str(), 0, &face);
-	// TEMP
-	int32_t font_size = 50;
-	FT_Set_Char_Size(face, 0, font_size << 6, 96, 96);
+	FT_New_Face(ft, (const char*)font_file_path.string().c_str(), 0, &face);
+	
+	FT_Set_Char_Size(
+		face, 
+		0, 
+		font_size * 64, 
+		96, 
+		96
+	);
 
-	// quick and dirty max texture size estimate
+	glm::ivec2 max_texture_resolution(4096);
 
-	int max_glyph_amount = 2 << 12;
-	int supported_glyph_amount = 0;
-	for (int i = 0; i < max_glyph_amount; i++) {
-		if (!FT_Get_Char_Index(face, i))
+	glm::ivec2 pen(0);
+	int32_t glyph_counter;
+	for (glyph_counter = 0; glyph_counter < face->num_glyphs; glyph_counter++) {
+		if (!FT_Get_Char_Index(face, glyph_counter))
 			continue;
-		supported_glyph_amount++;
+
+		FT_Error char_load_error = FT_Load_Char(face, glyph_counter, FT_LOAD_RENDER | FT_LOAD_FORCE_AUTOHINT | FT_LOAD_TARGET_LIGHT);
+		FT_Bitmap* bmp = &face->glyph->bitmap;
+
+		if (pen.x + bmp->width + 1 >= max_texture_resolution.x) {
+			if (pen.y + (face->size->metrics.height >> 6) >= max_texture_resolution.y) {
+				std::cout << "here" << std::endl;
+				break;
+			}
+			pen.x = 0;
+			pen.y += ((face->size->metrics.height >> 6));
+		}
+		pen.x += bmp->width + 1;
+
+		glyph_counter++;
 	}
-	int tex_height = font_size * 1.2f * std::sqrt(supported_glyph_amount);
-	//tex_height = std::pow(2, std::ceil(std::log2(tex_height)));
-	tex_height = std::max(512, tex_height);
-	int tex_width = tex_height;
 
-	// render glyphs to atlas
+	glm::ivec2 texture_resolution = glm::ivec2(max_texture_resolution.x, pen.y);
+	std::cout << texture_resolution.x << ", " << texture_resolution.y << std::endl;
 
-	unsigned char* png_data = new unsigned char[tex_width * tex_height * 4];
+	unsigned char* png_data = new unsigned char[
+		texture_resolution.x * 
+		texture_resolution.y * 
+		Texture2D::ColorTextureFormat_bytes_per_pixel(Texture2D::ColorTextureFormat::RGBA8)
+		];
 
-	int pen_x = 0, pen_y = 0;
+	
+	pen = glm::ivec2(0);
 
-	for (int i = 0; i < max_glyph_amount; ++i) {
+	for (int i = 0; i < glyph_counter; ++i) {
 		if (!FT_Get_Char_Index(face, i)) {
 			//std::cout << "failed to load char with index: " << i << std::endl;
 			continue;
@@ -89,51 +110,65 @@ FontBank::Font FontBank::_load(const std::filesystem::path& font_file_path)
 		FT_Error char_load_error = FT_Load_Char(face, i, FT_LOAD_RENDER | FT_LOAD_FORCE_AUTOHINT | FT_LOAD_TARGET_LIGHT);
 		FT_Bitmap* bmp = &face->glyph->bitmap;
 
-		if (pen_x + bmp->width >= tex_width) {
-			pen_x = 0;
-			pen_y += ((face->size->metrics.height >> 6) + 1);
+		if (pen.x + bmp->width + 1 >= max_texture_resolution.x) {
+			if (pen.y + (face->size->metrics.height >> 6) >= texture_resolution.y) {
+				std::cout << "here2" << std::endl;
+				break;
+			}
+			pen.x = 0;
+			pen.y += ((face->size->metrics.height >> 6));
 		}
-
+		
 		for (int row = 0; row < bmp->rows; ++row) {
 			for (int col = 0; col < bmp->width; ++col) {
-				int x = pen_x + col;
-				int y = pen_y + row;
-				png_data[((tex_height - 1 - y) * tex_width + x) * 4 + 0] = 0xff;
-				png_data[((tex_height - 1 - y) * tex_width + x) * 4 + 1] = 0xff;
-				png_data[((tex_height - 1 - y) * tex_width + x) * 4 + 2] = 0xff;
-				png_data[((tex_height - 1 - y) * tex_width + x) * 4 + 3] = bmp->buffer[row * bmp->pitch + col];
+				int x = pen.x + col;
+				int y = pen.y + row;
+
+				png_data[((texture_resolution.y - 1 - y) * texture_resolution.x + x) * 4 + 0] = 0xff;
+				png_data[((texture_resolution.y - 1 - y) * texture_resolution.x + x) * 4 + 1] = 0xff;
+				png_data[((texture_resolution.y - 1 - y) * texture_resolution.x + x) * 4 + 2] = 0xff;
+				png_data[((texture_resolution.y - 1 - y) * texture_resolution.x + x) * 4 + 3] = bmp->buffer[row * bmp->width + col];
 			}
 		}
 
 		// this is stuff you'd need when rendering individual glyphs out of the atlas
 		glyph_info info;
-		info.coords_low.x = (float)pen_x / tex_width;
-		info.coords_low.y = (float)pen_y / tex_height;
-		info.coords_hi.x = (float)(pen_x + bmp->width) / tex_width;
-		info.coords_hi.y = (float)(pen_y + bmp->rows) / tex_height;
-		info.offset.x = (float)face->glyph->bitmap_left / tex_width;
-		info.offset.y = (float)face->glyph->bitmap_top / tex_height;
-		info.advance = (float)(face->glyph->advance.x >> 6) / tex_width;
+		info.coords_low.x = (float)pen.x / texture_resolution.x;
+		info.coords_low.y = (float)pen.y / texture_resolution.y;
+		info.coords_hi.x = (float)(pen.x + bmp->width) / texture_resolution.x;
+		info.coords_hi.y = (float)(pen.y + bmp->rows)  / texture_resolution.y;
+		info.offset.x = (float)face->glyph->bitmap_left / texture_resolution.x;
+		info.offset.y = (float)face->glyph->bitmap_top / texture_resolution.y;
+		info.advance = (float)(face->glyph->advance.x >> 6) / texture_resolution.x;
 
 		font.glyph_table[i] = info;
 
-		pen_x += bmp->width + 1;
+		pen.x += bmp->width;
 	}
 
 	glyph_info new_line;
 	new_line.coords_low.x = 0;
 	new_line.coords_low.y = 0;
 	new_line.coords_hi.x = 0;
-	new_line.coords_hi.y = (float)((face->size->metrics.height) >> 6) / tex_height;
+	new_line.coords_hi.y = (float)((face->size->metrics.height) >> 6) / texture_resolution.y;
 	font.glyph_table['\n'] = new_line;
 
 	FT_Done_FreeType(ft);
 
-	std::shared_ptr<Image> font_atlas = std::make_shared<Image>(png_data, tex_width, tex_height, 1, 4, 1, true);
+	std::shared_ptr<Image> font_atlas = std::make_shared<Image>(png_data, 
+		texture_resolution.x, 
+		texture_resolution.y, 
+		1, 
+		Texture2D::ColorTextureFormat_bytes_per_pixel(Texture2D::ColorTextureFormat::RGBA8), 
+		1, 
+		true
+	);
+
 	font_atlas->save_to_disc("atlas.png");
 
-	font.atlas = std::make_shared<Texture2D>(tex_width, tex_height, Texture2D::ColorTextureFormat::RGBA8, 32, -0.75f, 0);
+	font.atlas = std::make_shared<Texture2D>(texture_resolution.x, texture_resolution.y, Texture2D::ColorTextureFormat::RGBA8, 32, -0.75f, 0);
 	font.atlas->load_data_with_mipmaps(*font_atlas, Texture2D::ColorFormat::RGBA, Texture2D::Type::UNSIGNED_BYTE);
+	font.font_size = font_size;
 
 	return font;
 }

@@ -26,6 +26,16 @@ void Text::set_text(const std::u32string& text)
 	_mesh_needs_update = true;
 }
 
+void Text::set_scale(float scale) 
+{
+	this->_scale = scale;
+	_mesh_needs_update = true;
+}
+
+float Text::get_scale() const {
+	return _scale;
+}
+
 //void Text::set_text(const std::string& text)
 //{
 //	set_text(to_utf32(text));
@@ -57,6 +67,8 @@ void Text::_update_mesh() {
 
 	bool next_line_at_next_space = false;
 	
+	float effective_scale = _scale / active_font.font_size / 96;
+
 	for (const uint32_t& character : _text) {
 
 		if (_text_max_width) {
@@ -65,20 +77,21 @@ void Text::_update_mesh() {
 		}
 
 		const FontBank::glyph_info& character_info = active_font.glyph_table[character];
+		glm::vec2 font_resolution = active_font.atlas->get_size();
 
-		float uv_width = character_info.coords_hi.x - character_info.coords_low.x;
+		float uv_width	= character_info.coords_hi.x - character_info.coords_low.x;
 		float uv_height = character_info.coords_hi.y - character_info.coords_low.y;
 
-		float xpos = pen_x + character_info.offset.x * _scale;
-		float ypos = pen_y - (uv_height - character_info.offset.y) * _scale;
+		float xpos = pen_x + character_info.offset.x * font_resolution.x * effective_scale;
+		float ypos = pen_y - (uv_height - character_info.offset.y) * font_resolution.y * effective_scale;
 
-		float w = uv_width * _scale;
-		float h = uv_height * _scale;
-
+		float w = uv_width  * font_resolution.x * effective_scale;
+		float h = uv_height * font_resolution.y * effective_scale;
+		
 		if (character == ' ') {
 			if (next_line_at_next_space) {
 				pen_x = 0;
-				pen_y -= active_font.glyph_table['\n'].coords_hi.y * _scale;
+				pen_y -= active_font.glyph_table['\n'].coords_hi.y * effective_scale;
 				next_line_at_next_space = false;
 				continue;
 			}
@@ -86,7 +99,7 @@ void Text::_update_mesh() {
 
 		if (character == '\n') {
 			pen_x = 0;
-			pen_y -= uv_height * _scale;
+			pen_y -= uv_height * effective_scale;
 			next_line_at_next_space = false;
 			continue;
 		}
@@ -98,11 +111,12 @@ void Text::_update_mesh() {
 			glm::vec3(xpos + w,	ypos + h,	0),
 		};
 
+
 		glm::vec2 new_uv[] = {
-			glm::vec2(character_info.coords_low.x, 1 - character_info.coords_hi.y),
-			glm::vec2(character_info.coords_hi.x, 1 - character_info.coords_hi.y),
+			glm::vec2(character_info.coords_low.x, 1 - character_info.coords_hi.y) ,
+			glm::vec2(character_info.coords_hi.x, 1 - character_info.coords_hi.y)  ,
 			glm::vec2(character_info.coords_low.x, 1 - character_info.coords_low.y),
-			glm::vec2(character_info.coords_hi.x, 1 - character_info.coords_low.y),
+			glm::vec2(character_info.coords_hi.x, 1 - character_info.coords_low.y) ,
 		};
 
 		uint32_t new_indicies[] = {
@@ -119,7 +133,7 @@ void Text::_update_mesh() {
 		for (uint32_t value : new_indicies)
 			model.indicies.push_back(value);
 
-		pen_x += character_info.advance * _scale;
+		pen_x += character_info.advance * font_resolution.x * effective_scale;
 		char_count++;
 	}
 

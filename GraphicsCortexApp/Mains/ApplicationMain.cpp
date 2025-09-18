@@ -25,7 +25,9 @@
 #include "OpenGLBackend/OpenGLResourceSystemTest.h"
 #include "OpenGLBackend/OpenGLDeviceResourceSystemTest.h"
 
-#include "ImmidiateRenderer/ImmidiateRendererTest.h"
+#include "ImmediateRenderer/ImmediateRendererTest.h"
+
+#include "CortexGUI/CortexGUITest.h"
 
 int main() {
 	
@@ -55,5 +57,7 @@ int main() {
 	//OpenGLResourceSystemTest().run();
 	//OpenGLDeviceResourceSystemTest().run();
 
-	ImmidiateRendererTest().run();
+	//ImmediateRendererTest().run();
+
+	CortexGUITest().run();
 }

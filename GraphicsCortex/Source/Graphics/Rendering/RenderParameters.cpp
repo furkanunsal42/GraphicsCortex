@@ -119,12 +119,14 @@ void RenderParameters::apply() const
 
 	GLCall(glPrimitiveRestartIndex(primitive_restart_index));
 
-	//if (scissor_test) {
-	//	GLCall(glEnable(GL_SCISSOR_TEST));
-	//}
-	//else {
-	//	GLCall(glDisable(GL_SCISSOR_TEST));
-	//}
+	if (scissor_test) {
+		GLCall(glEnable(GL_SCISSOR_TEST));
+		GLCall(glScissor(scissor_viewport.x, scissor_viewport.y, scissor_viewport.z, scissor_viewport.w));
+	}
+	else {
+		GLCall(glDisable(GL_SCISSOR_TEST));
+		GLCall(glScissor(0, 0, 1, 1));
+	}
 
 	if (stencil_test) {
 		GLCall(glEnable(GL_STENCIL_TEST));
@@ -176,4 +178,6 @@ void RenderParameters::apply() const
 	));
 
 	GLCall(glPointSize(point_size));
+	GLCall(glLineWidth(line_width));
+
 }
