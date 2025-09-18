@@ -1,7 +1,7 @@
 
 #include "GraphicsCortex.h"
 #include "CurvedSurface/CurvedSurface.h"
-#include "Tools/ImmidiateRendering/ImmidiateRenderer.h"
+#include "Tools/ImmediateRendering/ImmediateRenderer.h"
 
 int main(){
 
@@ -11,13 +11,17 @@ int main(){
 	desc.w_name = "Gozdiscoptics";
 	Window window(desc);
 
-	CurvedSurface surface;
-	surface.define_surface("-x*x + y*y");
+	CurvedSurface surface0;
+	surface0.define_surface("x*x - y*y");
+	surface0.set_position(glm::vec3(0, 0, -0.3));
+	surface0.set_rotation(glm::quat(glm::vec3(glm::pi<float>() / 2, 0, 0)));
 
+	CurvedSurface surface1;
+	surface1.define_surface("-x*x + y*y");
+	surface1.set_position(glm::vec3(0, 0, 0.3));
+	surface1.set_rotation(glm::quat(glm::vec3(glm::pi<float>() / 2, 0, 0)));
 
-	//surface.set_rotation(glm::quat(glm::vec3(glm::pi<float>() / 2, 0, 0)));
-
-	ImmidiateRenderer immidiate(1024 * 32);
+	ImmediateRenderer immidiate(1024 * 32);
 
 	immidiate.set_line_color(glm::vec4(1, 0, 0, 1));
 
@@ -40,7 +44,9 @@ int main(){
 
 		camera.handle_movements((GLFWwindow*)window.get_handle(), deltatime);
 
-		surface.render(camera);
+		surface0.render(camera);
+		surface1.render(camera);
+
 		immidiate.render_without_clear(camera);
 
 		window.swap_buffers();

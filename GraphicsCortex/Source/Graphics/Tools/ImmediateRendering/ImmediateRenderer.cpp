@@ -154,17 +154,17 @@ void ImmediateRenderer::render_without_clear()
 	}
 }
 
-void ImmidiateRenderer::render(Framebuffer& target_framebuffer, Camera& camera){
+void ImmediateRenderer::render(Framebuffer& target_framebuffer, Camera& camera){
 	render_without_clear(target_framebuffer, camera);
 	_clear();
 }
 
-void ImmidiateRenderer::render(Camera& camera){
+void ImmediateRenderer::render(Camera& camera){
 	render_without_clear(camera);
 	_clear();
 }
 
-void ImmidiateRenderer::render_without_clear(Framebuffer& target_framebuffer, Camera& camera)
+void ImmediateRenderer::render_without_clear(Framebuffer& target_framebuffer, Camera& camera)
 {
 	Framebuffer previous_framebuffer = Framebuffer::get_current_draw();
 	target_framebuffer.bind_draw();
@@ -172,7 +172,7 @@ void ImmidiateRenderer::render_without_clear(Framebuffer& target_framebuffer, Ca
 	previous_framebuffer.bind_draw();
 }
 
-void ImmidiateRenderer::render_without_clear(Camera& camera)
+void ImmediateRenderer::render_without_clear(Camera& camera)
 {
 	_compile_shaders();
 
@@ -190,7 +190,7 @@ void ImmidiateRenderer::render_without_clear(Camera& camera)
 	triangle_program->update_uniform("projection", glm::identity<glm::mat4>());
 }
 
-void ImmidiateRenderer::_compile_shaders()
+void ImmediateRenderer::_compile_shaders()
 {
 	if (line_program != nullptr && triangle_program != nullptr)
 		return;

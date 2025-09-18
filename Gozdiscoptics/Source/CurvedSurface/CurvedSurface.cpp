@@ -121,7 +121,7 @@ void CurvedSurface::render(Camera& camera){
 
 	glm::mat4 model = glm::identity<glm::mat4>();
 	model = glm::translate(model, position);
-	model = glm::mat4_cast(quaternion) * model;
+	model = model * glm::mat4_cast(quaternion);
 	model = glm::scale(model, scale);
 
 	program.update_uniform("model", model);
