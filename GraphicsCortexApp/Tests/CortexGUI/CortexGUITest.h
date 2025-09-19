@@ -17,7 +17,7 @@ public:
 
 		default_init();
 
-		//font_id font = FontBank::get().load_font("../GraphicsCortex/Fonts/Roboto-Regular.ttf", 64);
+		font_id font = FontBank::get().load_font("../GraphicsCortex/Fonts/Roboto-Regular.ttf", 64);
 		//Text text(U"Hello There");
 		//text.set_font(font);
 		//text.set_scale(1.0f);
@@ -30,6 +30,7 @@ public:
 		//text_program.update_uniform("projection", glm::ortho(-0.5f, 0.5f, -ratio / 2, ratio / 2));
 		//text_program.update_uniform("color", glm::vec4(1, 0, 0, 1));
 		
+
 		Widget widget = GUI::get().create_widget();
 		widget.style().color = glm::vec4(1, 0, 1, 1);
 		widget.size() = glm::vec2(1920, 1080) / 2.0f;
@@ -41,6 +42,9 @@ public:
 		child.position() = glm::vec2(100, 100);
 		child.size() = glm::vec2(1920, 1080) / 2.0f;
 		child.z() = 1;
+
+		child.style().texture = FontBank::get().get_font(font).atlas;
+		child.size() = child.style().texture->get_size();
 
 		while (true) {
 			double deltatime = default_window->handle_events(true);

@@ -53,7 +53,8 @@ void GUI::_compile_shaders() {
 		return;
 
 	gui_renderer = std::make_shared<Program>(Shader(gui_renderer_shader_parent_path / "gui_vertex.vert", gui_renderer_shader_parent_path / "gui_fragment.frag"));
-
+	gui_renderer_texture = std::make_shared<Program>(Shader(gui_renderer_shader_parent_path / "gui_vertex.vert", gui_renderer_shader_parent_path / "gui_fragment_texture.frag"));
+	
 	shaders_compiled = true;
 }
 
@@ -240,10 +241,10 @@ void GUI::_update_vab_to_render(widget_t id)
 			glm::vec3 position2 = glm::vec3(merged_position + glm::vec2(info.size),			-info.z);
 			glm::vec3 position3 = glm::vec3(merged_position + glm::vec2(info.size.x, 0),	-info.z);
 
-			glm::vec3 texcoord0(0);
-			glm::vec3 texcoord1(0);
-			glm::vec3 texcoord2(0);
-			glm::vec3 texcoord3(0);
+			glm::vec2 texcoord0(0, 1);
+			glm::vec2 texcoord1(0, 0);
+			glm::vec2 texcoord2(1, 0);
+			glm::vec2 texcoord3(1, 1);
 
 			glm::vec4 color0(info.style.color);
 			glm::vec4 color1(info.style.color);
@@ -280,10 +281,10 @@ void GUI::_update_vab_to_render(widget_t id)
 			glm::vec3 position2 = glm::vec3(merged_position + glm::vec2(info.size),			-info.z);
 			glm::vec3 position3 = glm::vec3(merged_position + glm::vec2(info.size.x, 0),	-info.z);
 
-			glm::vec3 texcoord0(0);
-			glm::vec3 texcoord1(0);
-			glm::vec3 texcoord2(0);
-			glm::vec3 texcoord3(0);
+			glm::vec2 texcoord0(0, 1);
+			glm::vec2 texcoord1(0, 0);
+			glm::vec2 texcoord2(1, 0);
+			glm::vec2 texcoord3(1, 1);
 
 			glm::vec4 color0(info.style.color);
 			glm::vec4 color1(info.style.color);
@@ -365,12 +366,12 @@ void GUI::_render_tmp(widget_t id)
 
 void GUI::_render(widget_t id)
 {
-	_compile_shaders();
-
 	if (!_does_widget_exist(id)) {
 		std::cout << "[GUI Error] GUI::_render() is called with improper widget_id : " << id << std::endl;
 		ASSERT(false);
 	}
+	
+	_compile_shaders();
 
 	glm::vec4 previous_viewport = primitive_renderer::get_viewport_position_size();
 	glm::vec2 total_viewport = primitive_renderer::get_viewport_size();
@@ -392,17 +393,25 @@ void GUI::_render(widget_t id)
 	);
 
 	gui_renderer->update_uniform("projection", projection_matrix);
+	gui_renderer_texture->update_uniform("projection", projection_matrix);
 
 	_update_vab_to_render(id);
 
 	_traverse_children(id, [&](widget_t child_id, glm::vec2 merged_position) {
+
+		bool widget_is_textured = widgets[child_id].style.texture != nullptr;
+		
+		Program& renderer = widget_is_textured ? *gui_renderer_texture : *gui_renderer;
+
+		if (widget_is_textured)
+			renderer.update_uniform("source_texture", *widgets[child_id].style.texture);
 
 		RenderParameters params(true);
 		params.scissor_test = true;
 		params.scissor_viewport = parent_viewport;
 
 		primitive_renderer::render(
-			*gui_renderer,
+			renderer,
 			*vab,
 			PrimitiveType::triangle,
 			params,

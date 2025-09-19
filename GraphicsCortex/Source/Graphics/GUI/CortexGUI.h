@@ -104,5 +104,7 @@ private:
 	std::shared_ptr<VertexAttributeBuffer> vab;
 
 	std::shared_ptr<Program> gui_renderer;
+	std::shared_ptr<Program> gui_renderer_texture;
+
 	std::shared_ptr<ImmediateRenderer> immediate_renderer;
 };
