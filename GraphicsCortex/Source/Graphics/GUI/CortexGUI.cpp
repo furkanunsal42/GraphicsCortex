@@ -3,11 +3,16 @@
 #include <queue>
 
 #include "PrimitiveRenderer.h"
+#include "WindowBoundGlobalResources.h"
+
+std::filesystem::path gui_renderer_shader_parent_path = "../GraphicsCortex/Source/GLSL/GUI/";
 
 GUI& GUI::get()
 {
-	static GUI gui;
-	return gui;
+	if (active_global_resources->GUI == nullptr)
+		active_global_resources->GUI = std::unique_ptr<GUI>(new GUI());
+
+	return *active_global_resources->GUI;
 }
 
 ImmediateRenderer& GUI::get_immediate_renderer()
@@ -19,13 +24,13 @@ ImmediateRenderer& GUI::get_immediate_renderer()
 
 Widget GUI::create_widget()
 {
-	widget_id id = _create_widget(invalid_widget);
+	widget_t id = _create_widget(invalid_widget);
 	return Widget(attached_window_handle, id);
 }
 
 Widget GUI::create_widget(Widget& parent_widget)
 {
-	widget_id id = _create_widget(parent_widget.id);
+	widget_t id = _create_widget(parent_widget.id);
 	return Widget(attached_window_handle, id);
 }
 
@@ -43,21 +48,30 @@ GUI::GUI()
 {
 }
 
-widget_id GUI::_generate_widget_id()
+void GUI::_compile_shaders() {
+	if (shaders_compiled)
+		return;
+
+	gui_renderer = std::make_shared<Program>(Shader(gui_renderer_shader_parent_path / "gui_vertex.vert", gui_renderer_shader_parent_path / "gui_fragment.frag"));
+
+	shaders_compiled = true;
+}
+
+widget_t GUI::_generate_widget_id()
 {
-	widget_id id = next_widget_id;
+	widget_t id = next_widget_id;
 	next_widget_id++;
 	return id;
 }
 
-widget_id GUI::_create_widget(widget_id parent_id)
+widget_t GUI::_create_widget(widget_t parent_id)
 {
 	if (!_does_widget_exist(parent_id) && parent_id != invalid_widget) {
 		std::cout << "[GUI Error] GUI::_create_widget() is called with improper parent_id: " << parent_id << std::endl;
 		ASSERT(false);
 	}
 
-	widget_id id = _generate_widget_id();
+	widget_t id = _generate_widget_id();
 	
 	WidgetInfo info;
 	info.id = id;
@@ -69,41 +83,41 @@ widget_id GUI::_create_widget(widget_id parent_id)
 	return id;
 }
 
-void GUI::_release_widget(widget_id id)
+void GUI::_release_widget(widget_t id)
 {
 	if (!_does_widget_exist(id))
 		return;
 
-	widget_id parent = widgets[id].parent_id;
+	widget_t parent = widgets[id].parent_id;
 	widgets.erase(id);
 
 	if (_does_widget_exist(parent)) {
-		std::vector<widget_id>& children_list = widgets[parent].children;
+		std::vector<widget_t>& children_list = widgets[parent].children;
 		auto iterator = std::find(children_list.begin(), children_list.end(), id);
 		widgets[parent].children.erase(iterator);
 	}
 }
 
-bool GUI::_does_widget_exist(widget_id id)
+bool GUI::_does_widget_exist(widget_t id)
 {
 	return widgets.find(id) != widgets.end();
 }
 
-void GUI::_traverse_children(widget_id root_id, std::function<void(widget_id, glm::vec2)> lambda)
+void GUI::_traverse_children(widget_t root_id, std::function<void(widget_t, glm::vec2)> lambda)
 {
 	if (!_does_widget_exist(root_id)) {
 		std::cout << "[GUI Error] GUI::_traverse_children() is called with invalid root_id" << std::endl;
 		ASSERT(false);
 	}
 	
-	std::queue<widget_id> nodes;
+	std::queue<widget_t> nodes;
 	std::queue<glm::vec2> positions;
 	nodes.push(root_id);
 	positions.push(widgets[root_id].position);
 
 	while (nodes.size() != 0) {
 		
-		widget_id node = nodes.front();
+		widget_t node = nodes.front();
 		glm::vec2 position = positions.front();
 
 		lambda(node, position);
@@ -111,14 +125,14 @@ void GUI::_traverse_children(widget_id root_id, std::function<void(widget_id, gl
 		nodes.pop();
 		positions.pop();
 
-		for (widget_id child : widgets[node].children) {
+		for (widget_t child : widgets[node].children) {
 			nodes.push(child);
 			positions.push(position + widgets[child].position);
 		}
 	}
 }
 
-void GUI::_traverse_parents(widget_id root_id, std::function<void(widget_id)> lambda)
+void GUI::_traverse_parents(widget_t root_id, std::function<void(widget_t)> lambda)
 {
 	if (!_does_widget_exist(root_id)) {
 		std::cout << "[GUI Error] GUI::_traverse_parents() is called with invalid root_id" << std::endl;
@@ -126,7 +140,7 @@ void GUI::_traverse_parents(widget_id root_id, std::function<void(widget_id)> la
 	}
 
 
-	widget_id node = root_id;
+	widget_t node = root_id;
 
 	while (node != invalid_widget) {
 		lambda(node);
@@ -134,10 +148,168 @@ void GUI::_traverse_parents(widget_id root_id, std::function<void(widget_id)> la
 	}
 }
 
-void GUI::_render(widget_id id)
+void GUI::_init_vab(size_t begin_size_in_bytes)
+{
+	if (vab != nullptr)
+		return;
+
+	vab = std::make_shared<VertexAttributeBuffer>();
+	vab->attach_vertex_buffer(
+		0, 
+		std::make_shared<Buffer>(begin_size_in_bytes), 
+		sizeof(Vertex),
+		0, 
+		0
+	);
+
+	vab->push_attribute_format(0, 0, VertexAttributeBuffer::a_f32, 3, true); // position
+	vab->push_attribute_format(1, 0, VertexAttributeBuffer::a_f32, 2, true); // texture_coord
+	vab->push_attribute_format(2, 0, VertexAttributeBuffer::a_f32, 4, true); // color
+
+	vab_total_size_in_bytes = begin_size_in_bytes;
+	vab_used_size_in_bytes = 0;
+}
+
+void GUI::_resize_vab(size_t new_size_in_bytes)
+{
+	if (vab_total_size_in_bytes == new_size_in_bytes)
+		return;
+
+	if (new_size_in_bytes < vab_total_size_in_bytes) {
+		std::cout << "[GUI Error] GUI::_resize_vab() is called but shrinking vab through GUI::_resize_vab() is not permitted, use GUI::_consolidate_vab() instead" << std::endl;
+		ASSERT(false);
+	}
+
+	auto old_vab = vab;
+	size_t old_used_size = vab_used_size_in_bytes;
+
+	vab = nullptr;
+	_init_vab(new_size_in_bytes);
+
+	if (old_vab == nullptr)
+		return;
+
+	Buffer& old_buffer = *old_vab->get_buffer_slot(0).buffer;
+	Buffer& new_buffer = *vab->get_buffer_slot(0).buffer;
+
+	old_buffer.copy_to(new_buffer);
+	
+	vab_used_size_in_bytes = old_used_size;
+	vab_total_size_in_bytes = new_size_in_bytes;
+}
+
+void GUI::_append_data_to_vab(void* data, size_t data_size_in_bytes)
+{
+	_init_vab();
+
+	size_t size_needed = vab_used_size_in_bytes + data_size_in_bytes;
+
+	if (size_needed > vab_total_size_in_bytes) {
+		size_t size_to_resize = vab_total_size_in_bytes;
+		
+		while (size_to_resize < size_needed)
+			size_to_resize *= 2;
+
+		_resize_vab(size_to_resize);
+	}
+
+	Buffer& buffer = *vab->get_buffer_slot(0).buffer;
+	buffer.load_data(vab_used_size_in_bytes, 0, data_size_in_bytes, data);
+
+	vab_used_size_in_bytes += data_size_in_bytes;
+}
+
+void GUI::_update_vab_to_render(widget_t id)
 {
 	if (!_does_widget_exist(id)) {
-		std::cout << "[GUI Error] GUI::_render() is called with improper widget_id : " << id << std::endl;
+		std::cout << "[GUI Error] GUI::_update_vab_to_render() is called with improper widget_id : " << id << std::endl;
+		ASSERT(false);
+	}
+
+	
+
+	std::vector<Vertex> vertices_to_add;
+
+	_traverse_children(id, [&](widget_t child_id, glm::vec2 merged_position) {
+		WidgetInfo& info = widgets[child_id];
+		bool is_widget_present_in_vab = info.vab_begin != WidgetInfo::widget_does_not_exist;
+
+		if (!is_widget_present_in_vab) {
+			glm::vec3 position0 = glm::vec3(merged_position + glm::vec2(0, 0),				-info.z);
+			glm::vec3 position1 = glm::vec3(merged_position + glm::vec2(0, info.size.y),	-info.z);
+			glm::vec3 position2 = glm::vec3(merged_position + glm::vec2(info.size),			-info.z);
+			glm::vec3 position3 = glm::vec3(merged_position + glm::vec2(info.size.x, 0),	-info.z);
+
+			glm::vec3 texcoord0(0);
+			glm::vec3 texcoord1(0);
+			glm::vec3 texcoord2(0);
+			glm::vec3 texcoord3(0);
+
+			glm::vec4 color0(info.style.color);
+			glm::vec4 color1(info.style.color);
+			glm::vec4 color2(info.style.color);
+			glm::vec4 color3(info.style.color);
+
+			vertices_to_add.push_back(Vertex(position0, texcoord0, color0));
+			vertices_to_add.push_back(Vertex(position1, texcoord1, color1));
+			vertices_to_add.push_back(Vertex(position2, texcoord2, color2));
+			vertices_to_add.push_back(Vertex(position0, texcoord0, color0));
+			vertices_to_add.push_back(Vertex(position2, texcoord2, color2));
+			vertices_to_add.push_back(Vertex(position3, texcoord3, color3));
+
+			info.vab_begin = vab_used_size_in_bytes + vertices_to_add.size() * sizeof(Vertex);
+		}
+		});
+
+	_append_data_to_vab(vertices_to_add.data(), vertices_to_add.size() * sizeof(Vertex));
+	vertices_to_add.clear();
+
+	_traverse_children(id, [&](widget_t child_id, glm::vec2 merged_position) {
+		WidgetInfo& info = widgets[child_id];
+
+		if (info.z != info.old_z) {
+			std::erase(z_to_widget_table[info.old_z], info.id);
+			z_to_widget_table[info.z].push_back(info.id);
+			info.old_z = info.z;
+		}
+
+		if (info.vab_properties_changed) {
+
+			glm::vec3 position0 = glm::vec3(merged_position + glm::vec2(0, 0),				-info.z);
+			glm::vec3 position1 = glm::vec3(merged_position + glm::vec2(0, info.size.y),	-info.z);
+			glm::vec3 position2 = glm::vec3(merged_position + glm::vec2(info.size),			-info.z);
+			glm::vec3 position3 = glm::vec3(merged_position + glm::vec2(info.size.x, 0),	-info.z);
+
+			glm::vec3 texcoord0(0);
+			glm::vec3 texcoord1(0);
+			glm::vec3 texcoord2(0);
+			glm::vec3 texcoord3(0);
+
+			glm::vec4 color0(info.style.color);
+			glm::vec4 color1(info.style.color);
+			glm::vec4 color2(info.style.color);
+			glm::vec4 color3(info.style.color);
+
+			Vertex vertices[6];
+			vertices[0] = Vertex(position0, texcoord0, color0);
+			vertices[1] = Vertex(position1, texcoord1, color1);
+			vertices[2] = Vertex(position2, texcoord2, color2);
+			vertices[3] = Vertex(position0, texcoord0, color0);
+			vertices[4] = Vertex(position2, texcoord2, color2);
+			vertices[5] = Vertex(position3, texcoord3, color3);
+
+			Buffer& buffer = *vab->get_buffer_slot(0).buffer;
+			buffer.load_data(info.vab_begin, 0, 6 * sizeof(Vertex), vertices);
+
+			info.vab_properties_changed = false;
+		}
+		});
+}
+
+void GUI::_render_tmp(widget_t id)
+{
+	if (!_does_widget_exist(id)) {
+		std::cout << "[GUI Error] GUI::_render_tmp() is called with improper widget_id : " << id << std::endl;
 		ASSERT(false);
 	}
 
@@ -145,104 +317,119 @@ void GUI::_render(widget_id id)
 	glm::vec2 total_viewport = primitive_renderer::get_viewport_size();
 
 	glm::vec4 parent_viewport = glm::vec4(
-		(widgets[id].position.x / 2.0f + 0.5) * total_viewport.x,
-		(widgets[id].position.y / 2.0f + 0.5) * total_viewport.y,
-		(widgets[id].actual_size.x / 2.0f + 0.5) * total_viewport.x,
-		(widgets[id].actual_size.y / 2.0f + 0.5) * total_viewport.y
+		widgets[id].position.x,
+		total_viewport.y - widgets[id].position.y - widgets[id].size.y,
+		widgets[id].size.x,
+		widgets[id].size.y
 	);
 	
-	_traverse_children(id, [&](widget_id child_id, glm::vec2 merged_position) {
+	Camera camera;
+	camera.projection_matrix = glm::ortho(
+		0.0f,
+		total_viewport.x,
+		total_viewport.y,
+		0.0f,
+		total_number_of_z_layers / 2.0f,
+		-total_number_of_z_layers / 2.0f
+	);
+	camera.view_matrix = glm::identity<glm::mat4>();
+
+	_traverse_children(id, [&](widget_t child_id, glm::vec2 merged_position) {
 		
 		int32_t z = widgets[child_id].z;
 
 		immediate.set_fill_color(widgets[child_id].style.color);
 		immediate.draw_quad(
-			glm::vec3(merged_position + glm::vec2(0, 0),								-z / 1024.0f * 32),
-			glm::vec3(merged_position + glm::vec2(widgets[child_id].actual_size.x, 0),	-z / 1024.0f * 32),
-			glm::vec3(merged_position + glm::vec2(widgets[child_id].actual_size),		-z / 1024.0f * 32),
-			glm::vec3(merged_position + glm::vec2(0, widgets[child_id].actual_size.y),	-z / 1024.0f * 32)
+			glm::vec3(merged_position + glm::vec2(0, 0),						-z),
+			glm::vec3(merged_position + glm::vec2(0, widgets[child_id].size.y),	-z),
+			glm::vec3(merged_position + glm::vec2(widgets[child_id].size),		-z),
+			glm::vec3(merged_position + glm::vec2(widgets[child_id].size.x, 0),	-z)
 		);
 
 		RenderParameters params(true);
 		params.scissor_test = true;
 
-		//parent_viewport = glm::vec4(
-		//	1920/2, 1080/2, 1920/4, 1080/4
-		//	//(widgets[child_id].position.x / 2.0f + 0.5) * total_viewport.x,
-		//	//(widgets[child_id].position.y / 2.0f + 0.5) * total_viewport.y,
-		//	//(widgets[child_id].actual_size.x / 2.0f + 0.5) * total_viewport.x,
-		//	//(widgets[child_id].actual_size.y / 2.0f + 0.5) * total_viewport.y
-		//);
-
 		params.scissor_viewport = parent_viewport;
-		immediate.render(params);
+		immediate.render(camera, params);
+
+		parent_viewport = glm::vec4(
+			widgets[child_id].position.x,
+			total_viewport.y - widgets[child_id].position.y - widgets[child_id].size.y,
+			widgets[child_id].size.x,
+			widgets[child_id].size.y
+		);
 
 		});
 }
 
-Widget::~Widget()
+
+void GUI::_render(widget_t id)
 {
-	GUI::get()._release_widget(id);
+	_compile_shaders();
+
+	if (!_does_widget_exist(id)) {
+		std::cout << "[GUI Error] GUI::_render() is called with improper widget_id : " << id << std::endl;
+		ASSERT(false);
+	}
+
+	glm::vec4 previous_viewport = primitive_renderer::get_viewport_position_size();
+	glm::vec2 total_viewport = primitive_renderer::get_viewport_size();
+
+	glm::vec4 parent_viewport = glm::vec4(
+		widgets[id].position.x,
+		total_viewport.y - widgets[id].position.y - widgets[id].size.y,
+		widgets[id].size.x,
+		widgets[id].size.y
+	);
+
+	glm::mat4 projection_matrix = glm::ortho(
+		0.0f,
+		total_viewport.x,
+		total_viewport.y,
+		0.0f,
+		total_number_of_z_layers / 2.0f,
+		-total_number_of_z_layers / 2.0f
+	);
+
+	gui_renderer->update_uniform("projection", projection_matrix);
+
+	_update_vab_to_render(id);
+
+	_traverse_children(id, [&](widget_t child_id, glm::vec2 merged_position) {
+
+		RenderParameters params(true);
+		params.scissor_test = true;
+		params.scissor_viewport = parent_viewport;
+
+		primitive_renderer::render(
+			*gui_renderer,
+			*vab,
+			PrimitiveType::triangle,
+			params,
+			widgets[child_id].vab_begin / sizeof(Vertex),
+			6,
+			1,
+			0
+		);
+		
+		parent_viewport = glm::vec4(
+			widgets[child_id].position.x,
+			total_viewport.y - widgets[child_id].position.y - widgets[child_id].size.y,
+			widgets[child_id].size.x,
+			widgets[child_id].size.y
+		);
+		});
+
+	primitive_renderer::set_viewport(previous_viewport);
 }
 
-Widget::Widget(void* owner_gui_identifier, widget_id id) :
-	owner_gui_identifier(owner_gui_identifier), id(id)
+GUI::Vertex::Vertex(
+	glm::vec3 pos,
+	glm::vec2 texcoord,
+	glm::vec4 color
+) :
+	position(pos),
+	texcoord(texcoord),
+	color(color)
 {
-	
-}
-
-Widget Widget::create_child() {
-	if (!GUI::get().does_widget_exist(*this)) {
-		std::cout << "[GUI Error] Widget::create_child() is called on invalid Widget" << std::endl;
-		ASSERT(false);
-	}
-
-	return GUI::get().create_widget(*this);
-}
-
-
-WidgetStyle& Widget::style(){
-	if (!GUI::get().does_widget_exist(*this)) {
-		std::cout << "[GUI Error] Widget::style() is called on invalid Widget" << std::endl;
-		ASSERT(false);
-	}
-
-	return GUI::get().widgets[id].style;
-}
-
-glm::vec2& Widget::position(){
-	if (!GUI::get().does_widget_exist(*this)) {
-		std::cout << "[GUI Error] Widget::position() is called on invalid Widget" << std::endl;
-		ASSERT(false);
-	}
-
-	return GUI::get().widgets[id].position;
-}
-
-glm::vec2& Widget::size(){
-	if (!GUI::get().does_widget_exist(*this)) {
-		std::cout << "[GUI Error] Widget::size() is called on invalid Widget" << std::endl;
-		ASSERT(false);
-	}
-
-	return GUI::get().widgets[id].actual_size;
-}
-
-int32_t& Widget::z(){
-	if (!GUI::get().does_widget_exist(*this)) {
-		std::cout << "[GUI Error] Widget::z() is called on invalid Widget" << std::endl;
-		ASSERT(false);
-	}
-	
-	return GUI::get().widgets[id].z;
-}
-
-std::string& Widget::text()
-{
-	if (!GUI::get().does_widget_exist(*this)) {
-		std::cout << "[GUI Error] Widget::z() is called on invalid Widget" << std::endl;
-		ASSERT(false);
-	}
-
-	return GUI::get().widgets[id].text;
 }

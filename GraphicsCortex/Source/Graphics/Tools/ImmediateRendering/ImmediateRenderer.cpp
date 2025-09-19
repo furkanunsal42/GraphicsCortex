@@ -176,7 +176,7 @@ void ImmediateRenderer::render_without_clear(Camera& camera, RenderParameters re
 {
 	_compile_shaders();
 
-	camera.update_matrixes();
+	//camera.update_matrixes();
 	line_program->update_uniform("view", camera.view_matrix);
 	line_program->update_uniform("projection", camera.projection_matrix);
 	triangle_program->update_uniform("view", camera.view_matrix);

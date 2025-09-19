@@ -284,6 +284,9 @@ void primitive_renderer::clear(Framebuffer& framebuffer, float red, float green,
 
 void primitive_renderer::clear(float red, float green, float blue, float alpha)
 {
+	RenderParameters params(true);
+	params.apply();
+
 	uint32_t clear_bits = GL_COLOR_BUFFER_BIT;
 
 	int32_t bound_framebuffer_id;
