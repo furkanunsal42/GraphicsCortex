@@ -30,6 +30,21 @@ Widget Widget::create_child() {
 	return GUI::get().create_widget(*this);
 }
 
+void Widget::set_parent(Widget new_parent)
+{
+	if (!GUI::get().does_widget_exist(*this))
+		return;
+
+	GUI::get().set_widget_parent(*this, new_parent);
+}
+
+Widget Widget::get_parent() {
+	if (!GUI::get().does_widget_exist(*this))
+		return Widget::null_widget;
+
+	return Widget(owner_gui_identifier, GUI::get().widgets[id].parent_id);
+}
+
 glm::vec2& Widget::texcoord_min()
 {
 	if (!GUI::get().does_widget_exist(*this)) {
@@ -136,3 +151,11 @@ std::shared_ptr<Texture2D>& Widget::texture()
 	return GUI::get().widgets[id].texture;
 }
 
+bool operator==(const Widget& a, const Widget& b)
+{
+	bool same_id = a.id == b.id;
+	bool same_gui = a.owner_gui_identifier == b.owner_gui_identifier;
+	bool both_are_null = a.id == invalid_widget && b.id == invalid_widget;
+
+	return (same_gui && same_id) || both_are_null;
+}

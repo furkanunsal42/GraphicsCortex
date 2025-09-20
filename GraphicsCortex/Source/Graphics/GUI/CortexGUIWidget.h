@@ -30,11 +30,13 @@ enum GUIEventType {
 
 class Widget {
 public:
-	widget_t id = invalid_widget;
 
+	Widget() = default;
 	//~Widget();
 
 	Widget create_child();
+	void set_parent(Widget new_parent);
+	Widget get_parent();
 
 	glm::vec2& texcoord_min();
 	glm::vec2& texcoord_max();
@@ -47,6 +49,8 @@ public:
 
 	std::shared_ptr<Texture2D>& texture();
 
+	friend bool operator==(const Widget& a, const Widget& b);
+
 	void set_on_render_function(std::function<void()> render_function);
 	void set_on_event_function(std::function<void(GUIEventType)> event_function);
 
@@ -54,6 +58,7 @@ public:
 
 private:
 	friend GUI;
+	widget_t id = invalid_widget;
 	void* owner_gui_identifier = nullptr;
-	Widget(void* owner_gui_identifier = nullptr, widget_t id = invalid_widget);
+	Widget(void* owner_gui_identifier, widget_t id);
 };

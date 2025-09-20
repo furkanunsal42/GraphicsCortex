@@ -56,7 +56,6 @@ public:
 
 	glm::vec4 margin;
 	glm::vec4 padding;
-	Alignment content_alignment;
 
 	glm::vec4 border_rounding;
 	glm::vec4 border_thickness;
@@ -69,11 +68,6 @@ public:
 	int32_t z;
 
 	glm::vec4 color;
-
-	font_id font;
-	float text_height;
-	std::string text;
-	glm::vec4 text_color;
 
 	control_style_t style;
 	

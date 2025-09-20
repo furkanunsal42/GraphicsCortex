@@ -34,6 +34,11 @@ Widget GUI::create_widget(Widget& parent_widget)
 	return Widget(attached_window_handle, id);
 }
 
+void GUI::set_widget_parent(Widget& target_widget, Widget& new_parent)
+{
+	_set_widget_parent(target_widget.id, new_parent.id);
+}
+
 void GUI::release_widget(Widget& widget)
 {
 	if (widget.id == invalid_widget)
@@ -91,6 +96,33 @@ widget_t GUI::_create_widget(widget_t parent_id)
 		widgets[parent_id].children.push_back(id);
 	
 	return id;
+}
+
+void GUI::_set_widget_parent(widget_t target_widget, widget_t new_parent)
+{
+	if (!_does_widget_exist(target_widget)) {
+		std::cout << "[GUI Error] GUI::_set_widget_parent() is called but target_widget is not valid" << std::endl;
+		ASSERT(false);
+	}
+
+	if (!_does_widget_exist(new_parent) && new_parent != invalid_widget) {
+		std::cout << "[GUI Error] GUI::_set_widget_parent() is called but new_parent is not valid" << std::endl;
+		ASSERT(false);
+	}
+
+	if (widgets[target_widget].parent_id == new_parent)
+		return;
+
+
+	widget_t old_parent = widgets[target_widget].parent_id;
+
+	widgets[target_widget].parent_id = new_parent;
+
+	if (old_parent != invalid_widget)
+		std::erase(widgets[old_parent].children, target_widget);
+	
+	if (new_parent != invalid_widget)
+		widgets[new_parent].children.push_back(target_widget);
 }
 
 void GUI::_release_widget(widget_t id)
@@ -383,13 +415,6 @@ void GUI::_render(widget_t id)
 	glm::vec4 previous_viewport = primitive_renderer::get_viewport_position_size();
 	glm::vec2 total_viewport = primitive_renderer::get_viewport_size();
 
-	glm::vec4 parent_viewport = glm::vec4(
-		widgets[id].position.x,
-		total_viewport.y - widgets[id].position.y - widgets[id].size.y,
-		widgets[id].size.x,
-		widgets[id].size.y
-	);
-
 	glm::mat4 projection_matrix = glm::ortho(
 		0.0f,
 		total_viewport.x,
@@ -414,8 +439,20 @@ void GUI::_render(widget_t id)
 			renderer.update_uniform("source_texture", *widgets[child_id].texture);
 
 		RenderParameters params(true);
-		params.scissor_test = true;
-		params.scissor_viewport = parent_viewport;
+		params.scissor_test = false;
+
+		widget_t parent_id = widgets[child_id].parent_id;
+		if (parent_id != invalid_widget) {
+		
+			glm::vec4 parent_viewport = glm::vec4(
+				widgets[parent_id].position.x,
+				total_viewport.y - widgets[parent_id].position.y - widgets[parent_id].size.y,
+				widgets[parent_id].size.x,
+				widgets[parent_id].size.y
+			);
+			params.scissor_test = true;
+			params.scissor_viewport = parent_viewport;
+		}
 
 		primitive_renderer::render(
 			renderer,
@@ -426,13 +463,6 @@ void GUI::_render(widget_t id)
 			6,
 			1,
 			0
-		);
-		
-		parent_viewport = glm::vec4(
-			widgets[child_id].position.x,
-			total_viewport.y - widgets[child_id].position.y - widgets[child_id].size.y,
-			widgets[child_id].size.x,
-			widgets[child_id].size.y
 		);
 		});
 

@@ -22,9 +22,10 @@ public:
 
 	Widget create_widget();
 	Widget create_widget(Widget& parent_widget);
+	void set_widget_parent(Widget& target_widget, Widget& new_parent);
 	void release_widget(Widget& widget);
 	bool does_widget_exist(Widget& widget);
-
+	
 	void render(Widget& root_widget);
 
 private:
@@ -40,6 +41,7 @@ private:
 	widget_t _generate_widget_id();
 
 	widget_t _create_widget(widget_t parent_id = invalid_widget);
+	void _set_widget_parent(widget_t target_widget, widget_t set_new_parent);
 	void _release_widget(widget_t id);
 	bool _does_widget_exist(widget_t id);
 	
@@ -75,7 +77,7 @@ private:
 		glm::vec4 border_thickness = glm::vec4(0);
 		int32_t z = 0;
 		int32_t old_z = 0;
-
+		
 		std::shared_ptr<Texture2D> texture = nullptr;
 
 		bool capture_cursor_event = true;

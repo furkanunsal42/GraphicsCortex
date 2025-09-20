@@ -29,6 +29,7 @@ public:
 		std::shared_ptr<Texture2D> atlas = nullptr;
 		std::unordered_map<uint32_t, glyph_info> glyph_table;
 		int32_t font_size;
+		float text_height;
 	};
 
 	font_id load_font(const std::filesystem::path& font_file_path, int32_t font_size = 32);
