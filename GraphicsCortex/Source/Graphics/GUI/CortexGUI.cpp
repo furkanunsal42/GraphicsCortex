@@ -22,39 +22,39 @@ ImmediateRenderer& GUI::get_immediate_renderer()
 	return *immediate_renderer;
 }
 
-Widget GUI::create_widget()
+Element GUI::create_element()
 {
-	widget_t id = _create_widget(invalid_widget);
-	return Widget(attached_window_handle, id);
+	element_t id = _create_element(invalid_element);
+	return Element(attached_window_handle, id);
 }
 
-Widget GUI::create_widget(Widget& parent_widget)
+Element GUI::create_element(Element& parent_element)
 {
-	widget_t id = _create_widget(parent_widget.id);
-	return Widget(attached_window_handle, id);
+	element_t id = _create_element(parent_element.id);
+	return Element(attached_window_handle, id);
 }
 
-void GUI::set_widget_parent(Widget& target_widget, Widget& new_parent)
+void GUI::set_element_parent(Element& target_element, Element& new_parent)
 {
-	_set_widget_parent(target_widget.id, new_parent.id);
+	_set_element_parent(target_element.id, new_parent.id);
 }
 
-void GUI::release_widget(Widget& widget)
+void GUI::release_element(Element& element)
 {
-	if (widget.id == invalid_widget)
+	if (element.id == invalid_element)
 		return;
 
-	_release_widget(widget.id);
+	_release_element(element.id);
 }
 
-bool GUI::does_widget_exist(Widget& widget)
+bool GUI::does_element_exist(Element& element)
 {
-	return _does_widget_exist(widget.id) && widget.owner_gui_identifier == attached_window_handle;
+	return _does_element_exist(element.id) && element.owner_gui_identifier == attached_window_handle;
 }
 
-void GUI::render(Widget& root_widget)
+void GUI::render(Element& root_element)
 {
-	_render(root_widget.id);
+	_render(root_element.id);
 }
 
 GUI::GUI()
@@ -71,95 +71,95 @@ void GUI::_compile_shaders() {
 	shaders_compiled = true;
 }
 
-widget_t GUI::_generate_widget_id()
+element_t GUI::_generate_element_id()
 {
-	widget_t id = next_widget_id;
-	next_widget_id++;
+	element_t id = next_element_id;
+	next_element_id++;
 	return id;
 }
 
-widget_t GUI::_create_widget(widget_t parent_id)
+element_t GUI::_create_element(element_t parent_id)
 {
-	if (!_does_widget_exist(parent_id) && parent_id != invalid_widget) {
-		std::cout << "[GUI Error] GUI::_create_widget() is called with improper parent_id: " << parent_id << std::endl;
+	if (!_does_element_exist(parent_id) && parent_id != invalid_element) {
+		std::cout << "[GUI Error] GUI::_create_element() is called with improper parent_id: " << parent_id << std::endl;
 		ASSERT(false);
 	}
 
-	widget_t id = _generate_widget_id();
+	element_t id = _generate_element_id();
 	
-	WidgetInfo info;
+	ElementInfo info;
 	info.id = id;
 	info.parent_id = parent_id;
 
-	widgets[id] = info;
-	if(_does_widget_exist(parent_id))
-		widgets[parent_id].children.push_back(id);
+	elements[id] = info;
+	if(_does_element_exist(parent_id))
+		elements[parent_id].children.push_back(id);
 	
 	return id;
 }
 
-void GUI::_set_widget_parent(widget_t target_widget, widget_t new_parent)
+void GUI::_set_element_parent(element_t target_element, element_t new_parent)
 {
-	if (!_does_widget_exist(target_widget)) {
-		std::cout << "[GUI Error] GUI::_set_widget_parent() is called but target_widget is not valid" << std::endl;
+	if (!_does_element_exist(target_element)) {
+		std::cout << "[GUI Error] GUI::_set_element_parent() is called but target_element is not valid" << std::endl;
 		ASSERT(false);
 	}
 
-	if (!_does_widget_exist(new_parent) && new_parent != invalid_widget) {
-		std::cout << "[GUI Error] GUI::_set_widget_parent() is called but new_parent is not valid" << std::endl;
+	if (!_does_element_exist(new_parent) && new_parent != invalid_element) {
+		std::cout << "[GUI Error] GUI::_set_element_parent() is called but new_parent is not valid" << std::endl;
 		ASSERT(false);
 	}
 
-	if (widgets[target_widget].parent_id == new_parent)
+	if (elements[target_element].parent_id == new_parent)
 		return;
 
 
-	widget_t old_parent = widgets[target_widget].parent_id;
+	element_t old_parent = elements[target_element].parent_id;
 
-	widgets[target_widget].parent_id = new_parent;
+	elements[target_element].parent_id = new_parent;
 
-	if (old_parent != invalid_widget)
-		std::erase(widgets[old_parent].children, target_widget);
+	if (old_parent != invalid_element)
+		std::erase(elements[old_parent].children, target_element);
 	
-	if (new_parent != invalid_widget)
-		widgets[new_parent].children.push_back(target_widget);
+	if (new_parent != invalid_element)
+		elements[new_parent].children.push_back(target_element);
 }
 
-void GUI::_release_widget(widget_t id)
+void GUI::_release_element(element_t id)
 {
-	if (!_does_widget_exist(id))
+	if (!_does_element_exist(id))
 		return;
 
-	widget_t parent = widgets[id].parent_id;
-	widgets.erase(id);
+	element_t parent = elements[id].parent_id;
+	elements.erase(id);
 
-	if (_does_widget_exist(parent)) {
-		std::vector<widget_t>& children_list = widgets[parent].children;
+	if (_does_element_exist(parent)) {
+		std::vector<element_t>& children_list = elements[parent].children;
 		auto iterator = std::find(children_list.begin(), children_list.end(), id);
-		widgets[parent].children.erase(iterator);
+		elements[parent].children.erase(iterator);
 	}
 }
 
-bool GUI::_does_widget_exist(widget_t id)
+bool GUI::_does_element_exist(element_t id)
 {
-	return widgets.find(id) != widgets.end();
+	return elements.find(id) != elements.end();
 }
 
-void GUI::_traverse_children(widget_t root_id, std::function<void(widget_t, glm::vec2)> lambda)
+void GUI::_traverse_children(element_t root_id, std::function<void(element_t, glm::vec2)> lambda)
 {
-	if (!_does_widget_exist(root_id)) {
+	if (!_does_element_exist(root_id)) {
 		std::cout << "[GUI Error] GUI::_traverse_children() is called with invalid root_id" << std::endl;
 		ASSERT(false);
 	}
 	
-	std::queue<widget_t> nodes;
+	std::queue<element_t> nodes;
 	std::queue<glm::vec2> positions;
 	nodes.push(root_id);
-	positions.push(widgets[root_id].position);
+	positions.push(elements[root_id].position);
 
 	while (nodes.size() != 0) {
 		
-		widget_t node = nodes.front();
+		element_t node = nodes.front();
 		glm::vec2 position = positions.front();
 
 		lambda(node, position);
@@ -167,26 +167,26 @@ void GUI::_traverse_children(widget_t root_id, std::function<void(widget_t, glm:
 		nodes.pop();
 		positions.pop();
 
-		for (widget_t child : widgets[node].children) {
+		for (element_t child : elements[node].children) {
 			nodes.push(child);
-			positions.push(position + widgets[child].position);
+			positions.push(position + elements[child].position);
 		}
 	}
 }
 
-void GUI::_traverse_parents(widget_t root_id, std::function<void(widget_t)> lambda)
+void GUI::_traverse_parents(element_t root_id, std::function<void(element_t)> lambda)
 {
-	if (!_does_widget_exist(root_id)) {
+	if (!_does_element_exist(root_id)) {
 		std::cout << "[GUI Error] GUI::_traverse_parents() is called with invalid root_id" << std::endl;
 		ASSERT(false);
 	}
 
 
-	widget_t node = root_id;
+	element_t node = root_id;
 
-	while (node != invalid_widget) {
+	while (node != invalid_element) {
 		lambda(node);
-		node = widgets[node].parent_id;
+		node = elements[node].parent_id;
 	}
 }
 
@@ -261,20 +261,20 @@ void GUI::_append_data_to_vab(void* data, size_t data_size_in_bytes)
 	vab_used_size_in_bytes += data_size_in_bytes;
 }
 
-void GUI::_update_vab_to_render(widget_t id)
+void GUI::_update_vab_to_render(element_t id)
 {
-	if (!_does_widget_exist(id)) {
-		std::cout << "[GUI Error] GUI::_update_vab_to_render() is called with improper widget_id : " << id << std::endl;
+	if (!_does_element_exist(id)) {
+		std::cout << "[GUI Error] GUI::_update_vab_to_render() is called with improper element_id : " << id << std::endl;
 		ASSERT(false);
 	}
 
 	std::vector<Vertex> vertices_to_add;
 
-	_traverse_children(id, [&](widget_t child_id, glm::vec2 merged_position) {
-		WidgetInfo& info = widgets[child_id];
-		bool is_widget_present_in_vab = info.vab_begin != WidgetInfo::widget_does_not_exist;
+	_traverse_children(id, [&](element_t child_id, glm::vec2 merged_position) {
+		ElementInfo& info = elements[child_id];
+		bool is_element_present_in_vab = info.vab_begin != ElementInfo::element_does_not_exist;
 
-		if (!is_widget_present_in_vab) {
+		if (!is_element_present_in_vab) {
 			glm::vec3 position0 = glm::vec3(merged_position + glm::vec2(0, 0),				-info.z);
 			glm::vec3 position1 = glm::vec3(merged_position + glm::vec2(0, info.size.y),	-info.z);
 			glm::vec3 position2 = glm::vec3(merged_position + glm::vec2(info.size),			-info.z);
@@ -304,12 +304,12 @@ void GUI::_update_vab_to_render(widget_t id)
 	_append_data_to_vab(vertices_to_add.data(), vertices_to_add.size() * sizeof(Vertex));
 	vertices_to_add.clear();
 
-	_traverse_children(id, [&](widget_t child_id, glm::vec2 merged_position) {
-		WidgetInfo& info = widgets[child_id];
+	_traverse_children(id, [&](element_t child_id, glm::vec2 merged_position) {
+		ElementInfo& info = elements[child_id];
 
 		if (info.z != info.old_z) {
-			std::erase(z_to_widget_table[info.old_z], info.id);
-			z_to_widget_table[info.z].push_back(info.id);
+			std::erase(z_to_element_table[info.old_z], info.id);
+			z_to_element_table[info.z].push_back(info.id);
 			info.old_z = info.z;
 		}
 
@@ -346,10 +346,10 @@ void GUI::_update_vab_to_render(widget_t id)
 		});
 }
 
-void GUI::_render_tmp(widget_t id)
+void GUI::_render_tmp(element_t id)
 {
-	if (!_does_widget_exist(id)) {
-		std::cout << "[GUI Error] GUI::_render_tmp() is called with improper widget_id : " << id << std::endl;
+	if (!_does_element_exist(id)) {
+		std::cout << "[GUI Error] GUI::_render_tmp() is called with improper element_id : " << id << std::endl;
 		ASSERT(false);
 	}
 
@@ -357,10 +357,10 @@ void GUI::_render_tmp(widget_t id)
 	glm::vec2 total_viewport = primitive_renderer::get_viewport_size();
 
 	glm::vec4 parent_viewport = glm::vec4(
-		widgets[id].position.x,
-		total_viewport.y - widgets[id].position.y - widgets[id].size.y,
-		widgets[id].size.x,
-		widgets[id].size.y
+		elements[id].position.x,
+		total_viewport.y - elements[id].position.y - elements[id].size.y,
+		elements[id].size.x,
+		elements[id].size.y
 	);
 	
 	Camera camera;
@@ -374,16 +374,16 @@ void GUI::_render_tmp(widget_t id)
 	);
 	camera.view_matrix = glm::identity<glm::mat4>();
 
-	_traverse_children(id, [&](widget_t child_id, glm::vec2 merged_position) {
+	_traverse_children(id, [&](element_t child_id, glm::vec2 merged_position) {
 		
-		int32_t z = widgets[child_id].z;
+		int32_t z = elements[child_id].z;
 
-		immediate.set_fill_color(widgets[child_id].color);
+		immediate.set_fill_color(elements[child_id].color);
 		immediate.draw_quad(
 			glm::vec3(merged_position + glm::vec2(0, 0),						-z),
-			glm::vec3(merged_position + glm::vec2(0, widgets[child_id].size.y),	-z),
-			glm::vec3(merged_position + glm::vec2(widgets[child_id].size),		-z),
-			glm::vec3(merged_position + glm::vec2(widgets[child_id].size.x, 0),	-z)
+			glm::vec3(merged_position + glm::vec2(0, elements[child_id].size.y),	-z),
+			glm::vec3(merged_position + glm::vec2(elements[child_id].size),		-z),
+			glm::vec3(merged_position + glm::vec2(elements[child_id].size.x, 0),	-z)
 		);
 
 		RenderParameters params(true);
@@ -393,20 +393,20 @@ void GUI::_render_tmp(widget_t id)
 		immediate.render(camera, params);
 
 		parent_viewport = glm::vec4(
-			widgets[child_id].position.x,
-			total_viewport.y - widgets[child_id].position.y - widgets[child_id].size.y,
-			widgets[child_id].size.x,
-			widgets[child_id].size.y
+			elements[child_id].position.x,
+			total_viewport.y - elements[child_id].position.y - elements[child_id].size.y,
+			elements[child_id].size.x,
+			elements[child_id].size.y
 		);
 
 		});
 }
 
 
-void GUI::_render(widget_t id)
+void GUI::_render(element_t id)
 {
-	if (!_does_widget_exist(id)) {
-		std::cout << "[GUI Error] GUI::_render() is called with improper widget_id : " << id << std::endl;
+	if (!_does_element_exist(id)) {
+		std::cout << "[GUI Error] GUI::_render() is called with improper element_id : " << id << std::endl;
 		ASSERT(false);
 	}
 	
@@ -430,42 +430,42 @@ void GUI::_render(widget_t id)
 	_update_vab_to_render(id);
 
 	struct render_data {
-		widget_t id;
+		element_t id;
 		glm::vec2 merged_position;
 	};
 	std::map<int32_t, std::vector<render_data>> sorted_children;
 
-	_traverse_children(id, [&](widget_t child_id, glm::vec2 merged_position) {
+	_traverse_children(id, [&](element_t child_id, glm::vec2 merged_position) {
 		render_data data;
 		data.id = child_id;
 		data.merged_position = merged_position;
-		sorted_children[widgets[child_id].z].push_back(data);
+		sorted_children[elements[child_id].z].push_back(data);
 		});
 
 	for (auto it = sorted_children.begin(); it != sorted_children.end(); it++) {
 		int32_t z = it->first;
 		for (render_data& data : it->second) {
-			widget_t& child_id = data.id;
+			element_t& child_id = data.id;
 			glm::vec2& merged_position = data.merged_position;
 
-			bool widget_is_textured = widgets[child_id].texture != nullptr;
+			bool element_is_textured = elements[child_id].texture != nullptr;
 
-			Program& renderer = widget_is_textured ? *gui_renderer_texture : *gui_renderer;
+			Program& renderer = element_is_textured ? *gui_renderer_texture : *gui_renderer;
 
-			if (widget_is_textured)
-				renderer.update_uniform("source_texture", *widgets[child_id].texture);
+			if (element_is_textured)
+				renderer.update_uniform("source_texture", *elements[child_id].texture);
 
 			RenderParameters params(true);
 			params.depth_function = RenderParameters::DepthStencilFunction::LEQUAL;
 
-			widget_t parent_id = widgets[child_id].parent_id;
-			if (parent_id != invalid_widget) {
+			element_t parent_id = elements[child_id].parent_id;
+			if (parent_id != invalid_element) {
 
 				glm::vec4 parent_viewport = glm::vec4(
-					widgets[parent_id].position.x,
-					total_viewport.y - widgets[parent_id].position.y - widgets[parent_id].size.y,
-					widgets[parent_id].size.x,
-					widgets[parent_id].size.y
+					elements[parent_id].position.x,
+					total_viewport.y - elements[parent_id].position.y - elements[parent_id].size.y,
+					elements[parent_id].size.x,
+					elements[parent_id].size.y
 				);
 				params.scissor_test = true;
 				params.scissor_viewport = parent_viewport;
@@ -476,7 +476,7 @@ void GUI::_render(widget_t id)
 				*vab,
 				PrimitiveType::triangle,
 				params,
-				widgets[child_id].vab_begin / sizeof(Vertex),
+				elements[child_id].vab_begin / sizeof(Vertex),
 				6,
 				1,
 				0

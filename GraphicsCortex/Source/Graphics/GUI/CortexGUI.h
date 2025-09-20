@@ -10,9 +10,19 @@
 #include "Font.h"
 #include "Tools/ImmediateRendering/ImmediateRenderer.h"
 
-#include "CortexGUIWidget.h"
+#include "CortexGUIElement.h"
+//#include "CortexGUIWidget.h"
 
 extern std::filesystem::path gui_renderer_shader_parent_path;
+
+template<typename T> 
+class WidgetHandle;
+
+namespace widget {
+	template<typename T> WidgetHandle<T> create();
+	template<typename T> void release(WidgetHandle<T>& widget);
+	template<typename T> bool does_exist(WidgetHandle<T>& widget);
+}
 
 class GUI {
 public:
@@ -20,16 +30,20 @@ public:
 	static GUI& get();
 	ImmediateRenderer& get_immediate_renderer();
 
-	Widget create_widget();
-	Widget create_widget(Widget& parent_widget);
-	void set_widget_parent(Widget& target_widget, Widget& new_parent);
-	void release_widget(Widget& widget);
-	bool does_widget_exist(Widget& widget);
+	template<typename T> WidgetHandle<T> create_widget();
+	template<typename T> void release_widget(WidgetHandle<T>& widget);
+	template<typename T> bool does_widget_exist(WidgetHandle<T>& widget);
+
+	Element create_element();
+	Element create_element(Element& parent_element);
+	void set_element_parent(Element& target_element, Element& new_parent);
+	void release_element(Element& element);
+	bool does_element_exist(Element& element);
 	
-	void render(Widget& root_widget);
+	void render(Element& root_element);
 
 private:
-	friend Widget;
+	friend Element;
 
 	GUI();
 	const int32_t total_number_of_z_layers = 2048;
@@ -37,36 +51,36 @@ private:
 	bool shaders_compiled = false;
 	void _compile_shaders();
 
-	widget_t next_widget_id = 1;
-	widget_t _generate_widget_id();
+	element_t next_element_id = 1;
+	element_t _generate_element_id();
 
-	widget_t _create_widget(widget_t parent_id = invalid_widget);
-	void _set_widget_parent(widget_t target_widget, widget_t set_new_parent);
-	void _release_widget(widget_t id);
-	bool _does_widget_exist(widget_t id);
+	element_t _create_element(element_t parent_id = invalid_element);
+	void _set_element_parent(element_t target_element, element_t set_new_parent);
+	void _release_element(element_t id);
+	bool _does_element_exist(element_t id);
 	
-	void _render_tmp(widget_t id);
+	void _render_tmp(element_t id);
 
-	void _render(widget_t id);
-	void _render_and_partially_render_parents(widget_t id);
-	void _render_and_fully_render_parents(widget_t id);
+	void _render(element_t id);
+	void _render_and_partially_render_parents(element_t id);
+	void _render_and_fully_render_parents(element_t id);
 
-	void _traverse_children(widget_t root_id, std::function<void(widget_t, glm::vec2)> lambda);
-	void _traverse_parents(widget_t root_id, std::function<void(widget_t)> lambda);
+	void _traverse_children(element_t root_id, std::function<void(element_t, glm::vec2)> lambda);
+	void _traverse_parents(element_t root_id, std::function<void(element_t)> lambda);
 
 	void _init_vab(size_t begin_size_in_bytes = 1024 * 1024);
 	void _resize_vab(size_t new_size_in_bytes);
 	void _consolidate_vab();
 	void _append_data_to_vab(void* data, size_t data_size_in_bytes);
-	void _update_vab_to_render(widget_t id);
+	void _update_vab_to_render(element_t id);
 
 	void* attached_window_handle = nullptr;
 
-	struct WidgetInfo {
-		constexpr static size_t widget_does_not_exist = -1;
-		widget_t id = invalid_widget;
-		widget_t parent_id = invalid_widget;
-		std::vector<widget_t> children;
+	struct ElementInfo {
+		constexpr static size_t element_does_not_exist = -1;
+		element_t id = invalid_element;
+		element_t parent_id = invalid_element;
+		std::vector<element_t> children;
 
 		glm::vec2 position = glm::vec2(0);
 		glm::vec2 size = glm::vec2(-1);
@@ -87,7 +101,7 @@ private:
 		std::function<void()> custom_on_render;
 		std::function<void(GUIEventType)> custom_on_event;
 
-		size_t vab_begin = widget_does_not_exist;
+		size_t vab_begin = element_does_not_exist;
 	
 		bool vab_properties_changed = false;
 		bool texture_changed = false;
@@ -106,8 +120,8 @@ private:
 		glm::vec4 color;
 	};
 
-	std::unordered_map<widget_t, WidgetInfo> widgets;
-	std::map<int32_t, std::vector<widget_t>> z_to_widget_table;
+	std::unordered_map<element_t, ElementInfo> elements;
+	std::map<int32_t, std::vector<element_t>> z_to_element_table;
 
 	size_t vab_total_size_in_bytes = 0;
 	size_t vab_used_size_in_bytes = 0;

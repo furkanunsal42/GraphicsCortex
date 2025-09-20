@@ -1,9 +1,9 @@
 #pragma once
-#include "GUI/CortexGUIControl.h"
+#include "GUI/CortexGUIWidget.h"
 
-namespace gui_controls {
+namespace widget {
 
-	class Image : public GUIControl {
+	class Image : public Widget {
 	public:
 
 		enum FitStyle {
@@ -20,29 +20,29 @@ namespace gui_controls {
 		
 		std::shared_ptr<Texture2D> texture = nullptr;
 
-		Widget& get_widget() {
-			apply_properties_to_widget(widget);
+		Element& get_element() {
+			apply_properties_to_element(element);
 			update_texture();
-			return widget;
+			return element;
 		}
 
 	private:
 
 		void update_texture() {
-			widget.texture() = texture;
+			element.texture() = texture;
 			
 			if (image_fit == Stretch) {
-				widget.texcoord_min() = glm::vec2(0);
-				widget.texcoord_max() = glm::vec2(1);
+				element.texcoord_min() = glm::vec2(0);
+				element.texcoord_max() = glm::vec2(1);
 				return;
 			}
 			//if (image_fit == Absolute) {
-			//	widget.texcoord_min() = glm::vec2(0);
-			//	widget.texcoord_max() = glm::vec2(1) * glm::vec2(widget.size()) / glm::vec2(texture->get_size());
+			//	element.texcoord_min() = glm::vec2(0);
+			//	element.texcoord_max() = glm::vec2(1) * glm::vec2(element.size()) / glm::vec2(texture->get_size());
 			//	return;
 			//}
 			if (image_fit == Contain) {
-				glm::vec2 self_size = widget.size();
+				glm::vec2 self_size = element.size();
 				glm::vec2 texture_size = texture->get_size();
 
 				float self_aspect_ratio		= self_size.x / self_size.y;
@@ -53,17 +53,17 @@ namespace gui_controls {
 				if (self_aspect_ratio >= texture_aspect_ratio) {
 					clipped_size.y = self_size.y;
 					clipped_size.x = clipped_size.y * texture_aspect_ratio;
-					widget.position().x = (self_size.x - clipped_size.x) / 2;
+					element.position().x = (self_size.x - clipped_size.x) / 2;
 				}
 				else {
 					clipped_size.x = self_size.x;
 					clipped_size.y = clipped_size.x / texture_aspect_ratio;
-					widget.position().y = (self_size.y - clipped_size.y) / 2;
+					element.position().y = (self_size.y - clipped_size.y) / 2;
 				}
 				
-				widget.size() = clipped_size;
-				widget.texcoord_min() = glm::vec2(0);
-				widget.texcoord_max() = glm::vec2(1);
+				element.size() = clipped_size;
+				element.texcoord_min() = glm::vec2(0);
+				element.texcoord_max() = glm::vec2(1);
 				return;
 			}
 		}

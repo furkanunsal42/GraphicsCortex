@@ -1,11 +1,11 @@
 #pragma once
-#include "GUI/CortexGUIControl.h"
+#include "GUI/CortexGUIWidget.h"
 
 #include "Font.h"
 
-namespace gui_controls {
+namespace widget {
 
-	class Label : public GUIControl {
+	class Label : public Widget {
 	public:
 
 		font_id font = FontBank::not_a_font;
@@ -13,10 +13,10 @@ namespace gui_controls {
 		std::string text = "";
 		glm::vec4 text_color = glm::vec4(0, 0, 0, 1);
 
-		Widget& get_widget() {
-			apply_properties_to_widget(widget);
+		Element& get_element() {
+			apply_properties_to_element(element);
 			update_glyphs();
-			return widget;
+			return element;
 		}
 
 	private:
@@ -30,14 +30,14 @@ namespace gui_controls {
 			float advance = 0;
 
 			for (int32_t i = 0; i < text.size(); i++) {
-				if (glyphs[i].first == text[i] && glyphs[i].second != Widget::null_widget)
+				if (glyphs[i].first == text[i] && glyphs[i].second != Element::null_element)
 					continue;
 
-				if (glyphs[i].second == Widget::null_widget)
-					glyphs[i].second = GUI::get().create_widget(widget);
+				if (glyphs[i].second == Element::null_element)
+					glyphs[i].second = GUI::get().create_element(element);
 
 				if (glyphs[i].first != text[i]) {
-					Widget& g = glyphs[i].second;
+					Element& g = glyphs[i].second;
 
 					g.texture() = FontBank::get().get_font(font).atlas;
 					float font_size = FontBank::get().get_font(font).font_size;
@@ -62,6 +62,6 @@ namespace gui_controls {
 			}
 		}
 
-		std::vector<std::pair<uint32_t, Widget>> glyphs;
+		std::vector<std::pair<uint32_t, Element>> glyphs;
 	};
 }

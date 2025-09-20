@@ -1,64 +1,89 @@
 #pragma once
-
-#include <cinttypes>
 #include <string>
-#include <functional>
-#include <memory>
 
-#include "Math/AABB.h"
+#include "glm.hpp"
 #include "Font.h"
 
-class GUI;
+#include "GUI/CortexGUI.h"
 
-constexpr static float render_only_when_dirty = -1;
 typedef uint32_t widget_t;
-constexpr static widget_t root_widget = 0;
-constexpr static widget_t invalid_widget = -1;
+constexpr widget_t invalid_widget = -1;
 
-// Weak EventType variants doesn't require the widget to be top-most widget
-enum GUIEventType {
-	Hovered_Weak,
-	Clicked_Weak,
-	RightClicked_Weak,
-	DoubleClicked_Weak,
+typedef uint32_t widget_style_t;
+constexpr widget_style_t invalid_widget_style = -1;
 
-	Hovered,
-	Clicked,
-	RightClicked,
-	DoubleClicked,
+enum Alignment {
+	Center,
+	Left,
+	Top,
+	Right,
+	Bottom
+};
+
+struct ControlStyleInfo {
+	glm::vec4 margin;
+	glm::vec4 padding;
+	Alignment content_alignment;
+
+	glm::vec4 border_rounding;
+	glm::vec4 border_thickness;
+	glm::vec4 border_color;
+
+	glm::vec2 target_size;
+	//glm::vec2 min_size;
+	//glm::vec2 max_size;
+	
+	glm::vec4 color;
+	
+	font_id font;
+	float text_height;
+	std::string text;
+	glm::vec4 text_color;
+
+};
+
+class ControlStyle {
+public:
+	widget_style_t id = invalid_widget_style;
+
+private:
+
 };
 
 class Widget {
 public:
 
-	Widget() = default;
-	//~Widget();
+	Widget() {
+		element = GUI::get().create_element();
+	};
 
-	Widget create_child();
-	void set_parent(Widget new_parent);
-	Widget get_parent();
+	glm::vec4 margin;
+	glm::vec4 padding;
 
-	glm::vec2& texcoord_min();
-	glm::vec2& texcoord_max();
-	glm::vec4& color();
-	glm::vec4& border_color();
-	glm::vec4& border_thickness();
-	glm::vec2& position();
-	glm::vec2& size();
-	int32_t& z();
+	glm::vec4 border_rounding;
+	glm::vec4 border_thickness;
+	glm::vec4 border_color;
 
-	std::shared_ptr<Texture2D>& texture();
+	glm::vec2 target_size;
+	//glm::vec2 min_size;
+	//glm::vec2 max_size;
 
-	friend bool operator==(const Widget& a, const Widget& b);
+	int32_t z;
 
-	void set_on_render_function(std::function<void()> render_function);
-	void set_on_event_function(std::function<void(GUIEventType)> event_function);
+	glm::vec4 color;
 
-	static const Widget null_widget;
+	widget_style_t style;
+	
+	void apply_properties_to_element(Element& element) {
+		element.size() = target_size;
+		element.color() = color;
+		element.z() = z;
+	};
 
-private:
-	friend GUI;
-	widget_t id = invalid_widget;
-	void* owner_gui_identifier = nullptr;
-	Widget(void* owner_gui_identifier, widget_t id);
+	virtual Element& get_element() = 0;
+	//virtual void update_before_render();
+protected:
+
+	Element element = Element::null_element;
+
 };
