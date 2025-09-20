@@ -429,42 +429,59 @@ void GUI::_render(widget_t id)
 
 	_update_vab_to_render(id);
 
+	struct render_data {
+		widget_t id;
+		glm::vec2 merged_position;
+	};
+	std::map<int32_t, std::vector<render_data>> sorted_children;
+
 	_traverse_children(id, [&](widget_t child_id, glm::vec2 merged_position) {
-
-		bool widget_is_textured = widgets[child_id].texture != nullptr;
-		
-		Program& renderer = widget_is_textured ? *gui_renderer_texture : *gui_renderer;
-
-		if (widget_is_textured)
-			renderer.update_uniform("source_texture", *widgets[child_id].texture);
-
-		RenderParameters params(true);
-		params.scissor_test = false;
-
-		widget_t parent_id = widgets[child_id].parent_id;
-		if (parent_id != invalid_widget) {
-		
-			glm::vec4 parent_viewport = glm::vec4(
-				widgets[parent_id].position.x,
-				total_viewport.y - widgets[parent_id].position.y - widgets[parent_id].size.y,
-				widgets[parent_id].size.x,
-				widgets[parent_id].size.y
-			);
-			params.scissor_test = true;
-			params.scissor_viewport = parent_viewport;
-		}
-
-		primitive_renderer::render(
-			renderer,
-			*vab,
-			PrimitiveType::triangle,
-			params,
-			widgets[child_id].vab_begin / sizeof(Vertex),
-			6,
-			1,
-			0
-		);
+		render_data data;
+		data.id = child_id;
+		data.merged_position = merged_position;
+		sorted_children[widgets[child_id].z].push_back(data);
 		});
+
+	for (auto it = sorted_children.begin(); it != sorted_children.end(); it++) {
+		int32_t z = it->first;
+		for (render_data& data : it->second) {
+			widget_t& child_id = data.id;
+			glm::vec2& merged_position = data.merged_position;
+
+			bool widget_is_textured = widgets[child_id].texture != nullptr;
+
+			Program& renderer = widget_is_textured ? *gui_renderer_texture : *gui_renderer;
+
+			if (widget_is_textured)
+				renderer.update_uniform("source_texture", *widgets[child_id].texture);
+
+			RenderParameters params(true);
+
+			widget_t parent_id = widgets[child_id].parent_id;
+			if (parent_id != invalid_widget) {
+
+				glm::vec4 parent_viewport = glm::vec4(
+					widgets[parent_id].position.x,
+					total_viewport.y - widgets[parent_id].position.y - widgets[parent_id].size.y,
+					widgets[parent_id].size.x,
+					widgets[parent_id].size.y
+				);
+				params.scissor_test = true;
+				params.scissor_viewport = parent_viewport;
+			}
+
+			primitive_renderer::render(
+				renderer,
+				*vab,
+				PrimitiveType::triangle,
+				params,
+				widgets[child_id].vab_begin / sizeof(Vertex),
+				6,
+				1,
+				0
+			);
+		}
+	}
 
 	primitive_renderer::set_viewport(previous_viewport);
 }
