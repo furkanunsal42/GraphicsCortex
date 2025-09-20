@@ -34,6 +34,14 @@ Widget GUI::create_widget(Widget& parent_widget)
 	return Widget(attached_window_handle, id);
 }
 
+void GUI::release_widget(Widget& widget)
+{
+	if (widget.id == invalid_widget)
+		return;
+
+	_release_widget(widget.id);
+}
+
 bool GUI::does_widget_exist(Widget& widget)
 {
 	return _does_widget_exist(widget.id) && widget.owner_gui_identifier == attached_window_handle;
@@ -79,7 +87,8 @@ widget_t GUI::_create_widget(widget_t parent_id)
 	info.parent_id = parent_id;
 
 	widgets[id] = info;
-	widgets[parent_id].children.push_back(id);
+	if(_does_widget_exist(parent_id))
+		widgets[parent_id].children.push_back(id);
 	
 	return id;
 }
@@ -227,8 +236,6 @@ void GUI::_update_vab_to_render(widget_t id)
 		ASSERT(false);
 	}
 
-	
-
 	std::vector<Vertex> vertices_to_add;
 
 	_traverse_children(id, [&](widget_t child_id, glm::vec2 merged_position) {
@@ -241,15 +248,15 @@ void GUI::_update_vab_to_render(widget_t id)
 			glm::vec3 position2 = glm::vec3(merged_position + glm::vec2(info.size),			-info.z);
 			glm::vec3 position3 = glm::vec3(merged_position + glm::vec2(info.size.x, 0),	-info.z);
 
-			glm::vec2 texcoord0(0, 1);
-			glm::vec2 texcoord1(0, 0);
-			glm::vec2 texcoord2(1, 0);
-			glm::vec2 texcoord3(1, 1);
+			glm::vec2 texcoord0(info.texcoord_min.x, info.texcoord_max.y);
+			glm::vec2 texcoord1(info.texcoord_min.x, info.texcoord_min.y);
+			glm::vec2 texcoord2(info.texcoord_max.x, info.texcoord_min.y);
+			glm::vec2 texcoord3(info.texcoord_max.x, info.texcoord_max.y);
 
-			glm::vec4 color0(info.style.color);
-			glm::vec4 color1(info.style.color);
-			glm::vec4 color2(info.style.color);
-			glm::vec4 color3(info.style.color);
+			glm::vec4 color0(info.color);
+			glm::vec4 color1(info.color);
+			glm::vec4 color2(info.color);
+			glm::vec4 color3(info.color);
 
 			vertices_to_add.push_back(Vertex(position0, texcoord0, color0));
 			vertices_to_add.push_back(Vertex(position1, texcoord1, color1));
@@ -281,15 +288,15 @@ void GUI::_update_vab_to_render(widget_t id)
 			glm::vec3 position2 = glm::vec3(merged_position + glm::vec2(info.size),			-info.z);
 			glm::vec3 position3 = glm::vec3(merged_position + glm::vec2(info.size.x, 0),	-info.z);
 
-			glm::vec2 texcoord0(0, 1);
-			glm::vec2 texcoord1(0, 0);
-			glm::vec2 texcoord2(1, 0);
-			glm::vec2 texcoord3(1, 1);
+			glm::vec2 texcoord0(info.texcoord_min.x, info.texcoord_max.y);
+			glm::vec2 texcoord1(info.texcoord_min.x, info.texcoord_min.y);
+			glm::vec2 texcoord2(info.texcoord_max.x, info.texcoord_min.y);
+			glm::vec2 texcoord3(info.texcoord_max.x, info.texcoord_max.y);
 
-			glm::vec4 color0(info.style.color);
-			glm::vec4 color1(info.style.color);
-			glm::vec4 color2(info.style.color);
-			glm::vec4 color3(info.style.color);
+			glm::vec4 color0(info.color);
+			glm::vec4 color1(info.color);
+			glm::vec4 color2(info.color);
+			glm::vec4 color3(info.color);
 
 			Vertex vertices[6];
 			vertices[0] = Vertex(position0, texcoord0, color0);
@@ -339,7 +346,7 @@ void GUI::_render_tmp(widget_t id)
 		
 		int32_t z = widgets[child_id].z;
 
-		immediate.set_fill_color(widgets[child_id].style.color);
+		immediate.set_fill_color(widgets[child_id].color);
 		immediate.draw_quad(
 			glm::vec3(merged_position + glm::vec2(0, 0),						-z),
 			glm::vec3(merged_position + glm::vec2(0, widgets[child_id].size.y),	-z),
@@ -399,12 +406,12 @@ void GUI::_render(widget_t id)
 
 	_traverse_children(id, [&](widget_t child_id, glm::vec2 merged_position) {
 
-		bool widget_is_textured = widgets[child_id].style.texture != nullptr;
+		bool widget_is_textured = widgets[child_id].texture != nullptr;
 		
 		Program& renderer = widget_is_textured ? *gui_renderer_texture : *gui_renderer;
 
 		if (widget_is_textured)
-			renderer.update_uniform("source_texture", *widgets[child_id].style.texture);
+			renderer.update_uniform("source_texture", *widgets[child_id].texture);
 
 		RenderParameters params(true);
 		params.scissor_test = true;

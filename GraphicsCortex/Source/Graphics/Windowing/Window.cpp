@@ -331,7 +331,6 @@ Window::~Window()
 
 void Window::release()
 {
-	
 	if (newsletters != nullptr) {
 		delete newsletters;
 		newsletters = nullptr;

@@ -22,6 +22,7 @@ public:
 
 	Widget create_widget();
 	Widget create_widget(Widget& parent_widget);
+	void release_widget(Widget& widget);
 	bool does_widget_exist(Widget& widget);
 
 	void render(Widget& root_widget);
@@ -67,19 +68,26 @@ private:
 
 		glm::vec2 position = glm::vec2(0);
 		glm::vec2 size = glm::vec2(-1);
+		glm::vec2 texcoord_min = glm::vec2(0);
+		glm::vec2 texcoord_max = glm::vec2(1);
+		glm::vec4 color = glm::vec4(1);
+		glm::vec4 border_color = glm::vec4(1);
+		glm::vec4 border_thickness = glm::vec4(0);
 		int32_t z = 0;
 		int32_t old_z = 0;
 
-		std::string text = "";
+		std::shared_ptr<Texture2D> texture = nullptr;
 
-		WidgetStyle style;
+		bool capture_cursor_event = true;
+		bool pass_through_cursor_event = false;
+		float render_target_fps = render_only_when_dirty;
+
 		std::function<void()> custom_on_render;
 		std::function<void(GUIEventType)> custom_on_event;
 
 		size_t vab_begin = widget_does_not_exist;
 	
 		bool vab_properties_changed = false;
-		bool text_changed = false;
 		bool texture_changed = false;
 	};
 

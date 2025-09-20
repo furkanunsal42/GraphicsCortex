@@ -1,12 +1,19 @@
 #include "CortexGUIWidget.h"
 #include "CortexGUI.h"
+#include "WindowBoundGlobalResources.h"
 
 const Widget Widget::null_widget = Widget(nullptr, invalid_widget);
 
-Widget::~Widget()
-{
-	GUI::get()._release_widget(id);
-}
+//Widget::~Widget()
+//{
+//	if (id == invalid_widget)
+//		return;
+//
+//	if (active_global_resources == nullptr || active_global_resources->GUI == nullptr)
+//		return;
+//
+//	GUI::get()._release_widget(id);
+//}
 
 Widget::Widget(void* owner_gui_identifier, widget_t id) :
 	owner_gui_identifier(owner_gui_identifier), id(id)
@@ -23,16 +30,65 @@ Widget Widget::create_child() {
 	return GUI::get().create_widget(*this);
 }
 
-
-WidgetStyle& Widget::style() {
+glm::vec2& Widget::texcoord_min()
+{
 	if (!GUI::get().does_widget_exist(*this)) {
-		std::cout << "[GUI Error] Widget::style() is called on invalid Widget" << std::endl;
+		std::cout << "[GUI Error] Widget::texcoord_min() is called on invalid Widget" << std::endl;
 		ASSERT(false);
 	}
 
 	GUI::get().widgets[id].vab_properties_changed = true;
-	
-	return GUI::get().widgets[id].style;
+
+	return GUI::get().widgets[id].texcoord_min;
+}
+
+glm::vec2& Widget::texcoord_max()
+{
+	if (!GUI::get().does_widget_exist(*this)) {
+		std::cout << "[GUI Error] Widget::texcoord_max() is called on invalid Widget" << std::endl;
+		ASSERT(false);
+	}
+
+	GUI::get().widgets[id].vab_properties_changed = true;
+
+	return GUI::get().widgets[id].texcoord_max;
+}
+
+glm::vec4& Widget::color()
+{
+	if (!GUI::get().does_widget_exist(*this)) {
+		std::cout << "[GUI Error] Widget::color() is called on invalid Widget" << std::endl;
+		ASSERT(false);
+	}
+
+	GUI::get().widgets[id].vab_properties_changed = true;
+
+	return GUI::get().widgets[id].color;
+}
+
+glm::vec4& Widget::border_color()
+{
+	if (!GUI::get().does_widget_exist(*this)) {
+		std::cout << "[GUI Error] Widget::border_color() is called on invalid Widget" << std::endl;
+		ASSERT(false);
+	}
+
+	GUI::get().widgets[id].vab_properties_changed = true;
+
+	return GUI::get().widgets[id].border_color;
+}
+
+glm::vec4& Widget::border_thickness()
+{
+	if (!GUI::get().does_widget_exist(*this)) {
+		std::cout << "[GUI Error] Widget::border_thickness() is called on invalid Widget" << std::endl;
+		ASSERT(false);
+	}
+
+	GUI::get().widgets[id].vab_properties_changed = true;
+
+	return GUI::get().widgets[id].border_thickness;
+
 }
 
 glm::vec2& Widget::position() {
@@ -68,14 +124,15 @@ int32_t& Widget::z() {
 	return GUI::get().widgets[id].z;
 }
 
-std::string& Widget::text()
+std::shared_ptr<Texture2D>& Widget::texture()
 {
 	if (!GUI::get().does_widget_exist(*this)) {
-		std::cout << "[GUI Error] Widget::z() is called on invalid Widget" << std::endl;
+		std::cout << "[GUI Error] Widget::texture() is called on invalid Widget" << std::endl;
 		ASSERT(false);
 	}
-	
-	GUI::get().widgets[id].text_changed = true;
 
-	return GUI::get().widgets[id].text;
+	GUI::get().widgets[id].texture_changed = true;
+
+	return GUI::get().widgets[id].texture;
 }
+

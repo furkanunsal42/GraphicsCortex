@@ -28,34 +28,24 @@ enum GUIEventType {
 	DoubleClicked,
 };
 
-struct WidgetStyle {
-	glm::vec4 color = glm::vec4(1);
-	glm::vec4 border_color = glm::vec4(1);
-	glm::vec4 border_thickness = glm::vec4(0);;
-
-	font_id font = FontBank::not_a_font;
-	std::shared_ptr<Texture2D> texture = nullptr;
-
-	glm::ivec2 target_size = glm::vec2(-1);
-
-	bool capture_cursor_event = true;
-	bool pass_through_cursor_event = false;
-	float render_target_fps = render_only_when_dirty;
-};
-
 class Widget {
 public:
 	widget_t id = invalid_widget;
 
-	~Widget();
+	//~Widget();
 
 	Widget create_child();
 
-	WidgetStyle& style();
+	glm::vec2& texcoord_min();
+	glm::vec2& texcoord_max();
+	glm::vec4& color();
+	glm::vec4& border_color();
+	glm::vec4& border_thickness();
 	glm::vec2& position();
 	glm::vec2& size();
 	int32_t& z();
-	std::string& text();
+
+	std::shared_ptr<Texture2D>& texture();
 
 	void set_on_render_function(std::function<void()> render_function);
 	void set_on_event_function(std::function<void(GUIEventType)> event_function);

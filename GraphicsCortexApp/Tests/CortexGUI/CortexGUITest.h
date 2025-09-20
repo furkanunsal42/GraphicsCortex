@@ -4,6 +4,9 @@
 #include "TestBench/TestBench.h"
 
 #include "GUI/CortexGUI.h"
+#include "Tools/GraphicsOperation/GraphicsOperation.h"
+
+#include "CortexGUIControls/Basic/GUIControl_Rectangle.h"
 
 class CortexGUITest: public TestBench {
 public:
@@ -17,7 +20,7 @@ public:
 
 		default_init();
 
-		font_id font = FontBank::get().load_font("../GraphicsCortex/Fonts/Roboto-Regular.ttf", 64);
+		//font_id font = FontBank::get().load_font("../GraphicsCortex/Fonts/Roboto-Regular.ttf", 64);
 		//Text text(U"Hello There");
 		//text.set_font(font);
 		//text.set_scale(1.0f);
@@ -29,22 +32,37 @@ public:
 		//text_program.update_uniform("view", glm::identity<glm::mat4>());
 		//text_program.update_uniform("projection", glm::ortho(-0.5f, 0.5f, -ratio / 2, ratio / 2));
 		//text_program.update_uniform("color", glm::vec4(1, 0, 0, 1));
-		
 
 		Widget widget = GUI::get().create_widget();
-		widget.style().color = glm::vec4(1, 0, 1, 1);
+		widget.color() = glm::vec4(1, 0, 1, 1);
 		widget.size() = glm::vec2(1920, 1080) / 2.0f;
 		widget.position() = glm::vec2(200, 100);
 		widget.z() = 0;
 
 		Widget child = widget.create_child();
-		child.style().color = glm::vec4(0, 0, 1, 1);
+		child.color() = glm::vec4(0, 0, 1, 1);
 		child.position() = glm::vec2(100, 100);
 		child.size() = glm::vec2(1920, 1080) / 2.0f;
 		child.z() = 1;
 
-		child.style().texture = FontBank::get().get_font(font).atlas;
-		child.size() = child.style().texture->get_size();
+		Image orange("../GraphicsCortex/Images/orange.png", 4, true);
+		
+		std::shared_ptr<Texture2D> texture = std::make_shared<Texture2D>(orange.get_width(), orange.get_height(), Texture2D::ColorTextureFormat::RGBA8, 1, 0, 0);
+		texture->load_data(orange, Texture2D::ColorFormat::RGBA, Texture2D::Type::UNSIGNED_BYTE, 0);
+
+		GraphicsOperation op;
+		op.compute(
+			*texture,
+			"vec4(target.xyz, all(greaterThan(target.xyz, vec3(0.95))) ? 0 : 1)"
+		);
+
+		child.texture() = texture;
+		child.size() = child.texture()->get_size() / 8;
+
+		gui_controls::Rectangle rect;
+		rect.color = glm::vec4(0, 0, 1, 1);
+		rect.target_size = glm::vec2(1920, 1080) / 2.0f;
+		rect.z = 1;
 
 		while (true) {
 			double deltatime = default_window->handle_events(true);
@@ -59,7 +77,9 @@ public:
 
 			//primitive_renderer::render(text_program, text, RenderParameters(true));
 
-			GUI::get().render(widget);
+			//GUI::get().render(widget);
+
+			GUI::get().render(rect.get_widget());
 
 			default_window->swap_buffers();
 		}
