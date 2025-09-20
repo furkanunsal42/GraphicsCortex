@@ -70,8 +70,20 @@ void RenderParameters::apply() const
 		cull_face_direction == CullDirection::FRONT_AND_BACK ? GL_FRONT_AND_BACK : GL_BACK
 	));
 
+	
+
 	if (depth_test) {
 		GLCall(glEnable(GL_DEPTH_TEST));
+		GLCall(glDepthFunc(
+			depth_function == DepthStencilFunction::NEVER		? GL_NEVER		:
+			depth_function == DepthStencilFunction::LESS		? GL_LESS		:
+			depth_function == DepthStencilFunction::LEQUAL		? GL_LEQUAL		:
+			depth_function == DepthStencilFunction::GREATER		? GL_GREATER	:
+			depth_function == DepthStencilFunction::GEQUAL		? GL_GEQUAL		:
+			depth_function == DepthStencilFunction::EQUAL		? GL_EQUAL		:
+			depth_function == DepthStencilFunction::NOTEQUAL	? GL_NOTEQUAL	:
+			depth_function == DepthStencilFunction::ALWAYS		? GL_ALWAYS		: GL_NEVER
+		));
 	}
 	else {
 		GLCall(glDisable(GL_DEPTH_TEST));
@@ -136,14 +148,14 @@ void RenderParameters::apply() const
 	}
 
 	GLCall(glStencilFunc(
-		stencil_function == StencilFunction::NEVER		? GL_NEVER		:
-		stencil_function == StencilFunction::LESS		? GL_LESS		:
-		stencil_function == StencilFunction::LEQUAL		? GL_LEQUAL		:
-		stencil_function == StencilFunction::GREATER	? GL_GREATER	:
-		stencil_function == StencilFunction::GEQUAL		? GL_GEQUAL		:
-		stencil_function == StencilFunction::EQUAL		? GL_EQUAL		:
-		stencil_function == StencilFunction::NOTEQUAL	? GL_NOTEQUAL	:
-		stencil_function == StencilFunction::ALWAYS		? GL_ALWAYS		: GL_NEVER,
+		stencil_function == DepthStencilFunction::NEVER		? GL_NEVER		:
+		stencil_function == DepthStencilFunction::LESS		? GL_LESS		:
+		stencil_function == DepthStencilFunction::LEQUAL	? GL_LEQUAL		:
+		stencil_function == DepthStencilFunction::GREATER	? GL_GREATER	:
+		stencil_function == DepthStencilFunction::GEQUAL	? GL_GEQUAL		:
+		stencil_function == DepthStencilFunction::EQUAL		? GL_EQUAL		:
+		stencil_function == DepthStencilFunction::NOTEQUAL	? GL_NOTEQUAL	:
+		stencil_function == DepthStencilFunction::ALWAYS	? GL_ALWAYS		: GL_NEVER,
 		stencil_referance,
 		stencil_mask
 		));

@@ -54,7 +54,7 @@ namespace gui_controls {
 
 					g.position() = glm::vec2(advance, 0) + inverted_offset * atlas_size / font_size * text_height + glm::vec2(0, text_height);
 					g.size() = (table.coords_hi - table.coords_low) * atlas_size / font_size * text_height;
-					g.z() = 2;
+					g.z() = z;
 
 					advance += table.advance * atlas_size.x / font_size * text_height;
 					glyphs[i].first = text[i];

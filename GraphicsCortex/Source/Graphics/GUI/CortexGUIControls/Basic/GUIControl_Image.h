@@ -13,7 +13,10 @@ namespace gui_controls {
 
 		FitStyle image_fit = Contain;
 
-		void load_image(const std::filesystem::path& image_path);
+		void load_image(const std::filesystem::path& image_path) {
+			texture = std::make_shared<Texture2D>(image_path.string(), Texture2D::ColorTextureFormat::RGBA8, Texture2D::ColorFormat::RGBA, Texture2D::Type::UNSIGNED_BYTE, 1, 0, 0);
+			texture->wait_async_load();
+		}
 		
 		std::shared_ptr<Texture2D> texture = nullptr;
 

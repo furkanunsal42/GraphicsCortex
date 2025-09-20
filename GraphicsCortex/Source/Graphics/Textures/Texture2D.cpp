@@ -12,17 +12,17 @@ namespace {
 		std::ifstream file;
 		file.open(filename);
 		if (file) {
-			*output_image = new Image(filename, desired_channels);
+			*output_image = new Image(filename, desired_channels, true);
 		}
 		else { // file doesn't exist
 			std::cout << "[ERROR] Image path not found : " << filename << std::endl;
-			*output_image = new Image("../GraphicsCortex/Images/missing_texture.png", desired_channels);
+			*output_image = new Image("../GraphicsCortex/Images/missing_texture.png", desired_channels, true);
 		}
 
 		if ((*output_image)->get_width() == 0 || (*output_image)->get_height() == 0 || (*output_image)->get_channel_count() == 0) {
 			std::cout << "[ERROR] Image couldn't be properly imported : " << filename << std::endl;
 			if (*output_image != nullptr) delete* output_image;
-			*output_image = new Image("../GraphicsCortex/Images/missing_texture.png", desired_channels);
+			*output_image = new Image("../GraphicsCortex/Images/missing_texture.png", desired_channels, true);
 		}
 		if (texture_width != 0 && texture_height != 0)
 			(*output_image)->resize(texture_width, texture_height);

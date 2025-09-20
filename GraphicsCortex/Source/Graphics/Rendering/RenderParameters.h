@@ -31,7 +31,7 @@ public:
 		FRONT_AND_BACK
 	};
 
-	enum class StencilFunction {
+	enum class DepthStencilFunction {
 		NEVER, 
 		LESS, 
 		LEQUAL, 
@@ -68,6 +68,7 @@ public:
 	bool depth_clamp = false;
 	float depth_clamp_near_value = 0.0f;
 	float depth_clamp_far_value = 1.0f;
+	DepthStencilFunction depth_function = DepthStencilFunction::LESS;
 
 	bool framebuffer_srgb = false;
 	
@@ -81,7 +82,7 @@ public:
 	glm::ivec4 scissor_viewport;
 
 	bool stencil_test = false;
-	StencilFunction stencil_function = StencilFunction::ALWAYS;
+	DepthStencilFunction stencil_function = DepthStencilFunction::ALWAYS;
 	int32_t stencil_referance = 0;
 	uint32_t stencil_mask = -1;
 	StencilOperation stencil_operation_on_stencil_fail = StencilOperation::KEEP;

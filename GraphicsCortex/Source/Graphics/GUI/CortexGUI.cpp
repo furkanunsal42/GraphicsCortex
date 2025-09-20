@@ -456,6 +456,7 @@ void GUI::_render(widget_t id)
 				renderer.update_uniform("source_texture", *widgets[child_id].texture);
 
 			RenderParameters params(true);
+			params.depth_function = RenderParameters::DepthStencilFunction::LEQUAL;
 
 			widget_t parent_id = widgets[child_id].parent_id;
 			if (parent_id != invalid_widget) {
