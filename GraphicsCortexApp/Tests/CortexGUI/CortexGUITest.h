@@ -6,9 +6,9 @@
 #include "GUI/CortexGUI.h"
 #include "Tools/GraphicsOperation/GraphicsOperation.h"
 
-#include "CortexGUIControls/Basic/GUIWidget_Rectangle.h"
-#include "CortexGUIControls/Basic/GUIWidget_Label.h"
-#include "CortexGUIControls/Basic/GUIWidget_Image.h"
+#include "CortexGUIWidgets/Basic/GUIWidget_Rectangle.h"
+#include "CortexGUIWidgets/Basic/GUIWidget_Label.h"
+#include "CortexGUIWidgets/Basic/GUIWidget_Image.h"
 
 class CortexGUITest: public TestBench {
 public:
@@ -39,7 +39,9 @@ public:
 		image.image_fit = widget::Image::Contain;
 		image.target_size = glm::vec2(500, 500);
 		image.z = 0;
-		 
+
+		//sauto label2 = widget::create<widget::Label>()
+
 		while (true) {
 			double deltatime = default_window->handle_events(true);
 			primitive_renderer::clear(0.5, 0.7, 0.8, 1);

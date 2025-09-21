@@ -4,58 +4,18 @@
 #include "glm.hpp"
 #include "Font.h"
 
-#include "GUI/CortexGUI.h"
+#include "GUI/CortexGUIWidgetStyle.h"
+#include "GUI/CortexGUIElement.h"
+
+class GUI;
 
 typedef uint32_t widget_t;
 constexpr widget_t invalid_widget = -1;
 
-typedef uint32_t widget_style_t;
-constexpr widget_style_t invalid_widget_style = -1;
-
-enum Alignment {
-	Center,
-	Left,
-	Top,
-	Right,
-	Bottom
-};
-
-struct ControlStyleInfo {
-	glm::vec4 margin;
-	glm::vec4 padding;
-	Alignment content_alignment;
-
-	glm::vec4 border_rounding;
-	glm::vec4 border_thickness;
-	glm::vec4 border_color;
-
-	glm::vec2 target_size;
-	//glm::vec2 min_size;
-	//glm::vec2 max_size;
-	
-	glm::vec4 color;
-	
-	font_id font;
-	float text_height;
-	std::string text;
-	glm::vec4 text_color;
-
-};
-
-class ControlStyle {
-public:
-	widget_style_t id = invalid_widget_style;
-
-private:
-
-};
-
 class Widget {
 public:
 
-	Widget() {
-		element = GUI::get().create_element();
-	};
+	Widget();
 
 	glm::vec4 margin;
 	glm::vec4 padding;
@@ -74,16 +34,27 @@ public:
 
 	widget_style_t style;
 	
-	void apply_properties_to_element(Element& element) {
-		element.size() = target_size;
-		element.color() = color;
-		element.z() = z;
-	};
+	void apply_properties_to_element(Element& element);
 
 	virtual Element& get_element() = 0;
 	//virtual void update_before_render();
 protected:
 
 	Element element = Element::null_element;
+};
 
+template<typename W>
+class WidgetHandle {
+public:
+	
+	W& properties();
+	W& operator->();
+	
+	template <typename W0, typename W1>
+	friend bool operator==(const WidgetHandle<W0>& a, const WidgetHandle<W1>& b);
+
+private:
+	WidgetHandle(void* owner_gui_identifier, element_t id);
+	widget_t id = invalid_widget;
+	void* owner_gui_identifier = nullptr;
 };
