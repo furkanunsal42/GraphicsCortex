@@ -11,12 +11,9 @@
 #include "Tools/ImmediateRendering/ImmediateRenderer.h"
 
 #include "CortexGUIElement.h"
-//#include "CortexGUIWidget.h"
+#include "CortexGUIWidget.h"
 
 extern std::filesystem::path gui_renderer_shader_parent_path;
-
-template<typename T> 
-class WidgetHandle;
 
 namespace widget {
 	template<typename T> WidgetHandle<T> create();
@@ -26,7 +23,6 @@ namespace widget {
 
 class GUI {
 public:
-
 	static GUI& get();
 	ImmediateRenderer& get_immediate_renderer();
 
@@ -41,15 +37,30 @@ public:
 	bool does_element_exist(Element& element);
 	
 	void render(Element& root_element);
+	template<typename T>
+	void render(WidgetHandle<T>& widget);
+
+	Widget& get_widget_data(widget_t id);
 
 private:
 	friend Element;
+
+	template <typename T>
+	friend class WidgetHandle;
 
 	GUI();
 	const int32_t total_number_of_z_layers = 2048;
 
 	bool shaders_compiled = false;
 	void _compile_shaders();
+
+	widget_t next_widget_id = 1;
+	widget_t _generate_widget_id();
+	
+	template<typename T> 
+	widget_t _create_widget();
+	void _release_widget(widget_t widget);
+	bool _does_widget_exist(widget_t widget);
 
 	element_t next_element_id = 1;
 	element_t _generate_element_id();
@@ -120,6 +131,8 @@ private:
 		glm::vec4 color;
 	};
 
+	std::unordered_map<widget_t, std::shared_ptr<Widget>> widgets;
+
 	std::unordered_map<element_t, ElementInfo> elements;
 	std::map<int32_t, std::vector<element_t>> z_to_element_table;
 
@@ -132,3 +145,5 @@ private:
 
 	std::shared_ptr<ImmediateRenderer> immediate_renderer;
 };
+
+#include "CortexGUI_Templated.h"

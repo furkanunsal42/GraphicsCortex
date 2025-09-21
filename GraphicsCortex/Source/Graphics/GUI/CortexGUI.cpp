@@ -57,6 +57,16 @@ void GUI::render(Element& root_element)
 	_render(root_element.id);
 }
 
+Widget& GUI::get_widget_data(widget_t id)
+{
+	if (!_does_widget_exist(id)) {
+		ASSERT(false);
+		std::cout << "[GUI Error] GUI::get_widget_data() is not permitted to be called with an invalid widget_id: " << id << std::endl;
+	}
+
+	return *widgets[id];
+}
+
 GUI::GUI()
 {
 }
@@ -69,6 +79,26 @@ void GUI::_compile_shaders() {
 	gui_renderer_texture = std::make_shared<Program>(Shader(gui_renderer_shader_parent_path / "gui_vertex.vert", gui_renderer_shader_parent_path / "gui_fragment_texture.frag"));
 	
 	shaders_compiled = true;
+}
+
+widget_t GUI::_generate_widget_id()
+{
+	widget_t id = next_element_id;
+	next_element_id++;
+	return id;
+}
+
+void GUI::_release_widget(widget_t widget)
+{
+	if (!_does_widget_exist(widget))
+		return;
+
+	widgets.erase(widget);
+}
+
+bool GUI::_does_widget_exist(widget_t widget)
+{
+	return widgets.find(widget) != widgets.end();
 }
 
 element_t GUI::_generate_element_id()

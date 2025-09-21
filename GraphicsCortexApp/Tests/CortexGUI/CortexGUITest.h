@@ -10,6 +10,8 @@
 #include "CortexGUIWidgets/Basic/GUIWidget_Label.h"
 #include "CortexGUIWidgets/Basic/GUIWidget_Image.h"
 
+#include "CortexGUIWidgets/Container/GUIWidget_Stack.h"
+
 class CortexGUITest: public TestBench {
 public:
 
@@ -26,28 +28,32 @@ public:
 
 		font_id font = FontBank::get().load_font("../GraphicsCortex/Fonts/Roboto-Regular.ttf", 64);
 		
-		widget::Label label;
-		label.font = font;
-		label.text = "Portakal Ortakal!";
-		label.color = glm::vec4(0, 0, 1, 0);
-		label.text_height = 16;
-		label.target_size = glm::vec2(500, 50);
-		label.z = 0;
+		auto stack = widget::create<widget::Stack>();
 
-		widget::Image image;
-		image.load_image("../GraphicsCortex/Images/orange.png");
-		image.image_fit = widget::Image::Contain;
-		image.target_size = glm::vec2(500, 500);
-		image.z = 0;
+		auto label = widget::create<widget::Label>();
+		label->font = font;
+		label->text = "Portakal Ortakal!";
+		label->color = glm::vec4(0, 0, 1, 0);
+		label->text_height = 16;
+		label->target_size = glm::vec2(50, 50);
+		label->z = 0;
+		stack->push_back(label);
 
-		//sauto label2 = widget::create<widget::Label>()
+		auto image = widget::create<widget::Image>();
+		image->load_image("../GraphicsCortex/Images/orange.png");
+		image->image_fit = widget::Image::Stretch;
+		image->target_size = glm::vec2(500, 500);
+		image->z = 0;
+		stack->push_back(image);
 
 		while (true) {
 			double deltatime = default_window->handle_events(true);
 			primitive_renderer::clear(0.5, 0.7, 0.8, 1);
 
-			GUI::get().render(image.get_element());
-			GUI::get().render(label.get_element());
+			//GUI::get().render(image);
+			//GUI::get().render(label);
+
+			GUI::get().render(stack);
 
 			default_window->swap_buffers();
 		}

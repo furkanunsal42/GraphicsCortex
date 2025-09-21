@@ -38,6 +38,7 @@ public:
 
 	virtual Element& get_element() = 0;
 	//virtual void update_before_render();
+
 protected:
 
 	Element element = Element::null_element;
@@ -47,14 +48,36 @@ template<typename W>
 class WidgetHandle {
 public:
 	
-	W& properties();
-	W& operator->();
+	WidgetHandle() = default;
+
+	W& properties() {
+		return *std::reinterpret_pointer_cast<W, Widget>(GUI::get().widgets[id]);
+	}
+
+	W* operator->() const {
+		return std::reinterpret_pointer_cast<W, Widget>(GUI::get().widgets[id]).get();
+	}
 	
 	template <typename W0, typename W1>
 	friend bool operator==(const WidgetHandle<W0>& a, const WidgetHandle<W1>& b);
 
+	operator widget_t();
+
 private:
+	friend GUI;
 	WidgetHandle(void* owner_gui_identifier, element_t id);
 	widget_t id = invalid_widget;
 	void* owner_gui_identifier = nullptr;
 };
+
+template<typename W>
+inline WidgetHandle<W>::operator widget_t()
+{
+	return id;
+}
+
+template<typename W>
+inline WidgetHandle<W>::WidgetHandle(void* owner_gui_identifier, element_t id) :
+	owner_gui_identifier(owner_gui_identifier), id(id)
+{
+}
