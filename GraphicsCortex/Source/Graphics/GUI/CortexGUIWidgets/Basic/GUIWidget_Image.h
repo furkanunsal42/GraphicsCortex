@@ -1,10 +1,14 @@
 #pragma once
-#include "GUI/CortexGUIWidget.h"
+#include "GUI/CortexGUI.h"
 
 namespace widget {
 
 	class Image : public Widget {
 	public:
+
+		Image(){
+			color = glm::vec4(1, 1, 1, 1);
+		}
 
 		enum FitStyle {
 			Stretch,

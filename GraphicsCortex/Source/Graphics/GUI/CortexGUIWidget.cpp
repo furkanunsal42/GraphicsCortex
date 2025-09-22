@@ -12,6 +12,3 @@ void Widget::apply_properties_to_element(Element& element)
 	element.color() = color;
 	element.z() = z;
 };
-
-
-;

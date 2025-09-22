@@ -9,6 +9,6 @@ in vec2 v_texcoord;
 in vec4 v_color;
 
 void main(){
-	frag_color = vec4(v_color.xyz, 1);
+	frag_color = v_color;
  }
 

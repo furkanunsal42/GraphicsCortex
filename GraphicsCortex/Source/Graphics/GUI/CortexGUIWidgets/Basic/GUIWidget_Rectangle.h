@@ -1,12 +1,12 @@
 #pragma once
-#include "GUI/CortexGUIWidget.h"
+#include "GUI/CortexGUI.h"
 
 namespace widget {
 
 	class Rectangle : public Widget {
 	public:
 
-		Element& get_widget() {
+		Element& get_element() {
 			apply_properties_to_element(element);
 			return element;
 		}

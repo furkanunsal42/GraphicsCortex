@@ -1,5 +1,5 @@
 #pragma once
-#include "GUI/CortexGUIWidget.h"
+#include "GUI/CortexGUI.h"
 
 #include "Font.h"
 
@@ -29,6 +29,8 @@ namespace widget {
 				
 			float advance = 0;
 
+			glm::vec2 text_size(0);
+
 			for (int32_t i = 0; i < text.size(); i++) {
 				if (glyphs[i].first == text[i] && glyphs[i].second != Element::null_element)
 					continue;
@@ -55,11 +57,27 @@ namespace widget {
 					g.position() = glm::vec2(advance, 0) + inverted_offset * atlas_size / font_size * text_height + glm::vec2(0, text_height);
 					g.size() = (table.coords_hi - table.coords_low) * atlas_size / font_size * text_height;
 					g.z() = z;
+					g.color() = text_color;
+
+					text_size.y = glm::max(text_size.y, g.size().y);
+					text_size.x = g.position().x + g.size().x;
 
 					advance += table.advance * atlas_size.x / font_size * text_height;
 					glyphs[i].first = text[i];
 				}
 			}
+
+			for (int32_t i = 0; i < text.size(); i++) {
+				Element& g = glyphs[i].second;
+				text_size.y = glm::max(text_size.y, g.size().y);
+				text_size.x = g.position().x + g.size().x;
+			}
+
+			if (target_size.x == 0)
+				element.size().x = text_size.x;
+
+			if (target_size.y == 0)
+				element.size().y = text_size.y;
 		}
 
 		std::vector<std::pair<uint32_t, Element>> glyphs;

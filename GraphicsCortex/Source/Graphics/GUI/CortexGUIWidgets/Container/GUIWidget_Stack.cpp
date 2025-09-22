@@ -10,3 +10,8 @@ void widget::Stack::push_back(widget_t widget)
 
 	widgets.push_back(widget);
 }
+
+void widget::Stack::remove(widget_t widget)
+{
+	std::erase(widgets, widget);
+}

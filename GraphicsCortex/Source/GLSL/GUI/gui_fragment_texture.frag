@@ -1,4 +1,4 @@
-a#<fragment shader>
+#<fragment shader>
 
 #version 460 core 
 
@@ -11,6 +11,6 @@ in vec2 v_texcoord;
 in vec4 v_color;
 
 void main(){
-	frag_color = texture(source_texture, v_texcoord);
+	frag_color = texture(source_texture, v_texcoord) * v_color;
  }
 

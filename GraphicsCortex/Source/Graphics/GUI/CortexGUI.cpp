@@ -457,6 +457,19 @@ void GUI::_render(element_t id)
 	gui_renderer->update_uniform("projection", projection_matrix);
 	gui_renderer_texture->update_uniform("projection", projection_matrix);
 
+	if (elements[id].size.x < 0 && elements[id].parent_id == invalid_element)
+		elements[id].size.x = total_viewport.x;
+	if (elements[id].size.y < 0 && elements[id].parent_id == invalid_element)
+		elements[id].size.y = total_viewport.y;
+
+	if (glm::any(glm::lessThan(elements[id].size, glm::vec2(0)))) {
+		std::cout << "[GUI Error] GUI::_render() is called on a child widget with a negative size, widgets with sizes relative to other widgets cannot be the root of a _render() call" << std::endl;
+		ASSERT(false);
+	}
+	
+	if (glm::any(glm::equal(elements[id].size, glm::vec2(0))))
+		return;
+
 	_update_vab_to_render(id);
 
 	struct render_data {
