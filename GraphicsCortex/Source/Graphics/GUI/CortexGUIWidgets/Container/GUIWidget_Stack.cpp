@@ -188,9 +188,9 @@ void widget::Stack::lay_widgets() {
 		}
 	}
 
-	if (target_size.x == 0)
+	if (element.size().x == 0)
 		element.size().x = min_content_size.x + padding.x + padding.z;
 
-	if (target_size.y == 0)
+	if (element.size().y == 0)
 		element.size().y = min_content_size.y + padding.y + padding.w;
 }

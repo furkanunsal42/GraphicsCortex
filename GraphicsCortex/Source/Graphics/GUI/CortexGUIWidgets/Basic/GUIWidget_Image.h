@@ -40,11 +40,6 @@ namespace widget {
 				element.texcoord_max() = glm::vec2(1);
 				return;
 			}
-			//if (image_fit == Absolute) {
-			//	element.texcoord_min() = glm::vec2(0);
-			//	element.texcoord_max() = glm::vec2(1) * glm::vec2(element.size()) / glm::vec2(texture->get_size());
-			//	return;
-			//}
 			if (image_fit == Contain) {
 				glm::vec2 self_size = element.size();
 				glm::vec2 texture_size = texture->get_size();

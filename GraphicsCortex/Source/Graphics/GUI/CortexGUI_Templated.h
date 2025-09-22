@@ -29,7 +29,7 @@ inline void GUI::render(WidgetHandle<T>& widget)
 	// TODO: find physical size of the widget from parents
 	glm::vec2 allocated_size = widgets[widget.id]->target_size;
 
-	if (glm::any(glm::lessThanEqual(widgets[widget.id]->target_size, glm::vec2(0))))
+	if (glm::any(glm::lessThan(widgets[widget.id]->target_size, glm::vec2(0))))
 		allocated_size = primitive_renderer::get_viewport_size();
 
 	render(widgets[widget.id]->get_element(allocated_size));

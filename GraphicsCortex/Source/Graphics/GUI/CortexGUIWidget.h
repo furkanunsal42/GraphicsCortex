@@ -20,13 +20,13 @@ public:
 	glm::vec4 margin;
 	glm::vec4 padding;
 
-	glm::vec4 border_rounding;
-	glm::vec4 border_thickness;
-	glm::vec4 border_color;
-
 	glm::vec2 target_size;
 	//glm::vec2 min_size;
 	//glm::vec2 max_size;
+
+	glm::vec4 border_rounding;
+	glm::vec4 border_thickness;
+	glm::vec4 border_color;
 
 	int32_t z;
 

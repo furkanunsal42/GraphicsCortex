@@ -73,10 +73,10 @@ namespace widget {
 				text_size.x = g.position().x + g.size().x;
 			}
 
-			if (target_size.x == 0)
+			if (element.size().x == 0)
 				element.size().x = text_size.x;
 
-			if (target_size.y == 0)
+			if (element.size().y == 0)
 				element.size().y = text_size.y;
 		}
 

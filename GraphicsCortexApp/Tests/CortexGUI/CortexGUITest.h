@@ -31,7 +31,7 @@ public:
 		auto stack = widget::create<widget::Stack>();
 		stack->color = glm::vec4(1, 0, 0, 1);
 		stack->alignment = widget::Stack::Horizontal;
-		stack->target_size = glm::vec2(1000, 1000);
+		stack->target_size = glm::vec2(0);
 
 		auto rectangle = widget::create<widget::Rectangle>();
 		rectangle->target_size = glm::vec2(100, 900);
