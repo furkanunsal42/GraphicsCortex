@@ -35,6 +35,9 @@ namespace widget {
 		void update_texture() {
 			element.texture() = texture;
 			
+			if (texture == nullptr)
+				return;
+
 			if (image_fit == Stretch) {
 				element.texcoord_min() = glm::vec2(0);
 				element.texcoord_max() = glm::vec2(1);

@@ -17,22 +17,22 @@ public:
 
 	Widget();
 
-	glm::vec4 margin;
-	glm::vec4 padding;
+	glm::vec4 margin = glm::vec4(0);
+	glm::vec4 padding = glm::vec4(0);
 
-	glm::vec2 target_size;
+	glm::vec2 target_size = glm::vec2(0);
 	//glm::vec2 min_size;
 	//glm::vec2 max_size;
 
-	glm::vec4 border_rounding;
-	glm::vec4 border_thickness;
-	glm::vec4 border_color;
+	glm::vec4 border_rounding = glm::vec4(0);
+	glm::vec4 border_thickness = glm::vec4(0);
+	glm::vec4 border_color = glm::vec4(0, 0, 0, 1);
 
-	int32_t z;
+	int32_t z = 0;
 
-	glm::vec4 color;
+	glm::vec4 color = glm::vec4(1, 1, 1, 1);
 
-	widget_style_t style;
+	widget_style_t style = invalid_widget_style;
 	
 	void apply_properties_to_element(Element& element, glm::vec2 allocated_size);
 

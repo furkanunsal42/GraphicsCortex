@@ -32,24 +32,27 @@ public:
 		stack->color = glm::vec4(1, 0, 0, 1);
 		stack->alignment = widget::Stack::Horizontal;
 		stack->target_size = glm::vec2(0);
+		stack->z = 0;
 
 		auto rectangle = widget::create<widget::Rectangle>();
 		rectangle->target_size = glm::vec2(100, 900);
 		rectangle->margin = glm::vec4(0, -1, 0, -1);
 		rectangle->color = glm::vec4(1, 0, 1, 1);
+		rectangle->z = 1;
 		stack->push_back(rectangle);
 
 		auto label = widget::create<widget::Label>();
 		label->font = font;
 		label->text = "Portakal Ortakal!";
+		label->z = 2;
 		stack->push_back(label);
 
 		auto image = widget::create<widget::Image>();
 		image->load_image("../GraphicsCortex/Images/orange.png");
 		image->image_fit = widget::Image::Stretch;
 		image->target_size = glm::vec2(500, 500);
+		image->z = 3;
 		stack->push_back(image);
-
 
 		while (true) {
 			double deltatime = default_window->handle_events(true);

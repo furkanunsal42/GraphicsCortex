@@ -8,6 +8,10 @@ namespace widget {
 	class Label : public Widget {
 	public:
 
+		Label() {
+			color = glm::vec4(0, 0, 0, 0);
+		}
+
 		font_id font = FontBank::not_a_font;
 		float text_height = 16;
 		std::string text = "";
