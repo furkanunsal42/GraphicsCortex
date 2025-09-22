@@ -24,56 +24,33 @@ glm::vec2 widget::Stack::compute_min_content_size() {
 
 		if (alignment == Horizontal) {
 
-			if (child_widget.target_size.x > 0)
-				content_size.x += child_widget.target_size.x;
-			else if (child_widget.target_size.x == 0)
-				content_size.x += child_widget.get_element(glm::vec2(0)).size().x;
-			
-			if (child_widget.margin.x > 0)
-				content_size.x += child_widget.margin.x;
-			if (child_widget.margin.z > 0)
-				content_size.x += child_widget.margin.z;
+			if (child_widget.target_size.x > 0)		content_size.x += child_widget.target_size.x;
+			if (child_widget.target_size.x == 0)	content_size.x += child_widget.get_element(glm::vec2(0)).size().x;
+			if (child_widget.margin.x > 0)			content_size.x += child_widget.margin.x;
+			if (child_widget.margin.z > 0)			content_size.x += child_widget.margin.z;
 
 			float child_widget_known_height = 0;
-			if (child_widget.target_size.y > 0)
-				child_widget_known_height += child_widget.target_size.y;
-			else if (child_widget.target_size.y == 0)
-				child_widget_known_height += child_widget.get_element(glm::vec2(0)).size().y;
+			if (child_widget.target_size.y > 0)		child_widget_known_height += child_widget.target_size.y;
+			if (child_widget.target_size.y == 0)	child_widget_known_height += child_widget.get_element(glm::vec2(0)).size().y;
+			if (child_widget.margin.y > 0)			child_widget_known_height += child_widget.margin.y;
+			if (child_widget.margin.w > 0)			child_widget_known_height += child_widget.margin.w;
 
-			if (child_widget.margin.y > 0)
-				child_widget_known_height += child_widget.margin.y;
-			if (child_widget.margin.w > 0)
-				child_widget_known_height += child_widget.margin.w;
-
-			if (child_widget_known_height > 0)
-				content_size.y = glm::max(content_size.y, child_widget_known_height);
-
+			if (child_widget_known_height > 0)		content_size.y = glm::max(content_size.y, child_widget_known_height);
 		}
 		else if (alignment == Vertical) {
 
 			float child_widget_known_width = 0;
-			if (child_widget.target_size.x > 0)
-				child_widget_known_width += child_widget.target_size.x;
-			else if (child_widget.target_size.x == 0)
-				child_widget_known_width += child_widget.get_element(glm::vec2(0)).size().x;
-
-			if (child_widget.margin.x > 0)
-				child_widget_known_width += child_widget.margin.x;
-			if (child_widget.margin.z > 0)
-				child_widget_known_width += child_widget.margin.z;
-
-			if (child_widget_known_width > 0)
-				content_size.x = glm::max(content_size.x, child_widget_known_width);
-
-			if (child_widget.target_size.y > 0)
-				content_size.y += child_widget.target_size.y;
-			else if (child_widget.target_size.y == 0)
-				content_size.y += child_widget.get_element(glm::vec2(0)).size().y;
+			if (child_widget.target_size.x > 0)		child_widget_known_width += child_widget.target_size.x;
+			if (child_widget.target_size.x == 0)	child_widget_known_width += child_widget.get_element(glm::vec2(0)).size().x;
+			if (child_widget.margin.x > 0)			child_widget_known_width += child_widget.margin.x;
+			if (child_widget.margin.z > 0)			child_widget_known_width += child_widget.margin.z;
 			
-			if (child_widget.margin.y > 0)
-				content_size.y += child_widget.margin.y;
-			if (child_widget.margin.w > 0)
-				content_size.y += child_widget.margin.w;
+			if (child_widget_known_width > 0)		content_size.x = glm::max(content_size.x, child_widget_known_width);
+			
+			if (child_widget.target_size.y > 0)		content_size.y += child_widget.target_size.y;
+			if (child_widget.target_size.y == 0)	content_size.y += child_widget.get_element(glm::vec2(0)).size().y;
+			if (child_widget.margin.y > 0)			content_size.y += child_widget.margin.y;
+			if (child_widget.margin.w > 0)			content_size.y += child_widget.margin.w;
 		}
 	}
 	return content_size;
@@ -88,33 +65,24 @@ glm::vec2 widget::Stack::compute_relative_divison_size(const glm::vec2& min_cont
 
 		glm::vec2 child_relative_sizes(0);
 
-		if (child_widget.target_size.x < 0)
-			child_relative_sizes.x += child_widget.target_size.x;
-		if (child_widget.target_size.y < 0)
-			child_relative_sizes.y += child_widget.target_size.y;
-
-		if (child_widget.margin.x < 0)
-			child_relative_sizes.x += child_widget.margin.x;
-		if (child_widget.margin.y < 0)
-			child_relative_sizes.y += child_widget.margin.y;
-		if (child_widget.margin.z < 0)
-			child_relative_sizes.x += child_widget.margin.z;
-		if (child_widget.margin.w < 0)
-			child_relative_sizes.y += child_widget.margin.w;
+		if (child_widget.target_size.x < 0)	child_relative_sizes.x += child_widget.target_size.x;
+		if (child_widget.target_size.y < 0)	child_relative_sizes.y += child_widget.target_size.y;
+		if (child_widget.margin.x < 0)		child_relative_sizes.x += child_widget.margin.x;
+		if (child_widget.margin.y < 0)		child_relative_sizes.y += child_widget.margin.y;
+		if (child_widget.margin.z < 0)		child_relative_sizes.x += child_widget.margin.z;
+		if (child_widget.margin.w < 0)		child_relative_sizes.y += child_widget.margin.w;
 
 		if (alignment == Horizontal) {
-			if (child_relative_sizes.x < 0)
-				total_relative_sizes.x += child_relative_sizes.x;
-			if (child_relative_sizes.y < 0)
-				total_relative_sizes.y = glm::min(total_relative_sizes.y, child_relative_sizes.y);
+			if (child_relative_sizes.x < 0)	total_relative_sizes.x += child_relative_sizes.x;
+			if (child_relative_sizes.y < 0)	total_relative_sizes.y = glm::min(total_relative_sizes.y, child_relative_sizes.y);
 		}
 		else if (alignment == Vertical) {
-			if (child_relative_sizes.x < 0)
-				total_relative_sizes.x = glm::min(total_relative_sizes.x, child_relative_sizes.x);
-			if (child_relative_sizes.y < 0)
-				total_relative_sizes.y += child_relative_sizes.y;
+			if (child_relative_sizes.x < 0)	total_relative_sizes.x = glm::min(total_relative_sizes.x, child_relative_sizes.x);
+			if (child_relative_sizes.y < 0)	total_relative_sizes.y += child_relative_sizes.y;
 		}
 	}
+
+	//std::cout << total_relative_sizes.x << ", " << total_relative_sizes.y << std::endl;
 
 	return total_relative_sizes;
 }
@@ -123,11 +91,13 @@ void widget::Stack::lay_widgets() {
 	std::vector<glm::vec2> positions(widgets.size());
 	std::vector<glm::vec2> sizes(widgets.size());
 
-	glm::vec2 min_content_size = compute_min_content_size();
-	glm::vec2 total_relative_sizes = compute_relative_divison_size(min_content_size);
+	glm::vec2 min_content_size		= compute_min_content_size();
+	glm::vec2 total_relative_sizes	= compute_relative_divison_size(min_content_size);
 
-	glm::vec2 current_position(0);
-	current_position += glm::vec2(padding.x, padding.y);
+	glm::vec2 current_position		= glm::vec2(padding.x, padding.y);
+
+	if (element.size().x == 0)	element.size().x = min_content_size.x + padding.x + padding.z;
+	if (element.size().y == 0)	element.size().y = min_content_size.y + padding.y + padding.w;
 
 	for (int32_t i = 0; i < widgets.size(); i++) {
 		Widget& child_widget = GUI::get().get_widget_data(this->widgets[i]);
@@ -187,10 +157,4 @@ void widget::Stack::lay_widgets() {
 			current_position.x += total_child_size.x;
 		}
 	}
-
-	if (element.size().x == 0)
-		element.size().x = min_content_size.x + padding.x + padding.z;
-
-	if (element.size().y == 0)
-		element.size().y = min_content_size.y + padding.y + padding.w;
 }

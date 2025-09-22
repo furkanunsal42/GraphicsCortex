@@ -34,24 +34,37 @@ public:
 		stack->target_size = glm::vec2(0);
 		stack->z = 0;
 
+		auto stack2 = widget::create<widget::Stack>();
+		stack2->alignment = widget::Stack::Vertical;
+		stack2->target_size = glm::vec2(0, -1);
+		stack2->color = glm::vec4(1, 1, 1, 1);
+
+		auto a = widget::create<widget::Rectangle>();
+		a->target_size = glm::vec2(100, 30);
+		a->color = glm::vec4(1, 0, 1, 1);
+		stack2->push_back(a);
+
+		auto b = widget::create<widget::Rectangle>();
+		b->target_size = glm::vec2(200, -1);
+		b->color = glm::vec4(0, 1, 0, 1);
+		stack2->push_back(b);
+		stack->push_back(stack2);
+
 		auto rectangle = widget::create<widget::Rectangle>();
 		rectangle->target_size = glm::vec2(100, 900);
-		rectangle->margin = glm::vec4(0, -1, 0, -1);
+		//rectangle->margin = glm::vec4(0, -1, 0, -1);
 		rectangle->color = glm::vec4(1, 0, 1, 1);
-		rectangle->z = 1;
 		stack->push_back(rectangle);
 
 		auto label = widget::create<widget::Label>();
 		label->font = font;
 		label->text = "Portakal Ortakal!";
-		label->z = 2;
 		stack->push_back(label);
 
 		auto image = widget::create<widget::Image>();
 		image->load_image("../GraphicsCortex/Images/orange.png");
 		image->image_fit = widget::Image::Stretch;
 		image->target_size = glm::vec2(500, 500);
-		image->z = 3;
 		stack->push_back(image);
 
 		while (true) {

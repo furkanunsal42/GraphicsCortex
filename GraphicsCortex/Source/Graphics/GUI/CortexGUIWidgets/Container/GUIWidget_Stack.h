@@ -6,6 +6,10 @@ namespace widget {
 	class Stack : public Widget {
 	public:
 
+		Stack() {
+			color = glm::vec4(0, 0, 0, 0);
+		}
+
 		enum Alignment {
 			Vertical,
 			Horizontal
