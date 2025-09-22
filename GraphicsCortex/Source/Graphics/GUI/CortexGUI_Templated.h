@@ -1,5 +1,6 @@
 #pragma once
 #include "CortexGUI.h"
+#include "PrimitiveRenderer.h"
 
 template<typename T>
 inline WidgetHandle<T> GUI::create_widget() {
@@ -25,7 +26,13 @@ inline void GUI::render(WidgetHandle<T>& widget)
 	if (!does_widget_exist(widget))
 		return;
 
-	render(widgets[widget.id]->get_element());
+	// TODO: find physical size of the widget from parents
+	glm::vec2 allocated_size = widgets[widget.id]->target_size;
+
+	if (glm::any(glm::lessThanEqual(widgets[widget.id]->target_size, glm::vec2(0))))
+		allocated_size = primitive_renderer::get_viewport_size();
+
+	render(widgets[widget.id]->get_element(allocated_size));
 }
 
 template<typename T>

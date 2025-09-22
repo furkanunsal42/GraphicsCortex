@@ -6,6 +6,7 @@
 #include <functional>
 #include <memory>
 
+#include "glm.hpp"
 #include "Math/AABB.h"
 #include "Font.h"
 #include "Tools/ImmediateRendering/ImmediateRenderer.h"

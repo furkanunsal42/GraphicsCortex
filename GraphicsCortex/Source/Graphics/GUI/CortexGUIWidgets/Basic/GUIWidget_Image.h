@@ -24,8 +24,8 @@ namespace widget {
 		
 		std::shared_ptr<Texture2D> texture = nullptr;
 
-		Element& get_element() {
-			apply_properties_to_element(element);
+		Element& get_element(glm::vec2 allocated_size) {
+			apply_properties_to_element(element, allocated_size);
 			update_texture();
 			return element;
 		}

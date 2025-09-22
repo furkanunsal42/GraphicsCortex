@@ -34,9 +34,9 @@ public:
 
 	widget_style_t style;
 	
-	void apply_properties_to_element(Element& element);
+	void apply_properties_to_element(Element& element, glm::vec2 allocated_size);
 
-	virtual Element& get_element() = 0;
+	virtual Element& get_element(glm::vec2 allocated_size) = 0;
 	//virtual void update_before_render();
 
 protected:

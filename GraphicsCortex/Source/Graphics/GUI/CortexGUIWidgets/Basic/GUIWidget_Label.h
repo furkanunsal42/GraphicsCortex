@@ -13,8 +13,8 @@ namespace widget {
 		std::string text = "";
 		glm::vec4 text_color = glm::vec4(0, 0, 0, 1);
 
-		Element& get_element() {
-			apply_properties_to_element(element);
+		Element& get_element(glm::vec2 allocated_size) {
+			apply_properties_to_element(element, allocated_size);
 			update_glyphs();
 			return element;
 		}
