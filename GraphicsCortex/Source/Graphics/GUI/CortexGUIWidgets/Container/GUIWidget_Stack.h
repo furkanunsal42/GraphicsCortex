@@ -30,7 +30,7 @@ namespace widget {
 			return element;
 		}
 
-		void push_back(widget_t widget);
+		void add(widget_t widget);
 		void remove(widget_t widget);
 
 	private:

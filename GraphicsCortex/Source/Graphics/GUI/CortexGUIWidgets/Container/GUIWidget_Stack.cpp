@@ -1,7 +1,8 @@
 #include "GUIWidget_Stack.h"
 #include "Debuger.h"
+#include "GUIWidget_Grid.h"
 
-void widget::Stack::push_back(widget_t widget)
+void widget::Stack::add(widget_t widget)
 {
 	if (std::find(widgets.begin(), widgets.end(), widget) != widgets.end()) {
 		std::cout << "[GUI Error] Stack::push_back() is called with a widget already part of it (id: " << widget << ")" << std::endl;
@@ -184,8 +185,6 @@ void widget::Stack::lay_widgets() {
 			child_physical_margin.z *= size_per_negative.x;
 		if (child_physical_margin.w < 0)
 			child_physical_margin.w *= size_per_negative.y;
-
-		//std::cout << child_physical_margin.x << ", " << child_physical_margin.y << ", " << child_physical_margin.z << ", " << child_physical_margin.w << std::endl;
 
 		Element& child_element = child_widget.get_element(child_physical_size);
 

@@ -6,56 +6,37 @@ namespace widget {
 	class Grid : public Widget {
 	public:
 
-		void define_layout(int32_t row_count, int32_t column_count);
-		void define_row_size(int32_t row_index, float height);
-		void define_column_size(int32_t column_index, float width);
+		void add_row(float height);
+		void add_column(float width);
 
-		void push_back(widget_t widget, int32_t row_index, glm::ivec2 column_index);
-
-		Element& get_element() {
-			apply_properties_to_element(element);
+		void add(widget_t widget, int32_t row_index, glm::ivec2 column_index);
+		void remove(widget_t widget);
+		
+		Element& get_element(glm::vec2 allocated_size) {
+			apply_properties_to_element(element, allocated_size);
 			lay_widgets();
 			return element;
 		}
 
 	private:
-		void lay_widgets() {
-			std::vector<glm::vec2> positions(widgets.size());
-			std::vector<glm::vec2> sizes(widgets.size());
 
-			glm::vec2 current_position(0);
-			glm::vec2 content_size(0);
+		glm::vec2 compute_min_content_size();
+		glm::vec2 compute_total_relative_size();
 
-			current_position += glm::vec2(padding.x, padding.y);
+		void lay_widgets();
 
-			for (int32_t i = 0; i < widgets.size(); i++) {
-				Widget& child_widget = GUI::get().get_widget_data(this->widgets[i]);
-				Element& child_element = child_widget.get_element();
-				if (child_element.get_parent() != Element::null_element && child_element.get_parent() != element) {
-					std::cout << "[GUI Error] Widgets cannot be part of multiple container Widgets" << std::endl;
-					ASSERT(false);
-				}
+		std::vector<float> rows;
+		std::vector<float> columns;
 
-				child_element.set_parent(element);
+		struct widget_info {
+			widget_info() = default;
+			widget_info(widget_t widget, int32_t row_id, int32_t column_id);
 
-				child_element.position() = current_position + glm::vec2(child_widget.margin.x, child_widget.margin.y);
-				glm::vec2 total_child_size = child_element.size() + glm::vec2(child_widget.margin.x + child_widget.margin.z, child_widget.margin.y + child_widget.margin.w);
-				if (alignment == Vertical) {
-					content_size.x = glm::max(content_size.x, total_child_size.x);
-					content_size.y = current_position.y + total_child_size.y;
-					current_position.y += total_child_size.y;
-				}
-				else if (alignment == Horizontal) {
-					content_size.y = glm::max(content_size.y, total_child_size.y);
-					content_size.x = current_position.x + total_child_size.x;
-					current_position.x += total_child_size.x;
-				}
+			widget_t widget = invalid_widget;
+			int32_t row_id = 0;
+			int32_t column_id = 0;
+		};
 
-			}
-
-			element.size() = content_size + glm::vec2(padding.x + padding.z, padding.y + padding.w);
-		}
-
-		std::vector<widget_t> widgets;
+		std::vector<widget_info> widgets;
 	};
 }
