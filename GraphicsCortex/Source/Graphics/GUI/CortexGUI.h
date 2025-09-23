@@ -78,6 +78,7 @@ private:
 	void _render_and_fully_render_parents(element_t id);
 
 	void _traverse_children(element_t root_id, std::function<void(element_t, glm::vec2)> lambda);
+	void _traverse_children_dfs(element_t root_id, std::function<void(element_t, glm::vec2, glm::vec4)> lambda);
 	void _traverse_parents(element_t root_id, std::function<void(element_t)> lambda);
 
 	void _init_vab(size_t begin_size_in_bytes = 1024 * 1024);

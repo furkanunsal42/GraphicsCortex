@@ -45,18 +45,18 @@ public:
 		label->z = 2;
 		grid->add(label, 0, 1);
 
-		//auto rectangle = widget::create<widget::Rectangle>();
-		//rectangle->z = 1;
-		//rectangle->target_size = glm::vec2(-1);
-		//rectangle->margin = glm::vec4(-1);
-		//grid->add(rectangle, 1, 0);
-		//
-		//auto image = widget::create<widget::Image>();
-		//image->load_image("../GraphicsCortex/Images/orange.png");
-		//image->image_fit = widget::Image::Stretch;
-		//image->target_size = glm::vec2(100, 100);
-		////image->margin = glm::vec4(50, 50, 0, 0);
-		//grid->add(image, 1, 0);
+		auto rectangle = widget::create<widget::Rectangle>();
+		rectangle->z = 1;
+		rectangle->target_size = glm::vec2(-1);
+		rectangle->margin = glm::vec4(-1);
+		grid->add(rectangle, 1, 0);
+		
+		auto image = widget::create<widget::Image>();
+		image->load_image("../GraphicsCortex/Images/orange.png");
+		image->image_fit = widget::Image::Stretch;
+		image->target_size = glm::vec2(100, 100);
+		//image->margin = glm::vec4(50, 50, 0, 0);
+		grid->add(image, 1, 0);
 
 		while (true) {
 			double deltatime = default_window->handle_events(true);

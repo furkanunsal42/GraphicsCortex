@@ -204,6 +204,61 @@ void GUI::_traverse_children(element_t root_id, std::function<void(element_t, gl
 	}
 }
 
+namespace {
+	glm::vec4 compute_viewports_intersection(const glm::vec4& a, const glm::vec4& b) {
+		
+		glm::vec2 a_lo = glm::vec2(a.x, a.y);
+		glm::vec2 a_hi = a_lo + glm::vec2(a.z, a.w);
+
+		glm::vec2 b_lo = glm::vec2(b.x, b.y);
+		glm::vec2 b_hi = b_lo + glm::vec2(b.z, b.w);
+
+		glm::vec2 r_lo = glm::vec2(
+			glm::max(a_lo.x, b_lo.x),
+			glm::max(a_lo.y, b_lo.y)
+		);
+
+		glm::vec2 r_hi = glm::vec2(
+			glm::min(a_hi.x, b_hi.x),
+			glm::min(a_hi.y, b_hi.y)
+		);
+	}
+}
+
+void GUI::_traverse_children_dfs(element_t root_id, std::function<void(element_t, glm::vec2, glm::vec4)> lambda)
+{
+	if (!_does_element_exist(root_id)) {
+		std::cout << "[GUI Error] GUI::_traverse_children() is called with invalid root_id" << std::endl;
+		ASSERT(false);
+	}
+
+	std::vector<element_t> nodes;
+	std::vector<glm::vec2> positions;
+	std::vector<glm::vec4> clip_viewports;
+	nodes.push_back(root_id);
+	positions.push_back(elements[root_id].position);
+	clip_viewports.push_back(glm::vec4(0, 0, 1920, 1920));
+
+	while (nodes.size() != 0) {
+
+		element_t node = nodes.back();
+		glm::vec2 position = positions.back();
+		glm::vec4 clip_viewport = clip_viewports.back();
+
+		lambda(node, position, clip_viewport);
+
+		nodes.pop_back();
+		positions.pop_back();
+		clip_viewports.pop_back();
+
+		for (element_t child : elements[node].children) {
+			nodes.push_back(child);
+			positions.push_back(position + elements[child].position);
+			clip_viewports.push_back(glm::vec4(0, 0, 1920, 1920));
+		}
+	}
+}
+
 void GUI::_traverse_parents(element_t root_id, std::function<void(element_t)> lambda)
 {
 	if (!_does_element_exist(root_id)) {
@@ -479,10 +534,11 @@ void GUI::_render(element_t id)
 	};
 	std::map<int32_t, std::vector<render_data>> sorted_children;
 
-	_traverse_children(id, [&](element_t child_id, glm::vec2 merged_position) {
+	_traverse_children_dfs(id, [&](element_t child_id, glm::vec2 merged_position, glm::vec4 clip_viewport) {
 		render_data data;
 		data.id = child_id;
 		data.merged_position = merged_position;
+		data.clip_viewport = clip_viewport;
 		sorted_children[elements[child_id].z].push_back(data);
 		});
 
@@ -491,6 +547,7 @@ void GUI::_render(element_t id)
 		for (render_data& data : it->second) {
 			element_t& child_id = data.id;
 			glm::vec2& merged_position = data.merged_position;
+			glm::vec4& clip_viewport = data.clip_viewport;
 
 			bool element_is_textured = elements[child_id].texture != nullptr;
 
@@ -501,19 +558,21 @@ void GUI::_render(element_t id)
 
 			RenderParameters params(true);
 			params.depth_function = RenderParameters::DepthStencilFunction::LEQUAL;
+			params.scissor_test = true;
+			params.scissor_viewport = clip_viewport;
 
-			element_t parent_id = elements[child_id].parent_id;
-			if (parent_id != invalid_element) {
-
-				glm::vec4 parent_viewport = glm::vec4(
-					elements[parent_id].position.x,
-					total_viewport.y - elements[parent_id].position.y - elements[parent_id].size.y,
-					elements[parent_id].size.x,
-					elements[parent_id].size.y
-				);
-				params.scissor_test = true;
-				params.scissor_viewport = parent_viewport;
-			}
+			//element_t parent_id = elements[child_id].parent_id;
+			//if (parent_id != invalid_element) {
+			//
+			//	glm::vec4 parent_viewport = glm::vec4(
+			//		elements[parent_id].position.x,
+			//		total_viewport.y - elements[parent_id].position.y - elements[parent_id].size.y,
+			//		elements[parent_id].size.x,
+			//		elements[parent_id].size.y
+			//	);
+			//	params.scissor_test = true;
+			//	params.scissor_viewport = parent_viewport;
+			//}
 
 			primitive_renderer::render(
 				renderer,
