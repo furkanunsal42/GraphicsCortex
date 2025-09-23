@@ -22,9 +22,6 @@
 #include "Skybox/SkyboxRenderingTest.h"
 #include "Skybox/EquirectangularProjectionTest.h"
 
-#include "OpenGLBackend/OpenGLResourceSystemTest.h"
-#include "OpenGLBackend/OpenGLDeviceResourceSystemTest.h"
-
 #include "ImmediateRenderer/ImmediateRendererTest.h"
 
 #include "CortexGUI/CortexGUITest.h"

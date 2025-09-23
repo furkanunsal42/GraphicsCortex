@@ -442,7 +442,7 @@ struct WindowDescription {
 	bool w_scale_framebuffer_size = true;
 
 	bool w_have_initial_position = false;
-	glm::ivec2 w_initial_position;
+	glm::ivec2 w_initial_position = glm::ivec2(0);
 	bool w_maximized_on_create = false;
 	bool w_focus_on_create = false;
 	bool w_focus_on_show = true;

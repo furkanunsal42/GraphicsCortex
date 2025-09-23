@@ -29,7 +29,7 @@ public:
 		font_id font = FontBank::get().load_font("../GraphicsCortex/Fonts/Roboto-Regular.ttf", 64);
 		
 		auto stack = widget::create<widget::Stack>();
-		stack->color = glm::vec4(1, 0, 0, 1);
+		//stack->color = glm::vec4(1, 0, 0, 1);
 		stack->alignment = widget::Stack::Horizontal;
 		stack->target_size = glm::vec2(0);
 		stack->z = 0;
@@ -37,7 +37,6 @@ public:
 		auto stack2 = widget::create<widget::Stack>();
 		stack2->alignment = widget::Stack::Vertical;
 		stack2->target_size = glm::vec2(0, -1);
-		stack2->color = glm::vec4(1, 1, 1, 1);
 
 		auto a = widget::create<widget::Rectangle>();
 		a->target_size = glm::vec2(100, 30);
