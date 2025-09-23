@@ -58,12 +58,14 @@ public:
 		auto label = widget::create<widget::Label>();
 		label->font = font;
 		label->text = "Portakal Ortakal!";
+		label->margin = glm::vec4(0, -1, 0, -1);
 		stack->push_back(label);
 
 		auto image = widget::create<widget::Image>();
 		image->load_image("../GraphicsCortex/Images/orange.png");
 		image->image_fit = widget::Image::Stretch;
 		image->target_size = glm::vec2(500, 500);
+		image->margin = glm::vec4(0, -1, 0, -1);
 		stack->push_back(image);
 
 		while (true) {

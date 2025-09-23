@@ -36,7 +36,9 @@ namespace widget {
 	private:
 
 		glm::vec2 compute_min_content_size();
-		glm::vec2 compute_relative_divison_size(const glm::vec2& min_content_size);
+		float compute_total_relative_size_main_axis();
+		float compute_total_relative_size_secondary_axis(int32_t widget_index);
+
 		void lay_widgets();
 
 		std::vector<widget_t> widgets;
