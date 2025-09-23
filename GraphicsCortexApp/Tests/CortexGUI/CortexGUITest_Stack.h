@@ -12,7 +12,7 @@
 
 #include "CortexGUIWidgets/Container/GUIWidget_Stack.h"
 
-class CortexGUITest: public TestBench {
+class CortexGUITest_Stack: public TestBench {
 public:
 
 	bool run() {
@@ -41,32 +41,32 @@ public:
 		auto a = widget::create<widget::Rectangle>();
 		a->target_size = glm::vec2(100, 30);
 		a->color = glm::vec4(1, 0, 1, 1);
-		stack2->push_back(a);
+		stack2->add(a);
 
 		auto b = widget::create<widget::Rectangle>();
 		b->target_size = glm::vec2(200, -1);
 		b->color = glm::vec4(0, 1, 0, 1);
-		stack2->push_back(b);
-		stack->push_back(stack2);
+		stack2->add(b);
+		stack->add(stack2);
 
 		auto rectangle = widget::create<widget::Rectangle>();
 		rectangle->target_size = glm::vec2(100, 900);
 		//rectangle->margin = glm::vec4(0, -1, 0, -1);
 		rectangle->color = glm::vec4(1, 0, 1, 1);
-		stack->push_back(rectangle);
+		stack->add(rectangle);
 
 		auto label = widget::create<widget::Label>();
 		label->font = font;
 		label->text = "Portakal Ortakal!";
 		label->margin = glm::vec4(0, -1, 0, -1);
-		stack->push_back(label);
+		stack->add(label);
 
 		auto image = widget::create<widget::Image>();
 		image->load_image("../GraphicsCortex/Images/orange.png");
 		image->image_fit = widget::Image::Stretch;
 		image->target_size = glm::vec2(500, 500);
 		image->margin = glm::vec4(0, -1, 0, -1);
-		stack->push_back(image);
+		stack->add(image);
 
 		while (true) {
 			double deltatime = default_window->handle_events(true);

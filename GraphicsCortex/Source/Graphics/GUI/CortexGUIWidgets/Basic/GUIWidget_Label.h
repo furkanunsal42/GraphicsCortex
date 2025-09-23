@@ -40,7 +40,7 @@ namespace widget {
 					continue;
 
 				if (glyphs[i].second == Element::null_element)
-					glyphs[i].second = GUI::get().create_element(element);
+					glyphs[i].second = element.create_child();
 
 				if (glyphs[i].first != text[i]) {
 					Element& g = glyphs[i].second;
@@ -77,11 +77,8 @@ namespace widget {
 				text_size.x = g.position().x + g.size().x;
 			}
 
-			if (element.size().x == 0)
-				element.size().x = text_size.x;
-
-			if (element.size().y == 0)
-				element.size().y = text_size.y;
+			if (element.size().x == 0)	element.size().x = text_size.x;
+			if (element.size().y == 0)	element.size().y = text_size.y;
 		}
 
 		std::vector<std::pair<uint32_t, Element>> glyphs;

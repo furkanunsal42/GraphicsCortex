@@ -24,7 +24,8 @@
 
 #include "ImmediateRenderer/ImmediateRendererTest.h"
 
-#include "CortexGUI/CortexGUITest.h"
+#include "CortexGUI/CortexGUITest_Stack.h"
+#include "CortexGUI/CortexGUITest_Grid.h"
 
 int main() {
 	
@@ -56,5 +57,6 @@ int main() {
 
 	//ImmediateRendererTest().run();
 
-	CortexGUITest().run();
+	//CortexGUITest_Stack().run();
+	CortexGUITest_Grid().run();
 }

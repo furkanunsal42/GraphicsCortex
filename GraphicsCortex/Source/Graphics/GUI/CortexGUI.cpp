@@ -475,6 +475,7 @@ void GUI::_render(element_t id)
 	struct render_data {
 		element_t id;
 		glm::vec2 merged_position;
+		glm::vec4 clip_viewport;
 	};
 	std::map<int32_t, std::vector<render_data>> sorted_children;
 
