@@ -218,10 +218,10 @@ namespace {
 		);
 
 		glm::vec4 viewport(
-			intersect.x,
-			intersect.y,
-			glm::max(intersect.z - intersect.x, 0.0f),
-			glm::max(intersect.w - intersect.y, 0.0f)
+			glm::floor(intersect.x),
+			glm::floor(intersect.y),
+			glm::ceil(glm::max(intersect.z - intersect.x, 0.0f)),
+			glm::ceil(glm::max(intersect.w - intersect.y, 0.0f))
 		);
 
 		return viewport;

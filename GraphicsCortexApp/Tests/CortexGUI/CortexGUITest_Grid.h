@@ -31,7 +31,6 @@ public:
 
 		font_id font = FontBank::get().load_font("../GraphicsCortex/Fonts/Roboto-Regular.ttf", 64);
 
-
 		auto button = widget::create<widget::Button>();
 
 		//auto grid = widget::create<widget::Grid>();
