@@ -207,21 +207,24 @@ void GUI::_traverse_children(element_t root_id, std::function<void(element_t, gl
 namespace {
 	glm::vec4 compute_viewports_intersection(const glm::vec4& a, const glm::vec4& b) {
 		
-		glm::vec2 a_lo = glm::vec2(a.x, a.y);
-		glm::vec2 a_hi = a_lo + glm::vec2(a.z, a.w);
+		glm::vec4 aabb_a(a.x, a.y, a.x + a.z, a.y + a.w);
+		glm::vec4 aabb_b(b.x, b.y, b.x + b.z, b.y + b.w);
 
-		glm::vec2 b_lo = glm::vec2(b.x, b.y);
-		glm::vec2 b_hi = b_lo + glm::vec2(b.z, b.w);
-
-		glm::vec2 r_lo = glm::vec2(
-			glm::max(a_lo.x, b_lo.x),
-			glm::max(a_lo.y, b_lo.y)
+		glm::vec4 intersect(
+			glm::max(aabb_a.x, aabb_b.x),
+			glm::max(aabb_a.y, aabb_b.y),
+			glm::min(aabb_a.z, aabb_b.z),
+			glm::min(aabb_a.w, aabb_b.w)
 		);
 
-		glm::vec2 r_hi = glm::vec2(
-			glm::min(a_hi.x, b_hi.x),
-			glm::min(a_hi.y, b_hi.y)
+		glm::vec4 viewport(
+			intersect.x,
+			intersect.y,
+			glm::max(intersect.z - intersect.x, 0.0f),
+			glm::max(intersect.w - intersect.y, 0.0f)
 		);
+
+		return viewport;
 	}
 }
 
@@ -232,12 +235,20 @@ void GUI::_traverse_children_dfs(element_t root_id, std::function<void(element_t
 		ASSERT(false);
 	}
 
+	glm::vec2 total_viewport = primitive_renderer::get_viewport_size();
+	glm::vec4 parent_viewport = glm::vec4(
+		elements[root_id].position.x,
+		total_viewport.y - elements[root_id].position.y - elements[root_id].size.y,
+		elements[root_id].size.x,
+		elements[root_id].size.y
+	);
+
 	std::vector<element_t> nodes;
 	std::vector<glm::vec2> positions;
 	std::vector<glm::vec4> clip_viewports;
 	nodes.push_back(root_id);
 	positions.push_back(elements[root_id].position);
-	clip_viewports.push_back(glm::vec4(0, 0, 1920, 1920));
+	clip_viewports.push_back(parent_viewport);
 
 	while (nodes.size() != 0) {
 
@@ -252,9 +263,18 @@ void GUI::_traverse_children_dfs(element_t root_id, std::function<void(element_t
 		clip_viewports.pop_back();
 
 		for (element_t child : elements[node].children) {
+			glm::vec2 child_position = position + elements[child].position;
+			
+			glm::vec4 child_viewport = glm::vec4(
+				child_position.x,
+				total_viewport.y - child_position.y - elements[child].size.y,
+				elements[child].size.x,
+				elements[child].size.y
+			);
+
 			nodes.push_back(child);
 			positions.push_back(position + elements[child].position);
-			clip_viewports.push_back(glm::vec4(0, 0, 1920, 1920));
+			clip_viewports.push_back(compute_viewports_intersection(clip_viewport, child_viewport));
 		}
 	}
 }
