@@ -44,22 +44,22 @@ Element& widget::Grid::get_element(glm::vec2 allocated_size) {
 	return element;
 }
 
-glm::vec2 widget::Grid::compute_slot_physical_size(int32_t row, int32_t column, glm::vec2 min_content_size, glm::vec2 total_relative_size)
-{
-	if (row >= rows.size() || row < 0 ||
-		column >= columns.size() || column < 0) {
-		std::cout << "[GUI Error] widgets::Grid::lay_widget() is called but a widget's row or column id is invalid" << std::endl;
-		ASSERT(false);
-	}
+//glm::vec2 widget::Grid::compute_slot_physical_size(int32_t row, int32_t column, glm::vec2 min_content_size, glm::vec2 total_relative_size)
+//{
+//	if (row >= rows.size() || row < 0 ||
+//		column >= columns.size() || column < 0) {
+//		std::cout << "[GUI Error] widgets::Grid::lay_widget() is called but a widget's row or column id is invalid" << std::endl;
+//		ASSERT(false);
+//	}
+//
+//	glm::vec2 slot_physical_size = glm::vec2(columns[column], rows[row]);
+//	if (slot_physical_size.x < 0) slot_physical_size.x / total_relative_size.x * (element.size().x - min_content_size.x);
+//	if (slot_physical_size.y < 0) slot_physical_size.y / total_relative_size.y * (element.size().y - min_content_size.y);
+//
+//	return slot_physical_size;
+//}
 
-	glm::vec2 slot_physical_size = glm::vec2(columns[column], rows[row]);
-	if (slot_physical_size.x < 0) slot_physical_size.x / total_relative_size.x * (element.size().x - min_content_size.x);
-	if (slot_physical_size.y < 0) slot_physical_size.y / total_relative_size.y * (element.size().y - min_content_size.y);
-
-	return slot_physical_size;
-}
-
-void widget::Grid::update_row_and_column_positions(glm::vec2 min_content_size, glm::vec2 total_relative_size)
+void widget::Grid::update_row_and_column_positions()
 {
 	row_positions.resize(rows.size());
 	column_positions.resize(columns.size());
@@ -67,39 +67,66 @@ void widget::Grid::update_row_and_column_positions(glm::vec2 min_content_size, g
 	float running_width = 0;
 	for (int32_t i = 0; i < columns.size(); i++) {
 		column_positions[i] = running_width;
-		running_width += compute_slot_physical_size(0, i, min_content_size, total_relative_size).x;
+		running_width += columns_physical_size[i];
 	}
 
 	float running_height = 0;
 	for (int32_t i = 0; i < rows.size(); i++) {
 		row_positions[i] = running_height;
-		running_height += compute_slot_physical_size(i, 0, min_content_size, total_relative_size).y;
+		running_height += rows_physical_size[i];
 	}
 }
 
-glm::vec2 widget::Grid::compute_min_content_size() {
-	glm::vec2 content_size(0);
+void widget::Grid::update_row_and_column_fit_size()
+{
+	rows_physical_size = rows;
+	columns_physical_size = columns;
 
-	for (float width : columns)
-		if (width > 0) content_size.x += width;
+	for (widget_info& widget : widgets) {
 
-	for (float height : rows)
-		if (height > 0) content_size.y += height;
-	
-	return content_size;
+		Widget& widget_data = GUI::get().get_widget_data(widget.widget);
+
+		glm::vec2 min_child_content_size(0);
+		glm::vec2 allocated_size(columns[widget.column_id], rows[widget.row_id]);
+
+		if (glm::any(glm::equal(allocated_size, glm::vec2(0))))
+			min_child_content_size = widget_data.get_element(allocated_size).size();
+
+		if (allocated_size.x == 0)
+			columns_physical_size[widget.column_id] = glm::max(columns_physical_size[widget.column_id], min_child_content_size.x);
+
+		if (allocated_size.y == 0)
+			rows_physical_size[widget.row_id] = glm::max(rows_physical_size[widget.row_id], min_child_content_size.y);
+	}
 }
 
-glm::vec2 widget::Grid::compute_total_relative_size()
-{
+glm::vec2 widget::Grid::update_rows_and_column_physical_size() {
+	
+	update_row_and_column_fit_size();
+
+	glm::vec2 min_content_size(0);
 	glm::vec2 total_relative_size(0);
 
-	for (float width : columns)
+	for (float width : columns_physical_size) {
+		if (width > 0) min_content_size.x += width;
 		if (width < 0) total_relative_size.x += width;
+	}
 
-	for (float height : rows)
+	for (float height : rows_physical_size) {
+		if (height > 0) min_content_size.y += height;
 		if (height < 0) total_relative_size.y += height;
+	}
 
-	return total_relative_size;
+	if (element.size().x == 0) element.size().x = min_content_size.x + padding.x + padding.z;
+	if (element.size().y == 0) element.size().y = min_content_size.y + padding.y + padding.w;
+	
+	for (float& width : columns_physical_size)
+		if (width < 0) width / total_relative_size.x * (element.size().x - min_content_size.x);
+
+	for (float& height : rows_physical_size)
+		if (height < 0) height / total_relative_size.y * (element.size().y - min_content_size.y);
+
+	return min_content_size;
 }
 
 glm::vec2 widget::Grid::compute_widget_total_known_size(Widget& widget)
@@ -134,7 +161,7 @@ glm::vec2 widget::Grid::compute_widget_total_relative_size(Widget& widget)
 	return total_relative_size;
 }
 
-void widget::Grid::update_slot_element_count(glm::vec2 min_content_size, glm::vec2 total_relative_size)
+void widget::Grid::update_slot_element_count()
 {
 	int32_t slot_count = rows.size() * columns.size();
 
@@ -151,9 +178,7 @@ void widget::Grid::update_slot_element_count(glm::vec2 min_content_size, glm::ve
 	for (int32_t x = 0; x < columns.size(); x++) {
 		for (int32_t y = 0; y < rows.size(); y++) {
 
-			glm::vec2 slot_physical_size = glm::vec2(columns[x], rows[y]);
-			if (slot_physical_size.x < 0) slot_physical_size.x / total_relative_size.x * (element.size().x - min_content_size.x);
-			if (slot_physical_size.y < 0) slot_physical_size.y / total_relative_size.y * (element.size().y - min_content_size.y);
+			glm::vec2 slot_physical_size = glm::vec2(columns_physical_size[x], rows_physical_size[y]);
 
 			glm::vec2 position = glm::vec2(column_positions[x], row_positions[y]) + glm::vec2(padding.x, padding.y);
 
@@ -167,14 +192,10 @@ void widget::Grid::update_slot_element_count(glm::vec2 min_content_size, glm::ve
 
 void widget::Grid::lay_widgets() {
 	
-	glm::vec2 min_content_size		= compute_min_content_size();
-	glm::vec2 total_relative_size	= compute_total_relative_size();
+	glm::vec2 min_content_size	= update_rows_and_column_physical_size();
 
-	if (element.size().x == 0) element.size().x = min_content_size.x + padding.x + padding.z;
-	if (element.size().y == 0) element.size().y = min_content_size.y + padding.y + padding.w;
-
-	update_row_and_column_positions(min_content_size, total_relative_size);
-	update_slot_element_count(min_content_size, total_relative_size);
+	update_row_and_column_positions();
+	update_slot_element_count();
 
 	for (int32_t i = 0; i < widgets.size(); i++) {
 		int32_t row = widgets[i].row_id;
@@ -187,11 +208,8 @@ void widget::Grid::lay_widgets() {
 			std::cout << "[GUI Error] widgets::Grid::lay_widget() is called but a widget's row or column id is invalid" << std::endl;
 			ASSERT(false);
 		}
-
-		glm::vec2 slot_physical_size = glm::vec2(columns[column], rows[row]);
-		if (slot_physical_size.x < 0) slot_physical_size.x / total_relative_size.x * (element.size().x - min_content_size.x);
-		if (slot_physical_size.y < 0) slot_physical_size.y / total_relative_size.y * (element.size().y - min_content_size.y);
-
+		glm::vec2 slot_physical_size = glm::vec2(columns_physical_size[column], rows_physical_size[row]);
+		
 		glm::vec2 child_known_size		= compute_widget_total_known_size(child_widget);
 		glm::vec2 child_relative_size	= compute_widget_total_relative_size(child_widget);
 

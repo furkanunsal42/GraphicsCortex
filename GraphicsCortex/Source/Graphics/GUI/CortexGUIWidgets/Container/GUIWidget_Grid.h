@@ -18,21 +18,24 @@ namespace widget {
 
 	private:
 
-		glm::vec2 compute_slot_physical_size(int32_t row, int32_t column, glm::vec2 min_content_size, glm::vec2 total_relative_size);
-		void update_row_and_column_positions(glm::vec2 min_content_size, glm::vec2 total_relative_size);
+		//glm::vec2 compute_slot_physical_size(int32_t row, int32_t column, glm::vec2 min_content_size, glm::vec2 total_relative_size);
+		void update_row_and_column_fit_size();
+		void update_row_and_column_positions();
 
-		glm::vec2 compute_min_content_size();
-		glm::vec2 compute_total_relative_size();
+		glm::vec2 update_rows_and_column_physical_size();
 		
 		glm::vec2 compute_widget_total_known_size(Widget& widget);
 		glm::vec2 compute_widget_total_relative_size(Widget& widget);
 
-		void update_slot_element_count(glm::vec2 min_content_size, glm::vec2 total_relative_size);
+		void update_slot_element_count();
 
 		void lay_widgets();
 
 		std::vector<float> row_positions;
 		std::vector<float> column_positions;
+
+		std::vector<float> rows_physical_size;
+		std::vector<float> columns_physical_size;
 
 		std::vector<float> rows;
 		std::vector<float> columns;

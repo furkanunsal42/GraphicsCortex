@@ -16,7 +16,8 @@ namespace widget {
 		WidgetHandle<widget::Rectangle> rectangle	= widget::create<widget::Rectangle>();
 
 		Button() {
-			target_size = glm::vec2(100, 40);
+			target_size = glm::vec2(0, 0);
+			//target_size = glm::vec2(100, 40);
 		}
 
 		Element& get_element(glm::vec2 allocated_size) {
