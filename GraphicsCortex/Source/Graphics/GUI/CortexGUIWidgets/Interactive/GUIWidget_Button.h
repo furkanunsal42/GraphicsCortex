@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "GUI/CortexGUI.h"
 
 #include "CortexGUIWidgets/Container/GUIWidget_Grid.h"
@@ -8,16 +8,22 @@
 
 namespace widget {
 
-	class Button : public Widget {
+	class Button : public Grid {
 	public:
 
-		WidgetHandle<widget::Grid> grid				= widget::create<widget::Grid>();
 		WidgetHandle<widget::Label> label			= widget::create<widget::Label>();
 		WidgetHandle<widget::Rectangle> rectangle	= widget::create<widget::Rectangle>();
 
 		Button() {
-			target_size = glm::vec2(0, 0);
-			//target_size = glm::vec2(100, 40);
+			color = glm::vec4(0, 0, 0, 1);
+			target_size = glm::vec2(100, 40);
+			padding = glm::vec4(100);
+
+			add_column(target_size.x);
+			add_row(target_size.y);
+
+			add(label, 0, 0);
+			add(rectangle, 0, 0);
 		}
 
 		Element& get_element(glm::vec2 allocated_size) {
@@ -33,13 +39,10 @@ namespace widget {
 			rectangle->margin = glm::vec4(0);
 			rectangle->target_size = glm::vec2(-1);
 			
-			grid->add_column(target_size.x);
-			grid->add_row(target_size.y);
-			
-			grid->add(label, 0, 0);
-			grid->add(rectangle, 0, 0);
+			set_column_size(target_size.x, 0);
+			set_row_size(target_size.y, 0);
 
-			return grid->get_element(allocated_size);
+			return Grid::get_element(allocated_size);
 		}
 
 	private:

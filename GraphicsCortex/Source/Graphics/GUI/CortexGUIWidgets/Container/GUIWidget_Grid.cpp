@@ -12,9 +12,30 @@ void widget::Grid::add_row(float height)
 	rows.push_back(height);
 }
 
+void widget::Grid::set_row_size(float height, int32_t row_index)
+{
+	if (row_index >= rows.size() || row_index < 0) {
+		std::cout << "[GUI Error] widget::Grid::set_row_size() is called with an invalid row index";
+		ASSERT(false);
+	}
+
+	rows[row_index] = height;
+}
+
 void widget::Grid::add_column(float width)
 {
+
 	columns.push_back(width);
+}
+
+void widget::Grid::set_column_size(float width, int32_t column_index)
+{
+	if (column_index >= columns.size() || column_index < 0) {
+		std::cout << "[GUI Error] widget::Grid::set_column_size() is called with an invalid column index";
+		ASSERT(false);
+	}
+
+	columns[column_index] = width;
 }
 
 void widget::Grid::add(widget_t widget, int32_t row_index, int32_t column_index)
@@ -43,21 +64,6 @@ Element& widget::Grid::get_element(glm::vec2 allocated_size) {
 	lay_widgets();
 	return element;
 }
-
-//glm::vec2 widget::Grid::compute_slot_physical_size(int32_t row, int32_t column, glm::vec2 min_content_size, glm::vec2 total_relative_size)
-//{
-//	if (row >= rows.size() || row < 0 ||
-//		column >= columns.size() || column < 0) {
-//		std::cout << "[GUI Error] widgets::Grid::lay_widget() is called but a widget's row or column id is invalid" << std::endl;
-//		ASSERT(false);
-//	}
-//
-//	glm::vec2 slot_physical_size = glm::vec2(columns[column], rows[row]);
-//	if (slot_physical_size.x < 0) slot_physical_size.x / total_relative_size.x * (element.size().x - min_content_size.x);
-//	if (slot_physical_size.y < 0) slot_physical_size.y / total_relative_size.y * (element.size().y - min_content_size.y);
-//
-//	return slot_physical_size;
-//}
 
 void widget::Grid::update_row_and_column_positions()
 {
@@ -89,8 +95,12 @@ void widget::Grid::update_row_and_column_fit_size()
 		glm::vec2 min_child_content_size(0);
 		glm::vec2 allocated_size(columns[widget.column_id], rows[widget.row_id]);
 
-		if (glm::any(glm::equal(allocated_size, glm::vec2(0))))
+		if (glm::any(glm::equal(allocated_size, glm::vec2(0)))) {
+			glm::vec4 positive_margin = glm::max(widget_data.margin, glm::vec4(0));
+			
 			min_child_content_size = widget_data.get_element(allocated_size).size();
+			min_child_content_size += glm::vec2(positive_margin.x + positive_margin.z, positive_margin.y + positive_margin.w);
+		}
 
 		if (allocated_size.x == 0)
 			columns_physical_size[widget.column_id] = glm::max(columns_physical_size[widget.column_id], min_child_content_size.x);

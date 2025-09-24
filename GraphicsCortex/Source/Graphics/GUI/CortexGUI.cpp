@@ -578,7 +578,7 @@ void GUI::_render(element_t id)
 
 			RenderParameters params(true);
 			params.depth_function = RenderParameters::DepthStencilFunction::LEQUAL;
-			params.scissor_test = true;
+			params.scissor_test = false;
 			params.scissor_viewport = clip_viewport;
 
 			//element_t parent_id = elements[child_id].parent_id;

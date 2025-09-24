@@ -9,7 +9,11 @@ namespace widget {
 		Grid();
 
 		void add_row(float height);
+		void set_row_size(float height, int32_t row_index);
+
 		void add_column(float width);
+		void set_column_size(float width, int32_t column_index);
+
 
 		void add(widget_t widget, int32_t row_index, int32_t column_index);
 		void remove(widget_t widget);
