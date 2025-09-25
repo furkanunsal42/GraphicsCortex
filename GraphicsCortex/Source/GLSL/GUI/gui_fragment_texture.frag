@@ -27,18 +27,3 @@ void main(){
 	frag_color = texture(source_texture, texcoord) * g_color0;
 }
 
-position_size;
-texcoord_begin_end;
-color0;
-color1;
-color2;
-gradient_direction_z_pad;
-border_thickness;
-border_rounding;
-border_color0;
-border_color1;
-border_color2;
-border_color3;
-shadow_thickness;
-shadow_color;
-
