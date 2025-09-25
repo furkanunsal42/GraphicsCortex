@@ -99,9 +99,19 @@ private:
 		glm::vec2 size = glm::vec2(-1);
 		glm::vec2 texcoord_min = glm::vec2(0);
 		glm::vec2 texcoord_max = glm::vec2(1);
-		glm::vec4 color = glm::vec4(1);
+		glm::vec4 color0 = glm::vec4(1);
+		glm::vec4 color1 = glm::vec4(1);
+		glm::vec4 color2 = glm::vec4(1);
 		glm::vec4 border_color = glm::vec4(1);
 		glm::vec4 border_thickness = glm::vec4(0);
+		glm::vec4 border_rounding = glm::vec4(0);
+		glm::vec4 border_color0 = glm::vec4(0);
+		glm::vec4 border_color1 = glm::vec4(0);
+		glm::vec4 border_color2 = glm::vec4(0);
+		glm::vec4 border_color3 = glm::vec4(0);
+		glm::vec4 shadow_thickness = glm::vec4(0);
+		glm::vec4 shadow_color = glm::vec4(0);
+
 		int32_t z = 0;
 		int32_t old_z = 0;
 		
@@ -122,15 +132,21 @@ private:
 
 	struct Vertex {
 		Vertex() = default;
-		Vertex(
-			glm::vec3 pos,
-			glm::vec2 texcoord,
-			glm::vec4 color
-		);
-
-		glm::vec3 position;
-		glm::vec2 texcoord;
-		glm::vec4 color;
+		
+		glm::vec4 position_size				= glm::vec4(0);
+		glm::vec4 texcoord_begin_end		= glm::vec4(0);
+		glm::vec4 color0					= glm::vec4(0);
+		glm::vec4 color1					= glm::vec4(0);
+		glm::vec4 color2					= glm::vec4(0);
+		glm::vec4 gradient_direction_z_pad	= glm::vec4(0);
+		glm::vec4 border_thickness			= glm::vec4(0);
+		glm::vec4 border_rounding			= glm::vec4(0);
+		glm::vec4 border_color0				= glm::vec4(0);
+		glm::vec4 border_color1				= glm::vec4(0);
+		glm::vec4 border_color2				= glm::vec4(0);
+		glm::vec4 border_color3				= glm::vec4(0);
+		glm::vec4 shadow_thickness			= glm::vec4(0);
+		glm::vec4 shadow_color				= glm::vec4(0);
 	};
 
 	std::unordered_map<widget_t, std::shared_ptr<Widget>> widgets;

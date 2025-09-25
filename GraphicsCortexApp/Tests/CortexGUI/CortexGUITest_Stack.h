@@ -57,7 +57,7 @@ public:
 
 		auto label = widget::create<widget::Label>();
 		label->font = font;
-		label->text = "Portakal Ortakal!";
+		label->text = U"Portakal Ortakal!";
 		label->margin = glm::vec4(0, -1, 0, -1);
 		stack->add(label);
 

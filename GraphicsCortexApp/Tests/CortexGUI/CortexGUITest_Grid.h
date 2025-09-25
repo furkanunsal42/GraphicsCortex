@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "GraphicsCortex.h"
 #include "TestBench/TestBench.h"
@@ -32,6 +32,7 @@ public:
 		font_id font = FontBank::get().load_font("../GraphicsCortex/Fonts/Roboto-Regular.ttf", 64);
 
 		auto button = widget::create<widget::Button>();
+		button->label->text = U"Kendimi Şanslı Hissediyorum";
 
 		//auto grid = widget::create<widget::Grid>();
 		//grid->add_row(100);
@@ -64,7 +65,7 @@ public:
 
 		while (true) {
 			double deltatime = default_window->handle_events(true);
-			primitive_renderer::clear(0.5, 0.7, 0.8, 1);
+			primitive_renderer::clear(0.12, 0.12, 0.12, 1);
 
 			GUI::get().render(button);
 

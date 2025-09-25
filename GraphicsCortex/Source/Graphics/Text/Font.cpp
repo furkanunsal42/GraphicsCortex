@@ -68,7 +68,8 @@ FontBank::Font FontBank::_load(const std::filesystem::path& font_file_path, int3
 	glm::ivec2 max_texture_resolution(4096);
 
 	glm::ivec2 pen(0);
-	int32_t glyph_counter;
+	int32_t glyph_counter = 0;
+
 	for (glyph_counter = 0; glyph_counter < face->num_glyphs; glyph_counter++) {
 		if (!FT_Get_Char_Index(face, glyph_counter))
 			continue;
@@ -101,7 +102,7 @@ FontBank::Font FontBank::_load(const std::filesystem::path& font_file_path, int3
 	
 	pen = glm::ivec2(0);
 
-	for (int i = 0; i < glyph_counter; ++i) {
+	for (int32_t i = 0; i < glyph_counter; ++i) {
 		if (!FT_Get_Char_Index(face, i)) {
 			//std::cout << "failed to load char with index: " << i << std::endl;
 			continue;
@@ -143,7 +144,7 @@ FontBank::Font FontBank::_load(const std::filesystem::path& font_file_path, int3
 
 		font.glyph_table[i] = info;
 
-		pen.x += bmp->width;
+		pen.x += bmp->width + 1;
 	}
 
 	glyph_info new_line;

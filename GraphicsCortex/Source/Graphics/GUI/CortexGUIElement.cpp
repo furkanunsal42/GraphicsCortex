@@ -78,7 +78,7 @@ glm::vec4& Element::color()
 
 	GUI::get().elements[id].vab_properties_changed = true;
 
-	return GUI::get().elements[id].color;
+	return GUI::get().elements[id].color0;
 }
 
 glm::vec4& Element::border_color()

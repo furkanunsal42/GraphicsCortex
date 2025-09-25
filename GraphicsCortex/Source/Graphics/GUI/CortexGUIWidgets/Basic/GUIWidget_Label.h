@@ -14,7 +14,7 @@ namespace widget {
 
 		font_id font = FontBank::not_a_font;
 		float text_height = 16;
-		std::string text = "";
+		std::u32string text = U"";
 		glm::vec4 text_color = glm::vec4(0, 0, 0, 1);
 
 		Element& get_element(glm::vec2 allocated_size) {
@@ -36,13 +36,13 @@ namespace widget {
 			glm::vec2 text_size(0);
 
 			for (int32_t i = 0; i < text.size(); i++) {
-				if (glyphs[i].first == text[i] && glyphs[i].second != Element::null_element)
-					continue;
+				//if (glyphs[i].first == text[i] && glyphs[i].second != Element::null_element)
+				//	continue;
 
 				if (glyphs[i].second == Element::null_element)
 					glyphs[i].second = element.create_child();
 
-				if (glyphs[i].first != text[i]) {
+				//if (glyphs[i].first != text[i]) {
 					Element& g = glyphs[i].second;
 
 					g.texture() = FontBank::get().get_font(font).atlas;
@@ -68,7 +68,7 @@ namespace widget {
 
 					advance += table.advance * atlas_size.x / font_size * text_height;
 					glyphs[i].first = text[i];
-				}
+				//}
 			}
 
 			for (int32_t i = 0; i < text.size(); i++) {

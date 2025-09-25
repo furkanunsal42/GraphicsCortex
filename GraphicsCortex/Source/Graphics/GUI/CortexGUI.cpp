@@ -75,8 +75,8 @@ void GUI::_compile_shaders() {
 	if (shaders_compiled)
 		return;
 
-	gui_renderer = std::make_shared<Program>(Shader(gui_renderer_shader_parent_path / "gui_vertex.vert", gui_renderer_shader_parent_path / "gui_fragment.frag"));
-	gui_renderer_texture = std::make_shared<Program>(Shader(gui_renderer_shader_parent_path / "gui_vertex.vert", gui_renderer_shader_parent_path / "gui_fragment_texture.frag"));
+	gui_renderer = std::make_shared<Program>(Shader(gui_renderer_shader_parent_path / "gui_vertex.vert", gui_renderer_shader_parent_path / "gui_geometry.geom", gui_renderer_shader_parent_path / "gui_fragment.frag"));
+	gui_renderer_texture = std::make_shared<Program>(Shader(gui_renderer_shader_parent_path / "gui_vertex.vert", gui_renderer_shader_parent_path / "gui_geometry.geom", gui_renderer_shader_parent_path / "gui_fragment_texture.frag"));
 	
 	shaders_compiled = true;
 }
@@ -309,9 +309,20 @@ void GUI::_init_vab(size_t begin_size_in_bytes)
 		0
 	);
 
-	vab->push_attribute_format(0, 0, VertexAttributeBuffer::a_f32, 3, true); // position
-	vab->push_attribute_format(1, 0, VertexAttributeBuffer::a_f32, 2, true); // texture_coord
-	vab->push_attribute_format(2, 0, VertexAttributeBuffer::a_f32, 4, true); // color
+	vab->push_attribute_format(0, 0,  VertexAttributeBuffer::a_f32, 4, true); // position_size
+	vab->push_attribute_format(1, 0,  VertexAttributeBuffer::a_f32, 4, true); // texcoord_begin_end
+	vab->push_attribute_format(2, 0,  VertexAttributeBuffer::a_f32, 4, true); // color0
+	vab->push_attribute_format(3, 0,  VertexAttributeBuffer::a_f32, 4, true); // color1
+	vab->push_attribute_format(4, 0,  VertexAttributeBuffer::a_f32, 4, true); // color2
+	vab->push_attribute_format(5, 0,  VertexAttributeBuffer::a_f32, 4, true); // gradient_direction_z_pad
+	vab->push_attribute_format(6, 0,  VertexAttributeBuffer::a_f32, 4, true); // border_thickness
+	vab->push_attribute_format(7, 0,  VertexAttributeBuffer::a_f32, 4, true); // border_rounding
+	vab->push_attribute_format(8, 0,  VertexAttributeBuffer::a_f32, 4, true); // border_color0
+	vab->push_attribute_format(9, 0,  VertexAttributeBuffer::a_f32, 4, true); // border_color1
+	vab->push_attribute_format(10, 0, VertexAttributeBuffer::a_f32, 4, true); // border_color2
+	vab->push_attribute_format(11, 0, VertexAttributeBuffer::a_f32, 4, true); // border_color3
+	vab->push_attribute_format(12, 0, VertexAttributeBuffer::a_f32, 4, true); // shadow_thickness
+	vab->push_attribute_format(13, 0, VertexAttributeBuffer::a_f32, 4, true); // shadow_color
 
 	vab_total_size_in_bytes = begin_size_in_bytes;
 	vab_used_size_in_bytes = 0;
@@ -380,28 +391,25 @@ void GUI::_update_vab_to_render(element_t id)
 		bool is_element_present_in_vab = info.vab_begin != ElementInfo::element_does_not_exist;
 
 		if (!is_element_present_in_vab) {
-			glm::vec3 position0 = glm::vec3(merged_position + glm::vec2(0, 0),				-info.z);
-			glm::vec3 position1 = glm::vec3(merged_position + glm::vec2(0, info.size.y),	-info.z);
-			glm::vec3 position2 = glm::vec3(merged_position + glm::vec2(info.size),			-info.z);
-			glm::vec3 position3 = glm::vec3(merged_position + glm::vec2(info.size.x, 0),	-info.z);
 
-			glm::vec2 texcoord0(info.texcoord_min.x, info.texcoord_max.y);
-			glm::vec2 texcoord1(info.texcoord_min.x, info.texcoord_min.y);
-			glm::vec2 texcoord2(info.texcoord_max.x, info.texcoord_min.y);
-			glm::vec2 texcoord3(info.texcoord_max.x, info.texcoord_max.y);
+			Vertex vertex;
+			vertex.position_size			= glm::vec4(merged_position, info.size);
+			vertex.texcoord_begin_end		= glm::vec4(info.texcoord_min, info.texcoord_max);
+			vertex.color0					= glm::vec4(info.color0);
+			vertex.color1					= glm::vec4(info.color1);
+			vertex.color2					= glm::vec4(info.color2);
+			vertex.gradient_direction_z_pad	= glm::vec4(glm::vec2(0), -info.z, 0);
+			vertex.border_thickness			= glm::vec4(info.border_thickness);
+			vertex.border_rounding			= glm::vec4(info.border_rounding);
+			vertex.border_color0			= glm::vec4(info.border_color0);
+			vertex.border_color1			= glm::vec4(info.border_color1);
+			vertex.border_color2			= glm::vec4(info.border_color2);
+			vertex.border_color3			= glm::vec4(info.border_color3);
+			vertex.shadow_thickness			= glm::vec4(info.shadow_thickness);
+			vertex.shadow_color				= glm::vec4(info.shadow_color);
 
-			glm::vec4 color0(info.color);
-			glm::vec4 color1(info.color);
-			glm::vec4 color2(info.color);
-			glm::vec4 color3(info.color);
-
-			vertices_to_add.push_back(Vertex(position0, texcoord0, color0));
-			vertices_to_add.push_back(Vertex(position1, texcoord1, color1));
-			vertices_to_add.push_back(Vertex(position2, texcoord2, color2));
-			vertices_to_add.push_back(Vertex(position0, texcoord0, color0));
-			vertices_to_add.push_back(Vertex(position2, texcoord2, color2));
-			vertices_to_add.push_back(Vertex(position3, texcoord3, color3));
-
+			vertices_to_add.push_back(vertex);
+			
 			info.vab_begin = vab_used_size_in_bytes + vertices_to_add.size() * sizeof(Vertex);
 		}
 		});
@@ -420,31 +428,24 @@ void GUI::_update_vab_to_render(element_t id)
 
 		if (info.vab_properties_changed) {
 
-			glm::vec3 position0 = glm::vec3(merged_position + glm::vec2(0, 0),				-info.z);
-			glm::vec3 position1 = glm::vec3(merged_position + glm::vec2(0, info.size.y),	-info.z);
-			glm::vec3 position2 = glm::vec3(merged_position + glm::vec2(info.size),			-info.z);
-			glm::vec3 position3 = glm::vec3(merged_position + glm::vec2(info.size.x, 0),	-info.z);
-
-			glm::vec2 texcoord0(info.texcoord_min.x, info.texcoord_max.y);
-			glm::vec2 texcoord1(info.texcoord_min.x, info.texcoord_min.y);
-			glm::vec2 texcoord2(info.texcoord_max.x, info.texcoord_min.y);
-			glm::vec2 texcoord3(info.texcoord_max.x, info.texcoord_max.y);
-
-			glm::vec4 color0(info.color);
-			glm::vec4 color1(info.color);
-			glm::vec4 color2(info.color);
-			glm::vec4 color3(info.color);
-
-			Vertex vertices[6];
-			vertices[0] = Vertex(position0, texcoord0, color0);
-			vertices[1] = Vertex(position1, texcoord1, color1);
-			vertices[2] = Vertex(position2, texcoord2, color2);
-			vertices[3] = Vertex(position0, texcoord0, color0);
-			vertices[4] = Vertex(position2, texcoord2, color2);
-			vertices[5] = Vertex(position3, texcoord3, color3);
+			Vertex vertex;
+			vertex.position_size			= glm::vec4(merged_position, info.size);
+			vertex.texcoord_begin_end		= glm::vec4(info.texcoord_min, info.texcoord_max);
+			vertex.color0					= glm::vec4(info.color0);
+			vertex.color1					= glm::vec4(info.color1);
+			vertex.color2					= glm::vec4(info.color2);
+			vertex.gradient_direction_z_pad	= glm::vec4(glm::vec2(0), -info.z, 0);
+			vertex.border_thickness			= glm::vec4(info.border_thickness);
+			vertex.border_rounding			= glm::vec4(info.border_rounding);
+			vertex.border_color0			= glm::vec4(info.border_color0);
+			vertex.border_color1			= glm::vec4(info.border_color1);
+			vertex.border_color2			= glm::vec4(info.border_color2);
+			vertex.border_color3			= glm::vec4(info.border_color3);
+			vertex.shadow_thickness			= glm::vec4(info.shadow_thickness);
+			vertex.shadow_color				= glm::vec4(info.shadow_color);
 
 			Buffer& buffer = *vab->get_buffer_slot(0).buffer;
-			buffer.load_data(info.vab_begin, 0, 6 * sizeof(Vertex), vertices);
+			buffer.load_data(info.vab_begin, 0, sizeof(Vertex), &vertex);
 
 			info.vab_properties_changed = false;
 		}
@@ -483,7 +484,7 @@ void GUI::_render_tmp(element_t id)
 		
 		int32_t z = elements[child_id].z;
 
-		immediate.set_fill_color(elements[child_id].color);
+		immediate.set_fill_color(elements[child_id].color0);
 		immediate.draw_quad(
 			glm::vec3(merged_position + glm::vec2(0, 0),						-z),
 			glm::vec3(merged_position + glm::vec2(0, elements[child_id].size.y),	-z),
@@ -597,10 +598,10 @@ void GUI::_render(element_t id)
 			primitive_renderer::render(
 				renderer,
 				*vab,
-				PrimitiveType::triangle,
+				PrimitiveType::point,
 				params,
 				elements[child_id].vab_begin / sizeof(Vertex),
-				6,
+				1,
 				1,
 				0
 			);
@@ -608,15 +609,4 @@ void GUI::_render(element_t id)
 	}
 
 	primitive_renderer::set_viewport(previous_viewport);
-}
-
-GUI::Vertex::Vertex(
-	glm::vec3 pos,
-	glm::vec2 texcoord,
-	glm::vec4 color
-) :
-	position(pos),
-	texcoord(texcoord),
-	color(color)
-{
 }

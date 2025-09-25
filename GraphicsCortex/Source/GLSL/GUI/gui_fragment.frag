@@ -4,11 +4,24 @@
 
 layout (location = 0) out vec4 frag_color;
 
-in vec3 v_position;
-in vec2 v_texcoord;
-in vec4 v_color;
+in vec4 g_position_size;
+in vec4 g_texcoord_begin_end;
+in vec4 g_color0;
+in vec4 g_color1;
+in vec4 g_color2;
+in vec4 g_gradient_direction_z_pad;
+in vec4 g_border_thickness;
+in vec4 g_border_rounding;
+in vec4 g_border_color0;
+in vec4 g_border_color1;
+in vec4 g_border_color2;
+in vec4 g_border_color3;
+in vec4 g_shadow_thickness;
+in vec4 g_shadow_color;
+
+in vec2 texcoord;
 
 void main(){
-	frag_color = v_color;
+	frag_color = g_color0;
  }
 
