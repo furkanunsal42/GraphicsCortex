@@ -81,18 +81,6 @@ glm::vec4& Element::color()
 	return GUI::get().elements[id].color0;
 }
 
-glm::vec4& Element::border_color()
-{
-	if (!GUI::get().does_element_exist(*this)) {
-		std::cout << "[GUI Error] Element::border_color() is called on invalid Element" << std::endl;
-		ASSERT(false);
-	}
-
-	GUI::get().elements[id].vab_properties_changed = true;
-
-	return GUI::get().elements[id].border_color;
-}
-
 glm::vec4& Element::border_thickness()
 {
 	if (!GUI::get().does_element_exist(*this)) {
@@ -104,6 +92,78 @@ glm::vec4& Element::border_thickness()
 
 	return GUI::get().elements[id].border_thickness;
 
+}
+
+glm::vec4& Element::border_color0()
+{
+	if (!GUI::get().does_element_exist(*this)) {
+		std::cout << "[GUI Error] Element::border_color0() is called on invalid Element" << std::endl;
+		ASSERT(false);
+	}
+
+	GUI::get().elements[id].vab_properties_changed = true;
+
+	return GUI::get().elements[id].border_color0;
+}
+
+glm::vec4& Element::border_color1()
+{
+	if (!GUI::get().does_element_exist(*this)) {
+		std::cout << "[GUI Error] Element::border_color1() is called on invalid Element" << std::endl;
+		ASSERT(false);
+	}
+
+	GUI::get().elements[id].vab_properties_changed = true;
+
+	return GUI::get().elements[id].border_color1;
+}
+
+glm::vec4& Element::border_color2()
+{
+	if (!GUI::get().does_element_exist(*this)) {
+		std::cout << "[GUI Error] Element::border_color2() is called on invalid Element" << std::endl;
+		ASSERT(false);
+	}
+
+	GUI::get().elements[id].vab_properties_changed = true;
+
+	return GUI::get().elements[id].border_color2;
+}
+
+glm::vec4& Element::border_color3()
+{
+	if (!GUI::get().does_element_exist(*this)) {
+		std::cout << "[GUI Error] Element::border_color3() is called on invalid Element" << std::endl;
+		ASSERT(false);
+	}
+
+	GUI::get().elements[id].vab_properties_changed = true;
+
+	return GUI::get().elements[id].border_color3;
+}
+
+glm::vec4& Element::shadow_thickness()
+{
+	if (!GUI::get().does_element_exist(*this)) {
+		std::cout << "[GUI Error] Element::shadow_thickness() is called on invalid Element" << std::endl;
+		ASSERT(false);
+	}
+
+	GUI::get().elements[id].vab_properties_changed = true;
+
+	return GUI::get().elements[id].shadow_thickness;
+}
+
+glm::vec4& Element::shadow_color()
+{
+	if (!GUI::get().does_element_exist(*this)) {
+		std::cout << "[GUI Error] Element::shadow_color() is called on invalid Element" << std::endl;
+		ASSERT(false);
+	}
+
+	GUI::get().elements[id].vab_properties_changed = true;
+
+	return GUI::get().elements[id].shadow_color;
 }
 
 glm::vec2& Element::position() {

@@ -102,7 +102,6 @@ private:
 		glm::vec4 color0 = glm::vec4(1);
 		glm::vec4 color1 = glm::vec4(1);
 		glm::vec4 color2 = glm::vec4(1);
-		glm::vec4 border_color = glm::vec4(1);
 		glm::vec4 border_thickness = glm::vec4(0);
 		glm::vec4 border_rounding = glm::vec4(0);
 		glm::vec4 border_color0 = glm::vec4(0);

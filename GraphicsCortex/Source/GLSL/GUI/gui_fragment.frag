@@ -20,8 +20,30 @@ in vec4 g_shadow_thickness;
 in vec4 g_shadow_color;
 
 in vec2 texcoord;
+in vec2 position;
 
 void main(){
-	frag_color = g_color0;
- }
 
+	const vec2 position_local = position - g_position_size.xy;
+	const vec2 size = g_position_size.zw;
+
+	vec4 border_distances;
+	border_distances.x = position_local.x;
+	border_distances.y = position_local.y;
+	border_distances.z = size.x - position_local.x;
+	border_distances.w = size.y - position_local.y;
+	border_distances -= g_border_thickness;
+
+	bvec4 borders = lessThan(border_distances, vec4(0));
+	bvec4 mask = lessThanEqual(border_distances.xyzw, min(min(border_distances.yxxx, border_distances.zzyy), border_distances.wwwz));
+	borders = mask && borders;
+
+	const vec4 active_color =	
+		borders.x	? g_border_color0 :
+		borders.y	? g_border_color1 :
+		borders.z	? g_border_color2 :
+		borders.w	? g_border_color3 :
+		g_color0;
+
+	frag_color = active_color;
+}

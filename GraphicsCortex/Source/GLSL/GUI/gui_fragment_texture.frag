@@ -22,6 +22,7 @@ in vec4 g_shadow_thickness;
 in vec4 g_shadow_color;
 
 in vec2 texcoord;
+in vec2 position;
 
 void main(){
 	frag_color = texture(source_texture, texcoord) * g_color0;

@@ -17,23 +17,45 @@ public:
 
 	Widget();
 
-	glm::vec4 margin = glm::vec4(0);
-	glm::vec4 padding = glm::vec4(0);
+	struct SpecializationStyle {
+		std::optional<glm::vec4> color				= std::nullopt;
+		std::optional<glm::vec2> target_size		= std::nullopt;
+		std::optional<glm::vec4> margin				= std::nullopt;
+		std::optional<glm::vec4> padding			= std::nullopt;
+		std::optional<glm::vec4> border_rounding	= std::nullopt;
+		std::optional<glm::vec4> border_thickness	= std::nullopt;
+		std::optional<glm::vec4> border_color0		= std::nullopt;
+		std::optional<glm::vec4> border_color1		= std::nullopt;
+		std::optional<glm::vec4> border_color2		= std::nullopt;
+		std::optional<glm::vec4> border_color3		= std::nullopt;
+		std::optional<glm::vec4> shadow_thickness	= std::nullopt;
+		std::optional<glm::vec4> shadow_color		= std::nullopt;
+		int32_t z = 0;
+		widget_style_t style						= invalid_widget_style;
+		//glm::vec2 min_size;
+		//glm::vec2 max_size;
+	};
 
-	glm::vec2 target_size = glm::vec2(0);
+	std::optional<glm::vec4> color				= glm::vec4(1, 1, 1, 1);
+	std::optional<glm::vec2> target_size		= glm::vec2(0);
+	std::optional<glm::vec4> margin				= glm::vec4(0);
+	std::optional<glm::vec4> padding			= glm::vec4(0);
+	std::optional<glm::vec4> border_rounding	= glm::vec4(0);
+	std::optional<glm::vec4> border_thickness	= glm::vec4(0);
+	std::optional<glm::vec4> border_color0		= glm::vec4(0, 0, 0, 1);
+	std::optional<glm::vec4> border_color1		= std::nullopt;
+	std::optional<glm::vec4> border_color2		= std::nullopt;
+	std::optional<glm::vec4> border_color3		= std::nullopt;
+	std::optional<glm::vec4> shadow_thickness	= glm::vec4(0);
+	std::optional<glm::vec4> shadow_color		= glm::vec4(0);
+	int32_t z = 0;
+	widget_style_t style = invalid_widget_style;
 	//glm::vec2 min_size;
 	//glm::vec2 max_size;
 
-	glm::vec4 border_rounding = glm::vec4(0);
-	glm::vec4 border_thickness = glm::vec4(0);
-	glm::vec4 border_color = glm::vec4(0, 0, 0, 1);
+	SpecializationStyle on_hover;
+	SpecializationStyle on_hold;
 
-	int32_t z = 0;
-
-	glm::vec4 color = glm::vec4(1, 1, 1, 1);
-
-	widget_style_t style = invalid_widget_style;
-	
 	void apply_properties_to_element(Element& element, glm::vec2 allocated_size);
 
 	virtual Element& get_element(glm::vec2 allocated_size) = 0;

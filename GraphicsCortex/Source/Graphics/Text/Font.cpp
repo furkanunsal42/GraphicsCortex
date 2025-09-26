@@ -98,7 +98,11 @@ FontBank::Font FontBank::_load(const std::filesystem::path& font_file_path, int3
 		texture_resolution.y * 
 		Texture2D::ColorTextureFormat_bytes_per_pixel(Texture2D::ColorTextureFormat::RGBA8)
 		];
-
+	std::memset(png_data, 0,
+		texture_resolution.x *
+		texture_resolution.y *
+		Texture2D::ColorTextureFormat_bytes_per_pixel(Texture2D::ColorTextureFormat::RGBA8)
+	);
 	
 	pen = glm::ivec2(0);
 

@@ -41,8 +41,13 @@ public:
 	glm::vec2& texcoord_min();
 	glm::vec2& texcoord_max();
 	glm::vec4& color();
-	glm::vec4& border_color();
 	glm::vec4& border_thickness();
+	glm::vec4& border_color0();
+	glm::vec4& border_color1();
+	glm::vec4& border_color2();
+	glm::vec4& border_color3();
+	glm::vec4& shadow_thickness();
+	glm::vec4& shadow_color();
 	glm::vec2& position();
 	glm::vec2& size();
 	int32_t& z();

@@ -32,7 +32,17 @@ public:
 		font_id font = FontBank::get().load_font("../GraphicsCortex/Fonts/Roboto-Regular.ttf", 64);
 
 		auto button = widget::create<widget::Button>();
-		button->label->text = U"Kendimi Şanslı Hissediyorum";
+		button->target_size = glm::vec2(0);
+		button->padding = glm::vec4(43, 13, 43, 13);
+		//button->padding = glm::vec4(0);
+		button->label->text = U"Kendimi Şanlı Hissediyorum";
+		button->label->text_color = glm::vec4(0, 0, 0, 1);
+		button->color = glm::vec4(0.88, 0.88, 0.88, 1);
+		button->border_thickness = glm::vec4(2);
+		button->border_color0 = glm::vec4(0, 0.47, 0.84, 1);
+		button->border_color1 = glm::vec4(0, 0.47, 0.84, 1);
+		button->border_color2 = glm::vec4(0, 0.47, 0.84, 1);
+		button->border_color3 = glm::vec4(0, 0.47, 0.84, 1);
 
 		//auto grid = widget::create<widget::Grid>();
 		//grid->add_row(100);
@@ -65,7 +75,7 @@ public:
 
 		while (true) {
 			double deltatime = default_window->handle_events(true);
-			primitive_renderer::clear(0.12, 0.12, 0.12, 1);
+			primitive_renderer::clear(0.94, 0.94, 0.94, 1);
 
 			GUI::get().render(button);
 
