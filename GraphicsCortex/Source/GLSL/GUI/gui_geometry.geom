@@ -57,33 +57,33 @@ void main(){
 	g_shadow_thickness			= v_shadow_thickness[0];
 	g_shadow_color				= v_shadow_color[0];
 
-	texcoord	= glm::vec2(v_texcoord_begin_end[0].x, v_texcoord_begin_end[0].w);
+	texcoord	= vec2(v_texcoord_begin_end[0].x, v_texcoord_begin_end[0].w);
 	position	= v_position_size[0].xy			+ vec2(0, 0) * vec2(v_position_size[0].z, v_position_size[0].w);
 	gl_Position = projection * vec4(position, v_gradient_direction_z_pad[0].z, 1);
 	EmitVertex();
 
-	texcoord	= glm::vec2(v_texcoord_begin_end[0].x, v_texcoord_begin_end[0].y);
+	texcoord	= vec2(v_texcoord_begin_end[0].x, v_texcoord_begin_end[0].y);
 	position	= v_position_size[0].xy			+ vec2(0, 1) * vec2(v_position_size[0].z, v_position_size[0].w);
 	gl_Position = projection * vec4(position, v_gradient_direction_z_pad[0].z, 1);
 	EmitVertex();
 
-	texcoord	= glm::vec2(v_texcoord_begin_end[0].z, v_texcoord_begin_end[0].y);
+	texcoord	= vec2(v_texcoord_begin_end[0].z, v_texcoord_begin_end[0].y);
 	position	= v_position_size[0].xy			+ vec2(1, 1) * vec2(v_position_size[0].z, v_position_size[0].w);
 	gl_Position = projection * vec4(position, v_gradient_direction_z_pad[0].z, 1);
 	EmitVertex();
 	EndPrimitive();
 
-	texcoord	= glm::vec2(v_texcoord_begin_end[0].x, v_texcoord_begin_end[0].w);
+	texcoord	= vec2(v_texcoord_begin_end[0].x, v_texcoord_begin_end[0].w);
 	position	= v_position_size[0].xy			+ vec2(0, 0) * vec2(v_position_size[0].z, v_position_size[0].w);
 	gl_Position = projection * vec4(position, v_gradient_direction_z_pad[0].z, 1);
 	EmitVertex();
 	
-	texcoord	= glm::vec2(v_texcoord_begin_end[0].z, v_texcoord_begin_end[0].y);
+	texcoord	= vec2(v_texcoord_begin_end[0].z, v_texcoord_begin_end[0].y);
 	position	= v_position_size[0].xy			+ vec2(1, 1) * vec2(v_position_size[0].z, v_position_size[0].w);
 	gl_Position = projection * vec4(position, v_gradient_direction_z_pad[0].z, 1);
 	EmitVertex();
 	
-	texcoord	= glm::vec2(v_texcoord_begin_end[0].z, v_texcoord_begin_end[0].w);
+	texcoord	= vec2(v_texcoord_begin_end[0].z, v_texcoord_begin_end[0].w);
 	position	= v_position_size[0].xy			+ vec2(1, 0) * vec2(v_position_size[0].z, v_position_size[0].w);
 	gl_Position = projection * vec4(position, v_gradient_direction_z_pad[0].z, 1);
 	EmitVertex();

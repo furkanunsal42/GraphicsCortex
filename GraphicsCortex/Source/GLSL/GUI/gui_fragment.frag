@@ -22,6 +22,15 @@ in vec4 g_shadow_color;
 in vec2 texcoord;
 in vec2 position;
 
+bvec4 and(bvec4 a, bvec4 b){
+	return bvec4(
+		a.x && b.x,
+		a.y && b.y,
+		a.z && b.z,
+		a.w && b.w
+		);
+}
+
 void main(){
 
 	const vec2 position_local = position - g_position_size.xy;
@@ -36,7 +45,7 @@ void main(){
 
 	bvec4 borders = lessThan(border_distances, vec4(0));
 	bvec4 mask = lessThanEqual(border_distances.xyzw, min(min(border_distances.yxxx, border_distances.zzyy), border_distances.wwwz));
-	borders = mask && borders;
+	borders = and(mask, borders);
 
 	const vec4 active_color =	
 		borders.x	? g_border_color0 :
