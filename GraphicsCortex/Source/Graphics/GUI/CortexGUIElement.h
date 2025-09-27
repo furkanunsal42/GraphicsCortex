@@ -42,6 +42,7 @@ public:
 	glm::vec2& texcoord_max();
 	glm::vec4& color();
 	glm::vec4& border_thickness();
+	glm::vec4& border_rounding();
 	glm::vec4& border_color0();
 	glm::vec4& border_color1();
 	glm::vec4& border_color2();

@@ -94,6 +94,18 @@ glm::vec4& Element::border_thickness()
 
 }
 
+glm::vec4& Element::border_rounding()
+{
+	if (!GUI::get().does_element_exist(*this)) {
+		std::cout << "[GUI Error] Element::border_rounding() is called on invalid Element" << std::endl;
+		ASSERT(false);
+	}
+
+	GUI::get().elements[id].vab_properties_changed = true;
+
+	return GUI::get().elements[id].border_rounding;
+}
+
 glm::vec4& Element::border_color0()
 {
 	if (!GUI::get().does_element_exist(*this)) {

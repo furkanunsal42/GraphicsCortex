@@ -18,6 +18,8 @@ void Widget::apply_properties_to_element(Element& element, glm::vec2 allocated_s
 	element.border_color2() = border_color2;
 	element.border_color3() = border_color3;
 	
+	element.border_rounding() = border_rounding;
+
 	element.shadow_color() = shadow_color;
 	element.shadow_thickness() = shadow_thickness;
 };

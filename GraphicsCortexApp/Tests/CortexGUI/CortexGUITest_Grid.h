@@ -15,10 +15,14 @@
 
 #include "CortexGUIWidgets/Interactive/GUIWidget_Button.h"
 
+#include <chrono>
+
 class CortexGUITest_Grid : public TestBench {
 public:
 
 	bool run() {
+
+		using namespace std::chrono_literals;
 
 		default_window_desc = new WindowDescription();
 		default_window_desc->w_resolution = glm::ivec2(1920, 1080);
@@ -31,6 +35,12 @@ public:
 
 		font_id font = FontBank::get().load_font("../GraphicsCortex/Fonts/Roboto-Regular.ttf", 64);
 
+		//auto rectangle = widget::create<widget::Rectangle>();
+		//rectangle->target_size = glm::vec2(100, 40);
+		//rectangle->color = glm::vec4(0.5, 0.5, 0.5, 1);
+		////rectangle->border_rounding = glm::vec4(20);
+		//rectangle->border_thickness = glm::vec4(10);
+
 		auto button = widget::create<widget::Button>();
 		button->target_size = glm::vec2(0);
 		button->padding = glm::vec4(43, 13, 43, 13);
@@ -38,13 +48,18 @@ public:
 		button->label->text = U"Kendimi Şanlı Hissediyorum";
 		button->label->text_color = glm::vec4(0, 0, 0, 1);
 		button->color = glm::vec4(0.88, 0.88, 0.88, 1);
+		//button->color = glm::vec4(0.12, 0.12, 0.12, 1);
 		button->border_thickness = glm::vec4(2);
 		button->border_color0 = glm::vec4(0, 0.47, 0.84, 1);
 		button->border_color1 = glm::vec4(0, 0.47, 0.84, 1);
 		button->border_color2 = glm::vec4(0, 0.47, 0.84, 1);
 		button->border_color3 = glm::vec4(0, 0.47, 0.84, 1);
 
+		button->border_rounding = glm::vec4(10);
+
 		//auto grid = widget::create<widget::Grid>();
+		//grid->color = glm::vec4(1, 0, 0, 1);
+		//grid->target_size = glm::vec4(0);
 		//grid->add_row(100);
 		//grid->add_row(100);
 		//grid->add_column(100);
@@ -52,11 +67,11 @@ public:
 		//
 		//auto label = widget::create<widget::Label>();
 		//label->font = font;
-		//label->text = "Portakal Ortakal!";
+		//label->text = U"Portakal Ortakal!";
 		//label->margin = glm::vec4(0, -1, 0, -1);
 		//label->target_size = glm::vec2(0);
-		//label->color = glm::vec4(0, 0, 0, 1);
-		//label->text_color = glm::vec4(1, 1, 1, 1);
+		//label->color = glm::vec4(0, 0, 0, 0);
+		//label->text_color = glm::vec4(0, 0, 0, 1);
 		//label->z = 2;
 		//grid->add(label, 1, 0);
 		//
