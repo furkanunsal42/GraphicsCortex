@@ -324,6 +324,51 @@ void Window::_initialize(const WindowDescription& description)
 	}
 }
 
+Window::Window(Window&& other) :
+	handle(std::move(other.handle)),
+	newsletters(std::move(other.newsletters)),
+	window_name(std::move(other.window_name)),
+	last_handle_events_time(std::move(other.last_handle_events_time)),
+	last_perforamnce_print_time(std::move(other.last_perforamnce_print_time)),
+	frame_count_since_performance_print(std::move(other.frame_count_since_performance_print))
+{
+	if (glfwGetWindowUserPointer((GLFWwindow*)handle) == &other)
+		glfwSetWindowUserPointer((GLFWwindow*)handle, this);
+
+	if (active_window == &other) {
+		active_window = this;
+	}
+
+	other.handle = nullptr;
+	other.newsletters = nullptr;
+}
+
+Window& Window::operator=(Window&& other)
+{
+	release();
+
+	if (this == &other)
+		return *this;
+
+	handle								= std::move(other.handle);
+	newsletters							= std::move(other.newsletters);
+	window_name							= std::move(other.window_name);
+	last_handle_events_time				= std::move(other.last_handle_events_time);
+	last_perforamnce_print_time			= std::move(other.last_perforamnce_print_time);
+	frame_count_since_performance_print = std::move(other.frame_count_since_performance_print);
+
+	if (glfwGetWindowUserPointer((GLFWwindow*)handle) == &other)
+		glfwSetWindowUserPointer((GLFWwindow*)handle, this);
+
+	if (active_window == &other)
+		active_window = this;
+
+	other.handle = nullptr;
+	other.newsletters = nullptr;
+	
+	return *this;
+}
+
 Window::~Window()
 {
 	release();
@@ -340,6 +385,8 @@ void Window::release()
 	context_to_global_resources.erase(handle);
 	if (active_global_resources == owned_global_resources)
 		active_global_resources = nullptr;
+	if (active_window == this)
+		active_window = nullptr;
 
 	if (handle != nullptr) {
 		glfwDestroyWindow((GLFWwindow*)handle);
@@ -352,6 +399,7 @@ void Window::context_make_current()
 	glfwMakeContextCurrent((GLFWwindow*)handle);
 
 	active_global_resources = &(context_to_global_resources[handle]);
+	active_window = this;
 }
 
 // event handling

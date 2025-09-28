@@ -15,18 +15,7 @@ typedef uint32_t element_t;
 constexpr static element_t root_element = 0;
 constexpr static element_t invalid_element = -1;
 
-// Weak EventType variants doesn't require the element to be top-most widget
-enum GUIEventType {
-	Hovered_Weak,
-	Clicked_Weak,
-	RightClicked_Weak,
-	DoubleClicked_Weak,
 
-	Hovered,
-	Clicked,
-	RightClicked,
-	DoubleClicked,
-};
 
 class Element {
 public:
@@ -57,8 +46,8 @@ public:
 
 	friend bool operator==(const Element& a, const Element& b);
 
-	void set_on_render_function(std::function<void()> render_function);
-	void set_on_event_function(std::function<void(GUIEventType)> event_function);
+	//void set_on_render_function(std::function<void()> render_function);
+	//void set_on_event_function(std::function<void(GUIEventType)> event_function);
 
 	static const Element null_element;
 

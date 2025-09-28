@@ -28,6 +28,14 @@ namespace widget {
 			label->z = z;
 
 			add(label, 0, 0);
+
+			events.subscribe([](GUIEvent event) {
+				if (event == GUIEvent::HoverBegin_Weak)
+					std::cout << "Hover Begin" << std::endl;
+				if (event == GUIEvent::HoverEnd_Weak)
+					std::cout << "Hover End" << std::endl;
+				});
+
 		}
 
 		Element& get_element(glm::vec2 allocated_size) {

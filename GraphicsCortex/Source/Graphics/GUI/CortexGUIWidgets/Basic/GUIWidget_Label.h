@@ -23,6 +23,22 @@ namespace widget {
 			return element;
 		}
 
+		//void poll_events(glm::vec2 absolute_position) override {
+		//	AABB2 self_aabb(absolute_position, absolute_position + element.size());
+		//	glm::vec2 cursor_pos = GUI::get().get_window()->get_cursor_position();
+		//
+		//	//std::cout << "label pos: " << self_aabb.low.x << ", " << self_aabb.low.y << "   end_pos: " << self_aabb.high.x << ", " << self_aabb.high.y << std::endl;
+		//	//std::cout << "cursor pos: " << cursor_pos.x << ", " << cursor_pos.y << std::endl;
+		//
+		//	if (self_aabb.does_contain(cursor_pos) && last_hover_begin == invalid_time) {
+		//		events.publish(GUIEvent::Hovered_Weak);
+		//		last_hover_begin = std::chrono::system_clock::now();
+		//	}
+		//	else if (!self_aabb.does_contain(cursor_pos)) {
+		//		last_hover_begin = invalid_time;
+		//	}
+		//}
+
 	private:
 
 		void update_glyphs() {
@@ -80,6 +96,8 @@ namespace widget {
 			if (element.size().x == 0)	element.size().x = text_size.x;
 			if (element.size().y == 0)	element.size().y = text_size.y;
 		}
+
+		
 
 		std::vector<std::pair<uint32_t, Element>> glyphs;
 	};

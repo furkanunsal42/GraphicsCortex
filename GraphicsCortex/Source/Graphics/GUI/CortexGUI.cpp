@@ -4,6 +4,7 @@
 
 #include "PrimitiveRenderer.h"
 #include "WindowBoundGlobalResources.h"
+#include "Window.h"
 
 std::filesystem::path gui_renderer_shader_parent_path = "../GraphicsCortex/Source/GLSL/GUI/";
 
@@ -67,8 +68,26 @@ Widget& GUI::get_widget_data(widget_t id)
 	return *widgets[id];
 }
 
+Window* GUI::get_window()
+{
+	if (active_window == nullptr) {
+		std::cout << "[GUI Error] GUI::get_window() is called but no active windows were present" << std::endl;
+		ASSERT(false);
+	}
+	if (active_window->get_handle() != attached_window_handle) {
+		std::cout << "[GUI Error] GUI::get_window() is called active window and GUI::attached_window_handle doesn't match" << std::endl;
+		ASSERT(false);
+	}
+	return active_window;
+}
+
 GUI::GUI()
 {
+	if (active_window == nullptr) {
+		std::cout << "[GUI error] GUI cannot be initialized when an active Window is not present" << std::endl;
+		ASSERT(false);
+	}
+	attached_window_handle = active_window->get_handle();
 }
 
 void GUI::_compile_shaders() {

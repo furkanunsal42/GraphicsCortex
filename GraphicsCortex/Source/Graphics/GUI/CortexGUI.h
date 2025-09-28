@@ -22,9 +22,12 @@ namespace widget {
 	template<typename T> bool does_exist(WidgetHandle<T>& widget);
 }
 
+class Window;
+
 class GUI {
 public:
 	static GUI& get();
+
 	ImmediateRenderer& get_immediate_renderer();
 
 	template<typename T> WidgetHandle<T> create_widget();
@@ -40,8 +43,10 @@ public:
 	void render(Element& root_element);
 	template<typename T>
 	void render(WidgetHandle<T>& widget);
-
+	
 	Widget& get_widget_data(widget_t id);
+
+	Window* get_window();
 
 private:
 	friend Element;
@@ -120,8 +125,8 @@ private:
 		bool pass_through_cursor_event = false;
 		float render_target_fps = render_only_when_dirty;
 
-		std::function<void()> custom_on_render;
-		std::function<void(GUIEventType)> custom_on_event;
+		//std::function<void()> custom_on_render;
+		//std::function<void(GUIEventType)> custom_on_event;
 
 		size_t vab_begin = element_does_not_exist;
 	

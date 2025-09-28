@@ -14,11 +14,11 @@ namespace widget {
 		void add_column(float width);
 		void set_column_size(float width, int32_t column_index);
 
-
 		void add(widget_t widget, int32_t row_index, int32_t column_index);
 		void remove(widget_t widget);
 		
 		Element& get_element(glm::vec2 allocated_size);
+		void poll_events(glm::vec2 absolute_position) override;
 
 	private:
 

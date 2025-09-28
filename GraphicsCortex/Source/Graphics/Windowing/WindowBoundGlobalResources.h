@@ -26,3 +26,4 @@ public:
 
 extern std::unordered_map<void*, GlobalResources> context_to_global_resources;
 extern GlobalResources* active_global_resources;
+extern Window* active_window;

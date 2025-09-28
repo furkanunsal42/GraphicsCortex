@@ -14,6 +14,10 @@ public:
 		WindowDescription desc;
 		auto window = std::make_shared<Window>(desc);
 
+		//Window window2(glm::vec2(100, 100), "window2");
+		//window2 = std::move(*window);
+		//window2.context_make_current();
+
 		window->newsletters->on_filepath_drop_events.subscribe([](const std::vector<std::filesystem::path>& paths) {
 			for (auto& path : paths)
 				std::wcout << path.c_str() << std::endl;

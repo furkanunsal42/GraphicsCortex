@@ -63,6 +63,9 @@ public:
 	static std::shared_ptr<Window> create_from_current();
 
 	Window(const Window& other) = delete;
+	Window(Window&& other);
+	Window& operator=(Window& other) = delete;
+	Window& operator=(Window&& other);
 	~Window();
 
 	void release();
@@ -398,10 +401,10 @@ protected:
 	};
 
 	void _initialize(const WindowDescription& description);
+	constexpr static std::chrono::system_clock::time_point invalid_time = std::chrono::system_clock::time_point::max();
+
 	void* handle = nullptr;
 	std::string window_name;
-
-	const std::chrono::system_clock::time_point invalid_time = std::chrono::system_clock::time_point(std::chrono::milliseconds::max());
 	std::chrono::system_clock::time_point last_handle_events_time = invalid_time;
 	std::chrono::system_clock::time_point last_perforamnce_print_time = invalid_time;
 	uint32_t frame_count_since_performance_print = 0;

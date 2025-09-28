@@ -42,20 +42,40 @@ public:
 		//rectangle->border_thickness = glm::vec4(10);
 
 		auto button = widget::create<widget::Button>();
-		button->target_size = glm::vec2(200, 100);
-		//button->padding = glm::vec4(43, 13, 43, 13);
-		button->padding = glm::vec4(0);
-		button->label->text = U"Kendimi Şanlı Hissediyorum";
+		button->target_size = glm::vec2(0);
+		button->padding = glm::vec4(43, 13, 43, 13);
+		//button->padding = glm::vec4(0);
+		button->label->text = U"Kendimi Şanslı Hissediyorum";
 		button->label->text_color = glm::vec4(0, 0, 0, 1);
 		button->color = glm::vec4(0.88, 0.88, 0.88, 1);
 		//button->color = glm::vec4(0.12, 0.12, 0.12, 1);
-		button->border_thickness = glm::vec4(10, 20, 10, 10);
-		button->border_color0 = glm::vec4(1, 0, 0, 1);
-		button->border_color1 = glm::vec4(0, 1, 0, 1);
-		button->border_color2 = glm::vec4(0, 0, 1, 1);
-		button->border_color3 = glm::vec4(1, 1, 0, 1);
+		button->border_thickness = glm::vec4(2);
+		//button->border_rounding = glm::vec4(10);
+		
+		//button->border_color0 = glm::vec4(0.68, 0.68, 0.68, 1);
+		//button->border_color1 = glm::vec4(0.68, 0.68, 0.68, 1);
+		//button->border_color2 = glm::vec4(0.68, 0.68, 0.68, 1);
+		//button->border_color3 = glm::vec4(0.68, 0.68, 0.68, 1);
 
-		button->border_rounding = glm::vec4(50);
+		button->border_color0 = glm::vec4(0.0, 0.47, 0.84, 1);
+		button->border_color1 = glm::vec4(0.0, 0.47, 0.84, 1);
+		button->border_color2 = glm::vec4(0.0, 0.47, 0.84, 1);
+		button->border_color3 = glm::vec4(0.0, 0.47, 0.84, 1);
+
+		button->on_hover.border_color0 = glm::vec4(0.0, 0.47, 0.84, 1);
+		button->on_hover.border_color1 = glm::vec4(0.0, 0.47, 0.84, 1);
+		button->on_hover.border_color2 = glm::vec4(0.0, 0.47, 0.84, 1);
+		button->on_hover.border_color3 = glm::vec4(0.0, 0.47, 0.84, 1);
+		button->on_hover.border_color0_transition = 150ms;
+		button->on_hover.border_color1_transition = 150ms;
+		button->on_hover.border_color2_transition = 150ms;
+		button->on_hover.border_color3_transition = 150ms;
+
+		button->on_hover.color = glm::vec4(0.9, 0.95, 0.98, 1);
+		button->on_hover.color_transition = 150ms;
+
+		button->on_hover.border_thickness = glm::vec4(1);
+		button->on_hover.border_thickness_transition = 150ms;
 
 		//auto grid = widget::create<widget::Grid>();
 		//grid->color = glm::vec4(1, 0, 0, 1);
@@ -91,8 +111,9 @@ public:
 		while (true) {
 			double deltatime = default_window->handle_events(true);
 			primitive_renderer::clear(0.94, 0.94, 0.94, 1);
-
+			
 			GUI::get().render(button);
+			button->poll_events(glm::vec2(0));
 
 			default_window->swap_buffers();
 		}
