@@ -33,7 +33,7 @@ public:
 	};
 
 	font_id load_font(const std::filesystem::path& font_file_path, int32_t font_size = 32);
-	Font get_font(font_id font);
+	const Font& get_font(font_id font);
 	bool does_font_exist(font_id font);
 
 	void clear();

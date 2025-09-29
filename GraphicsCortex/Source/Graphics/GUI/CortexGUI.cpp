@@ -16,6 +16,13 @@ GUI& GUI::get()
 	return *active_global_resources->GUI;
 }
 
+void GUI::end_frame() {
+	is_mouse_left_press_impulse = false;
+	is_mouse_left_release_impulse = false;
+	is_mouse_right_press_impulse = false;
+	is_mouse_right_release_impulse = false;
+}
+
 ImmediateRenderer& GUI::get_immediate_renderer()
 {
 	if (immediate_renderer == nullptr)
@@ -81,6 +88,26 @@ Window* GUI::get_window()
 	return active_window;
 }
 
+bool GUI::get_mouse_left_press_impulse()
+{
+	return is_mouse_left_press_impulse;
+}
+
+bool GUI::get_mouse_left_release_impulse()
+{
+	return is_mouse_left_release_impulse;
+}
+
+bool GUI::get_mouse_right_press_impulse()
+{
+	return is_mouse_right_press_impulse;
+}
+
+bool GUI::get_mouse_right_release_impulse()
+{
+	return is_mouse_right_release_impulse;
+}
+
 GUI::GUI()
 {
 	if (active_window == nullptr) {
@@ -88,6 +115,26 @@ GUI::GUI()
 		ASSERT(false);
 	}
 	attached_window_handle = active_window->get_handle();
+
+	mouse_newsletter = get_window()->newsletters->on_mouse_key_events.subscribe([&](Window::MousePressResult r) {
+		
+		if (r.button == Window::MouseButton::LEFT &&
+			r.action == Window::PressAction::PRESS)
+			is_mouse_left_press_impulse = true;
+
+		if (r.button == Window::MouseButton::LEFT &&
+			r.action == Window::PressAction::RELEASE)
+			is_mouse_left_release_impulse = true;
+
+		if (r.button == Window::MouseButton::RIGHT &&
+			r.action == Window::PressAction::PRESS)
+			is_mouse_right_press_impulse = true;
+
+		if (r.button == Window::MouseButton::RIGHT && 
+			r.action == Window::PressAction::RELEASE)
+			is_mouse_right_release_impulse = true;
+
+		});
 }
 
 void GUI::_compile_shaders() {

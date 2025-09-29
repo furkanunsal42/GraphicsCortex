@@ -26,12 +26,14 @@ font_id FontBank::load_font(const std::filesystem::path& font_file_path, int32_t
 	}
 }
 
-FontBank::Font FontBank::get_font(font_id font)
+const FontBank::Font& FontBank::get_font(font_id font)
 {
 	if (does_font_exist(font))
 		return _id_to_font[font];
-	else
-		return Font();
+	else {
+		std::cout << "[FontBank Error] FontBank::get_font() is called but given font does not exist" << std::endl;
+		ASSERT(false);
+	}
 }
 
 bool FontBank::does_font_exist(font_id font)

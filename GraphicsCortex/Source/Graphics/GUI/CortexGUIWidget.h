@@ -12,16 +12,13 @@
 
 // Weak EventType variants doesn't require the element to be top-most widget
 enum GUIEvent {
-	HoverBegin_Weak,
-	HoverEnd_Weak,
-	Clicked_Weak,
-	RightClicked_Weak,
-	DoubleClicked_Weak,
-
-	Hovered,
+	HoverBegin,
+	HoverEnd,
+	HoldBegin,
+	HoldEnd,
 	Clicked,
-	RightClicked,
 	DoubleClicked,
+	RightClicked,
 };
 
 class GUI;
@@ -33,36 +30,6 @@ class Widget {
 public:
 
 	Widget();
-
-	struct SpecializationStyle {
-		std::optional<glm::vec4> color				= std::nullopt;
-		std::optional<glm::vec4> border_rounding	= std::nullopt;
-		std::optional<glm::vec4> border_thickness	= std::nullopt;
-		std::optional<glm::vec4> border_color0		= std::nullopt;
-		std::optional<glm::vec4> border_color1		= std::nullopt;
-		std::optional<glm::vec4> border_color2		= std::nullopt;
-		std::optional<glm::vec4> border_color3		= std::nullopt;
-		std::optional<glm::vec4> shadow_thickness	= std::nullopt;
-		std::optional<glm::vec4> shadow_color		= std::nullopt;
-
-		std::chrono::system_clock::duration color_transition				= std::chrono::system_clock::duration(0);
-		std::chrono::system_clock::duration border_rounding_transition		= std::chrono::system_clock::duration(0);
-		std::chrono::system_clock::duration border_thickness_transition		= std::chrono::system_clock::duration(0);
-		std::chrono::system_clock::duration border_color0_transition		= std::chrono::system_clock::duration(0);
-		std::chrono::system_clock::duration border_color1_transition		= std::chrono::system_clock::duration(0);
-		std::chrono::system_clock::duration border_color2_transition		= std::chrono::system_clock::duration(0);
-		std::chrono::system_clock::duration border_color3_transition		= std::chrono::system_clock::duration(0);
-		std::chrono::system_clock::duration shadow_thickness_transition		= std::chrono::system_clock::duration(0);
-		std::chrono::system_clock::duration shadow_color_transition			= std::chrono::system_clock::duration(0);
-
-		widget_style_t style						= invalid_widget_style;
-		//glm::vec2 target_size		= glm::vec2(0);
-		//int32_t z = 0;
-		//glm::vec4 margin			= glm::vec4(0);
-		//glm::vec4 padding			= glm::vec4(0);
-		//glm::vec2 min_size;
-		//glm::vec2 max_size;
-	};
 
 	glm::vec2 target_size						= glm::vec2(0);
 	glm::vec4 margin							= glm::vec4(0);
@@ -76,14 +43,58 @@ public:
 	glm::vec4 border_color3						= glm::vec4(0);				/*optional*/
 	glm::vec4 shadow_thickness					= glm::vec4(0);				/*optional*/
 	glm::vec4 shadow_color						= glm::vec4(0);				/*optional*/
-
 	int32_t z = 0;
 	widget_style_t style = invalid_widget_style;
 	//glm::vec2 min_size;
 	//glm::vec2 max_size;
+	
+	///////////////////////////////////////////////////////////////////
+	//	on hover
+	
+	std::optional<glm::vec4> on_hover_color				= std::nullopt;
+	std::optional<glm::vec4> on_hover_border_rounding	= std::nullopt;
+	std::optional<glm::vec4> on_hover_border_thickness	= std::nullopt;
+	std::optional<glm::vec4> on_hover_border_color0		= std::nullopt;
+	std::optional<glm::vec4> on_hover_border_color1		= std::nullopt;
+	std::optional<glm::vec4> on_hover_border_color2		= std::nullopt;
+	std::optional<glm::vec4> on_hover_border_color3		= std::nullopt;
+	std::optional<glm::vec4> on_hover_shadow_thickness	= std::nullopt;
+	std::optional<glm::vec4> on_hover_shadow_color		= std::nullopt;
+	widget_style_t on_hover_style						= invalid_widget_style;
 
-	SpecializationStyle on_hover;
-	SpecializationStyle on_hold;
+	std::chrono::system_clock::duration on_hover_color_transition				= std::chrono::system_clock::duration(0);
+	std::chrono::system_clock::duration on_hover_border_rounding_transition		= std::chrono::system_clock::duration(0);
+	std::chrono::system_clock::duration on_hover_border_thickness_transition	= std::chrono::system_clock::duration(0);
+	std::chrono::system_clock::duration on_hover_border_color0_transition		= std::chrono::system_clock::duration(0);
+	std::chrono::system_clock::duration on_hover_border_color1_transition		= std::chrono::system_clock::duration(0);
+	std::chrono::system_clock::duration on_hover_border_color2_transition		= std::chrono::system_clock::duration(0);
+	std::chrono::system_clock::duration on_hover_border_color3_transition		= std::chrono::system_clock::duration(0);
+	std::chrono::system_clock::duration on_hover_shadow_thickness_transition	= std::chrono::system_clock::duration(0);
+	std::chrono::system_clock::duration on_hover_shadow_color_transition		= std::chrono::system_clock::duration(0);
+	///////////////////////////////////////////////////////////////////
+	//	on hold
+	
+	std::optional<glm::vec4> on_hold_color				= std::nullopt;
+	std::optional<glm::vec4> on_hold_border_rounding	= std::nullopt;
+	std::optional<glm::vec4> on_hold_border_thickness	= std::nullopt;
+	std::optional<glm::vec4> on_hold_border_color0		= std::nullopt;
+	std::optional<glm::vec4> on_hold_border_color1		= std::nullopt;
+	std::optional<glm::vec4> on_hold_border_color2		= std::nullopt;
+	std::optional<glm::vec4> on_hold_border_color3		= std::nullopt;
+	std::optional<glm::vec4> on_hold_shadow_thickness	= std::nullopt;
+	std::optional<glm::vec4> on_hold_shadow_color		= std::nullopt;
+	widget_style_t on_hold_style						= invalid_widget_style;
+
+	std::chrono::system_clock::duration on_hold_color_transition				= std::chrono::system_clock::duration(0);
+	std::chrono::system_clock::duration on_hold_border_rounding_transition		= std::chrono::system_clock::duration(0);
+	std::chrono::system_clock::duration on_hold_border_thickness_transition		= std::chrono::system_clock::duration(0);
+	std::chrono::system_clock::duration on_hold_border_color0_transition		= std::chrono::system_clock::duration(0);
+	std::chrono::system_clock::duration on_hold_border_color1_transition		= std::chrono::system_clock::duration(0);
+	std::chrono::system_clock::duration on_hold_border_color2_transition		= std::chrono::system_clock::duration(0);
+	std::chrono::system_clock::duration on_hold_border_color3_transition		= std::chrono::system_clock::duration(0);
+	std::chrono::system_clock::duration on_hold_shadow_thickness_transition		= std::chrono::system_clock::duration(0);
+	std::chrono::system_clock::duration on_hold_shadow_color_transition			= std::chrono::system_clock::duration(0);
+	///////////////////////////////////////////////////////////////////
 
 	Newsletter<GUIEvent> events;
 
@@ -97,8 +108,13 @@ protected:
 
 	Element element = Element::null_element;
 
-	std::chrono::system_clock::time_point current_hover_begin = invalid_time;
-	std::chrono::system_clock::time_point current_hold_begin = invalid_time;
+	std::chrono::system_clock::time_point last_hover_begin		= invalid_time;
+	std::chrono::system_clock::time_point last_hover_end		= invalid_time;
+	std::chrono::system_clock::time_point last_hold_begin		= invalid_time;
+	std::chrono::system_clock::time_point last_hold_end			= invalid_time;
+	std::chrono::system_clock::time_point last_right_hold_begin = invalid_time;
+	std::chrono::system_clock::time_point last_right_hold_end	= invalid_time;
+	std::chrono::system_clock::time_point last_left_click		= invalid_time;
 };
 
 template<typename W>

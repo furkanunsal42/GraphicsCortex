@@ -9,6 +9,8 @@
 #include "glm.hpp"
 #include "Math/AABB.h"
 #include "Font.h"
+#include "Newsletter.h"
+
 #include "Tools/ImmediateRendering/ImmediateRenderer.h"
 
 #include "CortexGUIElement.h"
@@ -26,7 +28,9 @@ class Window;
 
 class GUI {
 public:
+	
 	static GUI& get();
+	void end_frame();
 
 	ImmediateRenderer& get_immediate_renderer();
 
@@ -47,6 +51,11 @@ public:
 	Widget& get_widget_data(widget_t id);
 
 	Window* get_window();
+	
+	bool get_mouse_left_press_impulse();
+	bool get_mouse_left_release_impulse();
+	bool get_mouse_right_press_impulse();
+	bool get_mouse_right_release_impulse();
 
 private:
 	friend Element;
@@ -91,6 +100,12 @@ private:
 	void _consolidate_vab();
 	void _append_data_to_vab(void* data, size_t data_size_in_bytes);
 	void _update_vab_to_render(element_t id);
+
+	size_t mouse_newsletter = Newsletter<void()>::invalid_id;
+	bool is_mouse_left_press_impulse = false;
+	bool is_mouse_left_release_impulse = false;
+	bool is_mouse_right_press_impulse = false;
+	bool is_mouse_right_release_impulse = false;
 
 	void* attached_window_handle = nullptr;
 
