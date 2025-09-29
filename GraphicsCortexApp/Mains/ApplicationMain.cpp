@@ -27,6 +27,7 @@
 #include "CortexGUI/CortexGUITest_Button.h"
 #include "CortexGUI/CortexGUITest_Stack.h"
 #include "CortexGUI/CortexGUITest_Grid.h"
+#include "CortexGUI/CortexGUITest_TextInput.h"
 
 int main() {
 	
@@ -58,7 +59,8 @@ int main() {
 
 	//ImmediateRendererTest().run();
 
-	CortexGUITest_Button().run();
+	//CortexGUITest_Button().run();
 	//CortexGUITest_Stack().run();
 	//CortexGUITest_Grid().run();
+	CortexGUITest_TextInput().run();
 }
