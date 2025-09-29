@@ -41,77 +41,36 @@ public:
 		////rectangle->border_rounding = glm::vec4(20);
 		//rectangle->border_thickness = glm::vec4(10);
 
-		auto button = widget::create<widget::Button>();
-		button->target_size = glm::vec2(0);
-		button->padding = glm::vec4(43, 13, 43, 13);
-		button->label->text = U"Kendimi Şanslı Hissediyorum";
-		button->label->text_color = glm::vec4(0, 0, 0, 1);
-		button->color = glm::vec4(0.88, 0.88, 0.88, 1);
-		button->border_thickness = glm::vec4(2);
-		button->border_color0 = glm::vec4(0.0, 0.47, 0.84, 1);
-		button->border_color1 = glm::vec4(0.0, 0.47, 0.84, 1);
-		button->border_color2 = glm::vec4(0.0, 0.47, 0.84, 1);
-		button->border_color3 = glm::vec4(0.0, 0.47, 0.84, 1);
-
-		button->on_hover_border_color0 = glm::vec4(0.0, 0.47, 0.84, 1);
-		button->on_hover_border_color1 = glm::vec4(0.0, 0.47, 0.84, 1);
-		button->on_hover_border_color2 = glm::vec4(0.0, 0.47, 0.84, 1);
-		button->on_hover_border_color3 = glm::vec4(0.0, 0.47, 0.84, 1);
-		button->on_hover_border_color0_transition = 250ms;
-		button->on_hover_border_color1_transition = 250ms;
-		button->on_hover_border_color2_transition = 250ms;
-		button->on_hover_border_color3_transition = 250ms;
-		button->on_hover_color = glm::vec4(0.9, 0.95, 0.98, 1);
-		button->on_hover_color_transition = 250ms;
-		button->on_hover_border_thickness = glm::vec4(1);
-		button->on_hover_border_thickness_transition = 250ms;
-
-		button->on_hold_color = glm::vec4(0.8, 0.89, 0.97, 1);
-		button->on_hold_color_transition = 50ms;
-
-		button->events.subscribe([](GUIEvent event) {
-			if (event == GUIEvent::HoverBegin)
-				std::cout << "Hover Begin" << std::endl;
-			if (event == GUIEvent::HoverEnd)
-				std::cout << "Hover End" << std::endl;
-			if (event == GUIEvent::Clicked)
-				std::cout << "Clicked" << std::endl;
-			if (event == GUIEvent::HoldBegin)
-				std::cout << "Hold Begin" << std::endl;
-			if (event == GUIEvent::HoldEnd)
-				std::cout << "Hold End" << std::endl;
-			});
-
-		//auto grid = widget::create<widget::Grid>();
-		//grid->color = glm::vec4(1, 0, 0, 1);
-		//grid->target_size = glm::vec4(0);
-		//grid->add_row(100);
-		//grid->add_row(100);
-		//grid->add_column(100);
-		//grid->add_column(100);
-		//
-		//auto label = widget::create<widget::Label>();
-		//label->font = font;
-		//label->text = U"Portakal Ortakal!";
-		//label->margin = glm::vec4(0, -1, 0, -1);
-		//label->target_size = glm::vec2(0);
-		//label->color = glm::vec4(0, 0, 0, 0);
-		//label->text_color = glm::vec4(0, 0, 0, 1);
-		//label->z = 2;
-		//grid->add(label, 1, 0);
-		//
-		//auto rectangle = widget::create<widget::Rectangle>();
-		//rectangle->z = 1;
-		//rectangle->target_size = glm::vec2(-1);
-		//rectangle->margin = glm::vec4(-1);
-		//grid->add(rectangle, 1, 0);
-		//
-		//auto image = widget::create<widget::Image>();
-		//image->load_image("../GraphicsCortex/Images/orange.png");
-		//image->image_fit = widget::Image::Stretch;
-		//image->target_size = glm::vec2(100, 100);
-		////image->margin = glm::vec4(50, 50, 0, 0);
-		//grid->add(image, 1, 0);
+		auto grid = widget::create<widget::Grid>();
+		grid->color = glm::vec4(1, 0, 0, 1);
+		grid->target_size = glm::vec4(0);
+		grid->add_row(100);
+		grid->add_row(100);
+		grid->add_column(100);
+		grid->add_column(100);
+		
+		auto label = widget::create<widget::Label>();
+		label->font = font;
+		label->text = U"Portakal Ortakal!";
+		label->margin = glm::vec4(0, -1, 0, -1);
+		label->target_size = glm::vec2(0);
+		label->color = glm::vec4(0, 0, 0, 0);
+		label->text_color = glm::vec4(0, 0, 0, 1);
+		label->z = 2;
+		grid->add(label, 1, 0);
+		
+		auto rectangle = widget::create<widget::Rectangle>();
+		rectangle->z = 1;
+		rectangle->target_size = glm::vec2(-1);
+		rectangle->margin = glm::vec4(-1);
+		grid->add(rectangle, 1, 0);
+		
+		auto image = widget::create<widget::Image>();
+		image->load_image("../GraphicsCortex/Images/orange.png");
+		image->image_fit = widget::Image::Stretch;
+		image->target_size = glm::vec2(100, 100);
+		//image->margin = glm::vec4(50, 50, 0, 0);
+		grid->add(image, 1, 0);
 
 		
 
@@ -119,8 +78,8 @@ public:
 			double deltatime = default_window->handle_events(true);
 			primitive_renderer::clear(0.94, 0.94, 0.94, 1);
 
-			GUI::get().render(button);
-			button->poll_events(glm::vec2(0));
+			GUI::get().render(grid);
+
 
 			GUI::get().end_frame();
 			default_window->swap_buffers();
