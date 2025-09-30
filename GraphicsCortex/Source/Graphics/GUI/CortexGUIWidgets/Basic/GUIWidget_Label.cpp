@@ -75,7 +75,7 @@ void widget::Label::update_glyphs()
 		g.z() = z;
 		g.color() = text_color;
 
-		text_size.y = glm::max(text_size.y, g.size().y);
+		text_size.y = glm::max(text_size.y, g.position().y + g.size().y);
 		text_size.x = g.position().x + g.size().x;
 
 		advance += table.advance * atlas_size.x / font_size * text_height;
