@@ -463,7 +463,7 @@ void Texture2D::_create_handle()
 	
 	if (is_bindless) {
 		GLCall(texture_handle = glGetTextureHandleARB(id));
-		GLCall(glMakeTextureHandleNonResidentARB(texture_handle));
+		GLCall(glMakeTextureHandleResidentARB(texture_handle));
 		
 		_texture_handle_created = true;
 	}

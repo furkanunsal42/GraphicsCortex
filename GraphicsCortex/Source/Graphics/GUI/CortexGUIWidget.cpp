@@ -87,12 +87,13 @@ void Widget::poll_events(glm::vec2 absolute_position)
 {
 	AABB2 self_aabb(absolute_position, absolute_position + element.size());
 	glm::vec2 cursor_pos = GUI::get().get_window()->get_cursor_position();
+	bool cursor_on_widget	= self_aabb.does_contain(cursor_pos);
+	
 	Window::PressAction cursor_left_action = GUI::get().get_window()->get_mouse_button(Window::MouseButton::LEFT);
 	
-	bool left_press_impulse = GUI::get().get_mouse_left_press_impulse();
-	bool left_release_impulse = GUI::get().get_mouse_left_release_impulse();
+	bool left_press_impulse = GUI::get().get_window()->get_mouse_press_inpulse(Window::MouseButton::LEFT);
+	bool left_release_impulse = GUI::get().get_window()->get_mouse_release_inpulse(Window::MouseButton::LEFT);
 
-	bool cursor_on_widget	= self_aabb.does_contain(cursor_pos);
 	bool hover_happening	= 
 		(last_hover_begin != invalid_time && last_hover_end == invalid_time) ||
 		(last_hover_begin != Widget::invalid_time && last_hover_end != Widget::invalid_time && last_hover_begin > last_hover_end);

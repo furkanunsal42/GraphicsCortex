@@ -311,6 +311,30 @@ void Window::_initialize(const WindowDescription& description)
 				newsletters->on_filepath_drop_events.publish(paths_v);
 			}
 			});
+
+		newsletters->on_key_events.subscribe([&](const Window::KeyPressResult& result) {
+			if (result.action == PressAction::PRESS) {
+				newsletters->key_press_table[(size_t)result.key] = true;
+				newsletters->is_key_press_table_dirty = true;
+			}
+			else if (result.action == PressAction::RELEASE) {
+				newsletters->key_release_table[(size_t)result.key] = true;
+				newsletters->is_key_release_table_dirty = true;
+			}
+			});
+		
+		newsletters->on_mouse_key_events.subscribe([&](const Window::MousePressResult& result) {
+			if (result.action == PressAction::PRESS) {
+				newsletters->mouse_press_table[(size_t)result.button] = true;
+				newsletters->is_mouse_press_table_dirty = true;
+			}
+			else if (result.action == PressAction::RELEASE) {
+				newsletters->mouse_release_table[(size_t)result.button] = true;
+				newsletters->is_mouse_release_table_dirty = true;
+			}
+			});
+
+
 	}
 
 	// input handling
@@ -439,6 +463,10 @@ void Window::post_empty_event() {
 }
 
 double Window::handle_events(bool print_performances) {
+
+	if (newsletters != nullptr) {
+		newsletters->clear_tables();
+	}
 
 	glfwPollEvents();
 
@@ -897,4 +925,59 @@ Window::PressAction Window::get_mouse_button(MouseButton mouse_button)
 {
 	int state = glfwGetMouseButton((GLFWwindow*)handle, int32_t(mouse_button));
 	return Window::PressAction(state);
+}
+
+bool Window::get_key_press_inpulse(Key key)
+{
+	if (newsletters == nullptr) {
+		std::cout << "[IO Error] Window::get_key_press_impulse() is called but impulse queries are disabled when Window isn't initialized with Window::newsletters" << std::endl;
+		ASSERT(false);
+	}
+
+	return newsletters->key_press_table[(size_t)key];
+}
+
+bool Window::get_key_release_inpulse(Key key)
+{
+	if (newsletters == nullptr) {
+		std::cout << "[IO Error] Window::get_key_release_inpulse() is called but impulse queries are disabled when Window isn't initialized with Window::newsletters" << std::endl;
+		ASSERT(false);
+	}
+	return newsletters->key_release_table[(size_t)key];
+}
+
+bool Window::get_mouse_press_inpulse(MouseButton button)
+{
+	if (newsletters == nullptr) {
+		std::cout << "[IO Error] Window::get_mouse_press_inpulse() is called but impulse queries are disabled when Window isn't initialized with Window::newsletters" << std::endl;
+		ASSERT(false);
+	}
+	return newsletters->mouse_press_table[(size_t)button];
+}
+
+bool Window::get_mouse_release_inpulse(MouseButton button)
+{
+	if (newsletters == nullptr) {
+		std::cout << "[IO Error] Window::get_mouse_release_inpulse() is called but impulse queries are disabled when Window isn't initialized with Window::newsletters" << std::endl;
+		ASSERT(false);
+	}
+	return newsletters->mouse_release_table[(size_t)button];
+}
+
+Window::NewslettersBlock::NewslettersBlock()
+{
+	clear_tables();
+}
+
+void Window::NewslettersBlock::clear_tables()
+{
+	if (is_key_press_table_dirty)		std::memset(key_press_table.data(),		false, key_press_table.size()		* sizeof(bool));
+	if (is_key_release_table_dirty)		std::memset(key_release_table.data(),	false, key_release_table.size()		* sizeof(bool));
+	if (is_mouse_press_table_dirty)		std::memset(mouse_press_table.data(),	false, mouse_press_table.size()		* sizeof(bool));
+	if (is_mouse_release_table_dirty)	std::memset(mouse_release_table.data(), false, mouse_release_table.size()	* sizeof(bool));
+
+	is_key_press_table_dirty = false;
+	is_key_release_table_dirty = false;
+	is_mouse_press_table_dirty = false;
+	is_mouse_release_table_dirty = false;
 }

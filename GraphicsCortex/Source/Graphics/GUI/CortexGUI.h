@@ -52,11 +52,6 @@ public:
 
 	Window* get_window();
 	
-	bool get_mouse_left_press_impulse();
-	bool get_mouse_left_release_impulse();
-	bool get_mouse_right_press_impulse();
-	bool get_mouse_right_release_impulse();
-
 	//void request_cursor(Window::CursorImage cursor_image);
 
 private:

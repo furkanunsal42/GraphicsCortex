@@ -7,6 +7,7 @@
 #include "Newsletter.h"
 #include <memory>
 #include <filesystem>
+#include <array>
 
 class Image;
 class Monitor;
@@ -304,6 +305,9 @@ public:
 		RIGHT_ALT		=	346,
 		RIGHT_SUPER		=	347,
 		MENU			=	348,
+
+		KEY_COUNT		=	120,
+
 	};
 
 	enum class MouseButton {
@@ -312,12 +316,14 @@ public:
 		BUTTON2 = 1,
 		RIGHT = MouseButton::BUTTON2,
 		BUTTON3 = 2,
-		MIDDLE = MouseButton::BUTTON3,
 		BUTTON4 = 3,
+		MIDDLE = MouseButton::BUTTON3,
 		BUTTON5 = 4,
 		BUTTON6 = 5,
 		BUTTON7 = 6,
 		BUTTON8 = 7,
+
+		BUTTON_COUNT = 8,
 	}; 
 
 	enum class PressAction {
@@ -333,6 +339,8 @@ public:
 		SUPER		= 0x0008,
 		CAPS_LOCK	= 0x0010,
 		NUM_LOCK	= 0x0020,
+
+		MOD_COUNT	= 6,
 	};
 
 	enum class CursorMode {
@@ -360,7 +368,7 @@ public:
 	PressAction get_key(Key key);
 	int32_t get_key_scancode(Key key);
 	std::u8string get_key_name(Key key);
-
+	
 	bool is_raw_mouse_movement_supported();
 	bool get_raw_mouse_movement();
 	void set_raw_mouse_movement(bool value);
@@ -373,6 +381,12 @@ public:
 	bool get_sticky_mouse_buttons();
 	PressAction get_mouse_button(MouseButton mouse_button);
 
+	bool get_key_press_inpulse(Key key);
+	bool get_key_release_inpulse(Key key);
+	bool get_mouse_press_inpulse(MouseButton button);
+	bool get_mouse_release_inpulse(MouseButton button);
+
+
 	// TODO : custom and default cursor images
 
 protected:
@@ -380,6 +394,9 @@ protected:
 	Window(void* handle);
 
 	struct NewslettersBlock {
+
+		NewslettersBlock();
+
 		Newsletter<>							on_should_close_events;
 		Newsletter<const glm::ivec2&>			on_framebuffer_resolution_events;
 		Newsletter<const glm::ivec2&>			on_window_resolution_events;
@@ -398,6 +415,18 @@ protected:
 		Newsletter<const glm::dvec2&>			on_mouse_scroll_events;
 
 		Newsletter<const std::vector<std::filesystem::path>&>	on_filepath_drop_events;
+
+		void clear_tables();
+
+		std::array<bool, (size_t)Key::KEY_COUNT>			key_press_table;
+		std::array<bool, (size_t)Key::KEY_COUNT>			key_release_table;
+		std::array<bool, (size_t)MouseButton::BUTTON_COUNT> mouse_press_table;
+		std::array<bool, (size_t)MouseButton::BUTTON_COUNT> mouse_release_table;
+
+		bool is_key_press_table_dirty		= true;
+		bool is_key_release_table_dirty		= true;
+		bool is_mouse_press_table_dirty		= true;
+		bool is_mouse_release_table_dirty	= true;
 	};
 
 	void _initialize(const WindowDescription& description);

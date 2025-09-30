@@ -51,8 +51,14 @@ namespace widget {
 
 		Element& get_element(glm::vec2 allocated_size) {
 
-			if (label->get_glyph_count() > 3)
-				selector->margin.x = label->get_glyph_position(3).x + label->margin.x - 2;
+			cursor_position = glm::clamp(cursor_position, 0, label->get_glyph_count());
+			
+			if (cursor_position == 0 && label->get_glyph_count() == 0)
+				selector->margin.x = label->margin.x - 2;
+			else if (cursor_position == label->get_glyph_count())
+				selector->margin.x = label->get_glyph_position(cursor_position-1).x + label->get_glyph_size(cursor_position - 1).x + label->margin.x - 2;
+			else
+				selector->margin.x = label->get_glyph_position(cursor_position).x + label->margin.x - 2;
 
 			selector->target_size = glm::vec2(2, std::min(label->text_height + 8, allocated_size.y));
 			selector->color.a = focused ? 1 : 0;
@@ -61,6 +67,27 @@ namespace widget {
 			set_row_size(target_size.y, 0);
 
 			return Grid::get_element(allocated_size);
+		}
+
+		void poll_events(glm::vec2 absolute_position) override {
+			
+			Widget::poll_events(absolute_position);
+
+			AABB2 self_aabb(absolute_position, absolute_position + element.size());
+			glm::vec2 cursor_pos = GUI::get().get_window()->get_cursor_position();
+			bool cursor_on_widget = self_aabb.does_contain(cursor_pos);
+
+			if (GUI::get().get_window()->get_mouse_release_inpulse(Window::MouseButton::LEFT) && !cursor_on_widget)
+				this->focused = false;
+
+			Window::PressAction right_key = GUI::get().get_window()->get_key(Window::Key::RIGHT);
+			Window::PressAction left_key = GUI::get().get_window()->get_key(Window::Key::LEFT);
+
+			if (focused && right_key == Window::PressAction::PRESS)
+				cursor_position++;
+			if (focused && left_key == Window::PressAction::PRESS)
+				cursor_position--;
+
 		}
 
 	private:

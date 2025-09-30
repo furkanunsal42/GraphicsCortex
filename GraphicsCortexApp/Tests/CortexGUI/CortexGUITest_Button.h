@@ -34,7 +34,7 @@ public:
 		default_init();
 
 		font_id font = FontBank::get().load_font("../GraphicsCortex/Fonts/Roboto-Regular.ttf", 64);
-
+		
 		auto button = widget::create<widget::Button>();
 		button->target_size = glm::vec2(0);
 		button->padding = glm::vec4(43, 13, 43, 13);
@@ -46,7 +46,7 @@ public:
 		button->border_color1 = glm::vec4(0.0, 0.47, 0.84, 1);
 		button->border_color2 = glm::vec4(0.0, 0.47, 0.84, 1);
 		button->border_color3 = glm::vec4(0.0, 0.47, 0.84, 1);
-
+		
 		button->on_hover_border_color0 = glm::vec4(0.0, 0.47, 0.84, 1);
 		button->on_hover_border_color1 = glm::vec4(0.0, 0.47, 0.84, 1);
 		button->on_hover_border_color2 = glm::vec4(0.0, 0.47, 0.84, 1);
@@ -59,10 +59,10 @@ public:
 		button->on_hover_color_transition = 250ms;
 		button->on_hover_border_thickness = glm::vec4(1);
 		button->on_hover_border_thickness_transition = 250ms;
-
+		
 		button->on_hold_color = glm::vec4(0.8, 0.89, 0.97, 1);
 		button->on_hold_color_transition = 50ms;
-
+		
 		button->events.subscribe([](GUIEvent event) {
 			if (event == GUIEvent::HoverBegin)
 				std::cout << "Hover Begin" << std::endl;
@@ -75,15 +75,16 @@ public:
 			if (event == GUIEvent::HoldEnd)
 				std::cout << "Hold End" << std::endl;
 			});
-
+		
 		while (true) {
 			double deltatime = default_window->handle_events(true);
 			primitive_renderer::clear(0.94, 0.94, 0.94, 1);
 
 			GUI::get().render(button);
 			button->poll_events(glm::vec2(0));
-
+			
 			GUI::get().end_frame();
+
 			default_window->swap_buffers();
 		}
 	}
