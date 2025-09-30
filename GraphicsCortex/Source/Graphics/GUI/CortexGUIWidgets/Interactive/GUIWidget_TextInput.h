@@ -45,6 +45,7 @@ namespace widget {
 			events.subscribe([&](GUIEvent e) {
 				if (e == GUIEvent::Clicked)
 					this->focused = true;
+					gain_keyboard_focus();
 				});
 			
 		}
@@ -69,6 +70,23 @@ namespace widget {
 			return Grid::get_element(allocated_size);
 		}
 
+		size_t on_char_event = Newsletter<void()>::invalid_id;
+
+		void gain_keyboard_focus() {
+			if (on_char_event == Newsletter<void()>::invalid_id)
+				on_char_event = GUI::get().get_window()->newsletters->on_char_events.subscribe([&](uint32_t character) {
+					label->text.insert(label->text.begin() + cursor_position, character);
+					cursor_position++;
+					});
+		}
+
+		void lose_keyboard_focus() {
+			if (on_char_event != Newsletter<void()>::invalid_id) {
+				GUI::get().get_window()->newsletters->on_char_events.unsubscribe(on_char_event);
+				on_char_event = Newsletter<void()>::invalid_id;
+			}
+		}
+
 		void poll_events(glm::vec2 absolute_position) override {
 			
 			Widget::poll_events(absolute_position);
@@ -77,15 +95,18 @@ namespace widget {
 			glm::vec2 cursor_pos = GUI::get().get_window()->get_cursor_position();
 			bool cursor_on_widget = self_aabb.does_contain(cursor_pos);
 
-			if (GUI::get().get_window()->get_mouse_release_inpulse(Window::MouseButton::LEFT) && !cursor_on_widget)
+			if (GUI::get().get_window()->get_mouse_release_inpulse(Window::MouseButton::LEFT) && !cursor_on_widget) {
 				this->focused = false;
+				lose_keyboard_focus();
+			}
 
-			Window::PressAction right_key = GUI::get().get_window()->get_key(Window::Key::RIGHT);
-			Window::PressAction left_key = GUI::get().get_window()->get_key(Window::Key::LEFT);
+			bool right_key_pressed = GUI::get().get_window()->get_key_press_inpulse(Window::Key::RIGHT);
+			bool left_key_pressed = GUI::get().get_window()->get_key_press_inpulse(Window::Key::LEFT);
 
-			if (focused && right_key == Window::PressAction::PRESS)
+			if (focused && right_key_pressed) {
 				cursor_position++;
-			if (focused && left_key == Window::PressAction::PRESS)
+			}
+			if (focused && left_key_pressed)
 				cursor_position--;
 
 		}
