@@ -6,6 +6,8 @@
 #include "CortexGUIWidgets/Basic/GUIWidget_Rectangle.h"
 #include "CortexGUIWidgets/Basic/GUIWidget_Label.h"
 
+#include "Timer.h"
+
 namespace widget {
 
 	class TextInput : public Grid {
@@ -17,6 +19,9 @@ namespace widget {
 		glm::vec4 on_focus_border_color = glm::vec4(0, 0, 0, 1);
 		int32_t cursor_position = 0;
 		bool focused = false;
+
+		std::chrono::milliseconds cursor_timer_blink_period = std::chrono::milliseconds(500);
+		Timer<true> cursor_timer;
 
 		TextInput() {
 			color = glm::vec4(1, 1, 1, 1);
@@ -47,6 +52,10 @@ namespace widget {
 					this->focused = true;
 					gain_keyboard_focus();
 				});
+
+			cursor_timer.get_newsletter().subscribe([&]() {
+				selector->color.a = selector->color.a == 0 ? 1 : 0;
+				});
 			
 		}
 
@@ -62,7 +71,6 @@ namespace widget {
 				selector->margin.x = label->get_glyph_position(cursor_position).x + label->margin.x - 2;
 
 			selector->target_size = glm::vec2(2, std::min(label->text_height + 8, allocated_size.y));
-			selector->color.a = focused ? 1 : 0;
 
 			set_column_size(target_size.x, 0);
 			set_row_size(target_size.y, 0);
@@ -70,21 +78,67 @@ namespace widget {
 			return Grid::get_element(allocated_size);
 		}
 
-		size_t on_char_event = Newsletter<void()>::invalid_id;
+		size_t on_char_event	= Newsletter<>::invalid_id;
+		size_t on_key_event		= Newsletter<>::invalid_id;
 
 		void gain_keyboard_focus() {
-			if (on_char_event == Newsletter<void()>::invalid_id)
+			if (on_char_event == Newsletter<>::invalid_id) {
 				on_char_event = GUI::get().get_window()->newsletters->on_char_events.subscribe([&](uint32_t character) {
 					label->text.insert(label->text.begin() + cursor_position, character);
 					cursor_position++;
 					});
+			}
+			
+			if (on_key_event == Newsletter<>::invalid_id) {
+				on_key_event = GUI::get().get_window()->newsletters->on_key_events.subscribe([&](Window::KeyPressResult result) {
+					
+					if (result.action == Window::PressAction::RELEASE)
+						return;
+					
+					selector->color.a = 1;
+					cursor_timer.reset();
+
+					if (result.key == Window::Key::BACKSPACE) {
+						cursor_position--;
+						label->text.erase(label->text.begin() + cursor_position);
+					}
+					else if (result.key == Window::Key::TAB) {
+						label->text.insert(label->text.begin() + cursor_position, '\t');
+						cursor_position++;
+					}
+					else if (result.key == Window::Key::DELETE) {
+						label->text.erase(label->text.begin() + cursor_position);
+					}
+					else if (result.key == Window::Key::ENTER) {
+						this->focused = false;
+					}
+					else if (result.key == Window::Key::KP_ENTER) {
+						this->focused = false;
+					}
+					else if (result.key == Window::Key::RIGHT) {
+						cursor_position++;
+					}
+					else if (result.key == Window::Key::LEFT) {
+						cursor_position--;
+					}
+					});
+			}
+
+			selector->color.a = 1;
 		}
 
 		void lose_keyboard_focus() {
-			if (on_char_event != Newsletter<void()>::invalid_id) {
+			if (on_char_event != Newsletter<>::invalid_id) {
 				GUI::get().get_window()->newsletters->on_char_events.unsubscribe(on_char_event);
-				on_char_event = Newsletter<void()>::invalid_id;
+				on_char_event = Newsletter<>::invalid_id;
 			}
+
+			if (on_key_event != Newsletter<>::invalid_id) {
+				GUI::get().get_window()->newsletters->on_key_events.unsubscribe(on_key_event);
+				on_key_event = Newsletter<>::invalid_id;
+			}
+
+			selector->color.a = 0;
 		}
 
 		void poll_events(glm::vec2 absolute_position) override {
@@ -100,15 +154,14 @@ namespace widget {
 				lose_keyboard_focus();
 			}
 
-			bool right_key_pressed = GUI::get().get_window()->get_key_press_inpulse(Window::Key::RIGHT);
-			bool left_key_pressed = GUI::get().get_window()->get_key_press_inpulse(Window::Key::LEFT);
+			if (!focused)
+				lose_keyboard_focus();
 
-			if (focused && right_key_pressed) {
-				cursor_position++;
-			}
-			if (focused && left_key_pressed)
-				cursor_position--;
-
+			if (focused && !cursor_timer.is_running())
+				cursor_timer.start_periodic(cursor_timer_blink_period);
+			
+			if (!focused && cursor_timer.is_running())
+				cursor_timer.stop();
 		}
 
 	private:

@@ -160,6 +160,11 @@ FontBank::Font FontBank::_load(const std::filesystem::path& font_file_path, int3
 	new_line.coords_hi.y = (float)((face->size->metrics.height) >> 6) / texture_resolution.y;
 	font.glyph_table['\n'] = new_line;
 
+
+	glyph_info tab = font.glyph_table[' '];
+	tab.advance *= 4;
+	font.glyph_table['\t'] = tab;
+
 	FT_Done_FreeType(ft);
 
 	std::shared_ptr<Image> font_atlas = std::make_shared<Image>(png_data, 

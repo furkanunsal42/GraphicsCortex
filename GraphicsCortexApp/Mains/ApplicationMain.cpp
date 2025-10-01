@@ -24,10 +24,13 @@
 
 #include "ImmediateRenderer/ImmediateRendererTest.h"
 
+#include "Timer/TimerTest.h"
+
 #include "CortexGUI/CortexGUITest_Button.h"
 #include "CortexGUI/CortexGUITest_Stack.h"
 #include "CortexGUI/CortexGUITest_Grid.h"
 #include "CortexGUI/CortexGUITest_TextInput.h"
+
 
 int main() {
 	
@@ -58,6 +61,8 @@ int main() {
 	//OpenGLDeviceResourceSystemTest().run();
 
 	//ImmediateRendererTest().run();
+
+	//TimerTest().run();
 
 	//CortexGUITest_Button().run();
 	//CortexGUITest_Stack().run();

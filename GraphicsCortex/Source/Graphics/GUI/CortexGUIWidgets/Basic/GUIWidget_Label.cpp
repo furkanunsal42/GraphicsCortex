@@ -41,20 +41,20 @@ void widget::Label::update_glyphs()
 	if (!FontBank::get().does_font_exist(font))
 		return;
 
-	glyphs.resize(text.size());
+	while (glyphs.size() > text.size()) {
+		auto& g = glyphs.back();
+		GUI::get().release_element(g.second);
+		glyphs.pop_back();
+	}
+	while (glyphs.size() < text.size())
+		glyphs.push_back(std::pair<uint32_t, Element>(0, element.create_child()));
+
 
 	float advance = 0;
-
 	glm::vec2 text_size(0);
 
 	for (int32_t i = 0; i < text.size(); i++) {
-		//if (glyphs[i].first == text[i] && glyphs[i].second != Element::null_element)
-		//	continue;
-
-		if (glyphs[i].second == Element::null_element)
-			glyphs[i].second = element.create_child();
-
-		//if (glyphs[i].first != text[i]) {
+	
 		Element& g = glyphs[i].second;
 		FontBank::get().get_font(font);
 		g.texture() = FontBank::get().get_font(font).atlas;
@@ -80,7 +80,6 @@ void widget::Label::update_glyphs()
 
 		advance += table.advance * atlas_size.x / font_size * text_height;
 		glyphs[i].first = text[i];
-		//}
 	}
 
 	for (int32_t i = 0; i < text.size(); i++) {

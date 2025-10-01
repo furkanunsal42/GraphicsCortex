@@ -9,7 +9,7 @@
 #include "stb_image_resize.h"
 #include "tiffio.h"
 
-#include "DirectoryUtils.h"
+#include <filesystem>
 #include "Debuger.h"
 
 Image::Image(int width, int height, int channel_count, int byte_per_channel, bool vertical_flip) :
@@ -27,7 +27,7 @@ Image::Image(int width, int height, int depth, int channel_count, int byte_per_c
 Image::Image(const std::string& file_path, int desired_channels, bool vertical_flip) :
 	_source_filepath(file_path), _vertical_flip(vertical_flip)
 {
-	std::string type = compute_filetype(file_path);
+	std::string type = std::filesystem::path(file_path).extension().string();
 	if (type == ".raw" || type == ".RAW") {
 		std::cout << "[Image Loading Error] Image constructor is called without spesifying width and height but can't read the metadata of .raw files. please choose a constructor with target width and height parameters or import other image formats." << std::endl;
 		ASSERT(false);
@@ -123,7 +123,7 @@ void Image::_read_image_data(const ImageParameters& requested_parameters)
 	std::filesystem::path extension = std::filesystem::path(requested_parameters.path).extension();
 
 	if (requested_parameters.path.size() >= 4) {
-		std::string image_type = compute_filetype(requested_parameters.path);
+		std::string image_type = extension.string();
 		if (image_type == ".raw" || image_type == ".RAW") {
 			_read_image_data_raw(requested_parameters);
 			return;
@@ -131,7 +131,7 @@ void Image::_read_image_data(const ImageParameters& requested_parameters)
 	}
 
 	if (requested_parameters.path.size() >= 5) {
-		std::string image_type = compute_filetype(requested_parameters.path);
+		std::string image_type = extension.string();
 		if (image_type == ".tiff" || image_type == ".TIFF") {
 			_read_image_data_tiff(requested_parameters);
 			return;
@@ -298,9 +298,11 @@ void Image::resize_stride(int target_bytes_per_channel)
 
 void Image::save_to_disc(const std::string& target_filename) const
 {
+	if (std::filesystem::path(target_filename).has_parent_path())
+		std::filesystem::create_directories(std::filesystem::path(target_filename).parent_path());
+
 	if (target_filename.size() > 4) {
 		if (target_filename.substr(target_filename.size() - 4, 4) == ".raw" || target_filename.substr(target_filename.size() - 4, 4) == ".RAW") {
-			std::filesystem::create_directories(std::filesystem::path(compute_directory(target_filename)));
 			std::fstream file(target_filename, std::fstream::out | std::fstream::binary);
 			for (int32_t z = 0; z < get_depth(); z++) {
 				for (int32_t y = 0; y < get_height(); y++) {
@@ -321,7 +323,7 @@ void Image::save_to_disc(const std::string& target_filename) const
 	}
 
 	if (target_filename.size() > 4) {
-		if (target_filename.substr(target_filename.size() - 4, 4) == ".png" || target_filename.substr(target_filename.size() - 4, 4) == ".png")
+		if (target_filename.substr(target_filename.size() - 4, 4) == ".png" || target_filename.substr(target_filename.size() - 4, 4) == ".PNG")
 			int result_flag = stbi_write_png(target_filename.c_str(), _width, _height, _channel_count, _image_data, _width * _channel_count * _bytes_per_channel);
 	}
 

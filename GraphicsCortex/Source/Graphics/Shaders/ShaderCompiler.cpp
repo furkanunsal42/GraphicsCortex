@@ -4,11 +4,11 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <filesystem>
 
 #include <GL/glew.h>
 #include "Debuger.h"
 
-#include "DirectoryUtils.h"
 #include <unordered_set>
 
 #include "Texture1D.h"
@@ -22,18 +22,18 @@ Shader::Shader() { ; }
 Shader::Shader(const std::filesystem::path& target_file)
 {
 	read_shader(target_file.string());
-	filename = compute_filename(target_file.string());
+	filename = target_file.filename().string();
 }
 Shader::Shader(const std::filesystem::path& vertex_target_file, const std::filesystem::path& fragment_target_file) {
 	read_shader(vertex_target_file.string());
 	read_shader(fragment_target_file.string());
-	filename = compute_filename(vertex_target_file.string()) + " | " + compute_filename(fragment_target_file.string());
+	filename = vertex_target_file.filename().string() + " | " + fragment_target_file.filename().string();
 }
-Shader::Shader(const std::filesystem::path& vertex_target_file, const std::filesystem::path& geometry_terget_file, const std::filesystem::path& fragment_target_file) {
+Shader::Shader(const std::filesystem::path& vertex_target_file, const std::filesystem::path& geometry_target_file, const std::filesystem::path& fragment_target_file) {
 	read_shader(vertex_target_file.string());
-	read_shader(geometry_terget_file.string());
+	read_shader(geometry_target_file.string());
 	read_shader(fragment_target_file.string());
-	filename = compute_filename(vertex_target_file.string()) + " | " + compute_filename(geometry_terget_file.string()) + " | " + compute_filename(fragment_target_file.string());
+	filename = vertex_target_file.filename().string() + " | " + geometry_target_file.filename().string() + " | " + fragment_target_file.filename().string();
 }
 
 void Shader::read_shader(const std::filesystem::path& path) {
