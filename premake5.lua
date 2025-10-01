@@ -259,7 +259,7 @@ project "GraphicsCortex"
 		"odbccp32.lib"
 	}
 
-	buildoptions { "/sdl", "/openmp" }
+	buildoptions { "/sdl", "/openmp", "/D _SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING"}
 
 	filter "system:windows"
 		cppdialect "C++20"

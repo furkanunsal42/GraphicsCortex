@@ -16,6 +16,10 @@ GUI& GUI::get()
 	return *active_global_resources->GUI;
 }
 
+void GUI::release() {
+	active_global_resources->GUI = nullptr;
+}
+
 void GUI::end_frame() {
 	is_mouse_left_press_impulse = false;
 	is_mouse_left_release_impulse = false;

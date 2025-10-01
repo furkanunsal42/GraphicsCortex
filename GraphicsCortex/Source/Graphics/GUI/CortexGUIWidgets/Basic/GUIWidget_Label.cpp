@@ -18,22 +18,22 @@ int32_t widget::Label::get_glyph_count()
 
 glm::vec2 widget::Label::get_glyph_size(int32_t index)
 {
-	if (index < 0 || index >= get_glyph_count()) {
+	if (index < 0 || index > get_glyph_count()) {
 		std::cout << "[GUI Error] widget::Label::get_glyph_size() is called for a glyph that doesn't exist" << std::endl;
 		ASSERT(false);
 	}
 	
-	return glyphs[index].second.size();
+	return position_sizes[index].second;
 }
 
 glm::vec2 widget::Label::get_glyph_position(int32_t index)
 {
-	if (index < 0 || index >= get_glyph_count()) {
+	if (index < 0 || index > get_glyph_count()) {
 		std::cout << "[GUI Error] widget::Label::get_glyph_size() is called for a glyph that doesn't exist" << std::endl;
 		ASSERT(false);
 	}
 
-	return glyphs[index].second.position();
+	return position_sizes[index].first;
 }
 
 void widget::Label::update_glyphs()
@@ -49,6 +49,7 @@ void widget::Label::update_glyphs()
 	while (glyphs.size() < text.size())
 		glyphs.push_back(std::pair<uint32_t, Element>(0, element.create_child()));
 
+	position_sizes.resize(text.size() + 1);
 
 	float advance = 0;
 	glm::vec2 text_size(0);
@@ -71,16 +72,22 @@ void widget::Label::update_glyphs()
 		glm::vec2 inverted_offset = glm::vec2(table.offset.x, -table.offset.y);
 
 		g.position() = glm::vec2(advance, 0) + inverted_offset * atlas_size / font_size * text_height + glm::vec2(0, text_height);
-		g.size() = (table.coords_hi - table.coords_low) * atlas_size / font_size * text_height;
+		g.size() = glm::max(glm::vec2(0), (table.coords_hi - table.coords_low) * atlas_size / font_size * text_height);
 		g.z() = z;
 		g.color() = text_color;
 
 		text_size.y = glm::max(text_size.y, g.position().y + g.size().y);
 		text_size.x = g.position().x + g.size().x;
 
+		position_sizes[i].first		= g.position();
+		position_sizes[i].second	= g.size();
+
 		advance += table.advance * atlas_size.x / font_size * text_height;
 		glyphs[i].first = text[i];
 	}
+
+	position_sizes[text.size()].first	= glm::vec2(advance, 0);
+	position_sizes[text.size()].second	= glm::vec2(0);
 
 	for (int32_t i = 0; i < text.size(); i++) {
 		Element& g = glyphs[i].second;
@@ -88,6 +95,6 @@ void widget::Label::update_glyphs()
 		text_size.x = g.position().x + g.size().x;
 	}
 
-	if (element.size().x == 0)	element.size().x = text_size.x;
+	if (element.size().x == 0)	element.size().x = advance;
 	if (element.size().y == 0)	element.size().y = text_size.y;
 }

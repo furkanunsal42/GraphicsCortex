@@ -1,5 +1,8 @@
 #pragma once
 
+// code_cvt
+#define _SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING 
+
 #define ENABLE_OPENGL_DEBUGING
 
 #define MAX_TEXTURE_SLOTS 16

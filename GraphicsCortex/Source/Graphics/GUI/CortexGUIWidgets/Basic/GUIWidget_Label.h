@@ -24,7 +24,8 @@ namespace widget {
 	private:
 
 		void update_glyphs();
-
+		
+		std::vector<std::pair<glm::vec2, glm::vec2>> position_sizes;
 		std::vector<std::pair<uint32_t, Element>> glyphs;
 	};
 }

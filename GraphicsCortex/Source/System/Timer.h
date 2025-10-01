@@ -9,6 +9,8 @@ template<bool async, typename... T>
 class Timer {
 public:
 
+	~Timer() { stop(); }
+
 	bool is_async_timer();
 
 	Newsletter<T...>& get_newsletter();

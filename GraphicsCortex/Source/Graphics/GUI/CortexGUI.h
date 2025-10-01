@@ -30,6 +30,7 @@ class GUI {
 public:
 	
 	static GUI& get();
+	void release();
 	void end_frame();
 
 	ImmediateRenderer& get_immediate_renderer();

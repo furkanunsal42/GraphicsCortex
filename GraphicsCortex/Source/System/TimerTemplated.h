@@ -59,6 +59,9 @@ inline void Timer<async, T...>::reset() {
 
 template<bool async, typename... T>
 inline void Timer<async, T...>::stop() {
+	if (!is_running())
+		return;
+
 	should_stop = true;
 	thread.join();
 	thread = std::thread();

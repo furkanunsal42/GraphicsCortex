@@ -34,6 +34,12 @@ public:
 
 		default_init();
 
+		default_window->newsletters->on_should_close_events.unsubscribe_everyone();
+		default_window->newsletters->on_should_close_events.subscribe([]() {
+			GUI::get().release();
+			exit(0);
+			});
+
 		font_id font = FontBank::get().load_font("../GraphicsCortex/Fonts/Roboto-Regular.ttf", 64);
 
 		auto stack = widget::create<widget::Stack>();
@@ -92,12 +98,14 @@ public:
 		while (true) {
 			double deltatime = default_window->handle_events(true);
 			primitive_renderer::clear(0.98, 0.98, 0.98, 1);
-
+		
 			GUI::get().render(stack);
 			stack->poll_events(glm::vec2(0));
-
+		
 			GUI::get().end_frame();
 			default_window->swap_buffers();
 		}
+
+		return true;
 	}
 };

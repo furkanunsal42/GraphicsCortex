@@ -8,6 +8,8 @@
 
 #include "Timer.h"
 
+#include <codecvt>
+
 namespace widget {
 
 	class TextInput : public Grid {
@@ -16,10 +18,10 @@ namespace widget {
 		WidgetHandle<widget::Label> label = widget::create<widget::Label>();
 		WidgetHandle<widget::Rectangle> selector = widget::create<widget::Rectangle>();
 
-		glm::vec4 on_focus_border_color0 = glm::vec4(0.92, 0.82, 0.55, 1);
-		glm::vec4 on_focus_border_color1 = glm::vec4(0.92, 0.82, 0.55, 1);
-		glm::vec4 on_focus_border_color2 = glm::vec4(0.92, 0.82, 0.55, 1);
-		glm::vec4 on_focus_border_color3 = glm::vec4(0.92, 0.82, 0.55, 1);
+		glm::vec4 on_focus_border_color0 = glm::vec4(0.50, 0.50, 0.56, 1);
+		glm::vec4 on_focus_border_color1 = glm::vec4(0.50, 0.50, 0.56, 1);
+		glm::vec4 on_focus_border_color2 = glm::vec4(0.50, 0.50, 0.56, 1);
+		glm::vec4 on_focus_border_color3 = glm::vec4(0.50, 0.50, 0.56, 1);
 
 		int32_t cursor_position = 0;
 		bool focused = false;
@@ -41,7 +43,7 @@ namespace widget {
 
 			label->text = U"Enter Text Here";
 			label->font = 1;
-			label->margin = glm::vec4(8, -1, -1, -1);
+			label->margin = glm::vec4(8, 0, 0, 0);
 			label->text_color = glm::vec4(0.2, 0.2, 0.2, 1);
 			label->z = z;
 			add(label, 0, 0);
@@ -70,12 +72,14 @@ namespace widget {
 			
 			if (cursor_position == 0 && label->get_glyph_count() == 0)
 				selector->margin.x = label->margin.x - 2;
-			else if (cursor_position == label->get_glyph_count())
-				selector->margin.x = label->get_glyph_position(cursor_position-1).x + label->get_glyph_size(cursor_position - 1).x + label->margin.x - 2;
+			//else if (cursor_position == label->get_glyph_count())
+			//	selector->margin.x = label->get_glyph_position(cursor_position-1).x + label->get_glyph_size(cursor_position - 1).x + label->margin.x - 2;
 			else
 				selector->margin.x = label->get_glyph_position(cursor_position).x + label->margin.x - 2;
 
 			selector->target_size = glm::vec2(2, std::min(label->text_height + 8, allocated_size.y));
+
+			label->margin = glm::vec4(8, element.size().y / 2 - label->text_height / 2, 0, 0);
 
 			set_column_size(target_size.x, 0);
 			set_row_size(target_size.y, 0);
@@ -110,8 +114,7 @@ namespace widget {
 						label->text.erase(label->text.begin() + cursor_position);
 					}
 					else if (result.key == Window::Key::TAB) {
-						label->text.insert(label->text.begin() + cursor_position, '\t');
-						cursor_position++;
+						this->focused = false;
 					}
 					else if (result.key == Window::Key::DELETE) {
 						if (label->text.size() <= cursor_position)
@@ -125,12 +128,23 @@ namespace widget {
 					else if (result.key == Window::Key::KP_ENTER) {
 						this->focused = false;
 					}
+					else if (result.key == Window::Key::ESCAPE) {
+						this->focused = false;
+					}
 					else if (result.key == Window::Key::RIGHT) {
 						cursor_position++;
 					}
 					else if (result.key == Window::Key::LEFT) {
 						cursor_position--;
 					}
+					else if (result.key == Window::Key::V && ((int32_t)result.mods & (int32_t)Window::KeyMods::CONTROL) != 0) {
+						std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> conv;
+						std::u32string s32 = conv.from_bytes(clipboard::get());
+						
+						label->text.insert(cursor_position, s32);
+						cursor_position += s32.size();
+					}
+
 					});
 			}
 
