@@ -104,6 +104,8 @@ namespace widget {
 					cursor_timer.reset();
 
 					if (result.key == Window::Key::BACKSPACE) {
+						if (cursor_position <= 0)
+							return;
 						cursor_position--;
 						label->text.erase(label->text.begin() + cursor_position);
 					}
@@ -112,6 +114,9 @@ namespace widget {
 						cursor_position++;
 					}
 					else if (result.key == Window::Key::DELETE) {
+						if (label->text.size() <= cursor_position)
+							return;
+
 						label->text.erase(label->text.begin() + cursor_position);
 					}
 					else if (result.key == Window::Key::ENTER) {

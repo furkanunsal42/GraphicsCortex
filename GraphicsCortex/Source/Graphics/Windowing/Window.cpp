@@ -251,6 +251,9 @@ void Window::_initialize(const WindowDescription& description)
 			NewslettersBlock* newsletters = context->newsletters;
 			if (newsletters != nullptr) {
 				Key key_enum = Window::GLFW_to_KEY(key);
+				if (key_enum == Key(-1))
+					return;
+
 				PressAction press_action =
 					action == GLFW_PRESS ? PressAction::PRESS :
 					action == GLFW_RELEASE ? PressAction::RELEASE :
@@ -855,7 +858,13 @@ bool Window::get_sticky_keys()
 
 Window::PressAction Window::get_key(Key key)
 {
-	int action = glfwGetKey((GLFWwindow*)handle, Key_to_GLFW(key));
+	int32_t glfw_key = Key_to_GLFW(key);
+	if (glfw_key == -1) {
+		std::cout << "[IO Error] get_key() is called with invalid Key" << std::endl;
+		ASSERT(false);
+	}
+
+	int32_t action = glfwGetKey((GLFWwindow*)handle, glfw_key);
 
 	return	action == GLFW_PRESS ? Window::PressAction::PRESS :
 		action == GLFW_RELEASE ? Window::PressAction::RELEASE :
@@ -865,12 +874,24 @@ Window::PressAction Window::get_key(Key key)
 
 int32_t Window::get_key_scancode(Key key)
 {
-	return glfwGetKeyScancode(Key_to_GLFW(key));
+	int32_t glfw_key = Key_to_GLFW(key);
+	if (glfw_key == -1) {
+		std::cout << "[IO Error] get_key_scancode() is called with invalid Key" << std::endl;
+		ASSERT(false);
+	}
+
+	return glfwGetKeyScancode(glfw_key);
 }
 
 std::u8string Window::get_key_name(Key key)
 {
-	return std::u8string((const char8_t*)glfwGetKeyName(Key_to_GLFW(key), get_key_scancode(key)));
+	int32_t glfw_key = Key_to_GLFW(key);
+	if (glfw_key == -1) {
+		std::cout << "[IO Error] get_key_name() is called with invalid Key" << std::endl;
+		ASSERT(false);
+	}
+
+	return std::u8string((const char8_t*)glfwGetKeyName(glfw_key, get_key_scancode(key)));
 }
 
 bool Window::is_raw_mouse_movement_supported()
@@ -1236,7 +1257,7 @@ Window::Key Window::GLFW_to_KEY(int32_t glfw_key)
 	case GLFW_KEY_MENU:				return Key::MENU;
 	}
 
-	std::cout << "[Window Error] Window::GLFW_to_Key() is called but given glfw_key is invalid" << std::endl;
-	ASSERT(false);
+	//std::cout << "[Window Error] Window::GLFW_to_Key() is called but given glfw_key is invalid" << std::endl;
+	//ASSERT(false);
 	return Key(-1);
 }
