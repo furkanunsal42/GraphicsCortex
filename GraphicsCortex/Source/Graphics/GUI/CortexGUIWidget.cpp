@@ -100,25 +100,26 @@ void Widget::poll_events(glm::vec2 absolute_position)
 		(last_hold_begin != Widget::invalid_time && last_hold_end != Widget::invalid_time && last_hold_begin > last_hold_end);
 
 	if (!cursor_on_widget && hover_happening) {
-		events.publish(GUIEvent::HoverEnd);
+		events.publish(GUIEvent::HoverEnd, absolute_position, cursor_pos);
 		last_hover_end = std::chrono::system_clock::now();
 	}
 	else if (cursor_on_widget && !hover_happening) {
-		events.publish(GUIEvent::HoverBegin);
+		events.publish(GUIEvent::HoverBegin, absolute_position, cursor_pos);
 		last_hover_begin = std::chrono::system_clock::now();
 	}
 	
 	if (cursor_on_widget && left_press_impulse && !hold_happening) {
-		events.publish(GUIEvent::HoldBegin);
+		events.publish(GUIEvent::HoldBegin, absolute_position, cursor_pos);
 		last_hold_begin = std::chrono::system_clock::now();
 	}
 	else if (cursor_on_widget && cursor_left_action == Window::PressAction::RELEASE && hold_happening) {
-		events.publish(GUIEvent::Clicked);
-		events.publish(GUIEvent::HoldEnd);
+		events.publish(GUIEvent::Clicked, absolute_position, cursor_pos);
+		events.publish(GUIEvent::HoldEnd, absolute_position, cursor_pos);
 		last_hold_end = std::chrono::system_clock::now();
+		last_left_click = std::chrono::system_clock::now();
 	}
 	else if (!cursor_on_widget && cursor_left_action == Window::PressAction::RELEASE && hold_happening) {
-		events.publish(GUIEvent::HoldEnd);
+		events.publish(GUIEvent::HoldEnd, absolute_position, cursor_pos);
 		last_hold_end = std::chrono::system_clock::now();
 	}
 }

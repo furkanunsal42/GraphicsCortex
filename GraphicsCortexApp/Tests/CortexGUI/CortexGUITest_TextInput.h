@@ -47,10 +47,18 @@ public:
 
 		auto text_input = widget::create<widget::TextInput>();
 		text_input->margin = glm::vec4(10);
+		
+		//text_input->color = glm::vec4(0, 0, 0, 1);
+		//text_input->label->text_color = glm::vec4(1, 1, 1, 1);
+		//text_input->text_cursor->color = glm::vec4(1, 1, 1, 1);
 
 		auto button = widget::create<widget::Button>();
 		button->margin = glm::vec4(10);
-		button->label->text = U"OK";
+		button->label->text = U"Clear";
+		button->events.subscribe([&](GUIEvent e, glm::vec2 absolute_position, glm::vec2 cursor_position) {
+			if (e == GUIEvent::Clicked)
+				text_input->label->text = U"";
+			});
 
 		stack->add(text_input);
 		stack->add(button);

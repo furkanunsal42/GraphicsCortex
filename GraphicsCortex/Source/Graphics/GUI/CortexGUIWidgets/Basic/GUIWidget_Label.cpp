@@ -19,7 +19,7 @@ int32_t widget::Label::get_glyph_count()
 glm::vec2 widget::Label::get_glyph_size(int32_t index)
 {
 	if (index < 0 || index > get_glyph_count()) {
-		std::cout << "[GUI Error] widget::Label::get_glyph_size() is called for a glyph that doesn't exist" << std::endl;
+		std::cout << "[GUI Error] widget::Label::get_glyph_size() is called for a glyph that doesn't exist: " << index << std::endl;
 		ASSERT(false);
 	}
 	
@@ -34,6 +34,16 @@ glm::vec2 widget::Label::get_glyph_position(int32_t index)
 	}
 
 	return position_sizes[index].first;
+}
+
+void widget::Label::set_glyph_color(int32_t index, glm::vec4 color)
+{
+	if (index < 0 || index > get_glyph_count()) {
+		std::cout << "[GUI Error] widget::Label::get_glyph_size() is called for a glyph that doesn't exist" << std::endl;
+		ASSERT(false);
+	}
+
+	glyphs[index].second.color() = color;
 }
 
 void widget::Label::update_glyphs()
@@ -82,12 +92,16 @@ void widget::Label::update_glyphs()
 		position_sizes[i].first		= g.position();
 		position_sizes[i].second	= g.size();
 
+		if (text[i] == U' ') {
+			position_sizes[i].second = glm::vec2(table.advance * atlas_size.x / font_size * text_height, g.size().y);
+		}
+
 		advance += table.advance * atlas_size.x / font_size * text_height;
 		glyphs[i].first = text[i];
 	}
 
 	position_sizes[text.size()].first	= glm::vec2(advance, 0);
-	position_sizes[text.size()].second	= glm::vec2(0);
+	position_sizes[text.size()].second	= glm::vec2();
 
 	for (int32_t i = 0; i < text.size(); i++) {
 		Element& g = glyphs[i].second;

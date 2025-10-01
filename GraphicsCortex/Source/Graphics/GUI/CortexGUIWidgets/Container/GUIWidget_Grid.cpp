@@ -56,6 +56,10 @@ void widget::Grid::add(widget_t widget, int32_t row_index, int32_t column_index)
 
 void widget::Grid::remove(widget_t widget)
 {
+	for (auto& w : widgets)
+		if (w.widget == widget)
+			GUI::get().get_widget_data(w.widget).get_element(glm::vec2(0)).set_parent(Element::null_element);
+
 	std::erase_if(widgets, [&](const widget_info& info) { return info.widget == widget; });
 }
 

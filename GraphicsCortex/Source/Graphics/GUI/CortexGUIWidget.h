@@ -96,7 +96,11 @@ public:
 	std::chrono::system_clock::duration on_hold_shadow_color_transition			= std::chrono::system_clock::duration(0);
 	///////////////////////////////////////////////////////////////////
 
-	Newsletter<GUIEvent> events;
+	Newsletter<
+		GUIEvent,	// event type	
+		glm::vec2,	// widget_absolute_position
+		glm::vec2	// cursor_position
+	> events;
 
 	virtual void apply_properties_to_element(Element& element, glm::vec2 allocated_size);
 	virtual Element& get_element(glm::vec2 allocated_size) = 0;

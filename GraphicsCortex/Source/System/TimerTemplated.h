@@ -18,35 +18,58 @@ template<bool async, typename... T>
 inline void Timer<async, T...>::start_one_shot(std::chrono::milliseconds delay) {
 	
 	if (async) {
-		thread = std::thread([=]() {
-			std::this_thread::sleep_for(delay);
-			newsletter.publish();
+		thread = std::thread([this, delay]() {
+			while (!should_stop) {
+				if ((std::chrono::system_clock::now() - begin) < delay)
+					std::this_thread::sleep_for(delay / 10);
+				else {
+					begin = std::chrono::system_clock::now();
+					newsletter.publish();
+					return;
+				}
+			}
 			});
 	}
 	else {
-		thread = std::thread([=]() {
-			std::this_thread::sleep_for(delay);
-			publish_counter++;
+		thread = std::thread([this, delay]() {
+			while (!should_stop) {
+				if ((std::chrono::system_clock::now() - begin) < delay)
+					std::this_thread::sleep_for(delay / 10);
+				else {
+					begin = std::chrono::system_clock::now();
+					publish_counter++;
+					return;
+				}
+			}
 			});
 	}
 }
 
 template<bool async, typename... T>
 inline void Timer<async, T...>::start_periodic(std::chrono::milliseconds period) {
+	begin = std::chrono::system_clock::now();
 
 	if (async) {
-		thread = std::thread([=]() {
+		thread = std::thread([this, period]() {
 			while (!should_stop) {
-				std::this_thread::sleep_for(period);
-				newsletter.publish();
+				if ((std::chrono::system_clock::now() - begin) < period)
+					std::this_thread::sleep_for(period / 10);
+				else {
+					begin = std::chrono::system_clock::now();
+					newsletter.publish();
+				}
 			}
 			});
 	}
 	else {
-		thread = std::thread([&]() {
+		thread = std::thread([this, period]() {
 			while (!should_stop) {
-				std::this_thread::sleep_for(period);
-				publish_counter++;
+				if((std::chrono::system_clock::now() - begin) < period)
+					std::this_thread::sleep_for(period / 10);
+				else {
+					begin = std::chrono::system_clock::now();
+					publish_counter++;
+				}
 			}
 			});
 	}
@@ -54,7 +77,7 @@ inline void Timer<async, T...>::start_periodic(std::chrono::milliseconds period)
 
 template<bool async, typename... T>
 inline void Timer<async, T...>::reset() {
-	
+	begin = std::chrono::system_clock::now();
 }
 
 template<bool async, typename... T>

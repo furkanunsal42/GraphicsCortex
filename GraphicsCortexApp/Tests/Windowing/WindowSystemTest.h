@@ -13,6 +13,8 @@ public:
 
 		WindowDescription desc;
 		auto window = std::make_shared<Window>(desc);
+			
+		window->window_request_attention();
 
 		//Window window2(glm::vec2(100, 100), "window2");
 		//window2 = std::move(*window);

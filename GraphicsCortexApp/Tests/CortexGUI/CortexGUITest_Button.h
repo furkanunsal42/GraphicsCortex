@@ -63,7 +63,7 @@ public:
 		button->on_hold_color = glm::vec4(0.8, 0.89, 0.97, 1);
 		button->on_hold_color_transition = 50ms;
 		
-		button->events.subscribe([](GUIEvent event) {
+		button->events.subscribe([](GUIEvent event, glm::vec2 absolute_position, glm::vec2 cursor_position) {
 			if (event == GUIEvent::HoverBegin)
 				std::cout << "Hover Begin" << std::endl;
 			if (event == GUIEvent::HoverEnd)

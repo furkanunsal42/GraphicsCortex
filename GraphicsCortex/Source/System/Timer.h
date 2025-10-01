@@ -25,6 +25,7 @@ public:
 
 private:
 
+	std::chrono::system_clock::time_point begin;
 	bool should_stop = false;
 	std::atomic<size_t> publish_counter = 0;
 	std::thread thread;
