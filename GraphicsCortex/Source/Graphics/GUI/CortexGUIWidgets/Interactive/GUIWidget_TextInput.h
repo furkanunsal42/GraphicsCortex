@@ -61,6 +61,7 @@ namespace widget {
 
 		Element& get_element(glm::vec2 allocated_size) {
 
+			label->get_element(glm::vec2(0));
 			cursor_position = glm::clamp(cursor_position, 0, label->get_glyph_count());
 			
 			if (cursor_position == 0 && label->get_glyph_count() == 0)
