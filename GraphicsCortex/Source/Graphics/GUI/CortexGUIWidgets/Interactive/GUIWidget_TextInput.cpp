@@ -46,6 +46,15 @@ widget::TextInput::TextInput() {
 
 Element& widget::TextInput::get_element(glm::vec2 allocated_size) {
 
+	if (text.size() == 0) {
+		label->text = placeholder_text;
+		label->text_color = placeholder_text_color;
+	}
+	else {
+		label->text = text;
+		label->text_color = text_color;
+	}
+
 	if (selection_index_begin == selection_index_end ||
 		selection_index_begin == invalid_selection_index ||
 		selection_index_end == invalid_selection_index) 
@@ -104,7 +113,7 @@ Element& widget::TextInput::get_element(glm::vec2 allocated_size) {
 void widget::TextInput::gain_keyboard_focus() {
 	if (on_char_event == Newsletter<>::invalid_id) {
 		on_char_event = GUI::get().get_window()->newsletters->on_char_events.subscribe([&](uint32_t character) {
-			label->text.insert(label->text.begin() + text_cursor_position, character);
+			text.insert(text.begin() + text_cursor_position, character);
 			text_cursor_position++;
 			});
 	}
@@ -127,16 +136,16 @@ void widget::TextInput::gain_keyboard_focus() {
 				if (text_cursor_position <= 0)
 					return;
 				text_cursor_position--;
-				label->text.erase(label->text.begin() + text_cursor_position);
+				text.erase(text.begin() + text_cursor_position);
 			}
 			else if (result.key == Window::Key::TAB) {
 				this->focused = false;
 			}
 			else if (result.key == Window::Key::DELETE) {
-				if (label->text.size() <= text_cursor_position)
+				if (text.size() <= text_cursor_position)
 					return;
 
-				label->text.erase(label->text.begin() + text_cursor_position);
+				text.erase(text.begin() + text_cursor_position);
 			}
 			else if (result.key == Window::Key::ENTER) {
 				this->focused = false;
@@ -152,9 +161,9 @@ void widget::TextInput::gain_keyboard_focus() {
 				int32_t initial_cursor_position = text_cursor_position;
 
 				if (((int32_t)result.mods & (int32_t)Window::KeyMods::CONTROL)) {
-					while (text_cursor_position < label->text.size() && label->text[text_cursor_position] != ' ')
+					while (text_cursor_position < text.size() && text[text_cursor_position] != ' ')
 						text_cursor_position++;
-					while (text_cursor_position < label->text.size() && label->text[text_cursor_position] == ' ')
+					while (text_cursor_position < text.size() && text[text_cursor_position] == ' ')
 						text_cursor_position++;
 				}
 				else
@@ -172,11 +181,11 @@ void widget::TextInput::gain_keyboard_focus() {
 				
 				if (((int32_t)result.mods & (int32_t)Window::KeyMods::CONTROL)) {
 					text_cursor_position--;
-					while (text_cursor_position > 0 && label->text[text_cursor_position] == ' ')
+					while (text_cursor_position > 0 && text[text_cursor_position] == ' ')
 						text_cursor_position--;
-					while (text_cursor_position > 0 && label->text[text_cursor_position] != ' ')
+					while (text_cursor_position > 0 && text[text_cursor_position] != ' ')
 						text_cursor_position--;
-					if (label->text[text_cursor_position] == ' ')
+					if (text[text_cursor_position] == ' ')
 						text_cursor_position++;
 				}
 				else
@@ -192,7 +201,7 @@ void widget::TextInput::gain_keyboard_focus() {
 				std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> conv;
 				std::u32string s32 = conv.from_bytes(clipboard::get());
 
-				label->text.insert(text_cursor_position, s32);
+				text.insert(text_cursor_position, s32);
 				text_cursor_position += s32.size();
 			}
 

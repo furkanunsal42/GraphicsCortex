@@ -57,7 +57,7 @@ public:
 		button->label->text = U"Clear";
 		button->events.subscribe([&](GUIEvent e, glm::vec2 absolute_position, glm::vec2 cursor_position) {
 			if (e == GUIEvent::Clicked)
-				text_input->label->text = U"";
+				text_input->text = U"";
 			});
 
 		stack->add(text_input);
