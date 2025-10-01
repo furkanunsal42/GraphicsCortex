@@ -63,45 +63,45 @@ public:
 		stack->add(text_input);
 		stack->add(button);
 
-		//stext_input->target_size = glm::vec2(0);
-		//stext_input->padding = glm::vec4(43, 13, 43, 13);
-		//stext_input->label->text = U"Kendimi Şanslı Hissediyorum";
-		//stext_input->label->text_color = glm::vec4(0, 0, 0, 1);
-		//stext_input->color = glm::vec4(0.88, 0.88, 0.88, 1);
-		//stext_input->border_thickness = glm::vec4(2);
-		//stext_input->border_color0 = glm::vec4(0.0, 0.47, 0.84, 1);
-		//stext_input->border_color1 = glm::vec4(0.0, 0.47, 0.84, 1);
-		//stext_input->border_color2 = glm::vec4(0.0, 0.47, 0.84, 1);
-		//stext_input->border_color3 = glm::vec4(0.0, 0.47, 0.84, 1);
-		//s
-		//stext_input->on_hover_border_color0 = glm::vec4(0.0, 0.47, 0.84, 1);
-		//stext_input->on_hover_border_color1 = glm::vec4(0.0, 0.47, 0.84, 1);
-		//stext_input->on_hover_border_color2 = glm::vec4(0.0, 0.47, 0.84, 1);
-		//stext_input->on_hover_border_color3 = glm::vec4(0.0, 0.47, 0.84, 1);
-		//stext_input->on_hover_border_color0_transition = 250ms;
-		//stext_input->on_hover_border_color1_transition = 250ms;
-		//stext_input->on_hover_border_color2_transition = 250ms;
-		//stext_input->on_hover_border_color3_transition = 250ms;
-		//stext_input->on_hover_color = glm::vec4(0.9, 0.95, 0.98, 1);
-		//stext_input->on_hover_color_transition = 250ms;
-		//stext_input->on_hover_border_thickness = glm::vec4(1);
-		//stext_input->on_hover_border_thickness_transition = 250ms;
-		//s
-		//stext_input->on_hold_color = glm::vec4(0.8, 0.89, 0.97, 1);
-		//stext_input->on_hold_color_transition = 50ms;
-		//s
-		//stext_input->events.subscribe([](GUIEvent event) {
-		//s	if (event == GUIEvent::HoverBegin)
-		//s		std::cout << "Hover Begin" << std::endl;
-		//s	if (event == GUIEvent::HoverEnd)
-		//s		std::cout << "Hover End" << std::endl;
-		//s	if (event == GUIEvent::Clicked)
-		//s		std::cout << "Clicked" << std::endl;
-		//s	if (event == GUIEvent::HoldBegin)
-		//s		std::cout << "Hold Begin" << std::endl;
-		//s	if (event == GUIEvent::HoldEnd)
-		//s		std::cout << "Hold End" << std::endl;
-		//s	});
+		//text_input->target_size = glm::vec2(0);
+		//text_input->padding = glm::vec4(43, 13, 43, 13);
+		//text_input->label->text = U"Kendimi Şanslı Hissediyorum";
+		//text_input->label->text_color = glm::vec4(0, 0, 0, 1);
+		//text_input->color = glm::vec4(0.88, 0.88, 0.88, 1);
+		//text_input->border_thickness = glm::vec4(2);
+		//text_input->border_color0 = glm::vec4(0.0, 0.47, 0.84, 1);
+		//text_input->border_color1 = glm::vec4(0.0, 0.47, 0.84, 1);
+		//text_input->border_color2 = glm::vec4(0.0, 0.47, 0.84, 1);
+		//text_input->border_color3 = glm::vec4(0.0, 0.47, 0.84, 1);
+		//
+		//text_input->on_hover_border_color0 = glm::vec4(0.0, 0.47, 0.84, 1);
+		//text_input->on_hover_border_color1 = glm::vec4(0.0, 0.47, 0.84, 1);
+		//text_input->on_hover_border_color2 = glm::vec4(0.0, 0.47, 0.84, 1);
+		//text_input->on_hover_border_color3 = glm::vec4(0.0, 0.47, 0.84, 1);
+		//text_input->on_hover_border_color0_transition = 250ms;
+		//text_input->on_hover_border_color1_transition = 250ms;
+		//text_input->on_hover_border_color2_transition = 250ms;
+		//text_input->on_hover_border_color3_transition = 250ms;
+		//text_input->on_hover_color = glm::vec4(0.9, 0.95, 0.98, 1);
+		//text_input->on_hover_color_transition = 250ms;
+		//text_input->on_hover_border_thickness = glm::vec4(1);
+		//text_input->on_hover_border_thickness_transition = 250ms;
+		//
+		//text_input->on_hold_color = glm::vec4(0.8, 0.89, 0.97, 1);
+		//text_input->on_hold_color_transition = 50ms;
+		//
+		//text_input->events.subscribe([](GUIEvent event) {
+		//	if (event == GUIEvent::HoverBegin)
+		//		std::cout << "Hover Begin" << std::endl;
+		//	if (event == GUIEvent::HoverEnd)
+		//		std::cout << "Hover End" << std::endl;
+		//	if (event == GUIEvent::Clicked)
+		//		std::cout << "Clicked" << std::endl;
+		//	if (event == GUIEvent::HoldBegin)
+		//		std::cout << "Hold Begin" << std::endl;
+		//	if (event == GUIEvent::HoldEnd)
+		//		std::cout << "Hold End" << std::endl;
+		//	});
 
 		while (true) {
 			double deltatime = default_window->handle_events(true);

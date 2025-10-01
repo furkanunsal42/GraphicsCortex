@@ -74,7 +74,7 @@ Element& widget::TextInput::get_element(glm::vec2 allocated_size) {
 		
 		text_selection->margin.x		= label->get_glyph_position(min_selection).x + label->margin.x;
 		text_selection->target_size.x	= label->get_glyph_position(max_selection-1).x - label->get_glyph_position(min_selection).x + label->get_glyph_size(max_selection-1).x;
-		text_selection->target_size.y	= -1;
+		text_selection->target_size.y	= element.size().y / 2 - label->text_height / 2 + 2;
 	}
 	else 
 		text_selection->target_size = glm::vec2(-1, 0);
@@ -249,14 +249,14 @@ void widget::TextInput::apply_properties_to_element(Element& element, glm::vec2 
 	glm::vec4& border_color3_to_use = focused ? on_focus_border_color3 : border_color3;
 
 	element.size()				= allocated_size;
-	element.color()				= get_property(color,				on_hover_color,				last_hover_begin, last_hover_end, on_hover_color_transition,			on_hold_color,				last_hold_begin, last_hold_end, on_hold_color_transition			);
-	element.border_rounding()	= get_property(border_rounding,		on_hover_border_rounding,	last_hover_begin, last_hover_end, on_hover_border_rounding_transition,	on_hold_border_rounding,	last_hold_begin, last_hold_end, on_hold_border_rounding_transition	); 
-	element.border_thickness()	= get_property(border_thickness,	on_hover_border_thickness,	last_hover_begin, last_hover_end, on_hover_border_thickness_transition, on_hold_border_thickness,	last_hold_begin, last_hold_end, on_hold_border_thickness_transition	); 
-	element.border_color0()		= get_property(border_color0,		on_hover_border_color0,		last_hover_begin, last_hover_end, on_hover_border_color0_transition,	on_hold_border_color0,		last_hold_begin, last_hold_end, on_hold_border_color0_transition	); 
-	element.border_color1()		= get_property(border_color1,		on_hover_border_color1,		last_hover_begin, last_hover_end, on_hover_border_color1_transition,	on_hold_border_color1,		last_hold_begin, last_hold_end, on_hold_border_color1_transition	); 
-	element.border_color2()		= get_property(border_color2,		on_hover_border_color2,		last_hover_begin, last_hover_end, on_hover_border_color2_transition,	on_hold_border_color2,		last_hold_begin, last_hold_end, on_hold_border_color2_transition	); 
-	element.border_color3()		= get_property(border_color3,		on_hover_border_color3,		last_hover_begin, last_hover_end, on_hover_border_color3_transition,	on_hold_border_color3,		last_hold_begin, last_hold_end, on_hold_border_color3_transition	); 
-	element.shadow_thickness()	= get_property(shadow_thickness,	on_hover_shadow_thickness,	last_hover_begin, last_hover_end, on_hover_shadow_thickness_transition, on_hold_shadow_thickness,	last_hold_begin, last_hold_end, on_hold_shadow_thickness_transition	); 
-	element.shadow_color()		= get_property(shadow_color,		on_hover_shadow_color,		last_hover_begin, last_hover_end, on_hover_shadow_color_transition,		on_hold_shadow_color,		last_hold_begin, last_hold_end, on_hold_shadow_color_transition		); 
+	element.color()				= get_property(color,					on_hover_color,				last_hover_begin, last_hover_end, on_hover_color_transition,			on_hold_color,				last_hold_begin, last_hold_end, on_hold_color_transition			);
+	element.border_rounding()	= get_property(border_rounding,			on_hover_border_rounding,	last_hover_begin, last_hover_end, on_hover_border_rounding_transition,	on_hold_border_rounding,	last_hold_begin, last_hold_end, on_hold_border_rounding_transition	); 
+	element.border_thickness()	= get_property(border_thickness,		on_hover_border_thickness,	last_hover_begin, last_hover_end, on_hover_border_thickness_transition, on_hold_border_thickness,	last_hold_begin, last_hold_end, on_hold_border_thickness_transition	); 
+	element.border_color0()		= get_property(border_color0_to_use,	on_hover_border_color0,		last_hover_begin, last_hover_end, on_hover_border_color0_transition,	on_hold_border_color0,		last_hold_begin, last_hold_end, on_hold_border_color0_transition	); 
+	element.border_color1()		= get_property(border_color1_to_use,	on_hover_border_color1,		last_hover_begin, last_hover_end, on_hover_border_color1_transition,	on_hold_border_color1,		last_hold_begin, last_hold_end, on_hold_border_color1_transition	); 
+	element.border_color2()		= get_property(border_color2_to_use,	on_hover_border_color2,		last_hover_begin, last_hover_end, on_hover_border_color2_transition,	on_hold_border_color2,		last_hold_begin, last_hold_end, on_hold_border_color2_transition	); 
+	element.border_color3()		= get_property(border_color3_to_use,	on_hover_border_color3,		last_hover_begin, last_hover_end, on_hover_border_color3_transition,	on_hold_border_color3,		last_hold_begin, last_hold_end, on_hold_border_color3_transition	); 
+	element.shadow_thickness()	= get_property(shadow_thickness,		on_hover_shadow_thickness,	last_hover_begin, last_hover_end, on_hover_shadow_thickness_transition, on_hold_shadow_thickness,	last_hold_begin, last_hold_end, on_hold_shadow_thickness_transition	); 
+	element.shadow_color()		= get_property(shadow_color,			on_hover_shadow_color,		last_hover_begin, last_hover_end, on_hover_shadow_color_transition,		on_hold_shadow_color,		last_hold_begin, last_hold_end, on_hold_shadow_color_transition		); 
 	element.z() = z;
 }
