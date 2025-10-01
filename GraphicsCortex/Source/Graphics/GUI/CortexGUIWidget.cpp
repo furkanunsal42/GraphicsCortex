@@ -8,64 +8,61 @@ Widget::Widget()
 	element = GUI::get().create_element();
 }
 
-namespace {
+float Widget::get_t(
+	std::chrono::system_clock::time_point last_begin,
+	std::chrono::system_clock::time_point last_end,
+	std::chrono::system_clock::duration transition_time)
+{
+	if (transition_time.count() == 0)
+		return 1;
 
-	float get_t(
-		std::chrono::system_clock::time_point last_begin,
-		std::chrono::system_clock::time_point last_end,
-		std::chrono::system_clock::duration transition_time) 
-	{
-		if (transition_time.count() == 0)
-			return 1;
+	auto now = std::chrono::system_clock::now();
 
-		auto now = std::chrono::system_clock::now();
+	bool happening =
+		(last_begin != Widget::invalid_time && last_end == Widget::invalid_time) ||
+		(last_begin != Widget::invalid_time && last_end != Widget::invalid_time && last_begin > last_end);
 
-		bool happening =
-			(last_begin != Widget::invalid_time && last_end == Widget::invalid_time) ||
-			(last_begin != Widget::invalid_time && last_end != Widget::invalid_time && last_begin > last_end);
-		
-		bool recovering =
-			(last_begin != Widget::invalid_time && last_end != Widget::invalid_time && last_begin < last_end && now - last_end < std::min(transition_time, last_end - last_begin));
+	bool recovering =
+		(last_begin != Widget::invalid_time && last_end != Widget::invalid_time && last_begin < last_end && now - last_end < std::min(transition_time, last_end - last_begin));
 
-		//if (hover_happening)
-		//	std::cout << "hovering" << std::endl;
-		//if (hover_recovering)
-		//	std::cout << "recovering" << std::endl;
+	//if (hover_happening)
+	//	std::cout << "hovering" << std::endl;
+	//if (hover_recovering)
+	//	std::cout << "recovering" << std::endl;
 
-		float t = 0;
-		if (happening) {
-			std::chrono::system_clock::duration time_passed = std::min(std::chrono::system_clock::now() - last_begin, transition_time);
-			t = 1 - (transition_time - time_passed).count() / (float)transition_time.count();
-		}
-		if (recovering) {
-			std::chrono::system_clock::duration time_passed_hovering	= std::min(last_end - last_begin, transition_time);
-			std::chrono::system_clock::duration time_passed_recovering	= std::min(std::chrono::system_clock::now() - last_end, transition_time);
-			t = 1 - (transition_time - time_passed_hovering + time_passed_recovering).count() / (float)transition_time.count();
-		}
-
-		return t;
+	float t = 0;
+	if (happening) {
+		std::chrono::system_clock::duration time_passed = std::min(std::chrono::system_clock::now() - last_begin, transition_time);
+		t = 1 - (transition_time - time_passed).count() / (float)transition_time.count();
+	}
+	if (recovering) {
+		std::chrono::system_clock::duration time_passed_hovering = std::min(last_end - last_begin, transition_time);
+		std::chrono::system_clock::duration time_passed_recovering = std::min(std::chrono::system_clock::now() - last_end, transition_time);
+		t = 1 - (transition_time - time_passed_hovering + time_passed_recovering).count() / (float)transition_time.count();
 	}
 
-	glm::vec4 interpolate(glm::vec4 a, glm::vec4 b, float t) {
-		t = glm::clamp(t, 0.0f, 1.0f);
-		return a * (1 - t) + b * t;
-	}
+	return t;
+}
 
-	glm::vec4 get_property(
-		glm::vec4 default_property,
-		std::optional<glm::vec4>  on_hover,
-		std::chrono::system_clock::time_point last_hover_begin,
-		std::chrono::system_clock::time_point last_hover_end,
-		std::chrono::system_clock::duration hover_transition_time,
-		std::optional<glm::vec4> on_hold,
-		std::chrono::system_clock::time_point last_hold_begin,
-		std::chrono::system_clock::time_point last_hold_end,
-		std::chrono::system_clock::duration hold_transition_time
-	) {
-		glm::vec4 property = interpolate(default_property, on_hover.value_or(default_property), get_t(last_hover_begin, last_hover_end, hover_transition_time));
-		property = interpolate(property, on_hold.value_or(default_property), get_t(last_hold_begin, last_hold_end, hold_transition_time));
-		return property;
-	}
+glm::vec4 Widget::interpolate(glm::vec4 a, glm::vec4 b, float t) {
+	t = glm::clamp(t, 0.0f, 1.0f);
+	return a * (1 - t) + b * t;
+}
+
+glm::vec4 Widget::get_property(
+	glm::vec4 default_property,
+	std::optional<glm::vec4>  on_hover,
+	std::chrono::system_clock::time_point last_hover_begin,
+	std::chrono::system_clock::time_point last_hover_end,
+	std::chrono::system_clock::duration hover_transition_time,
+	std::optional<glm::vec4> on_hold,
+	std::chrono::system_clock::time_point last_hold_begin,
+	std::chrono::system_clock::time_point last_hold_end,
+	std::chrono::system_clock::duration hold_transition_time
+) {
+	glm::vec4 property = interpolate(default_property, on_hover.value_or(default_property), get_t(last_hover_begin, last_hover_end, hover_transition_time));
+	property = interpolate(property, on_hold.value_or(default_property), get_t(last_hold_begin, last_hold_end, hold_transition_time));
+	return property;
 }
 
 void Widget::apply_properties_to_element(Element& element, glm::vec2 allocated_size)

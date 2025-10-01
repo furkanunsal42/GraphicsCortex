@@ -98,11 +98,31 @@ public:
 
 	Newsletter<GUIEvent> events;
 
-	void apply_properties_to_element(Element& element, glm::vec2 allocated_size);
+	virtual void apply_properties_to_element(Element& element, glm::vec2 allocated_size);
 	virtual Element& get_element(glm::vec2 allocated_size) = 0;
 	virtual void poll_events(glm::vec2 absolute_position);
 
 	constexpr static std::chrono::system_clock::time_point invalid_time = std::chrono::system_clock::time_point::max();
+
+	float get_t(
+		std::chrono::system_clock::time_point last_begin,
+		std::chrono::system_clock::time_point last_end,
+		std::chrono::system_clock::duration transition_time
+		);
+	
+	glm::vec4 interpolate(glm::vec4 a, glm::vec4 b, float t);
+
+	glm::vec4 get_property(
+		glm::vec4 default_property,
+		std::optional<glm::vec4>  on_hover,
+		std::chrono::system_clock::time_point last_hover_begin,
+		std::chrono::system_clock::time_point last_hover_end,
+		std::chrono::system_clock::duration hover_transition_time,
+		std::optional<glm::vec4> on_hold,
+		std::chrono::system_clock::time_point last_hold_begin,
+		std::chrono::system_clock::time_point last_hold_end,
+		std::chrono::system_clock::duration hold_transition_time
+		);
 
 protected:
 

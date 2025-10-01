@@ -72,10 +72,10 @@ void widget::Grid::poll_events(glm::vec2 absolute_position)
 	AABB2 self_aabb(absolute_position, absolute_position + element.size());
 	glm::vec2 cursor_pos = GUI::get().get_window()->get_cursor_position();
 
-	if (self_aabb.does_contain(cursor_pos)) {
+	//if (self_aabb.does_contain(cursor_pos)) {
 		for (widget_info info : widgets)
 			GUI::get().get_widget_data(info.widget).poll_events(absolute_position + slot_elements[info.column_id * rows.size() + info.row_id].position());
-	}
+	//}
 }
 
 void widget::Grid::update_row_and_column_positions()

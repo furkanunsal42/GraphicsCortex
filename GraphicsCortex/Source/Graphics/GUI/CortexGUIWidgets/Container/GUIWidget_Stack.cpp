@@ -2,6 +2,19 @@
 #include "Debuger.h"
 #include "GUIWidget_Grid.h"
 
+void widget::Stack::poll_events(glm::vec2 absolute_position)
+{
+	Widget::poll_events(absolute_position);
+
+	AABB2 self_aabb(absolute_position, absolute_position + element.size());
+	glm::vec2 cursor_pos = GUI::get().get_window()->get_cursor_position();
+
+	//if (self_aabb.does_contain(cursor_pos)) {
+		for (int32_t i = 0; i < widgets.size(); i++)
+			GUI::get().get_widget_data(widgets[i]).poll_events(absolute_position + positions[i]);
+	//}
+}
+
 void widget::Stack::add(widget_t widget)
 {
 	if (std::find(widgets.begin(), widgets.end(), widget) != widgets.end()) {
@@ -10,11 +23,13 @@ void widget::Stack::add(widget_t widget)
 	}
 
 	widgets.push_back(widget);
+	positions.resize(widgets.size());
 }
 
 void widget::Stack::remove(widget_t widget)
 {
 	std::erase(widgets, widget);
+	positions.resize(widgets.size());
 }
 
 glm::vec2 widget::Stack::compute_min_content_size() {
@@ -105,8 +120,10 @@ float widget::Stack::compute_total_relative_size_main_axis()
 }
 
 void widget::Stack::lay_widgets() {
-	std::vector<glm::vec2> positions(widgets.size());
-	std::vector<glm::vec2> sizes(widgets.size()); 
+	positions.resize(widgets.size());
+
+	//std::vector<glm::vec2> positions();
+	//std::vector<glm::vec2> sizes(widgets.size()); 
 
 	glm::vec2 min_content_size		= compute_min_content_size();
 	float total_relative_size_main	= compute_total_relative_size_main_axis();
@@ -154,6 +171,8 @@ void widget::Stack::lay_widgets() {
 		child_element.set_parent(element);
 
 		child_element.position() = current_position + glm::vec2(child_physical_margin.x, child_physical_margin.y);
+		positions[i] = child_element.position();
+		
 		glm::vec2 total_child_size = child_element.size() + glm::vec2(child_physical_margin.x + child_physical_margin.z, child_physical_margin.y + child_physical_margin.w);
 		if (alignment == Vertical) {
 			current_position.y += total_child_size.y;

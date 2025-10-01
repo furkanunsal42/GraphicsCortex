@@ -30,6 +30,8 @@ namespace widget {
 			return element;
 		}
 
+		void poll_events(glm::vec2 absolute_position) override;
+
 		void add(widget_t widget);
 		void remove(widget_t widget);
 
@@ -42,5 +44,6 @@ namespace widget {
 		void lay_widgets();
 
 		std::vector<widget_t> widgets;
+		std::vector<glm::vec2> positions;
 	};
 }

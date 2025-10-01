@@ -16,7 +16,11 @@ namespace widget {
 		WidgetHandle<widget::Label> label = widget::create<widget::Label>();
 		WidgetHandle<widget::Rectangle> selector = widget::create<widget::Rectangle>();
 
-		glm::vec4 on_focus_border_color = glm::vec4(0, 0, 0, 1);
+		glm::vec4 on_focus_border_color0 = glm::vec4(0.92, 0.82, 0.55, 1);
+		glm::vec4 on_focus_border_color1 = glm::vec4(0.92, 0.82, 0.55, 1);
+		glm::vec4 on_focus_border_color2 = glm::vec4(0.92, 0.82, 0.55, 1);
+		glm::vec4 on_focus_border_color3 = glm::vec4(0.92, 0.82, 0.55, 1);
+
 		int32_t cursor_position = 0;
 		bool focused = false;
 
@@ -26,11 +30,11 @@ namespace widget {
 		TextInput() {
 			color = glm::vec4(1, 1, 1, 1);
 			border_thickness = glm::vec4(2);
-			border_color0 = glm::vec4(0.82, 0.82, 0.82, 1);
-			border_color1 = glm::vec4(0.82, 0.82, 0.82, 1);
-			border_color2 = glm::vec4(0.74, 0.74, 0.74, 1);
-			border_color3 = glm::vec4(0.82, 0.82, 0.82, 1);
-			target_size = glm::vec2(200, 40);
+			border_color0 = glm::vec4(0.68, 0.71, 0.75, 1);
+			border_color1 = glm::vec4(0.68, 0.71, 0.75, 1);
+			border_color2 = glm::vec4(0.68, 0.71, 0.75, 1);
+			border_color3 = glm::vec4(0.68, 0.71, 0.75, 1);
+			target_size = glm::vec2(400, 60);
 
 			add_column(target_size.x);
 			add_row(target_size.y);
@@ -38,7 +42,7 @@ namespace widget {
 			label->text = U"Enter Text Here";
 			label->font = 1;
 			label->margin = glm::vec4(8, -1, -1, -1);
-			label->text_color = glm::vec4(0, 0, 0, 1);
+			label->text_color = glm::vec4(0.2, 0.2, 0.2, 1);
 			label->z = z;
 			add(label, 0, 0);
 
@@ -163,6 +167,26 @@ namespace widget {
 			
 			if (!focused && cursor_timer.is_running())
 				cursor_timer.stop();
+		}
+
+		void apply_properties_to_element(Element& element, glm::vec2 allocated_size) override
+		{
+			glm::vec4& border_color0_to_use = focused ? on_focus_border_color0 : border_color0;
+			glm::vec4& border_color1_to_use = focused ? on_focus_border_color1 : border_color1;
+			glm::vec4& border_color2_to_use = focused ? on_focus_border_color2 : border_color2;
+			glm::vec4& border_color3_to_use = focused ? on_focus_border_color3 : border_color3;
+
+			element.size()				= allocated_size;
+			element.color()				= get_property(color,					on_hover_color,				last_hover_begin, last_hover_end, on_hover_color_transition,			on_hold_color,				last_hold_begin, last_hold_end, on_hold_color_transition			);
+			element.border_rounding()	= get_property(border_rounding,			on_hover_border_rounding,	last_hover_begin, last_hover_end, on_hover_border_rounding_transition,	on_hold_border_rounding,	last_hold_begin, last_hold_end, on_hold_border_rounding_transition	); 
+			element.border_thickness()	= get_property(border_thickness,		on_hover_border_thickness,	last_hover_begin, last_hover_end, on_hover_border_thickness_transition, on_hold_border_thickness,	last_hold_begin, last_hold_end, on_hold_border_thickness_transition	); 
+			element.border_color0()		= get_property(border_color0_to_use,	on_hover_border_color0,		last_hover_begin, last_hover_end, on_hover_border_color0_transition,	on_hold_border_color0,		last_hold_begin, last_hold_end, on_hold_border_color0_transition	); 
+			element.border_color1()		= get_property(border_color1_to_use,	on_hover_border_color1,		last_hover_begin, last_hover_end, on_hover_border_color1_transition,	on_hold_border_color1,		last_hold_begin, last_hold_end, on_hold_border_color1_transition	); 
+			element.border_color2()		= get_property(border_color2_to_use,	on_hover_border_color2,		last_hover_begin, last_hover_end, on_hover_border_color2_transition,	on_hold_border_color2,		last_hold_begin, last_hold_end, on_hold_border_color2_transition	); 
+			element.border_color3()		= get_property(border_color3_to_use,	on_hover_border_color3,		last_hover_begin, last_hover_end, on_hover_border_color3_transition,	on_hold_border_color3,		last_hold_begin, last_hold_end, on_hold_border_color3_transition	); 
+			element.shadow_thickness()	= get_property(shadow_thickness,		on_hover_shadow_thickness,	last_hover_begin, last_hover_end, on_hover_shadow_thickness_transition, on_hold_shadow_thickness,	last_hold_begin, last_hold_end, on_hold_shadow_thickness_transition	); 
+			element.shadow_color()		= get_property(shadow_color,			on_hover_shadow_color,		last_hover_begin, last_hover_end, on_hover_shadow_color_transition,		on_hold_shadow_color,		last_hold_begin, last_hold_end, on_hold_shadow_color_transition		); 
+			element.z() = z;
 		}
 
 	private:

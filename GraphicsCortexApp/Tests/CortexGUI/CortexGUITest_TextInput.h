@@ -36,7 +36,19 @@ public:
 
 		font_id font = FontBank::get().load_font("../GraphicsCortex/Fonts/Roboto-Regular.ttf", 64);
 
+		auto stack = widget::create<widget::Stack>();
+		stack->alignment = widget::Stack::Vertical;
+
 		auto text_input = widget::create<widget::TextInput>();
+		text_input->margin = glm::vec4(10);
+
+		auto button = widget::create<widget::Button>();
+		button->margin = glm::vec4(10);
+		button->label->text = U"OK";
+
+		stack->add(text_input);
+		stack->add(button);
+
 		//stext_input->target_size = glm::vec2(0);
 		//stext_input->padding = glm::vec4(43, 13, 43, 13);
 		//stext_input->label->text = U"Kendimi Şanslı Hissediyorum";
@@ -79,10 +91,10 @@ public:
 
 		while (true) {
 			double deltatime = default_window->handle_events(true);
-			primitive_renderer::clear(0.94, 0.94, 0.94, 1);
+			primitive_renderer::clear(0.98, 0.98, 0.98, 1);
 
-			GUI::get().render(text_input);
-			text_input->poll_events(glm::vec2(0));
+			GUI::get().render(stack);
+			stack->poll_events(glm::vec2(0));
 
 			GUI::get().end_frame();
 			default_window->swap_buffers();
