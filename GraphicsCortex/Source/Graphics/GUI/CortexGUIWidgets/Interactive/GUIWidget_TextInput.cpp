@@ -24,7 +24,6 @@ widget::TextInput::TextInput() {
 
 	text_selection->color = glm::vec4(0.15, 0.31, 0.47, 1);
 	text_selection->margin = glm::vec4(0, -1, 0, -1);
-	//add(text_selection, 0, 0);
 
 	text_cursor->color = glm::vec4(0, 0, 0, 1);
 	text_cursor->margin = glm::vec4(0, -1, 0, -1);
@@ -45,6 +44,15 @@ widget::TextInput::TextInput() {
 }
 
 Element& widget::TextInput::get_element(glm::vec2 allocated_size) {
+
+	text_cursor_position = std::clamp(text_cursor_position, 0, (int32_t)text.size());
+	if (selection_index_begin	> (int32_t)text.size() ||
+		selection_index_end		> (int32_t)text.size() ||
+		selection_index_begin == selection_index_end
+	) {
+		selection_index_begin = invalid_selection_index;
+		selection_index_end	  = invalid_selection_index;
+	}
 
 	if (text.size() == 0) {
 		label->text = placeholder_text;
@@ -113,6 +121,32 @@ Element& widget::TextInput::get_element(glm::vec2 allocated_size) {
 void widget::TextInput::gain_keyboard_focus() {
 	if (on_char_event == Newsletter<>::invalid_id) {
 		on_char_event = GUI::get().get_window()->newsletters->on_char_events.subscribe([&](uint32_t character) {
+
+			text_cursor_position = std::clamp(text_cursor_position, 0, (int32_t)text.size());
+			if (selection_index_begin > (int32_t)text.size() ||
+				selection_index_end > (int32_t)text.size() ||
+				selection_index_begin == selection_index_end
+				) {
+				selection_index_begin = invalid_selection_index;
+				selection_index_end = invalid_selection_index;
+			}
+
+			if (selection_index_begin != invalid_selection_index &&
+				selection_index_end != invalid_selection_index) 
+			{
+				int32_t min_selection = std::max(std::min(selection_index_begin, selection_index_end), 0);
+				int32_t max_selection = std::min(std::max(selection_index_begin, selection_index_end), label->get_glyph_count());
+
+				text.erase(min_selection, max_selection - min_selection);
+
+				if (selection_index_begin < selection_index_end)
+					text_cursor_position -= max_selection - min_selection;
+				text_cursor_position = std::clamp(text_cursor_position, 0, (int32_t)text.size());
+
+				selection_index_begin	= invalid_selection_index;
+				selection_index_end		= invalid_selection_index;
+			}
+
 			text.insert(text.begin() + text_cursor_position, character);
 			text_cursor_position++;
 			});
@@ -121,46 +155,161 @@ void widget::TextInput::gain_keyboard_focus() {
 	if (on_key_event == Newsletter<>::invalid_id) {
 		on_key_event = GUI::get().get_window()->newsletters->on_key_events.subscribe([&](Window::KeyPressResult result) {
 
+			text_cursor_position = std::clamp(text_cursor_position, 0, (int32_t)text.size());
+			if (selection_index_begin > (int32_t)text.size() ||
+				selection_index_end > (int32_t)text.size() ||
+				selection_index_begin == selection_index_end
+				) {
+				selection_index_begin = invalid_selection_index;
+				selection_index_end = invalid_selection_index;
+			}
+
 			if (result.action == Window::PressAction::RELEASE)
 				return;
-
-			if (((int32_t)result.mods & (int32_t)Window::KeyMods::SHIFT) == 0) {
-				selection_index_begin	= invalid_selection_index;
-				selection_index_end		= invalid_selection_index;
-			}
+			if (result.key == Window::Key::LEFT_CONTROL ||
+				result.key == Window::Key::RIGHT_CONTROL ||
+				result.key == Window::Key::LEFT_SHIFT ||
+				result.key == Window::Key::RIGHT_SHIFT)
+				return;
 
 			text_cursor->color.a = 1;
 			text_cursor_timer.reset();
 
 			if (result.key == Window::Key::BACKSPACE) {
-				if (text_cursor_position <= 0)
-					return;
-				text_cursor_position--;
-				text.erase(text.begin() + text_cursor_position);
+				
+				if (selection_index_begin	== invalid_selection_index &&
+					selection_index_end		== invalid_selection_index
+				) {
+					if (text_cursor_position <= 0)
+						return;
+					
+					if (((int32_t)result.mods & (int32_t)Window::KeyMods::CONTROL) != 0) {
+
+						int32_t delete_end = text_cursor_position;
+						delete_end--;
+						while (delete_end > 0 && text[delete_end] == ' ')
+							delete_end--;
+						while (delete_end > 0 && text[delete_end] != ' ')
+							delete_end--;
+						if (text[delete_end] == ' ')
+							delete_end++;
+
+						delete_end = std::clamp(delete_end, 0, (int32_t)text.size());
+
+						int32_t delete_begin = std::min(text_cursor_position, delete_end);
+						delete_end = std::max(text_cursor_position, delete_end);
+
+						text.erase(delete_begin, delete_end - delete_begin);
+
+						if (selection_index_begin < selection_index_end)
+							text_cursor_position -= delete_end - delete_begin;
+						text_cursor_position = std::clamp(text_cursor_position, 0, (int32_t)text.size());
+
+					}
+					else {
+						text_cursor_position--;
+						text.erase(text.begin() + text_cursor_position);
+					}
+				}
+				else {
+					
+					int32_t min_selection = std::max(std::min(selection_index_begin, selection_index_end), 0);
+					int32_t max_selection = std::min(std::max(selection_index_begin, selection_index_end), label->get_glyph_count());
+
+					text.erase(min_selection, max_selection - min_selection);
+
+					if (selection_index_begin < selection_index_end)
+						text_cursor_position -= max_selection - min_selection;
+					text_cursor_position = std::clamp(text_cursor_position, 0, (int32_t)text.size());
+
+					selection_index_begin	= invalid_selection_index;
+					selection_index_end		= invalid_selection_index;
+				}
+			}
+			else if (result.key == Window::Key::DELETE) {
+				if (selection_index_begin	== invalid_selection_index &&
+					selection_index_end		== invalid_selection_index
+				) {
+					if (text.size() <= text_cursor_position)
+						return;
+
+					if (((int32_t)result.mods & (int32_t)Window::KeyMods::CONTROL) != 0) {
+
+						int32_t delete_end = text_cursor_position;
+						
+						while (delete_end < text.size() && text[delete_end] != ' ')
+							delete_end++;
+						while (delete_end < text.size() && text[delete_end] == ' ')
+							delete_end++;
+
+						delete_end = std::clamp(delete_end, 0, (int32_t)text.size());
+
+						int32_t delete_begin = std::min(text_cursor_position, delete_end);
+						delete_end = std::max(text_cursor_position, delete_end);
+
+						text.erase(delete_begin, delete_end - delete_begin);
+
+						if (selection_index_begin < selection_index_end)
+							text_cursor_position -= delete_end - delete_begin;
+						text_cursor_position = std::clamp(text_cursor_position, 0, (int32_t)text.size());
+
+					}
+					else {
+						text.erase(text.begin() + text_cursor_position);
+					}
+				} 
+				else {
+
+					int32_t min_selection = std::max(std::min(selection_index_begin, selection_index_end), 0);
+					int32_t max_selection = std::min(std::max(selection_index_begin, selection_index_end), label->get_glyph_count());
+
+					text.erase(min_selection, max_selection - min_selection);
+
+					if (selection_index_begin < selection_index_end)
+						text_cursor_position -= max_selection - min_selection;
+					text_cursor_position = std::clamp(text_cursor_position, 0, (int32_t)text.size());
+
+					selection_index_begin = invalid_selection_index;
+					selection_index_end = invalid_selection_index;
+				}
 			}
 			else if (result.key == Window::Key::TAB) {
 				this->focused = false;
 			}
-			else if (result.key == Window::Key::DELETE) {
-				if (text.size() <= text_cursor_position)
-					return;
-
-				text.erase(text.begin() + text_cursor_position);
-			}
 			else if (result.key == Window::Key::ENTER) {
 				this->focused = false;
+				selection_index_begin	= invalid_selection_index;
+				selection_index_end		= invalid_selection_index;
 			}
 			else if (result.key == Window::Key::KP_ENTER) {
 				this->focused = false;
+				selection_index_begin	= invalid_selection_index;
+				selection_index_end		= invalid_selection_index;
 			}
 			else if (result.key == Window::Key::ESCAPE) {
 				this->focused = false;
+				selection_index_begin	= invalid_selection_index;
+				selection_index_end		= invalid_selection_index;
 			}
 			else if (result.key == Window::Key::RIGHT) {
 
+				if (selection_index_begin != invalid_selection_index &&
+					selection_index_end != invalid_selection_index &&
+					(((int32_t)result.mods & (int32_t)Window::KeyMods::SHIFT) == 0)
+					)
+				{
+					int32_t min_selection = std::max(std::min(selection_index_begin, selection_index_end), 0);
+					int32_t max_selection = std::min(std::max(selection_index_begin, selection_index_end), label->get_glyph_count());
+
+					text_cursor_position = max_selection - 1;
+
+					selection_index_begin	= invalid_selection_index;
+					selection_index_end		= invalid_selection_index;
+				}
+
 				int32_t initial_cursor_position = text_cursor_position;
 
-				if (((int32_t)result.mods & (int32_t)Window::KeyMods::CONTROL)) {
+				if (((int32_t)result.mods & (int32_t)Window::KeyMods::CONTROL) != 0) {
 					while (text_cursor_position < text.size() && text[text_cursor_position] != ' ')
 						text_cursor_position++;
 					while (text_cursor_position < text.size() && text[text_cursor_position] == ' ')
@@ -169,7 +318,9 @@ void widget::TextInput::gain_keyboard_focus() {
 				else
 					text_cursor_position++;
 
-				if (((int32_t)result.mods & (int32_t)Window::KeyMods::SHIFT)) {
+				text_cursor_position = std::clamp(text_cursor_position, 0, (int32_t)text.size());
+
+				if (((int32_t)result.mods & (int32_t)Window::KeyMods::SHIFT) != 0) {
 					if (selection_index_begin == invalid_selection_index)
 						selection_index_begin = initial_cursor_position;
 					selection_index_end = text_cursor_position;
@@ -177,9 +328,23 @@ void widget::TextInput::gain_keyboard_focus() {
 			}
 			else if (result.key == Window::Key::LEFT) {
 				
+				if (selection_index_begin != invalid_selection_index &&
+					selection_index_end != invalid_selection_index &&
+					(((int32_t)result.mods & (int32_t)Window::KeyMods::SHIFT) == 0)
+					)
+				{
+					int32_t min_selection = std::max(std::min(selection_index_begin, selection_index_end), 0);
+					int32_t max_selection = std::min(std::max(selection_index_begin, selection_index_end), label->get_glyph_count());
+
+					text_cursor_position = min_selection + 1;
+
+					selection_index_begin	= invalid_selection_index;
+					selection_index_end		= invalid_selection_index;
+				}
+
 				int32_t initial_cursor_position = text_cursor_position;
 				
-				if (((int32_t)result.mods & (int32_t)Window::KeyMods::CONTROL)) {
+				if (((int32_t)result.mods & (int32_t)Window::KeyMods::CONTROL) != 0) {
 					text_cursor_position--;
 					while (text_cursor_position > 0 && text[text_cursor_position] == ' ')
 						text_cursor_position--;
@@ -191,7 +356,9 @@ void widget::TextInput::gain_keyboard_focus() {
 				else
 					text_cursor_position--;
 
-				if (((int32_t)result.mods & (int32_t)Window::KeyMods::SHIFT)) {
+				text_cursor_position = std::clamp(text_cursor_position, 0, (int32_t)text.size());
+
+				if (((int32_t)result.mods & (int32_t)Window::KeyMods::SHIFT) != 0) {
 					if (selection_index_begin == invalid_selection_index)
 						selection_index_begin = initial_cursor_position;
 					selection_index_end = text_cursor_position;
@@ -204,6 +371,25 @@ void widget::TextInput::gain_keyboard_focus() {
 				text.insert(text_cursor_position, s32);
 				text_cursor_position += s32.size();
 			}
+			else if (result.key == Window::Key::C && ((int32_t)result.mods & (int32_t)Window::KeyMods::CONTROL) != 0) {
+
+				if (selection_index_begin == invalid_selection_index ||
+					selection_index_end	  == invalid_selection_index)
+					return;
+
+				int32_t min_selection = std::max(std::min(selection_index_begin, selection_index_end), 0);
+				int32_t max_selection = std::min(std::max(selection_index_begin, selection_index_end), label->get_glyph_count());
+
+				std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> conv;
+				clipboard::set(conv.to_bytes(text.substr(min_selection, max_selection)));
+			}
+			else if (result.key == Window::Key::A && ((int32_t)result.mods & (int32_t)Window::KeyMods::CONTROL) != 0) {
+
+				selection_index_begin = 0;
+				selection_index_end = text.size();
+				text_cursor_position = text.size();
+			}
+
 
 			});
 	}
@@ -226,6 +412,14 @@ void widget::TextInput::lose_keyboard_focus() {
 }
 
 void widget::TextInput::poll_events(glm::vec2 absolute_position) {
+	text_cursor_position = std::clamp(text_cursor_position, 0, (int32_t)text.size());
+	if (selection_index_begin	> (int32_t)text.size() ||
+		selection_index_end		> (int32_t)text.size() ||
+		selection_index_begin == selection_index_end
+	) {
+		selection_index_begin = invalid_selection_index;
+		selection_index_end	  = invalid_selection_index;
+	}
 
 	text_cursor_timer.handle_events();
 

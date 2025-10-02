@@ -10,11 +10,13 @@
 
 #include <codecvt>
 
+
 namespace widget {
+
 
 	class TextInput : public Grid  {
 	public:
-
+		
 		WidgetHandle<widget::Label>		label			= widget::create<widget::Label>();
 		WidgetHandle<widget::Rectangle> text_cursor		= widget::create<widget::Rectangle>();
 		WidgetHandle<widget::Rectangle> text_selection	= widget::create<widget::Rectangle>();
