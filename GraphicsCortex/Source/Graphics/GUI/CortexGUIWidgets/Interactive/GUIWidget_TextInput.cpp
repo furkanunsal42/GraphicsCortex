@@ -22,14 +22,12 @@ widget::TextInput::TextInput() {
 	label->z = z;
 	add(label, 0, 0);
 
-	text_selection->color = glm::vec4(0.15, 0.31, 0.47, 1);
+	text_selection->color = glm::vec4(0.23f, 0.48f, 0.72f, 1);
 	text_selection->margin = glm::vec4(0, -1, 0, -1);
 
 	text_cursor->color = glm::vec4(0, 0, 0, 1);
 	text_cursor->margin = glm::vec4(0, -1, 0, -1);
 	add(text_cursor, 0, 0);
-
-	text_selection->color = glm::vec4(0.15, 0.31, 0.47, 1);
 
 	events.subscribe([&](GUIEvent e, glm::vec2 absolute_position, glm::vec2 cursor_positions) {
 		if (e == GUIEvent::HoldBegin)
