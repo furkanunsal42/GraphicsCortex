@@ -56,8 +56,8 @@ namespace widget {
 
 		Element& get_element(glm::vec2 allocated_size) {
 			
-			set_column_size(target_size.x, 0);
-			set_row_size(target_size.y, 0);
+			set_column_size(allocated_size.x, 0);
+			set_row_size(allocated_size.y, 0);
 
 			return Grid::get_element(allocated_size);
 		}

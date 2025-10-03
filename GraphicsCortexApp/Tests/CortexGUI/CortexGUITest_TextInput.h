@@ -15,6 +15,7 @@
 
 #include "CortexGUIWidgets/Interactive/GUIWidget_Button.h"
 #include "CortexGUIWidgets/Interactive/GUIWidget_TextInput.h"
+#include "CortexGUIWidgets/Interactive/GUIWidget_Scroll.h"
 
 #include <chrono>
 
@@ -47,11 +48,8 @@ public:
 
 		auto text_input = widget::create<widget::TextInput>();
 		text_input->margin = glm::vec4(10);
+		stack->add(text_input);
 		
-		//text_input->color = glm::vec4(0, 0, 0, 1);
-		//text_input->label->text_color = glm::vec4(1, 1, 1, 1);
-		//text_input->text_cursor->color = glm::vec4(1, 1, 1, 1);
-
 		auto button = widget::create<widget::Button>();
 		button->margin = glm::vec4(10);
 		button->label->text = U"Clear";
@@ -59,9 +57,12 @@ public:
 			if (e == GUIEvent::Clicked)
 				text_input->text = U"";
 			});
-
-		stack->add(text_input);
 		stack->add(button);
+
+		auto scroll = widget::create<widget::Scroll>();
+		scroll->margin = glm::vec4(10);
+		stack->add(scroll);
+
 
 		//text_input->target_size = glm::vec2(0);
 		//text_input->padding = glm::vec4(43, 13, 43, 13);

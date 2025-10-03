@@ -8,13 +8,13 @@
 
 namespace widget {
 
-	class Slider : public Grid {
+	class Scroll : public Grid {
 	public:
 
-		WidgetHandle<widget::Rectangle> grip	= widget::create<widget::Rectangle>();
+		WidgetHandle<widget::Rectangle> grip = widget::create<widget::Rectangle>();
 		bool holding = false;
 
-		Slider() {
+		Scroll() {
 			using namespace std::chrono_literals;
 
 			add_column(30);
@@ -58,7 +58,7 @@ namespace widget {
 		}
 
 		void poll_events(glm::vec2 absolute_position) override {
-			
+
 			if (holding) {
 				glm::vec2 cursor_position = GUI::get().get_window()->get_cursor_position();
 				glm::vec2 cursor_position_local = cursor_position - absolute_position - glm::vec2(30, 0);

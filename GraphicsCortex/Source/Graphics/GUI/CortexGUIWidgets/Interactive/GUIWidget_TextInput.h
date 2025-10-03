@@ -28,22 +28,22 @@ namespace widget {
 
 		std::chrono::milliseconds text_cursor_timer_blink_period = std::chrono::milliseconds(500);
 		
-		glm::vec4 text_selected_color = glm::vec4(1, 1, 1, 1);
-		glm::vec4 text_color = glm::vec4(0.2, 0.2, 0.2, 1);
-		glm::vec4 placeholder_text_color = glm::vec4(0.5, 0.5, 0.5, 1);
+		glm::vec4 text_selected_color		= glm::vec4(1, 1, 1, 1);
+		glm::vec4 text_color				= glm::vec4(0.2, 0.2, 0.2, 1);
+		glm::vec4 placeholder_text_color	= glm::vec4(0.5, 0.5, 0.5, 1);
 		
 		std::u32string placeholder_text = U"Enter Text Here";
-		std::u32string text = U"";
+		std::u32string text				= U"";
 
 		Timer<false> text_cursor_timer;
 
-		size_t on_char_event = Newsletter<>::invalid_id;
-		size_t on_key_event = Newsletter<>::invalid_id;
+		size_t on_char_event	= Newsletter<>::invalid_id;
+		size_t on_key_event		= Newsletter<>::invalid_id;
 
 		static constexpr int32_t invalid_selection_index = -1;
 		int32_t selection_index_begin	= invalid_selection_index;
 		int32_t selection_index_end		= invalid_selection_index;
-		bool text_selection_active = false;
+		bool text_selection_active		= false;
 
 		int32_t text_cursor_position = 0;
 		bool focused = false;
