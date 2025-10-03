@@ -12,6 +12,8 @@ namespace widget {
 	public:
 
 		WidgetHandle<widget::Rectangle> grip = widget::create<widget::Rectangle>();
+		WidgetHandle<widget::Button> back_button	= widget::create<widget::Button>();
+		WidgetHandle<widget::Button> forward_button	= widget::create<widget::Button>();
 		bool holding = false;
 
 		Scroll() {
@@ -22,7 +24,7 @@ namespace widget {
 			add_column(30);
 			add_row(target_size.y);
 
-			color = glm::vec4(0.94f, 0.94f, 0.94f, 1);
+			color = glm::vec4(0.91f, 0.91f, 0.93, 1);
 			target_size = glm::vec2(-1, 30);
 
 			grip->margin = glm::vec4(0, -1, 0, -1);
@@ -30,14 +32,48 @@ namespace widget {
 			grip->z = z;
 
 			//grip->border_rounding = glm::vec4(10);
-			grip->color = glm::vec4(0.58f, 0.58f, 0.58f, 1);
-			grip->on_hover_color = glm::vec4(0.48f, 0.48f, 0.48f, 1);
+			grip->color = glm::vec4(0.76, 0.76, 0.78, 1);
+			grip->on_hover_color = glm::vec4(0.70, 0.70, 0.75, 1);
 			grip->on_hover_color_transition = 50ms;
 
-			grip->on_hold_color = glm::vec4(0.48f, 0.48f, 0.48f, 1);
+			grip->on_hold_color = glm::vec4(0.70, 0.70, 0.75, 1);
 			grip->on_hold_color_transition = 50ms;
 
 			add(grip, 0, 1);
+
+			back_button->color = color;
+			back_button->padding = glm::vec4(0);
+			back_button->label->text = U" < ";
+			back_button->target_size = glm::vec2(-1);
+			back_button->border_color0 = glm::vec4(0);
+			back_button->border_color1 = glm::vec4(0);
+			back_button->border_color2 = glm::vec4(0);
+			back_button->border_color3 = glm::vec4(0);
+			back_button->border_thickness = glm::vec4(0);
+			back_button->border_rounding = glm::vec4(0);
+			back_button->on_hover_color = glm::vec4(0.85, 0.85, 0.88, 1);
+			back_button->on_hover_color_transition = 10ms;
+			back_button->on_hold_color = glm::vec4(0.80, 0.80, 0.85, 1);
+			back_button->on_hold_color_transition = 10ms;
+
+			forward_button->color = color;
+			forward_button->padding = glm::vec4(0);
+			forward_button->label->text = U" > ";
+			forward_button->target_size = glm::vec2(-1);
+			forward_button->border_color0 = glm::vec4(0);
+			forward_button->border_color1 = glm::vec4(0);
+			forward_button->border_color2 = glm::vec4(0);
+			forward_button->border_color3 = glm::vec4(0);
+			forward_button->border_thickness = glm::vec4(0);
+			forward_button->border_rounding = glm::vec4(0);
+			forward_button->on_hover_color = glm::vec4(0.85, 0.85, 0.88, 1);
+			forward_button->on_hover_color_transition = 10ms;
+			forward_button->on_hold_color = glm::vec4(0.80, 0.80, 0.85, 1);
+			forward_button->on_hold_color_transition = 10ms;
+
+
+			add(back_button, 0, 0);
+			add(forward_button, 0, 2);
 
 			events.subscribe([&](GUIEvent event, glm::vec2 absolute_position, glm::vec2 cursor_position) {
 				if (event == GUIEvent::HoldBegin)
