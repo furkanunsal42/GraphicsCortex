@@ -41,7 +41,7 @@ public:
 		stack->add(text_input);
 		
 		auto button = widget::create<widget::Button>();
-		button->margin = glm::vec4(10);
+		button->margin = glm::vec4(-1, 10, 10, 10);
 		button->label->text = U"Clear";
 		button->events.subscribe([&](GUIEvent e, glm::vec2 absolute_position, glm::vec2 cursor_position) {
 			if (e == GUIEvent::Clicked)

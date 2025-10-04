@@ -140,21 +140,23 @@ void widget::Stack::lay_widgets() {
 		glm::vec2 size_per_negative(0);
 
 		if (alignment == Horizontal) {
-			float child_known_horizontal_size = 0;
-			if (child_widget.target_size.x > 0) child_known_horizontal_size += child_widget.target_size.y;
-			if (child_widget.margin.y > 0)		child_known_horizontal_size += child_widget.margin.y;
-			if (child_widget.margin.w > 0)		child_known_horizontal_size += child_widget.margin.w;
+			float child_known_vertical_size = 0;
+			if (child_widget.target_size.y > 0)		child_known_vertical_size += child_widget.target_size.y;
+			if (child_widget.target_size.y == 0)	child_known_vertical_size += child_widget.get_element(glm::vec2(0)).size().y;
+			if (child_widget.margin.y > 0)			child_known_vertical_size += child_widget.margin.y;
+			if (child_widget.margin.w > 0)			child_known_vertical_size += child_widget.margin.w;
 
 			size_per_negative.x = glm::max(element.size().x - min_content_size.x, 0.0f) / total_relative_size_main;
-			size_per_negative.y = glm::max(element.size().y - child_known_horizontal_size, 0.0f) / total_relative_size_secondary;
+			size_per_negative.y = glm::max(element.size().y - child_known_vertical_size, 0.0f) / total_relative_size_secondary;
 		}
 		else if (alignment == Vertical) {
-			float child_known_verical_size = 0;
-			if (child_widget.target_size.x > 0) child_known_verical_size += child_widget.target_size.x;
-			if (child_widget.margin.x > 0)		child_known_verical_size += child_widget.margin.x;
-			if (child_widget.margin.z > 0)		child_known_verical_size += child_widget.margin.z;
+			float child_known_horizontal_size = 0;
+			if (child_widget.target_size.x > 0)		child_known_horizontal_size += child_widget.target_size.x;
+			if (child_widget.target_size.x == 0)	child_known_horizontal_size += child_widget.get_element(glm::vec2(0)).size().x;
+			if (child_widget.margin.x > 0)			child_known_horizontal_size += child_widget.margin.x;
+			if (child_widget.margin.z > 0)			child_known_horizontal_size += child_widget.margin.z;
 
-			size_per_negative.x = glm::max(element.size().x - child_known_verical_size, 0.0f) / total_relative_size_secondary;
+			size_per_negative.x = glm::max(element.size().x - child_known_horizontal_size, 0.0f) / total_relative_size_secondary;
 			size_per_negative.y = glm::max(element.size().y - min_content_size.y, 0.0f) / total_relative_size_main;
 		}
 
