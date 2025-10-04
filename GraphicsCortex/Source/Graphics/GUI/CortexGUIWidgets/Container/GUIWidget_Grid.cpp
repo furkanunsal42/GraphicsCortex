@@ -78,7 +78,7 @@ void widget::Grid::poll_events(glm::vec2 absolute_position)
 
 	//if (self_aabb.does_contain(cursor_pos)) {
 		for (widget_info info : widgets)
-			GUI::get().get_widget_data(info.widget).poll_events(absolute_position + slot_elements[info.column_id * rows.size() + info.row_id].position());
+			GUI::get().get_widget_data(info.widget).poll_events(absolute_position + slot_elements[info.column_id * rows.size() + info.row_id].position() + info.position);
 	//}
 }
 
@@ -263,5 +263,6 @@ void widget::Grid::lay_widgets() {
 		child_element.set_parent(slot_elements[column * rows.size() + row]);
 
 		child_element.position() = glm::vec2(child_physical_margin.x, child_physical_margin.y);
+		widgets[i].position = child_element.position();
 	}
 }

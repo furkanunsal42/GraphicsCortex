@@ -20,13 +20,6 @@ void GUI::release() {
 	active_global_resources->GUI = nullptr;
 }
 
-void GUI::end_frame() {
-	is_mouse_left_press_impulse = false;
-	is_mouse_left_release_impulse = false;
-	is_mouse_right_press_impulse = false;
-	is_mouse_right_release_impulse = false;
-}
-
 ImmediateRenderer& GUI::get_immediate_renderer()
 {
 	if (immediate_renderer == nullptr)

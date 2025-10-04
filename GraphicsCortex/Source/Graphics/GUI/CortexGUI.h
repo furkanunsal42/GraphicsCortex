@@ -31,7 +31,6 @@ public:
 	
 	static GUI& get();
 	void release();
-	void end_frame();
 
 	ImmediateRenderer& get_immediate_renderer();
 
@@ -48,7 +47,8 @@ public:
 	void render(Element& root_element);
 	template<typename T>
 	void render(WidgetHandle<T>& widget);
-	
+	void render(Widget& widget);
+
 	Widget& get_widget_data(widget_t id);
 
 	Window* get_window();
@@ -100,10 +100,6 @@ private:
 	void _update_vab_to_render(element_t id);
 
 	size_t mouse_newsletter = Newsletter<void()>::invalid_id;
-	bool is_mouse_left_press_impulse = false;
-	bool is_mouse_left_release_impulse = false;
-	bool is_mouse_right_press_impulse = false;
-	bool is_mouse_right_release_impulse = false;
 
 	void* attached_window_handle = nullptr;
 

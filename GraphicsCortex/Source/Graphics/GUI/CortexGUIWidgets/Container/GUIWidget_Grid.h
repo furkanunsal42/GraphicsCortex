@@ -54,6 +54,8 @@ namespace widget {
 			widget_t widget = invalid_widget;
 			int32_t row_id = 0;
 			int32_t column_id = 0;
+
+			glm::vec2 position = glm::vec2(0);
 		};
 
 		std::vector<widget_info> widgets;

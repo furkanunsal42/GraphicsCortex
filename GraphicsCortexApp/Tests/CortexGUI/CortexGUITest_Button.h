@@ -83,8 +83,6 @@ public:
 			GUI::get().render(button);
 			button->poll_events(glm::vec2(0));
 			
-			GUI::get().end_frame();
-
 			default_window->swap_buffers();
 		}
 	}

@@ -14,14 +14,19 @@ namespace widget {
 		WidgetHandle<widget::Rectangle> grip = widget::create<widget::Rectangle>();
 		WidgetHandle<widget::Button> back_button	= widget::create<widget::Button>();
 		WidgetHandle<widget::Button> forward_button	= widget::create<widget::Button>();
+
 		bool holding = false;
+		float grip_holding_position_x = 0;
 
 		Scroll() {
 			using namespace std::chrono_literals;
 
-			add_column(30);
+			back_button->target_size = glm::vec2(30);
+			forward_button->target_size = glm::vec2(30);
+
+			add_column(back_button->target_size.x);
 			add_column(0);
-			add_column(30);
+			add_column(forward_button->target_size.x);
 			add_row(target_size.y);
 
 			color = glm::vec4(0.91f, 0.91f, 0.93, 1);
@@ -44,7 +49,6 @@ namespace widget {
 			back_button->color = color;
 			back_button->padding = glm::vec4(0);
 			back_button->label->text = U" < ";
-			back_button->target_size = glm::vec2(-1);
 			back_button->border_color0 = glm::vec4(0);
 			back_button->border_color1 = glm::vec4(0);
 			back_button->border_color2 = glm::vec4(0);
@@ -59,7 +63,6 @@ namespace widget {
 			forward_button->color = color;
 			forward_button->padding = glm::vec4(0);
 			forward_button->label->text = U" > ";
-			forward_button->target_size = glm::vec2(-1);
 			forward_button->border_color0 = glm::vec4(0);
 			forward_button->border_color1 = glm::vec4(0);
 			forward_button->border_color2 = glm::vec4(0);
@@ -76,18 +79,30 @@ namespace widget {
 			add(forward_button, 0, 2);
 
 			events.subscribe([&](GUIEvent event, glm::vec2 absolute_position, glm::vec2 cursor_position) {
-				if (event == GUIEvent::HoldBegin)
+				float local_cursor_position = cursor_position.x - absolute_position.x;
+				float grip_cursor_position = local_cursor_position - back_button->target_size.x - grip->margin.x;
+				
+				if (event == GUIEvent::HoldBegin) {
+					if (local_cursor_position < back_button->target_size.x ||
+						local_cursor_position > element.size().x - back_button->target_size.x
+						)
+						return;
+
 					holding = true;
-				if (event == GUIEvent::HoldEnd)
+					grip_holding_position_x = grip_cursor_position;
+				}
+				if (event == GUIEvent::HoldEnd) {
 					holding = false;
+					grip_holding_position_x = 0;
+				}
 				});
 		}
 
 		Element& get_element(glm::vec2 allocated_size) override {
 
-			set_column_size(30, 0);
-			set_column_size(allocated_size.x - 60, 1);
-			set_column_size(30, 2);
+			set_column_size(back_button->target_size.x, 0);
+			set_column_size(allocated_size.x - (back_button->target_size.x + forward_button->target_size.x), 1);
+			set_column_size(forward_button->target_size.x, 2);
 			set_row_size(allocated_size.y, 0);
 
 			return Grid::get_element(allocated_size);
@@ -96,12 +111,18 @@ namespace widget {
 		void poll_events(glm::vec2 absolute_position) override {
 
 			if (holding) {
-				glm::vec2 cursor_position = GUI::get().get_window()->get_cursor_position();
-				glm::vec2 cursor_position_local = cursor_position - absolute_position - glm::vec2(30, 0);
+				if (grip_holding_position_x > grip->target_size.x ||
+					grip_holding_position_x < 0
+				) {
+					grip_holding_position_x = grip->target_size.x / 2;
+				}
 
-				grip->margin.x = cursor_position_local.x;
+				glm::vec2 cursor_position = GUI::get().get_window()->get_cursor_position();
+				glm::vec2 cursor_position_local = cursor_position - absolute_position - glm::vec2(back_button->target_size.x, 0);
+
+				grip->margin.x = cursor_position_local.x - grip_holding_position_x;
 				grip->margin.x = std::max(grip->margin.x, 0.0f);
-				grip->margin.x = std::min(grip->margin.x, element.size().x - 30 - grip->target_size.x);
+				grip->margin.x = std::min(grip->margin.x, element.size().x - (back_button->target_size.x + forward_button->target_size.x) - grip->target_size.x);
 			}
 
 			Grid::poll_events(absolute_position);

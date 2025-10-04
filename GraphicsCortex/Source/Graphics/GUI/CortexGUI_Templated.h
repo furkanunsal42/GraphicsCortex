@@ -38,6 +38,22 @@ inline void GUI::render(WidgetHandle<T>& widget)
 	render(widgets[widget.id]->get_element(allocated_size));
 }
 
+inline void GUI::render(Widget& widget) {
+	//if (!does_widget_exist(widget))
+	//	return;
+
+	glm::vec2 allocated_size = widget.target_size;
+
+	if (glm::any(glm::equal(allocated_size, glm::vec2(0))))
+		allocated_size = widget.get_element(allocated_size).size();
+
+	// TODO: find physical size of the widget from parents
+	if (glm::any(glm::lessThan(widget.target_size, glm::vec2(0))))
+		allocated_size = primitive_renderer::get_viewport_size();
+
+	render(widget.get_element(allocated_size));
+}
+
 template<typename T>
 inline widget_t GUI::_create_widget()
 {

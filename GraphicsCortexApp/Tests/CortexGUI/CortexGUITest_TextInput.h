@@ -60,7 +60,7 @@ public:
 		stack->add(button);
 
 		auto scroll = widget::create<widget::Scroll>();
-		scroll->margin = glm::vec4(10);
+		scroll->margin = glm::vec4(0);
 		stack->add(scroll);
 
 
@@ -111,7 +111,6 @@ public:
 			GUI::get().render(stack);
 			stack->poll_events(glm::vec2(0));
 		
-			GUI::get().end_frame();
 			default_window->swap_buffers();
 		}
 

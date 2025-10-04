@@ -80,8 +80,6 @@ public:
 
 			GUI::get().render(grid);
 
-
-			GUI::get().end_frame();
 			default_window->swap_buffers();
 		}
 	}
