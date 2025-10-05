@@ -27,6 +27,7 @@
 #include "Timer/TimerTest.h"
 
 #include "CortexGUI/CortexGUITest_Button.h"
+#include "CortexGUI/CortexGUITest_Docking.h"
 #include "CortexGUI/CortexGUITest_Stack.h"
 #include "CortexGUI/CortexGUITest_Grid.h"
 #include "CortexGUI/CortexGUITest_TextInput.h"
@@ -65,8 +66,9 @@ int main() {
 	//TimerTest().run();
 
 	//CortexGUITest_Button().run();
+	CortexGUITest_Docking().run();
 	//CortexGUITest_Stack().run();
 	//CortexGUITest_Grid().run();
 	//CortexGUITest_TextInput().run();
-	CortexGUITest_GUIWindow().run();
+	//CortexGUITest_GUIWindow().run();
 }
