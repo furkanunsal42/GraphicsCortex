@@ -169,20 +169,23 @@ void Window::_initialize(const WindowDescription& description)
 	window_name = description.w_name;
 	shared_handle = description.context_shared;
 
-	if (shared_handle == nullptr) {
-		context_to_global_resources[handle] = GlobalResources();
-		shared_context_to_root_context[handle] = handle;
-	}
-	else if (context_to_global_resources.find(shared_handle) != context_to_global_resources.end()) {
-		shared_context_to_root_context[handle] = shared_handle;
-	}
-	else if (shared_context_to_root_context.find(shared_handle) != shared_context_to_root_context.end()){
-		shared_context_to_root_context[handle] = shared_context_to_root_context[shared_handle];
-	}
-	else {
-		context_to_global_resources[handle] = GlobalResources();
-		shared_context_to_root_context[handle] = handle;
-	}
+	context_to_global_resources[handle] = GlobalResources();
+	shared_context_to_root_context[handle] = handle;
+
+	//if (shared_handle == nullptr) {
+	//	context_to_global_resources[handle] = GlobalResources();
+	//	shared_context_to_root_context[handle] = handle;
+	//}
+	//else if (context_to_global_resources.find(shared_handle) != context_to_global_resources.end()) {
+	//	shared_context_to_root_context[handle] = shared_handle;
+	//}
+	//else if (shared_context_to_root_context.find(shared_handle) != shared_context_to_root_context.end()){
+	//	shared_context_to_root_context[handle] = shared_context_to_root_context[shared_handle];
+	//}
+	//else {
+	//	context_to_global_resources[handle] = GlobalResources();
+	//	shared_context_to_root_context[handle] = handle;
+	//}
 
 	context_make_current();
 	glfwSwapInterval(description.f_swap_interval);
@@ -457,7 +460,7 @@ void Window::context_make_current()
 		ASSERT(false);
 	}
 
-	void* root_handle = shared_context_to_root_context[handle];
+	void* root_handle = shared_context_to_root_context.at(handle);
 
 	if (context_to_global_resources.find(root_handle) == context_to_global_resources.end()) {
 		std::cout << "[OpenGL Error] Window::context_make_current() is called on but context wasn't properly initialized" << std::endl;
