@@ -28,13 +28,13 @@ public:
 		using namespace std::chrono_literals;
 
 		auto gui_window = GUIWindow();
-		gui_window.grid->target_size = glm::vec2(0, 0);
+		//gui_window.grid->target_size = glm::vec2(0, 0);
 		
 		font_id font = FontBank::get().load_font("../GraphicsCortex/Fonts/Roboto-Regular.ttf", 64);
 		
 		auto stack = widget::create<widget::Stack>();
 		stack->alignment = widget::Stack::Vertical;
-		gui_window.grid->add(stack, 0, 0);
+		//gui_window.grid->add(stack, 0, 0);
 		
 		auto text_input = widget::create<widget::TextInput>();
 		text_input->margin = glm::vec4(10);
