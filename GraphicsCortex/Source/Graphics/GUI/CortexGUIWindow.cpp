@@ -63,22 +63,15 @@ void GUIWindow::run() {
 		
 		for (auto child : children) {
 			
-			std::cout << child << std::endl;
-
 			GUIWindow& child_window = GUIWindowHierarchy::get().get_window_data(child);
+
+			child_window.window->context_make_current();
 
 			if (child_window.window->should_close()) {
 				GUIWindowHierarchy::get().release_window(child);
-				
-				//child_window.visible = false;
-				//child_window.handle_events();
-
 				std::erase(children, child);
-				//std::erase(children, child - 1);
 				break;
 			}
-
-			child_window.window->context_make_current();
 
 			child_window.handle_events();
 			child_window.render();
