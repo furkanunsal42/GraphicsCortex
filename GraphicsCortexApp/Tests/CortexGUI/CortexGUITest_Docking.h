@@ -27,14 +27,16 @@ public:
 
 		using namespace std::chrono_literals;
 
-		auto gui_window = widget::create<widget::GUIWindow>();
-		gui_window->target_size = glm::vec2(1000, 1000);
+		auto gui_window = GUIWindow();
+		gui_window.grid.target_size = glm::vec2(1000, 1000);
+
+		auto gui_window2 = GUIWindow();
+		gui_window2.grid.target_size = glm::vec2(1000, 1000);
 
 		font_id font = FontBank::get().load_font("../GraphicsCortex/Fonts/Roboto-Regular.ttf", 64);
 
-
-
-		gui_window->run();
+		gui_window.run();
+		gui_window2.run();
 
 		return true;
 	}

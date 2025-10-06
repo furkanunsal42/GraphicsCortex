@@ -11,7 +11,7 @@
 
 class Image;
 class Monitor;
-
+struct GlobalResources;
 struct WindowDescription;
 
 class Window {
@@ -70,6 +70,8 @@ public:
 	~Window();
 
 	void release();
+
+	GlobalResources* get_global_resources();
 
 	// events
 	bool should_close();
@@ -435,6 +437,7 @@ protected:
 	constexpr static std::chrono::system_clock::time_point invalid_time = std::chrono::system_clock::time_point::max();
 
 	void* handle = nullptr;
+	void* shared_handle = nullptr;
 	std::string window_name;
 	std::chrono::system_clock::time_point last_handle_events_time = invalid_time;
 	std::chrono::system_clock::time_point last_perforamnce_print_time = invalid_time;

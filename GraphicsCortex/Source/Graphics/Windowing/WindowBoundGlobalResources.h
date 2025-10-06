@@ -25,5 +25,6 @@ public:
 };
 
 extern std::unordered_map<void*, GlobalResources> context_to_global_resources;
+extern std::unordered_map<void*, void*> shared_context_to_root_context;
 extern GlobalResources* active_global_resources;
 extern Window* active_window;

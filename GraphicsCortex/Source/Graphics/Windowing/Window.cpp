@@ -167,12 +167,23 @@ void Window::_initialize(const WindowDescription& description)
 
 	handle = glfwCreateWindow(clipped_resolution.x, clipped_resolution.y, description.w_name.c_str(), (GLFWmonitor*)monitor_ptr, (GLFWwindow*)description.context_shared);
 	window_name = description.w_name;
+	shared_handle = description.context_shared;
 
-	// global resoureces
-	// if (description.context_shared != nullptr) {
-	// even if context is shared a unique GlobalResources() is created for each new context
-	// }
-	
+	if (shared_handle == nullptr) {
+		context_to_global_resources[handle] = GlobalResources();
+		shared_context_to_root_context[handle] = handle;
+	}
+	else if (context_to_global_resources.find(shared_handle) != context_to_global_resources.end()) {
+		shared_context_to_root_context[handle] = shared_handle;
+	}
+	else if (shared_context_to_root_context.find(shared_handle) != shared_context_to_root_context.end()){
+		shared_context_to_root_context[handle] = shared_context_to_root_context[shared_handle];
+	}
+	else {
+		context_to_global_resources[handle] = GlobalResources();
+		shared_context_to_root_context[handle] = handle;
+	}
+
 	context_make_current();
 	glfwSwapInterval(description.f_swap_interval);
 
@@ -408,24 +419,52 @@ void Window::release()
 		newsletters = nullptr;
 	}
 
-	GlobalResources* owned_global_resources = &(context_to_global_resources[handle]);
-	context_to_global_resources.erase(handle);
-	if (active_global_resources == owned_global_resources)
+	if (context_to_global_resources.find(handle) != context_to_global_resources.end()) {
+		GlobalResources* owned_global_resources = &(context_to_global_resources[handle]);
+		context_to_global_resources.erase(handle);
+	}
+	if (active_window == this) {
 		active_global_resources = nullptr;
-	if (active_window == this)
 		active_window = nullptr;
-
+	}
 	if (handle != nullptr) {
 		glfwDestroyWindow((GLFWwindow*)handle);
 		handle = nullptr;
+		shared_handle = nullptr;
 	}
+}
+
+GlobalResources* Window::get_global_resources()
+{
+	if (shared_context_to_root_context.find(handle) == shared_context_to_root_context.end())
+	{
+		std::cout << "[OpenGL Error Window::get_global_resources() is called but given context isn't properly initialized]" << std::endl;
+		ASSERT(false);
+	}
+
+	void* root_handle = shared_context_to_root_context[handle];
+	GlobalResources* referanced_global_resources = &(context_to_global_resources[root_handle]);
+
+	return referanced_global_resources;
 }
 
 void Window::context_make_current()
 {
 	glfwMakeContextCurrent((GLFWwindow*)handle);
 
-	active_global_resources = &(context_to_global_resources[handle]);
+	if (shared_context_to_root_context.find(handle) == shared_context_to_root_context.end()) {
+		std::cout << "[OpenGL Error] Window::context_make_current() is called on but context wasn't properly initialized" << std::endl;
+		ASSERT(false);
+	}
+
+	void* root_handle = shared_context_to_root_context[handle];
+
+	if (context_to_global_resources.find(root_handle) == context_to_global_resources.end()) {
+		std::cout << "[OpenGL Error] Window::context_make_current() is called on but context wasn't properly initialized" << std::endl;
+		ASSERT(false);
+	}
+
+	active_global_resources = &(context_to_global_resources[root_handle]);
 	active_window = this;
 }
 
