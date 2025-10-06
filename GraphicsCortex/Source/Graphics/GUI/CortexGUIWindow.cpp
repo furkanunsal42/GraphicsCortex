@@ -28,7 +28,7 @@ namespace {
 
 GUIWindow::GUIWindow(Window& window)
 {
-	this->window = std::make_unique<Window>(desc());
+	this->window = std::make_unique<Window>(desc(window));
 	grid = widget::create<widget::Grid>();
 
 	grid->target_size = glm::vec2(600, 400);
