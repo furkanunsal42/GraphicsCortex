@@ -100,5 +100,6 @@ void GUIWindow::handle_events() {
 void GUIWindow::render() {
 
 	GUI::get().render(grid);
+	grid->poll_events(glm::vec2(0));
 
 }

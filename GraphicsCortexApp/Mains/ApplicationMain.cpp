@@ -66,9 +66,9 @@ int main() {
 	//TimerTest().run();
 
 	//CortexGUITest_Button().run();
-	CortexGUITest_Docking().run();
+	//CortexGUITest_Docking().run();
 	//CortexGUITest_Stack().run();
 	//CortexGUITest_Grid().run();
 	//CortexGUITest_TextInput().run();
-	//CortexGUITest_GUIWindow().run();
+	CortexGUITest_GUIWindow().run();
 }
