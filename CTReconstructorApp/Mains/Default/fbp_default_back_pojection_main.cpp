@@ -22,7 +22,7 @@ int main() {
 	
 	solver.generate_blank_volume(parser.parameters);
 	
-	bool canceled = !ct_reconstructor::launch_preview_window(solver, parser);
+	bool canceled = !ct_reconstructor::launch_preview_window_back(solver, parser);
 	if (canceled) {
 		ct_reconstructor::release();
 		return 0;
