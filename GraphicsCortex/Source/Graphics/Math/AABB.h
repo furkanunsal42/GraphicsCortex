@@ -10,9 +10,9 @@ public:
 	AABB() = default;
 	AABB(vec_t low, vec_t high);
 
-	bool does_contain(const vec_t& point);
-	bool operator==(const AABB<L, T>& other);
-	AABB<L, T> intersection(const AABB<L, T>& other);
+	bool does_contain(const vec_t& point) const;
+	bool operator==(const AABB<L, T>& other) const;
+	AABB<L, T> intersection(const AABB<L, T>& other) const;
 
 	vec_t low	= vec_t(0);
 	vec_t high	= vec_t(0);
@@ -25,19 +25,19 @@ inline AABB<L, T>::AABB(vec_t low, vec_t high) :
 }
 
 template<int32_t L, typename T>
-inline bool AABB<L, T>::does_contain(const vec_t& point)
+inline bool AABB<L, T>::does_contain(const vec_t& point) const
 {
 	return glm::all(glm::greaterThanEqual(point, low)) && glm::all(glm::lessThan(point, high));
 }
 
 template<int32_t L, typename T>
-inline bool AABB<L, T>::operator==(const AABB& other)
+inline bool AABB<L, T>::operator==(const AABB& other) const
 {
 	return low == other.low && high == other.high;
 }
 
 template<int32_t L, typename T>
-inline AABB<L, T> AABB<L, T>::intersection(const AABB& other)
+inline AABB<L, T> AABB<L, T>::intersection(const AABB& other) const
 {
 	AABB<L, T> candidate = AABB<L, T>(glm::max(low, other.low), glm::min(high, other.high));
 	

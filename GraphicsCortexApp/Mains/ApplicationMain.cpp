@@ -33,6 +33,8 @@
 #include "CortexGUI/CortexGUITest_TextInput.h"
 #include "CortexGUI/CortexGUITest_GUIWindow.h"
 
+#include "CortexGUI2/CortexGUI2Test_Fundamental.h"
+
 int main() {
 	
 	//WindowSystemTest().run();
@@ -70,5 +72,7 @@ int main() {
 	//CortexGUITest_Stack().run();
 	//CortexGUITest_Grid().run();
 	//CortexGUITest_TextInput().run();
-	CortexGUITest_GUIWindow().run();
+	//CortexGUITest_GUIWindow().run();
+
+	CortexGUITest2_Fundamental().run();
 }

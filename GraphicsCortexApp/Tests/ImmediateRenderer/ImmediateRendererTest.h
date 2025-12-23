@@ -25,6 +25,8 @@ public:
 			double deltatime = default_window->handle_events(true);
 			primitive_renderer::clear(1, 1, 1, 1);
 			
+			immidiate.draw_rectangle(glm::vec2(0, 0), glm::vec2(0.1, 0.1));
+
 			immidiate.draw_line(glm::vec3(0.3, 0.3, 0), glm::vec3(0.7, 0.7, 0));
 			immidiate.draw_line(glm::vec3(0.7, 0.3, 0), glm::vec3(0.3, 0.7, 0));
 

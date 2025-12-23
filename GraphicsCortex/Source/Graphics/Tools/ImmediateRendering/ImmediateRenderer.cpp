@@ -79,6 +79,16 @@ void ImmediateRenderer::draw_quad(glm::vec3 position0, glm::vec3 position1, glm:
 	attribute_buffer_corrupted = true;
 }
 
+void ImmediateRenderer::draw_rectangle(glm::vec2 position0, glm::vec2 position1, float z)
+{
+	draw_quad(
+		glm::vec3(position0.x, position0.y, z),
+		glm::vec3(position1.x, position0.y, z),
+		glm::vec3(position1.x, position1.y, z),
+		glm::vec3(position0.x, position1.y, z)
+	);
+}
+
 void ImmediateRenderer::render(Framebuffer& target_framebuffer, RenderParameters render_parameters)
 {
 	render_without_clear(target_framebuffer, render_parameters);

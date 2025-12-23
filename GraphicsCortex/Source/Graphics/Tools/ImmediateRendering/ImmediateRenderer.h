@@ -20,16 +20,22 @@ public:
 	ImmediateRenderer(size_t max_command_count = 1024);
 
 	struct DrawProperties;
-
 	void set_fill_color(glm::vec4 color);
 	void set_line_color(glm::vec4 color);
 	void set_line_thickness(float thickness);
+	void set_clip_area(glm::vec2 begin, glm::vec2 size);
 	DrawProperties get_current_properties();
 
 	void draw_point(glm::vec3 position0);
 	void draw_line(glm::vec3 position0, glm::vec3 position1);
+	
 	void draw_triangle(glm::vec3 position0, glm::vec3 position1, glm::vec3 position2);
+	void draw_triangle(glm::vec2 position0, glm::vec2 position1, glm::vec2 position2, float z = 0);
+	
 	void draw_quad(glm::vec3 position0, glm::vec3 position1, glm::vec3 position2, glm::vec3 position3);
+	void draw_quad(glm::vec2 position0, glm::vec2 position1, glm::vec2 position2, glm::vec2 position3, float z = 0);
+	
+	void draw_rectangle(glm::vec2 position0, glm::vec2 position1, float z = 0);
 
 	void render(Framebuffer& target_framebuffer, RenderParameters render_parameters = RenderParameters(false));
 	void render(RenderParameters render_parameters = RenderParameters(false));

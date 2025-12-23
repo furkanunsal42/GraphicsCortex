@@ -5,148 +5,124 @@
 #include <string>
 #include <unordered_map>
 
+#include "Window.h"
+#include "Tools/ImmediateRendering/ImmediateRenderer.h"
+#include "Math/AABB.h"
+
+//class Watchdog {
+//public:
+//	Watchdog(const glm::vec2& other = glm::vec2(0));
+//	Watchdog& operator=(const glm::vec2& other);
+//	
+//	operator glm::vec2();
+//
+//private:
+//	glm::vec2 value = glm::vec2(0);
+//	bool triggered = false;
+//};
+
 class GUI2 {
 public:
 
-	void init();
-	void release();
-
-	static constexpr float		fit		= 0;
-	static constexpr float		avail	= -1024*1024;
-
-	static constexpr float		fit1	= fit;
-	static constexpr glm::vec2	fit2	= glm::vec2(fit);
-	static constexpr glm::vec3	fit3	= glm::vec3(fit);
-	static constexpr glm::vec4	fit4	= glm::vec4(fit);
-
-	static constexpr float		avail1	= avail;
-	static constexpr glm::vec2	avail2	= glm::vec2(avail);
-	static constexpr glm::vec3	avail3	= glm::vec3(avail);
-	static constexpr glm::vec4	avail4	= glm::vec4(avail);
+	//void init();
+	//void release();
 
 	struct WindowDesc;
 	struct BoxDesc;
-	struct TextDesc;
-	struct ImageDesc;
-	struct GridDesc;
-	struct StackDesc;
+	enum MouseEvent;
 
-	struct WindowResult;
-	struct BoxResult;
-	struct TextResult;
-	struct ImageResult;
-	struct GridResult;
-	struct StackResult;
-	
-	struct Layout;
-	struct IOState;
-
-	WindowResult	window(const std::string& idstr, WindowDesc& desc);
+	MouseEvent		window_begin(const std::string& idstr, const glm::vec2& initial_position, const glm::vec2& initial_size);
+	WindowDesc&		window_prop();
 	void			window_end();
 
-	BoxResult		box(BoxDesc& desc);
+	MouseEvent		box_begin(const glm::vec2& position, const glm::vec2& size);
+	BoxDesc&		box_prop();
+	void			box_end();
 
-	Layout			generate_layout(IOState& io_state);
+	void			render();
+
+	struct BoxDesc {
+		glm::vec2 position			= glm::vec2(0);
+		glm::vec2 size				= glm::vec2(128);
+
+		glm::vec4 color				= glm::vec4(1, 1, 1, 1);
+		glm::vec4 border_thickness	= glm::vec4(0);
+		glm::vec4 border_rounding	= glm::vec4(0);
+		glm::vec4 border_color0		= glm::vec4(0, 0, 0, 1);
+		glm::vec4 border_color1		= glm::vec4(0, 0, 0, 1);
+		glm::vec4 border_color2		= glm::vec4(0, 0, 0, 1);
+		glm::vec4 border_color3		= glm::vec4(0, 0, 0, 1);
+		glm::vec4 shadow_thickness	= glm::vec4(0);
+		glm::vec4 shadow_color		= glm::vec4(0, 0, 0, 1);
+
+		glm::vec2 uv00				= glm::vec2(0);
+		glm::vec2 uv11				= glm::vec2(1);
+		uint32_t texture_id			= -1;
+	};
 
 	struct WindowDesc {
-		const char* name;
+
+		glm::vec2 position			= glm::vec2(0);
+		glm::vec2 size				= glm::vec2(128);
+
+		std::string name			= "CortexGUI2 Window";
+		glm::vec4 color				= glm::vec4(1, 1, 1, 1);
+		glm::vec4 border_thickness	= glm::vec4(0);
+		glm::vec4 border_rounding	= glm::vec4(0);
+		glm::vec4 border_color0		= glm::vec4(0, 0, 0, 1);
+		glm::vec4 border_color1		= glm::vec4(0, 0, 0, 1);
+		glm::vec4 border_color2		= glm::vec4(0, 0, 0, 1);
+		glm::vec4 border_color3		= glm::vec4(0, 0, 0, 1);
+		glm::vec4 shadow_thickness	= glm::vec4(0);
+		glm::vec4 shadow_color		= glm::vec4(0, 0, 0, 1);
 		
-		glm::vec2 position;
-		glm::vec2 size;
-
-		glm::vec4 color;
-		glm::vec4 border_thickness;
-		glm::vec4 border_rounding;
-		glm::vec4 border_color0;
-		glm::vec4 border_color1;
-		glm::vec4 border_color2;
-		glm::vec4 border_color3;
-		glm::vec4 shadow_thickness;
-		glm::vec4 shadow_color;
-
-		bool is_grapable;
-		bool is_resizable;
-		//bool is_dockable;
-		//bool is_a_dock_surface;
+		bool is_decorated			= false;
+		bool is_resizable			= true;
 	};
 
-	struct WindowResult {
-
-	};
-
-	struct DrawCommand {
-		enum Type {
-			Clear,
-			DrawTriangle,
-			BufferLoadData,
-			BufferResize,
-		};
-
-		union {
-			glm::vec4 color;
-			struct {
-				void* data;
-				size_t begin;
-				size_t size;
-			};
-			struct {
-				size_t program_id;
-				size_t begin;
-				size_t size;
-			};
-		};
-	};
-
-	struct WindowCommand {
-		enum Type {
-			Create,
-			Rename,
-			Resize,
-			Reposition,
-			Destroy
-		};
-
-		union {
-			size_t id;
-			const char* name;
-			glm::ivec2 size;
-			glm::ivec2 position;
-		};
-	};
-
-	struct IOState {
-
-	};
-
-	struct Layout {
-
-		int32_t window_count;
-		size_t* draw_command_count_per_window;
-		DrawCommand** commands;
-
+	enum MouseEvent {
+		None			= 0b00000001,
+		Hover			= 0b00000010,
+		LeftPress		= 0b00000100,
+		LeftRelease		= 0b00001000,
+		LeftHold		= 0b00010000,
+		RightPress		= 0b00100000,
+		RightRelease	= 0b01000000,
+		RightHold		= 0b10000000,
 	};
 
 private:
 
-	struct Node {
-		
-		enum Type {
-			Window,
-			Box,
-		};
+	MouseEvent _generate_event_for_aabb(const AABB2& aabb);
+	void _publish_last();
 
-		Type type;
-		void* data;
-
-		size_t parent;
-		size_t sibling;
-		size_t child;
+	enum class MouseState {
+		Hover			= 0b00000000,
+		LeftPress		= 0b00000001,
+		LeftRelease		= 0b00000010,
+		LeftHold		= 0b00000100,
+		RightPress		= 0b00001000,
+		RightRelease	= 0b00010000,
+		RightHold		= 0b00100000,
 	};
 
-	std::vector<Node> nodes;
-	
-	std::vector<size_t> window_stack;
+	struct IOState {
+		MouseState mouse_state						= MouseState::Hover;
+		MouseState mouse_state_prev					= MouseState::Hover;
+		glm::vec2 mouse_position					= glm::vec2(0);
+		glm::vec2 mouse_left_press_begin_position	= glm::vec2(0);
+		glm::vec2 mouse_right_press_begin_position	= glm::vec2(0);
+	};
 
-	std::unordered_map<std::string, WindowDesc> windows_desc;
-	std::unordered_map<std::string, WindowDesc> windows_state;
+	struct WindowState {
+		bool active = false;
+		WindowDesc descriptor;
+		std::shared_ptr<Window> window = nullptr;
+		std::shared_ptr<ImmediateRenderer> renderer = nullptr;
+	};
+
+	IOState io_state;
+	std::vector<std::string> window_stack;
+	std::unordered_map<std::string, WindowState> windows_state;
+	std::optional<BoxDesc> box_last = std::nullopt;
 };
