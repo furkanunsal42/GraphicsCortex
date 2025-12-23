@@ -4,23 +4,23 @@
 namespace ImGuiThemes {
 
     static void LightTheme1(ImGuiStyle& style) {
-        //style.WindowRounding = 2.0f;             // Radius of window corners rounding. Set to 0.0f to have rectangular windows
-        //style.ScrollbarRounding = 3.0f;             // Radius of grab corners rounding for scrollbar
-        //style.GrabRounding = 2.0f;             // Radius of grabs corners rounding. Set to 0.0f to have rectangular slider grabs.
-        //style.AntiAliasedLines = true;
-        //style.AntiAliasedFill = true;
-        //style.WindowRounding = 2;
-        //style.ChildRounding = 2;
-        //style.ScrollbarSize = 16;
-        //style.ScrollbarRounding = 3;
-        //style.GrabRounding = 2;
-        //style.ItemSpacing.x = 10;
-        //style.ItemSpacing.y = 4;
-        //style.IndentSpacing = 22;
-        //style.FramePadding.x = 6;
-        //style.FramePadding.y = 4;
-        //style.Alpha = 1.0f;
-        //style.FrameRounding = 3.0f;
+        style.WindowRounding = 2.0f;             // Radius of window corners rounding. Set to 0.0f to have rectangular windows
+        style.ScrollbarRounding = 3.0f;             // Radius of grab corners rounding for scrollbar
+        style.GrabRounding = 2.0f;             // Radius of grabs corners rounding. Set to 0.0f to have rectangular slider grabs.
+        style.AntiAliasedLines = true;
+        style.AntiAliasedFill = true;
+        style.WindowRounding = 2;
+        style.ChildRounding = 2;
+        style.ScrollbarSize = 16;
+        style.ScrollbarRounding = 3;
+        style.GrabRounding = 2;
+        style.ItemSpacing.x = 10;
+        style.ItemSpacing.y = 4;
+        style.IndentSpacing = 22;
+        style.FramePadding.x = 6;
+        style.FramePadding.y = 4;
+        style.Alpha = 1.0f;
+        style.FrameRounding = 3.0f;
 
         float fontSize = 18.0f;// *2.0f;
 
@@ -53,11 +53,11 @@ namespace ImGuiThemes {
         style.Colors[ImGuiCol_HeaderHovered] = ImVec4(0.26f, 0.59f, 0.98f, 0.80f);
         style.Colors[ImGuiCol_HeaderActive] = ImVec4(0.26f, 0.59f, 0.98f, 1.00f);
 
-        style.Colors[ImGuiCol_Tab] = ImVec4(0.70f, 0.70f, 0.70f, 1.00f);
-        style.Colors[ImGuiCol_TabUnfocusedActive] = ImVec4(0.70f, 0.70f, 0.70f, 1.00f);
-        style.Colors[ImGuiCol_TabUnfocused] = ImVec4(0.70f, 0.70f, 0.70f, 1.00f);
-        style.Colors[ImGuiCol_TabHovered] = ImVec4(0.70f, 0.70f, 0.70f, 0.78f);
-        style.Colors[ImGuiCol_TabActive] = ImVec4(0.70f, 0.70f, 0.70f, 1.00f);
+        style.Colors[ImGuiCol_Tab]                  = ImVec4(0.86f, 0.86f, 0.86f, 1.00f);
+        style.Colors[ImGuiCol_TabUnfocusedActive]   = ImVec4(0.86f, 0.86f, 0.86f, 1.00f);
+        style.Colors[ImGuiCol_TabUnfocused]         = ImVec4(0.86f, 0.86f, 0.86f, 1.00f);
+        style.Colors[ImGuiCol_TabHovered]           = ImVec4(0.47f, 0.74f, 0.95f, 1.00f);
+        style.Colors[ImGuiCol_TabActive]            = ImVec4(0.67f, 0.80f, 0.96f, 1.00f);
 
         style.Colors[ImGuiCol_ResizeGrip] = ImVec4(1.00f, 1.00f, 1.00f, 0.50f);
         style.Colors[ImGuiCol_ResizeGripHovered] = ImVec4(0.26f, 0.59f, 0.98f, 0.67f);
@@ -103,7 +103,7 @@ namespace ImGuiThemes {
         //style.FramePadding.y = 4;
         //style.Alpha = 1.0f;
         //style.FrameRounding = 3.0f;
-
+        
         float fontSize = 18.0f;// *2.0f;
 
         style.Colors[ImGuiCol_Text] = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);

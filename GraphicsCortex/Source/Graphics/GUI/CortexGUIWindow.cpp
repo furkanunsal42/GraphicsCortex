@@ -34,8 +34,8 @@ GUIWindow::GUIWindow(Window& window)
 	grid->target_size = glm::vec2(600, 400);
 	grid->color = glm::vec4(0.94, 0.94, 0.94, 1);
 
-	grid->add_column(grid->target_size.x);
-	grid->add_row(grid->target_size.y);
+	grid->add_column(0);
+	grid->add_row(0);
 }
 
 GUIWindow::GUIWindow()
@@ -46,8 +46,8 @@ GUIWindow::GUIWindow()
 	grid->target_size = glm::vec2(600, 400);
 	grid->color = glm::vec4(0.94, 0.94, 0.94, 1);
 
-	grid->add_column(grid->target_size.x);
-	grid->add_row(grid->target_size.y);
+	grid->add_column(0);
+	grid->add_row(0);
 }
 
 void GUIWindow::run() {
@@ -75,7 +75,7 @@ void GUIWindow::run() {
 
 			child_window.handle_events();
 			child_window.render();
-
+			
 			child_window.window->swap_buffers();
 		}
 	}
@@ -86,20 +86,24 @@ void GUIWindow::run() {
 void GUIWindow::handle_events() {
 
 	double deltatime = window->handle_events(true);
-	primitive_renderer::clear(grid->color.r, grid->color.g, grid->color.b, grid->color.a);
-
-	if (window->get_window_resolution() != glm::ivec2(grid->target_size)) {
-		window->set_window_resolution(glm::ivec2(grid->target_size));
-		primitive_renderer::set_viewport_size(grid->target_size);
-	}
-
-	if (window->is_window_visible() != visible)
-		window->set_window_visibility(visible);
+	
 }
 
 void GUIWindow::render() {
 
-	GUI::get().render(grid);
+	primitive_renderer::clear(grid->color.r, grid->color.g, grid->color.b, grid->color.a);
+
+	Element& element = grid->get_element(grid->target_size);
+
+	if (window->get_window_resolution() != glm::ivec2(element.size())) {
+		window->set_window_resolution(glm::ivec2(element.size()));
+		primitive_renderer::set_viewport_size(element.size());
+	}
+
+	if (window->is_window_visible() != visible)
+		window->set_window_visibility(visible);
+
+	GUI::get().render(element);
 	grid->poll_events(glm::vec2(0));
 
 }

@@ -28,7 +28,7 @@ public:
 		using namespace std::chrono_literals;
 
 		auto gui_window = GUIWindowHierarchy::get().create_window<GUIWindow>();
-		//gui_window->grid->target_size = glm::vec2(0, 0);
+		gui_window->grid->target_size = glm::vec2(0, 0);
 		
 		font_id font = FontBank::get().load_font("../GraphicsCortex/Fonts/Roboto-Regular.ttf", 64);
 		

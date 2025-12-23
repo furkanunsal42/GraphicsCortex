@@ -46,8 +46,8 @@ public:
 	
 	void render(Element& root_element);
 	template<typename T>
-	void render(WidgetHandle<T>& widget);
-	void render(Widget& widget);
+	void render(WidgetHandle<T>& widget, glm::vec2 position = glm::vec2(0));
+	void render(Widget& widget, glm::vec2 position = glm::vec2(0));
 
 	Widget& get_widget_data(widget_t id);
 
