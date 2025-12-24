@@ -89,6 +89,7 @@ public:
 
 	// graphics context
 	void context_make_current();
+	static void detech_context();
 
 	uint32_t get_context_version_major();
 	uint32_t get_context_version_minor();

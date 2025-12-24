@@ -30,6 +30,7 @@ public:
 	struct WindowDesc;
 	struct BoxDesc;
 	enum MouseEvent;
+	struct IOState;
 
 	MouseEvent		window_begin(const std::string& idstr, const glm::vec2& initial_position, const glm::vec2& initial_size);
 	WindowDesc&		window_prop();
@@ -41,7 +42,11 @@ public:
 
 	void			render();
 
+	const IOState&	get_io_state();
+
 	struct BoxDesc {
+
+		MouseEvent mouse_event		= None;
 		glm::vec2 position			= glm::vec2(0);
 		glm::vec2 size				= glm::vec2(128);
 
@@ -62,6 +67,7 @@ public:
 
 	struct WindowDesc {
 
+		MouseEvent mouse_event		= MouseEvent::None;
 		glm::vec2 position			= glm::vec2(0);
 		glm::vec2 size				= glm::vec2(128);
 
@@ -122,6 +128,7 @@ private:
 	};
 
 	IOState io_state;
+	std::shared_ptr<Window> parent_window = nullptr;
 	std::vector<std::string> window_stack;
 	std::unordered_map<std::string, WindowState> windows_state;
 	std::optional<BoxDesc> box_last = std::nullopt;

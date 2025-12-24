@@ -1,6 +1,7 @@
 #include "GUI2.h"
 #include "PrimitiveRenderer.h"
 #include "WindowBoundGlobalResources.h"
+#include "GUI2Dynamic.h"
 
 GUI2::MouseEvent GUI2::window_begin(const std::string& idstr, const glm::vec2& initial_position, const glm::vec2& initial_size) {
 	
@@ -23,9 +24,11 @@ GUI2::MouseEvent GUI2::window_begin(const std::string& idstr, const glm::vec2& i
 		windows_state[idstr].descriptor.size		= old_descriptor.size;
 	}
 
+	MouseEvent event = _generate_event_for_aabb(AABB2(windows_state[idstr].descriptor.position, windows_state[idstr].descriptor.position + windows_state[idstr].descriptor.size));
+	windows_state[idstr].descriptor.mouse_event = event;
+	
 	window_stack.push_back(idstr);
-
-	MouseEvent event = _generate_event_for_aabb(AABB2(glm::vec2(0), window_prop().size));
+	
 	return event;
 }
 
@@ -52,7 +55,12 @@ GUI2::MouseEvent GUI2::box_begin(const glm::vec2& position, const glm::vec2& siz
 	box_last->position = position;
 	box_last->size = size;
 
-	return None;
+	auto& window_desc = windows_state[window_stack.back()].descriptor;
+
+	MouseEvent event = _generate_event_for_aabb(AABB2(window_desc.position + position, window_desc.position + position + size));
+	box_last->mouse_event = event;
+
+	return event;
 }
 
 GUI2::BoxDesc& GUI2::box_prop() {
@@ -72,12 +80,30 @@ void GUI2::render() {
 	Window* previous_window = active_window;
 	glm::vec4 previous_viewport = primitive_renderer::get_viewport_position_size();
 
+	//glm::vec4 previous_viewport = previous_window != nullptr ? 
+	//							  primitive_renderer::get_viewport_position_size() : 
+	//							  glm::ivec4(0);
+	//
+	//if (active_window == nullptr) {
+	//	WindowDescription desc;
+	//	desc.w_name = "CortexGUI2 Parent Window";
+	//	desc.w_resolution = glm::ivec2(0);
+	//	parent_window = std::make_shared<Window>(desc);
+	//	parent_window->context_make_current();
+	//}
+
 	for (auto iterator = windows_state.begin(); iterator != windows_state.end(); ) {
 		if (iterator->second.active == false)
 			iterator = windows_state.erase(iterator);
 		else
 			++iterator;
 	}
+
+	if (parent_window != nullptr)
+		parent_window->handle_events();
+
+	bool now_holding_left = false;
+	bool now_holding_right = false;
 
 	for (std::pair<const std::string, WindowState>& info : windows_state) {
 
@@ -96,6 +122,11 @@ void GUI2::render() {
 			description.w_scale_framebuffer_size	= false;
 			description.w_scale_window_size			= false;
 			description.w_decorated					= desc.is_decorated;
+
+			//description.context_shared				= previous_window != nullptr	? 
+			//										  previous_window->get_handle() :
+			//										  parent_window->get_handle();
+
 			state.window = std::make_shared<Window>(description);
 			state.window->set_window_position(desc.position);
 		}
@@ -115,6 +146,11 @@ void GUI2::render() {
 			desc.size = state.window->get_window_resolution();
 		}
 		
+		Window::PressAction left	= state.window->get_mouse_button(Window::MouseButton::LEFT);
+		Window::PressAction right	= state.window->get_mouse_button(Window::MouseButton::RIGHT);
+		now_holding_left			= now_holding_left	|| left  == Window::PressAction::PRESS;
+		now_holding_right			= now_holding_right	|| right == Window::PressAction::PRESS;
+
 		state.window->context_make_current();
 		primitive_renderer::clear(desc.color.x, desc.color.y, desc.color.z, desc.color.a);
 
@@ -142,12 +178,17 @@ void GUI2::render() {
 	window_stack.clear();
 
 	if (previous_window != nullptr) {
-		io_state.mouse_position = previous_window->get_cursor_position();
 		
-		Window::PressAction left	= previous_window->get_mouse_button(Window::MouseButton::LEFT);
-		Window::PressAction right	= previous_window->get_mouse_button(Window::MouseButton::RIGHT);
-		bool now_holding_left		= left  == Window::PressAction::PRESS;
-		bool now_holding_right		= right == Window::PressAction::PRESS;
+		//Window* effective_parent_window = previous_window != nullptr ? previous_window : parent_window.get();
+		Window* effective_parent_window = previous_window;
+
+		io_state.mouse_position =	effective_parent_window->get_cursor_position() + 
+									glm::dvec2(effective_parent_window->get_window_position());
+		
+		//Window::PressAction left	= effective_parent_window->get_mouse_button(Window::MouseButton::LEFT);
+		//Window::PressAction right	= effective_parent_window->get_mouse_button(Window::MouseButton::RIGHT);
+		//bool now_holding_left		= left  == Window::PressAction::PRESS;
+		//bool now_holding_right		= right == Window::PressAction::PRESS;
 		
 		MouseState mouse_state_prev = io_state.mouse_state;
 		bool were_holding_left   = ((int32_t)mouse_state_prev & (int32_t)MouseState::LeftHold)  != 0;
@@ -170,9 +211,18 @@ void GUI2::render() {
 		if ((int32_t)io_state.mouse_state & (int32_t)MouseState::LeftPress)  io_state.mouse_left_press_begin_position  = io_state.mouse_position;
 		if ((int32_t)io_state.mouse_state & (int32_t)MouseState::RightPress) io_state.mouse_right_press_begin_position = io_state.mouse_position;
 
-		previous_window->context_make_current();
-		primitive_renderer::set_viewport(previous_viewport);
+		if (previous_window != nullptr) {
+			previous_window->context_make_current();
+			primitive_renderer::set_viewport(previous_viewport);
+		}
+		//if (parent_window != nullptr)
+		//	Window::detech_context();
 	}
+}
+
+const GUI2::IOState& GUI2::get_io_state()
+{
+	return io_state;
 }
 
 GUI2::MouseEvent GUI2::_generate_event_for_aabb(const AABB2& aabb) {

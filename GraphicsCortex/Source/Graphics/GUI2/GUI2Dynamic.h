@@ -1,0 +1,231 @@
+#pragma once
+#include "GUI2.h"
+#include <variant>
+#include <array>
+
+class GUI2Dynamic {
+public:
+
+	static constexpr float		fit = -1;
+	static constexpr float		avail = -1024 * 64;
+
+	static constexpr float		fit1 = fit;
+	static constexpr glm::vec2	fit2 = glm::vec2(fit);
+	static constexpr glm::vec3	fit3 = glm::vec3(fit);
+	static constexpr glm::vec4	fit4 = glm::vec4(fit);
+
+	static constexpr float		avail1 = avail;
+	static constexpr glm::vec2	avail2 = glm::vec2(avail);
+	static constexpr glm::vec3	avail3 = glm::vec3(avail);
+	static constexpr glm::vec4	avail4 = glm::vec4(avail);
+
+	struct WindowDesc;
+	struct BoxDesc;
+	struct GridDesc;
+	struct StackDesc;
+
+	void				window_begin(const std::string& idstr);
+	WindowDesc&			window_prop();
+	void				window_end();
+
+	void				grid_begin(const std::string& idstr, glm::ivec2 grid_layout);
+	void				grid_begin(glm::ivec2 grid_layout);
+	GridDesc&			grid_prop();
+	void				grid_region(glm::ivec2 grid_index, glm::ivec2 grid_span);
+	void				grid_end();
+
+	void				stack_begin(const std::string& idstr);
+	void				stack_begin();
+	StackDesc&			stack_prop();
+	void				stack_end();
+
+	void				box_begin(const std::string& idstr);
+	void				box_begin();
+	BoxDesc&			box_prop();
+	void				box_end();
+
+	void				print_nodes();
+	void				print_layout();
+	void				resolve();
+	glm::vec2			get_size		(const std::string& idstr);
+	glm::vec2			get_position	(const std::string& idstr);
+	GUI2::MouseEvent	get_mouse_event	(const std::string& idstr);
+
+	void				publish(GUI2& gui);
+
+	//void				rect();
+	//void				text();
+	//void				image();
+	//
+	//void				textbox();
+	//void				slider();
+	//void				dragfloat();
+	//
+	//void				checkbox();
+	//void				button();
+	//void				imagebutton();
+	//
+	//void				combobox_begin();
+	//void				combobox_item();
+	//void				combobox_end();
+	//
+	//void				menu_begin();
+	//void				menu_item();
+	//void				menu_end();
+	//
+	//void				tab_begin();
+	//void				tab_item();
+	//void				tab_end();
+
+	struct WindowDesc {
+		glm::vec4	margin				= glm::vec4(0);
+		glm::vec4	padding				= glm::vec4(10);
+		glm::vec2	target_size			= glm::vec2(fit);
+		glm::vec2	min_size			= glm::vec2(fit);
+		glm::vec2	max_size			= glm::vec2(avail);
+
+		std::string name				= "CortexGUI2 Window";
+		glm::vec4	color				= glm::vec4(1, 1, 1, 1);
+		glm::vec4	border_thickness	= glm::vec4(0);
+		glm::vec4	border_rounding		= glm::vec4(0);
+		glm::vec4	border_color0		= glm::vec4(0, 0, 0, 1);
+		glm::vec4	border_color1		= glm::vec4(0, 0, 0, 1);
+		glm::vec4	border_color2		= glm::vec4(0, 0, 0, 1);
+		glm::vec4	border_color3		= glm::vec4(0, 0, 0, 1);
+		glm::vec4	shadow_thickness	= glm::vec4(0);
+		glm::vec4	shadow_color		= glm::vec4(0, 0, 0, 1);
+		
+		bool		is_decorated		= false;
+		bool		is_resizable		= true;
+
+	private:
+		friend GUI2Dynamic;
+		std::string idstr;
+	};
+
+	struct BoxDesc {
+		glm::vec4	margin				= glm::vec4(0);
+		glm::vec2	target_size			= glm::vec2(128);
+		glm::vec2	min_size			= glm::vec2(fit);
+		glm::vec2	max_size			= glm::vec2(avail);
+
+		glm::vec4	color				= glm::vec4(1, 1, 1, 1);
+		glm::vec4	border_thickness	= glm::vec4(0);
+		glm::vec4	border_rounding		= glm::vec4(0);
+		glm::vec4	border_color0		= glm::vec4(0, 0, 0, 1);
+		glm::vec4	border_color1		= glm::vec4(0, 0, 0, 1);
+		glm::vec4	border_color2		= glm::vec4(0, 0, 0, 1);
+		glm::vec4	border_color3		= glm::vec4(0, 0, 0, 1);
+		glm::vec4	shadow_thickness	= glm::vec4(0);
+		glm::vec4	shadow_color		= glm::vec4(0, 0, 0, 1);
+		
+		glm::vec2	uv00				= glm::vec2(0);
+		glm::vec2	uv11				= glm::vec2(1);
+		uint32_t	texture_id			= -1;
+
+	private:
+		friend GUI2Dynamic;
+		std::string idstr;
+		glm::ivec2	grid_slot			= glm::ivec2(0, 0);
+		glm::ivec2	grid_span			= glm::ivec2(0, 0);
+	};
+
+	struct GridDesc {
+		glm::vec4	margin				= glm::vec4(0);
+		glm::vec4	padding				= glm::vec4(10);
+		glm::vec2	target_size			= glm::vec2(fit);
+		glm::vec2	min_size			= glm::vec2(fit);
+		glm::vec2	max_size			= glm::vec2(avail);
+		
+		glm::ivec2	layout				= glm::ivec2(1, 1);
+	
+		//std::variant<
+		//	std::array<float, 32>, 
+		//	std::vector<float>
+		//> widths						= std::array<float, 32>();
+		std::vector<float> widths;
+
+	private:
+		friend GUI2Dynamic;
+		std::string idstr;
+		glm::ivec2	current_grid_index	= glm::ivec2(0, 0);
+		glm::ivec2	current_grid_span	= glm::ivec2(0, 0);
+		glm::ivec2	grid_slot			= glm::ivec2(0, 0);
+		glm::ivec2	grid_span			= glm::ivec2(0, 0);
+
+	};
+
+	struct StackDesc {
+		glm::vec4	margin				= glm::vec4(0);
+		glm::vec4	padding				= glm::vec4(10);
+		glm::vec2	target_size			= glm::vec2(fit);
+		glm::vec2	min_size			= glm::vec2(fit);
+		glm::vec2	max_size			= glm::vec2(avail);
+
+		float		spacing				= 10;
+		bool		is_vertical			= true;
+
+	private:
+		friend GUI2Dynamic;
+		std::string idstr;
+		glm::ivec2	grid_slot = glm::ivec2(0, 0);
+		glm::ivec2	grid_span = glm::ivec2(0, 0);
+
+	};
+
+	struct ResolvedProperties {
+		glm::vec2 position				= glm::vec2(0);
+		glm::vec2 size					= glm::vec2(0);
+		GUI2::MouseEvent event			= GUI2::None;
+	};
+
+private:
+
+	enum NodeType {
+		Window,
+		Box,
+		Grid,
+		Stack,
+	};
+
+	struct Node {
+		static constexpr size_t invalid_node = -1;
+		
+		std::variant<
+			WindowDesc, 
+			BoxDesc, 
+			GridDesc, 
+			StackDesc
+		> desc			= BoxDesc();
+		
+		size_t parent	= invalid_node;
+		size_t sibling	= invalid_node;
+		size_t child	= invalid_node;
+	};
+
+	std::vector<size_t> node_stack;
+	size_t last_window	= Node::invalid_node;
+	size_t last_box		= Node::invalid_node;
+	size_t last_grid	= Node::invalid_node;
+	size_t last_stack	= Node::invalid_node;
+	
+	std::vector<size_t>	root_nodes;
+	std::vector<Node> nodes;
+
+	size_t find_last_of_type(NodeType type);
+	NodeType get_type(const Node& node);
+	size_t push_node(size_t parent = Node::invalid_node);
+	size_t push_node(size_t parent, WindowDesc desc);
+	size_t push_node(size_t parent, BoxDesc desc);
+	size_t push_node(size_t parent, GridDesc desc);
+	size_t push_node(size_t parent, StackDesc desc);
+
+	//														level	  self
+	void traverse_nodes(size_t root_node, std::function<void(int32_t, size_t)> lambda_given_level_self);
+	void traverse_nodes_linear_down(size_t root_node, std::function<void(int32_t, size_t)> lambda_given_level_self);
+	void traverse_nodes_linear_up(size_t root_node, std::function<void(int32_t, size_t)> lambda_given_level_self);
+
+
+	std::unordered_map<std::string, ResolvedProperties> resolved_properties;
+
+};

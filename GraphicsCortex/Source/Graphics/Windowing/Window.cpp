@@ -471,6 +471,12 @@ void Window::context_make_current()
 	active_window = this;
 }
 
+void Window::detech_context() {
+	glfwMakeContextCurrent(nullptr);
+	active_global_resources = nullptr;
+	active_window = nullptr;
+}
+
 // event handling
 
 bool Window::should_close()

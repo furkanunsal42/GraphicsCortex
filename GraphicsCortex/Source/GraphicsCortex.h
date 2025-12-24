@@ -13,6 +13,8 @@
 #include "gtc/matrix_transform.hpp"
 #include "gtc/type_ptr.hpp"
 
+#include "GLMCout.h"
+
 #include "Debuger.h"
 #include "Monitor.h"
 #include "Window.h"

@@ -1460,6 +1460,7 @@ project "GozdiscopticsMax"
 	}
 
 	includedirs 
+	{
 		"%{prj.name}/Source",
 		"%{prj.name}/Tests",
 		"CortexPackager/Source",
