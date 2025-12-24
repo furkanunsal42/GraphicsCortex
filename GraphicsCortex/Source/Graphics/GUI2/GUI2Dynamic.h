@@ -28,9 +28,11 @@ public:
 	WindowDesc&			window_prop();
 	void				window_end();
 
-	void				grid_begin(const std::string& idstr, glm::ivec2 grid_layout);
-	void				grid_begin(glm::ivec2 grid_layout);
+	void				grid_begin(const std::string& idstr);
+	void				grid_begin();
 	GridDesc&			grid_prop();
+	void				grid_add_column(float width);
+	void				grid_add_row(float height);
 	void				grid_region(glm::ivec2 grid_index, glm::ivec2 grid_span);
 	void				grid_end();
 
@@ -78,7 +80,6 @@ public:
 	//void				tab_end();
 
 	struct WindowDesc {
-		glm::vec4	margin				= glm::vec4(0);
 		glm::vec4	padding				= glm::vec4(10);
 		glm::vec2	target_size			= glm::vec2(fit);
 		glm::vec2	min_size			= glm::vec2(fit);
@@ -98,9 +99,12 @@ public:
 		bool		is_decorated		= false;
 		bool		is_resizable		= true;
 
+		glm::vec2	position			= glm::vec2(0);
+
 	private:
 		friend GUI2Dynamic;
 		std::string idstr;
+		glm::vec2	size				= glm::vec2(0);
 	};
 
 	struct BoxDesc {
@@ -128,6 +132,8 @@ public:
 		std::string idstr;
 		glm::ivec2	grid_slot			= glm::ivec2(0, 0);
 		glm::ivec2	grid_span			= glm::ivec2(0, 0);
+		glm::vec2	position			= glm::vec2(0);
+		glm::vec2	size				= glm::vec2(0);
 	};
 
 	struct GridDesc {
@@ -137,13 +143,14 @@ public:
 		glm::vec2	min_size			= glm::vec2(fit);
 		glm::vec2	max_size			= glm::vec2(avail);
 		
-		glm::ivec2	layout				= glm::ivec2(1, 1);
+		//glm::ivec2	layout				= glm::ivec2(1, 1);
 	
 		//std::variant<
 		//	std::array<float, 32>, 
 		//	std::vector<float>
 		//> widths						= std::array<float, 32>();
-		std::vector<float> widths;
+		std::vector<float> columns;
+		std::vector<float> rows;
 
 	private:
 		friend GUI2Dynamic;
@@ -152,7 +159,8 @@ public:
 		glm::ivec2	current_grid_span	= glm::ivec2(0, 0);
 		glm::ivec2	grid_slot			= glm::ivec2(0, 0);
 		glm::ivec2	grid_span			= glm::ivec2(0, 0);
-
+		glm::vec2	position			= glm::vec2(0);
+		glm::vec2	size				= glm::vec2(0);
 	};
 
 	struct StackDesc {
@@ -168,8 +176,10 @@ public:
 	private:
 		friend GUI2Dynamic;
 		std::string idstr;
-		glm::ivec2	grid_slot = glm::ivec2(0, 0);
-		glm::ivec2	grid_span = glm::ivec2(0, 0);
+		glm::ivec2	grid_slot			= glm::ivec2(0, 0);
+		glm::ivec2	grid_span			= glm::ivec2(0, 0);
+		glm::vec2	position			= glm::vec2(0);
+		glm::vec2	size				= glm::vec2(0);
 
 	};
 
@@ -220,10 +230,19 @@ private:
 	size_t push_node(size_t parent, GridDesc desc);
 	size_t push_node(size_t parent, StackDesc desc);
 
+	glm::vec2&	node_position(size_t node);
+	glm::vec2&	node_size(size_t node);
+	glm::vec4&	node_margin(size_t node);
+	glm::vec2&	node_target_size(size_t node);
+	glm::vec2&	node_min_size(size_t node);
+	glm::vec2&	node_max_size(size_t node);
+
+
 	//														level	  self
-	void traverse_nodes(size_t root_node, std::function<void(int32_t, size_t)> lambda_given_level_self);
-	void traverse_nodes_linear_down(size_t root_node, std::function<void(int32_t, size_t)> lambda_given_level_self);
-	void traverse_nodes_linear_up(size_t root_node, std::function<void(int32_t, size_t)> lambda_given_level_self);
+	void _traverse_nodes(size_t root_node, std::function<void(int32_t, size_t)> lambda_given_level_self);
+	void traverse_nodes_down(size_t root_node, std::function<void(int32_t, size_t)> lambda_given_level_self);
+	void traverse_nodes_up(size_t root_node, std::function<void(int32_t, size_t)> lambda_given_level_self);
+	void traverse_nodes_children(size_t parent_node, std::function<void(size_t)> lambda_given_self);
 
 
 	std::unordered_map<std::string, ResolvedProperties> resolved_properties;

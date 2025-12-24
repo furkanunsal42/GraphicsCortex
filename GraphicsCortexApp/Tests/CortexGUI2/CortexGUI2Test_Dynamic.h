@@ -19,7 +19,9 @@ public:
 			gui_d.stack_begin();
 				gui_d.box_begin();
 				gui_d.box_end();
-				gui_d.grid_begin(glm::ivec2(1, 1));
+				gui_d.grid_begin();
+				gui_d.grid_add_column(GUI2Dynamic::avail);
+				gui_d.grid_add_row(GUI2Dynamic::avail);
 				gui_d.grid_end();
 				gui_d.box_begin();
 				gui_d.box_end();

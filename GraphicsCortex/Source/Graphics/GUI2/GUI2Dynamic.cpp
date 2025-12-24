@@ -91,6 +91,121 @@ size_t GUI2Dynamic::push_node(size_t parent, StackDesc desc)
 	return id;
 }
 
+glm::vec2& GUI2Dynamic::node_position(size_t node_id){
+	if (node_id >= nodes.size()) {
+		std::cout << "[GUI Error] GUI2Dynamic::node_position() is called but given node is not valid" << std::endl;
+		ASSERT(false);
+	}
+
+	Node& node = nodes[node_id];
+
+	switch (get_type(node)) {
+	case Window	: return std::get<WindowDesc>(node.desc).position;
+	case Box	: return std::get<BoxDesc>(node.desc).position;
+	case Grid	: return std::get<GridDesc>(node.desc).position;
+	case Stack	: return std::get<StackDesc>(node.desc).position;
+	}
+
+	std::cout << "[GUI Error] GUI2Dynamic::node_position() but an error is occured" << std::endl;
+	ASSERT(false);
+}
+
+glm::vec2& GUI2Dynamic::node_size(size_t node_id){
+	if (node_id >= nodes.size()) {
+		std::cout << "[GUI Error] GUI2Dynamic::node_size() is called but given node is not valid" << std::endl;
+		ASSERT(false);
+	}
+
+	Node& node = nodes[node_id];
+
+	switch (get_type(node)) {
+	case Window	: return std::get<WindowDesc>(node.desc).size;
+	case Box	: return std::get<BoxDesc>(node.desc).size;
+	case Grid	: return std::get<GridDesc>(node.desc).size;
+	case Stack	: return std::get<StackDesc>(node.desc).size;
+	}
+
+	std::cout << "[GUI Error] GUI2Dynamic::node_size() but an error is occured" << std::endl;
+	ASSERT(false);
+}
+
+glm::vec4& GUI2Dynamic::node_margin(size_t node_id){
+	if (node_id >= nodes.size()) {
+		std::cout << "[GUI Error] GUI2Dynamic::node_margin() is called but given node is not valid" << std::endl;
+		ASSERT(false);
+	}
+
+	Node& node = nodes[node_id];
+
+	switch (get_type(node)) {
+	//case Window	: return std::get<WindowDesc>(node.desc).margin;
+	case Box	: return std::get<BoxDesc>(node.desc).margin;
+	case Grid	: return std::get<GridDesc>(node.desc).margin;
+	case Stack	: return std::get<StackDesc>(node.desc).margin;
+	}
+
+	std::cout << "[GUI Error] GUI2Dynamic::node_margin() but an error is occured" << std::endl;
+	ASSERT(false);
+}
+
+glm::vec2& GUI2Dynamic::node_target_size(size_t node_id){
+	if (node_id >= nodes.size()) {
+		std::cout << "[GUI Error] GUI2Dynamic::node_target_size() is called but given node is not valid" << std::endl;
+		ASSERT(false);
+	}
+
+	Node& node = nodes[node_id];
+
+	switch (get_type(node)) {
+	case Window	: return std::get<WindowDesc>(node.desc).target_size;
+	case Box	: return std::get<BoxDesc>(node.desc).target_size;
+	case Grid	: return std::get<GridDesc>(node.desc).target_size;
+	case Stack	: return std::get<StackDesc>(node.desc).target_size;
+	}
+
+	std::cout << "[GUI Error] GUI2Dynamic::node_target_size() but an error is occured" << std::endl;
+	ASSERT(false);
+}
+
+glm::vec2& GUI2Dynamic::node_min_size(size_t node_id){
+	if (node_id >= nodes.size()) {
+		std::cout << "[GUI Error] GUI2Dynamic::node_min_size() is called but given node is not valid" << std::endl;
+		ASSERT(false);
+	}
+
+	Node& node = nodes[node_id];
+
+	switch (get_type(node)) {
+	case Window	: return std::get<WindowDesc>(node.desc).min_size;
+	case Box	: return std::get<BoxDesc>(node.desc).min_size;
+	case Grid	: return std::get<GridDesc>(node.desc).min_size;
+	case Stack	: return std::get<StackDesc>(node.desc).min_size;
+	}
+
+	std::cout << "[GUI Error] GUI2Dynamic::node_min_size() but an error is occured" << std::endl;
+	ASSERT(false);
+}
+
+glm::vec2& GUI2Dynamic::node_max_size(size_t node_id){
+	if (node_id >= nodes.size()) {
+		std::cout << "[GUI Error] GUI2Dynamic::node_max_size() is called but given node is not valid" << std::endl;
+		ASSERT(false);
+	}
+
+	Node& node = nodes[node_id];
+
+	switch (get_type(node)) {
+	case Window	: return std::get<WindowDesc>(node.desc).max_size;
+	case Box	: return std::get<BoxDesc>(node.desc).max_size;
+	case Grid	: return std::get<GridDesc>(node.desc).max_size;
+	case Stack	: return std::get<StackDesc>(node.desc).max_size;
+	}
+
+	std::cout << "[GUI Error] GUI2Dynamic::node_max_size() but an error is occured" << std::endl;
+	ASSERT(false);
+}
+
+
 ///////////		WINDOW		////////////
 
 void GUI2Dynamic::window_begin(const std::string& idstr){
@@ -137,13 +252,13 @@ void GUI2Dynamic::window_end(){
 
 ///////////		GRID		////////////
 
-void GUI2Dynamic::grid_begin(const std::string& idstr, glm::ivec2 grid_layout){
-	grid_begin(grid_layout);
+void GUI2Dynamic::grid_begin(const std::string& idstr){
+	grid_begin();
 	std::get<GridDesc>(nodes[last_grid].desc).idstr = idstr;
 	resolved_properties[idstr];
 }
 
-void GUI2Dynamic::grid_begin(glm::ivec2 grid_layout){
+void GUI2Dynamic::grid_begin(){
 	
 	if (node_stack.size() == 0) {
 		std::cout << "[GUI Error] GUI2Dynamic::grid_begin() is called but grids cannot be a root node in the hierarchy" << std::endl;
@@ -188,6 +303,14 @@ GUI2Dynamic::GridDesc& GUI2Dynamic::grid_prop(){
 	return std::get<GridDesc>(nodes[last_grid].desc);
 }
 
+void GUI2Dynamic::grid_add_column(float width){
+	grid_prop().columns.push_back(width);
+}
+
+void GUI2Dynamic::grid_add_row(float height){
+	grid_prop().rows.push_back(height);
+}
+
 void GUI2Dynamic::grid_region(glm::ivec2 grid_index, glm::ivec2 grid_span){
 	
 	if (last_grid == Node::invalid_node) {
@@ -202,7 +325,7 @@ void GUI2Dynamic::grid_region(glm::ivec2 grid_index, glm::ivec2 grid_span){
 
 	GUI2Dynamic::GridDesc& desc = grid_prop();
 
-	if (glm::any(glm::greaterThan(grid_index + grid_span, desc.layout))) {
+	if (glm::any(glm::greaterThan(grid_index + grid_span, glm::ivec2(desc.columns.size(), desc.rows.size())))) {
 		std::cout << "[GUI Error] GUI2Dynamic::grid_region() is called but values the given region exceeds the layout" << std::endl;
 		ASSERT(false);
 	}
@@ -223,6 +346,12 @@ void GUI2Dynamic::grid_end(){
 	}
 
 	auto& desc = grid_prop();
+
+	if (desc.columns.size() == 0 || desc.rows.size() == 0) {
+		std::cout << "[GUI Error] GUI2Dynamic::grid_end() is called without specifying at least one column and row" << std::endl;
+		ASSERT(false);
+	}
+
 	desc.current_grid_index	= glm::ivec2(0, 0);
 	desc.current_grid_span	= glm::ivec2(0, 0);
 
@@ -376,10 +505,10 @@ void GUI2Dynamic::box_end(){
 ///////////		TRAVERSAL		////////////
 
 //																	  level	   self
-void GUI2Dynamic::traverse_nodes(size_t root_node, std::function<void(int32_t, size_t)> lambda) {
+void GUI2Dynamic::_traverse_nodes(size_t root_node, std::function<void(int32_t, size_t)> lambda) {
 
 	if (root_node >= nodes.size()) {
-		std::cout << "[GUI Error] GUI2Dynamic::traverse_nodes() is called but given root_node doesn't exist" << std::endl;
+		std::cout << "[GUI Error] GUI2Dynamic::_traverse_nodes() is called but given root_node doesn't exist" << std::endl;
 		ASSERT(false);
 	}
 
@@ -416,10 +545,10 @@ void GUI2Dynamic::traverse_nodes(size_t root_node, std::function<void(int32_t, s
 
 }
 
-void GUI2Dynamic::traverse_nodes_linear_down(size_t root_node, std::function<void(int32_t, size_t)> lambda) {
+void GUI2Dynamic::traverse_nodes_down(size_t root_node, std::function<void(int32_t, size_t)> lambda) {
 	
 	if (root_node >= nodes.size()) {
-		std::cout << "[GUI Error] GUI2Dynamic::traverse_nodes_linear_down() is called but given root_node doesn't exist" << std::endl;
+		std::cout << "[GUI Error] GUI2Dynamic::traverse_nodes_down() is called but given root_node doesn't exist" << std::endl;
 		ASSERT(false);
 	}
 	
@@ -442,8 +571,58 @@ void GUI2Dynamic::traverse_nodes_linear_down(size_t root_node, std::function<voi
 	} while (level != 0 && node_index < nodes.size());
 }
 
-void GUI2Dynamic::traverse_nodes_linear_up(size_t root_node, std::function<void(int32_t, size_t)> lambda) {
+void GUI2Dynamic::traverse_nodes_up(size_t root_node, std::function<void(int32_t, size_t)> lambda) {
 
+	if (root_node >= nodes.size()) {
+		std::cout << "[GUI Error] GUI2Dynamic::traverse_nodes_up() is called but given root_node doesn't exist" << std::endl;
+		ASSERT(false);
+	}
+
+	size_t root_node_index = -1;
+	for (int32_t i = 0; i < root_nodes.size(); i++) {
+		if (root_nodes[i] == root_node)
+			root_node_index = i;
+	}
+
+	if (root_node_index == -1) {
+		std::cout << "[GUI Error] GUI2Dynamic::traverse_nodes_up() is called but given root_node is not an actual root node" << std::endl;
+		ASSERT(false);
+	}
+
+	size_t end_node = root_node_index != root_nodes.size() - 1 ? root_nodes[root_node_index + 1] : nodes.size();
+
+	size_t	node_index = end_node - 1;
+	int32_t level = 0;
+
+	do {
+
+		Node& node = nodes[node_index];
+
+		if (node.child != Node::invalid_node)
+			level--;
+		else if (node.sibling == Node::invalid_node)
+			level++;
+
+		lambda(level, node_index);
+		
+		node_index--;
+
+	} while (node_index >= root_node && node_index != -1);
+}
+
+void GUI2Dynamic::traverse_nodes_children(size_t parent_node, std::function<void(size_t)> lambda) {
+
+	if (parent_node >= nodes.size()) {
+		std::cout << "[GUI Error] GUI2Dynamic::traverse_nodes_children() is called but given root_node doesn't exist" << std::endl;
+		ASSERT(false);
+	}
+
+	size_t child = nodes[parent_node].child;
+
+	while (child != Node::invalid_node) {
+		lambda(child);
+		child = nodes[child].sibling;
+	}
 }
 
 void GUI2Dynamic::print_nodes() {
@@ -468,9 +647,7 @@ void GUI2Dynamic::print_layout()
 	if (root_nodes.size() == 0)
 		return;
 
-	std::cout << nodes.size() << std::endl;
-
-	traverse_nodes_linear_down(root_nodes[0], [&](int32_t level, size_t node) {
+	traverse_nodes_up(root_nodes[0], [&](int32_t level, size_t node) {
 
 		NodeType type = get_type(nodes[node]);
 		std::string name =
@@ -492,4 +669,69 @@ void GUI2Dynamic::print_layout()
 
 void GUI2Dynamic::resolve() {
 	
+	traverse_nodes_up(root_nodes[0], [&](int32_t level, size_t node_id) {
+
+		Node& node = nodes[node_id];
+		NodeType node_type = get_type(node);
+
+		switch (node_type) {
+		case Window	: break; 
+		case Box	: 
+		{
+			auto& desc = std::get<BoxDesc>(node.desc);
+			
+			desc.size = desc.target_size;
+			if (desc.target_size.x == fit)  desc.size.x = 0;
+			if (desc.target_size.y == fit)	desc.size.y = 0;
+			
+			break;
+		}
+		case Grid	: 
+		{
+
+			break;
+		}
+		case Stack	: 
+		{
+
+			auto& desc = std::get<StackDesc>(node.desc);
+
+			desc.size = desc.target_size;
+
+			if (node.child == Node::invalid_node) {
+				if (desc.target_size.x == fit)  desc.size.x = 0;
+				if (desc.target_size.y == fit)	desc.size.y = 0;
+			}
+			else {
+				
+				glm::vec2 min_size = glm::vec2(0);
+				int32_t children_count = 0;
+				traverse_nodes_children(node_id, [&](size_t child) {
+
+					children_count++;
+					glm::vec2 child_size = node_size(child);
+					if (desc.is_vertical) {
+						min_size.x =  glm::max(min_size.x, child_size.x);
+						min_size.y += child_size.y;
+					}
+					else {
+						min_size.x += child_size.x;
+						min_size.y = glm::max(min_size.y, child_size.y);
+					}
+
+					});
+
+				if (desc.is_vertical)	min_size.y += desc.spacing * glm::max((children_count - 1), 0);
+				else					min_size.x += desc.spacing * glm::max((children_count - 1), 0);
+
+				if (desc.target_size.x == fit)  desc.size.x = min_size.x;
+				if (desc.target_size.y == fit)	desc.size.y = min_size.y;
+			}
+			
+			break;
+		}
+		}
+
+		});
+
 }
