@@ -1,5 +1,6 @@
 #include "GUI2Dynamic.h"
 #include <queue>
+#include "GLMCout.h"
 
 size_t GUI2Dynamic::find_last_of_type(NodeType type)
 {
@@ -202,6 +203,46 @@ glm::vec2& GUI2Dynamic::node_max_size(size_t node_id){
 	}
 
 	std::cout << "[GUI Error] GUI2Dynamic::node_max_size() but an error is occured" << std::endl;
+	ASSERT(false);
+}
+
+glm::ivec2& GUI2Dynamic::node_grid_index(size_t node_id)
+{
+	if (node_id >= nodes.size()) {
+		std::cout << "[GUI Error] GUI2Dynamic::node_grid_index() is called but given node is not valid" << std::endl;
+		ASSERT(false);
+	}
+
+	Node& node = nodes[node_id];
+
+	switch (get_type(node)) {
+	//case Window	: return std::get<WindowDesc>(node.desc).max_size;
+	case Box	: return std::get<BoxDesc>(node.desc).grid_slot;
+	case Grid	: return std::get<GridDesc>(node.desc).grid_slot;
+	case Stack	: return std::get<StackDesc>(node.desc).grid_slot;
+	}
+
+	std::cout << "[GUI Error] GUI2Dynamic::node_grid_index() but an error is occured" << std::endl;
+	ASSERT(false);
+}
+
+glm::ivec2& GUI2Dynamic::node_grid_span(size_t node_id)
+{
+	if (node_id >= nodes.size()) {
+		std::cout << "[GUI Error] GUI2Dynamic::node_grid_span() is called but given node is not valid" << std::endl;
+		ASSERT(false);
+	}
+
+	Node& node = nodes[node_id];
+
+	switch (get_type(node)) {
+	//case Window	: return std::get<WindowDesc>(node.desc).max_size;
+	case Box	: return std::get<BoxDesc>(node.desc).grid_span;
+	case Grid	: return std::get<GridDesc>(node.desc).grid_span;
+	case Stack	: return std::get<StackDesc>(node.desc).grid_span;
+	}
+
+	std::cout << "[GUI Error] GUI2Dynamic::node_grid_span() but an error is occured" << std::endl;
 	ASSERT(false);
 }
 
@@ -647,7 +688,7 @@ void GUI2Dynamic::print_layout()
 	if (root_nodes.size() == 0)
 		return;
 
-	traverse_nodes_up(root_nodes[0], [&](int32_t level, size_t node) {
+	traverse_nodes_down(root_nodes[0], [&](int32_t level, size_t node) {
 
 		NodeType type = get_type(nodes[node]);
 		std::string name =
@@ -659,6 +700,8 @@ void GUI2Dynamic::print_layout()
 		for (int32_t i = 0; i < level; i++)
 			std::cout << " | ";
 		std::cout << name;
+		std::cout << " target_size: " << node_target_size(node);
+		std::cout << " size: " << node_size(node);
 		std::cout << std::endl;
 
 		});
@@ -669,31 +712,80 @@ void GUI2Dynamic::print_layout()
 
 void GUI2Dynamic::resolve() {
 	
-	traverse_nodes_up(root_nodes[0], [&](int32_t level, size_t node_id) {
+	print_layout();
+
+	resolve_phase0_fit(root_nodes[0]);
+	
+	std::cout << std::endl;
+	print_layout();
+	
+	resolve_phase1_avail(root_nodes[0]);
+
+
+
+}
+
+void GUI2Dynamic::resolve_phase0_fit(size_t root_node){
+	
+	traverse_nodes_up(root_node, [&](int32_t level, size_t node_id) {
 
 		Node& node = nodes[node_id];
 		NodeType node_type = get_type(node);
 
 		switch (node_type) {
-		case Window	: break; 
-		case Box	: 
+		case Window:
+		{
+			auto& desc = std::get<WindowDesc>(node.desc);
+
+			desc.size = desc.target_size;
+
+			if (node.child == Node::invalid_node)
+			{
+				desc.size = glm::ivec2(0);
+				break;
+			}
+
+			glm::vec2 child_size = node_size(node.child);
+
+			if (desc.target_size.x == fit)  desc.size.x = child_size.x;
+			if (desc.target_size.y == fit)	desc.size.y = child_size.y;
+
+			break;
+		}
+		case Box:
 		{
 			auto& desc = std::get<BoxDesc>(node.desc);
-			
+
 			desc.size = desc.target_size;
 			if (desc.target_size.x == fit)  desc.size.x = 0;
 			if (desc.target_size.y == fit)	desc.size.y = 0;
-			
-			break;
-		}
-		case Grid	: 
-		{
 
 			break;
 		}
-		case Stack	: 
+		case Grid:
 		{
+			auto& desc = std::get<GridDesc>(node.desc);
 
+			desc.size = desc.target_size;
+
+			if (glm::any(glm::equal(desc.target_size, glm::vec2(fit)))) {
+
+				glm::vec2 min_size = glm::vec2(0);
+
+				for (int32_t column_id = 0; column_id < desc.columns.size(); column_id++)
+					if (desc.columns[column_id] > 0) min_size.x += desc.columns[column_id];
+
+				for (int32_t row_id = 0; row_id < desc.rows.size(); row_id++)
+					if (desc.rows[row_id] > 0) min_size.x += desc.rows[row_id];
+
+				if (desc.target_size.x == fit)  desc.size.x = min_size.x;
+				if (desc.target_size.y == fit)	desc.size.y = min_size.y;
+			}
+
+			break;
+		}
+		case Stack:
+		{
 			auto& desc = std::get<StackDesc>(node.desc);
 
 			desc.size = desc.target_size;
@@ -702,8 +794,8 @@ void GUI2Dynamic::resolve() {
 				if (desc.target_size.x == fit)  desc.size.x = 0;
 				if (desc.target_size.y == fit)	desc.size.y = 0;
 			}
-			else {
-				
+			else if (glm::any(glm::equal(desc.target_size, glm::vec2(fit)))) {
+
 				glm::vec2 min_size = glm::vec2(0);
 				int32_t children_count = 0;
 				traverse_nodes_children(node_id, [&](size_t child) {
@@ -711,7 +803,7 @@ void GUI2Dynamic::resolve() {
 					children_count++;
 					glm::vec2 child_size = node_size(child);
 					if (desc.is_vertical) {
-						min_size.x =  glm::max(min_size.x, child_size.x);
+						min_size.x = glm::max(min_size.x, child_size.x);
 						min_size.y += child_size.y;
 					}
 					else {
@@ -727,11 +819,286 @@ void GUI2Dynamic::resolve() {
 				if (desc.target_size.x == fit)  desc.size.x = min_size.x;
 				if (desc.target_size.y == fit)	desc.size.y = min_size.y;
 			}
+
+			break;
+		}
+		}
+		});
+}
+
+void GUI2Dynamic::resolve_phase1_avail(size_t root_node)
+{
+	traverse_nodes_down(root_node, [&](int32_t level, size_t node_id) {
+
+		Node& node = nodes[node_id];
+		NodeType node_type = get_type(node);
+
+		switch (node_type) {
+		case Window:
+		{
+			auto& desc = std::get<WindowDesc>(node.desc);
 			
+			// handle maximize
+			if (is_avail(desc.target_size.x)) desc.size.x = 1024;
+			if (is_avail(desc.target_size.x)) desc.size.y = 1024;
+			
+			if (node.child != Node::invalid_node) {
+				if (is_avail(node_target_size(node.child).x)) node_size(node.child).x = desc.size.x;
+				if (is_avail(node_target_size(node.child).x)) node_size(node.child).y = desc.size.y;
+			}
+
+			break;
+		}
+		case Box:
+		{
+			break;
+		}
+		case Grid:
+		{
+			if (node.child == Node::invalid_node)
+				return;
+
+			auto& desc = std::get<GridDesc>(node.desc);
+			
+			glm::vec2 cells_min_size		= glm::vec2(0);
+			glm::ivec2 cells_avails_total	= glm::ivec2(0);
+
+			for (int32_t column_id = 0; column_id < desc.columns.size(); column_id++) {
+				cells_avails_total.x	+= avail_ratio(desc.columns[column_id]);
+				cells_min_size.x		+= is_avail(desc.columns[column_id]) ? 0 : desc.columns[column_id];
+			}
+			for (int32_t row_id = 0; row_id < desc.rows.size(); row_id++) {
+				cells_avails_total.y	+= avail_ratio(desc.rows[row_id]);
+				cells_min_size.y		+= is_avail(desc.rows[row_id]) ? 0 : desc.rows[row_id];
+			}
+
+			glm::vec2 size_per_avail = (desc.size - cells_min_size) / glm::vec2(cells_avails_total);
+			size_per_avail = glm::max(size_per_avail, glm::vec2(0));
+
+			traverse_nodes_children(node_id, [&](size_t child_id) {
+
+				glm::vec2 child_target_size = node_target_size(child_id);
+
+				if (!is_avail(child_target_size.x) && !is_avail(child_target_size.y))
+					return;
+
+				glm::ivec2 child_index	= node_grid_index(child_id);
+				glm::ivec2 child_span	= node_grid_span(child_id);
+
+				glm::vec2 cell_size = glm::vec2(0);
+
+				for (int32_t column_id = child_index.x; column_id < child_index.x + child_span.x; column_id++)
+					cell_size.x += is_avail(desc.columns[column_id]) ? avail_ratio(desc.columns[column_id]) * size_per_avail.x : desc.columns[column_id];
+				
+				for (int32_t row_id = child_index.y; row_id < child_index.y + child_span.y; row_id++)
+					cell_size.y += is_avail(desc.rows[row_id]) ? avail_ratio(desc.rows[row_id]) * size_per_avail.y : desc.rows[row_id];
+
+				glm::vec2& child_size_ref = node_size(child_id);
+				if (is_avail(child_target_size.x)) child_size_ref.x = cell_size.x;
+				if (is_avail(child_target_size.x)) child_size_ref.y = cell_size.y;
+
+				});
+
+			break;
+		}
+		case Stack:
+		{
+			if (node.child == Node::invalid_node)
+				return;
+
+			auto& desc = std::get<StackDesc>(node.desc);
+
+			glm::vec2  children_min_size	 = glm::vec2(0);
+			glm::ivec2 children_avails_total = glm::ivec2(0);
+			
+			traverse_nodes_children(node_id, [&](size_t child_id) {
+
+				glm::vec2 child_target_size = node_target_size(child_id);
+
+				children_avails_total.x += avail_ratio(child_target_size.x);
+				children_avails_total.y += avail_ratio(child_target_size.y);
+
+				if (!is_avail(child_target_size.x)) children_min_size.x += child_target_size.x;
+				if (!is_avail(child_target_size.y)) children_min_size.y += child_target_size.y;
+
+				});
+
+			glm::vec2 size_per_avail = (desc.size - children_min_size) / glm::vec2(children_avails_total);
+			size_per_avail = glm::max(size_per_avail, glm::vec2(0));
+
+			traverse_nodes_children(node_id, [&](size_t child_id) {
+
+				glm::vec2 child_target_size = node_target_size(child_id);
+
+				if (!is_avail(child_target_size.x) && !is_avail(child_target_size.y))
+					return;
+
+				glm::vec2& child_size_ref = node_size(child_id);
+				if (is_avail(child_target_size.x)) child_size_ref.x = avail_ratio(child_target_size.x) * size_per_avail.x;
+				if (is_avail(child_target_size.x)) child_size_ref.y = avail_ratio(child_target_size.y) * size_per_avail.y;
+
+				});
+
 			break;
 		}
 		}
 
 		});
+}
 
+void GUI2Dynamic::resolve_phase2_position(size_t root_node)
+{
+	traverse_nodes_down(root_node, [&](int32_t level, size_t node_id) {
+
+		Node& node = nodes[node_id];
+		NodeType node_type = get_type(node);
+
+		switch (node_type) {
+		case Window:
+		{
+			break;
+		}
+		case Box:
+		{
+			break;
+		}
+		case Grid:
+		{
+			if (node.child == Node::invalid_node)
+				return;
+
+			auto& desc = std::get<GridDesc>(node.desc);
+			
+			traverse_nodes_children(node_id, [&](size_t child_id) {
+
+				glm::ivec2 child_index	= node_grid_index(child_id);
+				glm::ivec2 child_span	= node_grid_span(child_id);
+
+				glm::vec2 cell_begin = glm::vec2(0);
+
+				for (int32_t column_id = 0; column_id < child_index.x; column_id++)
+					cell_begin.x += is_avail(desc.columns[column_id]) ? avail_ratio(desc.columns[column_id]) * size_per_avail.x : desc.columns[column_id];
+				
+				for (int32_t row_id = child_index.y; row_id < child_index.y + child_span.y; row_id++)
+					cell_size.y += is_avail(desc.rows[row_id]) ? avail_ratio(desc.rows[row_id]) * size_per_avail.y : desc.rows[row_id];
+
+				glm::vec2& child_size_ref = node_size(child_id);
+				if (is_avail(child_target_size.x)) child_size_ref.x = cell_size.x;
+				if (is_avail(child_target_size.x)) child_size_ref.y = cell_size.y;
+
+				});
+
+			break;
+		}
+		case Stack:
+		{
+			if (node.child == Node::invalid_node)
+				return;
+
+			auto& desc = std::get<StackDesc>(node.desc);
+
+			glm::vec2  children_min_size	 = glm::vec2(0);
+			glm::ivec2 children_avails_total = glm::ivec2(0);
+			
+			traverse_nodes_children(node_id, [&](size_t child_id) {
+
+				glm::vec2 child_target_size = node_target_size(child_id);
+
+				children_avails_total.x += avail_ratio(child_target_size.x);
+				children_avails_total.y += avail_ratio(child_target_size.y);
+
+				if (!is_avail(child_target_size.x)) children_min_size.x += child_target_size.x;
+				if (!is_avail(child_target_size.y)) children_min_size.y += child_target_size.y;
+
+				});
+
+			glm::vec2 size_per_avail = (desc.size - children_min_size) / glm::vec2(children_avails_total);
+			size_per_avail = glm::max(size_per_avail, glm::vec2(0));
+
+			traverse_nodes_children(node_id, [&](size_t child_id) {
+
+				glm::vec2 child_target_size = node_target_size(child_id);
+
+				if (!is_avail(child_target_size.x) && !is_avail(child_target_size.y))
+					return;
+
+				glm::vec2& child_size_ref = node_size(child_id);
+				if (is_avail(child_target_size.x)) child_size_ref.x = avail_ratio(child_target_size.x) * size_per_avail.x;
+				if (is_avail(child_target_size.x)) child_size_ref.y = avail_ratio(child_target_size.y) * size_per_avail.y;
+
+				});
+
+			break;
+		}
+		}
+
+		});
+}
+
+
+
+
+void GUI2Dynamic::publish(GUI2& gui)
+{
+	if (nodes.size() == 0) {
+		return;
+	}
+
+	if (node_stack.size() != 0) {
+		std::cout << "GUI2Dynamic::publish() is called but hierarchy isn't completed yet" << std::endl;
+		ASSERT(false);
+	}
+	
+	for (size_t root_node : root_nodes) {
+
+		if (get_type(nodes[root_node]) != NodeType::Window) {
+			std::cout << "GUI2Dynamic::publish() is called with invalid hierarchy" << std::endl;
+			ASSERT(false);
+		}
+
+		{
+			auto& desc = std::get<WindowDesc>(nodes[root_node].desc);
+
+			gui.window_begin(gui_idstr_prefix + "window" + std::to_string(root_node),
+				desc.size,
+				desc.position
+			);
+
+			gui.window_prop().position		= desc.position;
+			gui.window_prop().size			= desc.size;
+			gui.window_prop().is_resizable	= desc.is_resizable;
+			gui.window_prop().is_decorated	= desc.is_decorated;
+
+			gui.window_prop().color			= desc.color;
+		}
+
+		traverse_nodes_down(root_node, [&](int32_t level, size_t child) {
+
+			switch (get_type(nodes[child])) {
+			case Box :
+			{
+				auto& desc = std::get<BoxDesc>(nodes[child].desc);
+				gui.box_begin(desc.position, desc.size);
+				gui.box_prop().color = desc.color;
+				gui.box_end();
+
+				break;
+			}
+			case Window:
+			case Grid:
+			case Stack:
+				break;
+			}
+			});
+
+		gui.window_end();
+	}
+}
+
+bool GUI2Dynamic::is_avail(float value) {
+	return avail_ratio(value) != 0;
+}
+
+int32_t GUI2Dynamic::avail_ratio(float value) {
+	return value <= avail ? std::round(value / avail) : 0;
 }

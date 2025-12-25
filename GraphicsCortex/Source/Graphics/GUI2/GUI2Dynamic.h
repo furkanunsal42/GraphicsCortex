@@ -3,6 +3,47 @@
 #include <variant>
 #include <array>
 
+// rules of dynamic positioning
+// all objects have the following properties: 
+//   * "target_size"
+//   * "min_size"
+//   * "max_size"
+// in addition, container objects also have "padding" and containing objects have "margin"
+// 
+// any values specified for these properties can be either physical or relative.
+// definitions of physical and relative values depends on the type of object.
+// 
+//   * any positive value is always a physical value.
+//   * (fit) and (avail) are always relative sizes.
+// 
+//   * if target_size is either (fit) or a physical size then min_size and max_size is ignored.
+// 
+// if an object is a container:
+//   
+//   * (fit) can be used to mean minimum possible size that is enough to fit the contained objects.
+//   * if a (fit) sized container doesn't have any containing objects, it will have 0 physical size.
+// 
+// if an object is being contained:
+//   
+//   * (avail) can be used to mean maximum possible region the container can provide.
+//   * any positive intager multiple of (avail) can be used to specify a ratio.
+//   * total region requested by (avail) values will be partitioned to containing objects according to the coefficients of (avail)
+//   * if an (avail) sized object is being contained by a (fit) sized container, the object will have 0 physical size.
+// 
+// special case for margin:  
+// 
+//   * margin can be (avail) or physical size.
+//   * physical size definition for margin includes all 0, positive and negative values.
+//
+// special case for grid cells:
+// 
+//   * cell's of grids must have either (avail) or physical size.
+//
+// special case for stacks:
+//
+//   * "spacing" must be (avail) or physical size.
+//
+
 class GUI2Dynamic {
 public:
 
@@ -99,7 +140,7 @@ public:
 		bool		is_decorated		= false;
 		bool		is_resizable		= true;
 
-		glm::vec2	position			= glm::vec2(0);
+		glm::vec2	position			= glm::vec2(100);
 
 	private:
 		friend GUI2Dynamic;
@@ -143,12 +184,6 @@ public:
 		glm::vec2	min_size			= glm::vec2(fit);
 		glm::vec2	max_size			= glm::vec2(avail);
 		
-		//glm::ivec2	layout				= glm::ivec2(1, 1);
-	
-		//std::variant<
-		//	std::array<float, 32>, 
-		//	std::vector<float>
-		//> widths						= std::array<float, 32>();
 		std::vector<float> columns;
 		std::vector<float> rows;
 
@@ -236,7 +271,8 @@ private:
 	glm::vec2&	node_target_size(size_t node);
 	glm::vec2&	node_min_size(size_t node);
 	glm::vec2&	node_max_size(size_t node);
-
+	glm::ivec2&	node_grid_index(size_t node);
+	glm::ivec2&	node_grid_span(size_t node);
 
 	//														level	  self
 	void _traverse_nodes(size_t root_node, std::function<void(int32_t, size_t)> lambda_given_level_self);
@@ -244,7 +280,16 @@ private:
 	void traverse_nodes_up(size_t root_node, std::function<void(int32_t, size_t)> lambda_given_level_self);
 	void traverse_nodes_children(size_t parent_node, std::function<void(size_t)> lambda_given_self);
 
+	void resolve_phase0_fit(size_t root_node);
+	void resolve_phase1_avail(size_t root_node);
+	void resolve_phase2_position(size_t root_node);
+	void resolve_phase2_mouse_event(size_t root_node);
+
+	//template<typename T, std::enable_if_t<std::is_arithmetic_v<T>, bool> = true>
+	bool is_avail(float value);
+	int32_t avail_ratio(float value);
 
 	std::unordered_map<std::string, ResolvedProperties> resolved_properties;
 
+	static constexpr std::string gui_idstr_prefix = "::#";
 };

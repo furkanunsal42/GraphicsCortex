@@ -17,27 +17,44 @@ public:
 		gui_d.window_begin("My Window 0");
 		gui_d.stack_begin();
 			gui_d.stack_begin();
+				
 				gui_d.box_begin();
+				gui_d.box_prop().color = glm::vec4(0.1, 0.1, 0.1, 1);
 				gui_d.box_end();
+
 				gui_d.grid_begin();
 				gui_d.grid_add_column(GUI2Dynamic::avail);
 				gui_d.grid_add_row(GUI2Dynamic::avail);
 				gui_d.grid_end();
+				
 				gui_d.box_begin();
+				gui_d.box_prop().color = glm::vec4(0.1, 0.1, 0.1, 1);
 				gui_d.box_end();
+			
 			gui_d.stack_end();
+				
 				gui_d.box_begin();
+				gui_d.box_prop().color = glm::vec4(0.1, 0.1, 0.1, 1);
 				gui_d.box_end();
+				
 				gui_d.box_begin();
+				gui_d.box_prop().color = glm::vec4(0.1, 0.1, 0.1, 1);
 				gui_d.box_end();
+
 		gui_d.stack_end();
 		gui_d.window_end();
 
-
 		//gui_d.print_nodes();
-		gui_d.print_layout();
-
-		std::cin.get();
+		//std::cout << std::endl;
+		//gui_d.print_layout();
+		//std::cout << std::endl;
+		gui_d.resolve();
+		
+		while (true) {
+			
+			gui_d.publish(gui);
+			gui.render();
+		}
 
 		return true;
 	}
