@@ -96,30 +96,6 @@ public:
 
 	void				publish(GUI2& gui);
 
-	//void				rect();
-	//void				text();
-	//void				image();
-	//
-	//void				textbox();
-	//void				slider();
-	//void				dragfloat();
-	//
-	//void				checkbox();
-	//void				button();
-	//void				imagebutton();
-	//
-	//void				combobox_begin();
-	//void				combobox_item();
-	//void				combobox_end();
-	//
-	//void				menu_begin();
-	//void				menu_item();
-	//void				menu_end();
-	//
-	//void				tab_begin();
-	//void				tab_item();
-	//void				tab_end();
-
 	struct WindowDesc {
 		glm::vec4	padding				= glm::vec4(10);
 		glm::vec2	target_size			= glm::vec2(fit);
@@ -281,8 +257,7 @@ private:
 	void traverse_nodes_children(size_t parent_node, std::function<void(size_t)> lambda_given_self);
 
 	void resolve_phase0_fit(size_t root_node);
-	void resolve_phase1_avail(size_t root_node);
-	void resolve_phase2_position(size_t root_node);
+	void resolve_phase1_avail_and_position(size_t root_node);
 	void resolve_phase2_mouse_event(size_t root_node);
 
 	//template<typename T, std::enable_if_t<std::is_arithmetic_v<T>, bool> = true>

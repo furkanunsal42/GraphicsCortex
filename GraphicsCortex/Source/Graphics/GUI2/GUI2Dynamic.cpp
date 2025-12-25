@@ -719,10 +719,12 @@ void GUI2Dynamic::resolve() {
 	std::cout << std::endl;
 	print_layout();
 	
-	resolve_phase1_avail(root_nodes[0]);
+	resolve_phase1_avail_and_position(root_nodes[0]);
 
+	std::cout << std::endl;
+	print_layout();
 
-
+	resolve_phase2_mouse_event(root_nodes[0]);
 }
 
 void GUI2Dynamic::resolve_phase0_fit(size_t root_node){
@@ -826,7 +828,7 @@ void GUI2Dynamic::resolve_phase0_fit(size_t root_node){
 		});
 }
 
-void GUI2Dynamic::resolve_phase1_avail(size_t root_node)
+void GUI2Dynamic::resolve_phase1_avail_and_position(size_t root_node)
 {
 	traverse_nodes_down(root_node, [&](int32_t level, size_t node_id) {
 
@@ -845,6 +847,8 @@ void GUI2Dynamic::resolve_phase1_avail(size_t root_node)
 			if (node.child != Node::invalid_node) {
 				if (is_avail(node_target_size(node.child).x)) node_size(node.child).x = desc.size.x;
 				if (is_avail(node_target_size(node.child).x)) node_size(node.child).y = desc.size.y;
+
+				node_position(node.child) = desc.padding;
 			}
 
 			break;
@@ -872,7 +876,9 @@ void GUI2Dynamic::resolve_phase1_avail(size_t root_node)
 				cells_min_size.y		+= is_avail(desc.rows[row_id]) ? 0 : desc.rows[row_id];
 			}
 
-			glm::vec2 size_per_avail = (desc.size - cells_min_size) / glm::vec2(cells_avails_total);
+			glm::vec2 self_size = desc.size - glm::vec2(desc.padding.x + desc.padding.z, desc.padding.y + desc.padding.w);
+			
+			glm::vec2 size_per_avail = (self_size - cells_min_size) / glm::vec2(cells_avails_total);
 			size_per_avail = glm::max(size_per_avail, glm::vec2(0));
 
 			traverse_nodes_children(node_id, [&](size_t child_id) {
@@ -899,93 +905,28 @@ void GUI2Dynamic::resolve_phase1_avail(size_t root_node)
 
 				});
 
-			break;
-		}
-		case Stack:
-		{
-			if (node.child == Node::invalid_node)
-				return;
 
-			auto& desc = std::get<StackDesc>(node.desc);
-
-			glm::vec2  children_min_size	 = glm::vec2(0);
-			glm::ivec2 children_avails_total = glm::ivec2(0);
+			float current_offset = 0;
+			for (int32_t column_id = 0; column_id < desc.columns.size(); column_id++) {
+				float position = current_offset;
+				current_offset += is_avail(desc.columns[column_id]) ? avail_ratio(desc.columns[column_id]) * size_per_avail.x : desc.columns[column_id];
+				desc.columns[column_id] = position;
+			}
 			
-			traverse_nodes_children(node_id, [&](size_t child_id) {
-
-				glm::vec2 child_target_size = node_target_size(child_id);
-
-				children_avails_total.x += avail_ratio(child_target_size.x);
-				children_avails_total.y += avail_ratio(child_target_size.y);
-
-				if (!is_avail(child_target_size.x)) children_min_size.x += child_target_size.x;
-				if (!is_avail(child_target_size.y)) children_min_size.y += child_target_size.y;
-
-				});
-
-			glm::vec2 size_per_avail = (desc.size - children_min_size) / glm::vec2(children_avails_total);
-			size_per_avail = glm::max(size_per_avail, glm::vec2(0));
-
-			traverse_nodes_children(node_id, [&](size_t child_id) {
-
-				glm::vec2 child_target_size = node_target_size(child_id);
-
-				if (!is_avail(child_target_size.x) && !is_avail(child_target_size.y))
-					return;
-
-				glm::vec2& child_size_ref = node_size(child_id);
-				if (is_avail(child_target_size.x)) child_size_ref.x = avail_ratio(child_target_size.x) * size_per_avail.x;
-				if (is_avail(child_target_size.x)) child_size_ref.y = avail_ratio(child_target_size.y) * size_per_avail.y;
-
-				});
-
-			break;
-		}
-		}
-
-		});
-}
-
-void GUI2Dynamic::resolve_phase2_position(size_t root_node)
-{
-	traverse_nodes_down(root_node, [&](int32_t level, size_t node_id) {
-
-		Node& node = nodes[node_id];
-		NodeType node_type = get_type(node);
-
-		switch (node_type) {
-		case Window:
-		{
-			break;
-		}
-		case Box:
-		{
-			break;
-		}
-		case Grid:
-		{
-			if (node.child == Node::invalid_node)
-				return;
-
-			auto& desc = std::get<GridDesc>(node.desc);
+			current_offset = 0;
+			for (int32_t row_id = 0; row_id < desc.rows.size(); row_id++) {
+				float position = current_offset;
+				current_offset += is_avail(desc.rows[row_id]) ? avail_ratio(desc.rows[row_id]) * size_per_avail.y : desc.rows[row_id];
+				desc.rows[row_id] = position;
+			}
 			
+			glm::vec2 origin = desc.position + glm::vec2(desc.padding.x, desc.padding.y);
+
 			traverse_nodes_children(node_id, [&](size_t child_id) {
 
 				glm::ivec2 child_index	= node_grid_index(child_id);
-				glm::ivec2 child_span	= node_grid_span(child_id);
-
-				glm::vec2 cell_begin = glm::vec2(0);
-
-				for (int32_t column_id = 0; column_id < child_index.x; column_id++)
-					cell_begin.x += is_avail(desc.columns[column_id]) ? avail_ratio(desc.columns[column_id]) * size_per_avail.x : desc.columns[column_id];
+				node_position(child_id) = origin + glm::vec2(desc.columns[child_index.x], desc.columns[child_index.y]);
 				
-				for (int32_t row_id = child_index.y; row_id < child_index.y + child_span.y; row_id++)
-					cell_size.y += is_avail(desc.rows[row_id]) ? avail_ratio(desc.rows[row_id]) * size_per_avail.y : desc.rows[row_id];
-
-				glm::vec2& child_size_ref = node_size(child_id);
-				if (is_avail(child_target_size.x)) child_size_ref.x = cell_size.x;
-				if (is_avail(child_target_size.x)) child_size_ref.y = cell_size.y;
-
 				});
 
 			break;
@@ -1012,20 +953,34 @@ void GUI2Dynamic::resolve_phase2_position(size_t root_node)
 
 				});
 
-			glm::vec2 size_per_avail = (desc.size - children_min_size) / glm::vec2(children_avails_total);
+			glm::vec2 self_size = desc.size - glm::vec2(desc.padding.x + desc.padding.z, desc.padding.y + desc.padding.w);
+
+			glm::vec2 size_per_avail = (self_size - children_min_size) / glm::vec2(children_avails_total);
 			size_per_avail = glm::max(size_per_avail, glm::vec2(0));
+
+			float current_position = 0;
 
 			traverse_nodes_children(node_id, [&](size_t child_id) {
 
 				glm::vec2 child_target_size = node_target_size(child_id);
 
-				if (!is_avail(child_target_size.x) && !is_avail(child_target_size.y))
-					return;
+				glm::vec2& child_size_ref		= node_size(child_id);
+				glm::vec2& child_position_ref	= node_position(child_id);
 
-				glm::vec2& child_size_ref = node_size(child_id);
-				if (is_avail(child_target_size.x)) child_size_ref.x = avail_ratio(child_target_size.x) * size_per_avail.x;
-				if (is_avail(child_target_size.x)) child_size_ref.y = avail_ratio(child_target_size.y) * size_per_avail.y;
+				if (is_avail(child_target_size.x) || is_avail(child_target_size.y)) {
 
+					if (is_avail(child_target_size.x)) child_size_ref.x = avail_ratio(child_target_size.x) * size_per_avail.x;
+					if (is_avail(child_target_size.x)) child_size_ref.y = avail_ratio(child_target_size.y) * size_per_avail.y;
+				
+				}
+				
+				glm::vec2 origin = desc.position + glm::vec2(desc.padding.x, desc.padding.y);
+
+				child_position_ref = origin + (desc.is_vertical ? glm::vec2(0, current_position) : glm::vec2(current_position, 0));
+
+				current_position += desc.is_vertical ? child_size_ref.y : child_size_ref.x;
+				current_position += desc.spacing;
+				
 				});
 
 			break;
@@ -1035,8 +990,10 @@ void GUI2Dynamic::resolve_phase2_position(size_t root_node)
 		});
 }
 
+void GUI2Dynamic::resolve_phase2_mouse_event(size_t root_node)
+{
 
-
+}
 
 void GUI2Dynamic::publish(GUI2& gui)
 {
