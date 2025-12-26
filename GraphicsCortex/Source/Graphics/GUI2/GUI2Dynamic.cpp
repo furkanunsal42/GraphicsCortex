@@ -966,9 +966,9 @@ void GUI2Dynamic::resolve_phase1_avail_and_position(size_t root_node)
 			}
 
 			glm::vec2 self_size = desc.size - glm::vec2(desc.padding.x + desc.padding.z, desc.padding.y + desc.padding.w);
-			glm::vec2 size_per_avail = compute_size_per_avail(self_size - cells_min_size, cells_avails_total);
+			glm::vec2 size_per_avail	= compute_size_per_avail(self_size - cells_min_size, cells_avails_total);
 
-			float current_offset = compute_physical_size(desc.columns[0], size_per_avail.x);
+			float current_offset		= compute_physical_size(desc.columns[0], size_per_avail.x);
 			for (int32_t column_id = 0; column_id < desc.columns.size(); column_id++) {
 				float temp				= desc.columns[column_id];
 				desc.columns[column_id] = current_offset;
@@ -997,14 +997,12 @@ void GUI2Dynamic::resolve_phase1_avail_and_position(size_t root_node)
 				glm::ivec2 child_span	= node_grid_span(child_id);
 
 				glm::vec2 cell_size = glm::vec2(
-					desc.columns[child_index.x + child_span.x]	- (child_index.x > 0 ? desc.columns[child_index.x - 1] : 0),
-					desc.rows   [child_index.y + child_span.y]	- (child_index.y > 0 ? desc.rows   [child_index.y - 1] : 0)
+					desc.columns[child_index.x + child_span.x - 1]	- (child_index.x > 0 ? desc.columns[child_index.x - 1] : 0),
+					desc.rows   [child_index.y + child_span.y - 1]	- (child_index.y > 0 ? desc.rows   [child_index.y - 1] : 0)
 					);
 
-				std::cout << size_per_avail << std::endl;
-
 				glm::vec2 child_size_per_avail = compute_size_per_avail(cell_size - child_non_avail_size, child_total_avail);
-
+				
 				glm::vec2& child_size_ref = node_size(child_id);
 
 				if (is_avail(child_target_size.x)) child_size_ref.x  = avail_ratio(child_target_size.x) * child_size_per_avail.x;
@@ -1012,8 +1010,8 @@ void GUI2Dynamic::resolve_phase1_avail_and_position(size_t root_node)
 
 				glm::vec2 cell_position =
 					glm::vec2(
-						child_index.x > 0 ? desc.columns[child_index.x] : 0,
-						child_index.y > 0 ? desc.rows[child_index.y]	: 0);
+						child_index.x > 0 ? desc.columns[child_index.x - 1] : 0,
+						child_index.y > 0 ? desc.rows[child_index.y - 1]	: 0);
 
 				node_position(child_id) =
 					desc.position +
