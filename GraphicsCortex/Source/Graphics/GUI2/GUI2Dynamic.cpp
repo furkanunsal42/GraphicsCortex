@@ -279,7 +279,7 @@ glm::ivec2& GUI2Dynamic::node_grid_span(size_t node_id)
 
 ///////////		WINDOW		////////////
 
-void GUI2Dynamic::window_begin(const std::string& idstr){
+GUI2Dynamic::WindowDesc& GUI2Dynamic::window_begin(const std::string& idstr){
 	if (node_stack.size() != 0) {
 		std::cout << "[GUI Error] GUI2Dynamic::window_begin() is called but windows must be a root node in the hierarchy" << std::endl;
 		ASSERT(false);
@@ -293,6 +293,8 @@ void GUI2Dynamic::window_begin(const std::string& idstr){
 	last_window = id;
 	
 	resolved_properties[idstr];
+
+	return window_prop();
 }
 
 GUI2Dynamic::WindowDesc& GUI2Dynamic::window_prop(){
@@ -312,6 +314,9 @@ void GUI2Dynamic::window_end(){
 		ASSERT(false);
 	}
 
+	if (get_type(nodes[node_stack.back()]) == Box)
+		box_end();
+
 	if (get_type(nodes[node_stack.back()]) != NodeType::Window) {
 		std::cout << "[GUI Error] GUI2Dynamic::window_end() is called without finishing definition of an another object" << std::endl;
 		ASSERT(false);
@@ -323,18 +328,22 @@ void GUI2Dynamic::window_end(){
 
 ///////////		GRID		////////////
 
-void GUI2Dynamic::grid_begin(const std::string& idstr){
-	grid_begin();
+GUI2Dynamic::GridDesc& GUI2Dynamic::grid_begin(const std::string& idstr){
+	auto& desc = grid_begin();
 	std::get<GridDesc>(nodes[last_grid].desc).idstr = idstr;
 	resolved_properties[idstr];
+	return desc;
 }
 
-void GUI2Dynamic::grid_begin(){
+GUI2Dynamic::GridDesc& GUI2Dynamic::grid_begin(){
 	
 	if (node_stack.size() == 0) {
 		std::cout << "[GUI Error] GUI2Dynamic::grid_begin() is called but grids cannot be a root node in the hierarchy" << std::endl;
 		ASSERT(false);
 	}
+
+	if (get_type(nodes[node_stack.back()]) == Box)
+		box_end();
 
 	if (get_type(nodes[node_stack.back()]) == Window && nodes[node_stack.back()].child != Node::invalid_node) {
 		std::cout << "[GUI Error] GUI2Dynamic::grid_begin() is called under a window but windows can have only one child" << std::endl;
@@ -363,6 +372,7 @@ void GUI2Dynamic::grid_begin(){
 	node_stack.push_back(id);
 	last_grid = id;
 
+	return grid_prop();
 }
 
 GUI2Dynamic::GridDesc& GUI2Dynamic::grid_prop(){
@@ -411,6 +421,9 @@ void GUI2Dynamic::grid_end(){
 		ASSERT(false);
 	}
 
+	if (get_type(nodes[node_stack.back()]) == Box)
+		box_end();
+
 	if (get_type(nodes[node_stack.back()]) != NodeType::Grid) {
 		std::cout << "[GUI Error] GUI2Dynamic::grid_end() is called without finishing definition of an another object" << std::endl;
 		ASSERT(false);
@@ -423,6 +436,22 @@ void GUI2Dynamic::grid_end(){
 		ASSERT(false);
 	}
 
+	for (float column : desc.columns) {
+		if (column == fit)
+		{
+			std::cout << "[GUI Error] GUI2Dynamic::grid_end() is called but (fit) is not a valid value for a column" << std::endl;
+			ASSERT(false);
+		}
+	}
+
+	for (float row : desc.rows) {
+		if (row == fit)
+		{
+			std::cout << "[GUI Error] GUI2Dynamic::grid_end() is called but (fit) is not a valid value for a row" << std::endl;
+			ASSERT(false);
+		}
+	}
+
 	desc.current_grid_index	= glm::ivec2(0, 0);
 	desc.current_grid_span	= glm::ivec2(0, 0);
 
@@ -432,18 +461,22 @@ void GUI2Dynamic::grid_end(){
 
 ///////////		STACK		////////////
 
-void GUI2Dynamic::stack_begin(const std::string& idstr){
-	stack_begin();
+GUI2Dynamic::StackDesc& GUI2Dynamic::stack_begin(const std::string& idstr){
+	auto& desc = stack_begin();
 	std::get<StackDesc>(nodes[last_stack].desc).idstr = idstr;
 	resolved_properties[idstr];
+	return desc;
 }
 
-void GUI2Dynamic::stack_begin(){
+GUI2Dynamic::StackDesc& GUI2Dynamic::stack_begin(){
 	
 	if (node_stack.size() == 0) {
 		std::cout << "[GUI Error] GUI2Dynamic::stack_begin() is called but stacks cannot be a root node in the hierarchy" << std::endl;
 		ASSERT(false);
 	}
+
+	if (get_type(nodes[node_stack.back()]) == Box)
+		box_end();
 
 	if (get_type(nodes[node_stack.back()]) == Window && nodes[node_stack.back()].child != Node::invalid_node) {
 		std::cout << "[GUI Error] GUI2Dynamic::stack_begin() is called under a window but windows can have only one child" << std::endl;
@@ -472,6 +505,7 @@ void GUI2Dynamic::stack_begin(){
 	node_stack.push_back(id);
 	last_stack = id;
 
+	return stack_prop();
 }
 
 GUI2Dynamic::StackDesc& GUI2Dynamic::stack_prop(){
@@ -490,6 +524,9 @@ void GUI2Dynamic::stack_end(){
 		ASSERT(false);
 	}
 
+	if (get_type(nodes[node_stack.back()]) == Box)
+		box_end();
+
 	if (get_type(nodes[node_stack.back()]) != NodeType::Stack) {
 		std::cout << "[GUI Error] GUI2Dynamic::stack_end() is called without finishing definition of an another object" << std::endl;
 		ASSERT(false);
@@ -503,18 +540,22 @@ void GUI2Dynamic::stack_end(){
 ///////////		BOX		////////////
 
 
-void GUI2Dynamic::box_begin(const std::string& idstr){
-	box_begin();
+GUI2Dynamic::BoxDesc& GUI2Dynamic::box_begin(const std::string& idstr){
+	auto& desc = box_begin();
 	std::get<BoxDesc>(nodes[last_box].desc).idstr = idstr;
 	resolved_properties[idstr];
+	return desc;
 }
 
-void GUI2Dynamic::box_begin(){
+GUI2Dynamic::BoxDesc& GUI2Dynamic::box_begin(){
 
 	if (node_stack.size() == 0) {
 		std::cout << "[GUI Error] GUI2Dynamic::box_begin() is called but boxs cannot be a root node in the hierarchy" << std::endl;
 		ASSERT(false);
 	}
+
+	if (get_type(nodes[node_stack.back()]) == Box)
+		box_end();
 
 	if (get_type(nodes[node_stack.back()]) == Window && nodes[node_stack.back()].child != Node::invalid_node) {
 		std::cout << "[GUI Error] GUI2Dynamic::box_begin() is called under a window but windows can have only one child" << std::endl;
@@ -543,6 +584,7 @@ void GUI2Dynamic::box_begin(){
 	node_stack.push_back(id);
 	last_box = id;
 
+	return box_prop();
 }
 
 GUI2Dynamic::BoxDesc& GUI2Dynamic::box_prop(){
@@ -745,18 +787,20 @@ void GUI2Dynamic::print_layout()
 void GUI2Dynamic::resolve() {
 	
 	print_layout();
-
-	resolve_phase0_fit(root_nodes[0]);
+	for (size_t root_node : root_nodes)
+		resolve_phase0_fit(root_node);
 	
 	std::cout << std::endl;
 	print_layout();
 	
-	resolve_phase1_avail_and_position(root_nodes[0]);
+	for (size_t root_node : root_nodes)
+		resolve_phase1_avail_and_position(root_node);
 
 	std::cout << std::endl;
 	print_layout();
 
-	resolve_phase2_mouse_event(root_nodes[0]);
+	for (size_t root_node : root_nodes)
+		resolve_phase2_mouse_event(root_node);
 }
 
 void GUI2Dynamic::resolve_phase0_fit(size_t root_node){
@@ -782,8 +826,8 @@ void GUI2Dynamic::resolve_phase0_fit(size_t root_node){
 			glm::vec2 child_size	= node_size(node.child);
 			glm::vec2 child_margin	= non_avail(node_margin(node.child));
 			
-			if (desc.target_size.x == fit)  desc.size.x = child_size.x + + desc.padding.x + desc.padding.z + child_margin.x;
-			if (desc.target_size.y == fit)	desc.size.y = child_size.y + + desc.padding.y + desc.padding.w + child_margin.y;
+			if (desc.target_size.x == fit)  desc.size.x = child_size.x + desc.padding.x + desc.padding.z + child_margin.x;
+			if (desc.target_size.y == fit)	desc.size.y = child_size.y + desc.padding.y + desc.padding.w + child_margin.y;
 
 			break;
 		}
@@ -811,7 +855,7 @@ void GUI2Dynamic::resolve_phase0_fit(size_t root_node){
 					if (desc.columns[column_id] > 0) min_size.x += desc.columns[column_id];
 
 				for (int32_t row_id = 0; row_id < desc.rows.size(); row_id++)
-					if (desc.rows[row_id] > 0) min_size.x += desc.rows[row_id];
+					if (desc.rows[row_id] > 0) min_size.y += desc.rows[row_id];
 
 				if (desc.target_size.x == fit)  desc.size.x = min_size.x + desc.padding.x + desc.padding.z;
 				if (desc.target_size.y == fit)	desc.size.y = min_size.y + desc.padding.y + desc.padding.w;
@@ -836,7 +880,7 @@ void GUI2Dynamic::resolve_phase0_fit(size_t root_node){
 				traverse_nodes_children(node_id, [&](size_t child) {
 
 					children_count++;
-					glm::vec2 child_size = node_size(child) + non_avail(node_margin(child));
+					glm::vec2 child_size = non_avail(node_size(child)) + non_avail(node_margin(child));
 
 					if (desc.is_vertical) {
 						min_size.x = glm::max(min_size.x, child_size.x);
@@ -913,18 +957,18 @@ void GUI2Dynamic::resolve_phase1_avail_and_position(size_t root_node)
 			glm::vec2 self_size = desc.size - glm::vec2(desc.padding.x + desc.padding.z, desc.padding.y + desc.padding.w);
 			glm::vec2 size_per_avail = compute_size_per_avail(self_size - cells_min_size, cells_avails_total);
 
-			float current_offset = desc.columns[0];
+			float current_offset = compute_physical_size(desc.columns[0], size_per_avail.x);
 			for (int32_t column_id = 0; column_id < desc.columns.size(); column_id++) {
-				float temp = desc.columns[column_id];
+				float temp				= desc.columns[column_id];
 				desc.columns[column_id] = current_offset;
-				current_offset += compute_physical_size(temp, size_per_avail.x);
+				current_offset			+= compute_physical_size(temp, size_per_avail.x);
 			}
 
-			current_offset = desc.rows[0];
+			current_offset = compute_physical_size(desc.rows[0], size_per_avail.y);
 			for (int32_t row_id = 0; row_id < desc.rows.size(); row_id++) {
-				float temp = desc.rows[row_id];
-				desc.rows[row_id] = current_offset;
-				current_offset += compute_physical_size(temp, size_per_avail.y);
+				float temp			= desc.rows[row_id];
+				desc.rows[row_id]	= current_offset;
+				current_offset		+= compute_physical_size(temp, size_per_avail.y);
 			}
 
 			traverse_nodes_children(node_id, [&](size_t child_id) {
@@ -935,8 +979,8 @@ void GUI2Dynamic::resolve_phase1_avail_and_position(size_t root_node)
 				glm::ivec2 child_total_avail	= avail_ratio(child_margin_ref) + avail_ratio(child_target_size);
 				glm::vec2 child_non_avail_size	= non_avail(child_margin_ref) + non_avail(child_target_size);
 
-				if (!is_any_avail(child_total_avail))
-					return;
+				//if (glm::all(glm::equal(child_total_avail, glm::ivec2(0))))
+				//	return;
 
 				glm::ivec2 child_index	= node_grid_index(child_id);
 				glm::ivec2 child_span	= node_grid_span(child_id);
@@ -946,22 +990,24 @@ void GUI2Dynamic::resolve_phase1_avail_and_position(size_t root_node)
 					desc.rows   [child_index.y + child_span.y]	- (child_index.y > 0 ? desc.rows   [child_index.y - 1] : 0)
 					);
 
+				std::cout << size_per_avail << std::endl;
+
 				glm::vec2 child_size_per_avail = compute_size_per_avail(cell_size - child_non_avail_size, child_total_avail);
 
 				glm::vec2& child_size_ref = node_size(child_id);
 
-				//if (is_avail(child_margin_ref.x)) child_margin_ref.x = avail_ratio(child_margin_ref.x) * child_size_per_avail.x;
-				//if (is_avail(child_margin_ref.y)) child_margin_ref.y = avail_ratio(child_margin_ref.y) * child_size_per_avail.y;
-				//if (is_avail(child_margin_ref.z)) child_margin_ref.z = avail_ratio(child_margin_ref.z) * child_size_per_avail.x;
-				//if (is_avail(child_margin_ref.w)) child_margin_ref.w = avail_ratio(child_margin_ref.w) * child_size_per_avail.y;
+				if (is_avail(child_target_size.x)) child_size_ref.x  = avail_ratio(child_target_size.x) * child_size_per_avail.x;
+				if (is_avail(child_target_size.y)) child_size_ref.y  = avail_ratio(child_target_size.y) * child_size_per_avail.y;
 
-				if (is_avail(child_target_size.x)) child_size_ref.x  = avail_ratio(child_size_ref.x) * child_size_per_avail.x;
-				if (is_avail(child_target_size.y)) child_size_ref.y  = avail_ratio(child_size_ref.y) * child_size_per_avail.y;
+				glm::vec2 cell_position =
+					glm::vec2(
+						child_index.x > 0 ? desc.columns[child_index.x] : 0,
+						child_index.y > 0 ? desc.rows[child_index.y]	: 0);
 
 				node_position(child_id) =
 					desc.position +
+					cell_position + 
 					glm::vec2(desc.padding.x, desc.padding.y) +
-					glm::vec2(desc.columns[child_index.x], desc.columns[child_index.y]) +
 					glm::vec2(
 						compute_physical_size(child_margin_ref.x, child_size_per_avail.x),
 						compute_physical_size(child_margin_ref.y, child_size_per_avail.y)
@@ -1000,10 +1046,11 @@ void GUI2Dynamic::resolve_phase1_avail_and_position(size_t root_node)
 			children_min_size += desc.is_vertical ? glm::vec2(0, children_count * desc.spacing) : glm::vec2(children_count * desc.spacing, 0);
 
 			glm::vec2 self_size = desc.size - glm::vec2(desc.padding.x + desc.padding.z, desc.padding.y + desc.padding.w);
+			
 			int32_t size_per_avail = 
 				desc.is_vertical ?
 				compute_size_per_avail(self_size.y - children_min_size.y, children_total_avails) :
-				compute_size_per_avail(self_size.y - children_min_size.x, children_total_avails);
+				compute_size_per_avail(self_size.x - children_min_size.x, children_total_avails);
 
 			float current_position = 0;
 
@@ -1018,15 +1065,29 @@ void GUI2Dynamic::resolve_phase1_avail_and_position(size_t root_node)
 
 				int32_t child_avail_off_side	= 
 					desc.is_vertical ?
-					avail_ratio(child_margin_ref.y ) +
-					avail_ratio(child_margin_ref.w ) +
-					avail_ratio(child_target_size.y)
-					:
 					avail_ratio(child_margin_ref.x ) +
 					avail_ratio(child_margin_ref.z ) +
-					avail_ratio(child_target_size.x);
+					avail_ratio(child_target_size.x)
+					:
+					avail_ratio(child_margin_ref.y ) +
+					avail_ratio(child_margin_ref.w ) +
+					avail_ratio(child_target_size.y);
 
-				float child_avail_per_size_off_side = compute_physical_size(self_size.x, children_total_avails);
+				float child_physical_off_side	= 
+					desc.is_vertical ?
+					non_avail(child_margin_ref.x ) +
+					non_avail(child_margin_ref.z ) +
+					non_avail(child_target_size.x)
+					:
+					non_avail(child_margin_ref.y ) +
+					non_avail(child_margin_ref.w ) +
+					non_avail(child_target_size.y);
+
+				float child_avail_per_size_off_side 
+					= compute_size_per_avail(
+						(desc.is_vertical ? self_size.x : self_size.y) - child_physical_off_side,
+						child_avail_off_side
+					);
 
 				glm::vec2 effective_margin = glm::vec2(0);
 
@@ -1045,6 +1106,7 @@ void GUI2Dynamic::resolve_phase1_avail_and_position(size_t root_node)
 					effective_margin.x = compute_physical_size(child_margin_ref.x, size_per_avail);
 					effective_margin.y = compute_physical_size(child_margin_ref.y, child_avail_per_size_off_side);
 				}
+
 
 				child_position_ref = 
 					desc.position + 
@@ -1187,7 +1249,7 @@ glm::vec2 GUI2Dynamic::compute_size_per_avail(glm::vec2 remaining_size, glm::ive
 
 float GUI2Dynamic::compute_physical_size(float value, float size_per_avail)
 {
-	return is_avail(value) ? value * size_per_avail : value;
+	return is_avail(value) ? avail_ratio(value) * size_per_avail : value;
 }
 
 glm::vec2 GUI2Dynamic::compute_physical_size(glm::vec2 value, glm::vec2 size_per_avail)
@@ -1201,3 +1263,278 @@ glm::vec2 GUI2Dynamic::compute_physical_size(glm::vec4 value, glm::vec2 size_per
 		compute_physical_size(value.x, size_per_avail.x) + compute_physical_size(value.z, size_per_avail.x),
 		compute_physical_size(value.y, size_per_avail.y) + compute_physical_size(value.w, size_per_avail.y));
 }
+
+GUI2Dynamic::WindowDesc& GUI2Dynamic::WindowDesc::set_padding(glm::vec4 value)
+{
+	padding = value;
+	return *this;
+}
+
+GUI2Dynamic::WindowDesc& GUI2Dynamic::WindowDesc::set_target_size(glm::vec2 value)
+{
+	target_size = value;
+	return *this;
+}
+
+GUI2Dynamic::WindowDesc& GUI2Dynamic::WindowDesc::set_min_size(glm::vec2 value)
+{
+	min_size = value;
+	return *this;
+}
+
+GUI2Dynamic::WindowDesc& GUI2Dynamic::WindowDesc::set_max_size(glm::vec2 value)
+{
+	max_size = value;
+	return *this;
+}
+
+GUI2Dynamic::WindowDesc& GUI2Dynamic::WindowDesc::set_name(std::string value)
+{
+	name = value;
+	return *this;
+}
+
+GUI2Dynamic::WindowDesc& GUI2Dynamic::WindowDesc::set_color(glm::vec4 value)
+{
+	color = value;
+	return *this;
+}
+
+GUI2Dynamic::WindowDesc& GUI2Dynamic::WindowDesc::set_border_thickness(glm::vec4 value)
+{
+	border_thickness = value;
+	return *this;
+}
+
+GUI2Dynamic::WindowDesc& GUI2Dynamic::WindowDesc::set_border_rounding(glm::vec4 value)
+{
+	border_rounding = value;
+	return *this;
+}
+
+GUI2Dynamic::WindowDesc& GUI2Dynamic::WindowDesc::set_border_color0(glm::vec4 value)
+{
+	border_color0 = value;
+	return *this;
+}
+
+GUI2Dynamic::WindowDesc& GUI2Dynamic::WindowDesc::set_border_color1(glm::vec4 value)
+{
+	border_color1 = value;
+	return *this;
+}
+
+GUI2Dynamic::WindowDesc& GUI2Dynamic::WindowDesc::set_border_color2(glm::vec4 value)
+{
+	border_color2 = value;
+	return *this;
+}
+
+GUI2Dynamic::WindowDesc& GUI2Dynamic::WindowDesc::set_border_color3(glm::vec4 value)
+{
+	border_color3 = value;
+	return *this;
+}
+
+GUI2Dynamic::WindowDesc& GUI2Dynamic::WindowDesc::set_shadow_thickness(glm::vec4 value)
+{
+	shadow_thickness = value;
+	return *this;
+}
+
+GUI2Dynamic::WindowDesc& GUI2Dynamic::WindowDesc::set_shadow_color(glm::vec4 value)
+{
+	shadow_color = value;
+	return *this;
+}
+
+GUI2Dynamic::WindowDesc& GUI2Dynamic::WindowDesc::set_is_decorated(bool value)
+{
+	is_decorated = value;
+	return *this;
+}
+
+GUI2Dynamic::WindowDesc& GUI2Dynamic::WindowDesc::set_is_resizable(bool value)
+{
+	is_resizable = value;
+	return *this;
+}
+
+GUI2Dynamic::WindowDesc& GUI2Dynamic::WindowDesc::set_position(glm::vec2 value)
+{
+	position = value;
+	return *this;
+}
+
+GUI2Dynamic::BoxDesc& GUI2Dynamic::BoxDesc::set_uv00(glm::vec2 value)
+{
+	uv00 = value;
+	return *this;
+}
+
+GUI2Dynamic::BoxDesc& GUI2Dynamic::BoxDesc::set_uv11(glm::vec2 value)
+{
+	uv11 = value;
+	return *this;
+}
+
+GUI2Dynamic::BoxDesc& GUI2Dynamic::BoxDesc::set_texture_id(uint32_t value)
+{
+	texture_id = value;
+	return *this;
+}
+
+GUI2Dynamic::BoxDesc& GUI2Dynamic::BoxDesc::set_margin(glm::vec4 value)
+{
+	margin = value;
+	return *this;
+}
+
+GUI2Dynamic::BoxDesc& GUI2Dynamic::BoxDesc::set_target_size(glm::vec2 value)
+{
+	target_size = value;
+	return *this;
+}
+
+GUI2Dynamic::BoxDesc& GUI2Dynamic::BoxDesc::set_min_size(glm::vec2 value)
+{
+	min_size = value;
+	return *this;
+}
+
+GUI2Dynamic::BoxDesc& GUI2Dynamic::BoxDesc::set_max_size(glm::vec2 value)
+{
+	max_size = value;
+	return *this;
+}
+
+GUI2Dynamic::BoxDesc& GUI2Dynamic::BoxDesc::set_color(glm::vec4 value)
+{
+	color = value;
+	return *this;
+}
+
+GUI2Dynamic::BoxDesc& GUI2Dynamic::BoxDesc::set_border_thickness(glm::vec4 value)
+{
+	border_thickness = value;
+	return *this;
+}
+
+GUI2Dynamic::BoxDesc& GUI2Dynamic::BoxDesc::set_border_rounding(glm::vec4 value)
+{
+	border_rounding = value;
+	return *this;
+}
+
+GUI2Dynamic::BoxDesc& GUI2Dynamic::BoxDesc::set_border_color0(glm::vec4 value)
+{
+	border_color0 = value;
+	return *this;
+}
+
+GUI2Dynamic::BoxDesc& GUI2Dynamic::BoxDesc::set_border_color1(glm::vec4 value)
+{
+	border_color1 = value;
+	return *this;
+}
+
+GUI2Dynamic::BoxDesc& GUI2Dynamic::BoxDesc::set_border_color2(glm::vec4 value)
+{
+	border_color2 = value;
+	return *this;
+}
+
+GUI2Dynamic::BoxDesc& GUI2Dynamic::BoxDesc::set_border_color3(glm::vec4 value)
+{
+	border_color3 = value;
+	return *this;
+}
+
+GUI2Dynamic::BoxDesc& GUI2Dynamic::BoxDesc::set_shadow_thickness(glm::vec4 value)
+{
+	shadow_thickness = value;
+	return *this;
+}
+
+GUI2Dynamic::BoxDesc& GUI2Dynamic::BoxDesc::set_shadow_color(glm::vec4 value)
+{
+	shadow_color = value;
+	return *this;
+}
+
+
+GUI2Dynamic::GridDesc& GUI2Dynamic::GridDesc::set_margin(glm::vec4 value)
+{
+	margin = value;
+	return *this;
+}
+
+GUI2Dynamic::GridDesc& GUI2Dynamic::GridDesc::set_padding(glm::vec4 value)
+{
+	padding = value;
+	return *this;
+}
+
+GUI2Dynamic::GridDesc& GUI2Dynamic::GridDesc::set_target_size(glm::vec2 value)
+{
+	target_size = value;
+	return *this;
+}
+
+GUI2Dynamic::GridDesc& GUI2Dynamic::GridDesc::set_min_size(glm::vec2 value)
+{
+	min_size = value;
+	return *this;
+}
+
+GUI2Dynamic::GridDesc& GUI2Dynamic::GridDesc::set_max_size(glm::vec2 value)
+{
+	max_size = value;
+	return *this;
+}
+
+GUI2Dynamic::GridDesc& GUI2Dynamic::GridDesc::add_column(float width) {
+	columns.push_back(width);
+	return *this;
+}
+
+GUI2Dynamic::GridDesc& GUI2Dynamic::GridDesc::add_row(float height) {
+	rows.push_back(height);
+	return *this;
+}
+
+GUI2Dynamic::StackDesc& GUI2Dynamic::StackDesc::set_margin(glm::vec4 value) {
+	margin = value;
+	return *this;
+}
+
+GUI2Dynamic::StackDesc& GUI2Dynamic::StackDesc::set_padding(glm::vec4 value) {
+	padding = value;
+	return *this;
+}
+
+GUI2Dynamic::StackDesc& GUI2Dynamic::StackDesc::set_target_size(glm::vec2 value) {
+	target_size = value;
+	return *this;
+}
+
+GUI2Dynamic::StackDesc& GUI2Dynamic::StackDesc::set_min_size(glm::vec2 value) {
+	min_size = value;
+	return *this;
+}
+
+GUI2Dynamic::StackDesc& GUI2Dynamic::StackDesc::set_max_size(glm::vec2 value) {
+	max_size = value;
+	return *this;
+}
+
+GUI2Dynamic::StackDesc& GUI2Dynamic::StackDesc::set_spacing(float value) {
+	spacing = value;
+	return *this;
+}
+
+GUI2Dynamic::StackDesc& GUI2Dynamic::StackDesc::set_is_vertical(bool value) {
+	is_vertical = value;
+	return *this;
+}
+

@@ -50,40 +50,30 @@ public:
 	static constexpr float		fit = -1;
 	static constexpr float		avail = -1024 * 64;
 
-	static constexpr float		fit1 = fit;
-	static constexpr glm::vec2	fit2 = glm::vec2(fit);
-	static constexpr glm::vec3	fit3 = glm::vec3(fit);
-	static constexpr glm::vec4	fit4 = glm::vec4(fit);
-
-	static constexpr float		avail1 = avail;
-	static constexpr glm::vec2	avail2 = glm::vec2(avail);
-	static constexpr glm::vec3	avail3 = glm::vec3(avail);
-	static constexpr glm::vec4	avail4 = glm::vec4(avail);
-
 	struct WindowDesc;
 	struct BoxDesc;
 	struct GridDesc;
 	struct StackDesc;
 
-	void				window_begin(const std::string& idstr);
+	WindowDesc&			window_begin(const std::string& idstr);
 	WindowDesc&			window_prop();
 	void				window_end();
 
-	void				grid_begin(const std::string& idstr);
-	void				grid_begin();
+	GridDesc&			grid_begin(const std::string& idstr);
+	GridDesc&			grid_begin();
 	GridDesc&			grid_prop();
 	void				grid_add_column(float width);
 	void				grid_add_row(float height);
 	void				grid_region(glm::ivec2 grid_index, glm::ivec2 grid_span);
 	void				grid_end();
 
-	void				stack_begin(const std::string& idstr);
-	void				stack_begin();
+	StackDesc&			stack_begin(const std::string& idstr);
+	StackDesc&			stack_begin();
 	StackDesc&			stack_prop();
 	void				stack_end();
 
-	void				box_begin(const std::string& idstr);
-	void				box_begin();
+	BoxDesc&			box_begin(const std::string& idstr);
+	BoxDesc&			box_begin();
 	BoxDesc&			box_prop();
 	void				box_end();
 
@@ -115,8 +105,26 @@ public:
 		
 		bool		is_decorated		= false;
 		bool		is_resizable		= true;
-
+		
 		glm::vec2	position			= glm::vec2(100);
+		
+		WindowDesc& set_padding			(glm::vec4 value	);
+		WindowDesc& set_target_size		(glm::vec2 value	);
+		WindowDesc& set_min_size		(glm::vec2 value	);
+		WindowDesc& set_max_size		(glm::vec2 value	);
+		WindowDesc& set_name			(std::string value	);
+		WindowDesc& set_color			(glm::vec4 value	);
+		WindowDesc& set_border_thickness(glm::vec4 value	);
+		WindowDesc& set_border_rounding	(glm::vec4 value	);
+		WindowDesc& set_border_color0	(glm::vec4 value	);
+		WindowDesc& set_border_color1	(glm::vec4 value	);
+		WindowDesc& set_border_color2	(glm::vec4 value	);
+		WindowDesc& set_border_color3	(glm::vec4 value	);
+		WindowDesc& set_shadow_thickness(glm::vec4 value	);
+		WindowDesc& set_shadow_color	(glm::vec4 value	);
+		WindowDesc& set_is_decorated	(bool value			);
+		WindowDesc& set_is_resizable	(bool value			);
+		WindowDesc& set_position		(glm::vec2 value	);
 
 	private:
 		friend GUI2Dynamic;
@@ -144,6 +152,23 @@ public:
 		glm::vec2	uv11				= glm::vec2(1);
 		uint32_t	texture_id			= -1;
 
+		BoxDesc&	set_margin			(glm::vec4	value );
+		BoxDesc&	set_target_size		(glm::vec2	value );
+		BoxDesc&	set_min_size		(glm::vec2	value );
+		BoxDesc&	set_max_size		(glm::vec2	value );
+		BoxDesc&	set_color			(glm::vec4	value );
+		BoxDesc&	set_border_thickness(glm::vec4	value );
+		BoxDesc&	set_border_rounding	(glm::vec4	value );
+		BoxDesc&	set_border_color0	(glm::vec4	value );
+		BoxDesc&	set_border_color1	(glm::vec4	value );
+		BoxDesc&	set_border_color2	(glm::vec4	value );
+		BoxDesc&	set_border_color3	(glm::vec4	value );
+		BoxDesc&	set_shadow_thickness(glm::vec4	value );
+		BoxDesc&	set_shadow_color	(glm::vec4	value );
+		BoxDesc&	set_uv00			(glm::vec2	value );
+		BoxDesc&	set_uv11			(glm::vec2	value );
+		BoxDesc&	set_texture_id		(uint32_t	value );
+
 	private:
 		friend GUI2Dynamic;
 		std::string idstr;
@@ -162,6 +187,14 @@ public:
 		
 		std::vector<float> columns;
 		std::vector<float> rows;
+
+		GridDesc&	set_margin			(glm::vec4	value);
+		GridDesc&	set_padding			(glm::vec4	value);
+		GridDesc&	set_target_size		(glm::vec2	value);
+		GridDesc&	set_min_size		(glm::vec2	value);
+		GridDesc&	set_max_size		(glm::vec2	value);
+		GridDesc&	add_column			(float width);
+		GridDesc&	add_row				(float height);
 
 	private:
 		friend GUI2Dynamic;
@@ -183,6 +216,14 @@ public:
 
 		float		spacing				= 10;
 		bool		is_vertical			= true;
+
+		StackDesc&	set_margin 		(glm::vec4	value);
+		StackDesc&	set_padding 	(glm::vec4	value);
+		StackDesc&	set_target_size (glm::vec2	value);
+		StackDesc&	set_min_size 	(glm::vec2	value);
+		StackDesc&	set_max_size 	(glm::vec2	value);
+		StackDesc&	set_spacing 	(float		value);
+		StackDesc&	set_is_vertical (bool		value);
 
 	private:
 		friend GUI2Dynamic;
@@ -252,7 +293,6 @@ private:
 	glm::ivec2&	node_grid_index(size_t node);
 	glm::ivec2&	node_grid_span(size_t node);
 
-	//														level	  self
 	void _traverse_nodes(size_t root_node, std::function<void(int32_t, size_t)> lambda_given_level_self);
 	void traverse_nodes_down(size_t root_node, std::function<void(int32_t, size_t)> lambda_given_level_self);
 	void traverse_nodes_up(size_t root_node, std::function<void(int32_t, size_t)> lambda_given_level_self);
@@ -262,7 +302,6 @@ private:
 	void resolve_phase1_avail_and_position(size_t root_node);
 	void resolve_phase2_mouse_event(size_t root_node);
 
-	//template<typename T, std::enable_if_t<std::is_arithmetic_v<T>, bool> = true>
 	bool		is_avail(float value);
 	bool		is_any_avail(glm::vec2 value);
 	bool		is_any_avail(glm::vec4 value);
