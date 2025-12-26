@@ -82,22 +82,12 @@ public:
 		RightHold		= 0b10000000,
 	};
 
-	enum class MouseState {
-		Hover			= 0b00000000,
-		LeftPress		= 0b00000001,
-		LeftRelease		= 0b00000010,
-		LeftHold		= 0b00000100,
-		RightPress		= 0b00001000,
-		RightRelease	= 0b00010000,
-		RightHold		= 0b00100000,
-	};
-
 	struct IOState {
-		MouseState mouse_state						= MouseState::Hover;
-		MouseState mouse_state_prev					= MouseState::Hover;
-		glm::vec2 mouse_position					= glm::vec2(0);
-		glm::vec2 mouse_left_press_begin_position	= glm::vec2(0);
-		glm::vec2 mouse_right_press_begin_position	= glm::vec2(0);
+		MouseEvent	mouse_state						= MouseEvent::Hover;
+		MouseEvent	mouse_state_prev				= MouseEvent::Hover;
+		glm::vec2	mouse_position					= glm::vec2(0);
+		glm::vec2	mouse_left_press_begin_position	= glm::vec2(0);
+		glm::vec2	mouse_right_press_begin_position= glm::vec2(0);
 	};
 
 private:

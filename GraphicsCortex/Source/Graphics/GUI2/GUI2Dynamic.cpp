@@ -276,8 +276,33 @@ glm::ivec2& GUI2Dynamic::node_grid_span(size_t node_id)
 	ASSERT(false);
 }
 
+GUI2::MouseEvent& GUI2Dynamic::node_mouse_event(size_t node_id)
+{
+	if (node_id >= nodes.size()) {
+		std::cout << "[GUI Error] GUI2Dynamic::node_mouse_event() is called but given node is not valid" << std::endl;
+		ASSERT(false);
+	}
+
+	Node& node = nodes[node_id];
+
+	switch (get_type(node)) {
+	case Window	: return std::get<WindowDesc>(node.desc).mouse_event;
+	case Box	: return std::get<BoxDesc>(node.desc).mouse_event;
+	case Grid	: return std::get<GridDesc>(node.desc).mouse_event;
+	case Stack	: return std::get<StackDesc>(node.desc).mouse_event;
+	}
+
+	std::cout << "[GUI Error] GUI2Dynamic::node_mouse_event() but an error is occured" << std::endl;
+	ASSERT(false);
+}
+
 
 ///////////		WINDOW		////////////
+
+void GUI2Dynamic::new_frame(GUI2& gui)
+{
+	io_state = gui.get_io_state();
+}
 
 GUI2Dynamic::WindowDesc& GUI2Dynamic::window_begin(const std::string& idstr){
 	if (node_stack.size() != 0) {
@@ -292,7 +317,7 @@ GUI2Dynamic::WindowDesc& GUI2Dynamic::window_begin(const std::string& idstr){
 	node_stack.push_back(id);
 	last_window = id;
 	
-	resolved_properties[idstr];
+	//resolved_properties[idstr];
 
 	return window_prop();
 }
@@ -331,7 +356,7 @@ void GUI2Dynamic::window_end(){
 GUI2Dynamic::GridDesc& GUI2Dynamic::grid_begin(const std::string& idstr){
 	auto& desc = grid_begin();
 	std::get<GridDesc>(nodes[last_grid].desc).idstr = idstr;
-	resolved_properties[idstr];
+	//resolved_properties[idstr];
 	return desc;
 }
 
@@ -464,7 +489,7 @@ void GUI2Dynamic::grid_end(){
 GUI2Dynamic::StackDesc& GUI2Dynamic::stack_begin(const std::string& idstr){
 	auto& desc = stack_begin();
 	std::get<StackDesc>(nodes[last_stack].desc).idstr = idstr;
-	resolved_properties[idstr];
+	//resolved_properties[idstr];
 	return desc;
 }
 
@@ -543,7 +568,7 @@ void GUI2Dynamic::stack_end(){
 GUI2Dynamic::BoxDesc& GUI2Dynamic::box_begin(const std::string& idstr){
 	auto& desc = box_begin();
 	std::get<BoxDesc>(nodes[last_box].desc).idstr = idstr;
-	resolved_properties[idstr];
+	//resolved_properties[idstr];
 	return desc;
 }
 
@@ -812,6 +837,15 @@ void GUI2Dynamic::resolve() {
 
 	for (size_t root_node : root_nodes)
 		resolve_phase2_mouse_event(root_node);
+}
+
+size_t GUI2Dynamic::remember_this()
+{
+	if (node_stack.size() == 0) {
+		std::cout << "[GUI Error] GUI2Dynamic::remember_this() is called but there are no open object in the hieararchy" << std::endl;
+		ASSERT(false);
+	}
+
 }
 
 void GUI2Dynamic::resolve_phase0_fit(size_t root_node){
@@ -1140,7 +1174,40 @@ void GUI2Dynamic::resolve_phase1_avail_and_position(size_t root_node)
 
 void GUI2Dynamic::resolve_phase2_mouse_event(size_t root_node)
 {
+	if (root_node >= nodes.size()) {
+		std::cout << "[GUI Error] GUI2Dynamic::resolve_phase2_mouse_event() is called but given root_node doesn't exist" << std::endl;
+		ASSERT(false);
+	}
 
+	glm::vec2&		 mouse_position_ref = io_state.mouse_position;
+	GUI2::MouseEvent mouse_event_ref	= io_state.mouse_state;
+
+	std::vector<size_t> stack;
+	stack.push_back(root_node);
+
+	while (stack.size() != 0) {
+
+		size_t node_id		= stack.back();
+		stack.pop_back();
+
+		GUI2::MouseEvent& event_ref = node_mouse_event(node_id);
+
+		glm::vec2& position = node_position(node_id);
+		glm::vec2& size		= node_size(node_id);
+
+		AABB2 node_area		= AABB2(position, position + size);
+
+		if (!node_area.does_contain(mouse_position_ref)) {
+			event_ref = GUI2::MouseEvent::None;
+			continue;
+		}
+
+		event_ref = io_state.mouse_state;
+
+		traverse_nodes_children(node_id, [&](size_t child) {
+			stack.push_back(child);
+			});
+	}
 }
 
 void GUI2Dynamic::publish(GUI2& gui)

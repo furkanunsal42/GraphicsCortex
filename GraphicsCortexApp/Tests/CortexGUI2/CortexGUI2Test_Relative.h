@@ -41,7 +41,6 @@ public:
 		//
 		//gui_d.window_end();
 
-
 		gui_d.window_begin("My Window 1")
 			.set_is_decorated(false)
 			.set_color(glm::vec4(0.8, 0.8, 0.8, 1));

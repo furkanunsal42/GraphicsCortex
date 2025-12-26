@@ -201,26 +201,26 @@ void GUI2::render() {
 		//bool now_holding_left		= left  == Window::PressAction::PRESS;
 		//bool now_holding_right		= right == Window::PressAction::PRESS;
 		
-		MouseState mouse_state_prev = io_state.mouse_state;
-		bool were_holding_left   = ((int32_t)mouse_state_prev & (int32_t)MouseState::LeftHold)  != 0;
-		bool were_holding_right  = ((int32_t)mouse_state_prev & (int32_t)MouseState::RightHold) != 0;
-		bool were_pressing_left  = ((int32_t)mouse_state_prev & (int32_t)MouseState::LeftPress)  != 0;
-		bool were_pressing_right = ((int32_t)mouse_state_prev & (int32_t)MouseState::RightPress) != 0;
+		MouseEvent mouse_state_prev = io_state.mouse_state;
+		bool were_holding_left   = ((int32_t)mouse_state_prev & (int32_t)MouseEvent::LeftHold)   != 0;
+		bool were_holding_right  = ((int32_t)mouse_state_prev & (int32_t)MouseEvent::RightHold)  != 0;
+		bool were_pressing_left  = ((int32_t)mouse_state_prev & (int32_t)MouseEvent::LeftPress)  != 0;
+		bool were_pressing_right = ((int32_t)mouse_state_prev & (int32_t)MouseEvent::RightPress) != 0;
 		
-		io_state.mouse_state = MouseState::Hover;
+		io_state.mouse_state = MouseEvent::Hover;
 		
-		if (now_holding_left  &&  were_holding_left)	io_state.mouse_state = MouseState((int32_t)io_state.mouse_state | (int32_t)MouseState::LeftHold);
-		if (now_holding_left  &&  were_pressing_left)	io_state.mouse_state = MouseState((int32_t)io_state.mouse_state | (int32_t)MouseState::LeftHold);
-		if (!now_holding_left &&  were_holding_left)	io_state.mouse_state = MouseState((int32_t)io_state.mouse_state | (int32_t)MouseState::LeftRelease);
-		if (now_holding_left  && !were_holding_left)	io_state.mouse_state = MouseState((int32_t)io_state.mouse_state | (int32_t)MouseState::LeftPress);
+		if (now_holding_left  &&  were_holding_left)	io_state.mouse_state = MouseEvent((int32_t)io_state.mouse_state | (int32_t)MouseEvent::LeftHold);
+		if (now_holding_left  &&  were_pressing_left)	io_state.mouse_state = MouseEvent((int32_t)io_state.mouse_state | (int32_t)MouseEvent::LeftHold);
+		if (!now_holding_left &&  were_holding_left)	io_state.mouse_state = MouseEvent((int32_t)io_state.mouse_state | (int32_t)MouseEvent::LeftRelease);
+		if (now_holding_left  && !were_holding_left)	io_state.mouse_state = MouseEvent((int32_t)io_state.mouse_state | (int32_t)MouseEvent::LeftPress);
 		
-		if (now_holding_right  &&  were_holding_right)	io_state.mouse_state = MouseState((int32_t)io_state.mouse_state | (int32_t)MouseState::RightHold);
-		if (now_holding_right  &&  were_pressing_right)	io_state.mouse_state = MouseState((int32_t)io_state.mouse_state | (int32_t)MouseState::RightHold);
-		if (!now_holding_right &&  were_holding_right)	io_state.mouse_state = MouseState((int32_t)io_state.mouse_state | (int32_t)MouseState::RightRelease);
-		if (now_holding_right  && !were_holding_right)	io_state.mouse_state = MouseState((int32_t)io_state.mouse_state | (int32_t)MouseState::RightPress);
+		if (now_holding_right  &&  were_holding_right)	io_state.mouse_state = MouseEvent((int32_t)io_state.mouse_state | (int32_t)MouseEvent::RightHold);
+		if (now_holding_right  &&  were_pressing_right)	io_state.mouse_state = MouseEvent((int32_t)io_state.mouse_state | (int32_t)MouseEvent::RightHold);
+		if (!now_holding_right &&  were_holding_right)	io_state.mouse_state = MouseEvent((int32_t)io_state.mouse_state | (int32_t)MouseEvent::RightRelease);
+		if (now_holding_right  && !were_holding_right)	io_state.mouse_state = MouseEvent((int32_t)io_state.mouse_state | (int32_t)MouseEvent::RightPress);
 
-		if ((int32_t)io_state.mouse_state & (int32_t)MouseState::LeftPress)  io_state.mouse_left_press_begin_position  = io_state.mouse_position;
-		if ((int32_t)io_state.mouse_state & (int32_t)MouseState::RightPress) io_state.mouse_right_press_begin_position = io_state.mouse_position;
+		if ((int32_t)io_state.mouse_state & (int32_t)MouseEvent::LeftPress)  io_state.mouse_left_press_begin_position  = io_state.mouse_position;
+		if ((int32_t)io_state.mouse_state & (int32_t)MouseEvent::RightPress) io_state.mouse_right_press_begin_position = io_state.mouse_position;
 
 		if (previous_window != nullptr) {
 			previous_window->context_make_current();
@@ -238,13 +238,13 @@ const GUI2::IOState& GUI2::get_io_state()
 
 GUI2::MouseEvent GUI2::_generate_event_for_aabb(const AABB2& aabb) {
 	
-	if (aabb.does_contain(io_state.mouse_position) && ((int32_t)io_state.mouse_state & (int32_t)MouseState::LeftHold) != 0) return MouseEvent::LeftHold;
-	if (aabb.does_contain(io_state.mouse_position) && ((int32_t)io_state.mouse_state & (int32_t)MouseState::LeftPress) != 0) return MouseEvent::LeftPress;
-	if (aabb.does_contain(io_state.mouse_position) && ((int32_t)io_state.mouse_state & (int32_t)MouseState::LeftRelease) != 0) return MouseEvent::LeftRelease;
+	if (aabb.does_contain(io_state.mouse_position) && ((int32_t)io_state.mouse_state & (int32_t)MouseEvent::LeftHold) != 0) return MouseEvent::LeftHold;
+	if (aabb.does_contain(io_state.mouse_position) && ((int32_t)io_state.mouse_state & (int32_t)MouseEvent::LeftPress) != 0) return MouseEvent::LeftPress;
+	if (aabb.does_contain(io_state.mouse_position) && ((int32_t)io_state.mouse_state & (int32_t)MouseEvent::LeftRelease) != 0) return MouseEvent::LeftRelease;
 
-	if (aabb.does_contain(io_state.mouse_position) && ((int32_t)io_state.mouse_state & (int32_t)MouseState::RightHold) != 0) return MouseEvent::RightHold;
-	if (aabb.does_contain(io_state.mouse_position) && ((int32_t)io_state.mouse_state & (int32_t)MouseState::RightPress) != 0) return MouseEvent::RightPress;
-	if (aabb.does_contain(io_state.mouse_position) && ((int32_t)io_state.mouse_state & (int32_t)MouseState::RightRelease) != 0) return MouseEvent::RightRelease;
+	if (aabb.does_contain(io_state.mouse_position) && ((int32_t)io_state.mouse_state & (int32_t)MouseEvent::RightHold) != 0) return MouseEvent::RightHold;
+	if (aabb.does_contain(io_state.mouse_position) && ((int32_t)io_state.mouse_state & (int32_t)MouseEvent::RightPress) != 0) return MouseEvent::RightPress;
+	if (aabb.does_contain(io_state.mouse_position) && ((int32_t)io_state.mouse_state & (int32_t)MouseEvent::RightRelease) != 0) return MouseEvent::RightRelease;
 
 	if (aabb.does_contain(io_state.mouse_position)) return MouseEvent::Hover;
 

@@ -22,8 +22,11 @@ namespace widget {
 
 		DockSurface(std::string idstr);
 		void publish(GUI2Dynamic& gui_dynamic);
-
-	private:
+		BANA K?TAP AL!!!
+			BANA K?TAP AL!!!
+				BANA K?TAP AL!!!
+					BANA K?TAP AL!!!
+	private: 
 
 	};
 

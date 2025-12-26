@@ -47,8 +47,9 @@
 class GUI2Dynamic {
 public:
 
-	static constexpr float		fit = -1;
+	static constexpr float		fit   = -1;
 	static constexpr float		avail = -1024 * 64;
+	static constexpr size_t		invalid_id = -1;
 
 	struct WindowDesc;
 	struct BoxDesc;
@@ -56,12 +57,13 @@ public:
 	struct StackDesc;
 	struct ResolvedProperties;
 
+	void				new_frame(GUI2& gui);
+
 	WindowDesc&			window_begin(size_t id);
 	WindowDesc&			window_begin(const std::string& idstr);
 	WindowDesc&			window_prop();
 	void				window_end();
 
-	GridDesc&			grid_begin(size_t id);
 	GridDesc&			grid_begin(const std::string& idstr);
 	GridDesc&			grid_begin();
 	GridDesc&			grid_prop();
@@ -70,13 +72,11 @@ public:
 	void				grid_region(glm::ivec2 grid_index, glm::ivec2 grid_span = glm::ivec2(1, 1));
 	void				grid_end();
 
-	StackDesc&			stack_begin(size_t id);
 	StackDesc&			stack_begin(const std::string& idstr);
 	StackDesc&			stack_begin();
 	StackDesc&			stack_prop();
 	void				stack_end();
 
-	BoxDesc&			box_begin(size_t id);
 	BoxDesc&			box_begin(const std::string& idstr);
 	BoxDesc&			box_begin();
 	BoxDesc&			box_prop();
@@ -86,9 +86,9 @@ public:
 	void				print_layout();
 	void				resolve();
 	
-	size_t				generate_id();
-	ResolvedProperties& resolved_properties(size_t id);
-	ResolvedProperties& resolved_properties(const std::string& idstr);
+	size_t				remember_this();
+	ResolvedProperties& get_resolved_properties(size_t id);
+	ResolvedProperties& get_resolved_properties(const std::string& idstr);
 	GUI2::IOState&		get_io_state();
 
 	void				publish(GUI2& gui);
@@ -136,9 +136,10 @@ public:
 
 	private:
 		friend GUI2Dynamic;
-		std::string idstr;
+		size_t		id					= invalid_id;
 		glm::vec2	size				= glm::vec2(0);
 
+		GUI2::MouseEvent	mouse_event	= GUI2::MouseEvent::None;
 	};
 
 	struct BoxDesc {
@@ -181,11 +182,13 @@ public:
 
 	private:
 		friend GUI2Dynamic;
-		std::string idstr;
+		size_t		id					= invalid_id;
 		glm::ivec2	grid_slot			= glm::ivec2(0, 0);
 		glm::ivec2	grid_span			= glm::ivec2(0, 0);
 		glm::vec2	position			= glm::vec2(0);
 		glm::vec2	size				= glm::vec2(0);
+
+		GUI2::MouseEvent  mouse_event	= GUI2::MouseEvent::None;
 
 	};
 
@@ -213,13 +216,15 @@ public:
 
 	private:
 		friend GUI2Dynamic;
-		std::string idstr;
+		size_t		id					= invalid_id;
 		glm::ivec2	current_grid_index	= glm::ivec2(0, 0);
 		glm::ivec2	current_grid_span	= glm::ivec2(0, 0);
 		glm::ivec2	grid_slot			= glm::ivec2(0, 0);
 		glm::ivec2	grid_span			= glm::ivec2(0, 0);
 		glm::vec2	position			= glm::vec2(0);
 		glm::vec2	size				= glm::vec2(0);
+
+		GUI2::MouseEvent  mouse_event	= GUI2::MouseEvent::None;
 
 	};
 
@@ -244,11 +249,13 @@ public:
 
 	private:
 		friend GUI2Dynamic;
-		std::string idstr;
+		size_t		id					= invalid_id;
 		glm::ivec2	grid_slot			= glm::ivec2(0, 0);
 		glm::ivec2	grid_span			= glm::ivec2(0, 0);
 		glm::vec2	position			= glm::vec2(0);
 		glm::vec2	size				= glm::vec2(0);
+
+		GUI2::MouseEvent  mouse_event	= GUI2::MouseEvent::None;
 
 	};
 
@@ -311,6 +318,7 @@ private:
 	glm::vec2&		node_max_size(size_t node);
 	glm::ivec2&		node_grid_index(size_t node);
 	glm::ivec2&		node_grid_span(size_t node);
+	GUI2::MouseEvent&  node_mouse_event(size_t node);
 
 	void			_traverse_nodes(size_t root_node, std::function<void(int32_t, size_t)> lambda_given_level_self);
 	void			traverse_nodes_down(size_t root_node, std::function<void(int32_t, size_t)> lambda_given_level_self);
@@ -337,7 +345,9 @@ private:
 	glm::vec2		compute_physical_size(glm::vec2 value, glm::vec2 size_per_avail);
 	glm::vec2		compute_physical_size(glm::vec4 value, glm::vec2 size_per_avail);
 
-	std::unordered_map<std::string, ResolvedProperties> resolved_properties;
+	std::unordered_map<std::string, size_t>			idstr_to_id;
+	std::unordered_map<size_t, ResolvedProperties>	resolved_properties;
+
 	GUI2::IOState io_state;
 
 	static constexpr std::string gui_idstr_prefix = "::#";
