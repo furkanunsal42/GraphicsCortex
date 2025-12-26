@@ -149,6 +149,36 @@ glm::vec4& GUI2Dynamic::node_margin(size_t node_id){
 	ASSERT(false);
 }
 
+glm::vec4& GUI2Dynamic::node_padding(size_t node_id)
+{
+	if (node_id >= nodes.size()) {
+		std::cout << "[GUI Error] GUI2Dynamic::node_padding() is called but given node is not valid" << std::endl;
+		ASSERT(false);
+	}
+
+	Node& node = nodes[node_id];
+
+	switch (get_type(node)) {
+	case Window	: return std::get<WindowDesc>(node.desc).padding;
+	//case Box	: return std::get<BoxDesc>(node.desc).padding;
+	case Grid	: return std::get<GridDesc>(node.desc).padding;
+	case Stack	: return std::get<StackDesc>(node.desc).padding;
+	}
+
+	std::cout << "[GUI Error] GUI2Dynamic::node_padding() but an error is occured" << std::endl;
+	ASSERT(false);
+}
+
+glm::vec4 GUI2Dynamic::get_node_padding_non_ref(size_t node_id)
+{
+	if (node_id >= nodes.size()) {
+		std::cout << "[GUI Error] GUI2Dynamic::get_node_padding_non_ref() is called but given node is not valid" << std::endl;
+		ASSERT(false);
+	}
+
+	return get_type(nodes[node_id]) == NodeType::Box ? glm::vec4(0) : node_padding(node_id);
+}
+
 glm::vec2& GUI2Dynamic::node_target_size(size_t node_id){
 	if (node_id >= nodes.size()) {
 		std::cout << "[GUI Error] GUI2Dynamic::node_target_size() is called but given node is not valid" << std::endl;
@@ -702,6 +732,8 @@ void GUI2Dynamic::print_layout()
 		std::cout << name;
 		std::cout << " target_size: " << node_target_size(node);
 		std::cout << " size: " << node_size(node);
+		if (type != NodeType::Window)
+			std::cout << " margin: " << node_margin(node);
 		std::cout << std::endl;
 
 		});
@@ -747,10 +779,11 @@ void GUI2Dynamic::resolve_phase0_fit(size_t root_node){
 				break;
 			}
 
-			glm::vec2 child_size = node_size(node.child);
+			glm::vec2 child_size	= node_size(node.child);
+			glm::vec4 child_padding = get_node_padding_non_ref(node.child);
 
-			if (desc.target_size.x == fit)  desc.size.x = child_size.x;
-			if (desc.target_size.y == fit)	desc.size.y = child_size.y;
+			if (desc.target_size.x == fit)  desc.size.x = child_size.x + child_padding.x + child_padding.z;
+			if (desc.target_size.y == fit)	desc.size.y = child_size.y + child_padding.y + child_padding.w;
 
 			break;
 		}
@@ -780,8 +813,8 @@ void GUI2Dynamic::resolve_phase0_fit(size_t root_node){
 				for (int32_t row_id = 0; row_id < desc.rows.size(); row_id++)
 					if (desc.rows[row_id] > 0) min_size.x += desc.rows[row_id];
 
-				if (desc.target_size.x == fit)  desc.size.x = min_size.x;
-				if (desc.target_size.y == fit)	desc.size.y = min_size.y;
+				if (desc.target_size.x == fit)  desc.size.x = min_size.x + desc.padding.x + desc.padding.z;
+				if (desc.target_size.y == fit)	desc.size.y = min_size.y + desc.padding.y + desc.padding.w;
 			}
 
 			break;
@@ -818,8 +851,8 @@ void GUI2Dynamic::resolve_phase0_fit(size_t root_node){
 				if (desc.is_vertical)	min_size.y += desc.spacing * glm::max((children_count - 1), 0);
 				else					min_size.x += desc.spacing * glm::max((children_count - 1), 0);
 
-				if (desc.target_size.x == fit)  desc.size.x = min_size.x;
-				if (desc.target_size.y == fit)	desc.size.y = min_size.y;
+				if (desc.target_size.x == fit)  desc.size.x = min_size.x + desc.padding.x + desc.padding.z;
+				if (desc.target_size.y == fit)	desc.size.y = min_size.y + desc.padding.y + desc.padding.w;
 			}
 
 			break;
@@ -869,64 +902,70 @@ void GUI2Dynamic::resolve_phase1_avail_and_position(size_t root_node)
 
 			for (int32_t column_id = 0; column_id < desc.columns.size(); column_id++) {
 				cells_avails_total.x	+= avail_ratio(desc.columns[column_id]);
-				cells_min_size.x		+= is_avail(desc.columns[column_id]) ? 0 : desc.columns[column_id];
+				cells_min_size.x		+= non_avail(desc.columns[column_id]);
 			}
 			for (int32_t row_id = 0; row_id < desc.rows.size(); row_id++) {
 				cells_avails_total.y	+= avail_ratio(desc.rows[row_id]);
-				cells_min_size.y		+= is_avail(desc.rows[row_id]) ? 0 : desc.rows[row_id];
+				cells_min_size.y		+= non_avail(desc.rows[row_id]);
 			}
 
 			glm::vec2 self_size = desc.size - glm::vec2(desc.padding.x + desc.padding.z, desc.padding.y + desc.padding.w);
-			
-			glm::vec2 size_per_avail = (self_size - cells_min_size) / glm::vec2(cells_avails_total);
-			size_per_avail = glm::max(size_per_avail, glm::vec2(0));
+			glm::vec2 size_per_avail = compute_size_per_avail(self_size - cells_min_size, cells_avails_total);
+
+			float current_offset = desc.columns[0];
+			for (int32_t column_id = 0; column_id < desc.columns.size(); column_id++) {
+				float temp = desc.columns[column_id];
+				desc.columns[column_id] = current_offset;
+				current_offset += compute_physical_size(temp, size_per_avail.x);
+			}
+
+			current_offset = desc.rows[0];
+			for (int32_t row_id = 0; row_id < desc.rows.size(); row_id++) {
+				float temp = desc.rows[row_id];
+				desc.rows[row_id] = current_offset;
+				current_offset += compute_physical_size(temp, size_per_avail.y);
+			}
 
 			traverse_nodes_children(node_id, [&](size_t child_id) {
 
 				glm::vec2 child_target_size = node_target_size(child_id);
+				glm::vec4& child_margin_ref	= node_margin(child_id);
+				
+				glm::ivec2 child_total_avail	= avail_ratio(child_margin_ref) + avail_ratio(child_target_size);
+				glm::vec2 child_non_avail_size	= non_avail(child_margin_ref) + non_avail(child_target_size);
 
-				if (!is_avail(child_target_size.x) && !is_avail(child_target_size.y))
+				if (!is_any_avail(child_total_avail))
 					return;
 
 				glm::ivec2 child_index	= node_grid_index(child_id);
 				glm::ivec2 child_span	= node_grid_span(child_id);
 
-				glm::vec2 cell_size = glm::vec2(0);
+				glm::vec2 cell_size = glm::vec2(
+					desc.columns[child_index.x + child_span.x]	- (child_index.x > 0 ? desc.columns[child_index.x - 1] : 0),
+					desc.rows   [child_index.y + child_span.y]	- (child_index.y > 0 ? desc.rows   [child_index.y - 1] : 0)
+					);
 
-				for (int32_t column_id = child_index.x; column_id < child_index.x + child_span.x; column_id++)
-					cell_size.x += is_avail(desc.columns[column_id]) ? avail_ratio(desc.columns[column_id]) * size_per_avail.x : desc.columns[column_id];
-				
-				for (int32_t row_id = child_index.y; row_id < child_index.y + child_span.y; row_id++)
-					cell_size.y += is_avail(desc.rows[row_id]) ? avail_ratio(desc.rows[row_id]) * size_per_avail.y : desc.rows[row_id];
+				glm::vec2 child_size_per_avail = compute_size_per_avail(cell_size - child_non_avail_size, child_total_avail);
 
 				glm::vec2& child_size_ref = node_size(child_id);
-				if (is_avail(child_target_size.x)) child_size_ref.x = cell_size.x;
-				if (is_avail(child_target_size.x)) child_size_ref.y = cell_size.y;
 
-				});
+				//if (is_avail(child_margin_ref.x)) child_margin_ref.x = avail_ratio(child_margin_ref.x) * child_size_per_avail.x;
+				//if (is_avail(child_margin_ref.y)) child_margin_ref.y = avail_ratio(child_margin_ref.y) * child_size_per_avail.y;
+				//if (is_avail(child_margin_ref.z)) child_margin_ref.z = avail_ratio(child_margin_ref.z) * child_size_per_avail.x;
+				//if (is_avail(child_margin_ref.w)) child_margin_ref.w = avail_ratio(child_margin_ref.w) * child_size_per_avail.y;
 
+				if (is_avail(child_target_size.x)) child_size_ref.x  = avail_ratio(child_size_ref.x) * child_size_per_avail.x;
+				if (is_avail(child_target_size.y)) child_size_ref.y  = avail_ratio(child_size_ref.y) * child_size_per_avail.y;
 
-			float current_offset = 0;
-			for (int32_t column_id = 0; column_id < desc.columns.size(); column_id++) {
-				float position = current_offset;
-				current_offset += is_avail(desc.columns[column_id]) ? avail_ratio(desc.columns[column_id]) * size_per_avail.x : desc.columns[column_id];
-				desc.columns[column_id] = position;
-			}
-			
-			current_offset = 0;
-			for (int32_t row_id = 0; row_id < desc.rows.size(); row_id++) {
-				float position = current_offset;
-				current_offset += is_avail(desc.rows[row_id]) ? avail_ratio(desc.rows[row_id]) * size_per_avail.y : desc.rows[row_id];
-				desc.rows[row_id] = position;
-			}
-			
-			glm::vec2 origin = desc.position + glm::vec2(desc.padding.x, desc.padding.y);
+				node_position(child_id) =
+					desc.position +
+					glm::vec2(desc.padding.x, desc.padding.y) +
+					glm::vec2(desc.columns[child_index.x], desc.columns[child_index.y]) +
+					glm::vec2(
+						compute_physical_size(child_margin_ref.x, child_size_per_avail.x),
+						compute_physical_size(child_margin_ref.y, child_size_per_avail.y)
+					);
 
-			traverse_nodes_children(node_id, [&](size_t child_id) {
-
-				glm::ivec2 child_index	= node_grid_index(child_id);
-				node_position(child_id) = origin + glm::vec2(desc.columns[child_index.x], desc.columns[child_index.y]);
-				
 				});
 
 			break;
@@ -944,36 +983,28 @@ void GUI2Dynamic::resolve_phase1_avail_and_position(size_t root_node)
 			traverse_nodes_children(node_id, [&](size_t child_id) {
 
 				glm::vec2 child_target_size = node_target_size(child_id);
+				glm::vec4 child_padding		= get_node_padding_non_ref(child_id);
 
-				children_avails_total.x += avail_ratio(child_target_size.x);
-				children_avails_total.y += avail_ratio(child_target_size.y);
-
-				if (!is_avail(child_target_size.x)) children_min_size.x += child_target_size.x;
-				if (!is_avail(child_target_size.y)) children_min_size.y += child_target_size.y;
+				children_min_size		+= non_avail(child_target_size);
+				children_min_size		+= glm::vec2(child_padding.x + child_padding.z, child_padding.y + child_padding.w);
+				children_avails_total	+= avail_ratio(child_target_size);
 
 				});
 
 			glm::vec2 self_size = desc.size - glm::vec2(desc.padding.x + desc.padding.z, desc.padding.y + desc.padding.w);
-
-			glm::vec2 size_per_avail = (self_size - children_min_size) / glm::vec2(children_avails_total);
-			size_per_avail = glm::max(size_per_avail, glm::vec2(0));
+			glm::vec2 size_per_avail = compute_size_per_avail(self_size - children_min_size, children_avails_total);
 
 			float current_position = 0;
 
 			traverse_nodes_children(node_id, [&](size_t child_id) {
 
-				glm::vec2 child_target_size = node_target_size(child_id);
+				glm::vec2 child_target_size		= node_target_size(child_id);
 
 				glm::vec2& child_size_ref		= node_size(child_id);
 				glm::vec2& child_position_ref	= node_position(child_id);
 
-				if (is_avail(child_target_size.x) || is_avail(child_target_size.y)) {
+				child_size_ref = compute_physical_size(child_size_ref, size_per_avail);
 
-					if (is_avail(child_target_size.x)) child_size_ref.x = avail_ratio(child_target_size.x) * size_per_avail.x;
-					if (is_avail(child_target_size.x)) child_size_ref.y = avail_ratio(child_target_size.y) * size_per_avail.y;
-				
-				}
-				
 				glm::vec2 origin = desc.position + glm::vec2(desc.padding.x, desc.padding.y);
 
 				child_position_ref = origin + (desc.is_vertical ? glm::vec2(0, current_position) : glm::vec2(current_position, 0));
@@ -1056,6 +1087,71 @@ bool GUI2Dynamic::is_avail(float value) {
 	return avail_ratio(value) != 0;
 }
 
+bool GUI2Dynamic::is_any_avail(glm::vec2 value)
+{
+	return is_avail(value.x) || is_avail(value.y);
+}
+
+bool GUI2Dynamic::is_any_avail(glm::vec4 value)
+{
+	return is_avail(value.x) || is_avail(value.y) || is_avail(value.z) || is_avail(value.w);
+}
+
 int32_t GUI2Dynamic::avail_ratio(float value) {
 	return value <= avail ? std::round(value / avail) : 0;
+}
+
+glm::ivec2 GUI2Dynamic::avail_ratio(glm::vec2 value)
+{
+	return glm::ivec2(avail_ratio(value.x), avail_ratio(value.y));
+}
+
+glm::ivec2 GUI2Dynamic::avail_ratio(glm::vec4 value)
+{
+	return glm::ivec2(avail_ratio(value.x) + avail_ratio(value.z), avail_ratio(value.y) + avail_ratio(value.w));
+}
+
+float GUI2Dynamic::non_avail(float value)
+{
+	return is_avail(value) ? 0 : value;
+}
+
+glm::vec2 GUI2Dynamic::non_avail(glm::vec2 value)
+{
+	return glm::vec2(non_avail(value.x), non_avail(value.y));
+}
+
+glm::vec2 GUI2Dynamic::non_avail(glm::vec4 value)
+{
+	return glm::vec2(non_avail(value.x) + non_avail(value.z), non_avail(value.y) + non_avail(value.w));
+}
+
+float GUI2Dynamic::compute_size_per_avail(float remaining_size, int32_t avail_total)
+{
+	return glm::max(avail_total != 0 ? remaining_size / avail_total : 0, 0.0f);
+}
+
+glm::vec2 GUI2Dynamic::compute_size_per_avail(glm::vec2 remaining_size, glm::ivec2 avail_total)
+{
+	return glm::vec2(
+		compute_size_per_avail(remaining_size.x, avail_total.x),
+		compute_size_per_avail(remaining_size.y, avail_total.y)
+	);
+}
+
+float GUI2Dynamic::compute_physical_size(float value, float size_per_avail)
+{
+	return is_avail(value) ? value * size_per_avail : value;
+}
+
+glm::vec2 GUI2Dynamic::compute_physical_size(glm::vec2 value, glm::vec2 size_per_avail)
+{
+	return glm::vec2(compute_physical_size(value.x, size_per_avail.x), compute_physical_size(value.y, size_per_avail.y));
+}
+
+glm::vec2 GUI2Dynamic::compute_physical_size(glm::vec4 value, glm::vec2 size_per_avail)
+{
+	return glm::vec2(
+		compute_physical_size(value.x, size_per_avail.x) + compute_physical_size(value.z, size_per_avail.x),
+		compute_physical_size(value.y, size_per_avail.y) + compute_physical_size(value.w, size_per_avail.y));
 }

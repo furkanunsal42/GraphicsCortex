@@ -244,6 +244,8 @@ private:
 	glm::vec2&	node_position(size_t node);
 	glm::vec2&	node_size(size_t node);
 	glm::vec4&	node_margin(size_t node);
+	glm::vec4&	node_padding(size_t node);
+	glm::vec4	get_node_padding_non_ref(size_t node);
 	glm::vec2&	node_target_size(size_t node);
 	glm::vec2&	node_min_size(size_t node);
 	glm::vec2&	node_max_size(size_t node);
@@ -261,8 +263,24 @@ private:
 	void resolve_phase2_mouse_event(size_t root_node);
 
 	//template<typename T, std::enable_if_t<std::is_arithmetic_v<T>, bool> = true>
-	bool is_avail(float value);
-	int32_t avail_ratio(float value);
+	bool		is_avail(float value);
+	bool		is_any_avail(glm::vec2 value);
+	bool		is_any_avail(glm::vec4 value);
+	int32_t		avail_ratio(float value);
+	glm::ivec2	avail_ratio(glm::vec2 value);
+	glm::ivec2	avail_ratio(glm::vec4 value);
+	float		non_avail(float value);
+	glm::vec2	non_avail(glm::vec2 value);
+	glm::vec2	non_avail(glm::vec4 value);
+	float 		compute_size_per_avail(float remaining_size, int32_t avail_total);
+	glm::vec2  	compute_size_per_avail(glm::vec2 remaining_size, glm::ivec2 avail_total);
+
+
+
+	float		compute_physical_size(float value, float size_per_avail);
+	glm::vec2	compute_physical_size(glm::vec2 value, glm::vec2 size_per_avail);
+	glm::vec2	compute_physical_size(glm::vec4 value, glm::vec2 size_per_avail);
+
 
 	std::unordered_map<std::string, ResolvedProperties> resolved_properties;
 
