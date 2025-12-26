@@ -47,6 +47,8 @@ public:
 	void render_without_clear(Framebuffer& target_framebuffer, Camera& camera, RenderParameters render_parameters = RenderParameters(false));
 	void render_without_clear(Camera& camera, RenderParameters render_parameters = RenderParameters(false));
 
+	void clear();
+
 private:
 
 	const int32_t buffer_max_command_count;
@@ -72,7 +74,6 @@ private:
 	
 	void _update_gpu_buffers();
 
-	void _clear();
 
 	enum Geometry {
 		None = 0,

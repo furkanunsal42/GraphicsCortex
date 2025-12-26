@@ -35,6 +35,7 @@
 
 #include "CortexGUI2/CortexGUI2Test_Fundamental.h"
 #include "CortexGUI2/CortexGUI2Test_Dynamic.h"
+#include "CortexGUI2/CortexGUI2Test_Relative.h"
 
 int main() {
 	
@@ -75,6 +76,8 @@ int main() {
 	//CortexGUITest_TextInput().run();
 	//CortexGUITest_GUIWindow().run();
 
-	//CortexGUITest2_Fundamental().run();
-	CortexGUITest2_Dynamic().run();
+	CortexGUITest2_Fundamental().run();
+	//CortexGUITest2_Dynamic().run();
+	//CortexGUITest2_Relative().run();
+
 }

@@ -92,13 +92,13 @@ void ImmediateRenderer::draw_rectangle(glm::vec2 position0, glm::vec2 position1,
 void ImmediateRenderer::render(Framebuffer& target_framebuffer, RenderParameters render_parameters)
 {
 	render_without_clear(target_framebuffer, render_parameters);
-	_clear();
+	clear();
 }
 
 void ImmediateRenderer::render(RenderParameters render_parameters)
 {
 	render_without_clear(render_parameters);
-	_clear();
+	clear();
 }
 
 void ImmediateRenderer::render_without_clear(Framebuffer& target_framebuffer, RenderParameters render_parameters)
@@ -166,12 +166,12 @@ void ImmediateRenderer::render_without_clear(RenderParameters render_parameters)
 
 void ImmediateRenderer::render(Framebuffer& target_framebuffer, Camera& camera, RenderParameters render_parameters){
 	render_without_clear(target_framebuffer, camera, render_parameters);
-	_clear();
+	clear();
 }
 
 void ImmediateRenderer::render(Camera& camera, RenderParameters render_parameters){
 	render_without_clear(camera, render_parameters);
-	_clear();
+	clear();
 }
 
 void ImmediateRenderer::render_without_clear(Framebuffer& target_framebuffer, Camera& camera, RenderParameters render_parameters)
@@ -320,7 +320,7 @@ void ImmediateRenderer::_update_gpu_buffers()
 	attribute_buffer_corrupted = false;
 }
 
-void ImmediateRenderer::_clear()
+void ImmediateRenderer::clear()
 {
 	commands.clear();
 	vab->get_buffer_slot(0).buffer->clear();

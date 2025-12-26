@@ -275,12 +275,9 @@ private:
 	float 		compute_size_per_avail(float remaining_size, int32_t avail_total);
 	glm::vec2  	compute_size_per_avail(glm::vec2 remaining_size, glm::ivec2 avail_total);
 
-
-
 	float		compute_physical_size(float value, float size_per_avail);
 	glm::vec2	compute_physical_size(glm::vec2 value, glm::vec2 size_per_avail);
 	glm::vec2	compute_physical_size(glm::vec4 value, glm::vec2 size_per_avail);
-
 
 	std::unordered_map<std::string, ResolvedProperties> resolved_properties;
 

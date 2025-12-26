@@ -780,10 +780,10 @@ void GUI2Dynamic::resolve_phase0_fit(size_t root_node){
 			}
 
 			glm::vec2 child_size	= node_size(node.child);
-			glm::vec4 child_padding = get_node_padding_non_ref(node.child);
-
-			if (desc.target_size.x == fit)  desc.size.x = child_size.x + child_padding.x + child_padding.z;
-			if (desc.target_size.y == fit)	desc.size.y = child_size.y + child_padding.y + child_padding.w;
+			glm::vec2 child_margin	= non_avail(node_margin(node.child));
+			
+			if (desc.target_size.x == fit)  desc.size.x = child_size.x + + desc.padding.x + desc.padding.z + child_margin.x;
+			if (desc.target_size.y == fit)	desc.size.y = child_size.y + + desc.padding.y + desc.padding.w + child_margin.y;
 
 			break;
 		}
@@ -836,7 +836,8 @@ void GUI2Dynamic::resolve_phase0_fit(size_t root_node){
 				traverse_nodes_children(node_id, [&](size_t child) {
 
 					children_count++;
-					glm::vec2 child_size = node_size(child);
+					glm::vec2 child_size = node_size(child) + non_avail(node_margin(child));
+
 					if (desc.is_vertical) {
 						min_size.x = glm::max(min_size.x, child_size.x);
 						min_size.y += child_size.y;
@@ -977,22 +978,32 @@ void GUI2Dynamic::resolve_phase1_avail_and_position(size_t root_node)
 
 			auto& desc = std::get<StackDesc>(node.desc);
 
-			glm::vec2  children_min_size	 = glm::vec2(0);
-			glm::ivec2 children_avails_total = glm::ivec2(0);
-			
+			glm::vec2	children_min_size		= glm::vec2(0);
+			int32_t		children_total_avails	= 0;
+			int32_t		children_count			= 0;
+
 			traverse_nodes_children(node_id, [&](size_t child_id) {
 
 				glm::vec2 child_target_size = node_target_size(child_id);
-				glm::vec4 child_padding		= get_node_padding_non_ref(child_id);
+				glm::vec4 child_margin		= node_margin(child_id);
 
-				children_min_size		+= non_avail(child_target_size);
-				children_min_size		+= glm::vec2(child_padding.x + child_padding.z, child_padding.y + child_padding.w);
-				children_avails_total	+= avail_ratio(child_target_size);
+				children_min_size		+= non_avail(child_target_size) + non_avail(child_margin);
+				
+				children_total_avails +=
+					desc.is_vertical ?
+					avail_ratio(child_target_size.y) + avail_ratio(child_margin).y :
+					avail_ratio(child_target_size.x) + avail_ratio(child_margin).x;
 
+				children_count++;
 				});
 
+			children_min_size += desc.is_vertical ? glm::vec2(0, children_count * desc.spacing) : glm::vec2(children_count * desc.spacing, 0);
+
 			glm::vec2 self_size = desc.size - glm::vec2(desc.padding.x + desc.padding.z, desc.padding.y + desc.padding.w);
-			glm::vec2 size_per_avail = compute_size_per_avail(self_size - children_min_size, children_avails_total);
+			int32_t size_per_avail = 
+				desc.is_vertical ?
+				compute_size_per_avail(self_size.y - children_min_size.y, children_total_avails) :
+				compute_size_per_avail(self_size.y - children_min_size.x, children_total_avails);
 
 			float current_position = 0;
 
@@ -1002,12 +1013,47 @@ void GUI2Dynamic::resolve_phase1_avail_and_position(size_t root_node)
 
 				glm::vec2& child_size_ref		= node_size(child_id);
 				glm::vec2& child_position_ref	= node_position(child_id);
+				
+				glm::vec4& child_margin_ref		= node_margin(child_id);
 
-				child_size_ref = compute_physical_size(child_size_ref, size_per_avail);
+				int32_t child_avail_off_side	= 
+					desc.is_vertical ?
+					avail_ratio(child_margin_ref.y ) +
+					avail_ratio(child_margin_ref.w ) +
+					avail_ratio(child_target_size.y)
+					:
+					avail_ratio(child_margin_ref.x ) +
+					avail_ratio(child_margin_ref.z ) +
+					avail_ratio(child_target_size.x);
 
-				glm::vec2 origin = desc.position + glm::vec2(desc.padding.x, desc.padding.y);
+				float child_avail_per_size_off_side = compute_physical_size(self_size.x, children_total_avails);
 
-				child_position_ref = origin + (desc.is_vertical ? glm::vec2(0, current_position) : glm::vec2(current_position, 0));
+				glm::vec2 effective_margin = glm::vec2(0);
+
+				if (desc.is_vertical) {
+					child_size_ref.x = compute_physical_size(child_size_ref.x, child_avail_per_size_off_side);
+					child_size_ref.y = compute_physical_size(child_size_ref.y, size_per_avail);
+					
+					effective_margin.x = compute_physical_size(child_margin_ref.x, child_avail_per_size_off_side);
+					effective_margin.y = compute_physical_size(child_margin_ref.y, size_per_avail);
+
+				}
+				else {
+					child_size_ref.x = compute_physical_size(child_size_ref.x, size_per_avail);
+					child_size_ref.y = compute_physical_size(child_size_ref.y, child_avail_per_size_off_side);
+
+					effective_margin.x = compute_physical_size(child_margin_ref.x, size_per_avail);
+					effective_margin.y = compute_physical_size(child_margin_ref.y, child_avail_per_size_off_side);
+				}
+
+				child_position_ref = 
+					desc.position + 
+					glm::vec2(desc.padding.x, desc.padding.y) + 
+					effective_margin +
+					(desc.is_vertical ? 
+						glm::vec2(0, current_position) : 
+						glm::vec2(current_position, 0)
+						);
 
 				current_position += desc.is_vertical ? child_size_ref.y : child_size_ref.x;
 				current_position += desc.spacing;

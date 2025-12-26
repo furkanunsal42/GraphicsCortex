@@ -2,6 +2,7 @@
 #include "PrimitiveRenderer.h"
 #include "WindowBoundGlobalResources.h"
 #include "GUI2Dynamic.h"
+#include "GLMCout.h"
 
 GUI2::MouseEvent GUI2::window_begin(const std::string& idstr, const glm::vec2& initial_position, const glm::vec2& initial_size) {
 	
@@ -114,6 +115,33 @@ void GUI2::render() {
 		if (state.active == false)
 			continue;
 
+		std::function<void()> render_func = [&]() {
+
+			state.window->context_make_current();
+			primitive_renderer::clear(desc.color.x, desc.color.y, desc.color.z, desc.color.a);
+
+			RenderParameters params(true);
+			params.blend = true;
+			params.depth_test = true;
+			params.cull_face = true;
+			params.cull_face_direction = RenderParameters::CullDirection::FRONT;
+
+			glm::vec2 window_resolution = state.window->get_window_resolution();
+			
+			Camera camera;
+			camera.view_matrix = glm::mat4(1);
+			camera.projection_matrix = glm::ortho(0.0f, window_resolution.x, window_resolution.y, 0.0f, -1024.0f, 1024.0f);
+
+			if (state.renderer != nullptr) {
+				primitive_renderer::set_viewport_position(glm::vec2(0));
+				primitive_renderer::set_viewport_size(window_resolution);
+				state.renderer->render_without_clear(camera, params);
+			}
+
+			state.window->swap_buffers();
+
+			};
+
 		if (state.window == nullptr) {
 			WindowDescription description;
 			description.w_name						= desc.name;
@@ -129,6 +157,8 @@ void GUI2::render() {
 
 			state.window = std::make_shared<Window>(description);
 			state.window->set_window_position(desc.position);
+			state.window->newsletters->on_window_refresh_events.subscribe(render_func);
+
 		}
 
 		state.window->set_window_name(desc.name);
@@ -151,28 +181,9 @@ void GUI2::render() {
 		now_holding_left			= now_holding_left	|| left  == Window::PressAction::PRESS;
 		now_holding_right			= now_holding_right	|| right == Window::PressAction::PRESS;
 
-		state.window->context_make_current();
-		primitive_renderer::clear(desc.color.x, desc.color.y, desc.color.z, desc.color.a);
-
-		RenderParameters params(true);
-		params.blend = true;
-		params.depth_test = true;
-		params.cull_face = true;
-		params.cull_face_direction = RenderParameters::CullDirection::FRONT;
-
-		glm::vec2 window_resolution = state.window->get_window_resolution();
-
-		Camera camera;
-		camera.view_matrix			= glm::mat4(1);
-		camera.projection_matrix	= glm::ortho(0.0f, window_resolution.x, window_resolution.y, 0.0f, -1024.0f, 1024.0f);
-		
-		if (state.renderer != nullptr) {
-			primitive_renderer::set_viewport_position(glm::vec2(0));
-			primitive_renderer::set_viewport_size(window_resolution);
-			state.renderer->render(camera, params);
-		}
-		
-		state.window->swap_buffers();
+		render_func();
+		if (state.renderer != nullptr)
+			state.renderer->clear();
 	}
 
 	window_stack.clear();
