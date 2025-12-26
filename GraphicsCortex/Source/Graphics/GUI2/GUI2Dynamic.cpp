@@ -1512,6 +1512,12 @@ GUI2Dynamic::GridDesc& GUI2Dynamic::GridDesc::add_row(float height) {
 	return *this;
 }
 
+GUI2Dynamic::GridDesc& GUI2Dynamic::GridDesc::set_permeable_event(bool value)
+{
+	permeable_events = value;
+	return *this;
+}
+
 GUI2Dynamic::StackDesc& GUI2Dynamic::StackDesc::set_margin(glm::vec4 value) {
 	margin = value;
 	return *this;

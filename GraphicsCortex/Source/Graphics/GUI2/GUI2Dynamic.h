@@ -54,11 +54,14 @@ public:
 	struct BoxDesc;
 	struct GridDesc;
 	struct StackDesc;
+	struct ResolvedProperties;
 
+	WindowDesc&			window_begin(size_t id);
 	WindowDesc&			window_begin(const std::string& idstr);
 	WindowDesc&			window_prop();
 	void				window_end();
 
+	GridDesc&			grid_begin(size_t id);
 	GridDesc&			grid_begin(const std::string& idstr);
 	GridDesc&			grid_begin();
 	GridDesc&			grid_prop();
@@ -67,11 +70,13 @@ public:
 	void				grid_region(glm::ivec2 grid_index, glm::ivec2 grid_span = glm::ivec2(1, 1));
 	void				grid_end();
 
+	StackDesc&			stack_begin(size_t id);
 	StackDesc&			stack_begin(const std::string& idstr);
 	StackDesc&			stack_begin();
 	StackDesc&			stack_prop();
 	void				stack_end();
 
+	BoxDesc&			box_begin(size_t id);
 	BoxDesc&			box_begin(const std::string& idstr);
 	BoxDesc&			box_begin();
 	BoxDesc&			box_prop();
@@ -80,13 +85,16 @@ public:
 	void				print_nodes();
 	void				print_layout();
 	void				resolve();
-	glm::vec2			get_size		(const std::string& idstr);
-	glm::vec2			get_position	(const std::string& idstr);
-	GUI2::MouseEvent	get_mouse_event	(const std::string& idstr);
+	
+	size_t				generate_id();
+	ResolvedProperties& resolved_properties(size_t id);
+	ResolvedProperties& resolved_properties(const std::string& idstr);
+	GUI2::IOState&		get_io_state();
 
 	void				publish(GUI2& gui);
 
 	struct WindowDesc {
+
 		glm::vec4	padding				= glm::vec4(10);
 		glm::vec2	target_size			= glm::vec2(fit);
 		glm::vec2	min_size			= glm::vec2(fit);
@@ -130,9 +138,11 @@ public:
 		friend GUI2Dynamic;
 		std::string idstr;
 		glm::vec2	size				= glm::vec2(0);
+
 	};
 
 	struct BoxDesc {
+
 		glm::vec4	margin				= glm::vec4(0);
 		glm::vec2	target_size			= glm::vec2(128);
 		glm::vec2	min_size			= glm::vec2(fit);
@@ -176,9 +186,11 @@ public:
 		glm::ivec2	grid_span			= glm::ivec2(0, 0);
 		glm::vec2	position			= glm::vec2(0);
 		glm::vec2	size				= glm::vec2(0);
+
 	};
 
 	struct GridDesc {
+
 		glm::vec4	margin				= glm::vec4(0);
 		glm::vec4	padding				= glm::vec4(10);
 		glm::vec2	target_size			= glm::vec2(fit);
@@ -188,6 +200,8 @@ public:
 		std::vector<float> columns;
 		std::vector<float> rows;
 
+		bool		permeable_events	= false;
+
 		GridDesc&	set_margin			(glm::vec4	value);
 		GridDesc&	set_padding			(glm::vec4	value);
 		GridDesc&	set_target_size		(glm::vec2	value);
@@ -195,6 +209,7 @@ public:
 		GridDesc&	set_max_size		(glm::vec2	value);
 		GridDesc&	add_column			(float width);
 		GridDesc&	add_row				(float height);
+		GridDesc&	set_permeable_event (bool value);
 
 	private:
 		friend GUI2Dynamic;
@@ -205,9 +220,11 @@ public:
 		glm::ivec2	grid_span			= glm::ivec2(0, 0);
 		glm::vec2	position			= glm::vec2(0);
 		glm::vec2	size				= glm::vec2(0);
+
 	};
 
 	struct StackDesc {
+
 		glm::vec4	margin				= glm::vec4(0);
 		glm::vec4	padding				= glm::vec4(10);
 		glm::vec2	target_size			= glm::vec2(fit);
@@ -236,9 +253,11 @@ public:
 	};
 
 	struct ResolvedProperties {
+
 		glm::vec2 position				= glm::vec2(0);
 		glm::vec2 size					= glm::vec2(0);
 		GUI2::MouseEvent event			= GUI2::None;
+
 	};
 
 private:
@@ -319,6 +338,7 @@ private:
 	glm::vec2		compute_physical_size(glm::vec4 value, glm::vec2 size_per_avail);
 
 	std::unordered_map<std::string, ResolvedProperties> resolved_properties;
+	GUI2::IOState io_state;
 
 	static constexpr std::string gui_idstr_prefix = "::#";
 };

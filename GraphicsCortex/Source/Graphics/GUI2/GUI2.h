@@ -9,28 +9,13 @@
 #include "Tools/ImmediateRendering/ImmediateRenderer.h"
 #include "Math/AABB.h"
 
-//class Watchdog {
-//public:
-//	Watchdog(const glm::vec2& other = glm::vec2(0));
-//	Watchdog& operator=(const glm::vec2& other);
-//	
-//	operator glm::vec2();
-//
-//private:
-//	glm::vec2 value = glm::vec2(0);
-//	bool triggered = false;
-//};
-
 class GUI2 {
 public:
 
-	//void init();
-	//void release();
-
-	struct WindowDesc;
-	struct BoxDesc;
-	enum MouseEvent;
-	struct IOState;
+	struct	WindowDesc;
+	struct	BoxDesc;
+	enum	MouseEvent;
+	struct	IOState;
 
 	MouseEvent		window_begin(const std::string& idstr, const glm::vec2& initial_position, const glm::vec2& initial_size);
 	WindowDesc&		window_prop();
@@ -97,11 +82,6 @@ public:
 		RightHold		= 0b10000000,
 	};
 
-private:
-
-	MouseEvent _generate_event_for_aabb(const AABB2& aabb);
-	void _publish_last();
-
 	enum class MouseState {
 		Hover			= 0b00000000,
 		LeftPress		= 0b00000001,
@@ -120,6 +100,11 @@ private:
 		glm::vec2 mouse_right_press_begin_position	= glm::vec2(0);
 	};
 
+private:
+
+	MouseEvent _generate_event_for_aabb(const AABB2& aabb);
+	void _publish_last();
+	
 	struct WindowState {
 		bool active = false;
 		WindowDesc descriptor;

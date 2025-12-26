@@ -62,15 +62,24 @@ public:
 					.set_target_size(glm::vec2(avail, avail))
 					.set_margin(glm::vec4(10));
 
-				gui_d.grid_region(glm::ivec2(0, 1));
-				gui_d.box_begin()
-					.set_target_size(glm::vec2(avail, avail))
-					.set_margin(glm::vec4(10));
+				gui_d.grid_region(glm::ivec2(0, 1), glm::ivec2(2, 1));
+				gui_d.stack_begin()
+					.set_target_size(glm::vec2(avail));
 
-				gui_d.grid_region(glm::ivec2(1, 1));
-				gui_d.box_begin()
-					.set_target_size(glm::vec2(avail, avail))
-					.set_margin(glm::vec4(10));
+					gui_d.box_begin()
+						.set_target_size(glm::vec2(avail, 32));
+
+					gui_d.box_begin()
+						.set_target_size(glm::vec2(avail, 32));
+
+					gui_d.box_begin()
+						.set_target_size(glm::vec2(avail, 32));
+
+
+				gui_d.stack_end();
+				
+				
+				
 
 				//gui_d.box_begin()
 				//	.set_target_size(glm::vec2(avail, avail))
