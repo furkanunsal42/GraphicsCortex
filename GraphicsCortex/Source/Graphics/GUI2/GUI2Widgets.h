@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "GUI2Dynamic.h"
 
 
@@ -22,10 +22,7 @@ namespace widget {
 
 		DockSurface(std::string idstr);
 		void publish(GUI2Dynamic& gui_dynamic);
-		BANA K?TAP AL!!!
-			BANA K?TAP AL!!!
-				BANA K?TAP AL!!!
-					BANA K?TAP AL!!!
+
 	private: 
 
 	};
