@@ -667,6 +667,17 @@ void GUI2Dynamic::traverse_nodes_down(size_t root_node, std::function<void(int32
 	
 	size_t	node_index = root_node;
 	int32_t level = 0;
+	
+	size_t next_root_node = root_node;
+	for (size_t root : root_nodes) {
+		if (root > next_root_node) {
+			next_root_node = root;
+			break;
+		}
+	}
+
+	if (next_root_node == root_node)
+		next_root_node = nodes.size();
 
 	do {
 		
@@ -681,7 +692,7 @@ void GUI2Dynamic::traverse_nodes_down(size_t root_node, std::function<void(int32
 
 		node_index++;
 
-	} while (level != 0 && node_index < nodes.size());
+	} while (level != 0 && node_index < next_root_node);
 }
 
 void GUI2Dynamic::traverse_nodes_up(size_t root_node, std::function<void(int32_t, size_t)> lambda) {
