@@ -1,46 +1,105 @@
 #pragma once
 #include "GUI2Dynamic.h"
 
-//void				rect();
-//void				text();
-//void				image();
-//
-//void				textbox();
-//void				slider();
-//void				dragfloat();
-//
-//void				checkbox();
-//void				button();
-//void				imagebutton();
-//
-//void				combobox_begin();
-//void				combobox_item();
-//void				combobox_end();
-//
-//void				menu_begin();
-//void				menu_item();
-//void				menu_end();
-//
-//void				tab_begin();
-//void				tab_item();
-//void				tab_end();
 
-struct Rect {
+namespace widget {
 
+	struct Window {
 
-	Rect& set_color(glm::vec4);
+		glm::vec2 drag_begin;
+		glm::vec2 drag_end;
 
-	void publish(GUI2Dynamic& gui_dynamic);
-};
+		bool dockable = false;
 
-class Widget {
-public:
-	virtual void publish(GUI2Dynamic& gui_dynaimc) = 0;
-};
+		Window(std::string idstr);
+		void publish(GUI2Dynamic& gui_dynamic);
 
-class Label : public Widget {
-public:
-	std::string text;
-	void publish(GUI2Dynamic& gui_dynaimc) override {};
-};
+	private:
+
+	};
+
+	struct DockSurface {
+
+		DockSurface(std::string idstr);
+		void publish(GUI2Dynamic& gui_dynamic);
+
+	private:
+
+	};
+
+	struct Box {
+
+		Box& set_color(glm::vec4);
+		void publish(GUI2Dynamic& gui_dynamic);
+
+	};
+
+	struct Label {
+
+		std::string text;
+		void publish(GUI2Dynamic& gui_dynaimc);
+	
+	};
+
+	struct Image {
+
+		void publish(GUI2Dynamic& gui_dynaimc);
+
+	};
+
+	struct TextArea {
+
+		void publish(GUI2Dynamic& gui_dynaimc);
+
+	};
+
+	struct Slider {
+
+		void publish(GUI2Dynamic& gui_dynaimc);
+
+	};
+
+	struct DragFloat {
+
+		void publish(GUI2Dynamic& gui_dynaimc);
+
+	};
+
+	struct Button {
+
+		void publish(GUI2Dynamic& gui_dynaimc);
+
+	};
+
+	struct CheckBox {
+
+		void publish(GUI2Dynamic& gui_dynaimc);
+
+	};
+
+	struct ComboBox {
+
+		void publish(GUI2Dynamic& gui_dynaimc);
+
+	};
+
+	struct Menu {
+
+		void publish(GUI2Dynamic& gui_dynaimc);
+
+	};
+
+	struct Tab {
+
+		void publish(GUI2Dynamic& gui_dynaimc);
+
+	};
+
+	struct Collapsible {
+
+		void publish(GUI2Dynamic& gui_dynaimc);
+
+	};
+
+}
 
