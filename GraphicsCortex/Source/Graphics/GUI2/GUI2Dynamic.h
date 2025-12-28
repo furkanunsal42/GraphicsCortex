@@ -49,7 +49,7 @@ public:
 
 	static constexpr float		fit   = -1;
 	static constexpr float		avail = -1024 * 64;
-	static constexpr size_t		invalid_id = -1;
+	static constexpr size_t		invalid_id = 0;
 
 	struct WindowDesc;
 	struct BoxDesc;
@@ -59,12 +59,12 @@ public:
 
 	void				new_frame(GUI2& gui);
 
-	WindowDesc&			window_begin(size_t id);
+	WindowDesc&			window_begin(size_t& id);
 	WindowDesc&			window_begin(const std::string& idstr);
 	WindowDesc&			window_prop();
 	void				window_end();
 
-	GridDesc&			grid_begin(const std::string& idstr);
+	GridDesc&			grid_begin(size_t& id);
 	GridDesc&			grid_begin();
 	GridDesc&			grid_prop();
 	void				grid_add_column(float width);
@@ -72,23 +72,23 @@ public:
 	void				grid_region(glm::ivec2 grid_index, glm::ivec2 grid_span = glm::ivec2(1, 1));
 	void				grid_end();
 
-	StackDesc&			stack_begin(const std::string& idstr);
+	StackDesc&			stack_begin(size_t& id);
 	StackDesc&			stack_begin();
 	StackDesc&			stack_prop();
 	void				stack_end();
 
-	BoxDesc&			box_begin(const std::string& idstr);
+	BoxDesc&			box_begin(size_t& id);
 	BoxDesc&			box_begin();
 	BoxDesc&			box_prop();
 	void				box_end();
 
 	void				print_nodes();
 	void				print_layout();
+	void				resolve(size_t root_node, bool verbose = false);
 	void				resolve();
 	
-	size_t				remember_this();
-	ResolvedProperties& get_resolved_properties(size_t id);
-	ResolvedProperties& get_resolved_properties(const std::string& idstr);
+	ResolvedProperties  get_resolved_properties(size_t id);
+	ResolvedProperties  get_resolved_properties(const std::string& idstr);
 	GUI2::IOState&		get_io_state();
 
 	void				publish(GUI2& gui);
@@ -259,12 +259,15 @@ public:
 
 	};
 
+	struct Node;
 	struct ResolvedProperties {
 
+		size_t node_id					= Node::invalid_node;
 		glm::vec2 position				= glm::vec2(0);
 		glm::vec2 size					= glm::vec2(0);
 		GUI2::MouseEvent event			= GUI2::None;
 
+		bool does_exists();
 	};
 
 private:
@@ -318,6 +321,7 @@ private:
 	glm::vec2&		node_max_size(size_t node);
 	glm::ivec2&		node_grid_index(size_t node);
 	glm::ivec2&		node_grid_span(size_t node);
+	size_t			get_node_id(size_t node);
 	GUI2::MouseEvent&  node_mouse_event(size_t node);
 
 	void			_traverse_nodes(size_t root_node, std::function<void(int32_t, size_t)> lambda_given_level_self);
@@ -349,6 +353,9 @@ private:
 	std::unordered_map<size_t, ResolvedProperties>	resolved_properties;
 
 	GUI2::IOState io_state;
+
+	size_t next_id_to_generate = 1;
+	size_t generate_id();
 
 	static constexpr std::string gui_idstr_prefix = "::#";
 };

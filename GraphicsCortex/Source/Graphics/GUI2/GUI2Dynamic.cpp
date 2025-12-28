@@ -276,6 +276,26 @@ glm::ivec2& GUI2Dynamic::node_grid_span(size_t node_id)
 	ASSERT(false);
 }
 
+size_t GUI2Dynamic::get_node_id(size_t node_id)
+{
+	if (node_id >= nodes.size()) {
+		std::cout << "[GUI Error] GUI2Dynamic::get_node_id() is called but given node is not valid" << std::endl;
+		ASSERT(false);
+	}
+
+	Node& node = nodes[node_id];
+
+	switch (get_type(node)) {
+	case Window	: return std::get<WindowDesc>(node.desc).id;
+	case Box	: return std::get<BoxDesc>(node.desc).id;
+	case Grid	: return std::get<GridDesc>(node.desc).id;
+	case Stack	: return std::get<StackDesc>(node.desc).id;
+	}
+
+	std::cout << "[GUI Error] GUI2Dynamic::get_node_id() but an error is occured" << std::endl;
+	ASSERT(false);
+}
+
 GUI2::MouseEvent& GUI2Dynamic::node_mouse_event(size_t node_id)
 {
 	if (node_id >= nodes.size()) {
@@ -301,23 +321,48 @@ GUI2::MouseEvent& GUI2Dynamic::node_mouse_event(size_t node_id)
 
 void GUI2Dynamic::new_frame(GUI2& gui)
 {
+	nodes.clear();
+	root_nodes.clear();
+	node_stack.clear();
+
+	last_window = Node::invalid_node;
+	last_box	= Node::invalid_node;
+	last_grid	= Node::invalid_node;
+	last_stack	= Node::invalid_node;
+
 	io_state = gui.get_io_state();
+
+	for (auto iterator = resolved_properties.begin(); iterator != resolved_properties.end();) {
+		auto& [key, value] = *iterator;
+		
+		if (value.node_id == Node::invalid_node) {
+			iterator = resolved_properties.erase(iterator);
+		}
+		else {
+			value.node_id = invalid_id;
+			iterator++;
+		}
+	}
 }
 
-GUI2Dynamic::WindowDesc& GUI2Dynamic::window_begin(const std::string& idstr){
+GUI2Dynamic::WindowDesc& GUI2Dynamic::window_begin(size_t& id){
+
+	if (id == invalid_id)
+		id = generate_id();
+
 	if (node_stack.size() != 0) {
 		std::cout << "[GUI Error] GUI2Dynamic::window_begin() is called but windows must be a root node in the hierarchy" << std::endl;
 		ASSERT(false);
 	}
 	
 	WindowDesc desc;
-	desc.idstr = idstr;
-	size_t id = push_node(Node::invalid_node, desc);
+	desc.id = id;
+	size_t node_id = push_node(Node::invalid_node, desc);
 	
-	node_stack.push_back(id);
-	last_window = id;
+	node_stack.push_back(node_id);
+	last_window = node_id;
 	
-	//resolved_properties[idstr];
+	resolved_properties[id].node_id = last_window;
 
 	return window_prop();
 }
@@ -349,14 +394,22 @@ void GUI2Dynamic::window_end(){
 
 	node_stack.pop_back();
 	last_window = find_last_of_type(NodeType::Window);
+
+	resolve(root_nodes.back());
 }
 
 ///////////		GRID		////////////
 
-GUI2Dynamic::GridDesc& GUI2Dynamic::grid_begin(const std::string& idstr){
+GUI2Dynamic::GridDesc& GUI2Dynamic::grid_begin(size_t& id){
+	
+	if (id == invalid_id)
+		id = generate_id();
+
 	auto& desc = grid_begin();
-	std::get<GridDesc>(nodes[last_grid].desc).idstr = idstr;
-	//resolved_properties[idstr];
+	std::get<GridDesc>(nodes[last_grid].desc).id = id;
+	
+	resolved_properties[id].node_id = last_grid;
+	
 	return desc;
 }
 
@@ -486,10 +539,16 @@ void GUI2Dynamic::grid_end(){
 
 ///////////		STACK		////////////
 
-GUI2Dynamic::StackDesc& GUI2Dynamic::stack_begin(const std::string& idstr){
+GUI2Dynamic::StackDesc& GUI2Dynamic::stack_begin(size_t& id){
+	
+	if (id == invalid_id)
+		id = generate_id();
+
 	auto& desc = stack_begin();
-	std::get<StackDesc>(nodes[last_stack].desc).idstr = idstr;
-	//resolved_properties[idstr];
+	std::get<StackDesc>(nodes[last_stack].desc).id = id;
+	
+	resolved_properties[id].node_id = last_stack;
+
 	return desc;
 }
 
@@ -565,10 +624,15 @@ void GUI2Dynamic::stack_end(){
 ///////////		BOX		////////////
 
 
-GUI2Dynamic::BoxDesc& GUI2Dynamic::box_begin(const std::string& idstr){
+GUI2Dynamic::BoxDesc& GUI2Dynamic::box_begin(size_t& id){
+	if (id == invalid_id)
+		id = generate_id();
+
 	auto& desc = box_begin();
-	std::get<BoxDesc>(nodes[last_box].desc).idstr = idstr;
-	//resolved_properties[idstr];
+	
+	std::get<BoxDesc>(nodes[last_box].desc).id = id;
+	resolved_properties[id].node_id = last_box;
+	
 	return desc;
 }
 
@@ -817,35 +881,58 @@ void GUI2Dynamic::print_layout()
 		});
 }
 
-
 ///////////		RESOLVE		////////////
+
+void GUI2Dynamic::resolve(size_t root_node, bool verbose)
+{
+
+	if (verbose) print_layout();
+	
+	resolve_phase0_fit(root_node);
+
+	if (verbose) std::cout << std::endl;
+	if (verbose) print_layout();
+
+	resolve_phase1_avail_and_position(root_node);
+	
+	if (verbose) std::cout << std::endl;
+	if (verbose) print_layout();
+
+	resolve_phase2_mouse_event(root_node);
+}
 
 void GUI2Dynamic::resolve() {
 	
-	print_layout();
 	for (size_t root_node : root_nodes)
-		resolve_phase0_fit(root_node);
-	
-	std::cout << std::endl;
-	print_layout();
-	
-	for (size_t root_node : root_nodes)
-		resolve_phase1_avail_and_position(root_node);
-
-	std::cout << std::endl;
-	print_layout();
-
-	for (size_t root_node : root_nodes)
-		resolve_phase2_mouse_event(root_node);
+		resolve(root_node);
 }
 
-size_t GUI2Dynamic::remember_this()
+GUI2Dynamic::ResolvedProperties GUI2Dynamic::get_resolved_properties(size_t id)
 {
-	if (node_stack.size() == 0) {
-		std::cout << "[GUI Error] GUI2Dynamic::remember_this() is called but there are no open object in the hieararchy" << std::endl;
-		ASSERT(false);
-	}
+	if (resolved_properties.find(id) == resolved_properties.end())
+		return ResolvedProperties();
 
+	return resolved_properties.at(id);
+}
+
+GUI2Dynamic::ResolvedProperties GUI2Dynamic::get_resolved_properties(const std::string& idstr)
+{
+	if (idstr_to_id.find(idstr) == idstr_to_id.end())
+		return ResolvedProperties();
+
+	size_t id = idstr_to_id.at(idstr);
+	return get_resolved_properties(id);
+}
+
+GUI2::IOState& GUI2Dynamic::get_io_state() {
+	return io_state;
+}
+
+size_t GUI2Dynamic::generate_id()
+{
+	size_t id = next_id_to_generate;
+	next_id_to_generate++;
+	return id;
 }
 
 void GUI2Dynamic::resolve_phase0_fit(size_t root_node){
@@ -1179,11 +1266,22 @@ void GUI2Dynamic::resolve_phase2_mouse_event(size_t root_node)
 		ASSERT(false);
 	}
 
-	glm::vec2&		 mouse_position_ref = io_state.mouse_position;
-	GUI2::MouseEvent mouse_event_ref	= io_state.mouse_state;
+	if (resolved_properties.size() == 0)
+		return;
+
+	for (auto& entry : resolved_properties) {
+		auto& [resolved_id, resolved_property] = entry;
+		
+		resolved_property.event		= GUI2::None;
+	}
+
+	glm::vec2&			mouse_position_ref = io_state.mouse_position;
+	GUI2::MouseEvent	mouse_event_ref		= io_state.mouse_state;
+	glm::vec2			root_position		= node_position(root_node);
 
 	std::vector<size_t> stack;
 	stack.push_back(root_node);
+
 
 	while (stack.size() != 0) {
 
@@ -1192,8 +1290,8 @@ void GUI2Dynamic::resolve_phase2_mouse_event(size_t root_node)
 
 		GUI2::MouseEvent& event_ref = node_mouse_event(node_id);
 
-		glm::vec2& position = node_position(node_id);
-		glm::vec2& size		= node_size(node_id);
+		glm::vec2 position  = node_id != root_node ? root_position + node_position(node_id) : root_position;
+		glm::vec2 size		= node_size(node_id);
 
 		AABB2 node_area		= AABB2(position, position + size);
 
@@ -1203,10 +1301,24 @@ void GUI2Dynamic::resolve_phase2_mouse_event(size_t root_node)
 		}
 
 		event_ref = io_state.mouse_state;
+		size_t resolved_id = get_node_id(node_id);
+
+		if (resolved_properties.find(resolved_id) != resolved_properties.end()) {
+			resolved_properties[resolved_id].event = event_ref;
+		}
 
 		traverse_nodes_children(node_id, [&](size_t child) {
 			stack.push_back(child);
 			});
+	}
+
+	for (auto& entry : resolved_properties) {
+		auto& [resolved_id, resolved_property] = entry;
+		size_t node_id = resolved_property.node_id;
+
+		resolved_property.position	= node_position(node_id);
+		resolved_property.size		= node_size(node_id);
+
 	}
 }
 
@@ -1231,7 +1343,7 @@ void GUI2Dynamic::publish(GUI2& gui)
 		{
 			auto& desc = std::get<WindowDesc>(nodes[root_node].desc);
 
-			gui.window_begin(gui_idstr_prefix + "window" + std::to_string(root_node),
+			gui.window_begin(gui_idstr_prefix + "window" + std::to_string(desc.id),
 				desc.size,
 				desc.position
 			);
@@ -1620,3 +1732,7 @@ GUI2Dynamic::StackDesc& GUI2Dynamic::StackDesc::set_is_vertical(bool value) {
 	return *this;
 }
 
+bool GUI2Dynamic::ResolvedProperties::does_exists()
+{
+	return node_id != Node::invalid_node;
+}
