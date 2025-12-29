@@ -240,15 +240,15 @@ void widget2::IOWidget::resolve_io(GUI2Dynamic& gui_dynamic)
 	{
 		
 		if((event & GUI2::MouseEvent::None) != 0)
-			current_state = Leave;
+			current_state = HoldEnd;
 		if((event & GUI2::MouseEvent::Hover) != 0)
-			current_state = Hover;
+			current_state = HoldEnd;
 		if((event & GUI2::MouseEvent::LeftPress) != 0)
-			current_state = HoldBegin;
+			current_state = HoldEnd;
 		if((event & GUI2::MouseEvent::LeftRelease) != 0)
-			current_state = PressEnd; // ?
+			current_state = HoldEnd; // ?
 		if((event & GUI2::MouseEvent::LeftHold) != 0)
-			current_state = PressBegin; // ?
+			current_state = HoldEnd; // ?
 		break;
 	}
 	};
@@ -310,11 +310,6 @@ float widget2::StyledWidget::get_t(
 	bool recovering =
 		(last_begin != IOWidget::invalid_time && last_end != IOWidget::invalid_time && last_begin < last_end && now - last_end < std::min(transition_time, last_end - last_begin));
 
-	//if (hover_happening)
-	//	std::cout << "hovering" << std::endl;
-	//if (hover_recovering)
-	//	std::cout << "recovering" << std::endl;
-
 	float t = 0;
 	if (happening) {
 		std::chrono::system_clock::duration time_passed = std::min(std::chrono::system_clock::now() - last_begin, transition_time);
@@ -334,7 +329,6 @@ void widget2::Box::publish(GUI2Dynamic& gui_dynamic) {
 	gui_dynamic.box_begin(id);
 
 	gui_dynamic.box_prop().margin			=  get_property(margin,				on_hover_margin,			on_hover_margin_transition,				on_hold_margin,				on_hold_margin_transition);
-	//gui_dynamic.box_prop().target_size		=  target_size;
 	gui_dynamic.box_prop().target_size		=  get_property(target_size,		on_hover_target_size,		on_hover_target_size_transition,		on_hold_target_size,		on_hold_target_size_transition);
 	gui_dynamic.box_prop().color			=  get_property(color,				on_hover_color,				on_hover_color_transition,				on_hold_color,				on_hold_color_transition);
 	gui_dynamic.box_prop().border_thickness	=  get_property(border_thickness,	on_hover_border_thickness,	on_hover_border_thickness_transition,	on_hold_border_thickness,	on_hold_border_thickness_transition);

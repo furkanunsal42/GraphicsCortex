@@ -24,6 +24,16 @@ void ImmediateRenderer::set_line_thickness(float thickness)
 	current_properties.line_thickness = thickness;
 }
 
+void ImmediateRenderer::set_clip_area(glm::vec4 clip_area)
+{
+	current_properties.clip_area = clip_area;
+}
+
+void ImmediateRenderer::set_clip_area(glm::vec2 begin, glm::vec2 size)
+{
+	current_properties.clip_area = glm::vec4(begin, size);
+}
+
 ImmediateRenderer::DrawProperties ImmediateRenderer::get_current_properties()
 {
 	return current_properties;
@@ -52,40 +62,98 @@ void ImmediateRenderer::draw_line(glm::vec3 position0, glm::vec3 position1)
 	attribute_buffer_corrupted = true;
 }
 
-void ImmediateRenderer::draw_triangle(glm::vec3 position0, glm::vec3 position1, glm::vec3 position2)
-{
-	DrawCommand command(
+void ImmediateRenderer::draw_triangle(
+	glm::vec3 position0, glm::vec3 position1, glm::vec3 position2,
+	size_t texture_handle, glm::vec2 uv_begin, glm::vec2 uv_end
+) {
+	DrawCommand command
+	(
 		current_properties,
 		Triangle,
 		position0,
 		position1,
-		position2
+		position2,
+		glm::vec3(0),
+		texture_handle,
+		uv_begin,
+		uv_end
 	);
 	commands.push_back(command);
 	attribute_buffer_corrupted = true;
 }
 
-void ImmediateRenderer::draw_quad(glm::vec3 position0, glm::vec3 position1, glm::vec3 position2, glm::vec3 position3)
-{
+void ImmediateRenderer::draw_triangle(
+	glm::vec2 position0, glm::vec2 position1, glm::vec2 position2, float z,
+	size_t texture_handle, glm::vec2 uv_begin, glm::vec2 uv_end
+) {
+	DrawCommand command(
+		current_properties,
+		Triangle,
+		glm::vec3(position0, z),
+		glm::vec3(position1, z),
+		glm::vec3(position2, z),
+		glm::vec3(0),
+		texture_handle,
+		uv_begin,
+		uv_end
+	);
+	commands.push_back(command);
+	attribute_buffer_corrupted = true;
+}
+
+void ImmediateRenderer::draw_quad(
+	glm::vec3 position0, glm::vec3 position1, glm::vec3 position2, glm::vec3 position3,
+	size_t texture_handle, glm::vec2 uv_begin, glm::vec2 uv_end
+) {
 	DrawCommand command(
 		current_properties,
 		Quad,
 		position0,
 		position1,
 		position2,
-		position3
+		position3,
+		texture_handle,
+		uv_begin,
+		uv_end
 	);
 	commands.push_back(command);
 	attribute_buffer_corrupted = true;
 }
 
-void ImmediateRenderer::draw_rectangle(glm::vec2 position0, glm::vec2 position1, float z)
+void ImmediateRenderer::draw_quad
+(
+	glm::vec2 position0, glm::vec2 position1, glm::vec2 position2, glm::vec2 position3, float z,
+	size_t texture_handle, glm::vec2 uv_begin, glm::vec2 uv_end
+) {
+	DrawCommand command(
+		current_properties,
+		Quad,
+		glm::vec3(position0, z),
+		glm::vec3(position1, z),
+		glm::vec3(position2, z),
+		glm::vec3(position3, z),
+		texture_handle,
+		uv_begin,
+		uv_end
+	);
+	commands.push_back(command);
+	attribute_buffer_corrupted = true;
+}
+
+
+void ImmediateRenderer::draw_rectangle(
+	glm::vec2 position0, glm::vec2 position1, float z,
+	size_t texture_handle, glm::vec2 uv_begin, glm::vec2 uv_end
+)
 {
 	draw_quad(
 		glm::vec3(position0.x, position0.y, z),
 		glm::vec3(position1.x, position0.y, z),
 		glm::vec3(position1.x, position1.y, z),
-		glm::vec3(position0.x, position1.y, z)
+		glm::vec3(position0.x, position1.y, z),
+		texture_handle,
+		uv_begin,
+		uv_end
 	);
 }
 
@@ -225,6 +293,9 @@ void ImmediateRenderer::_init_vab()
 		vab->push_attribute_format(1, 0, VertexAttributeBuffer::a_f32, 4, true);
 		vab->push_attribute_format(2, 0, VertexAttributeBuffer::a_f32, 4, true);
 		vab->push_attribute_format(3, 0, VertexAttributeBuffer::a_f32, 4, true);
+		vab->push_attribute_format(4, 0, VertexAttributeBuffer::a_f32, 4, true);
+		vab->push_attribute_format(5, 0, VertexAttributeBuffer::a_f32, 2, true);
+		vab->push_attribute_format(6, 0, VertexAttributeBuffer::a_i32, 1, true);
 	}
 }
 
@@ -292,22 +363,28 @@ void ImmediateRenderer::_update_gpu_buffers()
 			gpu_struct.line_thickness_with_padding = glm::vec4(command.properties.line_thickness, 0, 0, 0);
 			
 			gpu_struct.position = glm::vec4(command.position0, 1);
+			gpu_struct.uv		= glm::vec2(command.uv_begin.x, command.uv_begin.y);
 			data.push_back(gpu_struct);
 
 			gpu_struct.position = glm::vec4(command.position1, 1);
+			gpu_struct.uv		= glm::vec2(command.uv_end.x, command.uv_begin.y);
 			data.push_back(gpu_struct);
 
 			gpu_struct.position = glm::vec4(command.position2, 1);
+			gpu_struct.uv		= glm::vec2(command.uv_end.x, command.uv_end.y);
 			data.push_back(gpu_struct);
 
 			if (command.geometry == Quad) {
 				gpu_struct.position = glm::vec4(command.position0, 1);
+				gpu_struct.uv		= glm::vec2(command.uv_begin.x, command.uv_begin.y);
 				data.push_back(gpu_struct);
 
 				gpu_struct.position = glm::vec4(command.position2, 1);
+				gpu_struct.uv		= glm::vec2(command.uv_end.x, command.uv_end.y);
 				data.push_back(gpu_struct);
 
 				gpu_struct.position = glm::vec4(command.position3, 1);
+				gpu_struct.uv		= glm::vec2(command.uv_begin.x, command.uv_end.y);
 				data.push_back(gpu_struct);
 			}
 		}
@@ -329,13 +406,26 @@ void ImmediateRenderer::clear()
 	triangle_commands_vertex_count = 0;
 }
 
-ImmediateRenderer::DrawCommand::DrawCommand(DrawProperties properties, Geometry geometry, glm::vec3 position0, glm::vec3 position1, glm::vec3 position2, glm::vec3 position3) :
+ImmediateRenderer::DrawCommand::DrawCommand(
+	DrawProperties properties, 
+	Geometry geometry, 
+	glm::vec3	position0, 
+	glm::vec3	position1, 
+	glm::vec3	position2, 
+	glm::vec3	position3,
+	size_t		texture_handle,
+	glm::vec2	uv_begin,
+	glm::vec2	uv_end
+) :
 	properties(properties),
 	geometry(geometry),
 	position0(position0),
 	position1(position1),
 	position2(position2),
-	position3(position3)
+	position3(position3),
+	texture_handle(texture_handle),
+	uv_begin(uv_begin),
+	uv_end(uv_end)
 {
 
 }

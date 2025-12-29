@@ -19,13 +19,6 @@ public:
 		GUI2 gui;
 		GUI2Dynamic gui_d;
 
-		size_t window1 = invalid_id;
-		size_t box0 = invalid_id;
-		size_t box1 = invalid_id;
-		size_t box2 = invalid_id;
-		size_t box3 = invalid_id;
-		size_t box4 = invalid_id;
-
 		widget2::Window window0;
 		window0.draggable = true;
 
@@ -65,7 +58,7 @@ public:
 			gui_d.stack_begin()
 				.set_target_size(glm::vec2(avail));
 
-			gui_d.box_begin(box0)
+			gui_d.box_begin()
 				.set_target_size(glm::vec2(avail, 32));
 
 			gui_d.box_prop().color = glm::vec4(1, 0, 0, 1);

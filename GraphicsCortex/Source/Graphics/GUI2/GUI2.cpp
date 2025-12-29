@@ -157,7 +157,7 @@ void GUI2::render() {
 
 			state.window = std::make_shared<Window>(description);
 			state.window->set_window_position(desc.position);
-			state.window->newsletters->on_window_refresh_events.subscribe(render_func);
+			//state.window->newsletters->on_window_refresh_events.subscribe(render_func);
 
 		}
 
