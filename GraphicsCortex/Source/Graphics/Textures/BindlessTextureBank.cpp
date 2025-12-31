@@ -1,16 +1,16 @@
 #include "BindlessTextureBank.h"
 #include "Debuger.h"
-#include "WindowBoundGlobalResources.h"
+//#include "WindowBoundGlobalResources.h"
 
 #include <iostream>
 
-BindlessTextureBank& BindlessTextureBank::get()
-{
-    if (active_global_resources->BindlessTextureBank == nullptr)
-        active_global_resources->BindlessTextureBank = std::unique_ptr<BindlessTextureBank>(new BindlessTextureBank());
-
-    return *active_global_resources->BindlessTextureBank;
-}
+//BindlessTextureBank& BindlessTextureBank::get()
+//{
+//    if (active_global_resources->BindlessTextureBank == nullptr)
+//        active_global_resources->BindlessTextureBank = std::unique_ptr<BindlessTextureBank>(new BindlessTextureBank());
+//
+//    return *active_global_resources->BindlessTextureBank;
+//}
 
 void BindlessTextureBank::add_texture(Texture2D& bindless_texture)
 {

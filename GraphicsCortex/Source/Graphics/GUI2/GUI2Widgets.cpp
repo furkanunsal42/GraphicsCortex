@@ -5,7 +5,7 @@ widget2::IOWidget::MouseState widget2::IOWidget::get_mouse_state(int32_t mouse_b
 	if (mouse_button >= 2 || mouse_button < 0)
 	{
 		std::cout << "[GUI Error] widget::IOWidget::get_mouse_state() is called for (mouse" << mouse_button << ") but only (mouse0) and (mouse1) are supported" << std::endl;
-		ASSERT(false);
+		
 	}
 	return mouse_states[mouse_button];
 }
@@ -28,22 +28,20 @@ void widget2::IOWidget::resolve_io(GUI2Dynamic& gui_dynamic)
 
 	case None : 
 	{
-		
 		if((event & GUI2::MouseEvent::None) != 0)
 			current_state = None;
 		if((event & GUI2::MouseEvent::Hover) != 0)
 			current_state = Enter;
-		if((event & GUI2::MouseEvent::LeftPress) != 0)
-			current_state = HoldBegin;
+		if ((event & GUI2::MouseEvent::LeftPress) != 0)
+			current_state = Enter;
 		if((event & GUI2::MouseEvent::LeftRelease) != 0)
-			current_state = PressEnd; //?
-		if((event & GUI2::MouseEvent::LeftHold) != 0)
-			current_state = PressBegin;
+			current_state = Enter; //?
+		if ((event & GUI2::MouseEvent::LeftHold) != 0)
+			current_state = Enter;
 		break;
 	}
 	case Enter : 
 	{
-		
 		if((event & GUI2::MouseEvent::None) != 0)
 			current_state = Leave;
 		if((event & GUI2::MouseEvent::Hover) != 0)
@@ -53,12 +51,11 @@ void widget2::IOWidget::resolve_io(GUI2Dynamic& gui_dynamic)
 		if((event & GUI2::MouseEvent::LeftRelease) != 0)
 			current_state = PressEnd; //?
 		if((event & GUI2::MouseEvent::LeftHold) != 0)
-			current_state = PressBegin; //?
+			current_state = PressBegin; //? 
 		break;
 	}
 	case Hover : 
 	{
-		
 		if((event & GUI2::MouseEvent::None) != 0)
 			current_state = Leave;
 		if((event & GUI2::MouseEvent::Hover) != 0)
@@ -73,7 +70,6 @@ void widget2::IOWidget::resolve_io(GUI2Dynamic& gui_dynamic)
 	}
 	case Leave : 
 	{
-		
 		if((event & GUI2::MouseEvent::None) != 0)
 			current_state = None;
 		if((event & GUI2::MouseEvent::Hover) != 0)
@@ -81,7 +77,7 @@ void widget2::IOWidget::resolve_io(GUI2Dynamic& gui_dynamic)
 		if((event & GUI2::MouseEvent::LeftPress) != 0)
 			current_state = Enter; //?
 		if((event & GUI2::MouseEvent::LeftRelease) != 0)
-			current_state = PressEnd; //?
+			current_state = PressEnd;  //?
 		if((event & GUI2::MouseEvent::LeftHold) != 0)
 			current_state = PressBegin;
 		break;
@@ -149,10 +145,12 @@ void widget2::IOWidget::resolve_io(GUI2Dynamic& gui_dynamic)
 	case Hold : 
 	{
 		
-		if((event & GUI2::MouseEvent::None) != 0)
-			current_state = Leave;
+		if ((event & GUI2::MouseEvent::None) != 0) {
+			last_hold_end = std::chrono::system_clock::now();
+			current_state = Leave; // HoldLeave?
+		}
 		if((event & GUI2::MouseEvent::Hover) != 0)
-			current_state = HoldEnd; // ?
+			current_state = HoldEnd;
 		if((event & GUI2::MouseEvent::LeftPress) != 0)
 			current_state = Hold; // ?
 		if((event & GUI2::MouseEvent::LeftRelease) != 0)
@@ -267,7 +265,7 @@ void widget2::IOWidget::resolve_io(GUI2Dynamic& gui_dynamic)
 	
 	if (current_state == HoldEnd)
 		last_hold_end = std::chrono::system_clock::now();
-	
+
 	if (current_state == HoldBegin || current_state == Hold) {
 		if (glm::dot(cursor_position_when_hold_begin - gui_dynamic.get_io_state().mouse_position, cursor_position_when_hold_begin - gui_dynamic.get_io_state().mouse_position) >= carry_begin_min_offset * carry_begin_min_offset) {
 			current_state = CarryBegin;

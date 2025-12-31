@@ -18,7 +18,7 @@ public:
 		glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
 		glm::ivec2 resolution = default_window->get_framebuffer_resolution();
-		RenderPipeline pipeline(resolution.x, resolution.y, Texture2D::ColorTextureFormat::RGBA8, Texture2D::DepthStencilTextureFormat::DEPTH24_STENCIL8, 16);
+		RenderPipeline pipeline(resolution.x, resolution.y, Texture2D::ColorTextureFormat::RGBA8, Texture2D::DepthStencilTextureFormat::DEPTH24_STENCIL8, 0);
 		pipeline.push_render_pass(std::make_shared<RenderPass_Clear>(glm::vec4(0, 0, 0, 1)));
 		pipeline.push_render_pass(std::make_shared<RenderPass_Shadowmaps>());
 		pipeline.push_render_pass(std::make_shared<RenderPass_Forward>());
@@ -32,10 +32,11 @@ public:
 		//Asset asset("../GraphicsCortex/Models/Thinker/source/Rodin_Thinker.obj");
 		//Asset asset("../GraphicsCortex/Models/medival/source/medival.fbx");
 		//Asset asset("../GraphicsCortex/Models/bmw/scene.gltf");
-		//Asset asset("../GraphicsCortex/Models/Sponza/scene.gltf");
+		Asset asset("../GraphicsCortex/Models/Sponza/scene.gltf");
 		//Asset asset_curtains("../GraphicsCortex/Models/Sponza/NewSponza_Curtains_glTF.gltf");
 		//Asset asset("../GraphicsCortex/Models/circuit/nogaro.obj");
-		Asset asset("../GraphicsCortex/ModelsKhronos/2.0/Sponza/glTF/Sponza.gltf");
+		//Asset asset("../GraphicsCortex/ModelsKhronos/2.0/Sponza/glTF/Sponza.gltf");
+		//Asset asset("../GraphicsCortex/ModelsKhronos/2.0/Sponza/glTF/Sponza.gltf");
 		//Asset asset("../GraphicsCortex/Models/gun/Cerberus_LP.FBX");
 
 		std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(asset.load_mesh());

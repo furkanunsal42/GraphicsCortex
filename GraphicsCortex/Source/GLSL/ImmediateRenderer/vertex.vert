@@ -16,7 +16,7 @@ layout (location = line_thickness_slot)	in vec4 a_line_thickness;
 layout (location = position_slot)		in vec4 a_position;
 layout (location = clip_area_slot)		in vec4 a_clip_area;
 layout (location = uv_slot)				in vec2 a_uv;
-layout (location = texture_index_slot)	in int a_texture_index;
+layout (location = texture_index_slot)	in uvec2 a_texture_index;
 
 out vec4 v_fill_color;
 out vec4 v_line_color;
@@ -24,7 +24,7 @@ out float v_line_thickness;
 out vec4 v_position;
 out vec4 v_clip_area;
 out vec2 v_uv;
-out int v_texture_index;
+out flat uvec2 v_texture_index;
 
 uniform mat4 view;
 uniform mat4 projection;

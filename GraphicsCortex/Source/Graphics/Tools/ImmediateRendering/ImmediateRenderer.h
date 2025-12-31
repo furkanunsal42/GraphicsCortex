@@ -82,12 +82,12 @@ private:
 		sizeof(glm::vec4) +		// position
 		sizeof(glm::vec4) +		// clip_area
 		sizeof(glm::vec2) +		// uv
-		sizeof(int32_t)			// texture_handle
+		sizeof(glm::uvec2)		// texture_handle
 		;
 
 	void _compile_shaders();
 	void _init_vab();
-	
+
 	struct DrawCommandGpu {
 		glm::vec4	fill_color		= glm::vec4(0, 0, 0, 1);
 		glm::vec4	line_color		= glm::vec4(0, 0, 0, 1);
@@ -95,7 +95,7 @@ private:
 		glm::vec4	position;
 		glm::vec4	clip_area		= glm::vec4(0, 0, 1, 1);
 		glm::vec2	uv				= glm::vec2(0);
-		int32_t		texture_handle	= 0;
+		glm::uvec2	texture_handle	= glm::uvec2(0);
 	};
 
 	size_t point_commands_vertex_count = 0;
@@ -152,8 +152,6 @@ private:
 
 	std::shared_ptr<Program> line_program = nullptr;
 	std::shared_ptr<Program> triangle_program = nullptr;
-
-	std::shared_ptr<UniformBuffer> texture_handle_buffer = nullptr;
 
 	bool attribute_buffer_corrupted = false;
 };

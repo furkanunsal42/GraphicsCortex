@@ -66,7 +66,7 @@ int main() {
 	//OpenGLResourceSystemTest().run();
 	//OpenGLDeviceResourceSystemTest().run();
 
-	//ImmediateRendererTest().run();
+	ImmediateRendererTest().run();
 
 	//TimerTest().run();
 
@@ -80,6 +80,6 @@ int main() {
 	//CortexGUITest2_Fundamental().run();
 	//CortexGUITest2_Dynamic().run();
 	//CortexGUITest2_Relative().run();
-	CortexGUITest2_Stateful().run();
+	//CortexGUITest2_Stateful().run();
 
 }

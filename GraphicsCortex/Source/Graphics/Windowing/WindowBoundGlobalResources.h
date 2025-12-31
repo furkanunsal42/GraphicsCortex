@@ -7,7 +7,7 @@
 #include "ShaderCompiler.h";
 #include "Tools/GraphicsOperation/GraphicsOperation.h";
 #include "Font.h"
-#include "BindlessTextureBank.h"
+//#include "BindlessTextureBank.h"
 #include "Package.h"
 #include "GUI/CortexGUI.h"
 
@@ -20,7 +20,7 @@ public:
 	std::unique_ptr<Program> SkylightComponent_prefiltered_convolver = nullptr;
 	std::unique_ptr<GraphicsOperation> SkylightComponent_operation = nullptr;
 	std::unique_ptr<FontBank> FontBank = nullptr;
-	std::unique_ptr<BindlessTextureBank> BindlessTextureBank = nullptr;
+	//std::unique_ptr<BindlessTextureBank> BindlessTextureBank = nullptr;
 	std::unique_ptr<GUI> GUI = nullptr;
 };
 

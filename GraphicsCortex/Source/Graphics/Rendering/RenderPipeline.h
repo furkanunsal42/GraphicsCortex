@@ -24,7 +24,6 @@ public:
 class RenderPipeline {
 public:
 
-
 	RenderPipeline(const RenderPipeline& other) = delete;
 	RenderPipeline(int width, int height, Texture2D::ColorTextureFormat internal_format, int multisample);
 	RenderPipeline(int width, int height, Texture2D::ColorTextureFormat internal_format, Texture2D::DepthStencilTextureFormat depth_stencil_format, int multisample);

@@ -1,5 +1,6 @@
 #include "ImmediateRenderer.h"
 #include "PrimitiveRenderer.h"
+#include "Math/GLMCout.h"
 
 std::filesystem::path immidiate_renderer_shader_parent_path = "../GraphicsCortex/Source/GLSL/ImmediateRenderer/";
 
@@ -284,19 +285,20 @@ void ImmediateRenderer::_compile_shaders()
 
 void ImmediateRenderer::_init_vab()
 {
-	if (vab == nullptr) {
-		vab = std::make_shared<VertexAttributeBuffer>();
+	if (vab != nullptr)
+		return;
 
-		vab->attach_vertex_buffer(0, std::make_shared<Buffer>(buffer_max_command_count * _draw_command_size_in_bytes), _draw_command_size_in_bytes, 0, 0);
+	vab = std::make_shared<VertexAttributeBuffer>();
+
+	vab->attach_vertex_buffer(0, std::make_shared<Buffer>(buffer_max_command_count * _draw_command_size_in_bytes), _draw_command_size_in_bytes, 0, 0);
 		
-		vab->push_attribute_format(0, 0, VertexAttributeBuffer::a_f32, 4, true);
-		vab->push_attribute_format(1, 0, VertexAttributeBuffer::a_f32, 4, true);
-		vab->push_attribute_format(2, 0, VertexAttributeBuffer::a_f32, 4, true);
-		vab->push_attribute_format(3, 0, VertexAttributeBuffer::a_f32, 4, true);
-		vab->push_attribute_format(4, 0, VertexAttributeBuffer::a_f32, 4, true);
-		vab->push_attribute_format(5, 0, VertexAttributeBuffer::a_f32, 2, true);
-		vab->push_attribute_format(6, 0, VertexAttributeBuffer::a_i32, 1, true);
-	}
+	vab->push_attribute_format(0, 0, VertexAttributeBuffer::a_f32, 4, true);
+	vab->push_attribute_format(1, 0, VertexAttributeBuffer::a_f32, 4, true);
+	vab->push_attribute_format(2, 0, VertexAttributeBuffer::a_f32, 4, true);
+	vab->push_attribute_format(3, 0, VertexAttributeBuffer::a_f32, 4, true);
+	vab->push_attribute_format(4, 0, VertexAttributeBuffer::a_f32, 4, true);
+	vab->push_attribute_format(5, 0, VertexAttributeBuffer::a_f32, 2, true);
+	vab->push_attribute_format(6, 0, VertexAttributeBuffer::a_ui32, 2, true);
 }
 
 void ImmediateRenderer::_update_gpu_buffers() 
@@ -315,6 +317,8 @@ void ImmediateRenderer::_update_gpu_buffers()
 	triangle_commands_vertex_count = 0;
 
 	size_t previous_vertex_count = 0;
+
+	size_t next_handle_index = 0;
 
 	// Point Commands
 	for (DrawCommand& command : commands) {
@@ -356,45 +360,48 @@ void ImmediateRenderer::_update_gpu_buffers()
 		if (command.geometry != Triangle && command.geometry != Quad)
 			continue;
 
-		if (command.geometry == Triangle || command.geometry == Quad) {
-			DrawCommandGpu gpu_struct;
-			gpu_struct.fill_color = command.properties.fill_color;
-			gpu_struct.line_color = command.properties.line_color;
-			gpu_struct.line_thickness_with_padding = glm::vec4(command.properties.line_thickness, 0, 0, 0);
-			
-			gpu_struct.position = glm::vec4(command.position0, 1);
-			gpu_struct.uv		= glm::vec2(command.uv_begin.x, command.uv_begin.y);
-			data.push_back(gpu_struct);
+		glm::uvec2 texture_handle = *(glm::uvec2*)&command.texture_handle;
 
-			gpu_struct.position = glm::vec4(command.position1, 1);
-			gpu_struct.uv		= glm::vec2(command.uv_end.x, command.uv_begin.y);
+		DrawCommandGpu gpu_struct;
+		gpu_struct.fill_color = command.properties.fill_color;
+		gpu_struct.line_color = command.properties.line_color;
+		gpu_struct.line_thickness_with_padding = glm::vec4(command.properties.line_thickness, 0, 0, 0);
+		gpu_struct.texture_handle = texture_handle;
+
+		gpu_struct.position = glm::vec4(command.position0, 1);
+		gpu_struct.uv		= glm::vec4(command.uv_begin.x, command.uv_begin.y, glm::vec2(0));
+		data.push_back(gpu_struct);
+
+		gpu_struct.position = glm::vec4(command.position1, 1);
+		gpu_struct.uv = glm::vec4(command.uv_end.x, command.uv_begin.y, glm::vec2(0));
+		data.push_back(gpu_struct);
+
+		gpu_struct.position = glm::vec4(command.position2, 1);
+		gpu_struct.uv = glm::vec4(command.uv_end.x, command.uv_end.y, glm::vec2(0));
+		data.push_back(gpu_struct);
+
+		if (command.geometry == Quad) {
+			gpu_struct.position = glm::vec4(command.position0, 1);
+			gpu_struct.uv = glm::vec4(command.uv_begin.x, command.uv_begin.y, glm::vec2(0));
 			data.push_back(gpu_struct);
 
 			gpu_struct.position = glm::vec4(command.position2, 1);
-			gpu_struct.uv		= glm::vec2(command.uv_end.x, command.uv_end.y);
+			gpu_struct.uv = glm::vec4(command.uv_end.x, command.uv_end.y, glm::vec2(0));
 			data.push_back(gpu_struct);
 
-			if (command.geometry == Quad) {
-				gpu_struct.position = glm::vec4(command.position0, 1);
-				gpu_struct.uv		= glm::vec2(command.uv_begin.x, command.uv_begin.y);
-				data.push_back(gpu_struct);
-
-				gpu_struct.position = glm::vec4(command.position2, 1);
-				gpu_struct.uv		= glm::vec2(command.uv_end.x, command.uv_end.y);
-				data.push_back(gpu_struct);
-
-				gpu_struct.position = glm::vec4(command.position3, 1);
-				gpu_struct.uv		= glm::vec2(command.uv_begin.x, command.uv_end.y);
-				data.push_back(gpu_struct);
-			}
+			gpu_struct.position = glm::vec4(command.position3, 1);
+			gpu_struct.uv = glm::vec4(command.uv_begin.x, command.uv_end.y, glm::vec2(0));
+			data.push_back(gpu_struct);
 		}
-	}
 
+	}
+	
 	triangle_commands_vertex_count = data.size() - previous_vertex_count;
 	previous_vertex_count = data.size();
 
 	vab->get_buffer_slot(0).buffer->load_data(data);
 	attribute_buffer_corrupted = false;
+
 }
 
 void ImmediateRenderer::clear()

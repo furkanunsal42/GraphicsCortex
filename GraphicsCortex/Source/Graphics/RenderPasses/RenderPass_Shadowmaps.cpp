@@ -312,7 +312,7 @@ void RenderPass_Shadowmaps::on_render(int pass_index, RenderPipeline& pipeline, 
 
 				glEnable(GL_DEPTH_TEST);
 				glCullFace(GL_BACK);
-				//glCullFace(GL_FRONT);
+				glCullFace(GL_FRONT);
 				render_scene(mesh_renderer_components, *depth_program, light_view_matrix, light_projection_ortho);
 				glCullFace(GL_BACK);
 				

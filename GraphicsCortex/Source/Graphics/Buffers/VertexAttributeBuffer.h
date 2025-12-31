@@ -41,6 +41,7 @@ public:
 
 	static uint32_t get_attribute_type_to_GL_type(VertexAttributeBuffer::AttributeType type);
 	static uint32_t get_attribute_type_to_GL_normalized_flag(VertexAttributeBuffer::AttributeType type);
+	static bool is_attribute_type_to_GL_int_type(VertexAttributeBuffer::AttributeType type);
 	static size_t get_attribute_size_in_bytes(VertexAttributeBuffer::AttributeType type);
 
 	struct BufferSlotInfo {

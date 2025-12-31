@@ -21,11 +21,27 @@ public:
 
 		ImmediateRenderer immidiate;
 
+		Texture2D texture = Texture2D(
+			256, 256,
+			Texture2D::ColorTextureFormat::RGBA8,
+			1, 0, 0
+		);
+		texture.is_bindless = true;
+		//texture.clear(glm::vec4(1, 0, 0, 1), 0);
+		texture.load_data(
+			Image("../GraphicsCortex/Images/orange.png", 256, 256, 1, 4, 1, true),
+			Texture2D::ColorFormat::RGBA,
+			Texture2D::Type::UNSIGNED_BYTE,
+			0
+		);
+
+		std::cout << texture.texture_handle << std::endl;
+
 		while (!default_window->should_close()) {
 			double deltatime = default_window->handle_events(true);
 			primitive_renderer::clear(1, 1, 1, 1);
 			
-			immidiate.draw_rectangle(glm::vec2(0, 0), glm::vec2(0.1, 0.1));
+			immidiate.draw_rectangle(glm::vec2(0, 0), glm::vec2(0.1, 0.1), 0, texture.texture_handle);
 
 			immidiate.draw_line(glm::vec3(0.3, 0.3, 0), glm::vec3(0.7, 0.7, 0));
 			immidiate.draw_line(glm::vec3(0.7, 0.3, 0), glm::vec3(0.3, 0.7, 0));

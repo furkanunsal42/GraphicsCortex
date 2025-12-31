@@ -88,4 +88,5 @@ void MeshRendererComponent::render(Camera& camera)
 			);
 		}
 		});
+
 }
