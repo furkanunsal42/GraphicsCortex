@@ -161,7 +161,7 @@ public:
 		
 		glm::vec2	uv00				= glm::vec2(0);
 		glm::vec2	uv11				= glm::vec2(1);
-		uint32_t	texture_id			= -1;
+		uint64_t	texture_handle		= 0;
 
 		BoxDesc&	set_margin			(glm::vec4	value );
 		BoxDesc&	set_target_size		(glm::vec2	value );
@@ -178,7 +178,7 @@ public:
 		BoxDesc&	set_shadow_color	(glm::vec4	value );
 		BoxDesc&	set_uv00			(glm::vec2	value );
 		BoxDesc&	set_uv11			(glm::vec2	value );
-		BoxDesc&	set_texture_id		(uint32_t	value );
+		BoxDesc&	set_texture_handle	(uint64_t	value );
 
 	private:
 		friend GUI2Dynamic;

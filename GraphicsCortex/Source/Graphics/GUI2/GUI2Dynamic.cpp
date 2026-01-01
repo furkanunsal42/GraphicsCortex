@@ -314,6 +314,9 @@ GUI2::MouseEvent& GUI2Dynamic::node_mouse_event(size_t node_id)
 
 	std::cout << "[GUI Error] GUI2Dynamic::node_mouse_event() but an error is occured" << std::endl;
 	ASSERT(false);
+
+	GUI2::MouseEvent null_event;
+	return null_event;
 }
 
 
@@ -1363,7 +1366,18 @@ void GUI2Dynamic::publish(GUI2& gui)
 			{
 				auto& desc = std::get<BoxDesc>(nodes[child].desc);
 				gui.box_begin(desc.position, desc.size);
-				gui.box_prop().color = desc.color;
+				gui.box_prop().color				= desc.color;
+				gui.box_prop().border_thickness		= desc.border_thickness;
+				gui.box_prop().border_rounding		= desc.border_rounding;
+				gui.box_prop().border_color0		= desc.border_color0;
+				gui.box_prop().border_color1		= desc.border_color1;
+				gui.box_prop().border_color2		= desc.border_color2;
+				gui.box_prop().border_color3		= desc.border_color3;
+				gui.box_prop().shadow_thickness		= desc.shadow_thickness;
+				gui.box_prop().shadow_color			= desc.shadow_color;
+				gui.box_prop().uv00					= desc.uv00;
+				gui.box_prop().uv11					= desc.uv11;
+				gui.box_prop().texture_handle		= desc.texture_handle;
 				gui.box_end();
 
 				break;
@@ -1566,9 +1580,9 @@ GUI2Dynamic::BoxDesc& GUI2Dynamic::BoxDesc::set_uv11(glm::vec2 value)
 	return *this;
 }
 
-GUI2Dynamic::BoxDesc& GUI2Dynamic::BoxDesc::set_texture_id(uint32_t value)
+GUI2Dynamic::BoxDesc& GUI2Dynamic::BoxDesc::set_texture_handle(uint64_t value)
 {
-	texture_id = value;
+	texture_handle = value;
 	return *this;
 }
 

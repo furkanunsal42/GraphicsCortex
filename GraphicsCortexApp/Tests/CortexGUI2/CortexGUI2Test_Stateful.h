@@ -32,6 +32,8 @@ public:
 		style_box.on_hold_margin				= glm::vec4(20, 0, 20, 0);
 		style_box.on_hold_margin_transition		= std::chrono::milliseconds(85);
 
+		Texture2D* texture = nullptr;
+
 		while (true) {
 
 			gui_d.new_frame(gui);
@@ -68,7 +70,8 @@ public:
 				.set_color(glm::vec4(0, 1, 0, 1));
 
 			gui_d.box_begin()
-				.set_target_size(glm::vec2(avail, 32));
+				.set_target_size(glm::vec2(avail, 32))
+				.set_texture_handle(texture != nullptr ? texture->texture_handle : 0);
 			
 			style_box.publish(gui_d);
 			
@@ -80,6 +83,23 @@ public:
 
 			gui_d.publish(gui);
 			gui.render();
+
+			if (texture == nullptr) {
+				texture = new Texture2D(
+					256, 256,
+					Texture2D::ColorTextureFormat::RGBA8,
+					1, 0, 0
+				);
+				texture->is_bindless = true;
+				//texture.clear(glm::vec4(1, 0, 0, 1), 0);
+				texture->load_data(
+					Image("../GraphicsCortex/Images/orange.png", 256, 256, 1, 4, 1, true),
+					Texture2D::ColorFormat::RGBA,
+					Texture2D::Type::UNSIGNED_BYTE,
+					0
+				);
+			}
+
 
 		}
 

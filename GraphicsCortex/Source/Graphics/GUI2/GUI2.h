@@ -47,7 +47,8 @@ public:
 
 		glm::vec2 uv00				= glm::vec2(0);
 		glm::vec2 uv11				= glm::vec2(1);
-		uint32_t texture_id			= -1;
+		uint64_t texture_handle		= 0;
+
 	};
 
 	struct WindowDesc {

@@ -269,8 +269,9 @@ void GUI2::_publish_last() {
 
 		renderer.set_fill_color(desc.color);
 		renderer.draw_rectangle(
-			desc.position,
-			desc.position + desc.size
+			desc.position + desc.size,
+			desc.position, 0,
+			desc.texture_handle, desc.uv00, desc.uv11
 		);
 
 		box_last = std::nullopt;
