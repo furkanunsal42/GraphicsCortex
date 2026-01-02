@@ -9,7 +9,7 @@ size_t GUI2Dynamic::find_last_of_type(NodeType type)
 
 	size_t traversing_node = node_stack.size() - 1;
 
-	while (traversing_node != -1 && get_type(nodes[node_stack[traversing_node]]) != NodeType::Window)
+	while (traversing_node != -1 && get_type(nodes[node_stack[traversing_node]]) != type)
 		traversing_node--;
 
 	size_t found_node = traversing_node != -1 ?
@@ -875,10 +875,11 @@ void GUI2Dynamic::print_layout()
 		for (int32_t i = 0; i < level; i++)
 			std::cout << " | ";
 		std::cout << name;
-		std::cout << " target_size: " << node_target_size(node);
 		std::cout << " size: " << node_size(node);
-		if (type != NodeType::Window)
-			std::cout << " margin: " << node_margin(node);
+		std::cout << " position: " << node_position(node);
+		std::cout << " target_size: " << node_target_size(node);
+		if (type != NodeType::Window)	std::cout << " margin: " << node_margin(node);
+		if (type != NodeType::Box)		std::cout << " padding: " << node_padding(node);
 		std::cout << std::endl;
 
 		});
@@ -1092,18 +1093,16 @@ void GUI2Dynamic::resolve_phase1_avail_and_position(size_t root_node)
 			glm::vec2 self_size = desc.size - glm::vec2(desc.padding.x + desc.padding.z, desc.padding.y + desc.padding.w);
 			glm::vec2 size_per_avail	= compute_size_per_avail(self_size - cells_min_size, cells_avails_total);
 
-			float current_offset		= compute_physical_size(desc.columns[0], size_per_avail.x);
+			float current_offset = 0;
 			for (int32_t column_id = 0; column_id < desc.columns.size(); column_id++) {
-				float temp				= desc.columns[column_id];
+				current_offset			+= compute_physical_size(desc.columns[column_id], size_per_avail.x);
 				desc.columns[column_id] = current_offset;
-				current_offset			+= compute_physical_size(temp, size_per_avail.x);
 			}
 
-			current_offset = compute_physical_size(desc.rows[0], size_per_avail.y);
+			current_offset = 0;
 			for (int32_t row_id = 0; row_id < desc.rows.size(); row_id++) {
-				float temp			= desc.rows[row_id];
+				current_offset		+= compute_physical_size(desc.rows[row_id], size_per_avail.y);
 				desc.rows[row_id]	= current_offset;
-				current_offset		+= compute_physical_size(temp, size_per_avail.y);
 			}
 
 			traverse_nodes_children(node_id, [&](size_t child_id) {
@@ -1284,7 +1283,6 @@ void GUI2Dynamic::resolve_phase2_mouse_event(size_t root_node)
 
 	std::vector<size_t> stack;
 	stack.push_back(root_node);
-
 
 	while (stack.size() != 0) {
 

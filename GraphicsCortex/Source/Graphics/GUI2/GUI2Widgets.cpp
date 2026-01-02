@@ -1,5 +1,10 @@
 #include "GUI2Widgets.h"
 
+GUI2Dynamic::ResolvedProperties widget2::Widget::get_resolved_properties(GUI2Dynamic& gui_dynamic)
+{
+	return gui_dynamic.get_resolved_properties(id);
+}
+
 widget2::IOWidget::MouseState widget2::IOWidget::get_mouse_state(int32_t mouse_button)
 {
 	if (mouse_button >= 2 || mouse_button < 0)
@@ -338,10 +343,55 @@ void widget2::Box::publish(GUI2Dynamic& gui_dynamic) {
 	gui_dynamic.box_prop().shadow_thickness	=  get_property(shadow_thickness,	on_hover_shadow_thickness,	on_hover_shadow_thickness_transition,	on_hold_shadow_thickness,	on_hold_shadow_thickness_transition);
 	gui_dynamic.box_prop().shadow_color		=  get_property(shadow_color,		on_hover_shadow_color,		on_hover_shadow_color_transition,		on_hold_shadow_color,		on_hold_shadow_color_transition);
 
-	gui_dynamic.box_end();
+	//gui_dynamic.box_end();
 
 	resolve_io(gui_dynamic);
 
+}
+
+void widget2::Box::apply_properties_to(GUI2Dynamic::WindowDesc& desc)
+{
+	desc.padding			= glm::vec4(0);
+	desc.target_size		=  get_property(target_size,		on_hover_target_size,		on_hover_target_size_transition,		on_hold_target_size,		on_hold_target_size_transition);
+	desc.color				=  get_property(color,				on_hover_color,				on_hover_color_transition,				on_hold_color,				on_hold_color_transition);
+	desc.border_thickness	=  get_property(border_thickness,	on_hover_border_thickness,	on_hover_border_thickness_transition,	on_hold_border_thickness,	on_hold_border_thickness_transition);
+	desc.border_rounding	=  get_property(border_rounding,	on_hover_border_rounding,	on_hover_border_rounding_transition,	on_hold_border_rounding,	on_hold_border_rounding_transition);
+	desc.border_color0		=  get_property(border_color0,		on_hover_border_color0,		on_hover_border_color0_transition,		on_hold_border_color0,		on_hold_border_color0_transition);
+	desc.border_color1		=  get_property(border_color1,		on_hover_border_color1,		on_hover_border_color1_transition,		on_hold_border_color1,		on_hold_border_color1_transition);
+	desc.border_color2		=  get_property(border_color2,		on_hover_border_color2,		on_hover_border_color2_transition,		on_hold_border_color2,		on_hold_border_color2_transition);
+	desc.border_color3		=  get_property(border_color3,		on_hover_border_color3,		on_hover_border_color3_transition,		on_hold_border_color3,		on_hold_border_color3_transition);
+	desc.shadow_thickness	=  get_property(shadow_thickness,	on_hover_shadow_thickness,	on_hover_shadow_thickness_transition,	on_hold_shadow_thickness,	on_hold_shadow_thickness_transition);
+	desc.shadow_color		=  get_property(shadow_color,		on_hover_shadow_color,		on_hover_shadow_color_transition,		on_hold_shadow_color,		on_hold_shadow_color_transition);
+}
+
+void widget2::Box::apply_properties_to(GUI2Dynamic::BoxDesc& desc)
+{
+	desc.margin				=  get_property(margin,				on_hover_margin,			on_hover_margin_transition,				on_hold_margin,				on_hold_margin_transition);
+	desc.target_size		=  get_property(target_size,		on_hover_target_size,		on_hover_target_size_transition,		on_hold_target_size,		on_hold_target_size_transition);
+	desc.color				=  get_property(color,				on_hover_color,				on_hover_color_transition,				on_hold_color,				on_hold_color_transition);
+	desc.border_thickness	=  get_property(border_thickness,	on_hover_border_thickness,	on_hover_border_thickness_transition,	on_hold_border_thickness,	on_hold_border_thickness_transition);
+	desc.border_rounding	=  get_property(border_rounding,	on_hover_border_rounding,	on_hover_border_rounding_transition,	on_hold_border_rounding,	on_hold_border_rounding_transition);
+	desc.border_color0		=  get_property(border_color0,		on_hover_border_color0,		on_hover_border_color0_transition,		on_hold_border_color0,		on_hold_border_color0_transition);
+	desc.border_color1		=  get_property(border_color1,		on_hover_border_color1,		on_hover_border_color1_transition,		on_hold_border_color1,		on_hold_border_color1_transition);
+	desc.border_color2		=  get_property(border_color2,		on_hover_border_color2,		on_hover_border_color2_transition,		on_hold_border_color2,		on_hold_border_color2_transition);
+	desc.border_color3		=  get_property(border_color3,		on_hover_border_color3,		on_hover_border_color3_transition,		on_hold_border_color3,		on_hold_border_color3_transition);
+	desc.shadow_thickness	=  get_property(shadow_thickness,	on_hover_shadow_thickness,	on_hover_shadow_thickness_transition,	on_hold_shadow_thickness,	on_hold_shadow_thickness_transition);
+	desc.shadow_color		=  get_property(shadow_color,		on_hover_shadow_color,		on_hover_shadow_color_transition,		on_hold_shadow_color,		on_hold_shadow_color_transition);
+}
+
+void widget2::Box::apply_properties_to(GUI2Dynamic::GridDesc& desc)
+{
+	desc.margin				=  get_property(margin,				on_hover_margin,			on_hover_margin_transition,				on_hold_margin,				on_hold_margin_transition);
+	desc.target_size		=  get_property(target_size,		on_hover_target_size,		on_hover_target_size_transition,		on_hold_target_size,		on_hold_target_size_transition);
+	desc.padding			=  glm::vec4(0);
+}
+
+void widget2::Box::apply_properties_to(GUI2Dynamic::StackDesc& desc)
+{
+	desc.margin				=  get_property(margin,				on_hover_margin,			on_hover_margin_transition,				on_hold_margin,				on_hold_margin_transition);
+	desc.target_size		=  get_property(target_size,		on_hover_target_size,		on_hover_target_size_transition,		on_hold_target_size,		on_hold_target_size_transition);
+	desc.padding			=  glm::vec4(0);
+	desc.spacing			=  0;
 }
 
 void widget2::Window::publish(GUI2Dynamic& gui_dynamic) {
@@ -360,4 +410,65 @@ void widget2::Window::publish(GUI2Dynamic& gui_dynamic) {
 		.set_color(glm::vec4(0.8, 0.8, 0.8, 1));
 
 	resolve_io(gui_dynamic);
+}
+
+void widget2::Image::publish(GUI2Dynamic& gui_dynamic)
+{
+	if (texture == nullptr) {
+		Box::publish(gui_dynamic);
+		gui_dynamic.box_prop().texture_handle = 0;
+		gui_dynamic.box_begin().uv00 = uv00;
+		gui_dynamic.box_begin().uv11 = uv11;
+		return;
+	}
+	
+
+	if (type == Stretch) {
+		Box::publish(gui_dynamic);
+		gui_dynamic.box_prop().texture_handle = texture->texture_handle;
+		gui_dynamic.box_begin().uv00 = uv00;
+		gui_dynamic.box_begin().uv11 = uv11;
+	}
+	else if (type == Fit) {
+		
+		auto& desc = gui_dynamic.grid_begin(grid_id);
+		apply_properties_to(desc);
+		
+		GUI2Dynamic::ResolvedProperties properties = gui_dynamic.get_resolved_properties(grid_id);
+		glm::vec2 size = glm::max(properties.size, get_resolved_properties(gui_dynamic).size);
+
+		gui_dynamic.grid_add_column(size.x);
+		gui_dynamic.grid_add_row(size.y);
+		gui_dynamic.grid_region(glm::ivec2(0));
+
+		Box::publish(gui_dynamic);
+
+		glm::vec2 self_size = size;
+		glm::vec2 texture_size = texture->get_size();
+
+		float self_aspect_ratio = self_size.x / self_size.y;
+		float texture_aspect_ratio = texture_size.x / texture_size.y;
+
+		glm::vec2 clipped_size;
+
+		if (self_aspect_ratio >= texture_aspect_ratio) {
+			clipped_size.y = self_size.y;
+			clipped_size.x = clipped_size.y * texture_aspect_ratio;
+			
+			gui_dynamic.box_prop().margin.x = (self_size.x - clipped_size.x) / 2;
+		}
+		else {
+			clipped_size.x = self_size.x;
+			clipped_size.y = clipped_size.x / texture_aspect_ratio;
+			gui_dynamic.box_prop().margin.y = (self_size.y - clipped_size.y) / 2;
+		}
+
+		gui_dynamic.box_prop().target_size = clipped_size;
+
+		gui_dynamic.box_prop().texture_handle = texture->texture_handle;
+		gui_dynamic.box_prop().uv00 = uv00;
+		gui_dynamic.box_prop().uv11 = uv11;
+		
+		gui_dynamic.grid_end();
+	}
 }

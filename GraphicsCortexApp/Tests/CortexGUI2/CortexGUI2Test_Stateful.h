@@ -32,7 +32,13 @@ public:
 		style_box.on_hold_margin				= glm::vec4(20, 0, 20, 0);
 		style_box.on_hold_margin_transition		= std::chrono::milliseconds(85);
 
-		Texture2D* texture = nullptr;
+		widget2::Image image;
+		image.target_size						= glm::vec2(avail, 64);
+		image.type								= widget2::Image::Fit;
+		image.on_hover_color					= glm::vec4(1, 0, 0, 1);
+		image.on_hover_color_transition			= std::chrono::milliseconds(1);
+
+		std::shared_ptr<Texture2D> texture = nullptr;
 
 		while (true) {
 
@@ -43,8 +49,8 @@ public:
 			gui_d.grid_begin()
 				.add_column(200)
 				.add_column(200)
-				.add_row(200)
-				.add_row(200);
+				.add_row(100)
+				.add_row(500);
 
 			gui_d.grid_region(glm::ivec2(0, 0));
 			gui_d.box_begin()
@@ -74,6 +80,7 @@ public:
 				.set_texture_handle(texture != nullptr ? texture->texture_handle : 0);
 			
 			style_box.publish(gui_d);
+			image.publish(gui_d);
 			
 			gui_d.stack_end();
 
@@ -84,8 +91,14 @@ public:
 			gui_d.publish(gui);
 			gui.render();
 
+			static bool once = true;
+			if (texture != nullptr && once) {
+				gui_d.print_layout();
+				once = false;
+			}
+
 			if (texture == nullptr) {
-				texture = new Texture2D(
+				texture = std::make_shared<Texture2D>(
 					256, 256,
 					Texture2D::ColorTextureFormat::RGBA8,
 					1, 0, 0
@@ -98,6 +111,7 @@ public:
 					Texture2D::Type::UNSIGNED_BYTE,
 					0
 				);
+				image.texture = texture;
 			}
 
 

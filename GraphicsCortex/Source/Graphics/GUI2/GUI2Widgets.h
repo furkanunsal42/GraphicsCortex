@@ -7,6 +7,7 @@ namespace widget2 {
 	class Widget {
 	protected:
 		size_t id = GUI2Dynamic::invalid_id;
+		GUI2Dynamic::ResolvedProperties get_resolved_properties(GUI2Dynamic& gui_dynamic);
 	};
 
 	class IOWidget : protected Widget {
@@ -170,6 +171,14 @@ namespace widget2 {
 		duration	on_hold_shadow_color_transition			= duration(0);
 
 		void publish(GUI2Dynamic& gui_dynamic);
+
+	protected:
+
+		void apply_properties_to(GUI2Dynamic::WindowDesc& desc);
+		void apply_properties_to(GUI2Dynamic::BoxDesc& desc);
+		void apply_properties_to(GUI2Dynamic::GridDesc& desc);
+		void apply_properties_to(GUI2Dynamic::StackDesc& desc);
+
 	};
 
 	struct Window : public IOWidget {
@@ -198,70 +207,83 @@ namespace widget2 {
 
 	};
 
-	struct Image {
+	struct Image : public Box {
 
-		void publish(GUI2Dynamic& gui_dynaimc);
+		enum Type {
+			Fit,
+			Stretch,
+			Custom,
+		};
+
+		std::shared_ptr<Texture2D> texture = nullptr;
+		glm::vec2 uv00 = glm::vec2(0);
+		glm::vec2 uv11 = glm::vec2(1);
+		size_t grid_id = GUI2Dynamic::invalid_id;
+
+		Type type = Fit;
+		
+		void publish(GUI2Dynamic& gui_dynamic);
 
 	};
 
 	struct Label {
 
 		std::string text;
-		void publish(GUI2Dynamic& gui_dynaimc);
-	
+		void publish(GUI2Dynamic& gui_dynamic);
+
 	};
 
 	struct TextArea {
 
-		void publish(GUI2Dynamic& gui_dynaimc);
+		void publish(GUI2Dynamic& gui_dynamic);
 
 	};
 
 	struct Slider {
 
-		void publish(GUI2Dynamic& gui_dynaimc);
+		void publish(GUI2Dynamic& gui_dynamic);
 
 	};
 
 	struct DragFloat {
 
-		void publish(GUI2Dynamic& gui_dynaimc);
+		void publish(GUI2Dynamic& gui_dynamic);
 
 	};
 
 	struct Button {
 
-		void publish(GUI2Dynamic& gui_dynaimc);
+		void publish(GUI2Dynamic& gui_dynamic);
 
 	};
 
 	struct CheckBox {
 
-		void publish(GUI2Dynamic& gui_dynaimc);
+		void publish(GUI2Dynamic& gui_dynamic);
 
 	};
 
 	struct ComboBox {
 
-		void publish(GUI2Dynamic& gui_dynaimc);
+		void publish(GUI2Dynamic& gui_dynamic);
 
 	};
 
 	struct Menu {
 
-		void publish(GUI2Dynamic& gui_dynaimc);
+		void publish(GUI2Dynamic& gui_dynamic);
 
 	};
 
 	struct Tab {
 
-		void publish(GUI2Dynamic& gui_dynaimc);
+		void publish(GUI2Dynamic& gui_dynamic);
 
 	};
 
 	struct Collapsible {
 
-		void publish(GUI2Dynamic& gui_dynaimc);
+		void publish(GUI2Dynamic& gui_dynamic);
 
 	};
 
