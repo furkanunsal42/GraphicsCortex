@@ -1,4 +1,5 @@
 #include "GUI2Widgets.h"
+#include "WindowBoundGlobalResources.h"
 
 GUI2Dynamic::ResolvedProperties widget2::Widget::get_resolved_properties(GUI2Dynamic& gui_dynamic)
 {
@@ -471,4 +472,76 @@ void widget2::Image::publish(GUI2Dynamic& gui_dynamic)
 		
 		gui_dynamic.grid_end();
 	}
+}
+
+void widget2::Label::publish(GUI2Dynamic& gui_dynamic)
+{
+	if (active_global_resources == nullptr || !FontBank::get().does_font_exist(font))
+		return;
+
+	float advance = 0;
+	glm::vec2 text_size(0);
+
+	auto& desc = gui_dynamic.grid_begin(id);
+	apply_properties_to(desc);
+	desc.target_size = glm::vec2(GUI2Dynamic::fit);
+
+	gui_dynamic.grid_region(glm::ivec2(0));
+
+	for (int32_t i = 0; i < text.size(); i++) {
+	
+		FontBank::get().get_font(font);
+
+		float font_size			= FontBank::get().get_font(font).font_size;
+		glm::vec2 atlas_size	= FontBank::get().get_font(font).atlas->get_size();
+		auto& table				= FontBank::get().get_font(font).glyph_table.at(text[i]);
+
+		glm::vec2 inverted_offset = glm::vec2(table.offset.x, -table.offset.y);
+
+		glm::vec2 position	= glm::vec2(advance, 0) + inverted_offset * atlas_size / font_size * text_height + glm::vec2(0, text_height);
+		glm::vec2 size		= glm::max(glm::vec2(0), (table.coords_hi - table.coords_low) * atlas_size / font_size * text_height);
+		
+		gui_dynamic.box_begin()
+			.set_target_size(size)
+			.set_margin(glm::vec4(position.x, position.y, 0, 0))
+			.set_uv00(glm::vec2(table.coords_hi.x,	1-table.coords_hi.y))
+			.set_uv11(glm::vec2(table.coords_low.x, 1 - table.coords_low.y))
+			.set_color(get_property(color, on_hover_color, on_hover_color_transition, on_hold_color, on_hold_color_transition))
+			.set_texture_handle(FontBank::get().get_font(font).atlas->texture_handle);
+
+		text_size.y = glm::max(text_size.y, size.y);
+		text_size.x = position.x + size.x;
+
+		advance += table.advance * atlas_size.x / font_size * text_height;
+	}
+
+	gui_dynamic.grid_add_column(text_size.x);
+	gui_dynamic.grid_add_row(text_size.y);
+	gui_dynamic.grid_end();
+
+	resolve_io(gui_dynamic);
+
+	//if (element.size().x == 0)	element.size().x = advance;
+	//if (element.size().y == 0)	element.size().y = text_size.y;
+}
+
+void widget2::TextArea::publish(GUI2Dynamic& gui_dynamic)
+{
+	label.text = text.size() == 0 ? placeholder_text : text;
+	
+	gui_dynamic.grid_begin();
+	gui_dynamic.grid_region(glm::ivec2(0));
+	
+	label.publish(gui_dynamic);
+	Box::publish(gui_dynamic);
+
+	glm::vec2 size = get_resolved_properties(gui_dynamic).size;
+	size = glm::max(size, label.get_resolved_properties(gui_dynamic).size);
+	size = glm::max(size, glm::vec2(1));
+
+	gui_dynamic.grid_add_column(size.x);
+	gui_dynamic.grid_add_row(size.y);
+	gui_dynamic.grid_end();
+
+	resolve_io(gui_dynamic);
 }

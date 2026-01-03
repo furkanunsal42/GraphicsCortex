@@ -1,16 +1,18 @@
 ﻿#pragma once
 #include "GUI2Dynamic.h"
 #include <chrono>
+#include "Font.h"
 
 namespace widget2 {
 
 	class Widget {
+	public:
+		GUI2Dynamic::ResolvedProperties get_resolved_properties(GUI2Dynamic& gui_dynamic);
 	protected:
 		size_t id = GUI2Dynamic::invalid_id;
-		GUI2Dynamic::ResolvedProperties get_resolved_properties(GUI2Dynamic& gui_dynamic);
 	};
 
-	class IOWidget : protected Widget {
+	class IOWidget : public Widget {
 		using duration		= std::chrono::system_clock::duration;
 		using time_point	= std::chrono::system_clock::time_point;
 	public:
@@ -226,17 +228,29 @@ namespace widget2 {
 
 	};
 
-	struct Label {
+	struct Label : public Box {
 
-		std::string text;
+		font_id font = 1;
+		std::u32string text;
+		float text_height = 16;
+
 		void publish(GUI2Dynamic& gui_dynamic);
 
 	};
 
-	struct TextArea {
+	struct TextArea : public Box {
+
+		std::u32string placeholder_text = U"Placeholder";
+		std::u32string text = U"";
+
+		glm::vec4 placeholder_color = glm::vec4(0.4, 0.4, 0.4, 1);
+
+		Label label;
+
+		bool keyboard_focus = false;
+		bool can_aquire_keyboard_focus = true;
 
 		void publish(GUI2Dynamic& gui_dynamic);
-
 	};
 
 	struct Slider {

@@ -16,7 +16,7 @@ in flat uvec2 v_texture_index;
 void main(){
 	
 	if (v_texture_index != uvec2(0, 0))
-		frag_color = vec4(texture(sampler2D(v_texture_index), v_uv).xyz, 1) * v_fill_color;
+		frag_color = vec4(texture(sampler2D(v_texture_index), v_uv).xyzw) * v_fill_color;
 	else
 		frag_color = v_fill_color;
  }

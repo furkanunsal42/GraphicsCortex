@@ -40,6 +40,12 @@ public:
 
 		std::shared_ptr<Texture2D> texture = nullptr;
 
+		widget2::Label label;
+		label.text						= U"Hello World";
+		label.color						= glm::vec4(0, 0, 0, 1);
+		label.on_hover_color			= glm::vec4(1, 0, 0, 1);
+		label.on_hover_color_transition = std::chrono::milliseconds(100);
+
 		while (true) {
 
 			gui_d.new_frame(gui);
@@ -82,6 +88,10 @@ public:
 			style_box.publish(gui_d);
 			image.publish(gui_d);
 			
+			static bool once = true;
+			if (!once)
+			label.publish(gui_d);
+
 			gui_d.stack_end();
 
 			gui_d.grid_end();
@@ -91,9 +101,9 @@ public:
 			gui_d.publish(gui);
 			gui.render();
 
-			static bool once = true;
-			if (texture != nullptr && once) {
+			if (once) {
 				gui_d.print_layout();
+				FontBank::get().load_font("../GraphicsCortex/Fonts/Roboto-Regular.ttf", 64);
 				once = false;
 			}
 

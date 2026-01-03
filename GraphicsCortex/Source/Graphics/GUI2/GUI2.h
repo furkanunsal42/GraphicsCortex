@@ -45,6 +45,7 @@ public:
 		glm::vec4 shadow_thickness	= glm::vec4(0);
 		glm::vec4 shadow_color		= glm::vec4(0, 0, 0, 1);
 
+		float	  z					= 0;
 		glm::vec2 uv00				= glm::vec2(0);
 		glm::vec2 uv11				= glm::vec2(1);
 		uint64_t texture_handle		= 0;

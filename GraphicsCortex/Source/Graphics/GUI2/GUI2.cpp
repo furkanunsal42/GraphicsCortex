@@ -270,7 +270,7 @@ void GUI2::_publish_last() {
 		renderer.set_fill_color(desc.color);
 		renderer.draw_rectangle(
 			desc.position + desc.size,
-			desc.position, 0,
+			desc.position, desc.z,
 			desc.texture_handle, desc.uv00, desc.uv11
 		);
 

@@ -487,10 +487,10 @@ void GUI2Dynamic::grid_region(glm::ivec2 grid_index, glm::ivec2 grid_span){
 
 	GUI2Dynamic::GridDesc& desc = grid_prop();
 
-	if (glm::any(glm::greaterThan(grid_index + grid_span, glm::ivec2(desc.columns.size(), desc.rows.size())))) {
-		std::cout << "[GUI Error] GUI2Dynamic::grid_region() is called but values the given region exceeds the layout" << std::endl;
-		ASSERT(false);
-	}
+	//if (glm::any(glm::greaterThan(grid_index + grid_span, glm::ivec2(desc.columns.size(), desc.rows.size())))) {
+	//	std::cout << "[GUI Error] GUI2Dynamic::grid_region() is called but values the given region exceeds the layout" << std::endl;
+	//	ASSERT(false);
+	//}
 
 	desc.current_grid_index = grid_index;
 	desc.current_grid_span	= grid_span;
@@ -1376,6 +1376,7 @@ void GUI2Dynamic::publish(GUI2& gui)
 				gui.box_prop().uv00					= desc.uv00;
 				gui.box_prop().uv11					= desc.uv11;
 				gui.box_prop().texture_handle		= desc.texture_handle;
+				gui.box_prop().z					= level;	 
 				gui.box_end();
 
 				break;

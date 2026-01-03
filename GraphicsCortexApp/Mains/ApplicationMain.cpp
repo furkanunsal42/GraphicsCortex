@@ -37,6 +37,8 @@
 #include "CortexGUI2/CortexGUI2Test_Dynamic.h"
 #include "CortexGUI2/CortexGUI2Test_Relative.h"
 #include "CortexGUI2/CortexGUI2Test_Stateful.h"
+#include "CortexGUI2/CortexGUI2Test_Widgets.h"
+#include "CortexGUI2/CortexGUI2Test_Hierarchy.h"
 
 int main() {
 	
@@ -81,5 +83,7 @@ int main() {
 	//CortexGUITest2_Dynamic().run();
 	//CortexGUITest2_Relative().run();
 	CortexGUITest2_Stateful().run();
+	//CortexGUITest2_Widgets().run();
+	//CortexGUITest2_Hierarchy().run();
 
 }

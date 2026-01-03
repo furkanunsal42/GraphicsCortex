@@ -179,6 +179,8 @@ FontBank::Font FontBank::_load(const std::filesystem::path& font_file_path, int3
 	font_atlas->save_to_disc("atlas.png");
 
 	font.atlas = std::make_shared<Texture2D>(texture_resolution.x, texture_resolution.y, Texture2D::ColorTextureFormat::RGBA8, 32, -0.75f, 0);
+	font.atlas->is_bindless = true;
+
 	font.atlas->load_data_with_mipmaps(*font_atlas, Texture2D::ColorFormat::RGBA, Texture2D::Type::UNSIGNED_BYTE);
 	font.font_size = font_size;
 	//font.text_height = face->size->metrics.height;
