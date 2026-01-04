@@ -42,12 +42,11 @@ public:
 
 		widget2::Label label;
 		label.text = U"Hello World";
-		label.color = glm::vec4(0, 0, 0, 1);
-		label.on_hover_color = glm::vec4(1, 0, 0, 1);
-		label.on_hover_color_transition = std::chrono::milliseconds(100);
+		label.text_color = glm::vec4(0, 0, 0, 1);
+		label.on_hover_text_color = glm::vec4(1, 0, 0, 1);
+		label.on_hover_text_color_transition = std::chrono::milliseconds(100);
 
 		widget2::TextArea text_area;
-		text_area.label.color = glm::vec4(0, 0, 0, 1);
 		text_area.text = U"HERE";
 
 		while (true) {
@@ -56,18 +55,18 @@ public:
 
 			window0.publish(gui_d);
 			
-			gui_d.stack_begin()
-				.set_target_size(glm::vec2(600, fit));
+			//gui_d.stack_begin()
+			//	.set_target_size(glm::vec2(600, fit));
 
 			//style_box.publish(gui_d);
-			//
+			
 			//image.publish(gui_d);
-			//
+			
 			//label.publish(gui_d);
 
 			text_area.publish(gui_d);
 
-			gui_d.stack_end();
+			//gui_d.stack_end();
 			gui_d.window_end();
 			
 			gui_d.publish(gui);

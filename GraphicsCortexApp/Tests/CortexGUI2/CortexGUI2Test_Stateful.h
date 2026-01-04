@@ -41,10 +41,10 @@ public:
 		std::shared_ptr<Texture2D> texture = nullptr;
 
 		widget2::Label label;
-		label.text						= U"Hello World";
-		label.color						= glm::vec4(0, 0, 0, 1);
-		label.on_hover_color			= glm::vec4(1, 0, 0, 1);
-		label.on_hover_color_transition = std::chrono::milliseconds(100);
+		label.text								= U"Hello World";
+		label.text_color						= glm::vec4(0, 0, 0, 1);
+		label.on_hover_text_color				= glm::vec4(1, 0, 0, 1);
+		label.on_hover_text_color_transition	= std::chrono::milliseconds(100);
 
 		while (true) {
 

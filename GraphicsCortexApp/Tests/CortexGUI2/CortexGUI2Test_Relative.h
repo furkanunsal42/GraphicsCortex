@@ -32,8 +32,8 @@ public:
 			gui_d.new_frame(gui);
 
 			gui_d.window_begin(window1)
-			.set_is_decorated(false)
-			.set_color(glm::vec4(0.8, 0.8, 0.8, 1));
+				.set_is_decorated(false)
+				.set_color(glm::vec4(0.8, 0.8, 0.8, 1));
 
 				gui_d.grid_begin()
 					.add_column(200)

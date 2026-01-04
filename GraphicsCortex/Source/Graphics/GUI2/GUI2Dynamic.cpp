@@ -517,21 +517,21 @@ void GUI2Dynamic::grid_end(){
 		ASSERT(false);
 	}
 
-	for (float column : desc.columns) {
-		if (column == fit)
-		{
-			std::cout << "[GUI Error] GUI2Dynamic::grid_end() is called but (fit) is not a valid value for a column" << std::endl;
-			ASSERT(false);
-		}
-	}
-
-	for (float row : desc.rows) {
-		if (row == fit)
-		{
-			std::cout << "[GUI Error] GUI2Dynamic::grid_end() is called but (fit) is not a valid value for a row" << std::endl;
-			ASSERT(false);
-		}
-	}
+	//for (float column : desc.columns) {
+	//	if (column == fit)
+	//	{
+	//		std::cout << "[GUI Error] GUI2Dynamic::grid_end() is called but (fit) is not a valid value for a column" << std::endl;
+	//		ASSERT(false);
+	//	}
+	//}
+	//
+	//for (float row : desc.rows) {
+	//	if (row == fit)
+	//	{
+	//		std::cout << "[GUI Error] GUI2Dynamic::grid_end() is called but (fit) is not a valid value for a row" << std::endl;
+	//		ASSERT(false);
+	//	}
+	//}
 
 	desc.current_grid_index	= glm::ivec2(0, 0);
 	desc.current_grid_span	= glm::ivec2(0, 0);
@@ -983,6 +983,37 @@ void GUI2Dynamic::resolve_phase0_fit(size_t root_node){
 
 			desc.size = desc.target_size;
 
+			for (int32_t column_id = 0; column_id < desc.columns.size(); column_id++) {
+				if (desc.columns[column_id] == fit) {
+					float max_value = 0;
+					traverse_nodes_children(node_id, [&](size_t child) {
+						if (node_grid_index(child).x == column_id) {
+							if (node_grid_span(child).x != 1) {
+								std::cout << "[GUI Error] grid slot cannot be \"fit\" while containing multi-slot children" << std::endl;
+								ASSERT(false);
+							}
+							max_value = std::max(max_value, non_avail(node_size(child).x));
+						}
+						});
+					desc.columns[column_id] = max_value;
+				}
+			}
+			for (int32_t row_id = 0; row_id < desc.rows.size(); row_id++) {
+				if (desc.rows[row_id] == fit) {
+					float max_value = 0;
+					traverse_nodes_children(node_id, [&](size_t child) {
+						if (node_grid_index(child).y == row_id) {
+							if (node_grid_span(child).y != 1) {
+								std::cout << "[GUI Error] grid slot cannot be \"fit\" while containing multi-slot children" << std::endl;
+								ASSERT(false);
+							}
+							max_value = std::max(max_value, non_avail(node_size(child).y));
+						}
+						});
+					desc.rows[row_id] = max_value;
+				}
+			}
+
 			if (glm::any(glm::equal(desc.target_size, glm::vec2(fit)))) {
 
 				glm::vec2 min_size = glm::vec2(0);
@@ -1376,8 +1407,9 @@ void GUI2Dynamic::publish(GUI2& gui)
 				gui.box_prop().uv00					= desc.uv00;
 				gui.box_prop().uv11					= desc.uv11;
 				gui.box_prop().texture_handle		= desc.texture_handle;
-				gui.box_prop().z					= level;	 
+				gui.box_prop().z					= (float)child;
 				gui.box_end();
+
 
 				break;
 			}

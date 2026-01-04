@@ -82,8 +82,8 @@ int main() {
 	//CortexGUITest2_Fundamental().run();
 	//CortexGUITest2_Dynamic().run();
 	//CortexGUITest2_Relative().run();
-	CortexGUITest2_Stateful().run();
-	//CortexGUITest2_Widgets().run();
+	//CortexGUITest2_Stateful().run();
+	CortexGUITest2_Widgets().run();
 	//CortexGUITest2_Hierarchy().run();
 
 }

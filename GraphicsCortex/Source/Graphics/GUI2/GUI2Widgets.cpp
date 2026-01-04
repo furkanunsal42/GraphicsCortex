@@ -395,6 +395,52 @@ void widget2::Box::apply_properties_to(GUI2Dynamic::StackDesc& desc)
 	desc.spacing			=  0;
 }
 
+void widget2::Grid::begin(GUI2Dynamic& gui_dynamic) {
+
+	gui_dynamic.grid_begin(id);
+
+	gui_dynamic.grid_prop().margin		= get_property(margin,		on_hover_margin,		on_hover_margin_transition,			on_hold_margin,			on_hold_margin_transition);
+	gui_dynamic.grid_prop().padding		= get_property(padding,		on_hover_padding,		on_hover_padding_transition,		on_hold_padding,		on_hold_padding_transition);
+	gui_dynamic.grid_prop().target_size = get_property(target_size, on_hover_target_size,	on_hover_target_size_transition,	on_hold_target_size,	on_hold_target_size_transition);
+
+}
+
+void widget2::Grid::add_column(GUI2Dynamic& gui_dynamic, float value){
+	gui_dynamic.grid_add_column(value);
+}
+
+void widget2::Grid::add_row(GUI2Dynamic& gui_dynamic, float value) {
+	gui_dynamic.grid_add_row(value);
+}
+
+void widget2::Grid::region(GUI2Dynamic& gui_dynamic, glm::ivec2 region, glm::ivec2 span){
+	gui_dynamic.grid_region(region, span);
+}
+
+void widget2::Grid::end(GUI2Dynamic& gui_dynamic){
+	gui_dynamic.grid_end();
+
+	resolve_io(gui_dynamic);
+}
+
+void widget2::Stack::begin(GUI2Dynamic& gui_dynamic) {
+
+	gui_dynamic.stack_begin(id);
+
+	gui_dynamic.stack_prop().margin			= get_property(margin,		on_hover_margin,		on_hover_margin_transition,			on_hold_margin,			on_hold_margin_transition);
+	gui_dynamic.stack_prop().padding		= get_property(padding,		on_hover_padding,		on_hover_padding_transition,		on_hold_padding,		on_hold_padding_transition);
+	gui_dynamic.stack_prop().target_size	= get_property(target_size, on_hover_target_size,	on_hover_target_size_transition,	on_hold_target_size,	on_hold_target_size_transition);
+	gui_dynamic.stack_prop().spacing		= get_property(spacing,		on_hover_spacing,		on_hover_spacing_transition,		on_hold_spacing,		on_hold_spacing_transition);
+
+}
+
+void widget2::Stack::end(GUI2Dynamic& gui_dynamic) {
+
+	gui_dynamic.stack_end();
+
+	resolve_io(gui_dynamic);
+}
+
 void widget2::Window::publish(GUI2Dynamic& gui_dynamic) {
 	
 	if (draggable && get_mouse_state() == widget2::IOWidget::Carry) {
@@ -418,8 +464,8 @@ void widget2::Image::publish(GUI2Dynamic& gui_dynamic)
 	if (texture == nullptr) {
 		Box::publish(gui_dynamic);
 		gui_dynamic.box_prop().texture_handle = 0;
-		gui_dynamic.box_begin().uv00 = uv00;
-		gui_dynamic.box_begin().uv11 = uv11;
+		gui_dynamic.box_prop().uv00 = uv00;
+		gui_dynamic.box_prop().uv11 = uv11;
 		return;
 	}
 	
@@ -427,8 +473,8 @@ void widget2::Image::publish(GUI2Dynamic& gui_dynamic)
 	if (type == Stretch) {
 		Box::publish(gui_dynamic);
 		gui_dynamic.box_prop().texture_handle = texture->texture_handle;
-		gui_dynamic.box_begin().uv00 = uv00;
-		gui_dynamic.box_begin().uv11 = uv11;
+		gui_dynamic.box_prop().uv00 = uv00;
+		gui_dynamic.box_prop().uv11 = uv11;
 	}
 	else if (type == Fit) {
 		
@@ -474,6 +520,12 @@ void widget2::Image::publish(GUI2Dynamic& gui_dynamic)
 	}
 }
 
+widget2::Label::Label() {
+
+	target_size = glm::vec2(GUI2Dynamic::fit);
+
+}
+
 void widget2::Label::publish(GUI2Dynamic& gui_dynamic)
 {
 	if (active_global_resources == nullptr || !FontBank::get().does_font_exist(font))
@@ -482,11 +534,12 @@ void widget2::Label::publish(GUI2Dynamic& gui_dynamic)
 	float advance = 0;
 	glm::vec2 text_size(0);
 
-	auto& desc = gui_dynamic.grid_begin(id);
-	apply_properties_to(desc);
-	desc.target_size = glm::vec2(GUI2Dynamic::fit);
+	begin(gui_dynamic);
+	region(gui_dynamic, glm::ivec2(0));
 
-	gui_dynamic.grid_region(glm::ivec2(0));
+	//gui_dynamic.box_begin()
+	//	.set_target_size(glm::vec2(GUI2Dynamic::avail))
+	//	.set_color(glm::vec4(1, 0, 0, 1));
 
 	for (int32_t i = 0; i < text.size(); i++) {
 	
@@ -506,7 +559,7 @@ void widget2::Label::publish(GUI2Dynamic& gui_dynamic)
 			.set_margin(glm::vec4(position.x, position.y, 0, 0))
 			.set_uv00(glm::vec2(table.coords_hi.x,	1-table.coords_hi.y))
 			.set_uv11(glm::vec2(table.coords_low.x, 1 - table.coords_low.y))
-			.set_color(get_property(color, on_hover_color, on_hover_color_transition, on_hold_color, on_hold_color_transition))
+			.set_color(get_property(text_color, on_hover_text_color, on_hover_text_color_transition, on_hold_text_color, on_hold_text_color_transition))
 			.set_texture_handle(FontBank::get().get_font(font).atlas->texture_handle);
 
 		text_size.y = glm::max(text_size.y, size.y);
@@ -515,33 +568,40 @@ void widget2::Label::publish(GUI2Dynamic& gui_dynamic)
 		advance += table.advance * atlas_size.x / font_size * text_height;
 	}
 
-	gui_dynamic.grid_add_column(text_size.x);
-	gui_dynamic.grid_add_row(text_size.y);
-	gui_dynamic.grid_end();
+	add_column(gui_dynamic, text_size.x);
+	add_row(gui_dynamic, text_size.y);
+	gui_dynamic.grid_prop().target_size = text_size;
+	end(gui_dynamic);
 
 	resolve_io(gui_dynamic);
+}
 
-	//if (element.size().x == 0)	element.size().x = advance;
-	//if (element.size().y == 0)	element.size().y = text_size.y;
+widget2::TextArea::TextArea()
+{
+	target_size					= glm::vec2(400, 60);
+	padding						= glm::vec4(0);
+	background.target_size		= glm::vec2(GUI2Dynamic::avail, GUI2Dynamic::avail);
+	background.margin			= glm::vec4(0);
+
+	label.target_size			= glm::vec2(GUI2Dynamic::fit);
+	label.margin				= glm::vec4(15, GUI2Dynamic::avail, 15, GUI2Dynamic::avail);
+	label.text_color			= glm::vec4(0, 0, 0, 1);
+
 }
 
 void widget2::TextArea::publish(GUI2Dynamic& gui_dynamic)
 {
 	label.text = text.size() == 0 ? placeholder_text : text;
 	
-	gui_dynamic.grid_begin();
-	gui_dynamic.grid_region(glm::ivec2(0));
+	begin(gui_dynamic);
+	region(gui_dynamic, glm::ivec2(0));
 	
+	background.publish(gui_dynamic);
 	label.publish(gui_dynamic);
-	Box::publish(gui_dynamic);
 
-	glm::vec2 size = get_resolved_properties(gui_dynamic).size;
-	size = glm::max(size, label.get_resolved_properties(gui_dynamic).size);
-	size = glm::max(size, glm::vec2(1));
-
-	gui_dynamic.grid_add_column(size.x);
-	gui_dynamic.grid_add_row(size.y);
-	gui_dynamic.grid_end();
+	add_column(gui_dynamic, GUI2Dynamic::avail);
+	add_row(gui_dynamic, GUI2Dynamic::avail);
+	end(gui_dynamic);
 
 	resolve_io(gui_dynamic);
 }

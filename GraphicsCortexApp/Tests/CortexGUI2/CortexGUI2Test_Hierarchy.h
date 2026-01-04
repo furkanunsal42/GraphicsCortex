@@ -27,7 +27,8 @@ public:
 		size_t box3		= invalid_id;
 		size_t box4		= invalid_id;
 		
-		while (true) {
+		while (true) 
+		{
 			
 			gui_d.new_frame(gui);
 
@@ -38,28 +39,29 @@ public:
 				gui_d.grid_begin()
 					.add_column(200)
 					.add_column(200)
-					.add_row(200);
+					.add_row(fit);
 					
 					gui_d.grid_region(glm::ivec2(1, 0));
 					
 					gui_d.grid_begin()
-						.set_target_size(glm::vec2(avail))
+						//.set_target_size(glm::vec2(avail))
 						.add_column(avail)
-						.add_row(avail)
-						.add_row(avail);
+						.add_row(100)
+						.add_row(fit);
 					
 					gui_d.grid_region(glm::ivec2(0, 1));
 
 						gui_d.box_begin(box0)
-							.set_target_size(glm::vec2(avail, avail))
+							.set_target_size(glm::vec2(100, 100))
 							.set_color(glm::vec4(1, 1, 0, 1));
 
 					gui_d.grid_end();
-					
 
 				gui_d.grid_end();
 
 			gui_d.window_end();
+
+			//gui_d.print_layout();
 
 			gui_d.publish(gui);
 			gui.render();
