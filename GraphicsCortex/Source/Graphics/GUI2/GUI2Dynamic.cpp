@@ -16,7 +16,7 @@ size_t GUI2Dynamic::find_last_of_type(NodeType type)
 						traversing_node : 
 						Node::invalid_node;
 
-	return found_node;
+	return node_stack[traversing_node];
 }
 
 GUI2Dynamic::NodeType GUI2Dynamic::get_type(const Node& node)

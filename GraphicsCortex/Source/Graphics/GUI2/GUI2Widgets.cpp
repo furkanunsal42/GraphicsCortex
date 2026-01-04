@@ -418,6 +418,7 @@ void widget2::Grid::region(GUI2Dynamic& gui_dynamic, glm::ivec2 region, glm::ive
 }
 
 void widget2::Grid::end(GUI2Dynamic& gui_dynamic){
+	
 	gui_dynamic.grid_end();
 
 	resolve_io(gui_dynamic);
@@ -520,15 +521,12 @@ void widget2::Image::publish(GUI2Dynamic& gui_dynamic)
 	}
 }
 
-widget2::Label::Label() {
-
-	target_size = glm::vec2(GUI2Dynamic::fit);
-
-}
-
 void widget2::Label::publish(GUI2Dynamic& gui_dynamic)
 {
 	if (active_global_resources == nullptr || !FontBank::get().does_font_exist(font))
+		return;
+
+	if (text.size() == 0)
 		return;
 
 	float advance = 0;
@@ -574,19 +572,6 @@ void widget2::Label::publish(GUI2Dynamic& gui_dynamic)
 	end(gui_dynamic);
 
 	resolve_io(gui_dynamic);
-}
-
-widget2::TextArea::TextArea()
-{
-	target_size					= glm::vec2(400, 60);
-	padding						= glm::vec4(0);
-	background.target_size		= glm::vec2(GUI2Dynamic::avail, GUI2Dynamic::avail);
-	background.margin			= glm::vec4(0);
-
-	label.target_size			= glm::vec2(GUI2Dynamic::fit);
-	label.margin				= glm::vec4(15, GUI2Dynamic::avail, 15, GUI2Dynamic::avail);
-	label.text_color			= glm::vec4(0, 0, 0, 1);
-
 }
 
 void widget2::TextArea::publish(GUI2Dynamic& gui_dynamic)

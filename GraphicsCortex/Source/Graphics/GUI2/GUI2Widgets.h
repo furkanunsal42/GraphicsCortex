@@ -317,7 +317,12 @@ namespace widget2 {
 		optvec4		on_hold_text_color				= std::nullopt;
 		duration	on_hold_text_color_transition	= duration(0);
 
-		Label();
+		Label() {
+
+			target_size					= glm::vec2(GUI2Dynamic::fit);
+
+		}
+
 		void publish(GUI2Dynamic& gui_dynamic);
 
 	};
@@ -335,7 +340,25 @@ namespace widget2 {
 		bool keyboard_focus = false;
 		bool can_aquire_keyboard_focus = true;
 
-		TextArea();
+		TextArea() {
+
+			target_size					= glm::vec2(400, 40);
+			padding						= glm::vec4(0);
+
+			background.color			= glm::vec4(1, 1, 1, 1);
+			background.border_thickness = glm::vec4(2);
+			background.border_color0	= glm::vec4(0.68, 0.71, 0.75, 1);
+			background.border_color1	= glm::vec4(0.68, 0.71, 0.75, 1);
+			background.border_color2	= glm::vec4(0.68, 0.71, 0.75, 1);
+			background.border_color3	= glm::vec4(0.68, 0.71, 0.75, 1);
+			background.target_size		= glm::vec2(GUI2Dynamic::avail, GUI2Dynamic::avail);
+			background.margin			= glm::vec4(0);
+
+			label.target_size			= glm::vec2(GUI2Dynamic::fit);
+			label.margin				= glm::vec4(8, GUI2Dynamic::avail, 8, GUI2Dynamic::avail);
+			label.text_color			= glm::vec4(0.2, 0.2, 0.2, 1);
+
+		}
 
 		void publish(GUI2Dynamic& gui_dynamic);
 	};

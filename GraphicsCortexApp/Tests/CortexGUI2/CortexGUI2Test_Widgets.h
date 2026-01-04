@@ -61,15 +61,15 @@ public:
 			
 			gui_d.stack_begin()
 				.set_target_size(glm::vec2(600, fit));
-
+			
 			style_box.publish(gui_d);
 			
 			image.publish(gui_d);
-			//
-			//label.publish(gui_d);
-			//
-			//text_area.publish(gui_d);
-
+			
+			label.publish(gui_d);
+			
+			text_area.publish(gui_d);
+			
 			gui_d.stack_end();
 			gui_d.window_end();
 			
