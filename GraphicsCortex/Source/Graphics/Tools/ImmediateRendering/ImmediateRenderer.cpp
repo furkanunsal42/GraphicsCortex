@@ -35,6 +35,38 @@ void ImmediateRenderer::set_clip_area(glm::vec2 begin, glm::vec2 size)
 	current_properties.clip_area = glm::vec4(begin, size);
 }
 
+void ImmediateRenderer::set_border_roundness(glm::vec4 roundness) {
+	current_properties.border_roundness = roundness;
+}
+
+void ImmediateRenderer::set_border_thickness(glm::vec4 thickness) {
+	current_properties.border_thickness = thickness;
+}
+
+void ImmediateRenderer::set_border_color0(glm::vec4 color) {
+	current_properties.border_color0 = color;
+}
+
+void ImmediateRenderer::set_border_color1(glm::vec4 color) {
+	current_properties.border_color1 = color;
+}
+
+void ImmediateRenderer::set_border_color2(glm::vec4 color) {
+	current_properties.border_color2 = color;
+}
+
+void ImmediateRenderer::set_border_color3(glm::vec4 color) {
+	current_properties.border_color3 = color;
+}
+
+void ImmediateRenderer::set_shadow_thickness(glm::vec4 shadow_thickness) {
+	current_properties.border_shadow_thickness = shadow_thickness;
+}
+
+void ImmediateRenderer::set_shadow_color(glm::vec4 shadow_color) {
+	current_properties.border_shadow_color = shadow_color;
+}
+
 ImmediateRenderer::DrawProperties ImmediateRenderer::get_current_properties()
 {
 	return current_properties;
@@ -299,6 +331,15 @@ void ImmediateRenderer::_init_vab()
 	vab->push_attribute_format(4, 0, VertexAttributeBuffer::a_f32, 4, true);
 	vab->push_attribute_format(5, 0, VertexAttributeBuffer::a_f32, 2, true);
 	vab->push_attribute_format(6, 0, VertexAttributeBuffer::a_ui32, 2, true);
+
+	vab->push_attribute_format(7, 0, VertexAttributeBuffer::a_f32, 4, true);
+	vab->push_attribute_format(8, 0, VertexAttributeBuffer::a_f32, 4, true);
+	vab->push_attribute_format(9, 0, VertexAttributeBuffer::a_f32, 4, true);
+	vab->push_attribute_format(10, 0, VertexAttributeBuffer::a_f32, 4, true);
+	vab->push_attribute_format(11, 0, VertexAttributeBuffer::a_f32, 4, true);
+	vab->push_attribute_format(12, 0, VertexAttributeBuffer::a_f32, 4, true);
+	vab->push_attribute_format(13, 0, VertexAttributeBuffer::a_f32, 4, true);
+	vab->push_attribute_format(14, 0, VertexAttributeBuffer::a_f32, 4, true);
 }
 
 void ImmediateRenderer::_update_gpu_buffers() 
@@ -345,7 +386,15 @@ void ImmediateRenderer::_update_gpu_buffers()
 		gpu_struct.fill_color = command.properties.fill_color;
 		gpu_struct.line_color = command.properties.line_color;
 		gpu_struct.line_thickness_with_padding = glm::vec4(command.properties.line_thickness, 0, 0, 0);
-		
+		gpu_struct.border_roundness				= command.properties.border_roundness;
+		gpu_struct.border_thickness				= command.properties.border_thickness;
+		gpu_struct.border_color0				= command.properties.border_color0;
+		gpu_struct.border_color1				= command.properties.border_color1;
+		gpu_struct.border_color2				= command.properties.border_color2;
+		gpu_struct.border_color3				= command.properties.border_color3;
+		gpu_struct.border_shadow_thickness		= command.properties.border_shadow_thickness;
+		gpu_struct.border_shadow_color			= command.properties.border_shadow_color;
+	
 		gpu_struct.position = glm::vec4(command.position0, 1);
 		data.push_back(gpu_struct);
 

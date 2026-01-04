@@ -23,6 +23,7 @@ public:
 		window0.draggable = true;
 
 		widget2::Box style_box;
+		style_box.border_color0 = glm::vec4(0, 0, 1, 1);
 		style_box.target_size = glm::vec2(avail, 32);
 		style_box.color = glm::vec4(1, 1, 1, 1);
 		style_box.on_hover_color = glm::vec4(1, 0, 1, 1);
@@ -55,18 +56,18 @@ public:
 
 			window0.publish(gui_d);
 			
-			//gui_d.stack_begin()
-			//	.set_target_size(glm::vec2(600, fit));
+			gui_d.stack_begin()
+				.set_target_size(glm::vec2(600, fit));
 
-			//style_box.publish(gui_d);
+			style_box.publish(gui_d);
 			
 			//image.publish(gui_d);
-			
+			//
 			//label.publish(gui_d);
+			//
+			//text_area.publish(gui_d);
 
-			text_area.publish(gui_d);
-
-			//gui_d.stack_end();
+			gui_d.stack_end();
 			gui_d.window_end();
 			
 			gui_d.publish(gui);

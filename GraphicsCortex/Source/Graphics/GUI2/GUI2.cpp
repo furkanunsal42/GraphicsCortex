@@ -268,11 +268,21 @@ void GUI2::_publish_last() {
 		ImmediateRenderer& renderer = *windows_state.at(window_stack.back()).renderer;
 
 		renderer.set_fill_color(desc.color);
+		renderer.set_border_roundness(desc.border_rounding);
+		renderer.set_border_thickness(desc.border_thickness);
+		renderer.set_border_color0(desc.border_color0);
+		renderer.set_border_color1(desc.border_color1);
+		renderer.set_border_color2(desc.border_color2);
+		renderer.set_border_color3(desc.border_color3);
+		renderer.set_shadow_thickness(desc.shadow_thickness);
+		renderer.set_shadow_color(desc.shadow_color);
+
 		renderer.draw_rectangle(
 			desc.position + desc.size,
 			desc.position, desc.z,
 			desc.texture_handle, desc.uv00, desc.uv11
 		);
+
 
 		box_last = std::nullopt;
 	}
