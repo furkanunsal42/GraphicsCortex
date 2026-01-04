@@ -24,6 +24,9 @@ public:
 
 		widget2::Box style_box;
 		style_box.border_color0 = glm::vec4(0, 0, 1, 1);
+		style_box.border_thickness = glm::vec4(2);
+		style_box.border_rounding = glm::vec4(10);
+
 		style_box.target_size = glm::vec2(avail, 32);
 		style_box.color = glm::vec4(1, 1, 1, 1);
 		style_box.on_hover_color = glm::vec4(1, 0, 1, 1);

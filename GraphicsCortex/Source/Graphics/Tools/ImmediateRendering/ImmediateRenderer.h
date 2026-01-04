@@ -90,8 +90,8 @@ private:
 		sizeof(glm::vec4) +		// line_thickness(x)
 		sizeof(glm::vec4) +		// position
 		sizeof(glm::vec4) +		// clip_area
-		sizeof(glm::vec2) +		// uv
-		sizeof(glm::uvec2)+		// texture_handle
+		sizeof(glm::vec4) +		// uv
+		sizeof(glm::uvec4)+		// texture_handle
 		sizeof(glm::vec4) +		// border_roundness
 		sizeof(glm::vec4) + 	// border_thickness
 		sizeof(glm::vec4) + 	// border_color0
@@ -99,7 +99,8 @@ private:
 		sizeof(glm::vec4) + 	// border_color2
 		sizeof(glm::vec4) + 	// border_color3
 		sizeof(glm::vec4) + 	// border_shadow_thickness
-		sizeof(glm::vec4)		// border_shadow_color
+		sizeof(glm::vec4) +		// border_shadow_color
+		sizeof(glm::vec4)		// position_size
 		;
 
 	void _compile_shaders();
@@ -111,8 +112,8 @@ private:
 		glm::vec4	line_thickness_with_padding = glm::vec4(1, 0, 0, 0);
 		glm::vec4	position;
 		glm::vec4	clip_area					= glm::vec4(0, 0, 1, 1);
-		glm::vec2	uv							= glm::vec2(0);
-		glm::uvec2	texture_handle				= glm::uvec2(0);
+		glm::vec4	uv							= glm::vec4(0);
+		glm::uvec4	texture_handle				= glm::uvec4(0);
 		glm::vec4	border_roundness			= glm::vec4(0);
 		glm::vec4	border_thickness			= glm::vec4(0);
 		glm::vec4	border_color0				= glm::vec4(0, 0, 0, 1);
@@ -121,6 +122,7 @@ private:
 		glm::vec4	border_color3				= glm::vec4(0, 0, 0, 1);
 		glm::vec4	border_shadow_thickness		= glm::vec4(0);
 		glm::vec4	border_shadow_color			= glm::vec4(0, 0, 0, 1);
+		glm::vec4	position_size				= glm::vec4(0, 0, 0, 0);
 	};
 
 	size_t point_commands_vertex_count = 0;

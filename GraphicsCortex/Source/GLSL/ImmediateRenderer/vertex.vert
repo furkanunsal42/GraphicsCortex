@@ -17,14 +17,15 @@ const int border_color2_slot			= 11;
 const int border_color3_slot			= 12;
 const int border_shadow_thickness_slot	= 13;
 const int border_shadow_color_slot		= 14;
+const int position_size_slot			= 15;
 	
 layout (location = fill_color_slot)					in vec4 a_fill_color;
 layout (location = line_color_slot)					in vec4 a_line_color;
 layout (location = line_thickness_slot)				in vec4 a_line_thickness;
 layout (location = position_slot)					in vec4 a_position;
 layout (location = clip_area_slot)					in vec4 a_clip_area;
-layout (location = uv_slot)							in vec2 a_uv;
-layout (location = texture_index_slot)				in uvec2 a_texture_index;
+layout (location = uv_slot)							in vec4 a_uv;
+layout (location = texture_index_slot)				in uvec4 a_texture_index;
 layout (location = border_roundness_slot)			in vec4 a_border_roundness;
 layout (location = border_thickness_slot)			in vec4 a_border_thickness;
 layout (location = border_color0_slot)				in vec4 a_border_color0;
@@ -33,14 +34,15 @@ layout (location = border_color2_slot)				in vec4 a_border_color2;
 layout (location = border_color3_slot)				in vec4 a_border_color3;
 layout (location = border_shadow_thickness_slot)	in vec4 a_border_shadow_thickness;
 layout (location = border_shadow_color_slot)		in vec4 a_border_shadow_color;
+layout (location = position_size_slot)				in vec4 a_position_size;
 
 out vec4 v_fill_color;
 out vec4 v_line_color;
 out float v_line_thickness;
 out vec4 v_position;
 out vec4 v_clip_area;
-out vec2 v_uv;
-out flat uvec2 v_texture_index;
+out vec4 v_uv;
+out flat uvec4 v_texture_index;
 out vec4 v_border_roundness;
 out vec4 v_border_thickness;
 out vec4 v_border_color0;
@@ -49,6 +51,7 @@ out vec4 v_border_color2;
 out vec4 v_border_color3;
 out vec4 v_border_shadow_thickness;
 out vec4 v_border_shadow_color;
+out vec4 v_position_size;
 	
 uniform mat4 view;
 uniform mat4 projection;
@@ -70,6 +73,7 @@ void main(){
 	v_border_color3 = a_border_color3;
 	v_border_shadow_thickness = a_border_shadow_thickness;
 	v_border_shadow_color = a_border_shadow_color;
+	v_position_size = a_position_size;
 
 	gl_Position = projection * view * a_position;
 }
