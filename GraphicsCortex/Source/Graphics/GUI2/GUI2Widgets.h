@@ -101,6 +101,40 @@ namespace widget2 {
 
 	};
 
+	//struct SimpleWindow : public IOWidget {
+	//
+	//};
+	//
+	//struct SimpleBox : public IOWidget {
+	//	using vec4 = glm::vec4;
+	//	using vec2 = glm::vec2;
+	//	
+	//	vec4		margin									= vec4(0);
+	//	vec2		target_size								= vec2(128);
+	//	vec2		min_size								= vec2(GUI2Dynamic::fit);
+	//	vec2		max_size								= vec2(GUI2Dynamic::avail);
+	//
+	//	vec4		color									= vec4(1, 1, 1, 1);
+	//	vec4		border_thickness						= vec4(0);
+	//	vec4		border_rounding							= vec4(0);
+	//	vec4		border_color0							= vec4(0, 0, 0, 1);
+	//	vec4		border_color1							= vec4(0, 0, 0, 1);
+	//	vec4		border_color2							= vec4(0, 0, 0, 1);
+	//	vec4		border_color3							= vec4(0, 0, 0, 1);
+	//	vec4		shadow_thickness						= vec4(0);
+	//	vec4		shadow_color							= vec4(0, 0, 0, 1);
+	//
+	//	void publish(GUI2Dynamic& gui_dynamic);
+	//};
+	//
+	//struct SimpleGrid : public IOWidget {
+	//
+	//};
+	//
+	//struct SimpleStack : public IOWidget {
+	//
+	//};
+
 	struct Box : public StyledWidget {
 
 		using duration	= std::chrono::system_clock::duration;
@@ -174,12 +208,155 @@ namespace widget2 {
 
 		void publish(GUI2Dynamic& gui_dynamic);
 
-	protected:
+	};
 
-		void apply_properties_to(GUI2Dynamic::WindowDesc& desc);
-		void apply_properties_to(GUI2Dynamic::BoxDesc& desc);
-		void apply_properties_to(GUI2Dynamic::GridDesc& desc);
-		void apply_properties_to(GUI2Dynamic::StackDesc& desc);
+	struct Grid : public StyledWidget {
+
+		using duration	= std::chrono::system_clock::duration;
+		using vec4		= glm::vec4;
+		using vec2		= glm::vec2;
+		using optvec4	= std::optional<glm::vec4>;
+		using optvec2	= std::optional<glm::vec2>;
+
+		vec4		margin									= vec4(0);
+		vec2		target_size								= vec2(128);
+		vec2		min_size								= vec2(GUI2Dynamic::fit);
+		vec2		max_size								= vec2(GUI2Dynamic::avail);
+
+		vec4		color									= vec4(1, 1, 1, 1);
+		vec4		border_thickness						= vec4(0);
+		vec4		border_rounding							= vec4(0);
+		vec4		border_color0							= vec4(0, 0, 0, 1);
+		vec4		border_color1							= vec4(0, 0, 0, 1);
+		vec4		border_color2							= vec4(0, 0, 0, 1);
+		vec4		border_color3							= vec4(0, 0, 0, 1);
+		vec4		shadow_thickness						= vec4(0);
+		vec4		shadow_color							= vec4(0, 0, 0, 1);
+		
+		optvec4		on_hover_margin							= std::nullopt;
+		optvec2		on_hover_target_size					= std::nullopt;
+		optvec4		on_hover_color							= std::nullopt;
+		optvec4		on_hover_border_thickness				= std::nullopt;
+		optvec4		on_hover_border_rounding				= std::nullopt;
+		optvec4		on_hover_border_color0					= std::nullopt;
+		optvec4		on_hover_border_color1					= std::nullopt;
+		optvec4		on_hover_border_color2					= std::nullopt;
+		optvec4		on_hover_border_color3					= std::nullopt;
+		optvec4		on_hover_shadow_thickness				= std::nullopt;
+		optvec4		on_hover_shadow_color					= std::nullopt;
+		
+		duration	on_hover_margin_transition				= duration(0);
+		duration	on_hover_target_size_transition			= duration(0);
+		duration	on_hover_color_transition				= duration(0);
+		duration	on_hover_border_thickness_transition	= duration(0);
+		duration	on_hover_border_rounding_transition		= duration(0);
+		duration	on_hover_border_color0_transition		= duration(0);
+		duration	on_hover_border_color1_transition		= duration(0);
+		duration	on_hover_border_color2_transition		= duration(0);
+		duration	on_hover_border_color3_transition		= duration(0);
+		duration	on_hover_shadow_thickness_transition	= duration(0);
+		duration	on_hover_shadow_color_transition		= duration(0);
+
+		optvec4		on_hold_margin							= std::nullopt;
+		optvec2		on_hold_target_size						= std::nullopt;
+		optvec4		on_hold_color							= std::nullopt;
+		optvec4		on_hold_border_thickness				= std::nullopt;
+		optvec4		on_hold_border_rounding					= std::nullopt;
+		optvec4		on_hold_border_color0					= std::nullopt;
+		optvec4		on_hold_border_color1					= std::nullopt;
+		optvec4		on_hold_border_color2					= std::nullopt;
+		optvec4		on_hold_border_color3					= std::nullopt;
+		optvec4		on_hold_shadow_thickness				= std::nullopt;
+		optvec4		on_hold_shadow_color					= std::nullopt;
+
+		duration	on_hold_margin_transition				= duration(0);
+		duration	on_hold_target_size_transition			= duration(0);
+		duration	on_hold_color_transition				= duration(0);
+		duration	on_hold_border_thickness_transition		= duration(0);
+		duration	on_hold_border_rounding_transition		= duration(0);
+		duration	on_hold_border_color0_transition		= duration(0);
+		duration	on_hold_border_color1_transition		= duration(0);
+		duration	on_hold_border_color2_transition		= duration(0);
+		duration	on_hold_border_color3_transition		= duration(0);
+		duration	on_hold_shadow_thickness_transition		= duration(0);
+		duration	on_hold_shadow_color_transition			= duration(0);
+
+		void publish(GUI2Dynamic& gui_dynamic);
+
+	};
+
+	struct Stack : public StyledWidget {
+
+		using duration	= std::chrono::system_clock::duration;
+		using vec4		= glm::vec4;
+		using vec2		= glm::vec2;
+		using optvec4	= std::optional<glm::vec4>;
+		using optvec2	= std::optional<glm::vec2>;
+
+		vec4		margin									= vec4(0);
+		vec2		target_size								= vec2(128);
+		vec2		min_size								= vec2(GUI2Dynamic::fit);
+		vec2		max_size								= vec2(GUI2Dynamic::avail);
+
+		vec4		color									= vec4(1, 1, 1, 1);
+		vec4		border_thickness						= vec4(0);
+		vec4		border_rounding							= vec4(0);
+		vec4		border_color0							= vec4(0, 0, 0, 1);
+		vec4		border_color1							= vec4(0, 0, 0, 1);
+		vec4		border_color2							= vec4(0, 0, 0, 1);
+		vec4		border_color3							= vec4(0, 0, 0, 1);
+		vec4		shadow_thickness						= vec4(0);
+		vec4		shadow_color							= vec4(0, 0, 0, 1);
+		
+		optvec4		on_hover_margin							= std::nullopt;
+		optvec2		on_hover_target_size					= std::nullopt;
+		optvec4		on_hover_color							= std::nullopt;
+		optvec4		on_hover_border_thickness				= std::nullopt;
+		optvec4		on_hover_border_rounding				= std::nullopt;
+		optvec4		on_hover_border_color0					= std::nullopt;
+		optvec4		on_hover_border_color1					= std::nullopt;
+		optvec4		on_hover_border_color2					= std::nullopt;
+		optvec4		on_hover_border_color3					= std::nullopt;
+		optvec4		on_hover_shadow_thickness				= std::nullopt;
+		optvec4		on_hover_shadow_color					= std::nullopt;
+		
+		duration	on_hover_margin_transition				= duration(0);
+		duration	on_hover_target_size_transition			= duration(0);
+		duration	on_hover_color_transition				= duration(0);
+		duration	on_hover_border_thickness_transition	= duration(0);
+		duration	on_hover_border_rounding_transition		= duration(0);
+		duration	on_hover_border_color0_transition		= duration(0);
+		duration	on_hover_border_color1_transition		= duration(0);
+		duration	on_hover_border_color2_transition		= duration(0);
+		duration	on_hover_border_color3_transition		= duration(0);
+		duration	on_hover_shadow_thickness_transition	= duration(0);
+		duration	on_hover_shadow_color_transition		= duration(0);
+
+		optvec4		on_hold_margin							= std::nullopt;
+		optvec2		on_hold_target_size						= std::nullopt;
+		optvec4		on_hold_color							= std::nullopt;
+		optvec4		on_hold_border_thickness				= std::nullopt;
+		optvec4		on_hold_border_rounding					= std::nullopt;
+		optvec4		on_hold_border_color0					= std::nullopt;
+		optvec4		on_hold_border_color1					= std::nullopt;
+		optvec4		on_hold_border_color2					= std::nullopt;
+		optvec4		on_hold_border_color3					= std::nullopt;
+		optvec4		on_hold_shadow_thickness				= std::nullopt;
+		optvec4		on_hold_shadow_color					= std::nullopt;
+
+		duration	on_hold_margin_transition				= duration(0);
+		duration	on_hold_target_size_transition			= duration(0);
+		duration	on_hold_color_transition				= duration(0);
+		duration	on_hold_border_thickness_transition		= duration(0);
+		duration	on_hold_border_rounding_transition		= duration(0);
+		duration	on_hold_border_color0_transition		= duration(0);
+		duration	on_hold_border_color1_transition		= duration(0);
+		duration	on_hold_border_color2_transition		= duration(0);
+		duration	on_hold_border_color3_transition		= duration(0);
+		duration	on_hold_shadow_thickness_transition		= duration(0);
+		duration	on_hold_shadow_color_transition			= duration(0);
+
+		void publish(GUI2Dynamic& gui_dynamic);
 
 	};
 
