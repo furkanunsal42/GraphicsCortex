@@ -64,7 +64,7 @@ public:
 
 			style_box.publish(gui_d);
 			
-			//image.publish(gui_d);
+			image.publish(gui_d);
 			//
 			//label.publish(gui_d);
 			//

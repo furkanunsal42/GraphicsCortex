@@ -20,17 +20,6 @@ in vec4 v_border_color3;
 in vec4 v_border_shadow_thickness;
 in vec4 v_border_shadow_color;
 in vec4 v_position_size;
-	
-/*
-void main(){
-	
-	if (v_texture_index.xy != uvec2(0, 0))
-		frag_color = vec4(texture(sampler2D(v_texture_index.xy), v_uv.xy)) * v_fill_color;
-	else
-		frag_color = v_fill_color;
- }
-
- */
  
 bvec4 and(bvec4 a, bvec4 b){
 	return bvec4(
@@ -44,6 +33,11 @@ bvec4 and(bvec4 a, bvec4 b){
 const float cos45 = 0.70710678118654752440084436210485;
 
 void main(){
+
+	if (v_texture_index.xy != uvec2(0, 0)){
+		frag_color = vec4(texture(sampler2D(v_texture_index.xy), v_uv.xy)) * v_fill_color;
+		return;
+	}
 
 	const vec2 position_local = v_position.xy - v_position_size.xy;
 	const vec2 size = v_position_size.zw;
