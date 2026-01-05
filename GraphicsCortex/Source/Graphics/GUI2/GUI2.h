@@ -4,10 +4,12 @@
 #include <vector>
 #include <string>
 #include <unordered_map>
+#include <variant>
 
 #include "Window.h"
 #include "Tools/ImmediateRendering/ImmediateRenderer.h"
 #include "Math/AABB.h"
+#include "Newsletter.h"
 
 class GUI2 {
 public:
@@ -84,12 +86,26 @@ public:
 		RightHold		= 0b10000000,
 	};
 
+	struct KeyboardEvent {
+		KeyboardEvent() = default;
+		KeyboardEvent(uint32_t key) { data = key; }
+		KeyboardEvent(Window::KeyPressResult key_press_result) { data = key_press_result; }
+
+		std::variant<
+			uint32_t,
+			Window::KeyPressResult
+		> data = 0u;
+	};
+
 	struct IOState {
 		MouseEvent	mouse_state						= MouseEvent::Hover;
 		MouseEvent	mouse_state_prev				= MouseEvent::Hover;
 		glm::vec2	mouse_position					= glm::vec2(0);
 		glm::vec2	mouse_left_press_begin_position	= glm::vec2(0);
 		glm::vec2	mouse_right_press_begin_position= glm::vec2(0);
+		std::vector<KeyboardEvent> keyboard_events;
+		size_t char_newsletter_event	= Newsletter<void()>::invalid_id;
+		size_t key_newsletter_event		= Newsletter<void()>::invalid_id;
 	};
 
 private:

@@ -51,7 +51,7 @@ public:
 		label.on_hover_text_color_transition = std::chrono::milliseconds(100);
 
 		widget2::TextArea text_area;
-		text_area.text = U"HERE";
+		text_area.text = U"";
 
 		while (true) {
 
@@ -75,7 +75,7 @@ public:
 			
 			gui_d.publish(gui);
 			gui.render();
-
+				
 			static bool once = true;
 			if (once) {
 				gui_d.print_layout();

@@ -3,31 +3,31 @@
 #include <chrono>
 #include "Font.h"
 
-#define _widget2_styled_property(type, name, default_value, event_name) \
+#define widget2_styled_event(type, name, event_name) \
 	std::optional<type> event_name##_##name = std::nullopt; \
-	std::chrono::system_clock::duration event_name##_##name##_transition = std::chrono::system_clock::duration(0)
+	std::chrono::system_clock::duration event_name##_##name##_transition = std::chrono::system_clock::duration(0);
 
 #define widget2_styled_property1(type, name, default_value, event_name0) \
 	type name = default_value; \
-	_widget2_styled_property(type, name, event_name0, default_value);
+	widget2_styled_event(type, name, event_name0)
 	
 #define widget2_styled_property2(type, name, default_value, event_name0, event_name1) \
 	type name = default_value; \
-	_widget2_styled_property(type, name, default_value, event_name0); \
-	_widget2_styled_property(type, name, default_value, event_name1);
+	widget2_styled_event(type, name, event_name0) \
+	widget2_styled_event(type, name, event_name1)
 
 #define widget2_styled_property3(type, name, default_value, event_name0, event_name1, event_name2) \
 	type name = default_value; \
-	_widget2_styled_property(type, name, default_value, event_name0); \
-	_widget2_styled_property(type, name, default_value, event_name1); \
-	_widget2_styled_property(type, name, default_value, event_name2);
+	widget2_styled_event(type, name, event_name0) \
+	widget2_styled_event(type, name, event_name1) \
+	widget2_styled_event(type, name, event_name2)
 
 #define widget2_styled_property4(type, name, default_value, event_name0, event_name1, event_name2, event_name3) \
 	type name = default_value; \
-	_widget2_styled_property(type, name, default_value, event_name0); \
-	_widget2_styled_property(type, name, default_value, event_name1); \
-	_widget2_styled_property(type, name, default_value, event_name2); \
-	_widget2_styled_property(type, name, default_value, event_name3);
+	widget2_styled_event(type, name, event_name0) \
+	widget2_styled_event(type, name, event_name1) \
+	widget2_styled_event(type, name, event_name2) \
+	widget2_styled_event(type, name, event_name3)
 
 #define	widget2_get_property1(name, event_name0) \
 	get_property(name, event_name0##_##name##, event_name0##_##name##_transition, on_hold_##name, on_hold_##name##_transition)
@@ -237,31 +237,76 @@ namespace widget2 {
 
 		Label() {
 
-			target_size					= glm::vec2(GUI2Dynamic::fit);
+			target_size	= glm::vec2(GUI2Dynamic::fit);
 
 		}
 
 		void publish(GUI2Dynamic& gui_dynamic);
 
+		void begin(GUI2Dynamic& gui_dynamic);
+		void publish_glyph(GUI2Dynamic& gui_dynamic, size_t end_index);
+		void end(GUI2Dynamic& gui_dynamic);
+
+	private:
+		float		advance					= 0;
+		glm::vec2	text_size				= glm::vec2(0);
+		int32_t		last_published_index	= 0; 
 	};
 
 	struct TextArea : public Grid {
 
-		std::u32string placeholder_text = U"Placeholder";
-		std::u32string text = U"";
-
-		glm::vec4 placeholder_color = glm::vec4(0.4, 0.4, 0.4, 1);
-
 		Box	  background;
 		Label label;
 
-		std::chrono::system_clock::time_point last_keyboard_focus = invalid_time;
+		std::u32string placeholder_text = U"Placeholder";
+		std::u32string text = U"";
+
+		glm::vec4 placeholder_text_color    = glm::vec4(0.4, 0.4, 0.4, 1);
+		glm::vec4 selected_text_color		= glm::vec4(0.5, 0.5, 0.5, 1);
+		glm::vec4 text_color				= glm::vec4(0.2, 0.2, 0.2, 1);
+		
+		std::optional<glm::vec4> on_focus_text_color		= glm::vec4(0, 0, 0, 1);
+		std::optional<glm::vec4> on_focus_border_thickness	= std::nullopt;
+		std::optional<glm::vec4> on_focus_border_rounding	= std::nullopt;
+		std::optional<glm::vec4> on_focus_border_color0		= std::nullopt;
+		std::optional<glm::vec4> on_focus_border_color1		= std::nullopt;
+		std::optional<glm::vec4> on_focus_border_color2		= std::nullopt;
+		std::optional<glm::vec4> on_focus_border_color3		= std::nullopt;
+		std::optional<glm::vec4> on_focus_shadow_thickness	= std::nullopt;
+		std::optional<glm::vec4> on_focus_shadow_color		= std::nullopt;
+
+		//widget2_styled_property2(glm::vec4, placeholder_text_color, glm::vec4(0.4, 0.4, 0.4, 1),	on_hover, on_focus)
+		//widget2_styled_property2(glm::vec4, selected_text_color,	glm::vec4(0.5, 0.5, 0.5, 1),	on_hover, on_focus)
+		//widget2_styled_property2(glm::vec4,	text_color,				glm::vec4(0.2, 0.2, 0.2, 1),	on_hover, on_focus)
+		//
+		//widget2_styled_event(glm::vec4,		border_thickness,	on_focus)
+		//widget2_styled_event(glm::vec4,		border_rounding,	on_focus)
+		//widget2_styled_event(glm::vec4,		border_color0,		on_focus)
+		//widget2_styled_event(glm::vec4,		border_color1,		on_focus)
+		//widget2_styled_event(glm::vec4,		border_color2,		on_focus)
+		//widget2_styled_event(glm::vec4,		border_color3,		on_focus)
+		//widget2_styled_event(glm::vec4,		shadow_thickness,	on_focus)
+		//widget2_styled_event(glm::vec4,		shadow_color,		on_focus)
+
+		std::chrono::system_clock::duration text_cursor_timer_blink_period = std::chrono::milliseconds(500);
+		glm::vec4 text_cursor_color = glm::vec4(0, 0, 0, 1);
+
+		static constexpr int32_t invalid_selection_index = -1;
+		int32_t selection_index_begin	= invalid_selection_index;
+		int32_t selection_index_end		= invalid_selection_index;
+		int32_t text_cursor_position	= 0;
+
 		bool can_aquire_keyboard_focus = true;
+		std::chrono::system_clock::time_point keyboard_focus_begin = invalid_time;
 
 		TextArea() {
 
 			target_size					= glm::vec2(400, 40);
 			padding						= glm::vec4(0);
+
+			label.target_size			= glm::vec2(GUI2Dynamic::fit);
+			label.margin				= glm::vec4(8, GUI2Dynamic::avail, 8, GUI2Dynamic::avail);
+			label.text_color			= glm::vec4(0.2, 0.2, 0.2, 1);
 
 			background.color			= glm::vec4(1, 1, 1, 1);
 			background.border_thickness = glm::vec4(2);
@@ -271,14 +316,12 @@ namespace widget2 {
 			background.border_color3	= glm::vec4(0.68, 0.71, 0.75, 1);
 			background.target_size		= glm::vec2(GUI2Dynamic::avail, GUI2Dynamic::avail);
 			background.margin			= glm::vec4(0);
-
-			label.target_size			= glm::vec2(GUI2Dynamic::fit);
-			label.margin				= glm::vec4(8, GUI2Dynamic::avail, 8, GUI2Dynamic::avail);
-			label.text_color			= glm::vec4(0.2, 0.2, 0.2, 1);
-
 		}
 
 		void publish(GUI2Dynamic& gui_dynamic);
+	
+	private:
+		void resolve_keyboard_io(GUI2Dynamic& gui_dynamic);
 	};
 
 	struct Slider {

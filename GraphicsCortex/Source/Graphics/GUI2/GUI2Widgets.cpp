@@ -1,5 +1,6 @@
 #include "GUI2Widgets.h"
 #include "WindowBoundGlobalResources.h"
+#include "Window.h"
 
 GUI2Dynamic::ResolvedProperties widget2::Widget::get_resolved_properties(GUI2Dynamic& gui_dynamic)
 {
@@ -507,33 +508,46 @@ void widget2::Label::publish(GUI2Dynamic& gui_dynamic)
 	if (text.size() == 0)
 		return;
 
-	float advance = 0;
-	glm::vec2 text_size(0);
+	begin(gui_dynamic);
+	end(gui_dynamic);
+}
+
+void widget2::Label::begin(GUI2Dynamic& gui_dynamic) {
+	
+	if (active_global_resources == nullptr || !FontBank::get().does_font_exist(font))
+		return;
+
+	if (text.size() == 0)
+		return;
+
+	advance = 0;
+	text_size = glm::vec2(0);
+	last_published_index = 0;
 
 	Grid::publish(gui_dynamic);
 	gui_dynamic.grid_region(glm::ivec2(0));
 
-	//gui_dynamic.box_begin()
-	//	.set_target_size(glm::vec2(GUI2Dynamic::avail))
-	//	.set_color(glm::vec4(1, 0, 0, 1));
+}
 
-	for (int32_t i = 0; i < text.size(); i++) {
+void widget2::Label::publish_glyph(GUI2Dynamic& gui_dynamic, size_t end_index) {
 	
+	for (last_published_index; last_published_index < std::min(end_index, text.size()); last_published_index++) {
+
 		FontBank::get().get_font(font);
 
-		float font_size			= FontBank::get().get_font(font).font_size;
-		glm::vec2 atlas_size	= FontBank::get().get_font(font).atlas->get_size();
-		auto& table				= FontBank::get().get_font(font).glyph_table.at(text[i]);
+		float font_size = FontBank::get().get_font(font).font_size;
+		glm::vec2 atlas_size = FontBank::get().get_font(font).atlas->get_size();
+		auto& table = FontBank::get().get_font(font).glyph_table.at(text[last_published_index]);
 
 		glm::vec2 inverted_offset = glm::vec2(table.offset.x, -table.offset.y);
 
-		glm::vec2 position	= glm::vec2(advance, 0) + inverted_offset * atlas_size / font_size * text_height + glm::vec2(0, text_height);
-		glm::vec2 size		= glm::max(glm::vec2(0), (table.coords_hi - table.coords_low) * atlas_size / font_size * text_height);
-		
+		glm::vec2 position = glm::vec2(advance, 0) + inverted_offset * atlas_size / font_size * text_height + glm::vec2(0, text_height);
+		glm::vec2 size = glm::max(glm::vec2(0), (table.coords_hi - table.coords_low) * atlas_size / font_size * text_height);
+
 		gui_dynamic.box_begin()
 			.set_target_size(size)
 			.set_margin(glm::vec4(position.x, position.y, 0, 0))
-			.set_uv00(glm::vec2(table.coords_hi.x,	1-table.coords_hi.y))
+			.set_uv00(glm::vec2(table.coords_hi.x, 1 - table.coords_hi.y))
 			.set_uv11(glm::vec2(table.coords_low.x, 1 - table.coords_low.y))
 			.set_color(widget2_get_property2(text_color, on_hover, on_hold))
 			.set_texture_handle(FontBank::get().get_font(font).atlas->texture_handle);
@@ -543,6 +557,11 @@ void widget2::Label::publish(GUI2Dynamic& gui_dynamic)
 
 		advance += table.advance * atlas_size.x / font_size * text_height;
 	}
+}
+
+void widget2::Label::end(GUI2Dynamic& gui_dynamic) {
+
+	publish_glyph(gui_dynamic, text.size());
 
 	gui_dynamic.grid_add_column(text_size.x);
 	gui_dynamic.grid_add_row(text_size.y);
@@ -554,8 +573,39 @@ void widget2::Label::publish(GUI2Dynamic& gui_dynamic)
 
 void widget2::TextArea::publish(GUI2Dynamic& gui_dynamic)
 {
-	label.text = text.size() == 0 ? placeholder_text : text;
+	if (can_aquire_keyboard_focus) {
+		if ((get_mouse_state(0) & Click) == Click)
+			keyboard_focus_begin = std::chrono::system_clock::now();
+
+		if (get_mouse_state(0) == None && gui_dynamic.get_io_state().mouse_state & GUI2::MouseEvent::LeftRelease)
+			keyboard_focus_begin = invalid_time;
+	}
 	
+	//widget2_styled_property2(glm::vec4, placeholder_text_color, glm::vec4(0.4, 0.4, 0.4, 1),	on_hover, on_focus)
+	//widget2_styled_property2(glm::vec4, selected_text_color,	glm::vec4(0.5, 0.5, 0.5, 1),	on_hover, on_focus)
+	//widget2_styled_property2(glm::vec4,	text_color,				glm::vec4(0.2, 0.2, 0.2, 1),	on_hover, on_focus)
+	//
+	//widget2_styled_event(glm::vec4,		border_thickness,	on_focus)
+	//widget2_styled_event(glm::vec4,		border_rounding,	on_focus)
+	//widget2_styled_event(glm::vec4,		border_color0,		on_focus)
+	//widget2_styled_event(glm::vec4,		border_color1,		on_focus)
+	//widget2_styled_event(glm::vec4,		border_color2,		on_focus)
+	//widget2_styled_event(glm::vec4,		border_color3,		on_focus)
+	//widget2_styled_event(glm::vec4,		shadow_thickness,	on_focus)
+	//widget2_styled_event(glm::vec4,		shadow_color,		on_focus)
+
+	glm::vec4 prev_label_text_color = label.text_color;
+
+	bool focused = keyboard_focus_begin != invalid_time;
+
+	if (focused) {
+		resolve_keyboard_io(gui_dynamic);
+	}
+
+	label.text			= text.size() == 0 && !focused ? placeholder_text : text;
+	label.text_color	= label.text.size() == 0 ? placeholder_text_color :
+							focused ? on_focus_text_color.value_or(label.text_color) : label.text_color;
+
 	Grid::publish(gui_dynamic);
 	gui_dynamic.grid_region(glm::ivec2(0));
 	
@@ -567,4 +617,21 @@ void widget2::TextArea::publish(GUI2Dynamic& gui_dynamic)
 	gui_dynamic.grid_end();
 
 	resolve_io(gui_dynamic);
+
+	label.text_color = prev_label_text_color;
+}
+
+void widget2::TextArea::resolve_keyboard_io(GUI2Dynamic& gui_dynamic) {
+	
+	for (GUI2::KeyboardEvent& e : gui_dynamic.get_io_state().keyboard_events) {
+		if (e.data.index() == 0)
+			text += std::get<uint32_t>(e.data);
+		else {
+			auto result = std::get<::Window::KeyPressResult>(e.data);
+			if (result.key == ::Window::Key::BACKSPACE && result.action != ::Window::PressAction::RELEASE && text.size() != 0) {
+				text.pop_back();
+			}
+		}
+	}
+
 }

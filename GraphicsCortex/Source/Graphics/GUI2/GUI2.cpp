@@ -157,6 +157,17 @@ void GUI2::render() {
 
 			state.window = std::make_shared<Window>(description);
 			state.window->set_window_position(desc.position);
+
+			if (io_state.char_newsletter_event == Newsletter<void()>::invalid_id) {
+				io_state.char_newsletter_event = state.window->newsletters->on_char_events.subscribe([&](const uint32_t& c) {
+					io_state.keyboard_events.push_back(c);
+					});
+			}
+			if (io_state.key_newsletter_event == Newsletter<void()>::invalid_id) {
+				io_state.key_newsletter_event = state.window->newsletters->on_key_events.subscribe([&](const Window::KeyPressResult& k) {
+					io_state.keyboard_events.push_back(k);
+					});
+			}
 			//state.window->newsletters->on_window_refresh_events.subscribe(render_func);
 
 		}
@@ -168,6 +179,8 @@ void GUI2::render() {
 			state.window->set_window_position(desc.position);
 			state.window->set_window_resolution(desc.size);
 		}
+
+		io_state.keyboard_events.clear();
 		
 		state.window->handle_events();
 		
@@ -229,6 +242,7 @@ void GUI2::render() {
 		//if (parent_window != nullptr)
 		//	Window::detech_context();
 	}
+	
 }
 
 const GUI2::IOState& GUI2::get_io_state()
