@@ -50,7 +50,7 @@ public:
 		label.on_hover_text_color = glm::vec4(1, 0, 0, 1);
 		label.on_hover_text_color_transition = std::chrono::milliseconds(100);
 
-		widget2::TextArea text_area;
+		widget2::TextInput text_area;
 		text_area.text = U"";
 
 		while (true) {

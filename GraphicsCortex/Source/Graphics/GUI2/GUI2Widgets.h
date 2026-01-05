@@ -244,7 +244,7 @@ namespace widget2 {
 		void publish(GUI2Dynamic& gui_dynamic);
 
 		void begin(GUI2Dynamic& gui_dynamic);
-		void publish_glyph(GUI2Dynamic& gui_dynamic, size_t end_index);
+		bool publish_glyph(GUI2Dynamic& gui_dynamic, size_t end_index);
 		void end(GUI2Dynamic& gui_dynamic);
 
 	private:
@@ -253,7 +253,7 @@ namespace widget2 {
 		int32_t		last_published_index	= 0; 
 	};
 
-	struct TextArea : public Grid {
+	struct TextInput : public Grid {
 
 		Box	  background;
 		Label label;
@@ -299,7 +299,7 @@ namespace widget2 {
 		bool can_aquire_keyboard_focus = true;
 		std::chrono::system_clock::time_point keyboard_focus_begin = invalid_time;
 
-		TextArea() {
+		TextInput() {
 
 			target_size					= glm::vec2(400, 40);
 			padding						= glm::vec4(0);
