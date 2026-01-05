@@ -3,6 +3,39 @@
 #include <chrono>
 #include "Font.h"
 
+#define _widget2_styled_property(type, name, default_value, event_name) \
+	std::optional<type> event_name##_##name = std::nullopt; \
+	std::chrono::system_clock::duration event_name##_##name##_transition = std::chrono::system_clock::duration(0)
+
+#define widget2_styled_property1(type, name, default_value, event_name0) \
+	type name = default_value; \
+	_widget2_styled_property(type, name, event_name0, default_value);
+	
+#define widget2_styled_property2(type, name, default_value, event_name0, event_name1) \
+	type name = default_value; \
+	_widget2_styled_property(type, name, default_value, event_name0); \
+	_widget2_styled_property(type, name, default_value, event_name1);
+
+#define widget2_styled_property3(type, name, default_value, event_name0, event_name1, event_name2) \
+	type name = default_value; \
+	_widget2_styled_property(type, name, default_value, event_name0); \
+	_widget2_styled_property(type, name, default_value, event_name1); \
+	_widget2_styled_property(type, name, default_value, event_name2);
+
+#define widget2_styled_property4(type, name, default_value, event_name0, event_name1, event_name2, event_name3) \
+	type name = default_value; \
+	_widget2_styled_property(type, name, default_value, event_name0); \
+	_widget2_styled_property(type, name, default_value, event_name1); \
+	_widget2_styled_property(type, name, default_value, event_name2); \
+	_widget2_styled_property(type, name, default_value, event_name3);
+
+#define	widget2_get_property1(name, event_name0) \
+	get_property(name, event_name0##_##name##, event_name0##_##name##_transition, on_hold_##name, on_hold_##name##_transition)
+
+#define	widget2_get_property2(name, event_name0, event_name1) \
+	get_property(name, event_name0##_##name, event_name0##_##name##_transition, event_name1##_##name, event_name1##_##name##_transition)
+
+
 namespace widget2 {
 
 	class Widget {
@@ -100,76 +133,21 @@ namespace widget2 {
 	};
 
 	struct Box : public StyledWidget {
-
-		using duration	= std::chrono::system_clock::duration;
-		using vec4		= glm::vec4;
-		using vec2		= glm::vec2;
-		using optvec4	= std::optional<glm::vec4>;
-		using optvec2	= std::optional<glm::vec2>;
 		
-		vec4		margin									= vec4(0);
-		vec2		target_size								= vec2(128);
-		vec2		min_size								= vec2(GUI2Dynamic::fit);
-		vec2		max_size								= vec2(GUI2Dynamic::avail);
-
-		vec4		color									= vec4(1, 1, 1, 1);
-		vec4		border_thickness						= vec4(0);
-		vec4		border_rounding							= vec4(0);
-		vec4		border_color0							= vec4(0, 0, 0, 1);
-		vec4		border_color1							= vec4(0, 0, 0, 1);
-		vec4		border_color2							= vec4(0, 0, 0, 1);
-		vec4		border_color3							= vec4(0, 0, 0, 1);
-		vec4		shadow_thickness						= vec4(0);
-		vec4		shadow_color							= vec4(0, 0, 0, 1);
+		widget2_styled_property2(glm::vec4,	margin,				glm::vec4(0),					on_hover, on_hold)
+		widget2_styled_property2(glm::vec2,	target_size,		glm::vec2(128),					on_hover, on_hold)
+		widget2_styled_property2(glm::vec2,	min_size,			glm::vec2(GUI2Dynamic::fit),	on_hover, on_hold)
+		widget2_styled_property2(glm::vec2,	max_size,			glm::vec2(GUI2Dynamic::avail),	on_hover, on_hold)
+		widget2_styled_property2(glm::vec4,	color,				glm::vec4(1, 1, 1, 1),			on_hover, on_hold)
+		widget2_styled_property2(glm::vec4,	border_thickness,	glm::vec4(0),					on_hover, on_hold)
+		widget2_styled_property2(glm::vec4,	border_rounding, 	glm::vec4(0),					on_hover, on_hold)
+		widget2_styled_property2(glm::vec4,	border_color0,	 	glm::vec4(0, 0, 0, 1),			on_hover, on_hold)
+		widget2_styled_property2(glm::vec4,	border_color1,	 	glm::vec4(0, 0, 0, 1),			on_hover, on_hold)
+		widget2_styled_property2(glm::vec4,	border_color2,	 	glm::vec4(0, 0, 0, 1),			on_hover, on_hold)
+		widget2_styled_property2(glm::vec4,	border_color3,	 	glm::vec4(0, 0, 0, 1),			on_hover, on_hold)
+		widget2_styled_property2(glm::vec4,	shadow_thickness,	glm::vec4(0),					on_hover, on_hold)
+		widget2_styled_property2(glm::vec4,	shadow_color,	 	glm::vec4(0, 0, 0, 1),			on_hover, on_hold)
 		
-		optvec4		on_hover_margin							= std::nullopt;
-		optvec2		on_hover_target_size					= std::nullopt;
-		optvec4		on_hover_color							= std::nullopt;
-		optvec4		on_hover_border_thickness				= std::nullopt;
-		optvec4		on_hover_border_rounding				= std::nullopt;
-		optvec4		on_hover_border_color0					= std::nullopt;
-		optvec4		on_hover_border_color1					= std::nullopt;
-		optvec4		on_hover_border_color2					= std::nullopt;
-		optvec4		on_hover_border_color3					= std::nullopt;
-		optvec4		on_hover_shadow_thickness				= std::nullopt;
-		optvec4		on_hover_shadow_color					= std::nullopt;
-		
-		duration	on_hover_margin_transition				= duration(0);
-		duration	on_hover_target_size_transition			= duration(0);
-		duration	on_hover_color_transition				= duration(0);
-		duration	on_hover_border_thickness_transition	= duration(0);
-		duration	on_hover_border_rounding_transition		= duration(0);
-		duration	on_hover_border_color0_transition		= duration(0);
-		duration	on_hover_border_color1_transition		= duration(0);
-		duration	on_hover_border_color2_transition		= duration(0);
-		duration	on_hover_border_color3_transition		= duration(0);
-		duration	on_hover_shadow_thickness_transition	= duration(0);
-		duration	on_hover_shadow_color_transition		= duration(0);
-
-		optvec4		on_hold_margin							= std::nullopt;
-		optvec2		on_hold_target_size						= std::nullopt;
-		optvec4		on_hold_color							= std::nullopt;
-		optvec4		on_hold_border_thickness				= std::nullopt;
-		optvec4		on_hold_border_rounding					= std::nullopt;
-		optvec4		on_hold_border_color0					= std::nullopt;
-		optvec4		on_hold_border_color1					= std::nullopt;
-		optvec4		on_hold_border_color2					= std::nullopt;
-		optvec4		on_hold_border_color3					= std::nullopt;
-		optvec4		on_hold_shadow_thickness				= std::nullopt;
-		optvec4		on_hold_shadow_color					= std::nullopt;
-
-		duration	on_hold_margin_transition				= duration(0);
-		duration	on_hold_target_size_transition			= duration(0);
-		duration	on_hold_color_transition				= duration(0);
-		duration	on_hold_border_thickness_transition		= duration(0);
-		duration	on_hold_border_rounding_transition		= duration(0);
-		duration	on_hold_border_color0_transition		= duration(0);
-		duration	on_hold_border_color1_transition		= duration(0);
-		duration	on_hold_border_color2_transition		= duration(0);
-		duration	on_hold_border_color3_transition		= duration(0);
-		duration	on_hold_shadow_thickness_transition		= duration(0);
-		duration	on_hold_shadow_color_transition			= duration(0);
-
 		void publish(GUI2Dynamic& gui_dynamic);
 	
 	protected:
@@ -182,83 +160,27 @@ namespace widget2 {
 
 	struct Grid : public StyledWidget {
 
-		using duration	= std::chrono::system_clock::duration;
-		using vec4		= glm::vec4;
-		using vec2		= glm::vec2;
-		using optvec4	= std::optional<glm::vec4>;
-		using optvec2	= std::optional<glm::vec2>;
+		widget2_styled_property2(glm::vec4, margin,			glm::vec4(0),						on_hover, on_hold)
+		widget2_styled_property2(glm::vec4, padding,		glm::vec4(0),						on_hover, on_hold)
+		widget2_styled_property2(glm::vec2, target_size,	glm::vec2(128),						on_hover, on_hold)
+		widget2_styled_property2(glm::vec2, min_size,		glm::vec2(GUI2Dynamic::fit),		on_hover, on_hold)
+		widget2_styled_property2(glm::vec2, max_size,		glm::vec2(GUI2Dynamic::avail),		on_hover, on_hold)
 
-		vec4		margin									= vec4(0);
-		vec4		padding									= vec4(0);
-		vec2		target_size								= vec2(128);
-		vec2		min_size								= vec2(GUI2Dynamic::fit);
-		vec2		max_size								= vec2(GUI2Dynamic::avail);
+		void publish(GUI2Dynamic& gui_dynamic);
 
-		optvec4		on_hover_margin							= std::nullopt;
-		optvec4		on_hover_padding						= std::nullopt;
-		optvec2		on_hover_target_size					= std::nullopt;
-		
-		duration	on_hover_margin_transition				= duration(0);
-		duration	on_hover_padding_transition				= duration(0);
-		duration	on_hover_target_size_transition			= duration(0);
-		
-		optvec4		on_hold_margin							= std::nullopt;
-		optvec4		on_hold_padding							= std::nullopt;
-		optvec2		on_hold_target_size						= std::nullopt;
-		
-		duration	on_hold_margin_transition				= duration(0);
-		duration	on_hold_padding_transition				= duration(0);
-		duration	on_hold_target_size_transition			= duration(0);
-		
-		void begin(GUI2Dynamic& gui_dynamic);
-		void add_column(GUI2Dynamic& gui_dynamic, float value);
-		void add_row(GUI2Dynamic& gui_dynamic, float value);
-		void region(GUI2Dynamic& gui_dynamic, glm::ivec2 region, glm::ivec2 span = glm::ivec2(1));
-		void end(GUI2Dynamic& gui_dynamic);
 	};
 
 	struct Stack : public StyledWidget {
 
-		using duration	= std::chrono::system_clock::duration;
-		using vec4		= glm::vec4;
-		using vec2		= glm::vec2;
-		using optvec4	= std::optional<glm::vec4>;
-		using optvec2	= std::optional<glm::vec2>;
-		using optfloat	= std::optional<float>;
+		widget2_styled_property2(glm::vec4,	margin,			glm::vec4(0),						on_hover, on_hold)
+		widget2_styled_property2(glm::vec4,	padding,		glm::vec4(0),						on_hover, on_hold)
+		widget2_styled_property2(glm::vec2,	target_size,	glm::vec2(128),						on_hover, on_hold)
+		widget2_styled_property2(glm::vec2,	min_size,		glm::vec2(GUI2Dynamic::fit),		on_hover, on_hold)
+		widget2_styled_property2(glm::vec2,	max_size,		glm::vec2(GUI2Dynamic::avail),		on_hover, on_hold)
+		widget2_styled_property2(float,		spacing,		10,									on_hover, on_hold)
 
-		vec4		margin									= vec4(0);
-		vec4		padding									= vec4(0);
-		vec2		target_size								= vec2(128);
-		vec2		min_size								= vec2(GUI2Dynamic::fit);
-		vec2		max_size								= vec2(GUI2Dynamic::avail);
-		float		spacing									= 10;
-
-		optvec4		on_hover_margin							= std::nullopt;
-		optvec4		on_hover_padding						= std::nullopt;
-		optvec2		on_hover_target_size					= std::nullopt;
-		optfloat	on_hover_spacing						= std::nullopt;
-
-		duration	on_hover_margin_transition				= duration(0);
-		duration	on_hover_padding_transition				= duration(0);
-		duration	on_hover_target_size_transition			= duration(0);
-		duration	on_hover_spacing_transition				= duration(0);
-
-		optvec4		on_hold_margin							= std::nullopt;
-		optvec4		on_hold_padding							= std::nullopt;
-		optvec2		on_hold_target_size						= std::nullopt;
-		optfloat	on_hold_spacing							= std::nullopt;
-
-		duration	on_hold_margin_transition				= duration(0);
-		duration	on_hold_padding_transition				= duration(0);
-		duration	on_hold_target_size_transition			= duration(0);
-		duration	on_hold_spacing_transition				= duration(0);
-		
-		void begin(GUI2Dynamic& gui_dynamic);
-		void end(GUI2Dynamic& gui_dynamic);
-
+		void publish(GUI2Dynamic& gui_dynamic);
 	};
-
-
 
 	struct Window : public IOWidget {
 
@@ -311,11 +233,7 @@ namespace widget2 {
 		std::u32string text;
 		float text_height = 16;
 
-		vec4		text_color						= vec4(0, 0, 0, 1);
-		optvec4		on_hover_text_color				= std::nullopt;
-		duration	on_hover_text_color_transition	= duration(0);
-		optvec4		on_hold_text_color				= std::nullopt;
-		duration	on_hold_text_color_transition	= duration(0);
+		widget2_styled_property2(glm::vec4, text_color, glm::vec4(0, 0, 0, 1), on_hover, on_hold)
 
 		Label() {
 
@@ -337,7 +255,7 @@ namespace widget2 {
 		Box	  background;
 		Label label;
 
-		bool keyboard_focus = false;
+		std::chrono::system_clock::time_point last_keyboard_focus = invalid_time;
 		bool can_aquire_keyboard_focus = true;
 
 		TextArea() {
