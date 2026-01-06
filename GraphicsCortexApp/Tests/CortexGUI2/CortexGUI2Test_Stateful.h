@@ -29,8 +29,8 @@ public:
 		style_box.on_hover_color_transition		= std::chrono::milliseconds(100);
 		style_box.on_hold_color					= glm::vec4(0, 1, 0, 1);
 		style_box.on_hold_color_transition		= std::chrono::milliseconds(200);
-		style_box.on_hold_margin				= glm::vec4(20, 0, 20, 0);
-		style_box.on_hold_margin_transition		= std::chrono::milliseconds(85);
+		//style_box.on_hold_margin				= glm::vec4(20, 0, 20, 0);
+		//style_box.on_hold_margin_transition		= std::chrono::milliseconds(85);
 
 		widget2::Image image;
 		image.target_size						= glm::vec2(avail, 64);

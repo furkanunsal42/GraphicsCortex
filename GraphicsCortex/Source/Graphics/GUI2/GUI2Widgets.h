@@ -45,9 +45,16 @@ namespace widget2 {
 		size_t id = GUI2Dynamic::invalid_id;
 	};
 
+	struct IOEvent {
+		using time_point = std::chrono::system_clock::time_point;
+		constexpr static time_point	invalid_time = time_point::max();
+
+		time_point begin	= invalid_time;
+		time_point end		= invalid_time;
+	};
+
 	class IOWidget : public Widget {
 		using duration		= std::chrono::system_clock::duration;
-		using time_point	= std::chrono::system_clock::time_point;
 	public:
 		constexpr static int32_t mouse_left = 0;
 		constexpr static int32_t mouse_right = 1;
@@ -83,18 +90,16 @@ namespace widget2 {
 		duration double_click_max_delay = std::chrono::milliseconds(500);
 		float carry_begin_min_offset = 10;
 
+		IOEvent hover;
+		IOEvent hold;
+		IOEvent click;
+
 	protected:
-		constexpr static time_point	invalid_time = time_point::max();
 		
 		void resolve_io(GUI2Dynamic& gui_dynamic);
-
-		time_point last_hover_begin	= invalid_time;
-		time_point last_hover_end	= invalid_time;
-		time_point last_hold_begin	= invalid_time;
-		time_point last_click		= invalid_time;
-		time_point last_hold_end	= invalid_time;
-
+		
 	private:
+
 		constexpr static glm::vec2	invalid_position = glm::vec2(-1);
 		
 		MouseState mouse_states[2] = { None, None };
@@ -104,6 +109,60 @@ namespace widget2 {
 		bool was_last_click_double = false;
 	};
 
+	template<typename T>
+	struct StyleProperty {
+		using duration = std::chrono::system_clock::duration;
+
+		StyleProperty() = default;
+		StyleProperty(T value) : value(value) { }
+
+		operator T() { return value; }
+
+		T value = T(0);
+
+		StyleProperty& transition(T default_value) {
+			value = value;
+			return *this;
+		}
+
+		StyleProperty& transition(IOEvent event, T transition_value, duration transition_duration = std::chrono::milliseconds(1)) {
+			float t = glm::clamp(get_t(event, transition_duration), 0.0f, 1.0f);
+			value = value * (1 - t) + transition_value * t;
+			return *this;
+		}
+
+	private:
+
+		float get_t(IOEvent event, duration transition_duration) {
+			
+			if (event.begin == IOEvent::invalid_time && event.end == IOEvent::invalid_time)
+				return 0;
+
+			if (transition_duration.count() == 0)
+				return event.end > event.begin ? 1 : 0;
+
+			auto now = std::chrono::system_clock::now();
+
+			duration time_passed			= std::min(now - event.begin,		transition_duration);
+			duration time_passed_hovering	= std::min(event.end - event.begin, transition_duration);
+			duration time_passed_recovering = std::min(now - event.end,			transition_duration);
+
+			bool happening =
+				(event.begin != IOEvent::invalid_time && event.end == IOEvent::invalid_time) ||
+				(event.begin != IOEvent::invalid_time && event.end != IOEvent::invalid_time && event.begin > event.end);
+
+			bool recovering =
+				event.begin != IOEvent::invalid_time	&&
+				event.end != IOEvent::invalid_time		&&
+				event.begin < event.end					&&
+				now - event.end < time_passed_hovering;
+
+			duration relevent_duration = happening ? time_passed : time_passed_hovering - time_passed_recovering;
+
+			return 1 - (transition_duration - relevent_duration).count() / (float)transition_duration.count();
+
+		}
+	};
 
 	class StyledWidget : public IOWidget {
 		using duration		= std::chrono::system_clock::duration;
@@ -118,7 +177,7 @@ namespace widget2 {
 			std::optional<T>	on_hold,
 			duration			hold_transition_time
 		);
-
+		
 	private:
 
 		float get_t(
@@ -134,7 +193,10 @@ namespace widget2 {
 
 	struct Box : public StyledWidget {
 		
-		widget2_styled_property2(glm::vec4,	margin,				glm::vec4(0),					on_hover, on_hold)
+		StyleProperty<glm::vec4> margin = glm::vec4(0);
+		
+		//widget2_styled_property2(glm::vec4,	margin,				glm::vec4(0),					on_hover, on_hold)
+		
 		widget2_styled_property2(glm::vec2,	target_size,		glm::vec2(128),					on_hover, on_hold)
 		widget2_styled_property2(glm::vec2,	min_size,			glm::vec2(GUI2Dynamic::fit),	on_hover, on_hold)
 		widget2_styled_property2(glm::vec2,	max_size,			glm::vec2(GUI2Dynamic::avail),	on_hover, on_hold)
@@ -245,6 +307,8 @@ namespace widget2 {
 
 		void begin(GUI2Dynamic& gui_dynamic);
 		bool publish_glyph(GUI2Dynamic& gui_dynamic, size_t end_index);
+		float get_current_advance();
+		float compute_advance(size_t end_index);
 		void end(GUI2Dynamic& gui_dynamic);
 
 	private:
@@ -261,32 +325,21 @@ namespace widget2 {
 		std::u32string placeholder_text = U"Placeholder";
 		std::u32string text = U"";
 
-		glm::vec4 placeholder_text_color    = glm::vec4(0.4, 0.4, 0.4, 1);
-		glm::vec4 selected_text_color		= glm::vec4(0.5, 0.5, 0.5, 1);
+		glm::vec4 placeholder_text_color    = glm::vec4(0.3, 0.3, 0.3, 1);
+		glm::vec4 selected_text_color		= glm::vec4(1, 1, 1, 1);
+		glm::vec4 selected_background_color = glm::vec4(0.23, 0.48, 0.72, 1);
 		glm::vec4 text_color				= glm::vec4(0.2, 0.2, 0.2, 1);
 		
-		std::optional<glm::vec4> on_focus_text_color		= glm::vec4(0, 0, 0, 1);
-		std::optional<glm::vec4> on_focus_border_thickness	= std::nullopt;
-		std::optional<glm::vec4> on_focus_border_rounding	= std::nullopt;
-		std::optional<glm::vec4> on_focus_border_color0		= std::nullopt;
-		std::optional<glm::vec4> on_focus_border_color1		= std::nullopt;
-		std::optional<glm::vec4> on_focus_border_color2		= std::nullopt;
-		std::optional<glm::vec4> on_focus_border_color3		= std::nullopt;
-		std::optional<glm::vec4> on_focus_shadow_thickness	= std::nullopt;
-		std::optional<glm::vec4> on_focus_shadow_color		= std::nullopt;
-
-		//widget2_styled_property2(glm::vec4, placeholder_text_color, glm::vec4(0.4, 0.4, 0.4, 1),	on_hover, on_focus)
-		//widget2_styled_property2(glm::vec4, selected_text_color,	glm::vec4(0.5, 0.5, 0.5, 1),	on_hover, on_focus)
-		//widget2_styled_property2(glm::vec4,	text_color,				glm::vec4(0.2, 0.2, 0.2, 1),	on_hover, on_focus)
-		//
-		//widget2_styled_event(glm::vec4,		border_thickness,	on_focus)
-		//widget2_styled_event(glm::vec4,		border_rounding,	on_focus)
-		//widget2_styled_event(glm::vec4,		border_color0,		on_focus)
-		//widget2_styled_event(glm::vec4,		border_color1,		on_focus)
-		//widget2_styled_event(glm::vec4,		border_color2,		on_focus)
-		//widget2_styled_event(glm::vec4,		border_color3,		on_focus)
-		//widget2_styled_event(glm::vec4,		shadow_thickness,	on_focus)
-		//widget2_styled_event(glm::vec4,		shadow_color,		on_focus)
+		std::optional<glm::vec4> on_focus_text_color					= glm::vec4(0, 0, 0, 1);
+		std::optional<glm::vec4> on_focus_background_color				= std::nullopt;
+		std::optional<glm::vec4> on_focus_background_border_thickness	= std::nullopt;
+		std::optional<glm::vec4> on_focus_background_border_rounding	= std::nullopt;
+		std::optional<glm::vec4> on_focus_background_border_color0		= glm::vec4(0.50, 0.50, 0.56, 1);
+		std::optional<glm::vec4> on_focus_background_border_color1		= glm::vec4(0.50, 0.50, 0.56, 1);
+		std::optional<glm::vec4> on_focus_background_border_color2		= glm::vec4(0.50, 0.50, 0.56, 1);
+		std::optional<glm::vec4> on_focus_background_border_color3		= glm::vec4(0.50, 0.50, 0.56, 1);
+		std::optional<glm::vec4> on_focus_background_shadow_thickness	= std::nullopt;
+		std::optional<glm::vec4> on_focus_background_shadow_color		= std::nullopt;
 
 		std::chrono::system_clock::duration text_cursor_timer_blink_period = std::chrono::milliseconds(500);
 		glm::vec4 text_cursor_color = glm::vec4(0, 0, 0, 1);
@@ -297,7 +350,7 @@ namespace widget2 {
 		int32_t text_cursor_position	= 0;
 
 		bool can_aquire_keyboard_focus = true;
-		std::chrono::system_clock::time_point keyboard_focus_begin = invalid_time;
+		std::chrono::system_clock::time_point keyboard_focus_begin = IOEvent::invalid_time;
 
 		TextInput() {
 
@@ -324,7 +377,16 @@ namespace widget2 {
 		void resolve_keyboard_io(GUI2Dynamic& gui_dynamic);
 	};
 
-	struct Slider {
+	struct Slider : public Grid {
+
+		Box head;
+
+		glm::vec4 color;
+		widget2_styled_property2(glm::vec4, filled_color, glm::vec4(0.13, 0.57, 0.59, 1), on_hover, on_hold)
+		
+		float value = 0.5;
+		float min_value = 0;
+		float max_value = 1;
 
 		void publish(GUI2Dynamic& gui_dynamic);
 
