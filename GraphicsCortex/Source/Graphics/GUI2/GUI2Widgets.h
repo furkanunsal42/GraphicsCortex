@@ -3,38 +3,7 @@
 #include <chrono>
 #include "Font.h"
 
-#define widget2_styled_event(type, name, event_name) \
-	std::optional<type> event_name##_##name = std::nullopt; \
-	std::chrono::system_clock::duration event_name##_##name##_transition = std::chrono::system_clock::duration(0);
-
-#define widget2_styled_property1(type, name, default_value, event_name0) \
-	type name = default_value; \
-	widget2_styled_event(type, name, event_name0)
-	
-#define widget2_styled_property2(type, name, default_value, event_name0, event_name1) \
-	type name = default_value; \
-	widget2_styled_event(type, name, event_name0) \
-	widget2_styled_event(type, name, event_name1)
-
-#define widget2_styled_property3(type, name, default_value, event_name0, event_name1, event_name2) \
-	type name = default_value; \
-	widget2_styled_event(type, name, event_name0) \
-	widget2_styled_event(type, name, event_name1) \
-	widget2_styled_event(type, name, event_name2)
-
-#define widget2_styled_property4(type, name, default_value, event_name0, event_name1, event_name2, event_name3) \
-	type name = default_value; \
-	widget2_styled_event(type, name, event_name0) \
-	widget2_styled_event(type, name, event_name1) \
-	widget2_styled_event(type, name, event_name2) \
-	widget2_styled_event(type, name, event_name3)
-
-#define	widget2_get_property1(name, event_name0) \
-	get_property(name, event_name0##_##name##, event_name0##_##name##_transition, on_hold_##name, on_hold_##name##_transition)
-
-#define	widget2_get_property2(name, event_name0, event_name1) \
-	get_property(name, event_name0##_##name, event_name0##_##name##_transition, event_name1##_##name, event_name1##_##name##_transition)
-
+#include <any>
 
 namespace widget2 {
 
@@ -51,6 +20,12 @@ namespace widget2 {
 
 		time_point begin	= invalid_time;
 		time_point end		= invalid_time;
+
+		void start_event();
+		void finish_event();
+
+		bool is_active();
+
 	};
 
 	class IOWidget : public Widget {
@@ -125,7 +100,7 @@ namespace widget2 {
 			return *this;
 		}
 
-		StyleProperty& transition(IOEvent event, T transition_value, duration transition_duration = std::chrono::milliseconds(1)) {
+		StyleProperty& transition(const IOEvent& event, T transition_value, duration transition_duration = std::chrono::milliseconds(1)) {
 			float t = glm::clamp(get_t(event, transition_duration), 0.0f, 1.0f);
 			value = value * (1 - t) + transition_value * t;
 			return *this;
@@ -133,7 +108,7 @@ namespace widget2 {
 
 	private:
 
-		float get_t(IOEvent event, duration transition_duration) {
+		float get_t(const IOEvent& event, duration transition_duration) {
 			
 			if (event.begin == IOEvent::invalid_time && event.end == IOEvent::invalid_time)
 				return 0;
@@ -164,51 +139,29 @@ namespace widget2 {
 		}
 	};
 
-	class StyledWidget : public IOWidget {
-		using duration		= std::chrono::system_clock::duration;
-		using time_point	= std::chrono::system_clock::time_point;
-	protected:
-
-		template<typename T>
-		T get_property(
-			T					default_property,
-			std::optional<T>	on_hover,
-			duration			hover_transition_time,
-			std::optional<T>	on_hold,
-			duration			hold_transition_time
-		);
-		
-	private:
-
-		float get_t(
-			time_point last_begin,
-			time_point last_end,
-			duration transition_time
-		);
+	class DefaultStyle {
+	public:
 		
 		template<typename T>
-		T interpolate(T a, T b, float t);
+		void apply(T& widget) = delete;
 
 	};
 
-	struct Box : public StyledWidget {
+	struct Box : public IOWidget {
 		
-		StyleProperty<glm::vec4> margin = glm::vec4(0);
-		
-		//widget2_styled_property2(glm::vec4,	margin,				glm::vec4(0),					on_hover, on_hold)
-		
-		widget2_styled_property2(glm::vec2,	target_size,		glm::vec2(128),					on_hover, on_hold)
-		widget2_styled_property2(glm::vec2,	min_size,			glm::vec2(GUI2Dynamic::fit),	on_hover, on_hold)
-		widget2_styled_property2(glm::vec2,	max_size,			glm::vec2(GUI2Dynamic::avail),	on_hover, on_hold)
-		widget2_styled_property2(glm::vec4,	color,				glm::vec4(1, 1, 1, 1),			on_hover, on_hold)
-		widget2_styled_property2(glm::vec4,	border_thickness,	glm::vec4(0),					on_hover, on_hold)
-		widget2_styled_property2(glm::vec4,	border_rounding, 	glm::vec4(0),					on_hover, on_hold)
-		widget2_styled_property2(glm::vec4,	border_color0,	 	glm::vec4(0, 0, 0, 1),			on_hover, on_hold)
-		widget2_styled_property2(glm::vec4,	border_color1,	 	glm::vec4(0, 0, 0, 1),			on_hover, on_hold)
-		widget2_styled_property2(glm::vec4,	border_color2,	 	glm::vec4(0, 0, 0, 1),			on_hover, on_hold)
-		widget2_styled_property2(glm::vec4,	border_color3,	 	glm::vec4(0, 0, 0, 1),			on_hover, on_hold)
-		widget2_styled_property2(glm::vec4,	shadow_thickness,	glm::vec4(0),					on_hover, on_hold)
-		widget2_styled_property2(glm::vec4,	shadow_color,	 	glm::vec4(0, 0, 0, 1),			on_hover, on_hold)
+		StyleProperty<glm::vec4> margin;
+		StyleProperty<glm::vec2> target_size;
+		StyleProperty<glm::vec2> min_size;
+		StyleProperty<glm::vec2> max_size;
+		StyleProperty<glm::vec4> color;
+		StyleProperty<glm::vec4> border_thickness;
+		StyleProperty<glm::vec4> border_rounding;
+		StyleProperty<glm::vec4> border_color0;
+		StyleProperty<glm::vec4> border_color1;
+		StyleProperty<glm::vec4> border_color2;
+		StyleProperty<glm::vec4> border_color3;
+		StyleProperty<glm::vec4> shadow_thickness;
+		StyleProperty<glm::vec4> shadow_color;
 		
 		void publish(GUI2Dynamic& gui_dynamic);
 	
@@ -220,46 +173,90 @@ namespace widget2 {
 		void apply_properties_to(GUI2Dynamic::StackDesc& desc);
 	};
 
-	struct Grid : public StyledWidget {
+	template<>
+	inline void DefaultStyle::apply<Box>(Box& widget) {
+		widget.margin			= glm::vec4(0);
+		widget.target_size		= glm::vec2(128);	
+		widget.min_size			= glm::vec2(GUI2Dynamic::fit);	
+		widget.max_size			= glm::vec2(GUI2Dynamic::avail);	
+		widget.color			= glm::vec4(1, 1, 1, 1);
+		widget.border_thickness	= glm::vec4(0);			
+		widget.border_rounding	= glm::vec4(0);		
+		widget.border_color0	= glm::vec4(0, 0, 0, 1);		
+		widget.border_color1	= glm::vec4(0, 0, 0, 1);		
+		widget.border_color2	= glm::vec4(0, 0, 0, 1);		
+		widget.border_color3	= glm::vec4(0, 0, 0, 1);		
+		widget.shadow_thickness	= glm::vec4(0);			
+		widget.shadow_color		= glm::vec4(0, 0, 0, 1);	
+	}
 
-		widget2_styled_property2(glm::vec4, margin,			glm::vec4(0),						on_hover, on_hold)
-		widget2_styled_property2(glm::vec4, padding,		glm::vec4(0),						on_hover, on_hold)
-		widget2_styled_property2(glm::vec2, target_size,	glm::vec2(128),						on_hover, on_hold)
-		widget2_styled_property2(glm::vec2, min_size,		glm::vec2(GUI2Dynamic::fit),		on_hover, on_hold)
-		widget2_styled_property2(glm::vec2, max_size,		glm::vec2(GUI2Dynamic::avail),		on_hover, on_hold)
+	struct Grid : public IOWidget {
+
+		StyleProperty<glm::vec4>	margin;
+		StyleProperty<glm::vec4>	padding;
+		StyleProperty<glm::vec2>	target_size;
+		StyleProperty<glm::vec2>	min_size;
+		StyleProperty<glm::vec2>	max_size;
 
 		void publish(GUI2Dynamic& gui_dynamic);
 
 	};
 
-	struct Stack : public StyledWidget {
+	template<>
+	inline void DefaultStyle::apply<Grid>(Grid& widget) {
+		widget.margin		= glm::vec4(0);	
+		widget.padding		= glm::vec4(0);
+		widget.target_size	= glm::vec2(128);
+		widget.min_size		= glm::vec2(GUI2Dynamic::fit);	
+		widget.max_size		= glm::vec2(GUI2Dynamic::avail);		
+	}
 
-		widget2_styled_property2(glm::vec4,	margin,			glm::vec4(0),						on_hover, on_hold)
-		widget2_styled_property2(glm::vec4,	padding,		glm::vec4(0),						on_hover, on_hold)
-		widget2_styled_property2(glm::vec2,	target_size,	glm::vec2(128),						on_hover, on_hold)
-		widget2_styled_property2(glm::vec2,	min_size,		glm::vec2(GUI2Dynamic::fit),		on_hover, on_hold)
-		widget2_styled_property2(glm::vec2,	max_size,		glm::vec2(GUI2Dynamic::avail),		on_hover, on_hold)
-		widget2_styled_property2(float,		spacing,		10,									on_hover, on_hold)
+	struct Stack : public IOWidget {
+
+		StyleProperty<glm::vec4>	margin;
+		StyleProperty<glm::vec4>	padding;
+		StyleProperty<glm::vec2>	target_size;
+		StyleProperty<glm::vec2>	min_size;
+		StyleProperty<glm::vec2>	max_size;
+		StyleProperty<float>		spacing;
 
 		void publish(GUI2Dynamic& gui_dynamic);
 	};
+
+	template<>
+	inline void DefaultStyle::apply<Stack>(Stack& widget) {
+		widget.margin		= glm::vec4(0);
+		widget.padding		= glm::vec4(0);
+		widget.target_size	= glm::vec2(128);	
+		widget.min_size		= glm::vec2(GUI2Dynamic::fit);	
+		widget.max_size		= glm::vec2(GUI2Dynamic::avail);	
+		widget.spacing		= 10;
+	}
 
 	struct Window : public IOWidget {
 
 		glm::vec2 drag_area_position;
 		glm::vec2 drag_area_size;
 
-		bool draggable				= false;
-		bool dockable				= false;
-		bool has_default_decoration = false;
+		bool draggable;
+		bool dockable;
+		bool has_default_decoration;
 
-		glm::vec2 position			= glm::vec2(100);
+		glm::vec2 position;
 
 		void publish(GUI2Dynamic& gui_dynamic);
 
 	private:
 
 	};
+
+	template<>
+	inline void DefaultStyle::apply<Window>(Window& widget) {
+		widget.draggable				= true;	
+		widget.dockable					= false;	
+		widget.has_default_decoration	= false;
+		widget.position					= glm::vec2(100);
+	}
 
 	struct DockSurface {
 
@@ -279,29 +276,31 @@ namespace widget2 {
 		};
 
 		std::shared_ptr<Texture2D> texture = nullptr;
-		glm::vec2 uv00 = glm::vec2(0);
-		glm::vec2 uv11 = glm::vec2(1);
-		size_t grid_id = GUI2Dynamic::invalid_id;
-
-		Type type = Fit;
+		glm::vec2 uv00;
+		glm::vec2 uv11;
+		Type type;
 		
 		void publish(GUI2Dynamic& gui_dynamic);
 
+	private:
+		size_t grid_id = GUI2Dynamic::invalid_id;
 	};
+
+	template<>
+	inline void DefaultStyle::apply<Image>(Image& widget) {
+		apply<Box>(widget);
+		widget.uv00 = glm::vec2(0);
+		widget.uv11 = glm::vec2(1);
+		widget.type = Image::Fit;
+		//widget.texture = nullptr;
+	}
 
 	struct Label : public Grid {
 
 		font_id font = 1;
 		std::u32string text;
-		float text_height = 16;
-
-		widget2_styled_property2(glm::vec4, text_color, glm::vec4(0, 0, 0, 1), on_hover, on_hold)
-
-		Label() {
-
-			target_size	= glm::vec2(GUI2Dynamic::fit);
-
-		}
+		float text_height;
+		StyleProperty<glm::vec4> text_color;
 
 		void publish(GUI2Dynamic& gui_dynamic);
 
@@ -317,59 +316,37 @@ namespace widget2 {
 		int32_t		last_published_index	= 0; 
 	};
 
+	template<>
+	inline void DefaultStyle::apply<Label>(Label& widget) {
+		apply<Grid>(widget);
+		//widget.font = 1;
+		widget.text_height = 16;
+		widget.text_color = glm::vec4(0, 0, 0, 1);
+		widget.target_size = glm::vec2(GUI2Dynamic::fit);
+	}
+
 	struct TextInput : public Grid {
 
 		Box	  background;
 		Label label;
 
+		StyleProperty<glm::vec4> placeholder_text_color;
+		StyleProperty<glm::vec4> selected_text_color;
+		StyleProperty<glm::vec4> selected_background_color;
+		StyleProperty<glm::vec4> text_color;
+		StyleProperty<glm::vec4> text_cursor_color;
+		std::chrono::system_clock::duration text_cursor_timer_blink_period;
+
 		std::u32string placeholder_text = U"Placeholder";
 		std::u32string text = U"";
 
-		glm::vec4 placeholder_text_color    = glm::vec4(0.3, 0.3, 0.3, 1);
-		glm::vec4 selected_text_color		= glm::vec4(1, 1, 1, 1);
-		glm::vec4 selected_background_color = glm::vec4(0.23, 0.48, 0.72, 1);
-		glm::vec4 text_color				= glm::vec4(0.2, 0.2, 0.2, 1);
-		
-		std::optional<glm::vec4> on_focus_text_color					= glm::vec4(0, 0, 0, 1);
-		std::optional<glm::vec4> on_focus_background_color				= std::nullopt;
-		std::optional<glm::vec4> on_focus_background_border_thickness	= std::nullopt;
-		std::optional<glm::vec4> on_focus_background_border_rounding	= std::nullopt;
-		std::optional<glm::vec4> on_focus_background_border_color0		= glm::vec4(0.50, 0.50, 0.56, 1);
-		std::optional<glm::vec4> on_focus_background_border_color1		= glm::vec4(0.50, 0.50, 0.56, 1);
-		std::optional<glm::vec4> on_focus_background_border_color2		= glm::vec4(0.50, 0.50, 0.56, 1);
-		std::optional<glm::vec4> on_focus_background_border_color3		= glm::vec4(0.50, 0.50, 0.56, 1);
-		std::optional<glm::vec4> on_focus_background_shadow_thickness	= std::nullopt;
-		std::optional<glm::vec4> on_focus_background_shadow_color		= std::nullopt;
-
-		std::chrono::system_clock::duration text_cursor_timer_blink_period = std::chrono::milliseconds(500);
-		glm::vec4 text_cursor_color = glm::vec4(0, 0, 0, 1);
-
 		static constexpr int32_t invalid_selection_index = -1;
-		int32_t selection_index_begin	= invalid_selection_index;
-		int32_t selection_index_end		= invalid_selection_index;
-		int32_t text_cursor_position	= 0;
+		int32_t selection_index_begin = invalid_selection_index;
+		int32_t selection_index_end = invalid_selection_index;
+		int32_t text_cursor_position = 0;
 
 		bool can_aquire_keyboard_focus = true;
-		std::chrono::system_clock::time_point keyboard_focus_begin = IOEvent::invalid_time;
-
-		TextInput() {
-
-			target_size					= glm::vec2(400, 40);
-			padding						= glm::vec4(0);
-
-			label.target_size			= glm::vec2(GUI2Dynamic::fit);
-			label.margin				= glm::vec4(8, GUI2Dynamic::avail, 8, GUI2Dynamic::avail);
-			label.text_color			= glm::vec4(0.2, 0.2, 0.2, 1);
-
-			background.color			= glm::vec4(1, 1, 1, 1);
-			background.border_thickness = glm::vec4(2);
-			background.border_color0	= glm::vec4(0.68, 0.71, 0.75, 1);
-			background.border_color1	= glm::vec4(0.68, 0.71, 0.75, 1);
-			background.border_color2	= glm::vec4(0.68, 0.71, 0.75, 1);
-			background.border_color3	= glm::vec4(0.68, 0.71, 0.75, 1);
-			background.target_size		= glm::vec2(GUI2Dynamic::avail, GUI2Dynamic::avail);
-			background.margin			= glm::vec4(0);
-		}
+		IOEvent focus;
 
 		void publish(GUI2Dynamic& gui_dynamic);
 	
@@ -377,13 +354,50 @@ namespace widget2 {
 		void resolve_keyboard_io(GUI2Dynamic& gui_dynamic);
 	};
 
+
+	template<>
+	inline void DefaultStyle::apply<TextInput>(TextInput& widget) {
+		apply<Grid>(widget);
+		apply(widget.background);
+		apply(widget.label);
+
+		widget.placeholder_text_color 			= glm::vec4(0.3, 0.3, 0.3, 1);
+		widget.selected_text_color 				= glm::vec4(1, 1, 1, 1);
+		widget.selected_background_color 		= glm::vec4(0.23, 0.48, 0.72, 1);
+		widget.text_color 						= glm::vec4(0.2, 0.2, 0.2, 1);
+		widget.text_cursor_color 				= glm::vec4(0, 0, 0, 1);
+		widget.text_cursor_timer_blink_period	= std::chrono::milliseconds(500);
+
+		widget.target_size 						= glm::vec2(400, 40);
+		widget.padding 							= glm::vec4(0);
+
+		widget.label.target_size 				= glm::vec2(GUI2Dynamic::fit);
+		widget.label.margin 					= glm::vec4(8, GUI2Dynamic::avail, 8, GUI2Dynamic::avail);
+		widget.label.text_color 				= glm::vec4(0.2, 0.2, 0.2, 1);
+		
+		widget.background.color 				= glm::vec4(1, 1, 1, 1);
+		widget.background.border_thickness 		= glm::vec4(2);
+		widget.background.border_color0 		= glm::vec4(0.68, 0.71, 0.75, 1);
+		widget.background.border_color1 		= glm::vec4(0.68, 0.71, 0.75, 1);
+		widget.background.border_color2 		= glm::vec4(0.68, 0.71, 0.75, 1);
+		widget.background.border_color3 		= glm::vec4(0.68, 0.71, 0.75, 1);
+		widget.background.target_size 			= glm::vec2(GUI2Dynamic::avail, GUI2Dynamic::avail);
+		widget.background.margin				= glm::vec4(0);
+
+		widget.label.text_color.transition(widget.focus, glm::vec4(0, 0, 0, 1));
+		widget.background.border_color0.transition(widget.focus, glm::vec4(0.50, 0.50, 0.56, 1));
+		widget.background.border_color1.transition(widget.focus, glm::vec4(0.50, 0.50, 0.56, 1));
+		widget.background.border_color2.transition(widget.focus, glm::vec4(0.50, 0.50, 0.56, 1));
+		widget.background.border_color3.transition(widget.focus, glm::vec4(0.50, 0.50, 0.56, 1));
+	}
+
+
 	struct Slider : public Grid {
 
 		Box head;
+		Box background;
+		Box filled_bar;
 
-		glm::vec4 color;
-		widget2_styled_property2(glm::vec4, filled_color, glm::vec4(0.13, 0.57, 0.59, 1), on_hover, on_hold)
-		
 		float value = 0.5;
 		float min_value = 0;
 		float max_value = 1;
@@ -392,11 +406,54 @@ namespace widget2 {
 
 	};
 
-	struct DragFloat {
+	template<>
+	inline void DefaultStyle::apply<Slider>(Slider& widget) {
+		apply<Grid>(widget);
+		apply(widget.head);
+		apply(widget.background);
+		apply(widget.filled_bar);
+
+		widget.target_size	= glm::vec2(400, 20);
+
+		widget.head.target_size			= glm::vec2(widget.target_size.value.y, widget.target_size.value.y);
+		widget.head.color				= glm::vec4(0.82, 0.82, 0.82, 1);
+		widget.head.color.transition(widget.head.hover, glm::vec4(0.79, 0.79, 0.79, 1), std::chrono::milliseconds(50));
+		widget.head.color.transition(widget.head.hold,	glm::vec4(0.82, 0.82, 0.92, 1), std::chrono::milliseconds(50));
+
+		widget.background.target_size	= glm::vec2(GUI2Dynamic::avail);
+		widget.background.color			= glm::vec4(0.90, 0.90, 0.90, 1);
+
+		widget.filled_bar.target_size	= glm::vec2(0, GUI2Dynamic::avail);
+		widget.filled_bar.color			= glm::vec4(0.28f, 0.7f, 0.89f, 1);
+	}
+
+	struct DragFloat : public Grid {
+
+		Label text;
+		Box background;
+
+		float value			= 0.0f;
+
+		float sensitivity	= 1;
+		float min_value		= std::numeric_limits<float>::min();
+		float max_value		= std::numeric_limits<float>::max();
 
 		void publish(GUI2Dynamic& gui_dynamic);
 
 	};
+
+	template<>
+	inline void DefaultStyle::apply<DragFloat>(DragFloat& widget) {
+		apply<Grid>(widget);
+		apply(widget.text);
+		apply(widget.background);
+
+		widget.target_size = glm::vec2(120, 40);
+		
+		widget.background.target_size = glm::vec2(GUI2Dynamic::avail);
+		
+		widget.text.margin = glm::vec4(GUI2Dynamic::avail);
+	}
 
 	struct Button {
 
@@ -435,5 +492,3 @@ namespace widget2 {
 	};
 
 }
-
-#include "GUI2Widgets_Templated.h"

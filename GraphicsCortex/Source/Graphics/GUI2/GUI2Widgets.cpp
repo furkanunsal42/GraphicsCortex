@@ -302,53 +302,21 @@ void widget2::IOWidget::resolve_io(GUI2Dynamic& gui_dynamic)
 	mouse_states[0] = current_state;
 }
 
-
-float widget2::StyledWidget::get_t(
-	std::chrono::system_clock::time_point last_begin,
-	std::chrono::system_clock::time_point last_end,
-	std::chrono::system_clock::duration transition_time)
-{
-	if (transition_time.count() == 0)
-		return 1;
-
-	auto now = std::chrono::system_clock::now();
-
-	bool happening =
-		(last_begin != IOEvent::invalid_time && last_end == IOEvent::invalid_time) ||
-		(last_begin != IOEvent::invalid_time && last_end != IOEvent::invalid_time && last_begin > last_end);
-
-	bool recovering =
-		(last_begin != IOEvent::invalid_time && last_end != IOEvent::invalid_time && last_begin < last_end && now - last_end < std::min(transition_time, last_end - last_begin));
-
-	float t = 0;
-	if (happening) {
-		std::chrono::system_clock::duration time_passed = std::min(std::chrono::system_clock::now() - last_begin, transition_time);
-		t = 1 - (transition_time - time_passed).count() / (float)transition_time.count();
-	}
-	if (recovering) {
-		std::chrono::system_clock::duration time_passed_hovering = std::min(last_end - last_begin, transition_time);
-		std::chrono::system_clock::duration time_passed_recovering = std::min(std::chrono::system_clock::now() - last_end, transition_time);
-		t = 1 - (transition_time - time_passed_hovering + time_passed_recovering).count() / (float)transition_time.count();
-	}
-
-	return t;
-}
-
 void widget2::Box::publish(GUI2Dynamic& gui_dynamic) {
 
 	gui_dynamic.box_begin(id);
 
 	gui_dynamic.box_prop().margin			=  margin;
-	gui_dynamic.box_prop().target_size		=  widget2_get_property2(target_size,		on_hover, on_hold);
-	gui_dynamic.box_prop().color			=  widget2_get_property2(color,				on_hover, on_hold);
-	gui_dynamic.box_prop().border_thickness	=  widget2_get_property2(border_thickness,	on_hover, on_hold);
-	gui_dynamic.box_prop().border_rounding	=  widget2_get_property2(border_rounding,	on_hover, on_hold);
-	gui_dynamic.box_prop().border_color0	=  widget2_get_property2(border_color0,		on_hover, on_hold);
-	gui_dynamic.box_prop().border_color1	=  widget2_get_property2(border_color1,		on_hover, on_hold);
-	gui_dynamic.box_prop().border_color2	=  widget2_get_property2(border_color2,		on_hover, on_hold);
-	gui_dynamic.box_prop().border_color3	=  widget2_get_property2(border_color3,		on_hover, on_hold);
-	gui_dynamic.box_prop().shadow_thickness	=  widget2_get_property2(shadow_thickness,	on_hover, on_hold);
-	gui_dynamic.box_prop().shadow_color		=  widget2_get_property2(shadow_color,		on_hover, on_hold);
+	gui_dynamic.box_prop().target_size		=  target_size;
+	gui_dynamic.box_prop().color			=  color;
+	gui_dynamic.box_prop().border_thickness	=  border_thickness;
+	gui_dynamic.box_prop().border_rounding	=  border_rounding;
+	gui_dynamic.box_prop().border_color0	=  border_color0;
+	gui_dynamic.box_prop().border_color1	=  border_color1;
+	gui_dynamic.box_prop().border_color2	=  border_color2;
+	gui_dynamic.box_prop().border_color3	=  border_color3;
+	gui_dynamic.box_prop().shadow_thickness	=  shadow_thickness;
+	gui_dynamic.box_prop().shadow_color		=  shadow_color;
 
 	//gui_dynamic.box_end();
 
@@ -359,44 +327,44 @@ void widget2::Box::publish(GUI2Dynamic& gui_dynamic) {
 void widget2::Box::apply_properties_to(GUI2Dynamic::WindowDesc& desc)
 {
 	desc.padding			= glm::vec4(0);
-	desc.target_size		=  widget2_get_property2(target_size,		on_hover, on_hold);
-	desc.color				=  widget2_get_property2(color,				on_hover, on_hold);
-	desc.border_thickness	=  widget2_get_property2(border_thickness,	on_hover, on_hold);
-	desc.border_rounding	=  widget2_get_property2(border_rounding,	on_hover, on_hold);
-	desc.border_color0		=  widget2_get_property2(border_color0,		on_hover, on_hold);
-	desc.border_color1		=  widget2_get_property2(border_color1,		on_hover, on_hold);
-	desc.border_color2		=  widget2_get_property2(border_color2,		on_hover, on_hold);
-	desc.border_color3		=  widget2_get_property2(border_color3,		on_hover, on_hold);
-	desc.shadow_thickness	=  widget2_get_property2(shadow_thickness,	on_hover, on_hold);
-	desc.shadow_color		=  widget2_get_property2(shadow_color,		on_hover, on_hold);
+	desc.target_size		=  target_size;
+	desc.color				=  color;
+	desc.border_thickness	=  border_thickness;
+	desc.border_rounding	=  border_rounding;
+	desc.border_color0		=  border_color0;
+	desc.border_color1		=  border_color1;
+	desc.border_color2		=  border_color2;
+	desc.border_color3		=  border_color3;
+	desc.shadow_thickness	=  shadow_thickness;
+	desc.shadow_color		=  shadow_color;
 }
 
 void widget2::Box::apply_properties_to(GUI2Dynamic::BoxDesc& desc)
 {
 	desc.margin				=  margin;
-	desc.target_size		=  widget2_get_property2(target_size,		on_hover, on_hold);
-	desc.color				=  widget2_get_property2(color,				on_hover, on_hold);
-	desc.border_thickness	=  widget2_get_property2(border_thickness,	on_hover, on_hold);
-	desc.border_rounding	=  widget2_get_property2(border_rounding,	on_hover, on_hold);
-	desc.border_color0		=  widget2_get_property2(border_color0,		on_hover, on_hold);
-	desc.border_color1		=  widget2_get_property2(border_color1,		on_hover, on_hold);
-	desc.border_color2		=  widget2_get_property2(border_color2,		on_hover, on_hold);
-	desc.border_color3		=  widget2_get_property2(border_color3,		on_hover, on_hold);
-	desc.shadow_thickness	=  widget2_get_property2(shadow_thickness,	on_hover, on_hold);
-	desc.shadow_color		=  widget2_get_property2(shadow_color,		on_hover, on_hold);
+	desc.target_size		=  target_size;
+	desc.color				=  color;
+	desc.border_thickness	=  border_thickness;
+	desc.border_rounding	=  border_rounding;
+	desc.border_color0		=  border_color0;
+	desc.border_color1		=  border_color1;
+	desc.border_color2		=  border_color2;
+	desc.border_color3		=  border_color3;
+	desc.shadow_thickness	=  shadow_thickness;
+	desc.shadow_color		=  shadow_color;
 }
 
 void widget2::Box::apply_properties_to(GUI2Dynamic::GridDesc& desc)
 {
 	desc.margin				=  margin;
-	desc.target_size		=  widget2_get_property2(target_size,		on_hover, on_hold);
+	desc.target_size		=  target_size;
 	desc.padding			=  glm::vec4(0);
 }
 
 void widget2::Box::apply_properties_to(GUI2Dynamic::StackDesc& desc)
 {
 	desc.margin				=  margin;
-	desc.target_size		=  widget2_get_property2(target_size,		on_hover, on_hold);
+	desc.target_size		=  target_size;
 	desc.padding			=  glm::vec4(0);
 	desc.spacing			=  0;
 }
@@ -405,10 +373,12 @@ void widget2::Grid::publish(GUI2Dynamic& gui_dynamic) {
 
 	gui_dynamic.grid_begin(id);
 
-	gui_dynamic.grid_prop().margin		= widget2_get_property2(margin,			on_hover, on_hold);
-	gui_dynamic.grid_prop().padding		= widget2_get_property2(padding,		on_hover, on_hold);
-	gui_dynamic.grid_prop().target_size = widget2_get_property2(target_size,	on_hover, on_hold);
+	gui_dynamic.grid_prop().margin		= margin;
+	gui_dynamic.grid_prop().padding		= padding;
+	gui_dynamic.grid_prop().target_size = target_size;
 	
+	gui_dynamic.grid_region(glm::ivec2(0));
+
 	resolve_io(gui_dynamic);
 
 }
@@ -417,10 +387,10 @@ void widget2::Stack::publish(GUI2Dynamic& gui_dynamic) {
 
 	gui_dynamic.stack_begin(id);
 
-	gui_dynamic.stack_prop().margin			= widget2_get_property2(margin,			on_hover, on_hold);
-	gui_dynamic.stack_prop().padding		= widget2_get_property2(padding,		on_hover, on_hold);
-	gui_dynamic.stack_prop().target_size	= widget2_get_property2(target_size,	on_hover, on_hold);
-	gui_dynamic.stack_prop().spacing		= widget2_get_property2(spacing,		on_hover, on_hold);
+	gui_dynamic.stack_prop().margin			= margin;
+	gui_dynamic.stack_prop().padding		= padding;
+	gui_dynamic.stack_prop().target_size	= target_size;
+	gui_dynamic.stack_prop().spacing		= spacing;
 	
 	resolve_io(gui_dynamic);
 
@@ -558,7 +528,7 @@ bool widget2::Label::publish_glyph(GUI2Dynamic& gui_dynamic, size_t end_index) {
 			.set_margin(glm::vec4(position.x, position.y, 0, 0))
 			.set_uv00(glm::vec2(table.coords_hi.x, 1 - table.coords_hi.y))
 			.set_uv11(glm::vec2(table.coords_low.x, 1 - table.coords_low.y))
-			.set_color(widget2_get_property2(text_color, on_hover, on_hold))
+			.set_color(text_color)
 			.set_texture_handle(FontBank::get().get_font(font).atlas->texture_handle);
 
 		text_size.y = glm::max(text_size.y, size.y);
@@ -621,57 +591,21 @@ void widget2::TextInput::publish(GUI2Dynamic& gui_dynamic)
 {
 	if (can_aquire_keyboard_focus) {
 		if ((get_mouse_state(0) & Click) == Click)
-			keyboard_focus_begin = std::chrono::system_clock::now();
+			focus.start_event();
 
 		if (get_mouse_state(0) == None && gui_dynamic.get_io_state().mouse_state & GUI2::MouseEvent::LeftRelease) {
-			keyboard_focus_begin	= IOEvent::invalid_time;
+			focus.finish_event();
 			selection_index_begin	= invalid_selection_index;
 			selection_index_end		= invalid_selection_index;
 		}
 	}
-	
-	//widget2_styled_property2(glm::vec4, placeholder_text_color, glm::vec4(0.4, 0.4, 0.4, 1),	on_hover, on_focus)
-	//widget2_styled_property2(glm::vec4, selected_text_color,	glm::vec4(0.5, 0.5, 0.5, 1),	on_hover, on_focus)
-	//widget2_styled_property2(glm::vec4,	text_color,				glm::vec4(0.2, 0.2, 0.2, 1),	on_hover, on_focus)
-	//
-	//widget2_styled_event(glm::vec4,		border_thickness,	on_focus)
-	//widget2_styled_event(glm::vec4,		border_rounding,	on_focus)
-	//widget2_styled_event(glm::vec4,		border_color0,		on_focus)
-	//widget2_styled_event(glm::vec4,		border_color1,		on_focus)
-	//widget2_styled_event(glm::vec4,		border_color2,		on_focus)
-	//widget2_styled_event(glm::vec4,		border_color3,		on_focus)
-	//widget2_styled_event(glm::vec4,		shadow_thickness,	on_focus)
-	//widget2_styled_event(glm::vec4,		shadow_color,		on_focus)
 
-	glm::vec4 prev_label_text_color = label.text_color;
-
-	glm::vec4 prev_background_color				= background.color;
-	glm::vec4 prev_background_border_thickness	= background.border_thickness;
-	glm::vec4 prev_background_border_rounding	= background.border_rounding;
-	glm::vec4 prev_background_border_color0		= background.border_color0;
-	glm::vec4 prev_background_border_color1		= background.border_color1;
-	glm::vec4 prev_background_border_color2		= background.border_color2;
-	glm::vec4 prev_background_border_color3		= background.border_color3;
-
-
-	bool focused = keyboard_focus_begin != IOEvent::invalid_time;
-	if (focused) {
+	if (focus.is_active())
 		resolve_keyboard_io(gui_dynamic);
-	}
-	focused = keyboard_focus_begin != IOEvent::invalid_time;
+
+	label.text			= text.size() == 0 && !focus.is_active() ? placeholder_text : text;
+	label.text_color	= text.size() == 0 && !focus.is_active() ? placeholder_text_color : text_color;
 	
-	label.text			= text.size() == 0 && !focused ? placeholder_text : text;
-	label.text_color	= text.size() == 0 && !focused ? placeholder_text_color :
-							focused ? on_focus_text_color.value_or(label.text_color) : label.text_color;
-
-	background.color				= focused ? on_focus_background_color			.value_or(background.color)	: background.color;
-	background.border_thickness		= focused ? on_focus_background_border_thickness.value_or(background.border_thickness)	: background.border_thickness;
-	background.border_rounding		= focused ? on_focus_background_border_rounding	.value_or(background.border_rounding)	: background.border_rounding;
-	background.border_color0		= focused ? on_focus_background_border_color0	.value_or(background.border_color0)	: background.border_color0;
-	background.border_color1		= focused ? on_focus_background_border_color1	.value_or(background.border_color1)	: background.border_color1;
-	background.border_color2		= focused ? on_focus_background_border_color2	.value_or(background.border_color2)	: background.border_color2;
-	background.border_color3		= focused ? on_focus_background_border_color3	.value_or(background.border_color3)	: background.border_color3;
-
 	Grid::publish(gui_dynamic);
 	gui_dynamic.grid_region(glm::ivec2(0));
 	
@@ -686,7 +620,7 @@ void widget2::TextInput::publish(GUI2Dynamic& gui_dynamic)
 		gui_dynamic.box_begin()
 			.set_color(selected_background_color)
 			.set_target_size(glm::vec2(advance_end - advance_begin, label.text_height + 8))
-			.set_margin(glm::vec4(advance_begin + label.margin.x, GUI2Dynamic::avail, 0, GUI2Dynamic::avail));
+			.set_margin(glm::vec4(advance_begin + label.margin.value.x, GUI2Dynamic::avail, 0, GUI2Dynamic::avail));
 	}
 	
 	label.begin(gui_dynamic);
@@ -707,17 +641,6 @@ void widget2::TextInput::publish(GUI2Dynamic& gui_dynamic)
 	gui_dynamic.grid_end();
 
 	resolve_io(gui_dynamic);
-
-	label.text_color				= prev_label_text_color;
-	
-	background.color				= prev_background_color;
-	background.border_thickness		= prev_background_border_thickness;
-	background.border_rounding		= prev_background_border_rounding;
-	background.border_color0		= prev_background_border_color0;
-	background.border_color1		= prev_background_border_color1;
-	background.border_color2		= prev_background_border_color2;
-	background.border_color3		= prev_background_border_color3;
-
 }
 
 void widget2::TextInput::resolve_keyboard_io(GUI2Dynamic& gui_dynamic) {
@@ -875,20 +798,20 @@ void widget2::TextInput::resolve_keyboard_io(GUI2Dynamic& gui_dynamic) {
 				}
 			}
 			else if (result.key == ::Window::Key::TAB) {
-				keyboard_focus_begin = IOEvent::invalid_time;
+				focus.end = std::chrono::system_clock::now();
 			}
 			else if (result.key == ::Window::Key::ENTER) {
-				keyboard_focus_begin = IOEvent::invalid_time;
+				focus.finish_event();
 				selection_index_begin = invalid_selection_index;
 				selection_index_end = invalid_selection_index;
 			}
 			else if (result.key == ::Window::Key::KP_ENTER) {
-				keyboard_focus_begin = IOEvent::invalid_time;
+				focus.finish_event();
 				selection_index_begin = invalid_selection_index;
 				selection_index_end = invalid_selection_index;
 			}
 			else if (result.key == ::Window::Key::ESCAPE) {
-				keyboard_focus_begin = IOEvent::invalid_time;
+				focus.finish_event();
 				selection_index_begin = invalid_selection_index;
 				selection_index_end = invalid_selection_index;
 			}
@@ -997,5 +920,46 @@ void widget2::TextInput::resolve_keyboard_io(GUI2Dynamic& gui_dynamic) {
 	}
 
 
+
+}
+
+void widget2::IOEvent::start_event()
+{
+	begin = std::chrono::system_clock::now();
+}
+
+void widget2::IOEvent::finish_event()
+{
+	end = std::chrono::system_clock::now();
+}
+
+bool widget2::IOEvent::is_active()
+{
+	if (begin == invalid_time && end == invalid_time)
+		return false;
+	if (begin == invalid_time && end != invalid_time)
+		return false;
+	if (begin != invalid_time && end == invalid_time)
+		return true;
+	return (begin > end);
+}
+
+void widget2::Slider::publish(GUI2Dynamic& gui_dynamic) {
+
+	float filled_width = get_resolved_properties(gui_dynamic).size.x / max_value * value;
+	filled_bar.target_size.value.x	= filled_width;
+	head.margin.value.x				= filled_width;
+
+	Grid::publish(gui_dynamic);
+	gui_dynamic.grid_add_column(GUI2Dynamic::avail);
+	gui_dynamic.grid_add_row(GUI2Dynamic::avail);
+	
+	background.publish(gui_dynamic);
+	filled_bar.publish(gui_dynamic);
+	head.publish(gui_dynamic);
+
+	gui_dynamic.grid_end();
+
+	resolve_io(gui_dynamic);
 
 }
