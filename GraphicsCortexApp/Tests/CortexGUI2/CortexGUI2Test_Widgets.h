@@ -29,6 +29,8 @@ public:
 			gui_d.new_frame(gui);
 
 			static widget2::Window window0;
+			
+			style.apply(window0);
 			window0.draggable = true;
 			window0.publish(gui_d);
 			

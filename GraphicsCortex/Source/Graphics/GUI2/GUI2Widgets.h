@@ -242,7 +242,7 @@ namespace widget2 {
 		bool dockable;
 		bool has_default_decoration;
 
-		glm::vec2 position;
+		glm::vec2 position = glm::vec2(100);
 
 		void publish(GUI2Dynamic& gui_dynamic);
 
@@ -255,7 +255,6 @@ namespace widget2 {
 		widget.draggable				= true;	
 		widget.dockable					= false;	
 		widget.has_default_decoration	= false;
-		widget.position					= glm::vec2(100);
 	}
 
 	struct DockSurface {
@@ -413,18 +412,21 @@ namespace widget2 {
 		apply(widget.background);
 		apply(widget.filled_bar);
 
-		widget.target_size	= glm::vec2(400, 20);
+		widget.target_size	= glm::vec2(400, 26);
 
 		widget.head.target_size			= glm::vec2(widget.target_size.value.y, widget.target_size.value.y);
-		widget.head.color				= glm::vec4(0.82, 0.82, 0.82, 1);
-		widget.head.color.transition(widget.head.hover, glm::vec4(0.79, 0.79, 0.79, 1), std::chrono::milliseconds(50));
-		widget.head.color.transition(widget.head.hold,	glm::vec4(0.82, 0.82, 0.92, 1), std::chrono::milliseconds(50));
+		widget.head.color				= glm::vec4(0.88, 0.88, 0.88, 1);
+		widget.head.border_rounding		= glm::vec4(16);
+		widget.head.color.transition(widget.head.hover, glm::vec4(0.78, 0.78, 0.92, 1), std::chrono::milliseconds(100));
+		widget.head.color.transition(widget.head.hold,	glm::vec4(0.82, 0.82, 0.82, 1), std::chrono::milliseconds(100));
 
-		widget.background.target_size	= glm::vec2(GUI2Dynamic::avail);
+		widget.background.target_size	= glm::vec2(GUI2Dynamic::avail, 4);
 		widget.background.color			= glm::vec4(0.90, 0.90, 0.90, 1);
+		widget.background.margin		= glm::vec4(0, GUI2Dynamic::avail, 0, GUI2Dynamic::avail);
 
-		widget.filled_bar.target_size	= glm::vec2(0, GUI2Dynamic::avail);
-		widget.filled_bar.color			= glm::vec4(0.28f, 0.7f, 0.89f, 1);
+		widget.filled_bar.target_size	= glm::vec2(0, widget.background.target_size.value.y);
+		widget.filled_bar.color			= glm::vec4(0.45f, 0.59f, 0.65f, 1);
+		widget.filled_bar.margin		= glm::vec4(0, GUI2Dynamic::avail, 0, GUI2Dynamic::avail);
 	}
 
 	struct DragFloat : public Grid {
