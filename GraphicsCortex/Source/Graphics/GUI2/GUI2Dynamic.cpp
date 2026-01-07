@@ -932,6 +932,11 @@ GUI2::IOState& GUI2Dynamic::get_io_state() {
 	return io_state;
 }
 
+int32_t GUI2Dynamic::get_levels_under_cursor()
+{
+	return levels_under_cursor;
+}
+
 size_t GUI2Dynamic::generate_id()
 {
 	size_t id = next_id_to_generate;
@@ -1312,12 +1317,19 @@ void GUI2Dynamic::resolve_phase2_mouse_event(size_t root_node)
 	GUI2::MouseEvent	mouse_event_ref		= io_state.mouse_state;
 	glm::vec2			root_position		= node_position(root_node);
 
-	std::vector<size_t> stack;
-	stack.push_back(root_node);
+	struct stack_info {
+		size_t widget = 0;
+		int32_t level = 0;
+	};
+
+	std::vector<stack_info> stack;
+	stack.push_back({ .widget=root_node, .level=0 });
+
+	levels_under_cursor = 0;
 
 	while (stack.size() != 0) {
 
-		size_t node_id		= stack.back();
+		auto [node_id, node_level] = stack.back();
 		stack.pop_back();
 
 		GUI2::MouseEvent& event_ref = node_mouse_event(node_id);
@@ -1337,10 +1349,12 @@ void GUI2Dynamic::resolve_phase2_mouse_event(size_t root_node)
 
 		if (resolved_properties.find(resolved_id) != resolved_properties.end()) {
 			resolved_properties[resolved_id].event = event_ref;
+			resolved_properties[resolved_id].level = node_level;
+			levels_under_cursor = std::max(levels_under_cursor, node_level + 1);
 		}
 
 		traverse_nodes_children(node_id, [&](size_t child) {
-			stack.push_back(child);
+			stack.push_back({ child, node_level + 1 });
 			});
 	}
 

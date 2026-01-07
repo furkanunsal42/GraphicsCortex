@@ -61,6 +61,7 @@ namespace widget2 {
 		MouseState	get_mouse_state(int32_t mouse_button = mouse_left);
 		glm::vec2	get_cursor_position_when_hold_begin(int32_t mouse_button = mouse_left);
 		glm::vec2	get_widget_position_when_hold_begin(int32_t mouse_button = mouse_left);
+		bool		is_topmost_widget();
 
 		duration double_click_max_delay = std::chrono::milliseconds(500);
 		float carry_begin_min_offset = 10;
@@ -71,7 +72,7 @@ namespace widget2 {
 
 	protected:
 		
-		void resolve_io(GUI2Dynamic& gui_dynamic);
+		void resolve_io(GUI2Dynamic& gui_dynamic, bool ignore_if_not_topmost_widget = true);
 		
 	private:
 
@@ -82,6 +83,7 @@ namespace widget2 {
 		glm::vec2 widget_position_when_hold_begin	= invalid_position;
 		
 		bool was_last_click_double = false;
+		bool is_top_most = false;
 	};
 
 	template<typename T>
@@ -146,6 +148,39 @@ namespace widget2 {
 		void apply(T& widget) = delete;
 
 	};
+
+	struct Window : public IOWidget {
+
+		glm::vec2 drag_area_position;
+		glm::vec2 drag_area_size;
+
+		bool draggable;
+		bool dockable;
+		bool has_default_decoration;
+
+		glm::vec2 position = glm::vec2(100);
+
+		void publish(GUI2Dynamic& gui_dynamic);
+
+	private:
+
+	};
+
+	template<>
+	inline void DefaultStyle::apply<Window>(Window& widget) {
+		widget.draggable = true;
+		widget.dockable = false;
+		widget.has_default_decoration = false;
+	}
+
+	//struct DockSurface {
+	//
+	//	DockSurface(std::string idstr);
+	//	void publish(GUI2Dynamic& gui_dynamic);
+	//
+	//private:
+	//
+	//};
 
 	struct Box : public IOWidget {
 		
@@ -233,39 +268,6 @@ namespace widget2 {
 		widget.spacing		= 10;
 	}
 
-	struct Window : public IOWidget {
-
-		glm::vec2 drag_area_position;
-		glm::vec2 drag_area_size;
-
-		bool draggable;
-		bool dockable;
-		bool has_default_decoration;
-
-		glm::vec2 position = glm::vec2(100);
-
-		void publish(GUI2Dynamic& gui_dynamic);
-
-	private:
-
-	};
-
-	template<>
-	inline void DefaultStyle::apply<Window>(Window& widget) {
-		widget.draggable				= true;	
-		widget.dockable					= false;	
-		widget.has_default_decoration	= false;
-	}
-
-	struct DockSurface {
-
-		DockSurface(std::string idstr);
-		void publish(GUI2Dynamic& gui_dynamic);
-
-	private: 
-
-	};
-
 	struct Image : public Box {
 
 		enum Type {
@@ -296,8 +298,9 @@ namespace widget2 {
 
 	struct Label : public Grid {
 
-		font_id font = 1;
-		std::u32string text;
+		std::u32string text = U"";
+
+		font_id font;
 		float text_height;
 		StyleProperty<glm::vec4> text_color;
 
@@ -318,7 +321,7 @@ namespace widget2 {
 	template<>
 	inline void DefaultStyle::apply<Label>(Label& widget) {
 		apply<Grid>(widget);
-		//widget.font = 1;
+		widget.font = 1;
 		widget.text_height = 16;
 		widget.text_color = glm::vec4(0, 0, 0, 1);
 		widget.target_size = glm::vec2(GUI2Dynamic::fit);

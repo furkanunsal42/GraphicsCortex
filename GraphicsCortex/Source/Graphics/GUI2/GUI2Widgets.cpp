@@ -28,12 +28,21 @@ glm::vec2 widget2::IOWidget::get_widget_position_when_hold_begin(int32_t mouse_b
 	return widget_position_when_hold_begin;
 }
 
+bool widget2::IOWidget::is_topmost_widget()
+{
+	return is_top_most;
+}
 
-void widget2::IOWidget::resolve_io(GUI2Dynamic& gui_dynamic)
+
+void widget2::IOWidget::resolve_io(GUI2Dynamic& gui_dynamic, bool ignore_if_not_topmost_widget)
 {
 	GUI2::MouseEvent event = gui_dynamic.get_resolved_properties(id).event;
 
 	MouseState current_state = mouse_states[0];
+	
+	if (ignore_if_not_topmost_widget && !is_topmost_widget())
+		event = GUI2::None;
+
 	switch (current_state) {
 
 	case None : 
@@ -300,6 +309,8 @@ void widget2::IOWidget::resolve_io(GUI2Dynamic& gui_dynamic)
 	click.end = click.begin;
 
 	mouse_states[0] = current_state;
+
+	is_top_most = gui_dynamic.get_resolved_properties(id).level == gui_dynamic.get_levels_under_cursor() - 1;
 }
 
 void widget2::Box::publish(GUI2Dynamic& gui_dynamic) {
@@ -640,7 +651,7 @@ void widget2::TextInput::publish(GUI2Dynamic& gui_dynamic)
 	gui_dynamic.grid_add_row(GUI2Dynamic::avail);
 	gui_dynamic.grid_end();
 
-	resolve_io(gui_dynamic);
+	resolve_io(gui_dynamic, false);
 }
 
 void widget2::TextInput::resolve_keyboard_io(GUI2Dynamic& gui_dynamic) {

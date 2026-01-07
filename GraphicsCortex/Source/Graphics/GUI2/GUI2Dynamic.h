@@ -90,6 +90,7 @@ public:
 	ResolvedProperties  get_resolved_properties(size_t id);
 	ResolvedProperties  get_resolved_properties(const std::string& idstr);
 	GUI2::IOState&		get_io_state();
+	int32_t				get_levels_under_cursor(); 
 
 	void				publish(GUI2& gui);
 
@@ -262,11 +263,11 @@ public:
 	struct Node;
 	struct ResolvedProperties {
 
-		size_t node_id					= Node::invalid_node;
-		glm::vec2 position				= glm::vec2(0);
-		glm::vec2 size					= glm::vec2(0);
-		GUI2::MouseEvent event			= GUI2::None;
-
+		size_t				node_id		= Node::invalid_node;
+		glm::vec2			position	= glm::vec2(0);
+		glm::vec2			size		= glm::vec2(0);
+		int32_t				level		= 0;
+		GUI2::MouseEvent	event		= GUI2::None;
 		bool does_exists();
 	};
 
@@ -351,8 +352,8 @@ private:
 
 	std::unordered_map<std::string, size_t>			idstr_to_id;
 	std::unordered_map<size_t, ResolvedProperties>	resolved_properties;
-
-	GUI2::IOState io_state;
+	int32_t			levels_under_cursor = 0;
+	GUI2::IOState	io_state;
 
 	size_t next_id_to_generate = 1;
 	size_t generate_id();
