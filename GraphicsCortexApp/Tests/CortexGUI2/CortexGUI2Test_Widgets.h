@@ -84,6 +84,7 @@ public:
 
 			static widget2::DragFloat drag_float;
 			static float drag_float_value = 0;
+			static std::u32string str;
 
 			style.apply(drag_float);
 			drag_float.publish(gui_d, drag_float_value);

@@ -987,14 +987,7 @@ void widget2::Slider::publish(GUI2Dynamic& gui_dynamic, float& value) {
 void widget2::DragFloat::publish(GUI2Dynamic& gui_dynamic, float& value) {
 	
 	std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> convert;
-
-	Grid::publish(gui_dynamic);
-
-	background.publish(gui_dynamic);
-	text.publish(gui_dynamic, convert.from_bytes(std::to_string(value)));
+	std::u32string string = convert.from_bytes(std::to_string(value));
 	
-	gui_dynamic.grid_add_column(target_size.value.x);
-	gui_dynamic.grid_add_row(target_size.value.y);
-	gui_dynamic.grid_end();
-
+	TextInput::publish(gui_dynamic, string);
 }

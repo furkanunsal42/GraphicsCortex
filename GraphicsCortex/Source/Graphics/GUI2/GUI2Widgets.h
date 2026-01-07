@@ -431,10 +431,7 @@ namespace widget2 {
 		widget.filled_bar.margin		= glm::vec4(0, GUI2Dynamic::avail, 0, GUI2Dynamic::avail);
 	}
 
-	struct DragFloat : public Grid {
-
-		Label text;
-		Box background;
+	struct DragFloat : public TextInput {
 
 		float sensitivity	= 1;
 		float min_value		= std::numeric_limits<float>::min();
@@ -442,29 +439,25 @@ namespace widget2 {
 
 		void publish(GUI2Dynamic& gui_dynamic, float& value);
 
+	protected:
+		
+		void publish(GUI2Dynamic& gui_dynamic, std::u32string& text);
+
 	};
 
 	template<>
 	inline void DefaultStyle::apply<DragFloat>(DragFloat& widget) {
-		apply<Grid>(widget);
-		apply(widget.text);
-		apply(widget.background);
-
+		apply<TextInput>(widget);
 		widget.target_size = glm::vec2(120, 30);
 		
-		widget.background.target_size		= glm::vec2(GUI2Dynamic::avail);
-		widget.background.color				= glm::vec4(0.45f, 0.59f, 0.65f, 1);
-		widget.background.border_thickness	= glm::vec4(2);
-		widget.background.border_color0		= glm::vec4(0.45f, 0.59f, 0.65f, 1);
-		widget.background.border_color1		= glm::vec4(0.45f, 0.59f, 0.65f, 1);
-		widget.background.border_color2		= glm::vec4(0.45f, 0.59f, 0.65f, 1);
-		widget.background.border_color3		= glm::vec4(0.45f, 0.59f, 0.65f, 1);
-		
-		widget.text.margin					= glm::vec4(GUI2Dynamic::avail);
-		widget.text.text_color				= glm::vec4(1, 1, 1, 1);
 	}
 
-	struct Button {
+	struct Button : public Grid {
+
+		Box background;
+		Label label;
+
+		std::u32string text;
 
 		void publish(GUI2Dynamic& gui_dynamic);
 
