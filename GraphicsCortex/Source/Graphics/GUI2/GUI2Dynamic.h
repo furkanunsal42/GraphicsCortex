@@ -60,7 +60,6 @@ public:
 	void				new_frame(GUI2& gui);
 
 	WindowDesc&			window_begin(size_t& id);
-	WindowDesc&			window_begin(const std::string& idstr);
 	WindowDesc&			window_prop();
 	void				window_end();
 
@@ -88,7 +87,6 @@ public:
 	void				resolve();
 	
 	ResolvedProperties  get_resolved_properties(size_t id);
-	ResolvedProperties  get_resolved_properties(const std::string& idstr);
 	GUI2::IOState&		get_io_state();
 	int32_t				get_levels_under_cursor(); 
 
@@ -350,7 +348,6 @@ private:
 	glm::vec2		compute_physical_size(glm::vec2 value, glm::vec2 size_per_avail);
 	glm::vec2		compute_physical_size(glm::vec4 value, glm::vec2 size_per_avail);
 
-	std::unordered_map<std::string, size_t>			idstr_to_id;
 	std::unordered_map<size_t, ResolvedProperties>	resolved_properties;
 	int32_t			levels_under_cursor = 0;
 	GUI2::IOState	io_state;

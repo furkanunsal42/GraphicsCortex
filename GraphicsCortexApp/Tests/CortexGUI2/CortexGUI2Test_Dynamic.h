@@ -14,7 +14,8 @@ public:
 		GUI2 gui;
 		GUI2Dynamic gui_d;
 		
-		gui_d.window_begin("My Window 0");
+		size_t window_id = GUI2Dynamic::invalid_id;
+		gui_d.window_begin(window_id);
 		gui_d.stack_begin();
 			gui_d.stack_begin();
 				

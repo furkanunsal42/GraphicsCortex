@@ -919,15 +919,6 @@ GUI2Dynamic::ResolvedProperties GUI2Dynamic::get_resolved_properties(size_t id)
 	return resolved_properties.at(id);
 }
 
-GUI2Dynamic::ResolvedProperties GUI2Dynamic::get_resolved_properties(const std::string& idstr)
-{
-	if (idstr_to_id.find(idstr) == idstr_to_id.end())
-		return ResolvedProperties();
-
-	size_t id = idstr_to_id.at(idstr);
-	return get_resolved_properties(id);
-}
-
 GUI2::IOState& GUI2Dynamic::get_io_state() {
 	return io_state;
 }

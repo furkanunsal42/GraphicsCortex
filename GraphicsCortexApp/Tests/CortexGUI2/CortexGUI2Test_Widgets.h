@@ -24,8 +24,8 @@ public:
 		std::shared_ptr<Texture2D> texture = nullptr;
 
 		while (true) {
-			
 			static bool once = true;
+			
 			gui_d.new_frame(gui);
 
 			static widget2::Window window0;
@@ -35,7 +35,8 @@ public:
 			window0.publish(gui_d);
 			
 			gui_d.stack_begin()
-				.set_target_size(glm::vec2(600, fit));
+				.set_target_size(glm::vec2(600, fit))
+				.set_padding(glm::vec4(0, 40, 0, 0));
 
 			static widget2::Box style_box;
 			
@@ -60,22 +61,28 @@ public:
 			image.publish(gui_d);
 
 			static widget2::Label label;
-			if (once) label.text = U"Hello World";
+			static float slider_value = 16;
 
 			style.apply(label);
+			label.text_height = slider_value;
 			label.text_color			= glm::vec4(0, 0, 0, 1);
 			label.text_color.transition(label.hover, glm::vec4(1, 0, 0, 1), std::chrono::milliseconds(100));
-			label.publish(gui_d);
+			label.publish(gui_d, U"Büyüt de Götüne Girsin");
 
 			static widget2::TextInput text_area;
+			static std::u32string text_area_str;
 
 			style.apply(text_area);
-			text_area.publish(gui_d);
+			text_area.publish(gui_d, text_area_str);
 			
 			static widget2::Slider slider;
 
 			style.apply(slider);
-			slider.publish(gui_d);
+			slider.max_value = 32;
+			slider.min_value = 8;
+			slider.publish(gui_d, slider_value);
+
+
 
 			gui_d.stack_end();
 			gui_d.window_end();
@@ -85,7 +92,7 @@ public:
 				
 			if (once) {
 				gui_d.print_layout();
-				FontBank::get().load_font("../GraphicsCortex/Fonts/Roboto-Regular.ttf", 16);
+				FontBank::get().load_font("../GraphicsCortex/Fonts/Roboto-Regular.ttf", 100);
 				once = false;
 			}
 

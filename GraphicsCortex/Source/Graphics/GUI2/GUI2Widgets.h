@@ -65,6 +65,7 @@ namespace widget2 {
 
 		duration double_click_max_delay = std::chrono::milliseconds(500);
 		float carry_begin_min_offset = 10;
+		bool ignore_mouse_if_not_topmost_widget = true;
 
 		IOEvent hover;
 		IOEvent hold;
@@ -72,7 +73,7 @@ namespace widget2 {
 
 	protected:
 		
-		void resolve_io(GUI2Dynamic& gui_dynamic, bool ignore_if_not_topmost_widget = true);
+		void resolve_io(GUI2Dynamic& gui_dynamic);
 		
 	private:
 
@@ -298,19 +299,17 @@ namespace widget2 {
 
 	struct Label : public Grid {
 
-		std::u32string text = U"";
-
 		font_id font;
 		float text_height;
 		StyleProperty<glm::vec4> text_color;
 
-		void publish(GUI2Dynamic& gui_dynamic);
+		void publish(GUI2Dynamic& gui_dynamic, const std::u32string& text);
 
-		void begin(GUI2Dynamic& gui_dynamic);
-		bool publish_glyph(GUI2Dynamic& gui_dynamic, size_t end_index);
+		void begin(GUI2Dynamic& gui_dynamic, const std::u32string& text);
+		bool publish_glyph(GUI2Dynamic& gui_dynamic, size_t end_index, const std::u32string& text);
 		float get_current_advance();
-		float compute_advance(size_t end_index);
-		void end(GUI2Dynamic& gui_dynamic);
+		float compute_advance(size_t end_index, const std::u32string& text);
+		void end(GUI2Dynamic& gui_dynamic, const std::u32string& text);
 
 	private:
 		float		advance					= 0;
@@ -340,7 +339,6 @@ namespace widget2 {
 		std::chrono::system_clock::duration text_cursor_timer_blink_period;
 
 		std::u32string placeholder_text = U"Placeholder";
-		std::u32string text = U"";
 
 		static constexpr int32_t invalid_selection_index = -1;
 		int32_t selection_index_begin = invalid_selection_index;
@@ -350,10 +348,10 @@ namespace widget2 {
 		bool can_aquire_keyboard_focus = true;
 		IOEvent focus;
 
-		void publish(GUI2Dynamic& gui_dynamic);
+		void publish(GUI2Dynamic& gui_dynamic, std::u32string& text);
 	
 	private:
-		void resolve_keyboard_io(GUI2Dynamic& gui_dynamic);
+		void resolve_keyboard_io(GUI2Dynamic& gui_dynamic, std::u32string& text);
 	};
 
 
@@ -400,11 +398,12 @@ namespace widget2 {
 		Box background;
 		Box filled_bar;
 
-		float value = 0.5;
 		float min_value = 0;
 		float max_value = 1;
 
-		void publish(GUI2Dynamic& gui_dynamic);
+		IOEvent grab;
+
+		void publish(GUI2Dynamic& gui_dynamic, float& value);
 
 	};
 
@@ -437,13 +436,11 @@ namespace widget2 {
 		Label text;
 		Box background;
 
-		float value			= 0.0f;
-
 		float sensitivity	= 1;
 		float min_value		= std::numeric_limits<float>::min();
 		float max_value		= std::numeric_limits<float>::max();
 
-		void publish(GUI2Dynamic& gui_dynamic);
+		void publish(GUI2Dynamic& gui_dynamic, float& value);
 
 	};
 

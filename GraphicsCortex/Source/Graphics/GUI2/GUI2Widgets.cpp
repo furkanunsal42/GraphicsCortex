@@ -34,14 +34,14 @@ bool widget2::IOWidget::is_topmost_widget()
 }
 
 
-void widget2::IOWidget::resolve_io(GUI2Dynamic& gui_dynamic, bool ignore_if_not_topmost_widget)
+void widget2::IOWidget::resolve_io(GUI2Dynamic& gui_dynamic)
 {
 	GUI2::MouseEvent event = gui_dynamic.get_resolved_properties(id).event;
 
 	MouseState current_state = mouse_states[0];
 	
-	if (ignore_if_not_topmost_widget && !is_topmost_widget())
-		event = GUI2::None;
+	if (ignore_mouse_if_not_topmost_widget && !is_topmost_widget())
+		event = GUI2::MouseEvent::None;
 
 	switch (current_state) {
 
@@ -486,7 +486,7 @@ void widget2::Image::publish(GUI2Dynamic& gui_dynamic)
 	}
 }
 
-void widget2::Label::publish(GUI2Dynamic& gui_dynamic)
+void widget2::Label::publish(GUI2Dynamic& gui_dynamic, const std::u32string& text)
 {
 	if (active_global_resources == nullptr || !FontBank::get().does_font_exist(font))
 		return;
@@ -494,11 +494,11 @@ void widget2::Label::publish(GUI2Dynamic& gui_dynamic)
 	if (text.size() == 0)
 		return;
 
-	begin(gui_dynamic);
-	end(gui_dynamic);
+	begin(gui_dynamic, text);
+	end(gui_dynamic, text);
 }
 
-void widget2::Label::begin(GUI2Dynamic& gui_dynamic) {
+void widget2::Label::begin(GUI2Dynamic& gui_dynamic, const std::u32string& text) {
 	
 	if (active_global_resources == nullptr || !FontBank::get().does_font_exist(font))
 		return;
@@ -515,7 +515,7 @@ void widget2::Label::begin(GUI2Dynamic& gui_dynamic) {
 
 }
 
-bool widget2::Label::publish_glyph(GUI2Dynamic& gui_dynamic, size_t end_index) {
+bool widget2::Label::publish_glyph(GUI2Dynamic& gui_dynamic, size_t end_index, const std::u32string& text) {
 	
 	bool published_at_least_once = false;
 
@@ -556,7 +556,7 @@ float widget2::Label::get_current_advance()
 	return advance;
 }
 
-float widget2::Label::compute_advance(size_t end_index)
+float widget2::Label::compute_advance(size_t end_index, const std::u32string& text)
 {
 	if (active_global_resources == nullptr || !FontBank::get().does_font_exist(font))
 		return 0;
@@ -580,7 +580,7 @@ float widget2::Label::compute_advance(size_t end_index)
 	return computed_advance;
 }
 
-void widget2::Label::end(GUI2Dynamic& gui_dynamic) {
+void widget2::Label::end(GUI2Dynamic& gui_dynamic, const std::u32string& text) {
 
 	if (active_global_resources == nullptr || !FontBank::get().does_font_exist(font))
 		return;
@@ -588,7 +588,7 @@ void widget2::Label::end(GUI2Dynamic& gui_dynamic) {
 	if (text.size() == 0)
 		return;
 
-	publish_glyph(gui_dynamic, text.size());
+	publish_glyph(gui_dynamic, text.size(), text);
 
 	gui_dynamic.grid_add_column(text_size.x);
 	gui_dynamic.grid_add_row(text_size.y);
@@ -598,8 +598,10 @@ void widget2::Label::end(GUI2Dynamic& gui_dynamic) {
 	resolve_io(gui_dynamic);
 }
 
-void widget2::TextInput::publish(GUI2Dynamic& gui_dynamic)
+void widget2::TextInput::publish(GUI2Dynamic& gui_dynamic, std::u32string& text)
 {
+	ignore_mouse_if_not_topmost_widget = false;
+
 	if (can_aquire_keyboard_focus) {
 		if ((get_mouse_state(0) & Click) == Click)
 			focus.start_event();
@@ -612,9 +614,9 @@ void widget2::TextInput::publish(GUI2Dynamic& gui_dynamic)
 	}
 
 	if (focus.is_active())
-		resolve_keyboard_io(gui_dynamic);
+		resolve_keyboard_io(gui_dynamic, text);
 
-	label.text			= text.size() == 0 && !focus.is_active() ? placeholder_text : text;
+	std::u32string& text_to_use	= text.size() == 0 && !focus.is_active() ? placeholder_text : text;
 	label.text_color	= text.size() == 0 && !focus.is_active() ? placeholder_text_color : text_color;
 	
 	Grid::publish(gui_dynamic);
@@ -625,36 +627,36 @@ void widget2::TextInput::publish(GUI2Dynamic& gui_dynamic)
 	if (selection_index_begin != invalid_selection_index && selection_index_end != invalid_selection_index) {
 		int32_t min = std::min(selection_index_begin, selection_index_end);
 		int32_t max = std::max(selection_index_begin, selection_index_end);
-		float advance_begin = label.compute_advance(min);
-		float advance_end	= label.compute_advance(max);
+		float advance_begin = label.compute_advance(min, text_to_use);
+		float advance_end = label.compute_advance(max, text_to_use);
 
 		gui_dynamic.box_begin()
 			.set_color(selected_background_color)
 			.set_target_size(glm::vec2(advance_end - advance_begin, label.text_height + 8))
 			.set_margin(glm::vec4(advance_begin + label.margin.value.x, GUI2Dynamic::avail, 0, GUI2Dynamic::avail));
 	}
-	
-	label.begin(gui_dynamic);
+
+	label.begin(gui_dynamic, text_to_use);
 	if (selection_index_begin != invalid_selection_index && selection_index_end != invalid_selection_index) {
 		int32_t min = std::min(selection_index_begin, selection_index_end);
 		int32_t max = std::max(selection_index_begin, selection_index_end);
-		
-		label.publish_glyph(gui_dynamic, min);
+
+		label.publish_glyph(gui_dynamic, min, text_to_use);
 		for (int32_t i = min + 1; i <= max; i++) {
-			if (label.publish_glyph(gui_dynamic, i))
+			if (label.publish_glyph(gui_dynamic, i, text_to_use))
 				gui_dynamic.box_prop().set_color(selected_text_color);
 		}
 	}
-	label.end(gui_dynamic);
+	label.end(gui_dynamic, text_to_use);
 
 	gui_dynamic.grid_add_column(GUI2Dynamic::avail);
 	gui_dynamic.grid_add_row(GUI2Dynamic::avail);
 	gui_dynamic.grid_end();
 
-	resolve_io(gui_dynamic, false);
+	resolve_io(gui_dynamic);
 }
 
-void widget2::TextInput::resolve_keyboard_io(GUI2Dynamic& gui_dynamic) {
+void widget2::TextInput::resolve_keyboard_io(GUI2Dynamic& gui_dynamic, std::u32string& text) {
 	
 	for (GUI2::KeyboardEvent& e : gui_dynamic.get_io_state().keyboard_events) {
 		if (e.data.index() == 0) {
@@ -672,7 +674,7 @@ void widget2::TextInput::resolve_keyboard_io(GUI2Dynamic& gui_dynamic) {
 				selection_index_end != invalid_selection_index)
 			{
 				int32_t min_selection = std::max(std::min(selection_index_begin, selection_index_end), 0);
-				int32_t max_selection = std::min(std::max(selection_index_begin, selection_index_end), (int32_t)label.text.size());
+				int32_t max_selection = std::min(std::max(selection_index_begin, selection_index_end), (int32_t)text.size());
 
 				text.erase(min_selection, max_selection - min_selection);
 
@@ -749,7 +751,7 @@ void widget2::TextInput::resolve_keyboard_io(GUI2Dynamic& gui_dynamic) {
 				else {
 
 					int32_t min_selection = std::max(std::min(selection_index_begin, selection_index_end), 0);
-					int32_t max_selection = std::min(std::max(selection_index_begin, selection_index_end), (int32_t)label.text.size());
+					int32_t max_selection = std::min(std::max(selection_index_begin, selection_index_end), (int32_t)text.size());
 
 					text.erase(min_selection, max_selection - min_selection);
 
@@ -796,7 +798,7 @@ void widget2::TextInput::resolve_keyboard_io(GUI2Dynamic& gui_dynamic) {
 				else {
 
 					int32_t min_selection = std::max(std::min(selection_index_begin, selection_index_end), 0);
-					int32_t max_selection = std::min(std::max(selection_index_begin, selection_index_end), (int32_t)label.text.size());
+					int32_t max_selection = std::min(std::max(selection_index_begin, selection_index_end), (int32_t)text.size());
 
 					text.erase(min_selection, max_selection - min_selection);
 
@@ -834,7 +836,7 @@ void widget2::TextInput::resolve_keyboard_io(GUI2Dynamic& gui_dynamic) {
 					)
 				{
 					int32_t min_selection = std::max(std::min(selection_index_begin, selection_index_end), 0);
-					int32_t max_selection = std::min(std::max(selection_index_begin, selection_index_end), (int32_t)label.text.size());
+					int32_t max_selection = std::min(std::max(selection_index_begin, selection_index_end), (int32_t)text.size());
 
 					text_cursor_position = max_selection - 1;
 
@@ -860,60 +862,60 @@ void widget2::TextInput::resolve_keyboard_io(GUI2Dynamic& gui_dynamic) {
 						selection_index_begin = initial_cursor_position;
 					selection_index_end = text_cursor_position;
 				}
-				}
+			}
 			else if (result.key == ::Window::Key::LEFT) {
 
-					if (selection_index_begin != invalid_selection_index &&
-						selection_index_end != invalid_selection_index &&
-						(((int32_t)result.mods & (int32_t)::Window::KeyMods::SHIFT) == 0)
-						)
-					{
-						int32_t min_selection = std::max(std::min(selection_index_begin, selection_index_end), 0);
-						int32_t max_selection = std::min(std::max(selection_index_begin, selection_index_end), (int32_t)label.text.size());
+				if (selection_index_begin != invalid_selection_index &&
+					selection_index_end != invalid_selection_index &&
+					(((int32_t)result.mods & (int32_t)::Window::KeyMods::SHIFT) == 0)
+					)
+				{
+					int32_t min_selection = std::max(std::min(selection_index_begin, selection_index_end), 0);
+					int32_t max_selection = std::min(std::max(selection_index_begin, selection_index_end), (int32_t)text.size());
 
-						text_cursor_position = min_selection + 1;
+					text_cursor_position = min_selection + 1;
 
-						selection_index_begin = invalid_selection_index;
-						selection_index_end = invalid_selection_index;
-					}
+					selection_index_begin = invalid_selection_index;
+					selection_index_end = invalid_selection_index;
+				}
 
-					int32_t initial_cursor_position = text_cursor_position;
+				int32_t initial_cursor_position = text_cursor_position;
 
-					if (((int32_t)result.mods & (int32_t)::Window::KeyMods::CONTROL) != 0) {
+				if (((int32_t)result.mods & (int32_t)::Window::KeyMods::CONTROL) != 0) {
+					text_cursor_position--;
+					while (text_cursor_position > 0 && text[text_cursor_position] == ' ')
 						text_cursor_position--;
-						while (text_cursor_position > 0 && text[text_cursor_position] == ' ')
-							text_cursor_position--;
-						while (text_cursor_position > 0 && text[text_cursor_position] != ' ')
-							text_cursor_position--;
-						if (text[text_cursor_position] == ' ')
-							text_cursor_position++;
-					}
-					else
+					while (text_cursor_position > 0 && text[text_cursor_position] != ' ')
 						text_cursor_position--;
+					if (text[text_cursor_position] == ' ')
+						text_cursor_position++;
+				}
+				else
+					text_cursor_position--;
 
-					text_cursor_position = std::clamp(text_cursor_position, 0, (int32_t)text.size());
+				text_cursor_position = std::clamp(text_cursor_position, 0, (int32_t)text.size());
 
-					if (((int32_t)result.mods & (int32_t)::Window::KeyMods::SHIFT) != 0) {
-						if (selection_index_begin == invalid_selection_index)
-							selection_index_begin = initial_cursor_position;
-						selection_index_end = text_cursor_position;
-					}
-					}
+				if (((int32_t)result.mods & (int32_t)::Window::KeyMods::SHIFT) != 0) {
+					if (selection_index_begin == invalid_selection_index)
+						selection_index_begin = initial_cursor_position;
+					selection_index_end = text_cursor_position;
+				}
+			}
 			else if (result.key == ::Window::Key::V && ((int32_t)result.mods & (int32_t)::Window::KeyMods::CONTROL) != 0) {
-						std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> conv;
-						std::u32string s32 = conv.from_bytes(clipboard::get());
+				std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> conv;
+				std::u32string s32 = conv.from_bytes(clipboard::get());
 
-						text.insert(text_cursor_position, s32);
-						text_cursor_position += s32.size();
-						}
+				text.insert(text_cursor_position, s32);
+				text_cursor_position += s32.size();
+			}
 			else if (result.key == ::Window::Key::C && ((int32_t)result.mods & (int32_t)::Window::KeyMods::CONTROL) != 0) {
 
-							if (selection_index_begin == invalid_selection_index ||
-								selection_index_end == invalid_selection_index)
-								return;
+				if (selection_index_begin == invalid_selection_index ||
+					selection_index_end == invalid_selection_index)
+					return;
 
-							int32_t min_selection = std::max(std::min(selection_index_begin, selection_index_end), 0);
-							int32_t max_selection = std::min(std::max(selection_index_begin, selection_index_end), (int32_t)label.text.size());
+				int32_t min_selection = std::max(std::min(selection_index_begin, selection_index_end), 0);
+				int32_t max_selection = std::min(std::max(selection_index_begin, selection_index_end), (int32_t)text.size());
 
 				std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> conv;
 				clipboard::set(conv.to_bytes(text.substr(min_selection, max_selection)));
@@ -955,11 +957,26 @@ bool widget2::IOEvent::is_active()
 	return (begin > end);
 }
 
-void widget2::Slider::publish(GUI2Dynamic& gui_dynamic) {
+void widget2::Slider::publish(GUI2Dynamic& gui_dynamic, float& value) {
 
-	float filled_width = get_resolved_properties(gui_dynamic).size.x / max_value * value;
+	ignore_mouse_if_not_topmost_widget = false;
+	
+	if ((get_mouse_state() & IOWidget::Hold) && (gui_dynamic.get_io_state().mouse_state & GUI2::LeftHold))
+		grab.start_event();
+	if (gui_dynamic.get_io_state().mouse_state & GUI2::LeftRelease)
+		grab.finish_event();
+
+	if (grab.is_active()) {
+		float position	= get_resolved_properties(gui_dynamic).position.x;
+		float size		= get_resolved_properties(gui_dynamic).size.x;
+		float cursor_position = gui_dynamic.get_io_state().mouse_position.x - gui_dynamic.window_prop().position.x;
+
+		value = glm::clamp(glm::mix(min_value, max_value, (cursor_position - position) / size), min_value, max_value);
+	}
+		
+	float filled_width = get_resolved_properties(gui_dynamic).size.x * (value - min_value) / (max_value - min_value);
 	filled_bar.target_size.value.x	= filled_width;
-	head.margin.value.x				= filled_width;
+	head.margin.value.x				= filled_width - head.get_resolved_properties(gui_dynamic).size.x / 2;
 
 	Grid::publish(gui_dynamic);
 	gui_dynamic.grid_add_column(GUI2Dynamic::avail);
@@ -972,5 +989,9 @@ void widget2::Slider::publish(GUI2Dynamic& gui_dynamic) {
 	gui_dynamic.grid_end();
 
 	resolve_io(gui_dynamic);
+
+}
+
+void widget2::DragFloat::publish(GUI2Dynamic& gui_dynamic, float& value) {
 
 }
