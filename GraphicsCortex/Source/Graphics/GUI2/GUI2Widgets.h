@@ -450,11 +450,18 @@ namespace widget2 {
 		apply(widget.text);
 		apply(widget.background);
 
-		widget.target_size = glm::vec2(120, 40);
+		widget.target_size = glm::vec2(120, 30);
 		
-		widget.background.target_size = glm::vec2(GUI2Dynamic::avail);
+		widget.background.target_size		= glm::vec2(GUI2Dynamic::avail);
+		widget.background.color				= glm::vec4(0.45f, 0.59f, 0.65f, 1);
+		widget.background.border_thickness	= glm::vec4(2);
+		widget.background.border_color0		= glm::vec4(0.45f, 0.59f, 0.65f, 1);
+		widget.background.border_color1		= glm::vec4(0.45f, 0.59f, 0.65f, 1);
+		widget.background.border_color2		= glm::vec4(0.45f, 0.59f, 0.65f, 1);
+		widget.background.border_color3		= glm::vec4(0.45f, 0.59f, 0.65f, 1);
 		
-		widget.text.margin = glm::vec4(GUI2Dynamic::avail);
+		widget.text.margin					= glm::vec4(GUI2Dynamic::avail);
+		widget.text.text_color				= glm::vec4(1, 1, 1, 1);
 	}
 
 	struct Button {

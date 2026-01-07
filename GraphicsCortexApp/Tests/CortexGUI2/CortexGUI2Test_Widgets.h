@@ -82,7 +82,11 @@ public:
 			slider.min_value = 8;
 			slider.publish(gui_d, slider_value);
 
+			static widget2::DragFloat drag_float;
+			static float drag_float_value = 0;
 
+			style.apply(drag_float);
+			drag_float.publish(gui_d, drag_float_value);
 
 			gui_d.stack_end();
 			gui_d.window_end();

@@ -315,6 +315,8 @@ void widget2::IOWidget::resolve_io(GUI2Dynamic& gui_dynamic)
 
 void widget2::Box::publish(GUI2Dynamic& gui_dynamic) {
 
+	resolve_io(gui_dynamic);
+
 	gui_dynamic.box_begin(id);
 
 	gui_dynamic.box_prop().margin			=  margin;
@@ -330,9 +332,6 @@ void widget2::Box::publish(GUI2Dynamic& gui_dynamic) {
 	gui_dynamic.box_prop().shadow_color		=  shadow_color;
 
 	//gui_dynamic.box_end();
-
-	resolve_io(gui_dynamic);
-
 }
 
 void widget2::Box::apply_properties_to(GUI2Dynamic::WindowDesc& desc)
@@ -382,6 +381,8 @@ void widget2::Box::apply_properties_to(GUI2Dynamic::StackDesc& desc)
 
 void widget2::Grid::publish(GUI2Dynamic& gui_dynamic) {
 
+	resolve_io(gui_dynamic);
+
 	gui_dynamic.grid_begin(id);
 
 	gui_dynamic.grid_prop().margin		= margin;
@@ -389,12 +390,11 @@ void widget2::Grid::publish(GUI2Dynamic& gui_dynamic) {
 	gui_dynamic.grid_prop().target_size = target_size;
 	
 	gui_dynamic.grid_region(glm::ivec2(0));
-
-	resolve_io(gui_dynamic);
-
 }
 
 void widget2::Stack::publish(GUI2Dynamic& gui_dynamic) {
+
+	resolve_io(gui_dynamic);
 
 	gui_dynamic.stack_begin(id);
 
@@ -402,13 +402,12 @@ void widget2::Stack::publish(GUI2Dynamic& gui_dynamic) {
 	gui_dynamic.stack_prop().padding		= padding;
 	gui_dynamic.stack_prop().target_size	= target_size;
 	gui_dynamic.stack_prop().spacing		= spacing;
-	
-	resolve_io(gui_dynamic);
-
 }
 
 void widget2::Window::publish(GUI2Dynamic& gui_dynamic) {
 	
+	resolve_io(gui_dynamic);
+
 	if (draggable && get_mouse_state() == widget2::IOWidget::Carry) {
 		position =
 			get_widget_position_when_hold_begin() +
@@ -422,7 +421,6 @@ void widget2::Window::publish(GUI2Dynamic& gui_dynamic) {
 		.set_position(position)
 		.set_color(glm::vec4(0.98, 0.98, 0.98, 1));
 
-	resolve_io(gui_dynamic);
 }
 
 void widget2::Image::publish(GUI2Dynamic& gui_dynamic)
@@ -595,7 +593,6 @@ void widget2::Label::end(GUI2Dynamic& gui_dynamic, const std::u32string& text) {
 	gui_dynamic.grid_prop().target_size = text_size;
 	gui_dynamic.grid_end();
 
-	resolve_io(gui_dynamic);
 }
 
 void widget2::TextInput::publish(GUI2Dynamic& gui_dynamic, std::u32string& text)
@@ -652,8 +649,6 @@ void widget2::TextInput::publish(GUI2Dynamic& gui_dynamic, std::u32string& text)
 	gui_dynamic.grid_add_column(GUI2Dynamic::avail);
 	gui_dynamic.grid_add_row(GUI2Dynamic::avail);
 	gui_dynamic.grid_end();
-
-	resolve_io(gui_dynamic);
 }
 
 void widget2::TextInput::resolve_keyboard_io(GUI2Dynamic& gui_dynamic, std::u32string& text) {
@@ -987,11 +982,19 @@ void widget2::Slider::publish(GUI2Dynamic& gui_dynamic, float& value) {
 	head.publish(gui_dynamic);
 
 	gui_dynamic.grid_end();
-
-	resolve_io(gui_dynamic);
-
 }
 
 void widget2::DragFloat::publish(GUI2Dynamic& gui_dynamic, float& value) {
+	
+	std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> convert;
+
+	Grid::publish(gui_dynamic);
+
+	background.publish(gui_dynamic);
+	text.publish(gui_dynamic, convert.from_bytes(std::to_string(value)));
+	
+	gui_dynamic.grid_add_column(target_size.value.x);
+	gui_dynamic.grid_add_row(target_size.value.y);
+	gui_dynamic.grid_end();
 
 }
