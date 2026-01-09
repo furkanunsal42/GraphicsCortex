@@ -70,11 +70,11 @@ public:
 			label.text_color.transition(label.hover, glm::vec4(1, 0, 0, 1), std::chrono::milliseconds(100));
 			label.publish(gui_d, U"Büyüt de Götüne Girsin");
 
-			static widget2::TextInput text_area;
+			static widget2::TextInput text_input;
 			static std::u32string text_input_str;
 
-			style.apply(text_area);
-			text_area.publish(gui_d, text_input_str);
+			style.apply(text_input);
+			text_input.publish(gui_d, text_input_str);
 			
 			static widget2::Slider slider;
 
@@ -84,7 +84,6 @@ public:
 			slider.publish(gui_d, slider_value);
 
 			static widget2::DragFloat drag_float;
-             
 
 			style.apply(drag_float);
 			drag_float.publish(gui_d, slider_value);
@@ -94,10 +93,9 @@ public:
 			style.apply(button);
 			button.publish(gui_d);
 
-			if (button.click.is_active()) {
+			if (button.click.is_activated_now(gui_d)) {
 				text_input_str = U"";
 			}
-
 
 			static widget2::ImageButton image_button;
 

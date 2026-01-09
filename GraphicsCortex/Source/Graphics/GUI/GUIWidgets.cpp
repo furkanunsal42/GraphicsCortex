@@ -744,8 +744,6 @@ void widget2::TextInput::resolve_keyboard_io(GUIDynamic& gui_dynamic, std::u32st
 		}
 	}
 
-
-
 }
 
 void widget2::Slider::publish(GUIDynamic& gui_dynamic, float& value) {

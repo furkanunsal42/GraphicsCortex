@@ -99,20 +99,20 @@ namespace widget2 {
 		apply(widget.background);
 		apply(widget.filled_bar);
 
-		widget.target_size						= glm::vec2(400, 26);
+		widget.target_size						= glm::vec2(400, 22);
 
 		widget.head.target_size					= glm::vec2(widget.target_size.value.y, widget.target_size.value.y);
-		widget.head.color 						= glm::vec4(0.88, 0.88, 0.88, 1);
-		widget.head.border_rounding 			= glm::vec4(16);
-		widget.head.color.transition(widget.head.hover, glm::vec4(0.78, 0.78, 0.92, 1), std::chrono::milliseconds(100));
-		widget.head.color.transition(widget.head.hold, glm::vec4(0.82, 0.82, 0.82, 1), std::chrono::milliseconds(100));
+		widget.head.color 						= glm::vec4(0.92, 0.92, 0.92, 1);
+		widget.head.border_rounding 			= glm::vec4(11);
+		widget.head.color.transition(widget.hover, glm::vec4(0.94, 0.94, 0.94, 1), std::chrono::milliseconds(100));
+		widget.head.color.transition(widget.hold, glm::vec4(0.82, 0.82, 0.82, 1), std::chrono::milliseconds(100));
 
 		widget.background.target_size			= glm::vec2(GUIDynamic::avail, 4);
 		widget.background.color 				= glm::vec4(0.90, 0.90, 0.90, 1);
 		widget.background.margin 				= glm::vec4(0, GUIDynamic::avail, 0, GUIDynamic::avail);
 
 		widget.filled_bar.target_size			= glm::vec2(GUIDynamic::avail, 4);
-		widget.filled_bar.color					= glm::vec4(0.90, 0.90, 0.90, 1);
+		widget.filled_bar.color					= glm::vec4(0.0, 0.47, 0.84, 1);
 		widget.filled_bar.margin				= glm::vec4(0, GUIDynamic::avail, 0, GUIDynamic::avail);
 	}
 
