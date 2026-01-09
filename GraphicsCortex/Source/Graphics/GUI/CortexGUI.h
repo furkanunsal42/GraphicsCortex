@@ -109,21 +109,21 @@ private:
 		element_t parent_id = invalid_element;
 		std::vector<element_t> children;
 
-		glm::vec2 position = glm::vec2(0);
-		glm::vec2 size = glm::vec2(-1);
-		glm::vec2 texcoord_min = glm::vec2(0);
-		glm::vec2 texcoord_max = glm::vec2(1);
-		glm::vec4 color0 = glm::vec4(1);
-		glm::vec4 color1 = glm::vec4(1);
-		glm::vec4 color2 = glm::vec4(1);
-		glm::vec4 border_thickness = glm::vec4(0);
-		glm::vec4 border_rounding = glm::vec4(0);
-		glm::vec4 border_color0 = glm::vec4(0);
-		glm::vec4 border_color1 = glm::vec4(0);
-		glm::vec4 border_color2 = glm::vec4(0);
-		glm::vec4 border_color3 = glm::vec4(0);
-		glm::vec4 shadow_thickness = glm::vec4(0);
-		glm::vec4 shadow_color = glm::vec4(0);
+		glm::vec2 position			= glm::vec2(0);
+		glm::vec2 size				= glm::vec2(-1);
+		glm::vec2 texcoord_min		= glm::vec2(0);	
+		glm::vec2 texcoord_max		= glm::vec2(1);	
+		glm::vec4 color0			= glm::vec4(1);
+		glm::vec4 color1			= glm::vec4(1);
+		glm::vec4 color2			= glm::vec4(1);
+		glm::vec4 border_thickness	= glm::vec4(0);		
+		glm::vec4 border_rounding	= glm::vec4(0);		
+		glm::vec4 border_color0		= glm::vec4(0);		
+		glm::vec4 border_color1		= glm::vec4(0);		
+		glm::vec4 border_color2		= glm::vec4(0);		
+		glm::vec4 border_color3		= glm::vec4(0);		
+		glm::vec4 shadow_thickness	= glm::vec4(0);		
+		glm::vec4 shadow_color		= glm::vec4(0);	
 
 		int32_t z = 0;
 		int32_t old_z = 0;

@@ -294,7 +294,6 @@ namespace widget2 {
 		widget.uv00 = glm::vec2(0);
 		widget.uv11 = glm::vec2(1);
 		widget.type = Image::Fit;
-		//widget.texture = nullptr;
 	}
 
 	struct Label : public Grid {
@@ -433,16 +432,21 @@ namespace widget2 {
 
 	struct DragFloat : public TextInput {
 
-		float sensitivity	= 1;
+		float sensitivity	= 0.01;
 		float min_value		= std::numeric_limits<float>::min();
 		float max_value		= std::numeric_limits<float>::max();
 
 		void publish(GUI2Dynamic& gui_dynamic, float& value);
 
+		IOEvent grab;
+
 	protected:
 		
+		std::u32string string = U"";
 		void publish(GUI2Dynamic& gui_dynamic, std::u32string& text);
 
+		constexpr static glm::vec2 invalid_cursor_position = glm::vec2(-1);
+		glm::vec2 cursor_position_when_grabbed_publish = invalid_cursor_position;
 	};
 
 	template<>
@@ -460,6 +464,10 @@ namespace widget2 {
 		std::u32string text;
 
 		void publish(GUI2Dynamic& gui_dynamic);
+
+	};
+
+	struct ImageButton : public Grid {
 
 	};
 

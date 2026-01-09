@@ -432,7 +432,6 @@ void widget2::Image::publish(GUI2Dynamic& gui_dynamic)
 		gui_dynamic.box_prop().uv11 = uv11;
 		return;
 	}
-	
 
 	if (type == Stretch) {
 		Box::publish(gui_dynamic);
@@ -987,7 +986,55 @@ void widget2::Slider::publish(GUI2Dynamic& gui_dynamic, float& value) {
 void widget2::DragFloat::publish(GUI2Dynamic& gui_dynamic, float& value) {
 	
 	std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> convert;
-	std::u32string string = convert.from_bytes(std::to_string(value));
-	
+
+	if (id == GUI2Dynamic::invalid_id)
+		string = convert.from_bytes(std::to_string(value));
+
+	bool previous_focus = focus.is_active();
+
 	TextInput::publish(gui_dynamic, string);
+
+	if (!previous_focus && focus.is_active()) {
+		selection_index_begin = 0;
+		selection_index_end = string.size();
+	}
+
+	if (previous_focus && !focus.is_active()) {
+		try {
+			size_t idx;
+			value = std::stof(convert.to_bytes(string), &idx);
+			if (idx != string.size())
+				throw std::exception();
+		}
+		catch (...) {
+			if (string.size() == 0)
+				value = 0;
+			string = convert.from_bytes(std::to_string(value));
+		}
+	}
+
+	if ((get_mouse_state() & IOWidget::Hold) && (gui_dynamic.get_io_state().mouse_state & GUI2::LeftHold))
+	{
+		grab.start_event();
+	}
+
+	if (gui_dynamic.get_io_state().mouse_state & GUI2::LeftRelease) {
+		grab.finish_event();
+		cursor_position_when_grabbed_publish = invalid_cursor_position;
+	}
+
+	if (grab.is_active()) {
+		
+		if (cursor_position_when_grabbed_publish == invalid_cursor_position)
+			cursor_position_when_grabbed_publish = gui_dynamic.get_io_state().mouse_position;
+
+		value += (gui_dynamic.get_io_state().mouse_position.x - cursor_position_when_grabbed_publish.x) * sensitivity;
+		string = convert.from_bytes(std::to_string(value));
+	
+		selection_index_begin = 0;
+		selection_index_end = string.size();
+
+		cursor_position_when_grabbed_publish = gui_dynamic.get_io_state().mouse_position;
+	}
+
 }
