@@ -6,6 +6,7 @@
 #include "GUI/GUI.h"
 #include "GUI/GUIDynamic.h"
 #include "GUI/GUIWidgets.h"
+#include "GUI/GUIWidgetStandardStyle.h"
 
 class CortexGUITest_Widgets : public TestBench {
 public:
@@ -70,10 +71,10 @@ public:
 			label.publish(gui_d, U"Büyüt de Götüne Girsin");
 
 			static widget2::TextInput text_area;
-			static std::u32string text_area_str;
+			static std::u32string text_input_str;
 
 			style.apply(text_area);
-			text_area.publish(gui_d, text_area_str);
+			text_area.publish(gui_d, text_input_str);
 			
 			static widget2::Slider slider;
 
@@ -92,6 +93,16 @@ public:
 
 			style.apply(button);
 			button.publish(gui_d);
+
+			if (button.click.is_active()) {
+				text_input_str = U"";
+			}
+
+
+			static widget2::ImageButton image_button;
+
+			style.apply(image_button);
+			image_button.publish(gui_d);
 
 			gui_d.stack_end();
 			gui_d.window_end();
@@ -120,6 +131,7 @@ public:
 					0
 				);
 				image.texture = texture;
+				image_button.image.texture = texture;
 			}
 		}
 		return true;

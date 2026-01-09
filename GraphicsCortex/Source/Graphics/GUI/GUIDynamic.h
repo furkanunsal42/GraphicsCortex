@@ -269,7 +269,7 @@ public:
 		glm::vec2			position	= glm::vec2(0);
 		glm::vec2			size		= glm::vec2(0);
 		int32_t				level		= 0;
-		GUI::MouseEvent	event		= GUI::None;
+		GUI::MouseEvent		event		= GUI::None;
 		bool does_exists();
 	};
 

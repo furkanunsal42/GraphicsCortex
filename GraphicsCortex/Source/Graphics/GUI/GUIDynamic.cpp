@@ -1306,8 +1306,8 @@ void GUIDynamic::resolve_phase2_mouse_event(size_t root_node)
 		resolved_property.event		= GUI::None;
 	}
 
-	glm::vec2&			mouse_position_ref = io_state.mouse_position;
-	GUI::MouseEvent	mouse_event_ref		= io_state.mouse_state;
+	glm::vec2&			mouse_position_ref	= io_state.mouse_position;
+	GUI::MouseEvent	mouse_event_ref			= io_state.mouse_state;
 	glm::vec2			root_position		= node_position(root_node);
 
 	struct stack_info {

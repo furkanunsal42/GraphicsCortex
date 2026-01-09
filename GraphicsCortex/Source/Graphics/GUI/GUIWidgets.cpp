@@ -56,12 +56,9 @@ void widget2::IOWidget::resolve_io(GUIDynamic& gui_dynamic)
 		widget_position_when_hold_begin = get_resolved_properties(gui_dynamic).position;
 	}
 
-	if (hold.is_active() && (gui_dynamic.get_io_state().mouse_state & GUI::LeftRelease))
+	if (hold.is_active() && (gui_dynamic.get_io_state().mouse_state & GUI::LeftRelease)) {
 		hold.finish(gui_dynamic);
-
-	if (hold.is_active() && (event & GUI::LeftRelease)) {
-		hold.finish(gui_dynamic);
-		click_happened = true;
+		click_happened = hover.is_active();
 	}
 
 	if (click_happened) {
@@ -76,7 +73,7 @@ void widget2::IOWidget::resolve_io(GUIDynamic& gui_dynamic)
 		else
 			was_last_click_double = false;
 
-		click.impulse(gui_dynamic);
+		click.start(gui_dynamic);
 	}
 
 	if (!press.is_active() && event & GUI::LeftHold)
@@ -132,6 +129,7 @@ bool widget2::IOEvent::is_deactivated_now(GUIDynamic& gui_dynamic)
 {
 	return end_time == gui_dynamic.get_current_frame_timepoint();
 }
+
 
 void widget2::Box::publish(GUIDynamic& gui_dynamic) {
 
@@ -418,6 +416,9 @@ void widget2::TextInput::publish(GUIDynamic& gui_dynamic, std::u32string& text)
 {
 	ignore_mouse_if_not_topmost_widget = false;
 
+	Grid::publish(gui_dynamic);
+	gui_dynamic.grid_region(glm::ivec2(0));
+
 	if (can_aquire_keyboard_focus) {
 		if (click.is_activated_now(gui_dynamic))
 			focus.start(gui_dynamic);
@@ -434,9 +435,6 @@ void widget2::TextInput::publish(GUIDynamic& gui_dynamic, std::u32string& text)
 
 	std::u32string& text_to_use	= text.size() == 0 && !focus.is_active() ? placeholder_text : text;
 	label.text_color	= text.size() == 0 && !focus.is_active() ? placeholder_text_color : text_color;
-	
-	Grid::publish(gui_dynamic);
-	gui_dynamic.grid_region(glm::ivec2(0));
 	
 	background.publish(gui_dynamic);
 	
@@ -852,6 +850,21 @@ void widget2::Button::publish(GUIDynamic& gui_dynamic) {
 
 	background.publish(gui_dynamic);
 	label.publish(gui_dynamic, text);
+
+	gui_dynamic.grid_end();
+}
+
+void widget2::ImageButton::publish(GUIDynamic& gui_dynamic) {
+
+	ignore_mouse_if_not_topmost_widget = false;
+
+	Grid::publish(gui_dynamic);
+	gui_dynamic.grid_add_column(GUIDynamic::avail);
+	gui_dynamic.grid_add_row(GUIDynamic::avail);
+
+
+	background.publish(gui_dynamic);
+	image.publish(gui_dynamic);
 
 	gui_dynamic.grid_end();
 }
