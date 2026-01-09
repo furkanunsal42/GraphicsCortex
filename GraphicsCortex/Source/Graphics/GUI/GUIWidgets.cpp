@@ -860,9 +860,32 @@ void widget2::ImageButton::publish(GUIDynamic& gui_dynamic) {
 	gui_dynamic.grid_add_column(GUIDynamic::avail);
 	gui_dynamic.grid_add_row(GUIDynamic::avail);
 
-
 	background.publish(gui_dynamic);
 	image.publish(gui_dynamic);
 
 	gui_dynamic.grid_end();
+}
+
+void widget2::CheckBox::publish(GUIDynamic& gui_dynamic, bool& checked) {
+	
+	ignore_mouse_if_not_topmost_widget = false;
+
+	Grid::publish(gui_dynamic);
+	gui_dynamic.grid_add_column(GUIDynamic::avail);
+	gui_dynamic.grid_add_row(GUIDynamic::avail);
+
+	background.publish(gui_dynamic);
+	
+	if (checked)
+		image.publish(gui_dynamic);
+
+	gui_dynamic.grid_end();
+
+	if (click.is_activated_now(gui_dynamic)) {
+		checked = !checked;
+	}
+
+	if (!checked && check.is_active()) check.finish(gui_dynamic);
+	if (checked && !check.is_active()) check.start(gui_dynamic);
+
 }

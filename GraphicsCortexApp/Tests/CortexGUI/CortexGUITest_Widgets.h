@@ -102,6 +102,12 @@ public:
 			style.apply(image_button);
 			image_button.publish(gui_d);
 
+			static widget2::CheckBox checkbox;
+			static bool checkbox_value = false;
+
+			style.apply(checkbox);
+			checkbox.publish(gui_d, checkbox_value);
+
 			gui_d.stack_end();
 			gui_d.window_end();
 
@@ -130,6 +136,7 @@ public:
 				);
 				image.texture = texture;
 				image_button.image.texture = texture;
+				checkbox.image.texture = texture;
 			}
 		}
 		return true;

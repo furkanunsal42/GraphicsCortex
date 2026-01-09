@@ -292,10 +292,14 @@ namespace widget2 {
 
 	};
 
-	struct CheckBox {
+	struct CheckBox : public Grid {
 
-		void publish(GUIDynamic& gui_dynamic);
+		Image	image;
+		Box		background;
 
+		void publish(GUIDynamic& gui_dynamic, bool& checked);
+
+		IOEvent check;
 	};
 
 	struct ComboBox {

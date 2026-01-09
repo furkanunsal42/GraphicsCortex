@@ -125,6 +125,7 @@ namespace widget2 {
 
 	template<>
 	inline void DefaultStyle::apply<Button>(Button& widget) {
+		apply<Grid>(widget);
 		apply(widget.background);
 		apply(widget.label);
 
@@ -155,7 +156,7 @@ namespace widget2 {
 
 	template<>
 	inline void DefaultStyle::apply<ImageButton>(ImageButton& widget) {
-
+		apply<Grid>(widget);
 		apply(widget.image);
 		apply(widget.background);
 
@@ -163,7 +164,7 @@ namespace widget2 {
 		
 		widget.image.margin						= glm::vec4(2);
 		widget.image.target_size				= glm::vec2(GUIDynamic::avail);
-		widget.image.type						= Image::Fit;
+		widget.image.type						= Image::Stretch;
 		
 		widget.background.target_size			= glm::vec2(GUIDynamic::avail);
 		widget.background.color					= glm::vec4(0, 0, 0, 0);
@@ -181,5 +182,38 @@ namespace widget2 {
 		widget.background.border_color2.transition(widget.hold, glm::vec4(0.45f, 0.59f, 0.65f, 1), std::chrono::milliseconds(40));
 		widget.background.border_color3.transition(widget.hold, glm::vec4(0.45f, 0.59f, 0.65f, 1), std::chrono::milliseconds(40));
 
+	}
+
+	template<>
+	inline void DefaultStyle::apply<CheckBox>(CheckBox& widget) {
+		apply<Grid>(widget);
+		apply(widget.image);
+		apply(widget.background);
+
+		widget.target_size						= glm::vec2(32);
+		
+		widget.image.margin						= glm::vec4(4);
+		widget.image.target_size				= glm::vec2(GUIDynamic::avail);
+		widget.image.type						= Image::Stretch;
+		widget.image.color						= glm::vec4(1, 1, 1, 0);
+
+		widget.background.target_size			= glm::vec2(GUIDynamic::avail);
+		widget.background.color					= glm::vec4(0, 0, 0, 0);
+		widget.background.border_color0			= glm::vec4(0.45f, 0.44f, 0.42f, 1);
+		widget.background.border_color1			= glm::vec4(0.45f, 0.44f, 0.42f, 1);
+		widget.background.border_color2			= glm::vec4(0.45f, 0.44f, 0.42f, 1);
+		widget.background.border_color3			= glm::vec4(0.45f, 0.44f, 0.42f, 1);
+		widget.background.border_thickness		= glm::vec4(1);
+
+		widget.background.border_thickness.	transition(widget.hover, glm::vec4(1), std::chrono::milliseconds(15));
+		widget.background.border_thickness.	transition(widget.hold, glm::vec4(2), std::chrono::milliseconds(80));
+		widget.background.color.			transition(widget.check, glm::vec4(0.0, 0.47, 0.84, 1), std::chrono::milliseconds(120));
+		widget.image.color.					transition(widget.check, glm::vec4(1, 1, 1, 1), std::chrono::milliseconds(120));
+
+
+		widget.background.border_color0.transition(widget.hold, glm::vec4(0.45f, 0.59f, 0.65f, 1), std::chrono::milliseconds(40));
+		widget.background.border_color1.transition(widget.hold, glm::vec4(0.45f, 0.59f, 0.65f, 1), std::chrono::milliseconds(40));
+		widget.background.border_color2.transition(widget.hold, glm::vec4(0.45f, 0.59f, 0.65f, 1), std::chrono::milliseconds(40));
+		widget.background.border_color3.transition(widget.hold, glm::vec4(0.45f, 0.59f, 0.65f, 1), std::chrono::milliseconds(40));
 	}
 }
