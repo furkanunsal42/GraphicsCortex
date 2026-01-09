@@ -26,13 +26,6 @@
 
 #include "Timer/TimerTest.h"
 
-#include "CortexGUI/CortexGUITest_Button.h"
-#include "CortexGUI/CortexGUITest_Docking.h"
-#include "CortexGUI/CortexGUITest_Stack.h"
-#include "CortexGUI/CortexGUITest_Grid.h"
-#include "CortexGUI/CortexGUITest_TextInput.h"
-#include "CortexGUI/CortexGUITest_GUIWindow.h"
-
 #include "CortexGUI2/CortexGUI2Test_Fundamental.h"
 #include "CortexGUI2/CortexGUI2Test_Dynamic.h"
 #include "CortexGUI2/CortexGUI2Test_Relative.h"
@@ -72,18 +65,11 @@ int main() {
 
 	//TimerTest().run();
 
-	//CortexGUITest_Button().run();
-	//CortexGUITest_Docking().run();
-	//CortexGUITest_Stack().run();
-	//CortexGUITest_Grid().run();
-	//CortexGUITest_TextInput().run();
-	//CortexGUITest_GUIWindow().run();
-
 	//CortexGUITest2_Fundamental().run();
 	//CortexGUITest2_Dynamic().run();
 	//CortexGUITest2_Relative().run();
 	//CortexGUITest2_Stateful().run();
-	CortexGUITest2_Widgets().run();
+	//CortexGUITest2_Widgets().run();
 	//CortexGUITest2_Hierarchy().run();
 
 }
