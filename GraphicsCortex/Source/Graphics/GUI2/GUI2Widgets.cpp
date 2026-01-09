@@ -1001,7 +1001,12 @@ void widget2::DragFloat::publish(GUI2Dynamic& gui_dynamic, float& value) {
 	
 	std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> convert;
 
-	if (id == GUI2Dynamic::invalid_id)
+	if (id == GUI2Dynamic::invalid_id) {
+		string = convert.from_bytes(std::to_string(value));
+		old_value = value;
+	}
+
+	if (old_value != value)
 		string = convert.from_bytes(std::to_string(value));
 
 	bool previous_focus = focus.is_active();
@@ -1051,6 +1056,7 @@ void widget2::DragFloat::publish(GUI2Dynamic& gui_dynamic, float& value) {
 		cursor_position_when_grabbed_publish = gui_dynamic.get_io_state().mouse_position;
 	}
 
+	old_value = value;
 }
 
 void widget2::Button::publish(GUI2Dynamic& gui_dynamic) {
@@ -1058,8 +1064,8 @@ void widget2::Button::publish(GUI2Dynamic& gui_dynamic) {
 	ignore_mouse_if_not_topmost_widget = false;
 
 	Grid::publish(gui_dynamic);
-	gui_dynamic.grid_add_column(GUI2Dynamic::fit);
-	gui_dynamic.grid_add_row(GUI2Dynamic::fit);
+	gui_dynamic.grid_add_column(GUI2Dynamic::avail);
+	gui_dynamic.grid_add_row(GUI2Dynamic::avail);
 
 	background.publish(gui_dynamic);
 	label.publish(gui_dynamic, text);

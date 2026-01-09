@@ -83,7 +83,7 @@ public:
 			slider.publish(gui_d, slider_value);
 
 			static widget2::DragFloat drag_float;
-			//static float drag_float_value = 3.1415;
+             
 
 			style.apply(drag_float);
 			drag_float.publish(gui_d, slider_value);

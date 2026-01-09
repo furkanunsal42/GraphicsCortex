@@ -69,6 +69,8 @@ namespace widget2 {
 
 		IOEvent hover;
 		IOEvent hold;
+		IOEvent press;
+		IOEvent carry;
 		IOEvent click;
 
 	protected:
@@ -443,6 +445,8 @@ namespace widget2 {
 	protected:
 		
 		std::u32string string = U"";
+		float old_value = 0;
+
 		void publish(GUI2Dynamic& gui_dynamic, std::u32string& text);
 
 		constexpr static glm::vec2 invalid_cursor_position = glm::vec2(-1);
@@ -472,12 +476,29 @@ namespace widget2 {
 		apply(widget.background);
 		apply(widget.label);
 
-		widget.target_size					= glm::vec2(GUI2Dynamic::fit);
+		widget.target_size					= glm::vec2(200, 120);
+		//widget.padding						= glm::vec4(43, 13, 43, 13);
+		//widget.target_size					= glm::vec2(GUI2Dynamic::fit);
 
 		widget.background.target_size		= glm::vec2(GUI2Dynamic::avail);
-		
-		widget.label.margin					= glm::vec4(GUI2Dynamic::avail);
+		widget.background.color				= glm::vec4(0.93, 0.93, 0.93, 1);
+		widget.background.border_thickness 	= glm::vec4(1);
+		widget.background.border_color0 	= glm::vec4(0.0, 0.47, 0.84, 1);
+		widget.background.border_color1 	= glm::vec4(0.0, 0.47, 0.84, 1);
+		widget.background.border_color2 	= glm::vec4(0.0, 0.47, 0.84, 1);
+		widget.background.border_color3 	= glm::vec4(0.0, 0.47, 0.84, 1);
 
+		widget.label.margin					= glm::vec4(GUI2Dynamic::avail);
+		widget.label.text_color				= glm::vec4(0.2, 0.2, 0.2, 1);
+
+		widget.background.border_color0.	transition(widget.hover, glm::vec4(0.0, 0.47, 0.84, 1), std::chrono::milliseconds(250));
+		widget.background.border_color1.	transition(widget.hover, glm::vec4(0.0, 0.47, 0.84, 1), std::chrono::milliseconds(250));
+		widget.background.border_color2.	transition(widget.hover, glm::vec4(0.0, 0.47, 0.84, 1), std::chrono::milliseconds(250));
+		widget.background.border_color3.	transition(widget.hover, glm::vec4(0.0, 0.47, 0.84, 1), std::chrono::milliseconds(250));
+		widget.background.color.			transition(widget.hover, glm::vec4(0.9, 0.95, 0.98, 1), std::chrono::milliseconds(250));
+		widget.background.border_thickness.	transition(widget.hover, glm::vec4(1), std::chrono::milliseconds(250));
+
+		widget.background.color.transition(widget.hold, glm::vec4(0.8, 0.89, 0.97, 1), std::chrono::milliseconds(50));
 	}
 
 	struct ImageButton : public Grid {
