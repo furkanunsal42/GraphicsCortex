@@ -34,31 +34,7 @@ namespace widget2 {
 		constexpr static int32_t mouse_left = 0;
 		constexpr static int32_t mouse_right = 1;
 		
-		enum MouseState {
-			
-			None		= 0b00000000,
-			Enter		= 0b10000001,
-			Hover		= 0b00000001,
-			Leave		= 0b01000000,
-
-			PressBegin	= 0b10000011,
-			Press		= 0b00000011,
-			PressEnd	= 0b01000011,
-
-			HoldBegin	= 0b10000111,
-			Hold		= 0b00000111,
-			HoldEnd		= 0b01000111,
-
-			Click		= 0b00101111,
-			DoubleClick	= 0b00111111,
-
-			CarryBegin	= 0b10100111,
-			Carry		= 0b00100111,
-			CarryEnd	= 0b01100111,
-
-		};
-
-		MouseState	get_mouse_state(int32_t mouse_button = mouse_left);
+		//MouseState	get_mouse_state(int32_t mouse_button = mouse_left);
 		glm::vec2	get_cursor_position_when_hold_begin(int32_t mouse_button = mouse_left);
 		glm::vec2	get_widget_position_when_hold_begin(int32_t mouse_button = mouse_left);
 		bool		is_topmost_widget();
@@ -72,6 +48,7 @@ namespace widget2 {
 		IOEvent press;
 		IOEvent carry;
 		IOEvent click;
+		IOEvent doubleclick;
 
 	protected:
 		
@@ -81,7 +58,6 @@ namespace widget2 {
 
 		constexpr static glm::vec2	invalid_position = glm::vec2(-1);
 		
-		MouseState mouse_states[2] = { None, None };
 		glm::vec2 cursor_position_when_hold_begin	= invalid_position;
 		glm::vec2 widget_position_when_hold_begin	= invalid_position;
 		
@@ -402,8 +378,6 @@ namespace widget2 {
 		float min_value = 0;
 		float max_value = 1;
 
-		IOEvent grab;
-
 		void publish(GUI2Dynamic& gui_dynamic, float& value);
 
 	};
@@ -439,8 +413,6 @@ namespace widget2 {
 		float max_value		= std::numeric_limits<float>::max();
 
 		void publish(GUI2Dynamic& gui_dynamic, float& value);
-
-		IOEvent grab;
 
 	protected:
 		

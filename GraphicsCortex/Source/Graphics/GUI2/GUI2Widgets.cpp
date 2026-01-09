@@ -10,15 +10,15 @@ GUI2Dynamic::ResolvedProperties widget2::Widget::get_resolved_properties(GUI2Dyn
 	return gui_dynamic.get_resolved_properties(id);
 }
 
-widget2::IOWidget::MouseState widget2::IOWidget::get_mouse_state(int32_t mouse_button)
-{
-	if (mouse_button >= 2 || mouse_button < 0)
-	{
-		std::cout << "[GUI Error] widget::IOWidget::get_mouse_state() is called for (mouse" << mouse_button << ") but only (mouse0) and (mouse1) are supported" << std::endl;
-		
-	}
-	return mouse_states[mouse_button];
-}
+// widget2::IOWidget::MouseState widget2::IOWidget::get_mouse_state(int32_t mouse_button)
+// {
+// 	if (mouse_button >= 2 || mouse_button < 0)
+// 	{
+// 		std::cout << "[GUI Error] widget::IOWidget::get_mouse_state() is called for (mouse" << mouse_button << ") but only (mouse0) and (mouse1) are supported" << std::endl;
+// 		
+// 	}
+// 	return mouse_states[mouse_button];
+// }
 
 glm::vec2 widget2::IOWidget::get_cursor_position_when_hold_begin(int32_t mouse_button) {
 	return cursor_position_when_hold_begin;
@@ -38,276 +38,61 @@ void widget2::IOWidget::resolve_io(GUI2Dynamic& gui_dynamic)
 {
 	GUI2::MouseEvent event = gui_dynamic.get_resolved_properties(id).event;
 
-	MouseState current_state = mouse_states[0];
-	
 	if (ignore_mouse_if_not_topmost_widget && !is_topmost_widget())
 		event = GUI2::MouseEvent::None;
 
-	switch (current_state) {
+	bool click_happened = false;
 
-	case None : 
-	{
-		if((event & GUI2::MouseEvent::None) != 0)
-			current_state = None;
-		if((event & GUI2::MouseEvent::Hover) != 0)
-			current_state = Enter;
-		if ((event & GUI2::MouseEvent::LeftPress) != 0)
-			current_state = Enter;
-		if((event & GUI2::MouseEvent::LeftRelease) != 0)
-			current_state = Enter; //?
-		if ((event & GUI2::MouseEvent::LeftHold) != 0)
-			current_state = Enter;
-		break;
-	}
-	case Enter : 
-	{
-		if((event & GUI2::MouseEvent::None) != 0)
-			current_state = Leave;
-		if((event & GUI2::MouseEvent::Hover) != 0)
-			current_state = Hover;
-		if((event & GUI2::MouseEvent::LeftPress) != 0)
-			current_state = HoldBegin;
-		if((event & GUI2::MouseEvent::LeftRelease) != 0)
-			current_state = PressEnd; //?
-		if((event & GUI2::MouseEvent::LeftHold) != 0)
-			current_state = PressBegin; //? 
-		break;
-	}
-	case Hover : 
-	{
-		if((event & GUI2::MouseEvent::None) != 0)
-			current_state = Leave;
-		if((event & GUI2::MouseEvent::Hover) != 0)
-			current_state = Hover;
-		if((event & GUI2::MouseEvent::LeftPress) != 0)
-			current_state = HoldBegin;
-		if((event & GUI2::MouseEvent::LeftRelease) != 0)
-			current_state = PressEnd;
-		if((event & GUI2::MouseEvent::LeftHold) != 0)
-			current_state = PressBegin;
-		break;
-	}
-	case Leave : 
-	{
-		if((event & GUI2::MouseEvent::None) != 0)
-			current_state = None;
-		if((event & GUI2::MouseEvent::Hover) != 0)
-			current_state = Enter;
-		if((event & GUI2::MouseEvent::LeftPress) != 0)
-			current_state = Enter; //?
-		if((event & GUI2::MouseEvent::LeftRelease) != 0)
-			current_state = PressEnd;  //?
-		if((event & GUI2::MouseEvent::LeftHold) != 0)
-			current_state = PressBegin;
-		break;
-	}
-	case PressBegin : 
-	{
-		
-		if((event & GUI2::MouseEvent::None) != 0)
-			current_state = Leave;
-		if((event & GUI2::MouseEvent::Hover) != 0)
-			current_state = Hover; // ?
-		if((event & GUI2::MouseEvent::LeftPress) != 0)
-			current_state = HoldBegin; // ?
-		if((event & GUI2::MouseEvent::LeftRelease) != 0)
-			current_state = PressEnd;
-		if((event & GUI2::MouseEvent::LeftHold) != 0)
-			current_state = Press;
-		break;
-	}
-	case Press : 
-	{
-		
-		if((event & GUI2::MouseEvent::None) != 0)
-			current_state = Leave;
-		if((event & GUI2::MouseEvent::Hover) != 0)
-			current_state = Hover; // ?
-		if((event & GUI2::MouseEvent::LeftPress) != 0)
-			current_state = HoldBegin; // ?
-		if((event & GUI2::MouseEvent::LeftRelease) != 0)
-			current_state = PressEnd; //?
-		if((event & GUI2::MouseEvent::LeftHold) != 0)
-			current_state = Press;
-		break;
-	}
-	case PressEnd : 
-	{
-		
-		if((event & GUI2::MouseEvent::None) != 0)
-			current_state = Leave;
-		if((event & GUI2::MouseEvent::Hover) != 0)
-			current_state = Hover;
-		if((event & GUI2::MouseEvent::LeftPress) != 0)
-			current_state = HoldBegin;
-		if((event & GUI2::MouseEvent::LeftRelease) != 0)
-			current_state = PressEnd; //?
-		if((event & GUI2::MouseEvent::LeftHold) != 0)
-			current_state = HoldBegin; // ?
-		break;
-	}
-	case HoldBegin : 
-	{
-		
-		if((event & GUI2::MouseEvent::None) != 0)
-			current_state = Leave;
-		if((event & GUI2::MouseEvent::Hover) != 0)
-			current_state = HoldEnd; // ?
-		if((event & GUI2::MouseEvent::LeftPress) != 0)
-			current_state = HoldBegin; // ?
-		if((event & GUI2::MouseEvent::LeftRelease) != 0)
-			current_state = HoldEnd;
-		if((event & GUI2::MouseEvent::LeftHold) != 0)
-			current_state = Hold;
-		break;
-	}
-	case Hold : 
-	{
-		
-		if ((event & GUI2::MouseEvent::None) != 0) {
-			hold.finish(gui_dynamic);
-			//hold.end_time = gui_dynamic.get_current_frame_timepoint();
-			current_state = Leave; // HoldLeave?
-		}
-		if((event & GUI2::MouseEvent::Hover) != 0)
-			current_state = HoldEnd;
-		if((event & GUI2::MouseEvent::LeftPress) != 0)
-			current_state = Hold; // ?
-		if((event & GUI2::MouseEvent::LeftRelease) != 0)
-			current_state = HoldEnd;
-		if((event & GUI2::MouseEvent::LeftHold) != 0)
-			current_state = Hold;
-		break;
-	}
-	case HoldEnd : 
-	{
-		
-		if((event & GUI2::MouseEvent::None) != 0)
-			current_state = Click;
-		if((event & GUI2::MouseEvent::Hover) != 0)
-			current_state = Click;
-		if((event & GUI2::MouseEvent::LeftPress) != 0)
-			current_state = Click;
-		if((event & GUI2::MouseEvent::LeftRelease) != 0)
-			current_state = Click;
-		if((event & GUI2::MouseEvent::LeftHold) != 0)
-			current_state = Click;
-		break;
-	}
-	case Click : 
-	{
-		
-		if((event & GUI2::MouseEvent::None) != 0)
-			current_state = Leave;
-		if((event & GUI2::MouseEvent::Hover) != 0)
-			current_state = Hover;
-		if((event & GUI2::MouseEvent::LeftPress) != 0)
-			current_state = HoldBegin;
-		if((event & GUI2::MouseEvent::LeftRelease) != 0)
-			current_state = PressEnd; // ?
-		if((event & GUI2::MouseEvent::LeftHold) != 0)
-			current_state = PressBegin; // ?
-		break;
-	}
-	case DoubleClick : 
-	{
-		
-		if((event & GUI2::MouseEvent::None) != 0)
-			current_state = Leave;
-		if((event & GUI2::MouseEvent::Hover) != 0)
-			current_state = Hover;
-		if((event & GUI2::MouseEvent::LeftPress) != 0)
-			current_state = HoldBegin;
-		if((event & GUI2::MouseEvent::LeftRelease) != 0)
-			current_state = PressEnd; // ?
-		if((event & GUI2::MouseEvent::LeftHold) != 0)
-			current_state = PressBegin; // ?
-		break;
-	}
-	case CarryBegin : 
-	{
-		
-		if((event & GUI2::MouseEvent::None) != 0)
-			current_state = CarryEnd;
-		if((event & GUI2::MouseEvent::Hover) != 0)
-			current_state = CarryEnd;
-		if((event & GUI2::MouseEvent::LeftPress) != 0)
-			current_state = CarryEnd;
-		if((event & GUI2::MouseEvent::LeftRelease) != 0)
-			current_state = CarryEnd;
-		if((event & GUI2::MouseEvent::LeftHold) != 0)
-			current_state = Carry;
-		break;
-	}
-	case Carry : 
-	{
-		
-		if((event & GUI2::MouseEvent::None) != 0)
-			current_state = CarryEnd; // ?
-		if((event & GUI2::MouseEvent::Hover) != 0)
-			current_state = CarryEnd;
-		if((event & GUI2::MouseEvent::LeftPress) != 0)
-			current_state = CarryEnd;
-		if((event & GUI2::MouseEvent::LeftRelease) != 0)
-			current_state = CarryEnd;
-		if((event & GUI2::MouseEvent::LeftHold) != 0)
-			current_state = Carry;
-		break;
-	}
-	case CarryEnd : 
-	{
-		
-		if((event & GUI2::MouseEvent::None) != 0)
-			current_state = HoldEnd;
-		if((event & GUI2::MouseEvent::Hover) != 0)
-			current_state = HoldEnd;
-		if((event & GUI2::MouseEvent::LeftPress) != 0)
-			current_state = HoldEnd;
-		if((event & GUI2::MouseEvent::LeftRelease) != 0)
-			current_state = HoldEnd; // ?
-		if((event & GUI2::MouseEvent::LeftHold) != 0)
-			current_state = HoldEnd; // ?
-		break;
-	}
-	};
-
-	if (current_state == Enter)
+	if (!hover.is_active() && (event & GUI2::Hover))
 		hover.start(gui_dynamic);
-	
-	if (current_state == Leave)
+
+	if (hover.is_active() && (event & GUI2::None))
 		hover.finish(gui_dynamic);
 
-	if (current_state == HoldBegin) {
-		widget_position_when_hold_begin = gui_dynamic.get_resolved_properties(id).position;
-		cursor_position_when_hold_begin = gui_dynamic.get_io_state().mouse_position;
+	if (!hold.is_active() && (event & GUI2::LeftPress)) {
 		hold.start(gui_dynamic);
+
+		cursor_position_when_hold_begin = gui_dynamic.get_io_state().mouse_position;
+		widget_position_when_hold_begin = get_resolved_properties(gui_dynamic).position;
 	}
-	
-	if (current_state == HoldEnd)
+
+	if (hold.is_active() && (gui_dynamic.get_io_state().mouse_state & GUI2::LeftRelease))
 		hold.finish(gui_dynamic);
 
-	if (current_state == HoldBegin || current_state == Hold) {
-		if (glm::dot(cursor_position_when_hold_begin - gui_dynamic.get_io_state().mouse_position, cursor_position_when_hold_begin - gui_dynamic.get_io_state().mouse_position) >= carry_begin_min_offset * carry_begin_min_offset) {
-			current_state = CarryBegin;
-		}
+	if (hold.is_active() && (event & GUI2::LeftRelease)) {
+		hold.finish(gui_dynamic);
+		click_happened = true;
 	}
 
-	if (current_state == Click) {
-		if (click.begin_time != GUI2Dynamic::invalid_time && (std::chrono::system_clock::now() - click.begin_time) <= double_click_max_delay && !was_last_click_double) {
-			current_state = DoubleClick;
+	if (click_happened) {
+
+		if (click.end_time != GUI2Dynamic::invalid_time &&
+			((gui_dynamic.get_current_frame_timepoint() - click.end_time) < double_click_max_delay) &&
+			!was_last_click_double)
+		{
+			doubleclick.impulse(gui_dynamic);
+			was_last_click_double = true;
 		}
-		else {
-			click.begin_time = std::chrono::system_clock::now();
+		else
 			was_last_click_double = false;
-		}
-	}
 
-	if (current_state == DoubleClick) {
 		click.impulse(gui_dynamic);
-		was_last_click_double = true;
 	}
 
-	mouse_states[0] = current_state;
+	if (!press.is_active() && event & GUI2::LeftHold)
+		press.start(gui_dynamic);
+
+	if (press.is_active() && !(event & GUI2::LeftHold))
+		press.finish(gui_dynamic);
+
+	if (hold.is_active() &&
+		glm::distance(gui_dynamic.get_io_state().mouse_position, cursor_position_when_hold_begin) > carry_begin_min_offset)
+	{
+		carry.start(gui_dynamic);
+	}
+
+	if (carry.is_active() && !hold.is_active())
+		carry.finish(gui_dynamic);
 
 	is_top_most = gui_dynamic.get_resolved_properties(id).level == gui_dynamic.get_levels_under_cursor() - 1;
 }
@@ -443,7 +228,7 @@ void widget2::Window::publish(GUI2Dynamic& gui_dynamic) {
 	
 	resolve_io(gui_dynamic);
 
-	if (draggable && get_mouse_state() == widget2::IOWidget::Carry) {
+	if (draggable && carry.is_active()) {
 		position =
 			get_widget_position_when_hold_begin() +
 			gui_dynamic.get_io_state().mouse_position -
@@ -634,10 +419,10 @@ void widget2::TextInput::publish(GUI2Dynamic& gui_dynamic, std::u32string& text)
 	ignore_mouse_if_not_topmost_widget = false;
 
 	if (can_aquire_keyboard_focus) {
-		if ((get_mouse_state(0) & Click) == Click)
+		if (click.is_activated_now(gui_dynamic))
 			focus.start(gui_dynamic);
 
-		if (get_mouse_state(0) == None && gui_dynamic.get_io_state().mouse_state & GUI2::MouseEvent::LeftRelease) {
+		if (!hover.is_active() && gui_dynamic.get_io_state().mouse_state & GUI2::MouseEvent::LeftRelease) {
 			focus.finish(gui_dynamic);
 			selection_index_begin	= invalid_selection_index;
 			selection_index_end		= invalid_selection_index;
@@ -973,12 +758,7 @@ void widget2::Slider::publish(GUI2Dynamic& gui_dynamic, float& value) {
 	gui_dynamic.grid_add_column(GUI2Dynamic::avail);
 	gui_dynamic.grid_add_row(GUI2Dynamic::avail);
 
-	if (hold.is_activated_now(gui_dynamic))
-		grab.start(gui_dynamic);
-	if (gui_dynamic.get_io_state().mouse_state & GUI2::LeftRelease)
-		grab.finish(gui_dynamic);
-
-	if (grab.is_active()) {
+	if (hold.is_active()) {
 		float position	= get_resolved_properties(gui_dynamic).position.x;
 		float size		= get_resolved_properties(gui_dynamic).size.x;
 		float cursor_position = gui_dynamic.get_io_state().mouse_position.x - gui_dynamic.window_prop().position.x;
@@ -1032,17 +812,17 @@ void widget2::DragFloat::publish(GUI2Dynamic& gui_dynamic, float& value) {
 		}
 	}
 
-	if ((get_mouse_state() & IOWidget::Hold) && (gui_dynamic.get_io_state().mouse_state & GUI2::LeftHold))
-	{
-		grab.start(gui_dynamic);
-	}
+	//if ((get_mouse_state() & IOWidget::Hold) && (gui_dynamic.get_io_state().mouse_state & GUI2::LeftHold))
+	//{
+	//	grab.start(gui_dynamic);
+	//}
 
-	if (gui_dynamic.get_io_state().mouse_state & GUI2::LeftRelease) {
-		grab.finish(gui_dynamic);
-		cursor_position_when_grabbed_publish = invalid_cursor_position;
-	}
+	//if (gui_dynamic.get_io_state().mouse_state & GUI2::LeftRelease) {
+	//	grab.finish(gui_dynamic);
+	//	cursor_position_when_grabbed_publish = invalid_cursor_position;
+	//}
 
-	if (grab.is_active()) {
+	if (hold.is_active()) {
 		
 		if (cursor_position_when_grabbed_publish == invalid_cursor_position)
 			cursor_position_when_grabbed_publish = gui_dynamic.get_io_state().mouse_position;
@@ -1055,6 +835,9 @@ void widget2::DragFloat::publish(GUI2Dynamic& gui_dynamic, float& value) {
 
 		cursor_position_when_grabbed_publish = gui_dynamic.get_io_state().mouse_position;
 	}
+	
+	if (hold.is_deactivated_now(gui_dynamic))
+		cursor_position_when_grabbed_publish = invalid_cursor_position;
 
 	old_value = value;
 }
