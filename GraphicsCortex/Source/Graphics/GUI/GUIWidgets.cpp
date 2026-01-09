@@ -406,8 +406,9 @@ void widget2::Label::end(GUIDynamic& gui_dynamic, const std::u32string& text) {
 	publish_glyph(gui_dynamic, text.size(), text);
 
 	gui_dynamic.grid_add_column(text_size.x);
-	gui_dynamic.grid_add_row(text_size.y);
-	gui_dynamic.grid_prop().target_size = text_size;
+	gui_dynamic.grid_add_row(text_height/*text_size.y*/);
+	//gui_dynamic.grid_prop().target_size = text_size;
+	gui_dynamic.grid_prop().target_size = glm::vec2(text_size.x, text_height);
 	gui_dynamic.grid_end();
 
 }
@@ -450,6 +451,8 @@ void widget2::TextInput::publish(GUIDynamic& gui_dynamic, std::u32string& text)
 			.set_margin(glm::vec4(advance_begin + label.margin.value.x, GUIDynamic::avail, 0, GUIDynamic::avail));
 	}
 
+	//label.margin.value.y = (get_resolved_properties(gui_dynamic).size.y - label.text_height) / 2;
+	
 	label.begin(gui_dynamic, text_to_use);
 	if (selection_index_begin != invalid_selection_index && selection_index_end != invalid_selection_index) {
 		int32_t min = std::min(selection_index_begin, selection_index_end);
@@ -462,6 +465,7 @@ void widget2::TextInput::publish(GUIDynamic& gui_dynamic, std::u32string& text)
 		}
 	}
 	label.end(gui_dynamic, text_to_use);
+
 
 	gui_dynamic.grid_add_column(GUIDynamic::avail);
 	gui_dynamic.grid_add_row(GUIDynamic::avail);

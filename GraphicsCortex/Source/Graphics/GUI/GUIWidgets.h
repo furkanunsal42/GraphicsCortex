@@ -266,7 +266,7 @@ namespace widget2 {
 		std::u32string string = U"";
 		float old_value = 0;
 
-		void publish(GUIDynamic& gui_dynamic, std::u32string& text);
+		void publish(GUIDynamic& gui_dynamic, std::u32string& text) = delete;
 
 		constexpr static glm::vec2 invalid_cursor_position = glm::vec2(-1);
 		glm::vec2 cursor_position_when_grabbed_publish = invalid_cursor_position;
@@ -311,18 +311,22 @@ namespace widget2 {
 	struct Menu {
 
 		void publish(GUIDynamic& gui_dynamic);
+		void end(GUIDynamic& gui_dynamic);
 
 	};
 
 	struct Tab {
 
 		void publish(GUIDynamic& gui_dynamic);
+		void end(GUIDynamic& gui_dynamic);
 
 	};
 
 	struct Collapsible {
 
 		void publish(GUIDynamic& gui_dynamic);
+		void end(GUIDynamic& gui_dynamic);
+
 
 	};
 
