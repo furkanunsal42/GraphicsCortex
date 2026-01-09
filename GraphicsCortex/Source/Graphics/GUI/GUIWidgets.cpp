@@ -1,11 +1,11 @@
-#include "GUI2Widgets.h"
+#include "GUIWidgets.h"
 #include "WindowBoundGlobalResources.h"
 #include "Window.h"
 #include "Clipboard.h"
 
 #include <codecvt>
 
-GUI2Dynamic::ResolvedProperties widget2::Widget::get_resolved_properties(GUI2Dynamic& gui_dynamic)
+GUIDynamic::ResolvedProperties widget2::Widget::get_resolved_properties(GUIDynamic& gui_dynamic)
 {
 	return gui_dynamic.get_resolved_properties(id);
 }
@@ -34,39 +34,39 @@ bool widget2::IOWidget::is_topmost_widget()
 }
 
 
-void widget2::IOWidget::resolve_io(GUI2Dynamic& gui_dynamic)
+void widget2::IOWidget::resolve_io(GUIDynamic& gui_dynamic)
 {
-	GUI2::MouseEvent event = gui_dynamic.get_resolved_properties(id).event;
+	GUI::MouseEvent event = gui_dynamic.get_resolved_properties(id).event;
 
 	if (ignore_mouse_if_not_topmost_widget && !is_topmost_widget())
-		event = GUI2::MouseEvent::None;
+		event = GUI::MouseEvent::None;
 
 	bool click_happened = false;
 
-	if (!hover.is_active() && (event & GUI2::Hover))
+	if (!hover.is_active() && (event & GUI::Hover))
 		hover.start(gui_dynamic);
 
-	if (hover.is_active() && (event & GUI2::None))
+	if (hover.is_active() && (event & GUI::None))
 		hover.finish(gui_dynamic);
 
-	if (!hold.is_active() && (event & GUI2::LeftPress)) {
+	if (!hold.is_active() && (event & GUI::LeftPress)) {
 		hold.start(gui_dynamic);
 
 		cursor_position_when_hold_begin = gui_dynamic.get_io_state().mouse_position;
 		widget_position_when_hold_begin = get_resolved_properties(gui_dynamic).position;
 	}
 
-	if (hold.is_active() && (gui_dynamic.get_io_state().mouse_state & GUI2::LeftRelease))
+	if (hold.is_active() && (gui_dynamic.get_io_state().mouse_state & GUI::LeftRelease))
 		hold.finish(gui_dynamic);
 
-	if (hold.is_active() && (event & GUI2::LeftRelease)) {
+	if (hold.is_active() && (event & GUI::LeftRelease)) {
 		hold.finish(gui_dynamic);
 		click_happened = true;
 	}
 
 	if (click_happened) {
 
-		if (click.end_time != GUI2Dynamic::invalid_time &&
+		if (click.end_time != GUIDynamic::invalid_time &&
 			((gui_dynamic.get_current_frame_timepoint() - click.end_time) < double_click_max_delay) &&
 			!was_last_click_double)
 		{
@@ -79,10 +79,10 @@ void widget2::IOWidget::resolve_io(GUI2Dynamic& gui_dynamic)
 		click.impulse(gui_dynamic);
 	}
 
-	if (!press.is_active() && event & GUI2::LeftHold)
+	if (!press.is_active() && event & GUI::LeftHold)
 		press.start(gui_dynamic);
 
-	if (press.is_active() && !(event & GUI2::LeftHold))
+	if (press.is_active() && !(event & GUI::LeftHold))
 		press.finish(gui_dynamic);
 
 	if (hold.is_active() &&
@@ -97,43 +97,43 @@ void widget2::IOWidget::resolve_io(GUI2Dynamic& gui_dynamic)
 	is_top_most = gui_dynamic.get_resolved_properties(id).level == gui_dynamic.get_levels_under_cursor() - 1;
 }
 
-void widget2::IOEvent::impulse(GUI2Dynamic& gui_dynamic) {
+void widget2::IOEvent::impulse(GUIDynamic& gui_dynamic) {
 	start(gui_dynamic);
 	finish(gui_dynamic);
 }
 
-void widget2::IOEvent::start(GUI2Dynamic& gui_dynamic)
+void widget2::IOEvent::start(GUIDynamic& gui_dynamic)
 {
 	begin_time = gui_dynamic.get_current_frame_timepoint();
 }
 
-void widget2::IOEvent::finish(GUI2Dynamic& gui_dynamic)
+void widget2::IOEvent::finish(GUIDynamic& gui_dynamic)
 {
 	end_time = gui_dynamic.get_current_frame_timepoint();
 }
 
 bool widget2::IOEvent::is_active()
 {
-	if (begin_time == GUI2Dynamic::invalid_time && end_time == GUI2Dynamic::invalid_time)
+	if (begin_time == GUIDynamic::invalid_time && end_time == GUIDynamic::invalid_time)
 		return false;
-	if (begin_time == GUI2Dynamic::invalid_time && end_time != GUI2Dynamic::invalid_time)
+	if (begin_time == GUIDynamic::invalid_time && end_time != GUIDynamic::invalid_time)
 		return false;
-	if (begin_time != GUI2Dynamic::invalid_time && end_time == GUI2Dynamic::invalid_time)
+	if (begin_time != GUIDynamic::invalid_time && end_time == GUIDynamic::invalid_time)
 		return true;
 	return (begin_time > end_time);
 }
 
-bool widget2::IOEvent::is_activated_now(GUI2Dynamic& gui_dynamic)
+bool widget2::IOEvent::is_activated_now(GUIDynamic& gui_dynamic)
 {
 	return begin_time == gui_dynamic.get_current_frame_timepoint();
 }
 
-bool widget2::IOEvent::is_deactivated_now(GUI2Dynamic& gui_dynamic)
+bool widget2::IOEvent::is_deactivated_now(GUIDynamic& gui_dynamic)
 {
 	return end_time == gui_dynamic.get_current_frame_timepoint();
 }
 
-void widget2::Box::publish(GUI2Dynamic& gui_dynamic) {
+void widget2::Box::publish(GUIDynamic& gui_dynamic) {
 
 	resolve_io(gui_dynamic);
 
@@ -154,7 +154,7 @@ void widget2::Box::publish(GUI2Dynamic& gui_dynamic) {
 	//gui_dynamic.box_end();
 }
 
-void widget2::Box::apply_properties_to(GUI2Dynamic::WindowDesc& desc)
+void widget2::Box::apply_properties_to(GUIDynamic::WindowDesc& desc)
 {
 	desc.padding			= glm::vec4(0);
 	desc.target_size		=  target_size;
@@ -169,7 +169,7 @@ void widget2::Box::apply_properties_to(GUI2Dynamic::WindowDesc& desc)
 	desc.shadow_color		=  shadow_color;
 }
 
-void widget2::Box::apply_properties_to(GUI2Dynamic::BoxDesc& desc)
+void widget2::Box::apply_properties_to(GUIDynamic::BoxDesc& desc)
 {
 	desc.margin				=  margin;
 	desc.target_size		=  target_size;
@@ -184,14 +184,14 @@ void widget2::Box::apply_properties_to(GUI2Dynamic::BoxDesc& desc)
 	desc.shadow_color		=  shadow_color;
 }
 
-void widget2::Box::apply_properties_to(GUI2Dynamic::GridDesc& desc)
+void widget2::Box::apply_properties_to(GUIDynamic::GridDesc& desc)
 {
 	desc.margin				=  margin;
 	desc.target_size		=  target_size;
 	desc.padding			=  glm::vec4(0);
 }
 
-void widget2::Box::apply_properties_to(GUI2Dynamic::StackDesc& desc)
+void widget2::Box::apply_properties_to(GUIDynamic::StackDesc& desc)
 {
 	desc.margin				=  margin;
 	desc.target_size		=  target_size;
@@ -199,7 +199,7 @@ void widget2::Box::apply_properties_to(GUI2Dynamic::StackDesc& desc)
 	desc.spacing			=  0;
 }
 
-void widget2::Grid::publish(GUI2Dynamic& gui_dynamic) {
+void widget2::Grid::publish(GUIDynamic& gui_dynamic) {
 
 	resolve_io(gui_dynamic);
 
@@ -212,7 +212,7 @@ void widget2::Grid::publish(GUI2Dynamic& gui_dynamic) {
 	gui_dynamic.grid_region(glm::ivec2(0));
 }
 
-void widget2::Stack::publish(GUI2Dynamic& gui_dynamic) {
+void widget2::Stack::publish(GUIDynamic& gui_dynamic) {
 
 	resolve_io(gui_dynamic);
 
@@ -224,7 +224,7 @@ void widget2::Stack::publish(GUI2Dynamic& gui_dynamic) {
 	gui_dynamic.stack_prop().spacing		= spacing;
 }
 
-void widget2::Window::publish(GUI2Dynamic& gui_dynamic) {
+void widget2::Window::publish(GUIDynamic& gui_dynamic) {
 	
 	resolve_io(gui_dynamic);
 
@@ -243,7 +243,7 @@ void widget2::Window::publish(GUI2Dynamic& gui_dynamic) {
 
 }
 
-void widget2::Image::publish(GUI2Dynamic& gui_dynamic)
+void widget2::Image::publish(GUIDynamic& gui_dynamic)
 {
 	if (texture == nullptr) {
 		Box::publish(gui_dynamic);
@@ -264,7 +264,7 @@ void widget2::Image::publish(GUI2Dynamic& gui_dynamic)
 		auto& desc = gui_dynamic.grid_begin(grid_id);
 		apply_properties_to(desc);
 		
-		GUI2Dynamic::ResolvedProperties properties = gui_dynamic.get_resolved_properties(grid_id);
+		GUIDynamic::ResolvedProperties properties = gui_dynamic.get_resolved_properties(grid_id);
 		glm::vec2 size = glm::max(properties.size, get_resolved_properties(gui_dynamic).size);
 
 		gui_dynamic.grid_add_column(size.x);
@@ -303,7 +303,7 @@ void widget2::Image::publish(GUI2Dynamic& gui_dynamic)
 	}
 }
 
-void widget2::Label::publish(GUI2Dynamic& gui_dynamic, const std::u32string& text)
+void widget2::Label::publish(GUIDynamic& gui_dynamic, const std::u32string& text)
 {
 	if (active_global_resources == nullptr || !FontBank::get().does_font_exist(font))
 		return;
@@ -315,7 +315,7 @@ void widget2::Label::publish(GUI2Dynamic& gui_dynamic, const std::u32string& tex
 	end(gui_dynamic, text);
 }
 
-void widget2::Label::begin(GUI2Dynamic& gui_dynamic, const std::u32string& text) {
+void widget2::Label::begin(GUIDynamic& gui_dynamic, const std::u32string& text) {
 	
 	if (active_global_resources == nullptr || !FontBank::get().does_font_exist(font))
 		return;
@@ -332,7 +332,7 @@ void widget2::Label::begin(GUI2Dynamic& gui_dynamic, const std::u32string& text)
 
 }
 
-bool widget2::Label::publish_glyph(GUI2Dynamic& gui_dynamic, size_t end_index, const std::u32string& text) {
+bool widget2::Label::publish_glyph(GUIDynamic& gui_dynamic, size_t end_index, const std::u32string& text) {
 	
 	bool published_at_least_once = false;
 
@@ -397,7 +397,7 @@ float widget2::Label::compute_advance(size_t end_index, const std::u32string& te
 	return computed_advance;
 }
 
-void widget2::Label::end(GUI2Dynamic& gui_dynamic, const std::u32string& text) {
+void widget2::Label::end(GUIDynamic& gui_dynamic, const std::u32string& text) {
 
 	if (active_global_resources == nullptr || !FontBank::get().does_font_exist(font))
 		return;
@@ -414,7 +414,7 @@ void widget2::Label::end(GUI2Dynamic& gui_dynamic, const std::u32string& text) {
 
 }
 
-void widget2::TextInput::publish(GUI2Dynamic& gui_dynamic, std::u32string& text)
+void widget2::TextInput::publish(GUIDynamic& gui_dynamic, std::u32string& text)
 {
 	ignore_mouse_if_not_topmost_widget = false;
 
@@ -422,7 +422,7 @@ void widget2::TextInput::publish(GUI2Dynamic& gui_dynamic, std::u32string& text)
 		if (click.is_activated_now(gui_dynamic))
 			focus.start(gui_dynamic);
 
-		if (!hover.is_active() && gui_dynamic.get_io_state().mouse_state & GUI2::MouseEvent::LeftRelease) {
+		if (!hover.is_active() && gui_dynamic.get_io_state().mouse_state & GUI::MouseEvent::LeftRelease) {
 			focus.finish(gui_dynamic);
 			selection_index_begin	= invalid_selection_index;
 			selection_index_end		= invalid_selection_index;
@@ -449,7 +449,7 @@ void widget2::TextInput::publish(GUI2Dynamic& gui_dynamic, std::u32string& text)
 		gui_dynamic.box_begin()
 			.set_color(selected_background_color)
 			.set_target_size(glm::vec2(advance_end - advance_begin, label.text_height + 8))
-			.set_margin(glm::vec4(advance_begin + label.margin.value.x, GUI2Dynamic::avail, 0, GUI2Dynamic::avail));
+			.set_margin(glm::vec4(advance_begin + label.margin.value.x, GUIDynamic::avail, 0, GUIDynamic::avail));
 	}
 
 	label.begin(gui_dynamic, text_to_use);
@@ -465,14 +465,14 @@ void widget2::TextInput::publish(GUI2Dynamic& gui_dynamic, std::u32string& text)
 	}
 	label.end(gui_dynamic, text_to_use);
 
-	gui_dynamic.grid_add_column(GUI2Dynamic::avail);
-	gui_dynamic.grid_add_row(GUI2Dynamic::avail);
+	gui_dynamic.grid_add_column(GUIDynamic::avail);
+	gui_dynamic.grid_add_row(GUIDynamic::avail);
 	gui_dynamic.grid_end();
 }
 
-void widget2::TextInput::resolve_keyboard_io(GUI2Dynamic& gui_dynamic, std::u32string& text) {
+void widget2::TextInput::resolve_keyboard_io(GUIDynamic& gui_dynamic, std::u32string& text) {
 	
-	for (GUI2::KeyboardEvent& e : gui_dynamic.get_io_state().keyboard_events) {
+	for (GUI::KeyboardEvent& e : gui_dynamic.get_io_state().keyboard_events) {
 		if (e.data.index() == 0) {
 
 			text_cursor_position = std::clamp(text_cursor_position, 0, (int32_t)text.size());
@@ -750,13 +750,13 @@ void widget2::TextInput::resolve_keyboard_io(GUI2Dynamic& gui_dynamic, std::u32s
 
 }
 
-void widget2::Slider::publish(GUI2Dynamic& gui_dynamic, float& value) {
+void widget2::Slider::publish(GUIDynamic& gui_dynamic, float& value) {
 
 	ignore_mouse_if_not_topmost_widget = false;
 	
 	Grid::publish(gui_dynamic);
-	gui_dynamic.grid_add_column(GUI2Dynamic::avail);
-	gui_dynamic.grid_add_row(GUI2Dynamic::avail);
+	gui_dynamic.grid_add_column(GUIDynamic::avail);
+	gui_dynamic.grid_add_row(GUIDynamic::avail);
 
 	if (hold.is_active()) {
 		float position	= get_resolved_properties(gui_dynamic).position.x;
@@ -777,11 +777,11 @@ void widget2::Slider::publish(GUI2Dynamic& gui_dynamic, float& value) {
 	gui_dynamic.grid_end();
 }
 
-void widget2::DragFloat::publish(GUI2Dynamic& gui_dynamic, float& value) {
+void widget2::DragFloat::publish(GUIDynamic& gui_dynamic, float& value) {
 	
 	std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> convert;
 
-	if (id == GUI2Dynamic::invalid_id) {
+	if (id == GUIDynamic::invalid_id) {
 		string = convert.from_bytes(std::to_string(value));
 		old_value = value;
 	}
@@ -812,12 +812,12 @@ void widget2::DragFloat::publish(GUI2Dynamic& gui_dynamic, float& value) {
 		}
 	}
 
-	//if ((get_mouse_state() & IOWidget::Hold) && (gui_dynamic.get_io_state().mouse_state & GUI2::LeftHold))
+	//if ((get_mouse_state() & IOWidget::Hold) && (gui_dynamic.get_io_state().mouse_state & GUI::LeftHold))
 	//{
 	//	grab.start(gui_dynamic);
 	//}
 
-	//if (gui_dynamic.get_io_state().mouse_state & GUI2::LeftRelease) {
+	//if (gui_dynamic.get_io_state().mouse_state & GUI::LeftRelease) {
 	//	grab.finish(gui_dynamic);
 	//	cursor_position_when_grabbed_publish = invalid_cursor_position;
 	//}
@@ -842,13 +842,13 @@ void widget2::DragFloat::publish(GUI2Dynamic& gui_dynamic, float& value) {
 	old_value = value;
 }
 
-void widget2::Button::publish(GUI2Dynamic& gui_dynamic) {
+void widget2::Button::publish(GUIDynamic& gui_dynamic) {
 
 	ignore_mouse_if_not_topmost_widget = false;
 
 	Grid::publish(gui_dynamic);
-	gui_dynamic.grid_add_column(GUI2Dynamic::avail);
-	gui_dynamic.grid_add_row(GUI2Dynamic::avail);
+	gui_dynamic.grid_add_column(GUIDynamic::avail);
+	gui_dynamic.grid_add_row(GUIDynamic::avail);
 
 	background.publish(gui_dynamic);
 	label.publish(gui_dynamic, text);

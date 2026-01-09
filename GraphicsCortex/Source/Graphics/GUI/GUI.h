@@ -11,7 +11,7 @@
 #include "Math/AABB.h"
 #include "Newsletter.h"
 
-class GUI2 {
+class GUI {
 public:
 
 	struct	WindowDesc;
@@ -60,7 +60,7 @@ public:
 		glm::vec2 position			= glm::vec2(0);
 		glm::vec2 size				= glm::vec2(128);
 
-		std::string name			= "CortexGUI2 Window";
+		std::string name			= "CortexGUI Window";
 		glm::vec4 color				= glm::vec4(1, 1, 1, 1);
 		glm::vec4 border_thickness	= glm::vec4(0);
 		glm::vec4 border_rounding	= glm::vec4(0);

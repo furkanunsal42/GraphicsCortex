@@ -26,12 +26,12 @@
 
 #include "Timer/TimerTest.h"
 
-#include "CortexGUI2/CortexGUI2Test_Fundamental.h"
-#include "CortexGUI2/CortexGUI2Test_Dynamic.h"
-#include "CortexGUI2/CortexGUI2Test_Relative.h"
-#include "CortexGUI2/CortexGUI2Test_Stateful.h"
-#include "CortexGUI2/CortexGUI2Test_Widgets.h"
-#include "CortexGUI2/CortexGUI2Test_Hierarchy.h"
+#include "CortexGUI/CortexGUITest_Fundamental.h"
+#include "CortexGUI/CortexGUITest_Dynamic.h"
+#include "CortexGUI/CortexGUITest_Relative.h"
+#include "CortexGUI/CortexGUITest_Stateful.h"
+#include "CortexGUI/CortexGUITest_Widgets.h"
+#include "CortexGUI/CortexGUITest_Hierarchy.h"
 
 int main() {
 	
@@ -65,11 +65,11 @@ int main() {
 
 	//TimerTest().run();
 
-	//CortexGUITest2_Fundamental().run();
-	//CortexGUITest2_Dynamic().run();
-	//CortexGUITest2_Relative().run();
-	//CortexGUITest2_Stateful().run();
-	//CortexGUITest2_Widgets().run();
-	//CortexGUITest2_Hierarchy().run();
+	//CortexGUITest_Fundamental().run();
+	//CortexGUITest_Dynamic().run();
+	//CortexGUITest_Relative().run();
+	//CortexGUITest_Stateful().run();
+	CortexGUITest_Widgets().run();
+	//CortexGUITest_Hierarchy().run();
 
 }

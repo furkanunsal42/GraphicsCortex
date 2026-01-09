@@ -3,15 +3,15 @@
 #include "GraphicsCortex.h"
 #include "TestBench/TestBench.h"
 
-#include "GUI2/GUI2.h"
+#include "GUI/GUI.h"
 
 
-class CortexGUITest2_Fundamental : public TestBench {
+class CortexGUITest_Fundamental : public TestBench {
 public:
 
 	bool run() {
 
-		GUI2 gui;
+		GUI gui;
 
 		while (true) {
 
@@ -21,7 +21,7 @@ public:
 			gui.window_prop().is_decorated = true;
 
 			glm::vec2 resolution1 = gui.window_prop().size;
-			if (gui.window_prop().mouse_event & GUI2::MouseEvent::LeftHold)
+			if (gui.window_prop().mouse_event & GUI::MouseEvent::LeftHold)
 				color = glm::vec4(0, 0, 1, 1);
 
 			gui.window_end();
@@ -33,13 +33,13 @@ public:
 			gui.window_prop().color			= glm::vec4(0.7, 0.7, 0.7, 1);
 			gui.window_prop().is_resizable	= false;
 
-			if (gui.window_prop().mouse_event & GUI2::MouseEvent::LeftPress)
+			if (gui.window_prop().mouse_event & GUI::MouseEvent::LeftPress)
 				std::cout << "window hold" << std::endl;
 
 			gui.box_begin(glm::vec2(0), glm::vec2(32));
 			gui.box_prop().color	= color;
 			
-			if (gui.box_prop().mouse_event & GUI2::MouseEvent::LeftPress)
+			if (gui.box_prop().mouse_event & GUI::MouseEvent::LeftPress)
 				std::cout << "holding" << std::endl;
 
 			gui.box_end();

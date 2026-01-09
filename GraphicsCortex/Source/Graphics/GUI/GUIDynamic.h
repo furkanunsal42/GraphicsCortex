@@ -1,5 +1,5 @@
 #pragma once
-#include "GUI2.h"
+#include "GUI.h"
 #include <variant>
 #include <array>
 
@@ -44,7 +44,7 @@
 //   * "spacing" must be (avail) or physical size.
 //
 
-class GUI2Dynamic {
+class GUIDynamic {
 public:
 
 	using time_point = std::chrono::system_clock::time_point;
@@ -60,7 +60,7 @@ public:
 	struct StackDesc;
 	struct ResolvedProperties;
 
-	void				new_frame(GUI2& gui);
+	void				new_frame(GUI& gui);
 
 	WindowDesc&			window_begin(size_t& id);
 	WindowDesc&			window_prop();
@@ -90,10 +90,10 @@ public:
 	void				resolve();
 	
 	ResolvedProperties  get_resolved_properties(size_t id);
-	GUI2::IOState&		get_io_state();
+	GUI::IOState&		get_io_state();
 	int32_t				get_levels_under_cursor(); 
 
-	void				publish(GUI2& gui);
+	void				publish(GUI& gui);
 	time_point			get_current_frame_timepoint();
 
 	struct WindowDesc {
@@ -103,7 +103,7 @@ public:
 		glm::vec2	min_size			= glm::vec2(fit);
 		glm::vec2	max_size			= glm::vec2(avail);
 
-		std::string name				= "CortexGUI2 Window";
+		std::string name				= "CortexGUI Window";
 		glm::vec4	color				= glm::vec4(1, 1, 1, 1);
 		glm::vec4	border_thickness	= glm::vec4(0);
 		glm::vec4	border_rounding		= glm::vec4(0);
@@ -138,11 +138,11 @@ public:
 		WindowDesc& set_position		(glm::vec2 value	);
 
 	private:
-		friend GUI2Dynamic;
+		friend GUIDynamic;
 		size_t		id					= invalid_id;
 		glm::vec2	size				= glm::vec2(0);
 
-		GUI2::MouseEvent	mouse_event	= GUI2::MouseEvent::None;
+		GUI::MouseEvent	mouse_event	= GUI::MouseEvent::None;
 	};
 
 	struct BoxDesc {
@@ -184,14 +184,14 @@ public:
 		BoxDesc&	set_texture_handle	(uint64_t	value );
 
 	private:
-		friend GUI2Dynamic;
+		friend GUIDynamic;
 		size_t		id					= invalid_id;
 		glm::ivec2	grid_slot			= glm::ivec2(0, 0);
 		glm::ivec2	grid_span			= glm::ivec2(0, 0);
 		glm::vec2	position			= glm::vec2(0);
 		glm::vec2	size				= glm::vec2(0);
 
-		GUI2::MouseEvent  mouse_event	= GUI2::MouseEvent::None;
+		GUI::MouseEvent  mouse_event	= GUI::MouseEvent::None;
 
 	};
 
@@ -218,7 +218,7 @@ public:
 		GridDesc&	set_permeable_event (bool value);
 
 	private:
-		friend GUI2Dynamic;
+		friend GUIDynamic;
 		size_t		id					= invalid_id;
 		glm::ivec2	current_grid_index	= glm::ivec2(0, 0);
 		glm::ivec2	current_grid_span	= glm::ivec2(0, 0);
@@ -227,7 +227,7 @@ public:
 		glm::vec2	position			= glm::vec2(0);
 		glm::vec2	size				= glm::vec2(0);
 
-		GUI2::MouseEvent  mouse_event	= GUI2::MouseEvent::None;
+		GUI::MouseEvent  mouse_event	= GUI::MouseEvent::None;
 
 	};
 
@@ -251,14 +251,14 @@ public:
 		StackDesc&	set_is_vertical (bool		value);
 
 	private:
-		friend GUI2Dynamic;
+		friend GUIDynamic;
 		size_t		id					= invalid_id;
 		glm::ivec2	grid_slot			= glm::ivec2(0, 0);
 		glm::ivec2	grid_span			= glm::ivec2(0, 0);
 		glm::vec2	position			= glm::vec2(0);
 		glm::vec2	size				= glm::vec2(0);
 
-		GUI2::MouseEvent  mouse_event	= GUI2::MouseEvent::None;
+		GUI::MouseEvent  mouse_event	= GUI::MouseEvent::None;
 
 	};
 
@@ -269,7 +269,7 @@ public:
 		glm::vec2			position	= glm::vec2(0);
 		glm::vec2			size		= glm::vec2(0);
 		int32_t				level		= 0;
-		GUI2::MouseEvent	event		= GUI2::None;
+		GUI::MouseEvent	event		= GUI::None;
 		bool does_exists();
 	};
 
@@ -325,7 +325,7 @@ private:
 	glm::ivec2&		node_grid_index(size_t node);
 	glm::ivec2&		node_grid_span(size_t node);
 	size_t			get_node_id(size_t node);
-	GUI2::MouseEvent&  node_mouse_event(size_t node);
+	GUI::MouseEvent&  node_mouse_event(size_t node);
 
 	void			_traverse_nodes(size_t root_node, std::function<void(int32_t, size_t)> lambda_given_level_self);
 	void			traverse_nodes_down(size_t root_node, std::function<void(int32_t, size_t)> lambda_given_level_self);
@@ -354,7 +354,7 @@ private:
 
 	std::unordered_map<size_t, ResolvedProperties>	resolved_properties;
 	int32_t			levels_under_cursor = 0;
-	GUI2::IOState	io_state;
+	GUI::IOState	io_state;
 	time_point current_frame_timepoint = invalid_time;
 
 	size_t next_id_to_generate = 1;

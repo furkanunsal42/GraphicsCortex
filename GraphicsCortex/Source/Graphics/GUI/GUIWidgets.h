@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "GUI2Dynamic.h"
+#include "GUIDynamic.h"
 #include <chrono>
 #include "Font.h"
 
@@ -9,23 +9,23 @@ namespace widget2 {
 
 	class Widget {
 	public:
-		GUI2Dynamic::ResolvedProperties get_resolved_properties(GUI2Dynamic& gui_dynamic);
+		GUIDynamic::ResolvedProperties get_resolved_properties(GUIDynamic& gui_dynamic);
 	protected:
-		size_t id = GUI2Dynamic::invalid_id;
+		size_t id = GUIDynamic::invalid_id;
 	};
 
 	struct IOEvent {
 		
-		GUI2Dynamic::time_point begin_time	= GUI2Dynamic::invalid_time;
-		GUI2Dynamic::time_point end_time	= GUI2Dynamic::invalid_time;
+		GUIDynamic::time_point begin_time	= GUIDynamic::invalid_time;
+		GUIDynamic::time_point end_time	= GUIDynamic::invalid_time;
 
-		void impulse(GUI2Dynamic& gui_dynamic);
-		void start(GUI2Dynamic& gui_dynamic);
-		void finish(GUI2Dynamic& gui_dynamic);
+		void impulse(GUIDynamic& gui_dynamic);
+		void start(GUIDynamic& gui_dynamic);
+		void finish(GUIDynamic& gui_dynamic);
 
 		bool is_active();
-		bool is_activated_now(GUI2Dynamic& gui_dynamic);
-		bool is_deactivated_now(GUI2Dynamic& gui_dynamic);
+		bool is_activated_now(GUIDynamic& gui_dynamic);
+		bool is_deactivated_now(GUIDynamic& gui_dynamic);
 	};
 
 	class IOWidget : public Widget {
@@ -52,7 +52,7 @@ namespace widget2 {
 
 	protected:
 		
-		void resolve_io(GUI2Dynamic& gui_dynamic);
+		void resolve_io(GUIDynamic& gui_dynamic);
 		
 	private:
 
@@ -91,7 +91,7 @@ namespace widget2 {
 
 		float get_t(const IOEvent& event, duration transition_duration) {
 			
-			if (event.begin_time == GUI2Dynamic::invalid_time && event.end_time == GUI2Dynamic::invalid_time)
+			if (event.begin_time == GUIDynamic::invalid_time && event.end_time == GUIDynamic::invalid_time)
 				return 0;
 
 			if (transition_duration.count() == 0)
@@ -104,12 +104,12 @@ namespace widget2 {
 			duration time_passed_recovering = std::min(now - event.end_time,				transition_duration);
 
 			bool happening =
-				(event.begin_time != GUI2Dynamic::invalid_time && event.end_time == GUI2Dynamic::invalid_time) ||
-				(event.begin_time != GUI2Dynamic::invalid_time && event.end_time != GUI2Dynamic::invalid_time && event.begin_time > event.end_time);
+				(event.begin_time != GUIDynamic::invalid_time && event.end_time == GUIDynamic::invalid_time) ||
+				(event.begin_time != GUIDynamic::invalid_time && event.end_time != GUIDynamic::invalid_time && event.begin_time > event.end_time);
 
 			bool recovering =
-				event.begin_time != GUI2Dynamic::invalid_time	&&
-				event.end_time != GUI2Dynamic::invalid_time		&&
+				event.begin_time != GUIDynamic::invalid_time	&&
+				event.end_time != GUIDynamic::invalid_time		&&
 				event.begin_time < event.end_time				&&
 				now - event.end_time < time_passed_hovering;
 
@@ -139,7 +139,7 @@ namespace widget2 {
 
 		glm::vec2 position = glm::vec2(100);
 
-		void publish(GUI2Dynamic& gui_dynamic);
+		void publish(GUIDynamic& gui_dynamic);
 
 	private:
 
@@ -155,7 +155,7 @@ namespace widget2 {
 	//struct DockSurface {
 	//
 	//	DockSurface(std::string idstr);
-	//	void publish(GUI2Dynamic& gui_dynamic);
+	//	void publish(GUIDynamic& gui_dynamic);
 	//
 	//private:
 	//
@@ -177,22 +177,22 @@ namespace widget2 {
 		StyleProperty<glm::vec4> shadow_thickness;
 		StyleProperty<glm::vec4> shadow_color;
 		
-		void publish(GUI2Dynamic& gui_dynamic);
+		void publish(GUIDynamic& gui_dynamic);
 	
 	protected:
 
-		void apply_properties_to(GUI2Dynamic::WindowDesc& desc);
-		void apply_properties_to(GUI2Dynamic::BoxDesc& desc);
-		void apply_properties_to(GUI2Dynamic::GridDesc& desc);
-		void apply_properties_to(GUI2Dynamic::StackDesc& desc);
+		void apply_properties_to(GUIDynamic::WindowDesc& desc);
+		void apply_properties_to(GUIDynamic::BoxDesc& desc);
+		void apply_properties_to(GUIDynamic::GridDesc& desc);
+		void apply_properties_to(GUIDynamic::StackDesc& desc);
 	};
 
 	template<>
 	inline void DefaultStyle::apply<Box>(Box& widget) {
 		widget.margin			= glm::vec4(0);
 		widget.target_size		= glm::vec2(128);	
-		widget.min_size			= glm::vec2(GUI2Dynamic::fit);	
-		widget.max_size			= glm::vec2(GUI2Dynamic::avail);	
+		widget.min_size			= glm::vec2(GUIDynamic::fit);	
+		widget.max_size			= glm::vec2(GUIDynamic::avail);	
 		widget.color			= glm::vec4(1, 1, 1, 1);
 		widget.border_thickness	= glm::vec4(0);			
 		widget.border_rounding	= glm::vec4(0);		
@@ -212,7 +212,7 @@ namespace widget2 {
 		StyleProperty<glm::vec2>	min_size;
 		StyleProperty<glm::vec2>	max_size;
 
-		void publish(GUI2Dynamic& gui_dynamic);
+		void publish(GUIDynamic& gui_dynamic);
 
 	};
 
@@ -220,9 +220,9 @@ namespace widget2 {
 	inline void DefaultStyle::apply<Grid>(Grid& widget) {
 		widget.margin		= glm::vec4(0);	
 		widget.padding		= glm::vec4(0);
-		widget.target_size	= glm::vec2(GUI2Dynamic::fit);
-		widget.min_size		= glm::vec2(GUI2Dynamic::fit);	
-		widget.max_size		= glm::vec2(GUI2Dynamic::avail);		
+		widget.target_size	= glm::vec2(GUIDynamic::fit);
+		widget.min_size		= glm::vec2(GUIDynamic::fit);	
+		widget.max_size		= glm::vec2(GUIDynamic::avail);		
 	}
 
 	struct Stack : public IOWidget {
@@ -234,7 +234,7 @@ namespace widget2 {
 		StyleProperty<glm::vec2>	max_size;
 		StyleProperty<float>		spacing;
 
-		void publish(GUI2Dynamic& gui_dynamic);
+		void publish(GUIDynamic& gui_dynamic);
 	};
 
 	template<>
@@ -242,8 +242,8 @@ namespace widget2 {
 		widget.margin		= glm::vec4(0);
 		widget.padding		= glm::vec4(0);
 		widget.target_size	= glm::vec2(128);	
-		widget.min_size		= glm::vec2(GUI2Dynamic::fit);	
-		widget.max_size		= glm::vec2(GUI2Dynamic::avail);	
+		widget.min_size		= glm::vec2(GUIDynamic::fit);	
+		widget.max_size		= glm::vec2(GUIDynamic::avail);	
 		widget.spacing		= 10;
 	}
 
@@ -260,10 +260,10 @@ namespace widget2 {
 		glm::vec2 uv11;
 		Type type;
 		
-		void publish(GUI2Dynamic& gui_dynamic);
+		void publish(GUIDynamic& gui_dynamic);
 
 	private:
-		size_t grid_id = GUI2Dynamic::invalid_id;
+		size_t grid_id = GUIDynamic::invalid_id;
 	};
 
 	template<>
@@ -280,13 +280,13 @@ namespace widget2 {
 		float text_height;
 		StyleProperty<glm::vec4> text_color;
 
-		void publish(GUI2Dynamic& gui_dynamic, const std::u32string& text);
+		void publish(GUIDynamic& gui_dynamic, const std::u32string& text);
 
-		void begin(GUI2Dynamic& gui_dynamic, const std::u32string& text);
-		bool publish_glyph(GUI2Dynamic& gui_dynamic, size_t end_index, const std::u32string& text);
+		void begin(GUIDynamic& gui_dynamic, const std::u32string& text);
+		bool publish_glyph(GUIDynamic& gui_dynamic, size_t end_index, const std::u32string& text);
 		float get_current_advance();
 		float compute_advance(size_t end_index, const std::u32string& text);
-		void end(GUI2Dynamic& gui_dynamic, const std::u32string& text);
+		void end(GUIDynamic& gui_dynamic, const std::u32string& text);
 
 	private:
 		float		advance					= 0;
@@ -300,7 +300,7 @@ namespace widget2 {
 		widget.font = 1;
 		widget.text_height = 16;
 		widget.text_color = glm::vec4(0, 0, 0, 1);
-		widget.target_size = glm::vec2(GUI2Dynamic::fit);
+		widget.target_size = glm::vec2(GUIDynamic::fit);
 	}
 
 	struct TextInput : public Grid {
@@ -325,10 +325,10 @@ namespace widget2 {
 		bool can_aquire_keyboard_focus = true;
 		IOEvent focus;
 
-		void publish(GUI2Dynamic& gui_dynamic, std::u32string& text);
+		void publish(GUIDynamic& gui_dynamic, std::u32string& text);
 	
 	private:
-		void resolve_keyboard_io(GUI2Dynamic& gui_dynamic, std::u32string& text);
+		void resolve_keyboard_io(GUIDynamic& gui_dynamic, std::u32string& text);
 	};
 
 
@@ -348,8 +348,8 @@ namespace widget2 {
 		widget.target_size 						= glm::vec2(400, 40);
 		widget.padding 							= glm::vec4(0);
 
-		widget.label.target_size 				= glm::vec2(GUI2Dynamic::fit);
-		widget.label.margin 					= glm::vec4(8, GUI2Dynamic::avail, 8, GUI2Dynamic::avail);
+		widget.label.target_size 				= glm::vec2(GUIDynamic::fit);
+		widget.label.margin 					= glm::vec4(8, GUIDynamic::avail, 8, GUIDynamic::avail);
 		widget.label.text_color 				= glm::vec4(0.2, 0.2, 0.2, 1);
 		
 		widget.background.color 				= glm::vec4(1, 1, 1, 1);
@@ -358,7 +358,7 @@ namespace widget2 {
 		widget.background.border_color1 		= glm::vec4(0.68, 0.71, 0.75, 1);
 		widget.background.border_color2 		= glm::vec4(0.68, 0.71, 0.75, 1);
 		widget.background.border_color3 		= glm::vec4(0.68, 0.71, 0.75, 1);
-		widget.background.target_size 			= glm::vec2(GUI2Dynamic::avail, GUI2Dynamic::avail);
+		widget.background.target_size 			= glm::vec2(GUIDynamic::avail, GUIDynamic::avail);
 		widget.background.margin				= glm::vec4(0);
 
 		widget.label.text_color.transition(widget.focus, glm::vec4(0, 0, 0, 1));
@@ -378,7 +378,7 @@ namespace widget2 {
 		float min_value = 0;
 		float max_value = 1;
 
-		void publish(GUI2Dynamic& gui_dynamic, float& value);
+		void publish(GUIDynamic& gui_dynamic, float& value);
 
 	};
 
@@ -397,13 +397,13 @@ namespace widget2 {
 		widget.head.color.transition(widget.head.hover, glm::vec4(0.78, 0.78, 0.92, 1), std::chrono::milliseconds(100));
 		widget.head.color.transition(widget.head.hold,	glm::vec4(0.82, 0.82, 0.82, 1), std::chrono::milliseconds(100));
 
-		widget.background.target_size	= glm::vec2(GUI2Dynamic::avail, 4);
+		widget.background.target_size	= glm::vec2(GUIDynamic::avail, 4);
 		widget.background.color			= glm::vec4(0.90, 0.90, 0.90, 1);
-		widget.background.margin		= glm::vec4(0, GUI2Dynamic::avail, 0, GUI2Dynamic::avail);
+		widget.background.margin		= glm::vec4(0, GUIDynamic::avail, 0, GUIDynamic::avail);
 
 		widget.filled_bar.target_size	= glm::vec2(0, widget.background.target_size.value.y);
 		widget.filled_bar.color			= glm::vec4(0.45f, 0.59f, 0.65f, 1);
-		widget.filled_bar.margin		= glm::vec4(0, GUI2Dynamic::avail, 0, GUI2Dynamic::avail);
+		widget.filled_bar.margin		= glm::vec4(0, GUIDynamic::avail, 0, GUIDynamic::avail);
 	}
 
 	struct DragFloat : public TextInput {
@@ -412,14 +412,14 @@ namespace widget2 {
 		float min_value		= std::numeric_limits<float>::min();
 		float max_value		= std::numeric_limits<float>::max();
 
-		void publish(GUI2Dynamic& gui_dynamic, float& value);
+		void publish(GUIDynamic& gui_dynamic, float& value);
 
 	protected:
 		
 		std::u32string string = U"";
 		float old_value = 0;
 
-		void publish(GUI2Dynamic& gui_dynamic, std::u32string& text);
+		void publish(GUIDynamic& gui_dynamic, std::u32string& text);
 
 		constexpr static glm::vec2 invalid_cursor_position = glm::vec2(-1);
 		glm::vec2 cursor_position_when_grabbed_publish = invalid_cursor_position;
@@ -439,7 +439,7 @@ namespace widget2 {
 
 		std::u32string text = U"button";
 
-		void publish(GUI2Dynamic& gui_dynamic);
+		void publish(GUIDynamic& gui_dynamic);
 
 	};
 
@@ -450,9 +450,9 @@ namespace widget2 {
 
 		widget.target_size					= glm::vec2(200, 120);
 		//widget.padding						= glm::vec4(43, 13, 43, 13);
-		//widget.target_size					= glm::vec2(GUI2Dynamic::fit);
+		//widget.target_size					= glm::vec2(GUIDynamic::fit);
 
-		widget.background.target_size		= glm::vec2(GUI2Dynamic::avail);
+		widget.background.target_size		= glm::vec2(GUIDynamic::avail);
 		widget.background.color				= glm::vec4(0.93, 0.93, 0.93, 1);
 		widget.background.border_thickness 	= glm::vec4(1);
 		widget.background.border_color0 	= glm::vec4(0.0, 0.47, 0.84, 1);
@@ -460,7 +460,7 @@ namespace widget2 {
 		widget.background.border_color2 	= glm::vec4(0.0, 0.47, 0.84, 1);
 		widget.background.border_color3 	= glm::vec4(0.0, 0.47, 0.84, 1);
 
-		widget.label.margin					= glm::vec4(GUI2Dynamic::avail);
+		widget.label.margin					= glm::vec4(GUIDynamic::avail);
 		widget.label.text_color				= glm::vec4(0.2, 0.2, 0.2, 1);
 
 		widget.background.border_color0.	transition(widget.hover, glm::vec4(0.0, 0.47, 0.84, 1), std::chrono::milliseconds(250));
@@ -479,31 +479,31 @@ namespace widget2 {
 
 	struct CheckBox {
 
-		void publish(GUI2Dynamic& gui_dynamic);
+		void publish(GUIDynamic& gui_dynamic);
 
 	};
 
 	struct ComboBox {
 
-		void publish(GUI2Dynamic& gui_dynamic);
+		void publish(GUIDynamic& gui_dynamic);
 
 	};
 
 	struct Menu {
 
-		void publish(GUI2Dynamic& gui_dynamic);
+		void publish(GUIDynamic& gui_dynamic);
 
 	};
 
 	struct Tab {
 
-		void publish(GUI2Dynamic& gui_dynamic);
+		void publish(GUIDynamic& gui_dynamic);
 
 	};
 
 	struct Collapsible {
 
-		void publish(GUI2Dynamic& gui_dynamic);
+		void publish(GUIDynamic& gui_dynamic);
 
 	};
 

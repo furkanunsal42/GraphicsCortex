@@ -3,22 +3,22 @@
 #include "GraphicsCortex.h"
 #include "TestBench/TestBench.h"
 
-#include "GUI2/GUI2.h"
-#include "GUI2/GUI2Dynamic.h"
-#include "GUI2/GUI2Widgets.h"
+#include "GUI/GUI.h"
+#include "GUI/GUIDynamic.h"
+#include "GUI/GUIWidgets.h"
 
-class CortexGUITest2_Stateful : public TestBench {
+class CortexGUITest_Stateful : public TestBench {
 public:
 
 	bool run() {
 
 		/*
-		constexpr auto avail = GUI2Dynamic::avail;
-		constexpr auto fit = GUI2Dynamic::fit;
-		constexpr auto invalid_id = GUI2Dynamic::invalid_id;
+		constexpr auto avail = GUIDynamic::avail;
+		constexpr auto fit = GUIDynamic::fit;
+		constexpr auto invalid_id = GUIDynamic::invalid_id;
 
-		GUI2 gui;
-		GUI2Dynamic gui_d;
+		GUI gui;
+		GUIDynamic gui_d;
 
 		widget2::Window window0;
 		window0.draggable = true;

@@ -1,10 +1,10 @@
-#include "GUI2.h"
+#include "GUI.h"
 #include "PrimitiveRenderer.h"
 #include "WindowBoundGlobalResources.h"
-#include "GUI2Dynamic.h"
+#include "GUIDynamic.h"
 #include "GLMCout.h"
 
-GUI2::MouseEvent GUI2::window_begin(const std::string& idstr, const glm::vec2& initial_position, const glm::vec2& initial_size) {
+GUI::MouseEvent GUI::window_begin(const std::string& idstr, const glm::vec2& initial_position, const glm::vec2& initial_size) {
 	
 	WindowDesc old_descriptor;
 	bool first_call = windows_state.find(idstr) == windows_state.end();
@@ -33,7 +33,7 @@ GUI2::MouseEvent GUI2::window_begin(const std::string& idstr, const glm::vec2& i
 	return event;
 }
 
-GUI2::WindowDesc& GUI2::window_prop() {
+GUI::WindowDesc& GUI::window_prop() {
 	if (window_stack.size() == 0) {
 		std::cout << "[GUI Error] window_prop() is called but no window is active" << std::endl;
 		ASSERT(false);
@@ -42,14 +42,14 @@ GUI2::WindowDesc& GUI2::window_prop() {
 	return state.descriptor;
 }
 
-void GUI2::window_end() {
+void GUI::window_end() {
 	window_stack.pop_back();
 }
 
-GUI2::MouseEvent GUI2::box_begin(const glm::vec2& position, const glm::vec2& size)
+GUI::MouseEvent GUI::box_begin(const glm::vec2& position, const glm::vec2& size)
 {
 	if (box_last != std::nullopt) {
-		std::cout << "[GUI Error] GUI2::box_begin() is called within another box definition. nested boxs are not a valid structure" << std::endl;
+		std::cout << "[GUI Error] GUI::box_begin() is called within another box definition. nested boxs are not a valid structure" << std::endl;
 	}
 
 	box_last = BoxDesc();
@@ -64,7 +64,7 @@ GUI2::MouseEvent GUI2::box_begin(const glm::vec2& position, const glm::vec2& siz
 	return event;
 }
 
-GUI2::BoxDesc& GUI2::box_prop() {
+GUI::BoxDesc& GUI::box_prop() {
 	if (box_last.has_value() == false) {
 		std::cout << "[GUI Error] box_prop() is called but no box was active" << std::endl;
 		ASSERT(false);
@@ -72,11 +72,11 @@ GUI2::BoxDesc& GUI2::box_prop() {
 	return box_last.value();
 }
 
-void GUI2::box_end() {
+void GUI::box_end() {
 	_publish_last();
 }
 
-void GUI2::render() {
+void GUI::render() {
 
 	Window* previous_window = active_window;
 	glm::vec4 previous_viewport = primitive_renderer::get_viewport_position_size();
@@ -87,7 +87,7 @@ void GUI2::render() {
 	//
 	//if (active_window == nullptr) {
 	//	WindowDescription desc;
-	//	desc.w_name = "CortexGUI2 Parent Window";
+	//	desc.w_name = "CortexGUI Parent Window";
 	//	desc.w_resolution = glm::ivec2(0);
 	//	parent_window = std::make_shared<Window>(desc);
 	//	parent_window->context_make_current();
@@ -245,12 +245,12 @@ void GUI2::render() {
 	
 }
 
-const GUI2::IOState& GUI2::get_io_state()
+const GUI::IOState& GUI::get_io_state()
 {
 	return io_state;
 }
 
-GUI2::MouseEvent GUI2::_generate_event_for_aabb(const AABB2& aabb) {
+GUI::MouseEvent GUI::_generate_event_for_aabb(const AABB2& aabb) {
 	
 	if (aabb.does_contain(io_state.mouse_position) && ((int32_t)io_state.mouse_state & (int32_t)MouseEvent::LeftHold) != 0) return MouseEvent::LeftHold;
 	if (aabb.does_contain(io_state.mouse_position) && ((int32_t)io_state.mouse_state & (int32_t)MouseEvent::LeftPress) != 0) return MouseEvent::LeftPress;
@@ -265,10 +265,10 @@ GUI2::MouseEvent GUI2::_generate_event_for_aabb(const AABB2& aabb) {
 	return None;
 }
 
-void GUI2::_publish_last() {
+void GUI::_publish_last() {
 
 	if (window_stack.size() == 0) {
-		std::cout << "[GUI Error] GUI2::_publish_last() is called but no window is active" << std::endl;
+		std::cout << "[GUI Error] GUI::_publish_last() is called but no window is active" << std::endl;
 		ASSERT(false);
 	}
 

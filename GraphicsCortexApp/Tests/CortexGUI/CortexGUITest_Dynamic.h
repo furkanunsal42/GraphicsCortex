@@ -3,18 +3,18 @@
 #include "GraphicsCortex.h"
 #include "TestBench/TestBench.h"
 
-#include "GUI2/GUI2.h"
-#include "GUI2/GUI2Dynamic.h"
+#include "GUI/GUI.h"
+#include "GUI/GUIDynamic.h"
 
-class CortexGUITest2_Dynamic : public TestBench {
+class CortexGUITest_Dynamic : public TestBench {
 public:
 
 	bool run() {
 
-		GUI2 gui;
-		GUI2Dynamic gui_d;
+		GUI gui;
+		GUIDynamic gui_d;
 		
-		size_t window_id = GUI2Dynamic::invalid_id;
+		size_t window_id = GUIDynamic::invalid_id;
 		gui_d.window_begin(window_id);
 		gui_d.stack_begin();
 			gui_d.stack_begin();
@@ -24,8 +24,8 @@ public:
 				gui_d.box_end();
 
 				gui_d.grid_begin();
-				gui_d.grid_add_column(GUI2Dynamic::avail);
-				gui_d.grid_add_row(GUI2Dynamic::avail);
+				gui_d.grid_add_column(GUIDynamic::avail);
+				gui_d.grid_add_row(GUIDynamic::avail);
 				gui_d.grid_end();
 				
 				gui_d.box_begin();

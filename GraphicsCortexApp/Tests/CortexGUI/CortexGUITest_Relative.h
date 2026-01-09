@@ -3,22 +3,22 @@
 #include "GraphicsCortex.h"
 #include "TestBench/TestBench.h"
 
-#include "GUI2/GUI2.h"
-#include "GUI2/GUI2Dynamic.h"
+#include "GUI/GUI.h"
+#include "GUI/GUIDynamic.h"
 
 #include <chrono>
 
-class CortexGUITest2_Relative : public TestBench {
+class CortexGUITest_Relative : public TestBench {
 public:
 
 	bool run() {
 
-		constexpr auto avail		= GUI2Dynamic::avail;
-		constexpr auto fit			= GUI2Dynamic::fit;
-		constexpr auto invalid_id	= GUI2Dynamic::invalid_id;
+		constexpr auto avail		= GUIDynamic::avail;
+		constexpr auto fit			= GUIDynamic::fit;
+		constexpr auto invalid_id	= GUIDynamic::invalid_id;
 		
-		GUI2 gui;
-		GUI2Dynamic gui_d;
+		GUI gui;
+		GUIDynamic gui_d;
 
 		size_t window1	= invalid_id;
 		size_t box0		= invalid_id;
@@ -58,7 +58,7 @@ public:
 						gui_d.box_begin(box0)
 							.set_target_size(glm::vec2(avail, 32));
 
-						if (gui_d.get_resolved_properties(box0).event & GUI2::MouseEvent::LeftHold) 
+						if (gui_d.get_resolved_properties(box0).event & GUI::MouseEvent::LeftHold) 
 						{
 							
 							gui_d.box_prop().color = glm::vec4(1, 0, 0, 1);
