@@ -1,4 +1,5 @@
 #include "Mesh.h"
+#include <queue>
 
 Mesh::Mesh(Model& model)
 {

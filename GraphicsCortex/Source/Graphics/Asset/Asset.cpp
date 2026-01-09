@@ -9,6 +9,7 @@
 #include <assimp/postprocess.h>
 
 #include <mutex>
+#include <queue>
 
 Asset::Asset(const std::filesystem::path& asset_path, const AssetImportDescription& properties)
 {

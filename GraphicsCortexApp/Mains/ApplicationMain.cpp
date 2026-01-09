@@ -24,8 +24,6 @@
 
 #include "ImmediateRenderer/ImmediateRendererTest.h"
 
-#include "Timer/TimerTest.h"
-
 #include "CortexGUI/CortexGUITest_Fundamental.h"
 #include "CortexGUI/CortexGUITest_Dynamic.h"
 #include "CortexGUI/CortexGUITest_Relative.h"
@@ -62,8 +60,6 @@ int main() {
 	//OpenGLDeviceResourceSystemTest().run();
 
 	//ImmediateRendererTest().run();
-
-	//TimerTest().run();
 
 	//CortexGUITest_Fundamental().run();
 	//CortexGUITest_Dynamic().run();

@@ -8,7 +8,6 @@
 #include "mat4x4.hpp"
 
 #include "Buffer.h"
-#include "NTree.h"
 #include "Model.h"
 #include "IndexBufferEnums.h"
 #include "VertexAttributeBuffer.h"

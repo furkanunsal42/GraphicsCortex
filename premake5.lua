@@ -200,7 +200,6 @@ project "GraphicsCortex"
 		"%{prj.name}/Dependencies/physx/include",
 		"%{prj.name}/Dependencies/physx/snippetutils",
 		"%{prj.name}/Dependencies/physx/snippetcommon",
-		"%{prj.name}/Dependencies/hiredis/include",
 		"%{prj.name}/Dependencies/freetype/include"
 	}
 
@@ -213,7 +212,6 @@ project "GraphicsCortex"
 		"%{prj.name}/Dependencies/GLEW/lib/Release/x64",
 		"%{prj.name}/Dependencies/GLFWx64/lib-vc2022",
 		"%{prj.name}/Dependencies/physx/lib_checked",
-		"%{prj.name}/Dependencies/hiredis/libx64",
 		"%{prj.name}/Dependencies/freetype"
 	}
 		
@@ -222,7 +220,6 @@ project "GraphicsCortex"
 		"CortexPackager",
 		"tiff.lib",
 		"freetype.lib",
-		"hiredis.lib",
 		"SnippetUtils_static_64.lib",
 		"SnippetRender_static_64.lib",
 		"SimulationController_static_64.lib",
@@ -347,7 +344,6 @@ project "GraphicsCortexApp"
 		"GraphicsCortex/Dependencies/physx/include",
 		"GraphicsCortex/Dependencies/physx/snippetutils",
 		"GraphicsCortex/Dependencies/physx/snippetcommon",
-		"GraphicsCortex/Dependencies/hiredis/include",
 		"GraphicsCortex/Dependencies/freetype/include"
 	}
 
@@ -446,7 +442,6 @@ project "CortexEditor"
 		"GraphicsCortex/Dependencies/physx/include",
 		"GraphicsCortex/Dependencies/physx/snippetutils",
 		"GraphicsCortex/Dependencies/physx/snippetcommon",
-		"GraphicsCortex/Dependencies/hiredis/include",
 		"GraphicsCortex/Dependencies/freetype/include"
 	}
 
@@ -546,7 +541,6 @@ project "GraphicsCortexEditor"
 		"GraphicsCortex/Dependencies/physx/include",
 		"GraphicsCortex/Dependencies/physx/snippetutils",
 		"GraphicsCortex/Dependencies/physx/snippetcommon",
-		"GraphicsCortex/Dependencies/hiredis/include",
 		"GraphicsCortex/Dependencies/freetype/include"
 	}
 
@@ -643,7 +637,6 @@ project "GraphicsCortexEditor"
 		"GraphicsCortex/Dependencies/physx/include",
 		"GraphicsCortex/Dependencies/physx/snippetutils",
 		"GraphicsCortex/Dependencies/physx/snippetcommon",
-		"GraphicsCortex/Dependencies/hiredis/include",
 		"GraphicsCortex/Dependencies/freetype/include"
 	}
 
@@ -742,7 +735,6 @@ project "CTReconstructor"
 		"GraphicsCortex/Dependencies/physx/include",
 		"GraphicsCortex/Dependencies/physx/snippetutils",
 		"GraphicsCortex/Dependencies/physx/snippetcommon",
-		"GraphicsCortex/Dependencies/hiredis/include",
 		"GraphicsCortex/Dependencies/freetype/include"
 	}
 
@@ -846,7 +838,6 @@ project "CTReconstructorApp"
 		"GraphicsCortex/Dependencies/physx/include",
 		"GraphicsCortex/Dependencies/physx/snippetutils",
 		"GraphicsCortex/Dependencies/physx/snippetcommon",
-		"GraphicsCortex/Dependencies/hiredis/include",
 		"GraphicsCortex/Dependencies/freetype/include"
 	}
 
@@ -951,7 +942,6 @@ project "CTAnalyzerNeo"
 		"GraphicsCortex/Dependencies/physx/include",
 		"GraphicsCortex/Dependencies/physx/snippetutils",
 		"GraphicsCortex/Dependencies/physx/snippetcommon",
-		"GraphicsCortex/Dependencies/hiredis/include",
 		"GraphicsCortex/Dependencies/freetype/include"
 	}
 
@@ -1189,7 +1179,6 @@ includedirs
 	"GraphicsCortex/Dependencies/physx/include",
 	"GraphicsCortex/Dependencies/physx/snippetutils",
 	"GraphicsCortex/Dependencies/physx/snippetcommon",
-	"GraphicsCortex/Dependencies/hiredis/include",
 	"GraphicsCortex/Dependencies/freetype/include"
 }
 
@@ -1292,7 +1281,6 @@ project "RubiksCube"
 		"GraphicsCortex/Dependencies/physx/include",
 		"GraphicsCortex/Dependencies/physx/snippetutils",
 		"GraphicsCortex/Dependencies/physx/snippetcommon",
-		"GraphicsCortex/Dependencies/hiredis/include",
 		"GraphicsCortex/Dependencies/freetype/include"
 	}
 
@@ -1391,7 +1379,6 @@ project "Gozdiscoptics"
 		"GraphicsCortex/Dependencies/physx/include",
 		"GraphicsCortex/Dependencies/physx/snippetutils",
 		"GraphicsCortex/Dependencies/physx/snippetcommon",
-		"GraphicsCortex/Dependencies/hiredis/include",
 		"GraphicsCortex/Dependencies/freetype/include"
 	}
 
@@ -1490,7 +1477,6 @@ project "GozdiscopticsMax"
 		"GraphicsCortex/Dependencies/physx/include",
 		"GraphicsCortex/Dependencies/physx/snippetutils",
 		"GraphicsCortex/Dependencies/physx/snippetcommon",
-		"GraphicsCortex/Dependencies/hiredis/include",
 		"GraphicsCortex/Dependencies/freetype/include"
 	}
 
@@ -1591,7 +1577,6 @@ project "KSP3"
 		"GraphicsCortex/Dependencies/physx/include",
 		"GraphicsCortex/Dependencies/physx/snippetutils",
 		"GraphicsCortex/Dependencies/physx/snippetcommon",
-		"GraphicsCortex/Dependencies/hiredis/include",
 		"GraphicsCortex/Dependencies/freetype/include"
 	}
 

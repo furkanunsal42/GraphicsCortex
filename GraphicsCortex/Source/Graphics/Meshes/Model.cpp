@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <iostream>
 #include <stdint.h>
+#include <queue>
 
 #include "Model.h"
 #include "Debuger.h"
