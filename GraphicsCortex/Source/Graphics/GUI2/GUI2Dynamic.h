@@ -47,6 +47,9 @@
 class GUI2Dynamic {
 public:
 
+	using time_point = std::chrono::system_clock::time_point;
+	constexpr static time_point	invalid_time = time_point::max();
+
 	static constexpr float		fit   = -1;
 	static constexpr float		avail = -1024 * 64;
 	static constexpr size_t		invalid_id = 0;
@@ -91,6 +94,7 @@ public:
 	int32_t				get_levels_under_cursor(); 
 
 	void				publish(GUI2& gui);
+	time_point			get_current_frame_timepoint();
 
 	struct WindowDesc {
 
@@ -351,6 +355,7 @@ private:
 	std::unordered_map<size_t, ResolvedProperties>	resolved_properties;
 	int32_t			levels_under_cursor = 0;
 	GUI2::IOState	io_state;
+	time_point current_frame_timepoint = invalid_time;
 
 	size_t next_id_to_generate = 1;
 	size_t generate_id();

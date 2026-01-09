@@ -346,6 +346,8 @@ void GUI2Dynamic::new_frame(GUI2& gui)
 			iterator++;
 		}
 	}
+
+	current_frame_timepoint = std::chrono::system_clock::now();
 }
 
 GUI2Dynamic::WindowDesc& GUI2Dynamic::window_begin(size_t& id){
@@ -1427,6 +1429,11 @@ void GUI2Dynamic::publish(GUI2& gui)
 
 		gui.window_end();
 	}
+}
+
+std::chrono::system_clock::time_point GUI2Dynamic::get_current_frame_timepoint()
+{
+	return current_frame_timepoint;
 }
 
 bool GUI2Dynamic::is_avail(float value) {

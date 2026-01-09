@@ -165,7 +165,8 @@ void widget2::IOWidget::resolve_io(GUI2Dynamic& gui_dynamic)
 	{
 		
 		if ((event & GUI2::MouseEvent::None) != 0) {
-			hold.end = std::chrono::system_clock::now();
+			hold.finish(gui_dynamic);
+			//hold.end_time = gui_dynamic.get_current_frame_timepoint();
 			current_state = Leave; // HoldLeave?
 		}
 		if((event & GUI2::MouseEvent::Hover) != 0)
@@ -271,19 +272,19 @@ void widget2::IOWidget::resolve_io(GUI2Dynamic& gui_dynamic)
 	};
 
 	if (current_state == Enter)
-		hover.begin = std::chrono::system_clock::now();
+		hover.start(gui_dynamic);
 	
 	if (current_state == Leave)
-		hover.end = std::chrono::system_clock::now();
+		hover.finish(gui_dynamic);
 
 	if (current_state == HoldBegin) {
 		widget_position_when_hold_begin = gui_dynamic.get_resolved_properties(id).position;
 		cursor_position_when_hold_begin = gui_dynamic.get_io_state().mouse_position;
-		hold.begin = std::chrono::system_clock::now();
+		hold.start(gui_dynamic);
 	}
 	
 	if (current_state == HoldEnd)
-		hold.end = std::chrono::system_clock::now();
+		hold.finish(gui_dynamic);
 
 	if (current_state == HoldBegin || current_state == Hold) {
 		if (glm::dot(cursor_position_when_hold_begin - gui_dynamic.get_io_state().mouse_position, cursor_position_when_hold_begin - gui_dynamic.get_io_state().mouse_position) >= carry_begin_min_offset * carry_begin_min_offset) {
@@ -292,25 +293,59 @@ void widget2::IOWidget::resolve_io(GUI2Dynamic& gui_dynamic)
 	}
 
 	if (current_state == Click) {
-		if (click.begin != IOEvent::invalid_time && (std::chrono::system_clock::now() - click.begin) <= double_click_max_delay && !was_last_click_double) {
+		if (click.begin_time != GUI2Dynamic::invalid_time && (std::chrono::system_clock::now() - click.begin_time) <= double_click_max_delay && !was_last_click_double) {
 			current_state = DoubleClick;
 		}
 		else {
-			click.begin = std::chrono::system_clock::now();
+			click.begin_time = std::chrono::system_clock::now();
 			was_last_click_double = false;
 		}
 	}
 
 	if (current_state == DoubleClick) {
-		click.begin = std::chrono::system_clock::now();
+		click.impulse(gui_dynamic);
 		was_last_click_double = true;
 	}
-
-	click.end = click.begin;
 
 	mouse_states[0] = current_state;
 
 	is_top_most = gui_dynamic.get_resolved_properties(id).level == gui_dynamic.get_levels_under_cursor() - 1;
+}
+
+void widget2::IOEvent::impulse(GUI2Dynamic& gui_dynamic) {
+	start(gui_dynamic);
+	finish(gui_dynamic);
+}
+
+void widget2::IOEvent::start(GUI2Dynamic& gui_dynamic)
+{
+	begin_time = gui_dynamic.get_current_frame_timepoint();
+}
+
+void widget2::IOEvent::finish(GUI2Dynamic& gui_dynamic)
+{
+	end_time = gui_dynamic.get_current_frame_timepoint();
+}
+
+bool widget2::IOEvent::is_active()
+{
+	if (begin_time == GUI2Dynamic::invalid_time && end_time == GUI2Dynamic::invalid_time)
+		return false;
+	if (begin_time == GUI2Dynamic::invalid_time && end_time != GUI2Dynamic::invalid_time)
+		return false;
+	if (begin_time != GUI2Dynamic::invalid_time && end_time == GUI2Dynamic::invalid_time)
+		return true;
+	return (begin_time > end_time);
+}
+
+bool widget2::IOEvent::is_activated_now(GUI2Dynamic& gui_dynamic)
+{
+	return begin_time == gui_dynamic.get_current_frame_timepoint();
+}
+
+bool widget2::IOEvent::is_deactivated_now(GUI2Dynamic& gui_dynamic)
+{
+	return end_time == gui_dynamic.get_current_frame_timepoint();
 }
 
 void widget2::Box::publish(GUI2Dynamic& gui_dynamic) {
@@ -600,10 +635,10 @@ void widget2::TextInput::publish(GUI2Dynamic& gui_dynamic, std::u32string& text)
 
 	if (can_aquire_keyboard_focus) {
 		if ((get_mouse_state(0) & Click) == Click)
-			focus.start_event();
+			focus.start(gui_dynamic);
 
 		if (get_mouse_state(0) == None && gui_dynamic.get_io_state().mouse_state & GUI2::MouseEvent::LeftRelease) {
-			focus.finish_event();
+			focus.finish(gui_dynamic);
 			selection_index_begin	= invalid_selection_index;
 			selection_index_end		= invalid_selection_index;
 		}
@@ -805,20 +840,20 @@ void widget2::TextInput::resolve_keyboard_io(GUI2Dynamic& gui_dynamic, std::u32s
 				}
 			}
 			else if (result.key == ::Window::Key::TAB) {
-				focus.end = std::chrono::system_clock::now();
+				focus.end_time = std::chrono::system_clock::now();
 			}
 			else if (result.key == ::Window::Key::ENTER) {
-				focus.finish_event();
+				focus.finish(gui_dynamic);
 				selection_index_begin = invalid_selection_index;
 				selection_index_end = invalid_selection_index;
 			}
 			else if (result.key == ::Window::Key::KP_ENTER) {
-				focus.finish_event();
+				focus.finish(gui_dynamic);
 				selection_index_begin = invalid_selection_index;
 				selection_index_end = invalid_selection_index;
 			}
 			else if (result.key == ::Window::Key::ESCAPE) {
-				focus.finish_event();
+				focus.finish(gui_dynamic);
 				selection_index_begin = invalid_selection_index;
 				selection_index_end = invalid_selection_index;
 			}
@@ -930,35 +965,18 @@ void widget2::TextInput::resolve_keyboard_io(GUI2Dynamic& gui_dynamic, std::u32s
 
 }
 
-void widget2::IOEvent::start_event()
-{
-	begin = std::chrono::system_clock::now();
-}
-
-void widget2::IOEvent::finish_event()
-{
-	end = std::chrono::system_clock::now();
-}
-
-bool widget2::IOEvent::is_active()
-{
-	if (begin == invalid_time && end == invalid_time)
-		return false;
-	if (begin == invalid_time && end != invalid_time)
-		return false;
-	if (begin != invalid_time && end == invalid_time)
-		return true;
-	return (begin > end);
-}
-
 void widget2::Slider::publish(GUI2Dynamic& gui_dynamic, float& value) {
 
 	ignore_mouse_if_not_topmost_widget = false;
 	
-	if ((get_mouse_state() & IOWidget::Hold) && (gui_dynamic.get_io_state().mouse_state & GUI2::LeftHold))
-		grab.start_event();
+	Grid::publish(gui_dynamic);
+	gui_dynamic.grid_add_column(GUI2Dynamic::avail);
+	gui_dynamic.grid_add_row(GUI2Dynamic::avail);
+
+	if (hold.is_activated_now(gui_dynamic))
+		grab.start(gui_dynamic);
 	if (gui_dynamic.get_io_state().mouse_state & GUI2::LeftRelease)
-		grab.finish_event();
+		grab.finish(gui_dynamic);
 
 	if (grab.is_active()) {
 		float position	= get_resolved_properties(gui_dynamic).position.x;
@@ -972,10 +990,6 @@ void widget2::Slider::publish(GUI2Dynamic& gui_dynamic, float& value) {
 	filled_bar.target_size.value.x	= filled_width;
 	head.margin.value.x				= filled_width - head.get_resolved_properties(gui_dynamic).size.x / 2;
 
-	Grid::publish(gui_dynamic);
-	gui_dynamic.grid_add_column(GUI2Dynamic::avail);
-	gui_dynamic.grid_add_row(GUI2Dynamic::avail);
-	
 	background.publish(gui_dynamic);
 	filled_bar.publish(gui_dynamic);
 	head.publish(gui_dynamic);
@@ -1015,11 +1029,11 @@ void widget2::DragFloat::publish(GUI2Dynamic& gui_dynamic, float& value) {
 
 	if ((get_mouse_state() & IOWidget::Hold) && (gui_dynamic.get_io_state().mouse_state & GUI2::LeftHold))
 	{
-		grab.start_event();
+		grab.start(gui_dynamic);
 	}
 
 	if (gui_dynamic.get_io_state().mouse_state & GUI2::LeftRelease) {
-		grab.finish_event();
+		grab.finish(gui_dynamic);
 		cursor_position_when_grabbed_publish = invalid_cursor_position;
 	}
 
@@ -1037,4 +1051,18 @@ void widget2::DragFloat::publish(GUI2Dynamic& gui_dynamic, float& value) {
 		cursor_position_when_grabbed_publish = gui_dynamic.get_io_state().mouse_position;
 	}
 
+}
+
+void widget2::Button::publish(GUI2Dynamic& gui_dynamic) {
+
+	ignore_mouse_if_not_topmost_widget = false;
+
+	Grid::publish(gui_dynamic);
+	gui_dynamic.grid_add_column(GUI2Dynamic::fit);
+	gui_dynamic.grid_add_row(GUI2Dynamic::fit);
+
+	background.publish(gui_dynamic);
+	label.publish(gui_dynamic, text);
+
+	gui_dynamic.grid_end();
 }

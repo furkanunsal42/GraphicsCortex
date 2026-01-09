@@ -15,17 +15,17 @@ namespace widget2 {
 	};
 
 	struct IOEvent {
-		using time_point = std::chrono::system_clock::time_point;
-		constexpr static time_point	invalid_time = time_point::max();
+		
+		GUI2Dynamic::time_point begin_time	= GUI2Dynamic::invalid_time;
+		GUI2Dynamic::time_point end_time	= GUI2Dynamic::invalid_time;
 
-		time_point begin	= invalid_time;
-		time_point end		= invalid_time;
-
-		void start_event();
-		void finish_event();
+		void impulse(GUI2Dynamic& gui_dynamic);
+		void start(GUI2Dynamic& gui_dynamic);
+		void finish(GUI2Dynamic& gui_dynamic);
 
 		bool is_active();
-
+		bool is_activated_now(GUI2Dynamic& gui_dynamic);
+		bool is_deactivated_now(GUI2Dynamic& gui_dynamic);
 	};
 
 	class IOWidget : public Widget {
@@ -113,27 +113,27 @@ namespace widget2 {
 
 		float get_t(const IOEvent& event, duration transition_duration) {
 			
-			if (event.begin == IOEvent::invalid_time && event.end == IOEvent::invalid_time)
+			if (event.begin_time == GUI2Dynamic::invalid_time && event.end_time == GUI2Dynamic::invalid_time)
 				return 0;
 
 			if (transition_duration.count() == 0)
-				return event.end > event.begin ? 1 : 0;
+				return event.end_time > event.begin_time ? 1 : 0;
 
 			auto now = std::chrono::system_clock::now();
 
-			duration time_passed			= std::min(now - event.begin,		transition_duration);
-			duration time_passed_hovering	= std::min(event.end - event.begin, transition_duration);
-			duration time_passed_recovering = std::min(now - event.end,			transition_duration);
+			duration time_passed			= std::min(now - event.begin_time,				transition_duration);
+			duration time_passed_hovering	= std::min(event.end_time - event.begin_time,	transition_duration);
+			duration time_passed_recovering = std::min(now - event.end_time,				transition_duration);
 
 			bool happening =
-				(event.begin != IOEvent::invalid_time && event.end == IOEvent::invalid_time) ||
-				(event.begin != IOEvent::invalid_time && event.end != IOEvent::invalid_time && event.begin > event.end);
+				(event.begin_time != GUI2Dynamic::invalid_time && event.end_time == GUI2Dynamic::invalid_time) ||
+				(event.begin_time != GUI2Dynamic::invalid_time && event.end_time != GUI2Dynamic::invalid_time && event.begin_time > event.end_time);
 
 			bool recovering =
-				event.begin != IOEvent::invalid_time	&&
-				event.end != IOEvent::invalid_time		&&
-				event.begin < event.end					&&
-				now - event.end < time_passed_hovering;
+				event.begin_time != GUI2Dynamic::invalid_time	&&
+				event.end_time != GUI2Dynamic::invalid_time		&&
+				event.begin_time < event.end_time				&&
+				now - event.end_time < time_passed_hovering;
 
 			duration relevent_duration = happening ? time_passed : time_passed_hovering - time_passed_recovering;
 
@@ -242,7 +242,7 @@ namespace widget2 {
 	inline void DefaultStyle::apply<Grid>(Grid& widget) {
 		widget.margin		= glm::vec4(0);	
 		widget.padding		= glm::vec4(0);
-		widget.target_size	= glm::vec2(128);
+		widget.target_size	= glm::vec2(GUI2Dynamic::fit);
 		widget.min_size		= glm::vec2(GUI2Dynamic::fit);	
 		widget.max_size		= glm::vec2(GUI2Dynamic::avail);		
 	}
@@ -461,11 +461,24 @@ namespace widget2 {
 		Box background;
 		Label label;
 
-		std::u32string text;
+		std::u32string text = U"button";
 
 		void publish(GUI2Dynamic& gui_dynamic);
 
 	};
+
+	template<>
+	inline void DefaultStyle::apply<Button>(Button& widget) {
+		apply(widget.background);
+		apply(widget.label);
+
+		widget.target_size					= glm::vec2(GUI2Dynamic::fit);
+
+		widget.background.target_size		= glm::vec2(GUI2Dynamic::avail);
+		
+		widget.label.margin					= glm::vec4(GUI2Dynamic::avail);
+
+	}
 
 	struct ImageButton : public Grid {
 
