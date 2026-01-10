@@ -305,6 +305,13 @@ namespace widget2 {
 	struct ComboBox {
 
 		void publish(GUIDynamic& gui_dynamic);
+		void end(GUIDynamic& gui_dynamic);
+
+	};
+
+	struct ComboBoxItem {
+
+		void publish(GUIDynamic& gui_dynamic);
 
 	};
 
@@ -315,18 +322,22 @@ namespace widget2 {
 
 	};
 
-	struct Tab {
+	struct MenuItem {
 
 		void publish(GUIDynamic& gui_dynamic);
-		void end(GUIDynamic& gui_dynamic);
+
+	};
+
+
+	struct Tab {
+
+		void publish(GUIDynamic& gui_dynamic, size_t& selected_id);
 
 	};
 
 	struct Collapsible {
 
-		void publish(GUIDynamic& gui_dynamic);
-		void end(GUIDynamic& gui_dynamic);
-
+		void publish(GUIDynamic& gui_dynamic, bool& is_active);
 
 	};
 

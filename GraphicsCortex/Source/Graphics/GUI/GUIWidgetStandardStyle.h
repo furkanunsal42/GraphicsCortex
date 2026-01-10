@@ -121,6 +121,10 @@ namespace widget2 {
 		apply<TextInput>(widget);
 		widget.target_size = glm::vec2(120, 30);
 
+		widget.background.border_color0.transition(widget.hold, glm::vec4(0.50, 0.50, 0.56, 1));
+		widget.background.border_color1.transition(widget.hold, glm::vec4(0.50, 0.50, 0.56, 1));
+		widget.background.border_color2.transition(widget.hold, glm::vec4(0.50, 0.50, 0.56, 1));
+		widget.background.border_color3.transition(widget.hold, glm::vec4(0.50, 0.50, 0.56, 1));
 	}
 
 	template<>

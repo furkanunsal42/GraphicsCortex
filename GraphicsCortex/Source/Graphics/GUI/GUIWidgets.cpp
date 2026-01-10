@@ -73,7 +73,7 @@ void widget2::IOWidget::resolve_io(GUIDynamic& gui_dynamic)
 		else
 			was_last_click_double = false;
 
-		click.start(gui_dynamic);
+		click.impulse(gui_dynamic);
 	}
 
 	if (!press.is_active() && event & GUI::LeftHold)
@@ -766,7 +766,7 @@ void widget2::Slider::publish(GUIDynamic& gui_dynamic, float& value) {
 		value = glm::clamp(glm::mix(min_value, max_value, (cursor_position - position) / size), min_value, max_value);
 	}
 		
-	float filled_width = get_resolved_properties(gui_dynamic).size.x * (value - min_value) / (max_value - min_value);
+	float filled_width = get_resolved_properties(gui_dynamic).size.x * glm::clamp((value - min_value) / (max_value - min_value), 0.0f, 1.0f);
 	filled_bar.target_size.value.x	= filled_width;
 	head.margin.value.x				= filled_width - head.get_resolved_properties(gui_dynamic).size.x / 2;
 
@@ -791,7 +791,21 @@ void widget2::DragFloat::publish(GUIDynamic& gui_dynamic, float& value) {
 
 	bool previous_focus = focus.is_active();
 
+	bool prev_can_aquire_keyboard_focus = can_aquire_keyboard_focus;
+	can_aquire_keyboard_focus = false;
+	
 	TextInput::publish(gui_dynamic, string);
+	
+	can_aquire_keyboard_focus = prev_can_aquire_keyboard_focus;
+
+	if (doubleclick.is_activated_now(gui_dynamic))
+		focus.start(gui_dynamic);
+
+	if (!hover.is_active() && gui_dynamic.get_io_state().mouse_state & GUI::MouseEvent::LeftRelease) {
+		focus.finish(gui_dynamic);
+		selection_index_begin = invalid_selection_index;
+		selection_index_end = invalid_selection_index;
+	}
 
 	if (!previous_focus && focus.is_active()) {
 		selection_index_begin = 0;
@@ -812,27 +826,19 @@ void widget2::DragFloat::publish(GUIDynamic& gui_dynamic, float& value) {
 		}
 	}
 
-	//if ((get_mouse_state() & IOWidget::Hold) && (gui_dynamic.get_io_state().mouse_state & GUI::LeftHold))
-	//{
-	//	grab.start(gui_dynamic);
-	//}
-
-	//if (gui_dynamic.get_io_state().mouse_state & GUI::LeftRelease) {
-	//	grab.finish(gui_dynamic);
-	//	cursor_position_when_grabbed_publish = invalid_cursor_position;
-	//}
-
 	if (hold.is_active()) {
 		
 		if (cursor_position_when_grabbed_publish == invalid_cursor_position)
 			cursor_position_when_grabbed_publish = gui_dynamic.get_io_state().mouse_position;
-
+	
 		value += (gui_dynamic.get_io_state().mouse_position.x - cursor_position_when_grabbed_publish.x) * sensitivity;
 		string = convert.from_bytes(std::to_string(value));
 	
-		selection_index_begin = 0;
-		selection_index_end = string.size();
-
+		if (selection_index_begin != invalid_selection_index && selection_index_end != invalid_selection_index) {
+			selection_index_begin = 0;
+			selection_index_end = string.size();
+		}
+	
 		cursor_position_when_grabbed_publish = gui_dynamic.get_io_state().mouse_position;
 	}
 	
