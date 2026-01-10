@@ -342,7 +342,7 @@ void GUIDynamic::new_frame(GUI& gui)
 			iterator = resolved_properties.erase(iterator);
 		}
 		else {
-			value.node_id = invalid_id;
+			value.node_id = Node::invalid_node;
 			iterator++;
 		}
 	}
@@ -1355,8 +1355,8 @@ void GUIDynamic::resolve_phase2_mouse_event(size_t root_node)
 		auto& [resolved_id, resolved_property] = entry;
 		size_t node_id = resolved_property.node_id;
 
-		resolved_property.position	= node_position(node_id);
-		resolved_property.size		= node_size(node_id);
+		resolved_property.position	= node_id == Node::invalid_node ? glm::vec2(0) : node_position(node_id);
+		resolved_property.size		= node_id == Node::invalid_node ? glm::vec2(0) : node_size(node_id);
 
 	}
 }

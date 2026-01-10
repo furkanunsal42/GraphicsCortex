@@ -2,6 +2,7 @@
 #include "WindowBoundGlobalResources.h"
 #include "Window.h"
 #include "Clipboard.h"
+#include "Math/GLMCout.h"
 
 #include <codecvt>
 
@@ -265,8 +266,8 @@ void widget2::Image::publish(GUIDynamic& gui_dynamic)
 		GUIDynamic::ResolvedProperties properties = gui_dynamic.get_resolved_properties(grid_id);
 		glm::vec2 size = glm::max(properties.size, get_resolved_properties(gui_dynamic).size);
 
-		gui_dynamic.grid_add_column(size.x);
-		gui_dynamic.grid_add_row(size.y);
+		gui_dynamic.grid_add_column(GUIDynamic::avail);
+		gui_dynamic.grid_add_row(GUIDynamic::avail);
 		gui_dynamic.grid_region(glm::ivec2(0));
 
 		Box::publish(gui_dynamic);
@@ -282,20 +283,17 @@ void widget2::Image::publish(GUIDynamic& gui_dynamic)
 		if (self_aspect_ratio >= texture_aspect_ratio) {
 			clipped_size.y = self_size.y;
 			clipped_size.x = clipped_size.y * texture_aspect_ratio;
-			
-			gui_dynamic.box_prop().margin.x = (self_size.x - clipped_size.x) / 2;
 		}
 		else {
 			clipped_size.x = self_size.x;
 			clipped_size.y = clipped_size.x / texture_aspect_ratio;
-			gui_dynamic.box_prop().margin.y = (self_size.y - clipped_size.y) / 2;
 		}
 
-		gui_dynamic.box_prop().target_size = clipped_size;
-
-		gui_dynamic.box_prop().texture_handle = texture->texture_handle;
-		gui_dynamic.box_prop().uv00 = uv00;
-		gui_dynamic.box_prop().uv11 = uv11;
+		gui_dynamic.box_prop().target_size		= clipped_size;
+		gui_dynamic.box_prop().margin			= glm::vec4(GUIDynamic::avail);
+		gui_dynamic.box_prop().texture_handle	= texture->texture_handle;
+		gui_dynamic.box_prop().uv00				= uv00;
+		gui_dynamic.box_prop().uv11				= uv11;
 		
 		gui_dynamic.grid_end();
 	}

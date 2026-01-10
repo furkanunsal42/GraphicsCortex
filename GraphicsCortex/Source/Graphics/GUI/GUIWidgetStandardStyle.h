@@ -168,7 +168,7 @@ namespace widget2 {
 		
 		widget.image.margin						= glm::vec4(2);
 		widget.image.target_size				= glm::vec2(GUIDynamic::avail);
-		widget.image.type						= Image::Stretch;
+		widget.image.type						= Image::Fit;
 		
 		widget.background.target_size			= glm::vec2(GUIDynamic::avail);
 		widget.background.color					= glm::vec4(0, 0, 0, 0);
@@ -198,7 +198,7 @@ namespace widget2 {
 		
 		widget.image.margin						= glm::vec4(4);
 		widget.image.target_size				= glm::vec2(GUIDynamic::avail);
-		widget.image.type						= Image::Stretch;
+		widget.image.type						= Image::Fit;
 		widget.image.color						= glm::vec4(1, 1, 1, 0);
 
 		widget.background.target_size			= glm::vec2(GUIDynamic::avail);
