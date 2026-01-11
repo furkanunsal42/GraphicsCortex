@@ -86,8 +86,7 @@ public:
 
 	void				print_nodes();
 	void				print_layout();
-	void				resolve(size_t root_node, bool verbose = false);
-	void				resolve();
+	void				resolve(bool verbose = false);
 	
 	ResolvedProperties  get_resolved_properties(size_t id);
 	GUI::IOState&		get_io_state();
@@ -266,6 +265,8 @@ public:
 	struct ResolvedProperties {
 
 		size_t				node_id		= Node::invalid_node;
+		int32_t				layout_id	= -1;
+
 		glm::vec2			position	= glm::vec2(0);
 		glm::vec2			size		= glm::vec2(0);
 		int32_t				level		= 0;
@@ -297,14 +298,17 @@ private:
 		size_t child	= invalid_node;
 	};
 
-	std::vector<size_t> node_stack;
-	size_t last_window	= Node::invalid_node;
-	size_t last_box		= Node::invalid_node;
-	size_t last_grid	= Node::invalid_node;
-	size_t last_stack	= Node::invalid_node;
-	
-	std::vector<size_t>	root_nodes;
-	std::vector<Node> nodes;
+	struct LayoutState {
+		std::vector<size_t> node_stack;
+		size_t last_window	= Node::invalid_node;
+		size_t last_box		= Node::invalid_node;
+		size_t last_grid	= Node::invalid_node;
+		size_t last_stack	= Node::invalid_node;
+		std::vector<Node>	nodes;
+	};
+
+	std::vector<LayoutState>	layout_states;
+	std::vector<int32_t>		layout_stack;
 
 	size_t			find_last_of_type(NodeType type);
 	NodeType		get_type(const Node& node);
@@ -327,14 +331,14 @@ private:
 	size_t			get_node_id(size_t node);
 	GUI::MouseEvent&  node_mouse_event(size_t node);
 
-	void			_traverse_nodes(size_t root_node, std::function<void(int32_t, size_t)> lambda_given_level_self);
-	void			traverse_nodes_down(size_t root_node, std::function<void(int32_t, size_t)> lambda_given_level_self);
-	void			traverse_nodes_up(size_t root_node, std::function<void(int32_t, size_t)> lambda_given_level_self);
+	void			_traverse_nodes(std::function<void(int32_t, size_t)> lambda_given_level_self);
+	void			traverse_nodes_down(std::function<void(int32_t, size_t)> lambda_given_level_self);
+	void			traverse_nodes_up(std::function<void(int32_t, size_t)> lambda_given_level_self);
 	void			traverse_nodes_children(size_t parent_node, std::function<void(size_t)> lambda_given_self);
 
-	void			resolve_phase0_fit(size_t root_node);
-	void			resolve_phase1_avail_and_position(size_t root_node);
-	void			resolve_phase2_mouse_event(size_t root_node);
+	void			resolve_phase0_fit();
+	void			resolve_phase1_avail_and_position();
+	void			resolve_phase2_mouse_event();
 
 	bool			is_avail(float value);
 	bool			is_any_avail(glm::vec2 value);
