@@ -90,7 +90,6 @@ public:
 	
 	ResolvedProperties  get_resolved_properties(size_t id);
 	GUI::IOState&		get_io_state();
-	int32_t				get_levels_under_cursor(); 
 
 	void				publish(GUI& gui);
 	time_point			get_current_frame_timepoint();
@@ -165,6 +164,8 @@ public:
 		glm::vec2	uv11				= glm::vec2(1);
 		uint64_t	texture_handle		= 0;
 
+		bool		pass_through_events = true;
+
 		BoxDesc&	set_margin			(glm::vec4	value );
 		BoxDesc&	set_target_size		(glm::vec2	value );
 		BoxDesc&	set_min_size		(glm::vec2	value );
@@ -181,6 +182,8 @@ public:
 		BoxDesc&	set_uv00			(glm::vec2	value );
 		BoxDesc&	set_uv11			(glm::vec2	value );
 		BoxDesc&	set_texture_handle	(uint64_t	value );
+
+		BoxDesc&	set_pass_through_events(bool	value );
 
 	private:
 		friend GUIDynamic;
@@ -206,6 +209,7 @@ public:
 		std::vector<float> rows;
 
 		bool		permeable_events	= false;
+		bool		pass_through_events = true;
 
 		GridDesc&	set_margin			(glm::vec4	value);
 		GridDesc&	set_padding			(glm::vec4	value);
@@ -214,7 +218,9 @@ public:
 		GridDesc&	set_max_size		(glm::vec2	value);
 		GridDesc&	add_column			(float width);
 		GridDesc&	add_row				(float height);
-		GridDesc&	set_permeable_event (bool value);
+		
+		GridDesc&	set_permeable_event	(	bool value	);
+		GridDesc&	set_pass_through_events(bool value	);
 
 	private:
 		friend GUIDynamic;
@@ -241,6 +247,8 @@ public:
 		float		spacing				= 10;
 		bool		is_vertical			= true;
 
+		bool		pass_through_events = true;
+
 		StackDesc&	set_margin 		(glm::vec4	value);
 		StackDesc&	set_padding 	(glm::vec4	value);
 		StackDesc&	set_target_size (glm::vec2	value);
@@ -248,6 +256,8 @@ public:
 		StackDesc&	set_max_size 	(glm::vec2	value);
 		StackDesc&	set_spacing 	(float		value);
 		StackDesc&	set_is_vertical (bool		value);
+
+		StackDesc&	set_pass_through_events(bool value);
 
 	private:
 		friend GUIDynamic;
@@ -330,6 +340,8 @@ private:
 	glm::ivec2&		node_grid_span(size_t node);
 	size_t			get_node_id(size_t node);
 	GUI::MouseEvent&  node_mouse_event(size_t node);
+	bool&			node_pass_through_events(size_t node);
+	bool			node_pass_through_events_non_ref(size_t node);
 
 	void			_traverse_nodes(std::function<void(int32_t, size_t)> lambda_given_level_self);
 	void			traverse_nodes_down(std::function<void(int32_t, size_t)> lambda_given_level_self);
@@ -357,7 +369,6 @@ private:
 	glm::vec2		compute_physical_size(glm::vec4 value, glm::vec2 size_per_avail);
 
 	std::unordered_map<size_t, ResolvedProperties>	resolved_properties;
-	int32_t			levels_under_cursor = 0;
 	GUI::IOState	io_state;
 	time_point current_frame_timepoint = invalid_time;
 

@@ -18,6 +18,7 @@ namespace widget2 {
 		widget.border_color3	= glm::vec4(0, 0, 0, 1);		
 		widget.shadow_thickness	= glm::vec4(0);			
 		widget.shadow_color		= glm::vec4(0, 0, 0, 1);	
+		widget.pass_through_events = false;
 	}
 
 	template<>
@@ -26,7 +27,8 @@ namespace widget2 {
 		widget.padding		= glm::vec4(0);
 		widget.target_size	= glm::vec2(GUIDynamic::fit);
 		widget.min_size		= glm::vec2(GUIDynamic::fit);	
-		widget.max_size		= glm::vec2(GUIDynamic::avail);		
+		widget.max_size		= glm::vec2(GUIDynamic::avail);
+		widget.pass_through_events = true;
 	}
 
 	template<>
@@ -37,6 +39,7 @@ namespace widget2 {
 		widget.min_size		= glm::vec2(GUIDynamic::fit);	
 		widget.max_size		= glm::vec2(GUIDynamic::avail);	
 		widget.spacing		= 10;
+		widget.pass_through_events = true;
 	}
 
 	template<>
@@ -45,6 +48,8 @@ namespace widget2 {
 		widget.uv00			= glm::vec2(0);
 		widget.uv11			= glm::vec2(1);
 		widget.type			= Image::Fit;
+
+		widget.pass_through_events = false;
 	}
 
 	template<>
@@ -54,6 +59,8 @@ namespace widget2 {
 		widget.text_height	= 16;
 		widget.text_color	= glm::vec4(0, 0, 0, 1);
 		widget.target_size	= glm::vec2(GUIDynamic::fit);
+
+		widget.pass_through_events = false;
 	}
 
 	template<>
@@ -90,6 +97,10 @@ namespace widget2 {
 		widget.background.border_color1.transition(widget.focus, glm::vec4(0.50, 0.50, 0.56, 1));
 		widget.background.border_color2.transition(widget.focus, glm::vec4(0.50, 0.50, 0.56, 1));
 		widget.background.border_color3.transition(widget.focus, glm::vec4(0.50, 0.50, 0.56, 1));
+		
+		widget.background.pass_through_events = true;
+		widget.label.pass_through_events = true;
+		widget.pass_through_events = false;
 	}
 
 	template<>
@@ -114,6 +125,11 @@ namespace widget2 {
 		widget.filled_bar.target_size			= glm::vec2(GUIDynamic::avail, 4);
 		widget.filled_bar.color					= glm::vec4(0.0, 0.47, 0.84, 1);
 		widget.filled_bar.margin				= glm::vec4(0, GUIDynamic::avail, 0, GUIDynamic::avail);
+
+		widget.background.pass_through_events = true;
+		widget.filled_bar.pass_through_events = true;
+		widget.head.pass_through_events = true;
+		widget.pass_through_events = false;
 	}
 
 	template<>
@@ -125,6 +141,8 @@ namespace widget2 {
 		widget.background.border_color1.transition(widget.hold, glm::vec4(0.50, 0.50, 0.56, 1));
 		widget.background.border_color2.transition(widget.hold, glm::vec4(0.50, 0.50, 0.56, 1));
 		widget.background.border_color3.transition(widget.hold, glm::vec4(0.50, 0.50, 0.56, 1));
+
+		widget.pass_through_events = false;
 	}
 
 	template<>
@@ -156,6 +174,10 @@ namespace widget2 {
 		widget.background.border_thickness.	transition(widget.hover, glm::vec4(1), std::chrono::milliseconds(250));
 
 		widget.background.color.transition(widget.hold, glm::vec4(0.8, 0.89, 0.97, 1), std::chrono::milliseconds(50));
+		
+		widget.background.pass_through_events = true;
+		widget.label.pass_through_events = true;
+		widget.pass_through_events = false;
 	}
 
 	template<>
@@ -185,7 +207,10 @@ namespace widget2 {
 		widget.background.border_color1.transition(widget.hold, glm::vec4(0.45f, 0.59f, 0.65f, 1), std::chrono::milliseconds(40));
 		widget.background.border_color2.transition(widget.hold, glm::vec4(0.45f, 0.59f, 0.65f, 1), std::chrono::milliseconds(40));
 		widget.background.border_color3.transition(widget.hold, glm::vec4(0.45f, 0.59f, 0.65f, 1), std::chrono::milliseconds(40));
-
+		
+		widget.background.pass_through_events = true;
+		widget.image.pass_through_events = true;
+		widget.pass_through_events = false;
 	}
 
 	template<>
@@ -219,5 +244,9 @@ namespace widget2 {
 		widget.background.border_color1.transition(widget.hold, glm::vec4(0.45f, 0.59f, 0.65f, 1), std::chrono::milliseconds(40));
 		widget.background.border_color2.transition(widget.hold, glm::vec4(0.45f, 0.59f, 0.65f, 1), std::chrono::milliseconds(40));
 		widget.background.border_color3.transition(widget.hold, glm::vec4(0.45f, 0.59f, 0.65f, 1), std::chrono::milliseconds(40));
+
+		widget.background.pass_through_events = true;
+		widget.image.pass_through_events = true;
+		widget.pass_through_events = false;
 	}
 }

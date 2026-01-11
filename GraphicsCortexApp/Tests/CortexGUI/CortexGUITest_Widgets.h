@@ -112,13 +112,10 @@ public:
 			gui_d.window_end();
 
 			static widget2::Window window1;
-			
 			style.apply(window1);
 			window1.draggable = true;
 			window1.publish(gui_d);
-			
 			gui_d.box_begin();
-
 			gui_d.window_end();
 
 			gui_d.publish(gui);

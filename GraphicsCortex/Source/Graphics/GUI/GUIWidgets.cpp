@@ -11,16 +11,6 @@ GUIDynamic::ResolvedProperties widget2::Widget::get_resolved_properties(GUIDynam
 	return gui_dynamic.get_resolved_properties(id);
 }
 
-// widget2::IOWidget::MouseState widget2::IOWidget::get_mouse_state(int32_t mouse_button)
-// {
-// 	if (mouse_button >= 2 || mouse_button < 0)
-// 	{
-// 		std::cout << "[GUI Error] widget::IOWidget::get_mouse_state() is called for (mouse" << mouse_button << ") but only (mouse0) and (mouse1) are supported" << std::endl;
-// 		
-// 	}
-// 	return mouse_states[mouse_button];
-// }
-
 glm::vec2 widget2::IOWidget::get_cursor_position_when_hold_begin(int32_t mouse_button) {
 	return cursor_position_when_hold_begin;
 }
@@ -29,18 +19,9 @@ glm::vec2 widget2::IOWidget::get_widget_position_when_hold_begin(int32_t mouse_b
 	return widget_position_when_hold_begin;
 }
 
-bool widget2::IOWidget::is_topmost_widget()
-{
-	return is_top_most;
-}
-
-
 void widget2::IOWidget::resolve_io(GUIDynamic& gui_dynamic)
 {
 	GUI::MouseEvent event = gui_dynamic.get_resolved_properties(id).event;
-
-	if (ignore_mouse_if_not_topmost_widget && !is_topmost_widget())
-		event = GUI::MouseEvent::None;
 
 	bool click_happened = false;
 
@@ -91,8 +72,6 @@ void widget2::IOWidget::resolve_io(GUIDynamic& gui_dynamic)
 
 	if (carry.is_active() && !hold.is_active())
 		carry.finish(gui_dynamic);
-
-	is_top_most = gui_dynamic.get_resolved_properties(id).level == gui_dynamic.get_levels_under_cursor() - 1;
 }
 
 void widget2::IOEvent::impulse(GUIDynamic& gui_dynamic) {
@@ -149,6 +128,7 @@ void widget2::Box::publish(GUIDynamic& gui_dynamic) {
 	gui_dynamic.box_prop().border_color3	=  border_color3;
 	gui_dynamic.box_prop().shadow_thickness	=  shadow_thickness;
 	gui_dynamic.box_prop().shadow_color		=  shadow_color;
+	gui_dynamic.box_prop().pass_through_events = pass_through_events;
 
 	//gui_dynamic.box_end();
 }
@@ -181,6 +161,7 @@ void widget2::Box::apply_properties_to(GUIDynamic::BoxDesc& desc)
 	desc.border_color3		=  border_color3;
 	desc.shadow_thickness	=  shadow_thickness;
 	desc.shadow_color		=  shadow_color;
+	desc.pass_through_events = pass_through_events;
 }
 
 void widget2::Box::apply_properties_to(GUIDynamic::GridDesc& desc)
@@ -188,6 +169,7 @@ void widget2::Box::apply_properties_to(GUIDynamic::GridDesc& desc)
 	desc.margin				=  margin;
 	desc.target_size		=  target_size;
 	desc.padding			=  glm::vec4(0);
+	desc.pass_through_events = pass_through_events;
 }
 
 void widget2::Box::apply_properties_to(GUIDynamic::StackDesc& desc)
@@ -196,6 +178,7 @@ void widget2::Box::apply_properties_to(GUIDynamic::StackDesc& desc)
 	desc.target_size		=  target_size;
 	desc.padding			=  glm::vec4(0);
 	desc.spacing			=  0;
+	desc.pass_through_events = pass_through_events;
 }
 
 void widget2::Grid::publish(GUIDynamic& gui_dynamic) {
@@ -207,7 +190,8 @@ void widget2::Grid::publish(GUIDynamic& gui_dynamic) {
 	gui_dynamic.grid_prop().margin		= margin;
 	gui_dynamic.grid_prop().padding		= padding;
 	gui_dynamic.grid_prop().target_size = target_size;
-	
+	gui_dynamic.grid_prop().pass_through_events = pass_through_events;
+
 	gui_dynamic.grid_region(glm::ivec2(0));
 }
 
@@ -221,6 +205,8 @@ void widget2::Stack::publish(GUIDynamic& gui_dynamic) {
 	gui_dynamic.stack_prop().padding		= padding;
 	gui_dynamic.stack_prop().target_size	= target_size;
 	gui_dynamic.stack_prop().spacing		= spacing;
+	gui_dynamic.stack_prop().pass_through_events = pass_through_events;
+
 }
 
 void widget2::Window::publish(GUIDynamic& gui_dynamic) {
@@ -413,8 +399,6 @@ void widget2::Label::end(GUIDynamic& gui_dynamic, const std::u32string& text) {
 
 void widget2::TextInput::publish(GUIDynamic& gui_dynamic, std::u32string& text)
 {
-	ignore_mouse_if_not_topmost_widget = false;
-
 	Grid::publish(gui_dynamic);
 	gui_dynamic.grid_region(glm::ivec2(0));
 
@@ -750,8 +734,6 @@ void widget2::TextInput::resolve_keyboard_io(GUIDynamic& gui_dynamic, std::u32st
 
 void widget2::Slider::publish(GUIDynamic& gui_dynamic, float& value) {
 
-	ignore_mouse_if_not_topmost_widget = false;
-	
 	Grid::publish(gui_dynamic);
 	gui_dynamic.grid_add_column(GUIDynamic::avail);
 	gui_dynamic.grid_add_row(GUIDynamic::avail);
@@ -848,8 +830,6 @@ void widget2::DragFloat::publish(GUIDynamic& gui_dynamic, float& value) {
 
 void widget2::Button::publish(GUIDynamic& gui_dynamic) {
 
-	ignore_mouse_if_not_topmost_widget = false;
-
 	Grid::publish(gui_dynamic);
 	gui_dynamic.grid_add_column(GUIDynamic::avail);
 	gui_dynamic.grid_add_row(GUIDynamic::avail);
@@ -861,8 +841,6 @@ void widget2::Button::publish(GUIDynamic& gui_dynamic) {
 }
 
 void widget2::ImageButton::publish(GUIDynamic& gui_dynamic) {
-
-	ignore_mouse_if_not_topmost_widget = false;
 
 	Grid::publish(gui_dynamic);
 	gui_dynamic.grid_add_column(GUIDynamic::avail);
@@ -876,8 +854,6 @@ void widget2::ImageButton::publish(GUIDynamic& gui_dynamic) {
 
 void widget2::CheckBox::publish(GUIDynamic& gui_dynamic, bool& checked) {
 	
-	ignore_mouse_if_not_topmost_widget = false;
-
 	Grid::publish(gui_dynamic);
 	gui_dynamic.grid_add_column(GUIDynamic::avail);
 	gui_dynamic.grid_add_row(GUIDynamic::avail);

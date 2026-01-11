@@ -430,6 +430,66 @@ GUI::MouseEvent& GUIDynamic::node_mouse_event(size_t node_id)
 	return null_event;
 }
 
+bool& GUIDynamic::node_pass_through_events(size_t node_id)
+{
+	if (layout_states.size() == 0) {
+		std::cout << "[GUI Error] GUIDynamic::node_pass_through_events() is called but there are no windows in the hierarchy" << std::endl;
+		ASSERT(false);
+	}
+
+	LayoutState& layout = layout_states[layout_stack.back()];
+
+	if (node_id >= layout.nodes.size()) {
+		std::cout << "[GUI Error] GUIDynamic::node_pass_through_events() is called but given node is not valid" << std::endl;
+		ASSERT(false);
+	}
+
+	Node& node = layout.nodes[node_id];
+
+	switch (get_type(node)) {
+	//case Window: return std::get<WindowDesc>(node.desc).;
+	case Box:	return std::get<BoxDesc>(node.desc).pass_through_events;
+	case Grid:	return std::get<GridDesc>(node.desc).pass_through_events;
+	case Stack: return std::get<StackDesc>(node.desc).pass_through_events;
+	}
+
+	std::cout << "[GUI Error] GUIDynamic::node_pass_through_events() but an error is occured" << std::endl;
+	ASSERT(false);
+
+	bool null_value;
+	return null_value;
+}
+
+bool GUIDynamic::node_pass_through_events_non_ref(size_t node_id)
+{
+	if (layout_states.size() == 0) {
+		std::cout << "[GUI Error] GUIDynamic::node_pass_through_events_non_ref() is called but there are no windows in the hierarchy" << std::endl;
+		ASSERT(false);
+	}
+
+	LayoutState& layout = layout_states[layout_stack.back()];
+
+	if (node_id >= layout.nodes.size()) {
+		std::cout << "[GUI Error] GUIDynamic::node_pass_through_events_non_ref() is called but given node is not valid" << std::endl;
+		ASSERT(false);
+	}
+
+	Node& node = layout.nodes[node_id];
+
+	switch (get_type(node)) {
+	case Window: return true;
+	case Box:	return std::get<BoxDesc>(node.desc).pass_through_events;
+	case Grid:	return std::get<GridDesc>(node.desc).pass_through_events;
+	case Stack: return std::get<StackDesc>(node.desc).pass_through_events;
+	}
+
+	std::cout << "[GUI Error] GUIDynamic::node_pass_through_events_non_ref() but an error is occured" << std::endl;
+	ASSERT(false);
+
+	return false;
+}
+
+
 
 ///////////		WINDOW		////////////
 
@@ -1182,11 +1242,6 @@ GUI::IOState& GUIDynamic::get_io_state() {
 	return io_state;
 }
 
-int32_t GUIDynamic::get_levels_under_cursor()
-{
-	return levels_under_cursor;
-}
-
 size_t GUIDynamic::generate_id()
 {
 	size_t id = next_id_to_generate;
@@ -1589,10 +1644,10 @@ void GUIDynamic::resolve_phase2_mouse_event()
 		int32_t level = 0;
 	};
 
+	std::vector<size_t> captured_nodes;
+
 	std::vector<stack_info> stack;
 	stack.push_back({ .widget = 0, .level = 0 });
-
-	levels_under_cursor = 0;
 
 	while (stack.size() != 0) {
 
@@ -1611,6 +1666,25 @@ void GUIDynamic::resolve_phase2_mouse_event()
 			continue;
 		}
 
+		if (!node_pass_through_events_non_ref(node_id)) {
+			
+			for (int32_t i = 0; i < captured_nodes.size(); i++) {
+				node_mouse_event(captured_nodes[i]) = GUI::MouseEvent::None;
+
+				size_t captured_resolved_id = get_node_id(captured_nodes[i]);
+
+				if (resolved_properties.find(captured_resolved_id) != resolved_properties.end()) {
+					if (resolved_properties[captured_resolved_id].layout_id != layout_stack.back())
+						continue;
+					resolved_properties[captured_resolved_id].event = GUI::MouseEvent::None;
+				}
+			}
+
+			captured_nodes.clear();
+		}
+
+		captured_nodes.push_back(node_id);
+
 		event_ref = io_state.mouse_state;
 		size_t resolved_id = get_node_id(node_id);
 
@@ -1621,8 +1695,9 @@ void GUIDynamic::resolve_phase2_mouse_event()
 
 			resolved_properties[resolved_id].event = event_ref;
 			resolved_properties[resolved_id].level = node_level;
-			levels_under_cursor = std::max(levels_under_cursor, node_level + 1);
 		}
+
+		
 
 		traverse_nodes_children(node_id, [&](size_t child) {
 			stack.push_back({ child, node_level + 1 });
@@ -1916,6 +1991,12 @@ GUIDynamic::BoxDesc& GUIDynamic::BoxDesc::set_texture_handle(uint64_t value)
 	return *this;
 }
 
+GUIDynamic::BoxDesc& GUIDynamic::BoxDesc::set_pass_through_events(bool value)
+{
+	 pass_through_events = value;
+	 return *this;
+}
+
 GUIDynamic::BoxDesc& GUIDynamic::BoxDesc::set_margin(glm::vec4 value)
 {
 	margin = value;
@@ -2041,6 +2122,12 @@ GUIDynamic::GridDesc& GUIDynamic::GridDesc::set_permeable_event(bool value)
 	return *this;
 }
 
+GUIDynamic::GridDesc& GUIDynamic::GridDesc::set_pass_through_events(bool value)
+{
+	pass_through_events = value;
+	return *this;
+}
+
 GUIDynamic::StackDesc& GUIDynamic::StackDesc::set_margin(glm::vec4 value) {
 	margin = value;
 	return *this;
@@ -2073,6 +2160,12 @@ GUIDynamic::StackDesc& GUIDynamic::StackDesc::set_spacing(float value) {
 
 GUIDynamic::StackDesc& GUIDynamic::StackDesc::set_is_vertical(bool value) {
 	is_vertical = value;
+	return *this;
+}
+
+GUIDynamic::StackDesc& GUIDynamic::StackDesc::set_pass_through_events(bool value)
+{
+	pass_through_events = value;
 	return *this;
 }
 

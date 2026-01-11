@@ -38,7 +38,6 @@ namespace widget2 {
 
 		duration double_click_max_delay = std::chrono::milliseconds(500);
 		float carry_begin_min_offset = 10;
-		bool ignore_mouse_if_not_topmost_widget = true;
 
 		IOEvent hover;
 		IOEvent hold;
@@ -59,7 +58,6 @@ namespace widget2 {
 		glm::vec2 widget_position_when_hold_begin	= invalid_position;
 		
 		bool was_last_click_double = false;
-		bool is_top_most = false;
 	};
 
 	template<typename T>
@@ -138,7 +136,8 @@ namespace widget2 {
 		StyleProperty<glm::vec4> border_color3;
 		StyleProperty<glm::vec4> shadow_thickness;
 		StyleProperty<glm::vec4> shadow_color;
-		
+		bool pass_through_events;
+
 		void publish(GUIDynamic& gui_dynamic);
 	
 	protected:
@@ -156,6 +155,7 @@ namespace widget2 {
 		StyleProperty<glm::vec2>	target_size;
 		StyleProperty<glm::vec2>	min_size;
 		StyleProperty<glm::vec2>	max_size;
+		bool pass_through_events;
 
 		void publish(GUIDynamic& gui_dynamic);
 
@@ -169,6 +169,7 @@ namespace widget2 {
 		StyleProperty<glm::vec2>	min_size;
 		StyleProperty<glm::vec2>	max_size;
 		StyleProperty<float>		spacing;
+		bool pass_through_events;
 
 		void publish(GUIDynamic& gui_dynamic);
 	};
