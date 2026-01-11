@@ -4,6 +4,25 @@
 namespace widget2 {
 
 	template<>
+	inline void DefaultStyle::apply<Window>(Window& widget) {
+		
+		widget.padding			= glm::vec4(10);
+		widget.target_size		= glm::vec2(GUIDynamic::fit);
+		widget.min_size			= glm::vec2(GUIDynamic::fit);
+		widget.max_size			= glm::vec2(GUIDynamic::fit);
+		widget.color			= glm::vec4(0.98f, 0.98f, 0.98f, 1);
+		widget.border_thickness	= glm::vec4(0);
+		widget.border_rounding	= glm::vec4(0);
+		widget.border_color0	= glm::vec4(1);
+		widget.border_color1	= glm::vec4(1);
+		widget.border_color2	= glm::vec4(1);
+		widget.border_color3	= glm::vec4(1);
+		widget.shadow_thickness	= glm::vec4(0);
+		widget.shadow_color		= glm::vec4(1);
+
+	}
+
+	template<>
 	inline void DefaultStyle::apply<Box>(Box& widget) {
 		widget.margin			= glm::vec4(0);
 		widget.target_size		= glm::vec2(128);	
@@ -35,7 +54,7 @@ namespace widget2 {
 	inline void DefaultStyle::apply<Stack>(Stack& widget) {
 		widget.margin		= glm::vec4(0);
 		widget.padding		= glm::vec4(0);
-		widget.target_size	= glm::vec2(128);	
+		widget.target_size	= glm::vec2(GUIDynamic::fit);
 		widget.min_size		= glm::vec2(GUIDynamic::fit);	
 		widget.max_size		= glm::vec2(GUIDynamic::avail);	
 		widget.spacing		= 10;
@@ -247,6 +266,49 @@ namespace widget2 {
 
 		widget.background.pass_through_events = true;
 		widget.image.pass_through_events = true;
+		widget.pass_through_events = false;
+	}
+
+	template<>
+	inline void DefaultStyle::apply<ComboBox>(ComboBox& widget) {
+		apply<Grid>(widget);
+		apply(widget.background);
+		apply(widget.label);
+		apply(widget.dropdown);
+		apply(widget.dropdown_stack);
+
+		widget.target_size						= glm::vec2(400, 40);
+		widget.padding							= glm::vec4(0);
+
+		widget.label.target_size				= glm::vec2(GUIDynamic::fit);
+		widget.label.margin						= glm::vec4(8, GUIDynamic::avail, 8, GUIDynamic::avail);
+		widget.label.text_color					= glm::vec4(0.2, 0.2, 0.2, 1);
+
+		widget.background.color					= glm::vec4(0.95, 0.95, 0.95, 1);
+		widget.background.border_thickness 		= glm::vec4(2);
+		widget.background.border_color0 		= glm::vec4(0.68, 0.71, 0.75, 1);
+		widget.background.border_color1 		= glm::vec4(0.68, 0.71, 0.75, 1);
+		widget.background.border_color2 		= glm::vec4(0.68, 0.71, 0.75, 1);
+		widget.background.border_color3 		= glm::vec4(0.68, 0.71, 0.75, 1);
+		widget.background.target_size 			= glm::vec2(GUIDynamic::avail, GUIDynamic::avail);
+		widget.background.margin 				= glm::vec4(0);
+
+		widget.background.color.transition(widget.hover, glm::vec4(0.81f, 0.85f, 0.9f, 1), std::chrono::milliseconds(120));
+		widget.background.border_color0.transition(widget.hover, glm::vec4(0.68, 0.71, 0.75, 1));
+		widget.background.border_color1.transition(widget.hover, glm::vec4(0.68, 0.71, 0.75, 1));
+		widget.background.border_color2.transition(widget.hover, glm::vec4(0.68, 0.71, 0.75, 1));
+		widget.background.border_color3.transition(widget.hover, glm::vec4(0.68, 0.71, 0.75, 1));
+
+		widget.background.color.transition(widget.hold, glm::vec4(0.76f, 0.8f, 0.85f, 1), std::chrono::milliseconds(60));
+
+		widget.dropdown.color					= glm::vec4(1, 1, 1, 1);
+		widget.dropdown.padding					= glm::vec4(0);
+
+		widget.dropdown_stack.target_size		= glm::vec2(GUIDynamic::fit);
+
+		widget.background.pass_through_events = true;
+		widget.label.pass_through_events = true;
+		widget.dropdown_stack.pass_through_events = true;
 		widget.pass_through_events = false;
 	}
 }

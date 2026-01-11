@@ -34,7 +34,6 @@ namespace widget2 {
 		
 		glm::vec2	get_cursor_position_when_hold_begin(int32_t mouse_button = mouse_left);
 		glm::vec2	get_widget_position_when_hold_begin(int32_t mouse_button = mouse_left);
-		bool		is_topmost_widget();
 
 		duration double_click_max_delay = std::chrono::milliseconds(500);
 		float carry_begin_min_offset = 10;
@@ -90,27 +89,34 @@ namespace widget2 {
 
 	struct Window : public IOWidget {
 
-		glm::vec2 drag_area_position;
-		glm::vec2 drag_area_size;
+		bool draggable				= true;
+		bool dockable				= false;
+		bool has_native_decoration	= false;
+		bool is_resizable			= false;
 
-		bool draggable;
-		bool dockable;
-		bool has_default_decoration;
+		std::string name = "CortexGUI Window";
 
-		glm::vec2 position = glm::vec2(100);
+		StyleProperty<glm::vec4> padding;
+		StyleProperty<glm::vec2> target_size;
+		StyleProperty<glm::vec2> min_size;
+		StyleProperty<glm::vec2> max_size;
+		StyleProperty<glm::vec4> color;
+		StyleProperty<glm::vec4> border_thickness;
+		StyleProperty<glm::vec4> border_rounding;
+		StyleProperty<glm::vec4> border_color0;
+		StyleProperty<glm::vec4> border_color1;
+		StyleProperty<glm::vec4> border_color2;
+		StyleProperty<glm::vec4> border_color3;
+		StyleProperty<glm::vec4> shadow_thickness;
+		StyleProperty<glm::vec4> shadow_color;
+
+		StyleProperty<glm::vec2> position = glm::vec2(100);
 
 		void publish(GUIDynamic& gui_dynamic);
 
 	private:
 
 	};
-
-	template<>
-	inline void DefaultStyle::apply<Window>(Window& widget) {
-		widget.draggable = true;
-		widget.dockable = false;
-		widget.has_default_decoration = false;
-	}
 
 	//struct DockSurface {
 	//
@@ -303,14 +309,28 @@ namespace widget2 {
 		IOEvent check;
 	};
 
-	struct ComboBox {
+	struct ComboBox : public Grid {
+
+		Box		background;
+		Label	label;
+
+		Window	dropdown;
+		Stack	dropdown_stack;
+
+		std::u32string text = U"ComboBox";
 
 		void publish(GUIDynamic& gui_dynamic);
 		void end(GUIDynamic& gui_dynamic);
 
+		IOEvent drop;
 	};
 
-	struct ComboBoxItem {
+	struct ComboBoxItem : Grid {
+
+		Box		background;
+		Label	label;
+
+		std::u32string text = U"Comboitem";
 
 		void publish(GUIDynamic& gui_dynamic);
 

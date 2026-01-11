@@ -221,11 +221,23 @@ void widget2::Window::publish(GUIDynamic& gui_dynamic) {
 	}
 
 	gui_dynamic.window_begin(id)
-		.set_is_resizable(false)
-		.set_is_decorated(false)
+		.set_name(name)
+		.set_is_resizable(is_resizable)
+		.set_is_decorated(has_native_decoration)
 		.set_position(position)
-		.set_color(glm::vec4(0.98, 0.98, 0.98, 1));
-
+		.set_padding(padding)
+		.set_target_size(target_size)
+		.set_min_size(min_size)
+		.set_max_size(max_size)
+		.set_color(color)
+		.set_border_thickness(border_thickness)
+		.set_border_rounding(border_rounding)
+		.set_border_color0(border_color0)
+		.set_border_color1(border_color1)
+		.set_border_color2(border_color2)
+		.set_border_color3(border_color3)
+		.set_shadow_thickness(shadow_thickness)
+		.set_shadow_color(shadow_color);
 }
 
 void widget2::Image::publish(GUIDynamic& gui_dynamic)
@@ -872,4 +884,45 @@ void widget2::CheckBox::publish(GUIDynamic& gui_dynamic, bool& checked) {
 	if (!checked && check.is_active()) check.finish(gui_dynamic);
 	if (checked && !check.is_active()) check.start(gui_dynamic);
 
+}
+
+
+void widget2::ComboBox::publish(GUIDynamic& gui_dynamic){
+		
+	Grid::publish(gui_dynamic);
+	gui_dynamic.grid_add_column(GUIDynamic::avail);
+	gui_dynamic.grid_add_row(GUIDynamic::avail);
+
+	background.publish(gui_dynamic);
+	label.publish(gui_dynamic,  text);
+
+	gui_dynamic.grid_end();
+
+	if (click.is_activated_now(gui_dynamic)) {
+		if (!drop.is_active())
+			drop.start(gui_dynamic);
+		else
+			drop.finish(gui_dynamic);
+	}
+
+	if (drop.is_active() && !(hover.is_active() || dropdown.hover.is_active()) && gui_dynamic.get_io_state().mouse_state & GUI::MouseEvent::LeftPress)
+		drop.finish(gui_dynamic);
+
+
+	if (drop.is_active()) {
+
+		dropdown.position = gui_dynamic.window_prop().position + get_resolved_properties(gui_dynamic).position + glm::vec2(0, get_resolved_properties(gui_dynamic).size.y);
+		dropdown.draggable = false;
+		dropdown.publish(gui_dynamic);
+
+		dropdown_stack.publish(gui_dynamic);
+	}
+}
+
+void widget2::ComboBox::end(GUIDynamic& gui_dynamic){
+	
+	if (drop.is_active()) {
+		gui_dynamic.stack_end();
+		gui_dynamic.window_end();
+	}
 }

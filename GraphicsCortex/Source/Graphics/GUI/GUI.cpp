@@ -93,13 +93,6 @@ void GUI::render() {
 	//	parent_window->context_make_current();
 	//}
 
-	for (auto iterator = windows_state.begin(); iterator != windows_state.end(); ) {
-		if (iterator->second.active == false)
-			iterator = windows_state.erase(iterator);
-		else
-			++iterator;
-	}
-
 	if (parent_window != nullptr)
 		parent_window->handle_events();
 
@@ -112,8 +105,9 @@ void GUI::render() {
 		WindowState& state = windows_state[idstr];
 		WindowDesc& desc = state.descriptor;
 
-		if (state.active == false)
+		if (state.active == false) {
 			continue;
+		}
 
 		std::function<void()> render_func = [&]() {
 
@@ -242,6 +236,20 @@ void GUI::render() {
 		//if (parent_window != nullptr)
 		//	Window::detech_context();
 	}
+
+	for (auto iterator = windows_state.begin(); iterator != windows_state.end(); ) {
+		if (iterator->second.active == false) {
+			iterator->second.window->context_make_current();
+			iterator->second.renderer = nullptr;
+			iterator->second.window = nullptr;
+			iterator = windows_state.erase(iterator);
+		}
+		else {
+			iterator->second.active = false;
+			++iterator;
+		}
+	}
+
 	
 }
 

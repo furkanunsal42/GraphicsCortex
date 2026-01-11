@@ -108,16 +108,31 @@ public:
 			style.apply(checkbox);
 			checkbox.publish(gui_d, checkbox_value);
 
+			static widget2::ComboBox combobox;
+			
+			style.apply(combobox);
+			combobox.publish(gui_d);
+			
+			if (combobox.drop.is_active()) {
+
+				gui_d.box_begin()
+					.set_color(glm::vec4(1, 1, 1, 1))
+					.set_target_size(glm::vec2(400, 200));
+
+			}
+
+			combobox.end(gui_d);
+
+			//static widget2::Window window1;
+			//style.apply(window1);
+			//window1.draggable = true;
+			//window1.publish(gui_d);
+			//gui_d.box_begin();
+			//gui_d.window_end();
+
 			gui_d.stack_end();
 			gui_d.window_end();
-
-			static widget2::Window window1;
-			style.apply(window1);
-			window1.draggable = true;
-			window1.publish(gui_d);
-			gui_d.box_begin();
-			gui_d.window_end();
-
+			
 			gui_d.publish(gui);
 			gui.render();
 				
