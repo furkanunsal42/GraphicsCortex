@@ -22,11 +22,25 @@ public:
 		GUI gui;
 		GUIDynamic gui_d;
 
-		std::shared_ptr<Texture2D> texture = nullptr;
+		FontBank::get().load_font("../GraphicsCortex/Fonts/Roboto-Regular.ttf", 100);
 
-		while (true) {
-			static bool once = true;
+		
+		std::shared_ptr<Texture2D> texture = std::make_shared<Texture2D>(
+				256, 256,
+				Texture2D::ColorTextureFormat::RGBA8,
+				1, 0, 0
+			);
+
+		texture->is_bindless = true;
 			
+		texture->load_data(
+				Image("../GraphicsCortex/Images/orange.png", 256, 256, 1, 4, 1, true),
+				Texture2D::ColorFormat::RGBA,
+				Texture2D::Type::UNSIGNED_BYTE,
+				0
+			);
+		
+		while (true) {			
 			gui_d.new_frame(gui);
 
 			static widget2::Window window0;
@@ -56,6 +70,7 @@ public:
 			static widget2::Image image;
 			
 			style.apply(image);
+			image.texture				= texture;
 			image.target_size			= glm::vec2(avail, 64);
 			image.type					= widget2::Image::Fit;
 			image.color.transition(image.hover, glm::vec4(1, 0, 0, 1));
@@ -100,12 +115,14 @@ public:
 			static widget2::ImageButton image_button;
 
 			style.apply(image_button);
+			image_button.image.texture = texture;
 			image_button.publish(gui_d);
 
 			static widget2::CheckBox checkbox;
 			static bool checkbox_value = false;
 
 			style.apply(checkbox);
+			checkbox.image.texture = texture;
 			checkbox.publish(gui_d, checkbox_value);
 
 			static widget2::ComboBox combobox;
@@ -135,31 +152,12 @@ public:
 			
 			gui_d.publish(gui);
 			gui.render();
-				
-			if (once) {
-				gui_d.print_layout();
-				FontBank::get().load_font("../GraphicsCortex/Fonts/Roboto-Regular.ttf", 100);
-				once = false;
-			}
 
-			if (texture == nullptr) {
-				texture = std::make_shared<Texture2D>(
-					256, 256,
-					Texture2D::ColorTextureFormat::RGBA8,
-					1, 0, 0
-				);
-				texture->is_bindless = true;
-				//texture.clear(glm::vec4(1, 0, 0, 1), 0);
-				texture->load_data(
-					Image("../GraphicsCortex/Images/orange.png", 256, 256, 1, 4, 1, true),
-					Texture2D::ColorFormat::RGBA,
-					Texture2D::Type::UNSIGNED_BYTE,
-					0
-				);
-				image.texture = texture;
-				image_button.image.texture = texture;
-				checkbox.image.texture = texture;
-			}
+			static bool once = true;
+			if (once)
+				gui_d.print_layout();
+			once = false;
+
 		}
 		return true;
 	}

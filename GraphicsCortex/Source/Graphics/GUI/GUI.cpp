@@ -4,6 +4,29 @@
 #include "GUIDynamic.h"
 #include "GLMCout.h"
 
+GUI::~GUI()
+{
+	if (parent_window != nullptr && owning_parent_window)
+		delete parent_window;
+}
+
+GUI::GUI() {
+
+	if (active_window == nullptr) {
+		WindowDescription desc;
+		desc.w_name = "CortexGUI Parent Window";
+		desc.w_resolution = glm::ivec2(0);
+		parent_window = new Window(desc);
+		parent_window->context_make_current();
+		owning_parent_window = true;
+	}
+	else {
+		parent_window = active_window;
+		owning_parent_window = false;
+	}
+
+}
+
 GUI::MouseEvent GUI::window_begin(const std::string& idstr, const glm::vec2& initial_position, const glm::vec2& initial_size) {
 	
 	WindowDesc old_descriptor;
@@ -78,22 +101,14 @@ void GUI::box_end() {
 
 void GUI::render() {
 
-	Window* previous_window = active_window;
+	if (active_window != parent_window) {
+		std::cout << "[GUI Error] GUI::render() is called but a different OpenGL context is current than the one it was created with." << std::endl;
+		ASSERT(false);
+	}
+
 	glm::vec4 previous_viewport = primitive_renderer::get_viewport_position_size();
-
-	//glm::vec4 previous_viewport = previous_window != nullptr ? 
-	//							  primitive_renderer::get_viewport_position_size() : 
-	//							  glm::ivec4(0);
-	//
-	//if (active_window == nullptr) {
-	//	WindowDescription desc;
-	//	desc.w_name = "CortexGUI Parent Window";
-	//	desc.w_resolution = glm::ivec2(0);
-	//	parent_window = std::make_shared<Window>(desc);
-	//	parent_window->context_make_current();
-	//}
-
-	if (parent_window != nullptr)
+	
+	if (owning_parent_window)
 		parent_window->handle_events();
 
 	bool now_holding_left = false;
@@ -144,10 +159,8 @@ void GUI::render() {
 			description.w_scale_framebuffer_size	= false;
 			description.w_scale_window_size			= false;
 			description.w_decorated					= desc.is_decorated;
-
-			//description.context_shared				= previous_window != nullptr	? 
-			//										  previous_window->get_handle() :
-			//										  parent_window->get_handle();
+			
+			description.context_shared				= parent_window->get_handle();
 
 			state.window = std::make_shared<Window>(description);
 			state.window->set_window_position(desc.position);
@@ -195,47 +208,34 @@ void GUI::render() {
 
 	window_stack.clear();
 
-	if (previous_window != nullptr) {
+	io_state.mouse_position =	parent_window->get_cursor_position() + 
+								glm::dvec2(parent_window->get_window_position());
 		
-		//Window* effective_parent_window = previous_window != nullptr ? previous_window : parent_window.get();
-		Window* effective_parent_window = previous_window;
+	//Window::PressAction left	= effective_parent_window->get_mouse_button(Window::MouseButton::LEFT);
+	//Window::PressAction right	= effective_parent_window->get_mouse_button(Window::MouseButton::RIGHT);
+	//bool now_holding_left		= left  == Window::PressAction::PRESS;
+	//bool now_holding_right		= right == Window::PressAction::PRESS;
+		
+	MouseEvent mouse_state_prev = io_state.mouse_state;
+	bool were_holding_left   = ((int32_t)mouse_state_prev & (int32_t)MouseEvent::LeftHold)   != 0;
+	bool were_holding_right  = ((int32_t)mouse_state_prev & (int32_t)MouseEvent::RightHold)  != 0;
+	bool were_pressing_left  = ((int32_t)mouse_state_prev & (int32_t)MouseEvent::LeftPress)  != 0;
+	bool were_pressing_right = ((int32_t)mouse_state_prev & (int32_t)MouseEvent::RightPress) != 0;
+		
+	io_state.mouse_state = MouseEvent::Hover;
+		
+	if (now_holding_left  &&  were_holding_left)	io_state.mouse_state = MouseEvent((int32_t)io_state.mouse_state | (int32_t)MouseEvent::LeftHold);
+	if (now_holding_left  &&  were_pressing_left)	io_state.mouse_state = MouseEvent((int32_t)io_state.mouse_state | (int32_t)MouseEvent::LeftHold);
+	if (!now_holding_left &&  were_holding_left)	io_state.mouse_state = MouseEvent((int32_t)io_state.mouse_state | (int32_t)MouseEvent::LeftRelease);
+	if (now_holding_left  && !were_holding_left)	io_state.mouse_state = MouseEvent((int32_t)io_state.mouse_state | (int32_t)MouseEvent::LeftPress);
+		
+	if (now_holding_right  &&  were_holding_right)	io_state.mouse_state = MouseEvent((int32_t)io_state.mouse_state | (int32_t)MouseEvent::RightHold);
+	if (now_holding_right  &&  were_pressing_right)	io_state.mouse_state = MouseEvent((int32_t)io_state.mouse_state | (int32_t)MouseEvent::RightHold);
+	if (!now_holding_right &&  were_holding_right)	io_state.mouse_state = MouseEvent((int32_t)io_state.mouse_state | (int32_t)MouseEvent::RightRelease);
+	if (now_holding_right  && !were_holding_right)	io_state.mouse_state = MouseEvent((int32_t)io_state.mouse_state | (int32_t)MouseEvent::RightPress);
 
-		io_state.mouse_position =	effective_parent_window->get_cursor_position() + 
-									glm::dvec2(effective_parent_window->get_window_position());
-		
-		//Window::PressAction left	= effective_parent_window->get_mouse_button(Window::MouseButton::LEFT);
-		//Window::PressAction right	= effective_parent_window->get_mouse_button(Window::MouseButton::RIGHT);
-		//bool now_holding_left		= left  == Window::PressAction::PRESS;
-		//bool now_holding_right		= right == Window::PressAction::PRESS;
-		
-		MouseEvent mouse_state_prev = io_state.mouse_state;
-		bool were_holding_left   = ((int32_t)mouse_state_prev & (int32_t)MouseEvent::LeftHold)   != 0;
-		bool were_holding_right  = ((int32_t)mouse_state_prev & (int32_t)MouseEvent::RightHold)  != 0;
-		bool were_pressing_left  = ((int32_t)mouse_state_prev & (int32_t)MouseEvent::LeftPress)  != 0;
-		bool were_pressing_right = ((int32_t)mouse_state_prev & (int32_t)MouseEvent::RightPress) != 0;
-		
-		io_state.mouse_state = MouseEvent::Hover;
-		
-		if (now_holding_left  &&  were_holding_left)	io_state.mouse_state = MouseEvent((int32_t)io_state.mouse_state | (int32_t)MouseEvent::LeftHold);
-		if (now_holding_left  &&  were_pressing_left)	io_state.mouse_state = MouseEvent((int32_t)io_state.mouse_state | (int32_t)MouseEvent::LeftHold);
-		if (!now_holding_left &&  were_holding_left)	io_state.mouse_state = MouseEvent((int32_t)io_state.mouse_state | (int32_t)MouseEvent::LeftRelease);
-		if (now_holding_left  && !were_holding_left)	io_state.mouse_state = MouseEvent((int32_t)io_state.mouse_state | (int32_t)MouseEvent::LeftPress);
-		
-		if (now_holding_right  &&  were_holding_right)	io_state.mouse_state = MouseEvent((int32_t)io_state.mouse_state | (int32_t)MouseEvent::RightHold);
-		if (now_holding_right  &&  were_pressing_right)	io_state.mouse_state = MouseEvent((int32_t)io_state.mouse_state | (int32_t)MouseEvent::RightHold);
-		if (!now_holding_right &&  were_holding_right)	io_state.mouse_state = MouseEvent((int32_t)io_state.mouse_state | (int32_t)MouseEvent::RightRelease);
-		if (now_holding_right  && !were_holding_right)	io_state.mouse_state = MouseEvent((int32_t)io_state.mouse_state | (int32_t)MouseEvent::RightPress);
-
-		if ((int32_t)io_state.mouse_state & (int32_t)MouseEvent::LeftPress)  io_state.mouse_left_press_begin_position  = io_state.mouse_position;
-		if ((int32_t)io_state.mouse_state & (int32_t)MouseEvent::RightPress) io_state.mouse_right_press_begin_position = io_state.mouse_position;
-
-		if (previous_window != nullptr) {
-			previous_window->context_make_current();
-			primitive_renderer::set_viewport(previous_viewport);
-		}
-		//if (parent_window != nullptr)
-		//	Window::detech_context();
-	}
+	if ((int32_t)io_state.mouse_state & (int32_t)MouseEvent::LeftPress)  io_state.mouse_left_press_begin_position  = io_state.mouse_position;
+	if ((int32_t)io_state.mouse_state & (int32_t)MouseEvent::RightPress) io_state.mouse_right_press_begin_position = io_state.mouse_position;
 
 	for (auto iterator = windows_state.begin(); iterator != windows_state.end(); ) {
 		if (iterator->second.active == false) {
@@ -250,12 +250,20 @@ void GUI::render() {
 		}
 	}
 
-	
+	parent_window->context_make_current();
+
+	if (!owning_parent_window)
+		primitive_renderer::set_viewport(previous_viewport);
 }
 
 const GUI::IOState& GUI::get_io_state()
 {
 	return io_state;
+}
+
+Window* GUI::get_parent_window()
+{
+	return parent_window;
 }
 
 GUI::MouseEvent GUI::_generate_event_for_aabb(const AABB2& aabb) {
