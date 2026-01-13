@@ -81,7 +81,6 @@ FontBank::Font FontBank::_load(const std::filesystem::path& font_file_path, int3
 
 		if (pen.x + bmp->width + 1 >= max_texture_resolution.x) {
 			if (pen.y + (face->size->metrics.height >> 6) >= max_texture_resolution.y) {
-				std::cout << "here" << std::endl;
 				break;
 			}
 			pen.x = 0;
@@ -93,7 +92,7 @@ FontBank::Font FontBank::_load(const std::filesystem::path& font_file_path, int3
 	}
 
 	glm::ivec2 texture_resolution = glm::ivec2(max_texture_resolution.x, pen.y);
-	std::cout << texture_resolution.x << ", " << texture_resolution.y << std::endl;
+	//std::cout << texture_resolution.x << ", " << texture_resolution.y << std::endl;
 
 	unsigned char* png_data = new unsigned char[
 		texture_resolution.x * 
@@ -119,7 +118,6 @@ FontBank::Font FontBank::_load(const std::filesystem::path& font_file_path, int3
 
 		if (pen.x + bmp->width + 1 >= max_texture_resolution.x) {
 			if (pen.y + (face->size->metrics.height >> 6) >= texture_resolution.y) {
-				std::cout << "here2" << std::endl;
 				break;
 			}
 			pen.x = 0;
@@ -176,7 +174,7 @@ FontBank::Font FontBank::_load(const std::filesystem::path& font_file_path, int3
 		true
 	);
 
-	font_atlas->save_to_disc("atlas.png");
+	//font_atlas->save_to_disc("atlas.png");
 
 	font.atlas = std::make_shared<Texture2D>(texture_resolution.x, texture_resolution.y, Texture2D::ColorTextureFormat::RGBA8, 32, -0.75f, 0);
 	font.atlas->is_bindless = true;

@@ -109,8 +109,6 @@ public:
 		glm::vec2	mouse_left_press_begin_position	= glm::vec2(0);
 		glm::vec2	mouse_right_press_begin_position= glm::vec2(0);
 		std::vector<KeyboardEvent> keyboard_events;
-		size_t char_newsletter_event	= Newsletter<void()>::invalid_id;
-		size_t key_newsletter_event		= Newsletter<void()>::invalid_id;
 	};
 
 private:
@@ -123,6 +121,8 @@ private:
 		WindowDesc descriptor;
 		std::shared_ptr<Window> window = nullptr;
 		std::shared_ptr<ImmediateRenderer> renderer = nullptr;
+		size_t char_newsletter_event = Newsletter<void()>::invalid_id;
+		size_t key_newsletter_event = Newsletter<void()>::invalid_id;
 	};
 
 	IOState io_state;

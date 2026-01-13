@@ -24,6 +24,7 @@ namespace widget2 {
 		bool is_active();
 		bool is_activated_now(GUIDynamic& gui_dynamic);
 		bool is_deactivated_now(GUIDynamic& gui_dynamic);
+
 	};
 
 	class IOWidget : public Widget {
@@ -318,10 +319,11 @@ namespace widget2 {
 		Stack	dropdown_stack;
 
 		std::u32string text = U"ComboBox";
-
+		
 		void publish(GUIDynamic& gui_dynamic);
 		void end(GUIDynamic& gui_dynamic);
 
+		IOEvent item_selected;
 		IOEvent drop;
 	};
 
@@ -330,13 +332,24 @@ namespace widget2 {
 		Box		background;
 		Label	label;
 
-		std::u32string text = U"Comboitem";
+		std::u32string text = U"Combo Item";
 
-		void publish(GUIDynamic& gui_dynamic);
+		void select(GUIDynamic& gui_dynamic, ComboBox& owner_combobox);
+		void publish(GUIDynamic& gui_dynamic, ComboBox& owner_combobox);
 
 	};
 
-	struct Menu {
+	struct Menu : public Grid {
+
+		Box background;
+		Label label;
+
+		Window	dropdown;
+		Stack	dropdown_stack;
+		
+		IOEvent item_selected;
+		IOEvent drop;
+		std::u32string text = U"Menu";
 
 		void publish(GUIDynamic& gui_dynamic);
 		void end(GUIDynamic& gui_dynamic);
@@ -345,10 +358,14 @@ namespace widget2 {
 
 	struct MenuItem {
 
+		Box		background;
+		Label	label;
+
+		std::u32string text = U"Menu Item";
+
 		void publish(GUIDynamic& gui_dynamic);
 
 	};
-
 
 	struct Tab {
 

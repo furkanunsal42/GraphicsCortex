@@ -925,4 +925,70 @@ void widget2::ComboBox::end(GUIDynamic& gui_dynamic){
 		gui_dynamic.stack_end();
 		gui_dynamic.window_end();
 	}
+
+	if (item_selected.is_activated_now(gui_dynamic))
+		drop.finish(gui_dynamic);
+}
+
+void widget2::ComboBoxItem::publish(GUIDynamic& gui_dynamic, ComboBox& owner_combobox) {
+
+	Grid::publish(gui_dynamic);
+	gui_dynamic.grid_add_column(GUIDynamic::avail);
+	gui_dynamic.grid_add_row(GUIDynamic::avail);
+
+	background.publish(gui_dynamic);
+	label.publish(gui_dynamic, text);
+
+	gui_dynamic.grid_end();
+
+	if (click.is_activated_now(gui_dynamic))
+		select(gui_dynamic, owner_combobox);
+}
+
+void widget2::ComboBoxItem::select(GUIDynamic& gui_dynamic, ComboBox& owner_combobox)
+{
+	owner_combobox.text = text;
+	owner_combobox.item_selected.impulse(gui_dynamic);
+}
+
+void widget2::Menu::publish(GUIDynamic& gui_dynamic) {
+
+	Grid::publish(gui_dynamic);
+	gui_dynamic.grid_add_column(GUIDynamic::avail);
+	gui_dynamic.grid_add_row(GUIDynamic::avail);
+
+	background.publish(gui_dynamic);
+	label.publish(gui_dynamic, text);
+
+	gui_dynamic.grid_end();
+
+	if (click.is_activated_now(gui_dynamic)) {
+		if (!drop.is_active())
+			drop.start(gui_dynamic);
+		else
+			drop.finish(gui_dynamic);
+	}
+
+	if (drop.is_active() && !(hover.is_active() || dropdown.hover.is_active()) && gui_dynamic.get_io_state().mouse_state & GUI::MouseEvent::LeftPress)
+		drop.finish(gui_dynamic);
+
+
+	if (drop.is_active()) {
+
+		dropdown.position = gui_dynamic.window_prop().position + get_resolved_properties(gui_dynamic).position + glm::vec2(0, get_resolved_properties(gui_dynamic).size.y);
+		dropdown.draggable = false;
+		dropdown.publish(gui_dynamic);
+
+		dropdown_stack.publish(gui_dynamic);
+	}
+}
+
+void widget2::Menu::end(GUIDynamic& gui_dynamic) {
+	if (drop.is_active()) {
+		gui_dynamic.stack_end();
+		gui_dynamic.window_end();
+	}
+
+	if (item_selected.is_activated_now(gui_dynamic))
+		drop.finish(gui_dynamic);
 }

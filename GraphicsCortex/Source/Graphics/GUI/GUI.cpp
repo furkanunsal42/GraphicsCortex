@@ -108,6 +108,8 @@ void GUI::render() {
 
 	glm::vec4 previous_viewport = primitive_renderer::get_viewport_position_size();
 	
+	io_state.keyboard_events.clear();
+
 	if (owning_parent_window)
 		parent_window->handle_events();
 
@@ -165,13 +167,14 @@ void GUI::render() {
 			state.window = std::make_shared<Window>(description);
 			state.window->set_window_position(desc.position);
 
-			if (io_state.char_newsletter_event == Newsletter<void()>::invalid_id) {
-				io_state.char_newsletter_event = state.window->newsletters->on_char_events.subscribe([&](const uint32_t& c) {
+			if (state.char_newsletter_event == Newsletter<void()>::invalid_id) {
+				state.char_newsletter_event = state.window->newsletters->on_char_events.subscribe([&](const uint32_t& c) {
 					io_state.keyboard_events.push_back(c);
+					std::cout << c << std::endl;
 					});
 			}
-			if (io_state.key_newsletter_event == Newsletter<void()>::invalid_id) {
-				io_state.key_newsletter_event = state.window->newsletters->on_key_events.subscribe([&](const Window::KeyPressResult& k) {
+			if (state.key_newsletter_event == Newsletter<void()>::invalid_id) {
+				state.key_newsletter_event = state.window->newsletters->on_key_events.subscribe([&](const Window::KeyPressResult& k) {
 					io_state.keyboard_events.push_back(k);
 					});
 			}
@@ -187,8 +190,6 @@ void GUI::render() {
 			state.window->set_window_resolution(desc.size);
 		}
 
-		io_state.keyboard_events.clear();
-		
 		state.window->handle_events();
 		
 		if (desc.is_resizable) {

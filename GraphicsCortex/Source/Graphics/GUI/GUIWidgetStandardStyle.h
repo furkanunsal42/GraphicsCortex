@@ -305,10 +305,61 @@ namespace widget2 {
 		widget.dropdown.padding					= glm::vec4(0);
 
 		widget.dropdown_stack.target_size		= glm::vec2(GUIDynamic::fit);
+		widget.dropdown_stack.spacing			= 0;
 
 		widget.background.pass_through_events = true;
 		widget.label.pass_through_events = true;
 		widget.dropdown_stack.pass_through_events = true;
+		widget.pass_through_events = false;
+	}
+
+	template<>
+	inline void DefaultStyle::apply<ComboBoxItem>(ComboBoxItem& widget) {
+		apply<Grid>(widget);
+		apply(widget.background);
+		apply(widget.label);
+
+		widget.target_size		= glm::vec2(400, 40);
+		
+		widget.background.target_size = glm::vec2(GUIDynamic::avail);
+		widget.background.color = glm::vec4(0.96, 0.96, 0.96, 1);
+		widget.background.color.transition(widget.hover, glm::vec4(0.88, 0.88, 0.88, 1));
+
+		widget.background.border_thickness = glm::vec4(0);
+		widget.background.border_thickness.transition(widget.hover, glm::vec4(1));
+
+		widget.background.border_color0 = glm::vec4(0.34, 0.34, 0.34, 1);
+		widget.background.border_color1 = glm::vec4(0.34, 0.34, 0.34, 1);
+		widget.background.border_color2 = glm::vec4(0.34, 0.34, 0.34, 1);
+		widget.background.border_color3 = glm::vec4(0.34, 0.34, 0.34, 1);
+
+		widget.label.margin = glm::vec4(8, GUIDynamic::avail, GUIDynamic::avail, GUIDynamic::avail);
+
+		widget.label.pass_through_events = true;
+		widget.background.pass_through_events = true;
+		widget.pass_through_events = true;
+	}
+
+	template<>
+	inline void DefaultStyle::apply<Menu>(Menu& widget) {
+		apply<Grid>(widget);
+		apply(widget.background);
+		apply(widget.label);
+
+		widget.target_size				= glm::vec2(100, 40);
+		widget.background.target_size	= glm::vec2(GUIDynamic::avail);
+		widget.label.margin				= glm::vec4(GUIDynamic::avail);
+
+		//widget.background.border_thickness	= glm::vec4(0);
+		//widget.background.border_color0		= glm::vec4(0.46, 0.46, 0.46, 1);
+		//widget.background.border_color1		= glm::vec4(0.46, 0.46, 0.46, 1);
+		//widget.background.border_color2		= glm::vec4(0.46, 0.46, 0.46, 1);
+		//widget.background.border_color3		= glm::vec4(0.46, 0.46, 0.46, 1);
+
+		widget.background.color.transition(widget.hover, glm::vec4(0.81f, 0.85f, 0.9f, 1));
+
+		widget.background.pass_through_events = true;
+		widget.label.pass_through_events = true;
 		widget.pass_through_events = false;
 	}
 }
