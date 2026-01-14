@@ -90,7 +90,7 @@ namespace widget2 {
 
 	struct Window : public IOWidget {
 
-		bool draggable				= true;
+		//bool draggable				= true;
 		bool dockable				= false;
 		bool has_native_decoration	= false;
 		bool is_resizable			= false;
@@ -114,8 +114,11 @@ namespace widget2 {
 		StyleProperty<glm::vec2> position = glm::vec2(100);
 
 		void publish(GUIDynamic& gui_dynamic);
+		void drag(GUIDynamic& gui_dynamic, IOWidget& widget);
 
 	private:
+
+		glm::vec2 window_position_when_drag_begin = glm::vec2(-1000);
 
 	};
 
@@ -356,13 +359,34 @@ namespace widget2 {
 
 	};
 
-	struct MenuItem {
+	struct MenuItem : public Grid {
 
 		Box		background;
 		Label	label;
 
 		std::u32string text = U"Menu Item";
 
+		void publish(GUIDynamic& gui_dynamic);
+
+	};
+
+	struct WindowControls : public Stack {
+		
+		ImageButton minimize_button;
+		ImageButton restore_button;
+		ImageButton close_button;
+
+		void publish(GUIDynamic& gui_dynamic);
+
+	};
+
+	struct ManuBar : public Grid {
+
+		Box background;
+		Stack manu_stack;
+		
+		WindowControls window_controls;
+		
 		void publish(GUIDynamic& gui_dynamic);
 
 	};

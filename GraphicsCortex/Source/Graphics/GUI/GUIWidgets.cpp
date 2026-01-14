@@ -213,13 +213,6 @@ void widget2::Window::publish(GUIDynamic& gui_dynamic) {
 	
 	resolve_io(gui_dynamic);
 
-	if (draggable && carry.is_active()) {
-		position =
-			get_widget_position_when_hold_begin() +
-			gui_dynamic.get_io_state().mouse_position -
-			get_cursor_position_when_hold_begin();
-	}
-
 	gui_dynamic.window_begin(id)
 		.set_name(name)
 		.set_is_resizable(is_resizable)
@@ -238,6 +231,23 @@ void widget2::Window::publish(GUIDynamic& gui_dynamic) {
 		.set_border_color3(border_color3)
 		.set_shadow_thickness(shadow_thickness)
 		.set_shadow_color(shadow_color);
+}
+
+void widget2::Window::drag(GUIDynamic& gui_dynamic, IOWidget& widget) {
+
+
+	if (/*draggable && */widget.carry.is_active()) {
+		if (window_position_when_drag_begin == glm::vec2(-1000))
+			window_position_when_drag_begin = position;
+
+		position =
+			window_position_when_drag_begin +
+			gui_dynamic.get_io_state().mouse_position -
+			widget.get_cursor_position_when_hold_begin();
+	}
+	else
+		window_position_when_drag_begin = glm::vec2(-1000);
+
 }
 
 void widget2::Image::publish(GUIDynamic& gui_dynamic)
@@ -912,7 +922,6 @@ void widget2::ComboBox::publish(GUIDynamic& gui_dynamic){
 	if (drop.is_active()) {
 
 		dropdown.position = gui_dynamic.window_prop().position + get_resolved_properties(gui_dynamic).position + glm::vec2(0, get_resolved_properties(gui_dynamic).size.y);
-		dropdown.draggable = false;
 		dropdown.publish(gui_dynamic);
 
 		dropdown_stack.publish(gui_dynamic);
@@ -976,7 +985,7 @@ void widget2::Menu::publish(GUIDynamic& gui_dynamic) {
 	if (drop.is_active()) {
 
 		dropdown.position = gui_dynamic.window_prop().position + get_resolved_properties(gui_dynamic).position + glm::vec2(0, get_resolved_properties(gui_dynamic).size.y);
-		dropdown.draggable = false;
+		dropdown.drag(gui_dynamic, dropdown);
 		dropdown.publish(gui_dynamic);
 
 		dropdown_stack.publish(gui_dynamic);

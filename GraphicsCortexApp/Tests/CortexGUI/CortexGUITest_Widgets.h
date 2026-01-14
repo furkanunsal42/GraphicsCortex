@@ -43,23 +43,23 @@ public:
 			gui_d.new_frame(gui);
 
 			static widget2::Window window0;
+			static widget2::Label label;
 			
 			style.apply(window0);
-			window0.draggable = true;
+			window0.drag(gui_d, window0);
 			window0.publish(gui_d);
 			
 			gui_d.stack_begin()
 				.set_target_size(glm::vec2(600, fit))
 				.set_padding(glm::vec4(0, 40, 0, 0));
 
-			static widget2::Label label;
 			static float slider_value = 16;
 
 			style.apply(label);
 			label.text_height = slider_value;
 			label.text_color			= glm::vec4(0, 0, 0, 1);
 			label.text_color.transition(label.hover, glm::vec4(1, 0, 0, 1), std::chrono::milliseconds(100));
-			label.publish(gui_d, U"Büyüt de Götüne Girsin");
+			label.publish(gui_d, U"Hello World!");
 
 			static widget2::TextInput text_input;
 			static std::u32string text_input_str;
@@ -146,6 +146,10 @@ public:
 
 			style.apply(menu);
 			menu.publish(gui_d);
+
+			if (menu.drop.is_active()) {
+
+			}
 
 			menu.end(gui_d);
 
