@@ -179,6 +179,7 @@ namespace widget2 {
 		StyleProperty<glm::vec2>	min_size;
 		StyleProperty<glm::vec2>	max_size;
 		StyleProperty<float>		spacing;
+		bool is_vertical;
 		bool pass_through_events;
 
 		void publish(GUIDynamic& gui_dynamic);
@@ -382,7 +383,7 @@ namespace widget2 {
 
 	};
 
-	struct ManuBar : public Grid {
+	struct MenuBar : public Grid {
 
 		Box background;
 		Stack manu_stack;
@@ -390,7 +391,7 @@ namespace widget2 {
 		WindowControls window_controls;
 		
 		void publish(GUIDynamic& gui_dynamic);
-
+		void end(GUIDynamic& gui_dynamic);
 	};
 
 	struct Tab {

@@ -43,17 +43,51 @@ public:
 			gui_d.new_frame(gui);
 
 			static widget2::Window window0;
-			static widget2::Label label;
-			
+			static widget2::MenuBar menubar;
+
 			style.apply(window0);
-			window0.drag(gui_d, window0);
+			window0.padding = glm::vec4(0);
+			
+			window0.drag(gui_d, menubar);
 			window0.publish(gui_d);
 			
+			gui_d.grid_begin()
+				.set_target_size(glm::vec2(fit))
+				.set_padding(glm::vec4(0));
+
+			gui_d.grid_add_column(fit);
+			gui_d.grid_add_row(fit);
+			gui_d.grid_add_row(fit);
+
+			gui_d.grid_region(glm::ivec2(0, 0));
+
+			style.apply(menubar);
+			menubar.window_controls.minimize_button.image.texture = texture;
+			menubar.window_controls.restore_button.image.texture = texture;
+			menubar.window_controls.close_button.image.texture = texture;
+			menubar.publish(gui_d);
+
+			static widget2::Menu menu;
+
+			style.apply(menu);
+			menu.publish(gui_d);
+
+			if (menu.drop.is_active()) {
+
+			}
+
+			menu.end(gui_d);
+
+			menubar.end(gui_d);
+			gui_d.grid_region(glm::ivec2(0, 1));
+
+
 			gui_d.stack_begin()
 				.set_target_size(glm::vec2(360, fit))
-				.set_padding(glm::vec4(0, 40, 0, 0));
+				.set_padding(glm::vec4(20, 20, 20, 20));
 
 			static float slider_value = 12;
+			static widget2::Label label;
 
 			style.apply(label);
 			label.text_height = slider_value;
@@ -142,18 +176,10 @@ public:
 			//gui_d.box_begin();
 			//gui_d.window_end();
 
-			static widget2::Menu menu;
-
-			style.apply(menu);
-			menu.publish(gui_d);
-
-			if (menu.drop.is_active()) {
-
-			}
-
-			menu.end(gui_d);
 
 			gui_d.stack_end();
+
+			gui_d.grid_end();
 			gui_d.window_end();
 			
 			gui_d.publish(gui);

@@ -36,6 +36,14 @@ public:
 
 	Window*			get_parent_window();
 
+	size_t			create_gui_texture(const std::filesystem::path& file_path);
+	size_t			create_gui_texture(const Image& image);
+	size_t			create_gui_texture(Texture2D& texture);
+	void			destroy_gui_texture(size_t gui_texture_id);
+	bool			does_gui_texture_exist(size_t gui_texture_id);
+	
+	static constexpr size_t invalid_gui_texture = -1;
+
 	struct BoxDesc {
 
 		MouseEvent mouse_event		= None;
@@ -110,6 +118,7 @@ public:
 		glm::vec2	mouse_right_press_begin_position= glm::vec2(0);
 		std::vector<KeyboardEvent> keyboard_events;
 	};
+	
 
 private:
 
@@ -124,6 +133,15 @@ private:
 		size_t char_newsletter_event = Newsletter<void()>::invalid_id;
 		size_t key_newsletter_event = Newsletter<void()>::invalid_id;
 	};
+
+	struct GUITextureInfo {
+		std::shared_ptr<Texture2D>	texture = nullptr;
+		size_t						texture_handle = 0;
+	};
+
+	size_t generate_gui_texture_id();
+
+	std::unordered_map<size_t, GUITextureInfo> texture_info;
 
 	IOState io_state;
 	Window* parent_window = nullptr;

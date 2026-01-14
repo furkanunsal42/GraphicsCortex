@@ -58,6 +58,7 @@ namespace widget2 {
 		widget.min_size		= glm::vec2(GUIDynamic::fit);	
 		widget.max_size		= glm::vec2(GUIDynamic::avail);	
 		widget.spacing		= 10;
+		widget.is_vertical	= true;
 		widget.pass_through_events = true;
 	}
 
@@ -363,4 +364,52 @@ namespace widget2 {
 		widget.label.pass_through_events = true;
 		widget.pass_through_events = false;
 	}
+
+	template<>
+	inline void DefaultStyle::apply<WindowControls>(WindowControls& widget) {
+		apply<Stack>(widget);
+		apply(widget.minimize_button);
+		apply(widget.restore_button);
+		apply(widget.close_button);
+
+		widget.target_size				= glm::vec2(GUIDynamic::fit);
+		widget.is_vertical				= false;
+		widget.spacing					= 0;
+		widget.padding					= glm::vec4(0);
+
+		widget.minimize_button.target_size = glm::vec2(40, 24);
+		widget.restore_button.target_size = glm::vec2(40, 24);
+		widget.close_button.target_size = glm::vec2(40, 24);
+
+		widget.minimize_button.background.color = glm::vec4(1, 1, 1, 1);
+		widget.minimize_button.background.color.transition(widget.minimize_button.hover, glm::vec4(0.8, 0.8, 0.8, 1));
+		widget.minimize_button.background.color.transition(widget.minimize_button.hold, glm::vec4(0.75, 0.75, 0.75, 1));
+
+		widget.restore_button.background.color = glm::vec4(1, 1, 1, 1);
+		widget.restore_button.background.color.transition(widget.restore_button.hover, glm::vec4(0.8, 0.8, 0.8, 1));
+		widget.restore_button.background.color.transition(widget.restore_button.hold, glm::vec4(0.75, 0.75, 0.75, 1));
+
+		widget.close_button.background.color = glm::vec4(1, 1, 1, 1);
+		widget.close_button.background.color.transition(widget.close_button.hover, glm::vec4(0.91f, 0.05f, 0.11f, 1));
+		widget.close_button.background.color.transition(widget.close_button.hold, glm::vec4(0.91f, 0.05f, 0.11f, 1));
+	}
+
+	template<>
+	inline void DefaultStyle::apply<MenuBar>(MenuBar& widget) {
+		apply<Grid>(widget);
+		apply(widget.background);
+		apply(widget.manu_stack);
+		apply(widget.window_controls);
+
+		widget.target_size					= glm::vec2(GUIDynamic::avail, 26);
+		widget.background.target_size		= glm::vec2(GUIDynamic::avail);
+	
+		widget.background.color				= glm::vec4(0.90, 0.90, 0.90, 1);
+
+		widget.background.pass_through_events = true;
+		widget.manu_stack.pass_through_events = true;
+		widget.window_controls.pass_through_events = false;
+		widget.pass_through_events = false;
+	}
+
 }

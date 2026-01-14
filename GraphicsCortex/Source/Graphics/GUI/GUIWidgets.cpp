@@ -201,12 +201,12 @@ void widget2::Stack::publish(GUIDynamic& gui_dynamic) {
 
 	gui_dynamic.stack_begin(id);
 
-	gui_dynamic.stack_prop().margin			= margin;
-	gui_dynamic.stack_prop().padding		= padding;
-	gui_dynamic.stack_prop().target_size	= target_size;
-	gui_dynamic.stack_prop().spacing		= spacing;
-	gui_dynamic.stack_prop().pass_through_events = pass_through_events;
-
+	gui_dynamic.stack_prop().margin					= margin;
+	gui_dynamic.stack_prop().padding				= padding;
+	gui_dynamic.stack_prop().target_size			= target_size;
+	gui_dynamic.stack_prop().spacing				= spacing;
+	gui_dynamic.stack_prop().pass_through_events 	= pass_through_events;
+	gui_dynamic.stack_prop().is_vertical			= is_vertical;
 }
 
 void widget2::Window::publish(GUIDynamic& gui_dynamic) {
@@ -1010,4 +1010,40 @@ void widget2::Menu::end(GUIDynamic& gui_dynamic) {
 
 	if (item_selected.is_activated_now(gui_dynamic))
 		drop.finish(gui_dynamic);
+}
+
+void widget2::WindowControls::publish(GUIDynamic& gui_dynamic) {
+	
+	Stack::publish(gui_dynamic);
+	
+	minimize_button.publish(gui_dynamic);
+	restore_button.publish(gui_dynamic);
+	close_button.publish(gui_dynamic);
+
+	gui_dynamic.stack_end();
+}
+
+void widget2::MenuBar::publish(GUIDynamic& gui_dynamic) {
+
+	Grid::publish(gui_dynamic);
+	gui_dynamic.grid_add_column(GUIDynamic::avail);
+	gui_dynamic.grid_add_column(GUIDynamic::fit);
+	gui_dynamic.grid_add_row(GUIDynamic::avail);
+
+	gui_dynamic.grid_region(glm::ivec2(0, 0), glm::ivec2(2, 1));
+	background.publish(gui_dynamic);
+
+	gui_dynamic.grid_region(glm::ivec2(1, 0));
+	window_controls.publish(gui_dynamic);
+
+	gui_dynamic.grid_region(glm::ivec2(0, 0));
+	manu_stack.publish(gui_dynamic);
+	
+}
+
+void widget2::MenuBar::end(GUIDynamic& gui_dynamic) {
+
+	gui_dynamic.stack_end();
+	gui_dynamic.grid_end();
+
 }
