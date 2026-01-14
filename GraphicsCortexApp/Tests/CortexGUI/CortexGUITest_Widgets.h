@@ -22,7 +22,7 @@ public:
 		GUI gui;
 		GUIDynamic gui_d;
 
-		FontBank::get().load_font("../GraphicsCortex/Fonts/Roboto-Regular.ttf", 100);
+		FontBank::get().load_font("../GraphicsCortex/Fonts/Roboto-Regular.ttf", 32);
 
 		std::shared_ptr<Texture2D> texture = std::make_shared<Texture2D>(
 				256, 256,
@@ -50,10 +50,10 @@ public:
 			window0.publish(gui_d);
 			
 			gui_d.stack_begin()
-				.set_target_size(glm::vec2(600, fit))
+				.set_target_size(glm::vec2(360, fit))
 				.set_padding(glm::vec4(0, 40, 0, 0));
 
-			static float slider_value = 16;
+			static float slider_value = 12;
 
 			style.apply(label);
 			label.text_height = slider_value;

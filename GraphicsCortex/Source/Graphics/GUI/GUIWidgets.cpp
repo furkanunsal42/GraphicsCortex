@@ -779,25 +779,35 @@ void widget2::Slider::publish(GUIDynamic& gui_dynamic, float& value) {
 	gui_dynamic.grid_end();
 }
 
+namespace {
+
+	std::string std_to_string_with_precision(float value, int32_t precision) {
+		std::ostringstream ss;
+		ss.precision(precision);
+		ss << std::fixed << value;
+		return std::move(ss).str();
+	}
+}
+
 void widget2::DragFloat::publish(GUIDynamic& gui_dynamic, float& value) {
 	
 	std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> convert;
 
 	if (id == GUIDynamic::invalid_id) {
-		string = convert.from_bytes(std::to_string(value));
+		string = convert.from_bytes(std_to_string_with_precision(value, precision));
 		old_value = value;
 	}
 
 	if (old_value != value)
-		string = convert.from_bytes(std::to_string(value));
+		string = convert.from_bytes(std_to_string_with_precision(value, precision));
 
 	bool previous_focus = focus.is_active();
 
 	bool prev_can_aquire_keyboard_focus = can_aquire_keyboard_focus;
 	can_aquire_keyboard_focus = false;
-	
+
 	TextInput::publish(gui_dynamic, string);
-	
+
 	can_aquire_keyboard_focus = prev_can_aquire_keyboard_focus;
 
 	if (doubleclick.is_activated_now(gui_dynamic))
@@ -824,17 +834,17 @@ void widget2::DragFloat::publish(GUIDynamic& gui_dynamic, float& value) {
 		catch (...) {
 			if (string.size() == 0)
 				value = 0;
-			string = convert.from_bytes(std::to_string(value));
+			string = convert.from_bytes(std_to_string_with_precision(value, precision));
 		}
 	}
 
 	if (hold.is_active()) {
-		
+
 		if (cursor_position_when_grabbed_publish == invalid_cursor_position)
 			cursor_position_when_grabbed_publish = gui_dynamic.get_io_state().mouse_position;
-	
+
 		value += (gui_dynamic.get_io_state().mouse_position.x - cursor_position_when_grabbed_publish.x) * sensitivity;
-		string = convert.from_bytes(std::to_string(value));
+		string = convert.from_bytes(std_to_string_with_precision(value, precision));
 	
 		if (selection_index_begin != invalid_selection_index && selection_index_end != invalid_selection_index) {
 			selection_index_begin = 0;

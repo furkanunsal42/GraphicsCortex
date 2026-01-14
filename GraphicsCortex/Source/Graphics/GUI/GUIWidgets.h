@@ -270,6 +270,8 @@ namespace widget2 {
 		float min_value		= std::numeric_limits<float>::min();
 		float max_value		= std::numeric_limits<float>::max();
 
+		int32_t precision	= 3;
+
 		void publish(GUIDynamic& gui_dynamic, float& value);
 
 	protected:

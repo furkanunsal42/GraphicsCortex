@@ -75,7 +75,7 @@ namespace widget2 {
 	inline void DefaultStyle::apply<Label>(Label& widget) {
 		apply<Grid>(widget);
 		widget.font			= 1;
-		widget.text_height	= 16;
+		widget.text_height	= 12;
 		widget.text_color	= glm::vec4(0, 0, 0, 1);
 		widget.target_size	= glm::vec2(GUIDynamic::fit);
 
@@ -95,11 +95,11 @@ namespace widget2 {
 		widget.text_cursor_color				= glm::vec4(0, 0, 0, 1);
 		widget.text_cursor_timer_blink_period	= std::chrono::milliseconds(500);
 
-		widget.target_size						= glm::vec2(400, 40);
+		widget.target_size						= glm::vec2(200, 26);
 		widget.padding							= glm::vec4(0);
 
 		widget.label.target_size				= glm::vec2(GUIDynamic::fit);
-		widget.label.margin						= glm::vec4(8, GUIDynamic::avail, 8, GUIDynamic::avail);
+		widget.label.margin						= glm::vec4(4, GUIDynamic::avail, 4, GUIDynamic::avail);
 		widget.label.text_color					= glm::vec4(0.2, 0.2, 0.2, 1);
 
 		widget.background.color					= glm::vec4(1, 1, 1, 1);
@@ -129,7 +129,7 @@ namespace widget2 {
 		apply(widget.background);
 		apply(widget.filled_bar);
 
-		widget.target_size						= glm::vec2(400, 22);
+		widget.target_size						= glm::vec2(200, 16);
 
 		widget.head.target_size					= glm::vec2(widget.target_size.value.y, widget.target_size.value.y);
 		widget.head.color 						= glm::vec4(0.92, 0.92, 0.92, 1);
@@ -154,7 +154,8 @@ namespace widget2 {
 	template<>
 	inline void DefaultStyle::apply<DragFloat>(DragFloat& widget) {
 		apply<TextInput>(widget);
-		widget.target_size = glm::vec2(120, 30);
+
+		widget.target_size = glm::vec2(80, 26);
 
 		widget.background.border_color0.transition(widget.hold, glm::vec4(0.50, 0.50, 0.56, 1));
 		widget.background.border_color1.transition(widget.hold, glm::vec4(0.50, 0.50, 0.56, 1));
@@ -170,7 +171,7 @@ namespace widget2 {
 		apply(widget.background);
 		apply(widget.label);
 
-		widget.target_size					= glm::vec2(200, 40);
+		widget.target_size					= glm::vec2(100, 26);
 		//widget.padding						= glm::vec4(43, 13, 43, 13);
 		//widget.target_size					= glm::vec2(GUIDynamic::fit);
 
@@ -205,7 +206,7 @@ namespace widget2 {
 		apply(widget.image);
 		apply(widget.background);
 
-		widget.target_size						= glm::vec2(40);
+		widget.target_size						= glm::vec2(26);
 		
 		widget.image.margin						= glm::vec4(2);
 		widget.image.target_size				= glm::vec2(GUIDynamic::avail);
@@ -238,7 +239,7 @@ namespace widget2 {
 		apply(widget.image);
 		apply(widget.background);
 
-		widget.target_size						= glm::vec2(32);
+		widget.target_size						= glm::vec2(26);
 		
 		widget.image.margin						= glm::vec4(4);
 		widget.image.target_size				= glm::vec2(GUIDynamic::avail);
@@ -277,7 +278,7 @@ namespace widget2 {
 		apply(widget.dropdown);
 		apply(widget.dropdown_stack);
 
-		widget.target_size						= glm::vec2(400, 40);
+		widget.target_size						= glm::vec2(200, 26);
 		widget.padding							= glm::vec4(0);
 
 		widget.label.target_size				= glm::vec2(GUIDynamic::fit);
@@ -319,7 +320,7 @@ namespace widget2 {
 		apply(widget.background);
 		apply(widget.label);
 
-		widget.target_size		= glm::vec2(400, 40);
+		widget.target_size		= glm::vec2(200, 26);
 		
 		widget.background.target_size = glm::vec2(GUIDynamic::avail);
 		widget.background.color = glm::vec4(0.96, 0.96, 0.96, 1);
@@ -346,7 +347,7 @@ namespace widget2 {
 		apply(widget.background);
 		apply(widget.label);
 
-		widget.target_size				= glm::vec2(100, 40);
+		widget.target_size				= glm::vec2(60, 26);
 		widget.background.target_size	= glm::vec2(GUIDynamic::avail);
 		widget.label.margin				= glm::vec4(GUIDynamic::avail);
 
