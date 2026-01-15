@@ -14,6 +14,8 @@ GUI::GUI() {
 
 	if (active_window == nullptr) {
 		WindowDescription desc;
+		desc.w_scale_framebuffer_size = false;
+		desc.w_scale_window_size = false;
 		desc.w_name = "CortexGUI Parent Window";
 		desc.w_resolution = glm::ivec2(0);
 		parent_window = new Window(desc);

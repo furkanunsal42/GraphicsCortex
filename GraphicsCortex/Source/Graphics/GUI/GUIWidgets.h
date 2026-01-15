@@ -90,7 +90,6 @@ namespace widget2 {
 
 	struct Window : public IOWidget {
 
-		//bool draggable				= true;
 		bool dockable				= false;
 		bool has_native_decoration	= false;
 		bool is_resizable			= false;

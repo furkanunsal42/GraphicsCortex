@@ -236,7 +236,7 @@ void widget2::Window::publish(GUIDynamic& gui_dynamic) {
 void widget2::Window::drag(GUIDynamic& gui_dynamic, IOWidget& widget) {
 
 
-	if (/*draggable && */widget.carry.is_active()) {
+	if (widget.carry.is_active()) {
 		if (window_position_when_drag_begin == glm::vec2(-1000))
 			window_position_when_drag_begin = position;
 
@@ -763,7 +763,7 @@ void widget2::Slider::publish(GUIDynamic& gui_dynamic, float& value) {
 	if (hold.is_active()) {
 		float position	= get_resolved_properties(gui_dynamic).position.x;
 		float size		= get_resolved_properties(gui_dynamic).size.x;
-		float cursor_position = gui_dynamic.get_io_state().mouse_position.x - gui_dynamic.window_prop().position.x;
+		float cursor_position = gui_dynamic.get_mouse_position_scale_independent().x;
 
 		value = glm::clamp(glm::mix(min_value, max_value, (cursor_position - position) / size), min_value, max_value);
 	}
@@ -841,9 +841,9 @@ void widget2::DragFloat::publish(GUIDynamic& gui_dynamic, float& value) {
 	if (hold.is_active()) {
 
 		if (cursor_position_when_grabbed_publish == invalid_cursor_position)
-			cursor_position_when_grabbed_publish = gui_dynamic.get_io_state().mouse_position;
+			cursor_position_when_grabbed_publish = gui_dynamic.get_mouse_position_scale_independent();
 
-		value += (gui_dynamic.get_io_state().mouse_position.x - cursor_position_when_grabbed_publish.x) * sensitivity;
+		value += (gui_dynamic.get_mouse_position_scale_independent().x - cursor_position_when_grabbed_publish.x) * sensitivity;
 		string = convert.from_bytes(std_to_string_with_precision(value, precision));
 	
 		if (selection_index_begin != invalid_selection_index && selection_index_end != invalid_selection_index) {
@@ -851,7 +851,7 @@ void widget2::DragFloat::publish(GUIDynamic& gui_dynamic, float& value) {
 			selection_index_end = string.size();
 		}
 	
-		cursor_position_when_grabbed_publish = gui_dynamic.get_io_state().mouse_position;
+		cursor_position_when_grabbed_publish = gui_dynamic.get_mouse_position_scale_independent();
 	}
 	
 	if (hold.is_deactivated_now(gui_dynamic))
@@ -931,7 +931,9 @@ void widget2::ComboBox::publish(GUIDynamic& gui_dynamic){
 
 	if (drop.is_active()) {
 
-		dropdown.position = gui_dynamic.window_prop().position + get_resolved_properties(gui_dynamic).position + glm::vec2(0, get_resolved_properties(gui_dynamic).size.y);
+		dropdown.position = 
+			gui_dynamic.window_prop().position + 
+			(get_resolved_properties(gui_dynamic).position + glm::vec2(0, get_resolved_properties(gui_dynamic).size.y)) * gui_dynamic.get_gui_scale();
 		dropdown.publish(gui_dynamic);
 
 		dropdown_stack.publish(gui_dynamic);

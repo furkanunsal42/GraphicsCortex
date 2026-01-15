@@ -89,10 +89,14 @@ public:
 	void				resolve(bool verbose = false);
 	
 	ResolvedProperties  get_resolved_properties(size_t id);
+	glm::vec2			get_mouse_position_scale_independent();
 	GUI::IOState&		get_io_state();
 
 	void				publish(GUI& gui);
 	time_point			get_current_frame_timepoint();
+	float				get_gui_scale();
+	void				set_gui_scale(float gui_scale);
+
 
 	struct WindowDesc {
 
@@ -350,7 +354,8 @@ private:
 
 	void			resolve_phase0_fit();
 	void			resolve_phase1_avail_and_position();
-	void			resolve_phase2_mouse_event();
+	void			resolve_phase2_gui_scale();
+	void			resolve_phase3_mouse_event();
 
 	bool			is_avail(float value);
 	bool			is_any_avail(glm::vec2 value);
@@ -370,7 +375,8 @@ private:
 
 	std::unordered_map<size_t, ResolvedProperties>	resolved_properties;
 	GUI::IOState	io_state;
-	time_point current_frame_timepoint = invalid_time;
+	time_point		current_frame_timepoint = invalid_time;
+	float			gui_scale = 1.0f;
 
 	size_t next_id_to_generate = 1;
 	size_t generate_id();

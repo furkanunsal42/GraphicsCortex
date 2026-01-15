@@ -1227,7 +1227,12 @@ void GUIDynamic::resolve(bool verbose)
 	if (verbose) std::cout << std::endl;
 	if (verbose) print_layout();
 
-	resolve_phase2_mouse_event();
+	resolve_phase2_gui_scale();
+
+	if (verbose) std::cout << std::endl;
+	if (verbose) print_layout();
+
+	resolve_phase3_mouse_event();
 }
 
 GUIDynamic::ResolvedProperties GUIDynamic::get_resolved_properties(size_t id)
@@ -1236,6 +1241,11 @@ GUIDynamic::ResolvedProperties GUIDynamic::get_resolved_properties(size_t id)
 		return ResolvedProperties();
 
 	return resolved_properties.at(id);
+}
+
+glm::vec2 GUIDynamic::get_mouse_position_scale_independent()
+{
+	return (io_state.mouse_position - window_prop().position) / gui_scale;
 }
 
 GUI::IOState& GUIDynamic::get_io_state() {
@@ -1616,10 +1626,34 @@ void GUIDynamic::resolve_phase1_avail_and_position()
 		});
 }
 
-void GUIDynamic::resolve_phase2_mouse_event()
+void GUIDynamic::resolve_phase2_gui_scale()
 {
 	if (layout_states.size() == 0) {
-		std::cout << "[GUI Error] GUIDynamic::resolve_phase2_mouse_event() is called but there are no windows in the hierarchy" << std::endl;
+		std::cout << "[GUI Error] GUIDynamic::resolve_phase2_gui_scale() is called but there are no windows in the hierarchy" << std::endl;
+		ASSERT(false);
+	}
+	
+	LayoutState& layout = layout_states.back();
+
+	traverse_nodes_down([&](int32_t level, size_t node_id) {
+
+		if (is_any_avail(node_size(node_id)))
+			return;
+		if (glm::any(glm::equal(node_size(node_id), glm::vec2(fit))))
+			return;
+
+		if (node_id != 0)
+			node_position(node_id)	*= gui_scale;
+		node_size(node_id)			*= gui_scale;
+			
+		});
+
+}
+
+void GUIDynamic::resolve_phase3_mouse_event()
+{
+	if (layout_states.size() == 0) {
+		std::cout << "[GUI Error] GUIDynamic::resolve_phase3_mouse_event() is called but there are no windows in the hierarchy" << std::endl;
 		ASSERT(false);
 	}
 
@@ -1712,8 +1746,8 @@ void GUIDynamic::resolve_phase2_mouse_event()
 		if (resolved_property.layout_id != layout_stack.back())
 			continue;
 
-		resolved_property.position =	node_id == Node::invalid_node ? glm::vec2(0) : node_position(node_id);
-		resolved_property.size =		node_id == Node::invalid_node ? glm::vec2(0) : node_size(node_id);
+		resolved_property.position =	node_id == Node::invalid_node ? glm::vec2(0) : node_position(node_id) / gui_scale;
+		resolved_property.size =		node_id == Node::invalid_node ? glm::vec2(0) : node_size(node_id) / gui_scale;
 	}
 }
 
@@ -1796,6 +1830,14 @@ void GUIDynamic::publish(GUI& gui)
 std::chrono::system_clock::time_point GUIDynamic::get_current_frame_timepoint()
 {
 	return current_frame_timepoint;
+}
+
+float GUIDynamic::get_gui_scale(){
+	return gui_scale;
+}
+
+void  GUIDynamic::set_gui_scale(float gui_scale){
+	this->gui_scale = gui_scale;
 }
 
 bool GUIDynamic::is_avail(float value) {

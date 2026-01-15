@@ -22,7 +22,9 @@ public:
 		GUI gui;
 		GUIDynamic gui_d;
 
-		FontBank::get().load_font("../GraphicsCortex/Fonts/Roboto-Regular.ttf", 32);
+		gui_d.set_gui_scale(6.0f);
+
+		FontBank::get().load_font("../GraphicsCortex/Fonts/Roboto-Regular.ttf", 32 * gui_d.get_gui_scale());
 
 		std::shared_ptr<Texture2D> texture = std::make_shared<Texture2D>(
 				256, 256,
