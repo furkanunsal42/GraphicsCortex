@@ -22,25 +22,12 @@ public:
 		GUI gui;
 		GUIDynamic gui_d;
 
-		gui_d.set_gui_scale(6.0f);
+		gui_d.set_gui_scale(1.5f);
 
 		FontBank::get().load_font("../GraphicsCortex/Fonts/Roboto-Regular.ttf", 32 * gui_d.get_gui_scale());
 
-		std::shared_ptr<Texture2D> texture = std::make_shared<Texture2D>(
-				256, 256,
-				Texture2D::ColorTextureFormat::RGBA8,
-				1, 0, 0
-			);
+		std::shared_ptr<Texture2D> texture = gui_d.gui_texture_bank.get_texture("../GraphicsCortex/Images/orange.png", Texture2D::ColorTextureFormat::RGBA8, Texture2D::ColorFormat::RGBA, Texture2D::Type::UNSIGNED_BYTE);
 
-		texture->is_bindless = true;
-			
-		texture->load_data(
-				Image("../GraphicsCortex/Images/orange.png", 256, 256, 1, 4, 1, true),
-				Texture2D::ColorFormat::RGBA,
-				Texture2D::Type::UNSIGNED_BYTE,
-				0
-			);
-		
 		while (true) {			
 			gui_d.new_frame(gui);
 
@@ -51,37 +38,30 @@ public:
 			window0.padding = glm::vec4(0);
 			
 			window0.drag(gui_d, menubar);
-			window0.publish(gui_d);
+			window0.publish_begin(gui_d);
 			
-			gui_d.grid_begin()
-				.set_target_size(glm::vec2(fit))
-				.set_padding(glm::vec4(0));
-
-			gui_d.grid_add_column(fit);
-			gui_d.grid_add_row(fit);
-			gui_d.grid_add_row(fit);
-
-			gui_d.grid_region(glm::ivec2(0, 0));
+			window0.publish_menubar_begin(gui_d);
 
 			style.apply(menubar);
 			menubar.window_controls.minimize_button.image.texture = texture;
 			menubar.window_controls.restore_button.image.texture = texture;
 			menubar.window_controls.close_button.image.texture = texture;
-			menubar.publish(gui_d);
+			menubar.publish_begin(gui_d);
 
 			static widget2::Menu menu;
 
 			style.apply(menu);
-			menu.publish(gui_d);
+			menu.publish_begin(gui_d);
 
 			if (menu.drop.is_active()) {
 
 			}
 
-			menu.end(gui_d);
+			menu.publish_end(gui_d);
 
-			menubar.end(gui_d);
-			gui_d.grid_region(glm::ivec2(0, 1));
+			menubar.publish_end(gui_d);
+			
+			window0.publish_menubar_end(gui_d);
 
 
 			gui_d.stack_begin()
@@ -140,7 +120,7 @@ public:
 			static widget2::ComboBox combobox;
 			
 			style.apply(combobox);
-			combobox.publish(gui_d);
+			combobox.publish_begin(gui_d);
 			
 			if (combobox.drop.is_active()) {
 
@@ -169,7 +149,7 @@ public:
 				item4.publish(gui_d, combobox);
 			}
 
-			combobox.end(gui_d);
+			combobox.publish_end(gui_d);
 
 			//static widget2::Window window1;
 			//style.apply(window1);

@@ -399,7 +399,6 @@ size_t GUIDynamic::get_node_id(size_t node_id)
 	std::cout << "[GUI Error] GUIDynamic::get_node_id() but an error is occured" << std::endl;
 	ASSERT(false);
 }
-
 GUI::MouseEvent& GUIDynamic::node_mouse_event(size_t node_id)
 {
 	if (layout_states.size() == 0) {
@@ -492,6 +491,10 @@ bool GUIDynamic::node_pass_through_events_non_ref(size_t node_id)
 
 
 ///////////		WINDOW		////////////
+
+void GUIDynamic::new_frame() {
+	new_frame(gui);
+}
 
 void GUIDynamic::new_frame(GUI& gui)
 {
@@ -1751,6 +1754,10 @@ void GUIDynamic::resolve_phase3_mouse_event()
 	}
 }
 
+void GUIDynamic::publish() {
+	publish(gui);
+}
+
 void GUIDynamic::publish(GUI& gui)
 {
 	if (layout_states.size() == 0)
@@ -2027,7 +2034,7 @@ GUIDynamic::BoxDesc& GUIDynamic::BoxDesc::set_uv11(glm::vec2 value)
 	return *this;
 }
 
-GUIDynamic::BoxDesc& GUIDynamic::BoxDesc::set_texture_handle(uint64_t value)
+GUIDynamic::BoxDesc& GUIDynamic::BoxDesc::set_texture_handle(size_t value)
 {
 	texture_handle = value;
 	return *this;

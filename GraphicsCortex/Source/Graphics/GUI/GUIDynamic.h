@@ -1,7 +1,9 @@
 #pragma once
-#include "GUI.h"
 #include <variant>
 #include <array>
+
+#include "GUI.h"
+#include "GUITextureBank.h"
 
 // rules of dynamic positioning
 // all objects have the following properties: 
@@ -60,6 +62,7 @@ public:
 	struct StackDesc;
 	struct ResolvedProperties;
 
+	void				new_frame();
 	void				new_frame(GUI& gui);
 
 	WindowDesc&			window_begin(size_t& id);
@@ -92,11 +95,14 @@ public:
 	glm::vec2			get_mouse_position_scale_independent();
 	GUI::IOState&		get_io_state();
 
+	void				publish();
 	void				publish(GUI& gui);
 	time_point			get_current_frame_timepoint();
 	float				get_gui_scale();
 	void				set_gui_scale(float gui_scale);
 
+	GUI gui;
+	GUITextureBank gui_texture_bank;
 
 	struct WindowDesc {
 

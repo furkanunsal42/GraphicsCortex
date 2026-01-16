@@ -10,6 +10,7 @@
 #include "Tools/ImmediateRendering/ImmediateRenderer.h"
 #include "Math/AABB.h"
 #include "Newsletter.h"
+#include "Texture2D.h"
 
 class GUI {
 public:
@@ -36,14 +37,6 @@ public:
 
 	Window*			get_parent_window();
 
-	size_t			create_gui_texture(const std::filesystem::path& file_path);
-	size_t			create_gui_texture(const Image& image);
-	size_t			create_gui_texture(Texture2D& texture);
-	void			destroy_gui_texture(size_t gui_texture_id);
-	bool			does_gui_texture_exist(size_t gui_texture_id);
-	
-	static constexpr size_t invalid_gui_texture = -1;
-
 	struct BoxDesc {
 
 		MouseEvent mouse_event		= None;
@@ -63,7 +56,7 @@ public:
 		float	  z					= 0;
 		glm::vec2 uv00				= glm::vec2(0);
 		glm::vec2 uv11				= glm::vec2(1);
-		uint64_t texture_handle		= 0;
+		uint64_t  texture_handle	= 0;
 
 	};
 
@@ -133,15 +126,6 @@ private:
 		size_t char_newsletter_event = Newsletter<void()>::invalid_id;
 		size_t key_newsletter_event = Newsletter<void()>::invalid_id;
 	};
-
-	struct GUITextureInfo {
-		std::shared_ptr<Texture2D>	texture = nullptr;
-		size_t						texture_handle = 0;
-	};
-
-	size_t generate_gui_texture_id();
-
-	std::unordered_map<size_t, GUITextureInfo> texture_info;
 
 	IOState io_state;
 	Window* parent_window = nullptr;

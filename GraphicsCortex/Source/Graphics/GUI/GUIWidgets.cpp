@@ -181,7 +181,7 @@ void widget2::Box::apply_properties_to(GUIDynamic::StackDesc& desc)
 	desc.pass_through_events = pass_through_events;
 }
 
-void widget2::Grid::publish(GUIDynamic& gui_dynamic) {
+void widget2::Grid::publish_begin(GUIDynamic& gui_dynamic) {
 
 	resolve_io(gui_dynamic);
 
@@ -195,7 +195,13 @@ void widget2::Grid::publish(GUIDynamic& gui_dynamic) {
 	gui_dynamic.grid_region(glm::ivec2(0));
 }
 
-void widget2::Stack::publish(GUIDynamic& gui_dynamic) {
+void widget2::Grid::publish_end(GUIDynamic& gui_dynamic) {
+	
+	gui_dynamic.grid_end();
+
+}
+
+void widget2::Stack::publish_begin(GUIDynamic& gui_dynamic) {
 
 	resolve_io(gui_dynamic);
 
@@ -209,7 +215,13 @@ void widget2::Stack::publish(GUIDynamic& gui_dynamic) {
 	gui_dynamic.stack_prop().is_vertical			= is_vertical;
 }
 
-void widget2::Window::publish(GUIDynamic& gui_dynamic) {
+void widget2::Stack::publish_end(GUIDynamic& gui_dynamic) {
+
+	gui_dynamic.stack_end();
+
+}
+
+void widget2::Window::publish_begin(GUIDynamic& gui_dynamic) {
 	
 	resolve_io(gui_dynamic);
 
@@ -231,6 +243,39 @@ void widget2::Window::publish(GUIDynamic& gui_dynamic) {
 		.set_border_color3(border_color3)
 		.set_shadow_thickness(shadow_thickness)
 		.set_shadow_color(shadow_color);
+
+	menubar_published = false;
+
+}
+
+void widget2::Window::publish_end(GUIDynamic& gui_dynamic) {
+
+	if (menubar_published)
+		gui_dynamic.grid_end();
+
+	gui_dynamic.window_end();
+
+}
+
+void widget2::Window::publish_menubar_begin(GUIDynamic& gui_dynamic) {
+
+	gui_dynamic.grid_begin()
+		.set_target_size(glm::vec2(GUIDynamic::fit))
+		.set_padding(glm::vec4(0));
+
+	gui_dynamic.grid_add_column(GUIDynamic::fit);
+	gui_dynamic.grid_add_row(GUIDynamic::fit);
+	gui_dynamic.grid_add_row(GUIDynamic::fit);
+
+	gui_dynamic.grid_region(glm::ivec2(0, 0));
+
+	menubar_published = true;
+}
+
+void widget2::Window::publish_menubar_end(GUIDynamic& gui_dynamic) {
+
+	gui_dynamic.grid_region(glm::ivec2(0, 1));
+
 }
 
 void widget2::Window::drag(GUIDynamic& gui_dynamic, IOWidget& widget) {
@@ -248,6 +293,18 @@ void widget2::Window::drag(GUIDynamic& gui_dynamic, IOWidget& widget) {
 	else
 		window_position_when_drag_begin = glm::vec2(-1000);
 
+}
+
+void widget2::Container::publish_begin(GUIDynamic& gui_dynamic) {
+
+	Grid::publish_begin(gui_dynamic);
+	gui_dynamic.grid_add_column(GUIDynamic::avail);
+	gui_dynamic.grid_add_row(GUIDynamic::avail);
+}
+
+void widget2::Container::publish_end(GUIDynamic& gui_dynamic) {
+
+	Grid::publish_end(gui_dynamic);
 }
 
 void widget2::Image::publish(GUIDynamic& gui_dynamic)
@@ -315,11 +372,11 @@ void widget2::Label::publish(GUIDynamic& gui_dynamic, const std::u32string& text
 	if (text.size() == 0)
 		return;
 
-	begin(gui_dynamic, text);
-	end(gui_dynamic, text);
+	publish_begin(gui_dynamic, text);
+	publish_end(gui_dynamic, text);
 }
 
-void widget2::Label::begin(GUIDynamic& gui_dynamic, const std::u32string& text) {
+void widget2::Label::publish_begin(GUIDynamic& gui_dynamic, const std::u32string& text) {
 	
 	if (active_global_resources == nullptr || !FontBank::get().does_font_exist(font))
 		return;
@@ -331,8 +388,7 @@ void widget2::Label::begin(GUIDynamic& gui_dynamic, const std::u32string& text) 
 	text_size = glm::vec2(0);
 	last_published_index = 0;
 
-	Grid::publish(gui_dynamic);
-	gui_dynamic.grid_region(glm::ivec2(0));
+	Container::publish_begin(gui_dynamic);
 
 }
 
@@ -372,12 +428,12 @@ bool widget2::Label::publish_glyph(GUIDynamic& gui_dynamic, size_t end_index, co
 	return published_at_least_once;
 }
 
-float widget2::Label::get_current_advance()
+float widget2::Label::get_published_advance()
 {
 	return advance;
 }
 
-float widget2::Label::compute_advance(size_t end_index, const std::u32string& text)
+float widget2::Label::compute_total_advance(size_t end_index, const std::u32string& text)
 {
 	if (active_global_resources == nullptr || !FontBank::get().does_font_exist(font))
 		return 0;
@@ -401,7 +457,7 @@ float widget2::Label::compute_advance(size_t end_index, const std::u32string& te
 	return computed_advance;
 }
 
-void widget2::Label::end(GUIDynamic& gui_dynamic, const std::u32string& text) {
+void widget2::Label::publish_end(GUIDynamic& gui_dynamic, const std::u32string& text) {
 
 	if (active_global_resources == nullptr || !FontBank::get().does_font_exist(font))
 		return;
@@ -411,18 +467,18 @@ void widget2::Label::end(GUIDynamic& gui_dynamic, const std::u32string& text) {
 
 	publish_glyph(gui_dynamic, text.size(), text);
 
-	gui_dynamic.grid_add_column(text_size.x);
-	gui_dynamic.grid_add_row(text_height/*text_size.y*/);
+	//gui_dynamic.grid_add_column(text_size.x);
+	//gui_dynamic.grid_add_row(text_height/*text_size.y*/);
 	//gui_dynamic.grid_prop().target_size = text_size;
+	
 	gui_dynamic.grid_prop().target_size = glm::vec2(text_size.x, text_height);
-	gui_dynamic.grid_end();
+	Container::publish_end(gui_dynamic);
 
 }
 
 void widget2::TextInput::publish(GUIDynamic& gui_dynamic, std::u32string& text)
 {
-	Grid::publish(gui_dynamic);
-	gui_dynamic.grid_region(glm::ivec2(0));
+	Container::publish_begin(gui_dynamic);
 
 	if (can_aquire_keyboard_focus) {
 		if (click.is_activated_now(gui_dynamic))
@@ -446,8 +502,8 @@ void widget2::TextInput::publish(GUIDynamic& gui_dynamic, std::u32string& text)
 	if (selection_index_begin != invalid_selection_index && selection_index_end != invalid_selection_index) {
 		int32_t min = std::min(selection_index_begin, selection_index_end);
 		int32_t max = std::max(selection_index_begin, selection_index_end);
-		float advance_begin = label.compute_advance(min, text_to_use);
-		float advance_end = label.compute_advance(max, text_to_use);
+		float advance_begin = label.compute_total_advance(min, text_to_use);
+		float advance_end = label.compute_total_advance(max, text_to_use);
 
 		gui_dynamic.box_begin()
 			.set_color(selected_background_color)
@@ -457,7 +513,7 @@ void widget2::TextInput::publish(GUIDynamic& gui_dynamic, std::u32string& text)
 
 	//label.margin.value.y = (get_resolved_properties(gui_dynamic).size.y - label.text_height) / 2;
 	
-	label.begin(gui_dynamic, text_to_use);
+	label.publish_begin(gui_dynamic, text_to_use);
 	if (selection_index_begin != invalid_selection_index && selection_index_end != invalid_selection_index) {
 		int32_t min = std::min(selection_index_begin, selection_index_end);
 		int32_t max = std::max(selection_index_begin, selection_index_end);
@@ -468,12 +524,9 @@ void widget2::TextInput::publish(GUIDynamic& gui_dynamic, std::u32string& text)
 				gui_dynamic.box_prop().set_color(selected_text_color);
 		}
 	}
-	label.end(gui_dynamic, text_to_use);
+	label.publish_end(gui_dynamic, text_to_use);
 
-
-	gui_dynamic.grid_add_column(GUIDynamic::avail);
-	gui_dynamic.grid_add_row(GUIDynamic::avail);
-	gui_dynamic.grid_end();
+	Grid::publish_end(gui_dynamic);
 }
 
 void widget2::TextInput::resolve_keyboard_io(GUIDynamic& gui_dynamic, std::u32string& text) {
@@ -756,10 +809,8 @@ void widget2::TextInput::resolve_keyboard_io(GUIDynamic& gui_dynamic, std::u32st
 
 void widget2::Slider::publish(GUIDynamic& gui_dynamic, float& value) {
 
-	Grid::publish(gui_dynamic);
-	gui_dynamic.grid_add_column(GUIDynamic::avail);
-	gui_dynamic.grid_add_row(GUIDynamic::avail);
-
+	Container::publish_begin(gui_dynamic);
+	
 	if (hold.is_active()) {
 		float position	= get_resolved_properties(gui_dynamic).position.x;
 		float size		= get_resolved_properties(gui_dynamic).size.x;
@@ -776,7 +827,8 @@ void widget2::Slider::publish(GUIDynamic& gui_dynamic, float& value) {
 	filled_bar.publish(gui_dynamic);
 	head.publish(gui_dynamic);
 
-	gui_dynamic.grid_end();
+	Container::publish_end(gui_dynamic);
+
 }
 
 namespace {
@@ -862,40 +914,34 @@ void widget2::DragFloat::publish(GUIDynamic& gui_dynamic, float& value) {
 
 void widget2::Button::publish(GUIDynamic& gui_dynamic) {
 
-	Grid::publish(gui_dynamic);
-	gui_dynamic.grid_add_column(GUIDynamic::avail);
-	gui_dynamic.grid_add_row(GUIDynamic::avail);
+	Container::publish_begin(gui_dynamic);
 
 	background.publish(gui_dynamic);
 	label.publish(gui_dynamic, text);
 
-	gui_dynamic.grid_end();
+	Container::publish_end(gui_dynamic);
 }
 
 void widget2::ImageButton::publish(GUIDynamic& gui_dynamic) {
 
-	Grid::publish(gui_dynamic);
-	gui_dynamic.grid_add_column(GUIDynamic::avail);
-	gui_dynamic.grid_add_row(GUIDynamic::avail);
-
+	Container::publish_begin(gui_dynamic);
+	
 	background.publish(gui_dynamic);
 	image.publish(gui_dynamic);
 
-	gui_dynamic.grid_end();
+	Container::publish_end(gui_dynamic);
 }
 
 void widget2::CheckBox::publish(GUIDynamic& gui_dynamic, bool& checked) {
 	
-	Grid::publish(gui_dynamic);
-	gui_dynamic.grid_add_column(GUIDynamic::avail);
-	gui_dynamic.grid_add_row(GUIDynamic::avail);
-
+	Container::publish_begin(gui_dynamic);
+	
 	background.publish(gui_dynamic);
 	
 	if (checked)
 		image.publish(gui_dynamic);
 
-	gui_dynamic.grid_end();
+	Container::publish_end(gui_dynamic);
 
 	if (click.is_activated_now(gui_dynamic)) {
 		checked = !checked;
@@ -907,16 +953,14 @@ void widget2::CheckBox::publish(GUIDynamic& gui_dynamic, bool& checked) {
 }
 
 
-void widget2::ComboBox::publish(GUIDynamic& gui_dynamic){
+void widget2::ComboBox::publish_begin(GUIDynamic& gui_dynamic){
 		
-	Grid::publish(gui_dynamic);
-	gui_dynamic.grid_add_column(GUIDynamic::avail);
-	gui_dynamic.grid_add_row(GUIDynamic::avail);
+	Container::publish_begin(gui_dynamic);
 
 	background.publish(gui_dynamic);
 	label.publish(gui_dynamic,  text);
 
-	gui_dynamic.grid_end();
+	Container::publish_end(gui_dynamic);
 
 	if (click.is_activated_now(gui_dynamic)) {
 		if (!drop.is_active())
@@ -934,17 +978,17 @@ void widget2::ComboBox::publish(GUIDynamic& gui_dynamic){
 		dropdown.position = 
 			gui_dynamic.window_prop().position + 
 			(get_resolved_properties(gui_dynamic).position + glm::vec2(0, get_resolved_properties(gui_dynamic).size.y)) * gui_dynamic.get_gui_scale();
-		dropdown.publish(gui_dynamic);
-
-		dropdown_stack.publish(gui_dynamic);
+		
+		dropdown.publish_begin(gui_dynamic);
+		dropdown_stack.publish_begin(gui_dynamic);
 	}
 }
 
-void widget2::ComboBox::end(GUIDynamic& gui_dynamic){
+void widget2::ComboBox::publish_end(GUIDynamic& gui_dynamic){
 	
 	if (drop.is_active()) {
-		gui_dynamic.stack_end();
-		gui_dynamic.window_end();
+		dropdown_stack.publish_end(gui_dynamic);
+		dropdown.publish_end(gui_dynamic);
 	}
 
 	if (item_selected.is_activated_now(gui_dynamic))
@@ -953,14 +997,12 @@ void widget2::ComboBox::end(GUIDynamic& gui_dynamic){
 
 void widget2::ComboBoxItem::publish(GUIDynamic& gui_dynamic, ComboBox& owner_combobox) {
 
-	Grid::publish(gui_dynamic);
-	gui_dynamic.grid_add_column(GUIDynamic::avail);
-	gui_dynamic.grid_add_row(GUIDynamic::avail);
+	Container::publish_begin(gui_dynamic);
 
 	background.publish(gui_dynamic);
 	label.publish(gui_dynamic, text);
 
-	gui_dynamic.grid_end();
+	Container::publish_end(gui_dynamic);
 
 	if (click.is_activated_now(gui_dynamic))
 		select(gui_dynamic, owner_combobox);
@@ -972,16 +1014,14 @@ void widget2::ComboBoxItem::select(GUIDynamic& gui_dynamic, ComboBox& owner_comb
 	owner_combobox.item_selected.impulse(gui_dynamic);
 }
 
-void widget2::Menu::publish(GUIDynamic& gui_dynamic) {
+void widget2::Menu::publish_begin(GUIDynamic& gui_dynamic) {
 
-	Grid::publish(gui_dynamic);
-	gui_dynamic.grid_add_column(GUIDynamic::avail);
-	gui_dynamic.grid_add_row(GUIDynamic::avail);
+	Container::publish_begin(gui_dynamic);
 
 	background.publish(gui_dynamic);
 	label.publish(gui_dynamic, text);
 
-	gui_dynamic.grid_end();
+	Container::publish_end(gui_dynamic);
 
 	if (click.is_activated_now(gui_dynamic)) {
 		if (!drop.is_active())
@@ -998,16 +1038,17 @@ void widget2::Menu::publish(GUIDynamic& gui_dynamic) {
 
 		dropdown.position = gui_dynamic.window_prop().position + get_resolved_properties(gui_dynamic).position + glm::vec2(0, get_resolved_properties(gui_dynamic).size.y);
 		dropdown.drag(gui_dynamic, dropdown);
-		dropdown.publish(gui_dynamic);
 
-		dropdown_stack.publish(gui_dynamic);
+		dropdown.publish_begin(gui_dynamic);
+		dropdown_stack.publish_begin(gui_dynamic);
 	}
 }
 
-void widget2::Menu::end(GUIDynamic& gui_dynamic) {
+void widget2::Menu::publish_end(GUIDynamic& gui_dynamic) {
+	
 	if (drop.is_active()) {
-		gui_dynamic.stack_end();
-		gui_dynamic.window_end();
+		dropdown_stack.publish_end(gui_dynamic);
+		dropdown.publish_end(gui_dynamic);
 	}
 
 	if (item_selected.is_activated_now(gui_dynamic))
@@ -1016,18 +1057,19 @@ void widget2::Menu::end(GUIDynamic& gui_dynamic) {
 
 void widget2::WindowControls::publish(GUIDynamic& gui_dynamic) {
 	
-	Stack::publish(gui_dynamic);
+	Stack::publish_begin(gui_dynamic);
 	
 	minimize_button.publish(gui_dynamic);
 	restore_button.publish(gui_dynamic);
 	close_button.publish(gui_dynamic);
 
-	gui_dynamic.stack_end();
+	Stack::publish_end(gui_dynamic);
 }
 
-void widget2::MenuBar::publish(GUIDynamic& gui_dynamic) {
+void widget2::MenuBar::publish_begin(GUIDynamic& gui_dynamic) {
 
-	Grid::publish(gui_dynamic);
+	Grid::publish_begin(gui_dynamic);
+
 	gui_dynamic.grid_add_column(GUIDynamic::avail);
 	gui_dynamic.grid_add_column(GUIDynamic::fit);
 	gui_dynamic.grid_add_row(GUIDynamic::avail);
@@ -1039,13 +1081,13 @@ void widget2::MenuBar::publish(GUIDynamic& gui_dynamic) {
 	window_controls.publish(gui_dynamic);
 
 	gui_dynamic.grid_region(glm::ivec2(0, 0));
-	manu_stack.publish(gui_dynamic);
+	manu_stack.publish_begin(gui_dynamic);
 	
 }
 
-void widget2::MenuBar::end(GUIDynamic& gui_dynamic) {
+void widget2::MenuBar::publish_end(GUIDynamic& gui_dynamic) {
 
-	gui_dynamic.stack_end();
-	gui_dynamic.grid_end();
+	manu_stack.publish_end(gui_dynamic);
+	Grid::publish_end(gui_dynamic);
 
 }

@@ -316,13 +316,6 @@ void GUI::_publish_last() {
 			desc.texture_handle, desc.uv00, desc.uv11
 		);
 
-
 		box_last = std::nullopt;
 	}
-}
-
-size_t GUI::generate_gui_texture_id()
-{
-	static size_t next_gui_texture_id = 0;
-	return next_gui_texture_id++;
 }

@@ -112,11 +112,17 @@ namespace widget2 {
 
 		StyleProperty<glm::vec2> position = glm::vec2(100);
 
-		void publish(GUIDynamic& gui_dynamic);
+		void publish_begin(GUIDynamic& gui_dynamic);
+		void publish_end(GUIDynamic& gui_dynamic);
+
+		void publish_menubar_begin(GUIDynamic& gui_dynamic);
+		void publish_menubar_end(GUIDynamic& gui_dynamic);
+
 		void drag(GUIDynamic& gui_dynamic, IOWidget& widget);
 
 	private:
-
+		
+		bool menubar_published = false;
 		glm::vec2 window_position_when_drag_begin = glm::vec2(-1000);
 
 	};
@@ -166,7 +172,8 @@ namespace widget2 {
 		StyleProperty<glm::vec2>	max_size;
 		bool pass_through_events;
 
-		void publish(GUIDynamic& gui_dynamic);
+		void publish_begin(GUIDynamic& gui_dynamic);
+		void publish_end(GUIDynamic& gui_dynamic);
 
 	};
 
@@ -181,7 +188,15 @@ namespace widget2 {
 		bool is_vertical;
 		bool pass_through_events;
 
-		void publish(GUIDynamic& gui_dynamic);
+		void publish_begin(GUIDynamic& gui_dynamic);
+		void publish_end(GUIDynamic& gui_dynamic);
+
+	};
+
+	struct Container : public Grid {
+
+		void publish_begin(GUIDynamic& gui_dynamic);
+		void publish_end(GUIDynamic& gui_dynamic);
 	};
 
 	struct Image : public Box {
@@ -203,7 +218,7 @@ namespace widget2 {
 		size_t grid_id = GUIDynamic::invalid_id;
 	};
 
-	struct Label : public Grid {
+	struct Label : public Container {
 
 		font_id font;
 		float text_height;
@@ -211,11 +226,12 @@ namespace widget2 {
 
 		void publish(GUIDynamic& gui_dynamic, const std::u32string& text);
 
-		void begin(GUIDynamic& gui_dynamic, const std::u32string& text);
+		void publish_begin(GUIDynamic& gui_dynamic, const std::u32string& text);
 		bool publish_glyph(GUIDynamic& gui_dynamic, size_t end_index, const std::u32string& text);
-		float get_current_advance();
-		float compute_advance(size_t end_index, const std::u32string& text);
-		void end(GUIDynamic& gui_dynamic, const std::u32string& text);
+		void publish_end(GUIDynamic& gui_dynamic, const std::u32string& text);
+		
+		float get_published_advance();
+		float compute_total_advance(size_t end_index, const std::u32string& text);
 
 	private:
 		float		advance					= 0;
@@ -223,7 +239,7 @@ namespace widget2 {
 		int32_t		last_published_index	= 0; 
 	};
 
-	struct TextInput : public Grid {
+	struct TextInput : public Container {
 
 		Box	  background;
 		Label label;
@@ -251,7 +267,7 @@ namespace widget2 {
 		void resolve_keyboard_io(GUIDynamic& gui_dynamic, std::u32string& text);
 	};
 
-	struct Slider : public Grid {
+	struct Slider : public Container {
 
 		Box head;
 		Box background;
@@ -285,7 +301,7 @@ namespace widget2 {
 		glm::vec2 cursor_position_when_grabbed_publish = invalid_cursor_position;
 	};
 
-	struct Button : public Grid {
+	struct Button : public Container {
 
 		Box background;
 		Label label;
@@ -296,7 +312,7 @@ namespace widget2 {
 
 	};
 
-	struct ImageButton : public Grid {
+	struct ImageButton : public Container {
 
 		Image	image;
 		Box		background;
@@ -305,7 +321,7 @@ namespace widget2 {
 
 	};
 
-	struct CheckBox : public Grid {
+	struct CheckBox : public Container {
 
 		Image	image;
 		Box		background;
@@ -315,7 +331,7 @@ namespace widget2 {
 		IOEvent check;
 	};
 
-	struct ComboBox : public Grid {
+	struct ComboBox : public Container {
 
 		Box		background;
 		Label	label;
@@ -325,14 +341,14 @@ namespace widget2 {
 
 		std::u32string text = U"ComboBox";
 		
-		void publish(GUIDynamic& gui_dynamic);
-		void end(GUIDynamic& gui_dynamic);
+		void publish_begin(GUIDynamic& gui_dynamic);
+		void publish_end(GUIDynamic& gui_dynamic);
 
 		IOEvent item_selected;
 		IOEvent drop;
 	};
 
-	struct ComboBoxItem : Grid {
+	struct ComboBoxItem : Container {
 
 		Box		background;
 		Label	label;
@@ -344,7 +360,7 @@ namespace widget2 {
 
 	};
 
-	struct Menu : public Grid {
+	struct Menu : public Container {
 
 		Box background;
 		Label label;
@@ -356,12 +372,12 @@ namespace widget2 {
 		IOEvent drop;
 		std::u32string text = U"Menu";
 
-		void publish(GUIDynamic& gui_dynamic);
-		void end(GUIDynamic& gui_dynamic);
+		void publish_begin(GUIDynamic& gui_dynamic);
+		void publish_end(GUIDynamic& gui_dynamic);
 
 	};
 
-	struct MenuItem : public Grid {
+	struct MenuItem : public Container {
 
 		Box		background;
 		Label	label;
@@ -389,8 +405,8 @@ namespace widget2 {
 		
 		WindowControls window_controls;
 		
-		void publish(GUIDynamic& gui_dynamic);
-		void end(GUIDynamic& gui_dynamic);
+		void publish_begin(GUIDynamic& gui_dynamic);
+		void publish_end(GUIDynamic& gui_dynamic);
 	};
 
 	struct Tab {
