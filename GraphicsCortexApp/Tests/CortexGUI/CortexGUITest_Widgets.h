@@ -17,6 +17,9 @@ public:
 		constexpr auto fit			= GUIDynamic::fit;
 		constexpr auto invalid_id	= GUIDynamic::invalid_id;
 
+		Package::load_package("graphics_cortex.hbv");
+		Package::loaded_package->print_headers();
+
 		widget2::DefaultStyle style;
 
 		GUI gui;
@@ -26,7 +29,7 @@ public:
 
 		FontBank::get().load_font("../GraphicsCortex/Fonts/Roboto-Regular.ttf", 32 * gui_d.get_gui_scale());
 
-		std::shared_ptr<Texture2D> texture = gui_d.gui_texture_bank.get_texture("../GraphicsCortex/Images/orange.png", Texture2D::ColorTextureFormat::RGBA8, Texture2D::ColorFormat::RGBA, Texture2D::Type::UNSIGNED_BYTE);
+		std::shared_ptr<Texture2D> texture = gui_d.gui_texture_bank.get_texture("Images/orange.png", Texture2D::ColorTextureFormat::RGBA8, Texture2D::ColorFormat::RGBA, Texture2D::Type::UNSIGNED_BYTE, glm::ivec2(860, 829));
 
 		while (true) {			
 			gui_d.new_frame(gui);
