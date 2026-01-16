@@ -88,7 +88,6 @@ int main(int32_t argc, const char* argv[]) {
 		if (verbose)
 			p.print_headers();
 
-		p.clear_obfuscation_seeds();
 		p.save_to_disk(output_directory / output_filename);
 	
 		if (verbose)
