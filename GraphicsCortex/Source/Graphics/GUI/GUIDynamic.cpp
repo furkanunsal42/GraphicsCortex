@@ -1,6 +1,7 @@
 #include "GUIDynamic.h"
 #include <queue>
 #include "GLMCout.h"
+#include "Monitor.h"
 
 size_t GUIDynamic::find_last_of_type(NodeType type)
 {
@@ -492,12 +493,15 @@ bool GUIDynamic::node_pass_through_events_non_ref(size_t node_id)
 
 ///////////		WINDOW		////////////
 
-void GUIDynamic::new_frame() {
-	new_frame(gui);
+void GUIDynamic::new_frame(bool update_gui_scale_from_monitor) {
+	new_frame(gui, update_gui_scale_from_monitor);
 }
 
-void GUIDynamic::new_frame(GUI& gui)
+void GUIDynamic::new_frame(GUI& gui, bool update_gui_scale_from_monitor)
 {
+	if (update_gui_scale_from_monitor)
+		set_gui_scale(Monitor::get_all_monitors()[0].get_content_scale().x);
+	
 	if (layout_stack.size() != 0) {
 		std::cout << "[GUI Error] GUIDynamic::new_frame() is called but previous gui hierarchy were invalid" << std::endl;
 		ASSERT(false);
@@ -1756,6 +1760,7 @@ void GUIDynamic::resolve_phase3_mouse_event()
 
 void GUIDynamic::publish() {
 	publish(gui);
+	gui.render();
 }
 
 void GUIDynamic::publish(GUI& gui)
