@@ -62,6 +62,8 @@ public:
 	struct StackDesc;
 	struct ResolvedProperties;
 
+	GUIDynamic();
+
 	void				new_frame(bool update_gui_scale_from_monitor = true);
 	void				new_frame(GUI& gui, bool update_gui_scale_from_monitor = true);
 

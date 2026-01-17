@@ -489,7 +489,9 @@ bool GUIDynamic::node_pass_through_events_non_ref(size_t node_id)
 	return false;
 }
 
-
+GUIDynamic::GUIDynamic() {
+	set_gui_scale(Monitor::get_all_monitors()[0].get_content_scale().x);
+}
 
 ///////////		WINDOW		////////////
 
