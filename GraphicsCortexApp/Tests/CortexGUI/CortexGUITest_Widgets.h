@@ -41,28 +41,28 @@ public:
 			window0.drag(gui_d, menubar);
 			window0.publish_begin(gui_d);
 			
-			window0.publish_menubar_begin(gui_d);
-
-			style.apply(menubar);
-			menubar.window_controls.minimize_button.image.texture = texture;
-			menubar.window_controls.restore_button.image.texture = texture;
-			menubar.window_controls.close_button.image.texture = texture;
-			menubar.publish_begin(gui_d);
-
-			static widget2::Menu menu;
-
-			style.apply(menu);
-			menu.publish_begin(gui_d);
-
-			if (menu.drop.is_active()) {
-
-			}
-
-			menu.publish_end(gui_d);
-
-			menubar.publish_end(gui_d);
-			
-			window0.publish_menubar_end(gui_d);
+			//window0.publish_menubar_begin(gui_d);
+			//
+			//style.apply(menubar);
+			//menubar.window_controls.minimize_button.image.texture = texture;
+			//menubar.window_controls.restore_button.image.texture = texture;
+			//menubar.window_controls.close_button.image.texture = texture;
+			//menubar.publish_begin(gui_d);
+			//
+			//static widget2::Menu menu;
+			//
+			//style.apply(menu);
+			//menu.publish_begin(gui_d);
+			//
+			//if (menu.drop.is_active()) {
+			//
+			//}
+			//
+			//menu.publish_end(gui_d);
+			//
+			//menubar.publish_end(gui_d);
+			//
+			//window0.publish_menubar_end(gui_d);
 
 
 			gui_d.stack_begin()
@@ -162,9 +162,10 @@ public:
 
 			gui_d.stack_end();
 
-			gui_d.grid_end();
-			gui_d.window_end();
-			
+			//gui_d.grid_end();
+			//gui_d.window_end();
+			window0.publish_end(gui_d);
+
 			gui_d.publish();
 
 			static bool once = true;

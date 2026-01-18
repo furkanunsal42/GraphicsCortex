@@ -9,7 +9,7 @@ namespace widget2 {
 		widget.padding			= glm::vec4(10);
 		widget.target_size		= glm::vec2(GUIDynamic::fit);
 		widget.min_size			= glm::vec2(GUIDynamic::fit);
-		widget.max_size			= glm::vec2(GUIDynamic::fit);
+		widget.max_size			= glm::vec2(10240);
 		widget.color			= glm::vec4(0.98f, 0.98f, 0.98f, 1);
 		widget.border_thickness	= glm::vec4(0);
 		widget.border_rounding	= glm::vec4(0);
@@ -27,7 +27,7 @@ namespace widget2 {
 		widget.margin			= glm::vec4(0);
 		widget.target_size		= glm::vec2(128);	
 		widget.min_size			= glm::vec2(GUIDynamic::fit);	
-		widget.max_size			= glm::vec2(GUIDynamic::avail);	
+		widget.max_size			= glm::vec2(10240);	
 		widget.color			= glm::vec4(1, 1, 1, 1);
 		widget.border_thickness	= glm::vec4(0);			
 		widget.border_rounding	= glm::vec4(0);		
@@ -46,7 +46,7 @@ namespace widget2 {
 		widget.padding		= glm::vec4(0);
 		widget.target_size	= glm::vec2(GUIDynamic::fit);
 		widget.min_size		= glm::vec2(GUIDynamic::fit);	
-		widget.max_size		= glm::vec2(GUIDynamic::avail);
+		widget.max_size		= glm::vec2(10240);
 		widget.pass_through_events = true;
 	}
 
@@ -56,7 +56,7 @@ namespace widget2 {
 		widget.padding		= glm::vec4(0);
 		widget.target_size	= glm::vec2(GUIDynamic::fit);
 		widget.min_size		= glm::vec2(GUIDynamic::fit);	
-		widget.max_size		= glm::vec2(GUIDynamic::avail);	
+		widget.max_size		= glm::vec2(10240);
 		widget.spacing		= 10;
 		widget.is_vertical	= true;
 		widget.pass_through_events = true;

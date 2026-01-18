@@ -14,6 +14,8 @@ public:
 		GUI gui;
 		GUIDynamic gui_d;
 		
+		gui_d.new_frame(gui);
+
 		size_t window_id = GUIDynamic::invalid_id;
 		gui_d.window_begin(window_id);
 		gui_d.stack_begin();
@@ -47,9 +49,9 @@ public:
 
 		//gui_d.print_nodes();
 		//std::cout << std::endl;
-		//gui_d.print_layout();
+		gui_d.print_layout();
 		//std::cout << std::endl;
-		gui_d.resolve();
+		//gui_d.resolve();
 		
 		while (true) {
 			

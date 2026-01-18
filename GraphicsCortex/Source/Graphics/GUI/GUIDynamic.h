@@ -111,7 +111,7 @@ public:
 		glm::vec4	padding				= glm::vec4(10);
 		glm::vec2	target_size			= glm::vec2(fit);
 		glm::vec2	min_size			= glm::vec2(fit);
-		glm::vec2	max_size			= glm::vec2(avail);
+		glm::vec2	max_size			= glm::vec2(10240);
 
 		std::string name				= "CortexGUI Window";
 		glm::vec4	color				= glm::vec4(1, 1, 1, 1);
@@ -215,7 +215,7 @@ public:
 		glm::vec4	padding				= glm::vec4(10);
 		glm::vec2	target_size			= glm::vec2(fit);
 		glm::vec2	min_size			= glm::vec2(fit);
-		glm::vec2	max_size			= glm::vec2(avail);
+		glm::vec2	max_size			= glm::vec2(10240);
 		
 		std::vector<float> columns;
 		std::vector<float> rows;
@@ -254,7 +254,7 @@ public:
 		glm::vec4	padding				= glm::vec4(10);
 		glm::vec2	target_size			= glm::vec2(fit);
 		glm::vec2	min_size			= glm::vec2(fit);
-		glm::vec2	max_size			= glm::vec2(avail);
+		glm::vec2	max_size			= glm::vec2(10240);
 
 		float		spacing				= 10;
 		bool		is_vertical			= true;

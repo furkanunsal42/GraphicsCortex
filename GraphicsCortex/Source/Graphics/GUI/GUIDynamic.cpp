@@ -1210,6 +1210,8 @@ void GUIDynamic::print_layout()
 			std::cout << " size: " << node_size(node);
 			std::cout << " position: " << node_position(node);
 			std::cout << " target_size: " << node_target_size(node);
+			std::cout << " min_size: " << node_min_size(node);
+			std::cout << " max_size: " << node_max_size(node);
 			if (type != NodeType::Window)	std::cout << " margin: " << node_margin(node);
 			if (type != NodeType::Box)		std::cout << " padding: " << node_padding(node);
 			std::cout << std::endl;
@@ -1287,15 +1289,19 @@ void GUIDynamic::resolve_phase0_fit(){
 		{
 			auto& desc = std::get<WindowDesc>(node.desc);
 
+			glm::vec2 self_padding = non_avail(desc.padding);
+
 			if (node.child == Node::invalid_node) {
 
-				if (desc.target_size.x	== fit) desc.target_size.x	= 0;
-				if (desc.target_size.y	== fit)	desc.target_size.y	= 0;
-				if (desc.min_size.x		== fit) desc.min_size.x		= 0;
-				if (desc.min_size.y		== fit)	desc.min_size.y		= 0;
-				if (desc.max_size.x		== fit) desc.max_size.x		= 0;
-				if (desc.max_size.y		== fit)	desc.max_size.y		= 0;
-			
+				if (desc.min_size.x == fit)		desc.min_size.x = non_avail(desc.target_size.x) + self_padding.x;
+				if (desc.min_size.y == fit)		desc.min_size.y = non_avail(desc.target_size.y) + self_padding.y;
+				if (desc.target_size.x == fit)  desc.target_size.x = desc.min_size.x			+ self_padding.x;
+				if (desc.target_size.y == fit)	desc.target_size.y = desc.min_size.y			+ self_padding.y;
+				if (desc.max_size.x == fit)		desc.max_size.x = desc.min_size.x				+ self_padding.x;
+				if (desc.max_size.y == fit)		desc.max_size.y = desc.min_size.y				+ self_padding.y;
+				if (desc.max_size.x == avail)	desc.max_size.x = 10240							+ self_padding.x;
+				if (desc.max_size.y == avail)	desc.max_size.y = 10240							+ self_padding.y;
+
 				break;
 			}
 
@@ -1304,33 +1310,38 @@ void GUIDynamic::resolve_phase0_fit(){
 			glm::vec2 child_max_size	= node_max_size(node.child);
 			glm::vec2 child_margin		= non_avail(node_margin(node.child));
 
-			if (desc.target_size.x	== fit) desc.target_size.x	= child_target_size.x;
-			if (desc.target_size.y	== fit)	desc.target_size.y	= child_target_size.y;
-			if (desc.min_size.x		== fit) desc.min_size.x		= child_min_size.x;
-			if (desc.min_size.y		== fit)	desc.min_size.y		= child_min_size.y;
-			if (desc.max_size.x		== fit) desc.max_size.x		= child_max_size.x;
-			if (desc.max_size.y		== fit)	desc.max_size.y		= child_max_size.y;
 
+			if (desc.target_size.x	== fit) desc.target_size.x	= child_min_size.x + child_margin.x + self_padding.x;
+			if (desc.target_size.y	== fit)	desc.target_size.y	= child_min_size.y + child_margin.y + self_padding.y;
+			if (desc.min_size.x		== fit) desc.min_size.x		= child_min_size.x + child_margin.x + self_padding.x;
+			if (desc.min_size.y		== fit)	desc.min_size.y		= child_min_size.y + child_margin.y + self_padding.y;
+			if (desc.max_size.x		== fit) desc.max_size.x		= child_min_size.x + child_margin.x + self_padding.x;
+			if (desc.max_size.y		== fit)	desc.max_size.y		= child_min_size.y + child_margin.y + self_padding.y;
+			
 			break;
 		}
 		case Box:
-		{
+			{ 
 			auto& desc = std::get<BoxDesc>(node.desc);
-			
-			if (desc.target_size.x == fit)  desc.target_size.x = 0;
-			if (desc.target_size.y == fit)	desc.target_size.y = 0;
-			if (desc.min_size.x == fit)		desc.min_size.x = 0;
-			if (desc.min_size.y == fit)		desc.min_size.y = 0;
-			if (desc.max_size.x == fit)		desc.max_size.x = 0;
-			if (desc.max_size.y == fit)		desc.max_size.y = 0;
+
+			if (desc.min_size.x == fit)		desc.min_size.x		= non_avail(desc.target_size.x);
+			if (desc.min_size.y == fit)		desc.min_size.y		= non_avail(desc.target_size.y);
+			if (desc.target_size.x == fit)  desc.target_size.x	= desc.min_size.x;
+			if (desc.target_size.y == fit)	desc.target_size.y	= desc.min_size.y;
+			if (desc.max_size.x == fit)		desc.max_size.x		= desc.min_size.x;
+			if (desc.max_size.y == fit)		desc.max_size.y		= desc.min_size.y;
+			if (desc.max_size.x == avail)	desc.max_size.x		= 10240;
+			if (desc.max_size.y == avail)	desc.max_size.y		= 10240;
 
 			break;
 		}
 		case Grid:
 		{
 			auto& desc = std::get<GridDesc>(node.desc);
+			
+			glm::vec2 self_padding = non_avail(desc.padding);
 
-			desc.size = desc.target_size;
+			//desc.size = desc.target_size;
 
 			for (int32_t column_id = 0; column_id < desc.columns.size(); column_id++) {
 				if (desc.columns[column_id] == fit) {
@@ -1371,12 +1382,23 @@ void GUIDynamic::resolve_phase0_fit(){
 			for (int32_t row_id = 0; row_id < desc.rows.size(); row_id++)
 				if (desc.rows[row_id] > 0) grid_min_size.y += desc.rows[row_id];
 
-			if (desc.target_size.x == fit)  desc.target_size.x	= grid_min_size.x;
-			if (desc.target_size.y == fit)	desc.target_size.y	= grid_min_size.y;
-			if (desc.min_size.x == fit)		desc.min_size.x		= grid_min_size.x;
-			if (desc.min_size.y == fit)		desc.min_size.y		= grid_min_size.y;
-			if (desc.max_size.x == fit)		desc.max_size.x		= grid_min_size.x;
-			if (desc.max_size.y == fit)		desc.max_size.y		= grid_min_size.y;
+
+			if (desc.min_size.x == fit)		desc.min_size.x		= non_avail(desc.target_size.x);
+			if (desc.min_size.y == fit)		desc.min_size.y		= non_avail(desc.target_size.y);
+			if (desc.target_size.x == fit)  desc.target_size.x	= desc.min_size.x;
+			if (desc.target_size.y == fit)	desc.target_size.y	= desc.min_size.y;
+			if (desc.max_size.x == fit)		desc.max_size.x		= desc.min_size.x;
+			if (desc.max_size.y == fit)		desc.max_size.y		= desc.min_size.y;
+			if (desc.max_size.x == avail)	desc.max_size.x		= 10240;
+			if (desc.max_size.y == avail)	desc.max_size.y		= 10240;
+
+
+			//if (desc.target_size.x == fit)  desc.target_size.x	= grid_min_size.x + self_padding.x;
+			//if (desc.target_size.y == fit)	desc.target_size.y	= grid_min_size.y + self_padding.y;
+			//if (desc.min_size.x == fit)		desc.min_size.x		= grid_min_size.x + self_padding.x;
+			//if (desc.min_size.y == fit)		desc.min_size.y		= grid_min_size.y + self_padding.y;
+			//if (desc.max_size.x == fit)		desc.max_size.x		= grid_min_size.x + self_padding.x;
+			//if (desc.max_size.y == fit)		desc.max_size.y		= grid_min_size.y + self_padding.y;
 
 			break;
 		}
@@ -1384,14 +1406,18 @@ void GUIDynamic::resolve_phase0_fit(){
 		{
 			auto& desc = std::get<StackDesc>(node.desc);
 
+			glm::vec2 self_padding = non_avail(desc.padding);
+
 			if (node.child == Node::invalid_node) {
 				
-				if (desc.target_size.y == fit)	desc.target_size.y	= 0;
-				if (desc.target_size.x == fit)  desc.target_size.x	= 0;
-				if (desc.min_size.x == fit)		desc.min_size.x		= 0;
-				if (desc.min_size.y == fit)		desc.min_size.y		= 0;
-				if (desc.max_size.x == fit)		desc.max_size.x		= 0;
-				if (desc.max_size.y == fit)		desc.max_size.y		= 0;
+				if (desc.min_size.x == fit)		desc.min_size.x = non_avail(desc.target_size.x) + self_padding.x;
+				if (desc.min_size.y == fit)		desc.min_size.y = non_avail(desc.target_size.y) + self_padding.y;
+				if (desc.target_size.x == fit)  desc.target_size.x = desc.min_size.x			+ self_padding.x;
+				if (desc.target_size.y == fit)	desc.target_size.y = desc.min_size.y			+ self_padding.y;
+				if (desc.max_size.x == fit)		desc.max_size.x = desc.min_size.x				+ self_padding.x;
+				if (desc.max_size.y == fit)		desc.max_size.y = desc.min_size.y				+ self_padding.y;
+				if (desc.max_size.x == avail)	desc.max_size.x = 10240							+ self_padding.x;
+				if (desc.max_size.y == avail)	desc.max_size.y = 10240							+ self_padding.y;
 
 			}
 			else if (glm::any(glm::equal(desc.target_size, glm::vec2(fit)))) {
@@ -1417,12 +1443,12 @@ void GUIDynamic::resolve_phase0_fit(){
 				if (desc.is_vertical)	stack_min_size.y += desc.spacing * glm::max((children_count - 1), 0);
 				else					stack_min_size.x += desc.spacing * glm::max((children_count - 1), 0);
 
-				if (desc.target_size.x == fit)  desc.target_size.x	= stack_min_size.x;
-				if (desc.target_size.y == fit)	desc.target_size.y	= stack_min_size.y;
-				if (desc.min_size.x == fit)		desc.min_size.x		= stack_min_size.x;
-				if (desc.min_size.y == fit)		desc.min_size.y		= stack_min_size.y;
-				if (desc.max_size.x == fit)		desc.max_size.x		= stack_min_size.x;
-				if (desc.max_size.y == fit)		desc.max_size.y		= stack_min_size.y;
+				if (desc.target_size.x == fit)  desc.target_size.x	= stack_min_size.x + self_padding.x;
+				if (desc.target_size.y == fit)	desc.target_size.y	= stack_min_size.y + self_padding.y;
+				if (desc.min_size.x == fit)		desc.min_size.x		= stack_min_size.x + self_padding.x;
+				if (desc.min_size.y == fit)		desc.min_size.y		= stack_min_size.y + self_padding.y;
+				if (desc.max_size.x == fit)		desc.max_size.x		= stack_min_size.x + self_padding.x;
+				if (desc.max_size.y == fit)		desc.max_size.y		= stack_min_size.y + self_padding.y;
 				
 			}
 
@@ -1487,10 +1513,13 @@ void GUIDynamic::resolve_phase1_avail_and_position()
 		}
 		case Grid:
 		{
+			auto& desc = std::get<GridDesc>(node.desc);
+			
+			desc.size = glm::clamp(desc.target_size, desc.min_size, desc.max_size);
+
 			if (node.child == Node::invalid_node)
 				return;
 
-			auto& desc = std::get<GridDesc>(node.desc);
 
 			glm::vec2 cells_min_size = glm::vec2(0);
 			glm::ivec2 cells_avails_total = glm::ivec2(0);
@@ -1521,7 +1550,7 @@ void GUIDynamic::resolve_phase1_avail_and_position()
 
 			traverse_nodes_children(node_id, [&](size_t child_id) {
 
-				glm::vec2 child_target_size = node_target_size(child_id);
+				glm::vec2& child_target_size = node_target_size(child_id);
 				glm::vec4& child_margin_ref = node_margin(child_id);
 
 				glm::ivec2 child_total_avail = avail_ratio(child_margin_ref) + avail_ratio(child_target_size);
@@ -1540,10 +1569,8 @@ void GUIDynamic::resolve_phase1_avail_and_position()
 
 				glm::vec2 child_size_per_avail = compute_size_per_avail(cell_size - child_non_avail_size, child_total_avail);
 
-				glm::vec2& child_size_ref = node_size(child_id);
-
-				if (is_avail(child_target_size.x)) child_size_ref.x = avail_ratio(child_target_size.x) * child_size_per_avail.x;
-				if (is_avail(child_target_size.y)) child_size_ref.y = avail_ratio(child_target_size.y) * child_size_per_avail.y;
+				if (is_avail(child_target_size.x)) child_target_size.x = avail_ratio(child_target_size.x) * child_size_per_avail.x;
+				if (is_avail(child_target_size.y)) child_target_size.y = avail_ratio(child_target_size.y) * child_size_per_avail.y;
 
 				glm::vec2 cell_position =
 					glm::vec2(
@@ -1685,24 +1712,16 @@ void GUIDynamic::resolve_phase1_avail_and_position()
 							child_avail_off_side
 						);
 				}
-
-				if ( desc.is_vertical)	node_target_size(child_id).x = clamped_size;
-				if (!desc.is_vertical)	node_target_size(child_id).y = clamped_size;
-
+				
 				glm::vec2 effective_margin = glm::vec2(0);
 
 				if (desc.is_vertical) {
-					child_size_ref.x = compute_physical_size(child_size_ref.x, child_avail_per_size_off_side);
-					child_size_ref.y = compute_physical_size(child_size_ref.y, size_per_avail);
-
+					child_target_size_ref.x = clamped_size;
 					effective_margin.x = compute_physical_size(child_margin_ref.x, child_avail_per_size_off_side);
 					effective_margin.y = compute_physical_size(child_margin_ref.y, size_per_avail);
-
 				}
 				else {
-					child_size_ref.x = compute_physical_size(child_size_ref.x, size_per_avail);
-					child_size_ref.y = compute_physical_size(child_size_ref.y, child_avail_per_size_off_side);
-
+					child_target_size_ref.y = clamped_size;
 					effective_margin.x = compute_physical_size(child_margin_ref.x, size_per_avail);
 					effective_margin.y = compute_physical_size(child_margin_ref.y, child_avail_per_size_off_side);
 				}
@@ -1717,7 +1736,7 @@ void GUIDynamic::resolve_phase1_avail_and_position()
 						glm::vec2(current_position, 0)
 						);
 
-				current_position += desc.is_vertical ? child_size_ref.y : child_size_ref.x;
+				current_position += desc.is_vertical ? child_target_size_ref.y : child_target_size_ref.x;
 				current_position += desc.spacing;
 
 				});
@@ -1748,9 +1767,14 @@ void GUIDynamic::resolve_phase2_gui_scale()
 		if (node_id != 0)
 			node_position(node_id)	*= gui_scale;
 		node_size(node_id)			*= gui_scale;
-			
+		
+		if (get_type(layout.nodes[node_id]) == Box) {
+			auto& desc = std::get<BoxDesc>(layout.nodes[node_id].desc);
+			desc.border_rounding	*= gui_scale;
+			desc.border_thickness	*= gui_scale;
+			desc.shadow_thickness	*= gui_scale;
+		}
 		});
-
 }
 
 void GUIDynamic::resolve_phase3_mouse_event()
