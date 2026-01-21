@@ -39,7 +39,7 @@ void main(){
 		return;
 	}
 
-	const vec2 position_local = v_position.xy - v_position_size.xy;
+	const vec2 position_local = v_position.xy - round(v_position_size.xy);
 	const vec2 size = v_position_size.zw;
 	
 	vec4 border_distances;
@@ -62,18 +62,17 @@ void main(){
 	vec4 active_color;
 	
 	if(!any(inside_corner)){
-		const vec4 length_inside_border = border_distances - v_border_thickness;
-	
-		bvec4 borders = lessThan(length_inside_border, vec4(0));
-		bvec4 mask = lessThanEqual(length_inside_border.xyzw, min(min(length_inside_border.yxxx, length_inside_border.zzyy), length_inside_border.wwwz));
-		borders = and(mask, borders);
-		
-		active_color =	
-			borders.x	? v_border_color0 :
-			borders.y	? v_border_color1 :
-			borders.z	? v_border_color2 :
-			borders.w	? v_border_color3 :
-			v_fill_color;
+		const vec4 length_inside_border = v_border_thickness - border_distances;
+		const vec4 border_coefficient = clamp(length_inside_border, 0, 1);
+		float total_coefficitent = border_coefficient.x + border_coefficient.y + border_coefficient.z + border_coefficient.w;
+
+		active_color = (1 - clamp(total_coefficitent, 0, 1)) * v_fill_color;
+		if (total_coefficitent > 0) {
+			active_color += border_coefficient.x / total_coefficitent * v_border_color0;
+			active_color += border_coefficient.y / total_coefficitent * v_border_color1;
+			active_color += border_coefficient.z / total_coefficitent * v_border_color2;
+			active_color += border_coefficient.w / total_coefficitent * v_border_color3;
+		}
 	} 
 	else {
 		

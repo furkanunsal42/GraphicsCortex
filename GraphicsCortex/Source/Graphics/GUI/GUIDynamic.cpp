@@ -489,17 +489,20 @@ bool GUIDynamic::node_pass_through_events_non_ref(size_t node_id)
 	return false;
 }
 
-GUIDynamic::GUIDynamic() {
-	set_gui_scale(Monitor::get_all_monitors()[0].get_content_scale().x);
+GUIDynamic::GUIDynamic(bool update_gui_scale_from_monitor) :
+	update_gui_scale_from_monitor(update_gui_scale_from_monitor)
+{
+	if (update_gui_scale_from_monitor)
+		set_gui_scale(Monitor::get_all_monitors()[0].get_content_scale().x);
 }
 
 ///////////		WINDOW		////////////
 
-void GUIDynamic::new_frame(bool update_gui_scale_from_monitor) {
-	new_frame(gui, update_gui_scale_from_monitor);
+void GUIDynamic::new_frame() {
+	new_frame(gui);
 }
 
-void GUIDynamic::new_frame(GUI& gui, bool update_gui_scale_from_monitor)
+void GUIDynamic::new_frame(GUI& gui)
 {
 	if (update_gui_scale_from_monitor)
 		set_gui_scale(Monitor::get_all_monitors()[0].get_content_scale().x);
@@ -1755,7 +1758,7 @@ void GUIDynamic::resolve_phase2_gui_scale()
 		ASSERT(false);
 	}
 	
-	LayoutState& layout = layout_states.back();
+	LayoutState& layout = layout_states[layout_stack.back()];
 
 	traverse_nodes_down([&](int32_t level, size_t node_id) {
 

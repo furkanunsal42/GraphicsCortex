@@ -62,10 +62,10 @@ public:
 	struct StackDesc;
 	struct ResolvedProperties;
 
-	GUIDynamic();
+	GUIDynamic(bool update_gui_scale_from_monitor = true);
 
-	void				new_frame(bool update_gui_scale_from_monitor = true);
-	void				new_frame(GUI& gui, bool update_gui_scale_from_monitor = true);
+	void				new_frame();
+	void				new_frame(GUI& gui);
 
 	WindowDesc&			window_begin(size_t& id);
 	WindowDesc&			window_prop();
@@ -385,6 +385,7 @@ private:
 	GUI::IOState	io_state;
 	time_point		current_frame_timepoint = invalid_time;
 	float			gui_scale = 1.0f;
+	bool			update_gui_scale_from_monitor = true;
 
 	size_t next_id_to_generate = 1;
 	size_t generate_id();
