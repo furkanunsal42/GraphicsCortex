@@ -31,7 +31,11 @@ void widget2::IOWidget::resolve_io(GUIDynamic& gui_dynamic)
 	if (hover.is_active() && (event & GUI::None))
 		hover.finish(gui_dynamic);
 
-	if (!hold.is_active() && (event & GUI::LeftPress)) {
+	bool focused = false;
+	if (gui_dynamic.window_prop_handle() != nullptr)
+		focused = gui_dynamic.window_prop_handle()->is_window_focused();
+
+	if (!hold.is_active() && (event & GUI::LeftPress) && focused) {
 		hold.start(gui_dynamic);
 
 		cursor_position_when_hold_begin = gui_dynamic.get_io_state().mouse_position;
@@ -222,8 +226,6 @@ void widget2::Stack::publish_end(GUIDynamic& gui_dynamic) {
 }
 
 void widget2::Window::publish_begin(GUIDynamic& gui_dynamic) {
-	
-	resolve_io(gui_dynamic);
 
 	gui_dynamic.window_begin(id)
 		.set_name(name)
@@ -243,6 +245,8 @@ void widget2::Window::publish_begin(GUIDynamic& gui_dynamic) {
 		.set_border_color3(border_color3)
 		.set_shadow_thickness(shadow_thickness)
 		.set_shadow_color(shadow_color);
+
+	resolve_io(gui_dynamic);
 
 	menubar_published = false;
 

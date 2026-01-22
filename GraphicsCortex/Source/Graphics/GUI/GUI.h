@@ -19,6 +19,7 @@ public:
 	struct	BoxDesc;
 	enum	MouseEvent;
 	struct	IOState;
+	struct	WindowState;
 
 	~GUI();
 	GUI();
@@ -36,6 +37,7 @@ public:
 	const IOState&	get_io_state();
 
 	Window*			get_parent_window();
+	WindowState*	get_window_state(const std::string& idstr);
 
 	struct BoxDesc {
 
@@ -111,13 +113,14 @@ public:
 		glm::vec2	mouse_right_press_begin_position= glm::vec2(0);
 		std::vector<KeyboardEvent> keyboard_events;
 	};
+
 	
 
 private:
 
 	MouseEvent _generate_event_for_aabb(const AABB2& aabb);
 	void _publish_last();
-	
+
 	struct WindowState {
 		bool active = false;
 		WindowDesc descriptor;
@@ -125,6 +128,7 @@ private:
 		std::shared_ptr<ImmediateRenderer> renderer = nullptr;
 		size_t char_newsletter_event = Newsletter<void()>::invalid_id;
 		size_t key_newsletter_event = Newsletter<void()>::invalid_id;
+		//bool focus = false;
 	};
 
 	IOState io_state;

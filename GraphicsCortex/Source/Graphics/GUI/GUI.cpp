@@ -208,7 +208,7 @@ void GUI::render() {
 		if (state.renderer != nullptr)
 			state.renderer->clear();
 	}
-
+	
 	window_stack.clear();
 
 	io_state.mouse_position =	parent_window->get_cursor_position() + 
@@ -267,6 +267,13 @@ const GUI::IOState& GUI::get_io_state()
 Window* GUI::get_parent_window()
 {
 	return parent_window;
+}
+
+GUI::WindowState* GUI::get_window_state(const std::string& idstr)
+{
+	if (windows_state.find(idstr) == windows_state.end())
+		return nullptr;
+	return &windows_state.at(idstr);
 }
 
 GUI::MouseEvent GUI::_generate_event_for_aabb(const AABB2& aabb) {

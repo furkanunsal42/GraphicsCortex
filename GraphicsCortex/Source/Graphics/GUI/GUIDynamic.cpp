@@ -1266,6 +1266,61 @@ GUI::IOState& GUIDynamic::get_io_state() {
 	return io_state;
 }
 
+::Window* GUIDynamic::window_prop_handle()
+{
+	if (layout_states.size() == 0)
+		return nullptr;
+
+	return get_window_handle(std::get<WindowDesc>(layout_states[layout_stack.back()].nodes[0].desc).id);
+}
+
+ImmediateRenderer* GUIDynamic::window_prop_immediate_renderer()
+{
+	if (layout_states.size() == 0)
+		return nullptr;
+
+	return get_immediate_renderer(std::get<WindowDesc>(layout_states[layout_stack.back()].nodes[0].desc).id);
+}
+
+::Window* GUIDynamic::get_window_handle(size_t window_id)
+{
+	if (resolved_properties.find(window_id) == resolved_properties.end())
+		return nullptr;
+
+	ResolvedProperties props = resolved_properties.at(window_id);
+
+	if (layout_states.size() <= props.layout_id)
+		return nullptr;
+
+	if (get_type(layout_states[props.layout_id].nodes[0]) != Window)
+		return nullptr;
+
+	
+	if (gui.get_window_state(compute_window_string(window_id)) == nullptr)
+		return nullptr;
+
+	return gui.get_window_state(compute_window_string(window_id))->window.get();
+}
+
+ImmediateRenderer* GUIDynamic::get_immediate_renderer(size_t window_id)
+{
+	if (resolved_properties.find(window_id) == resolved_properties.end())
+		return nullptr;
+
+	ResolvedProperties props = resolved_properties.at(window_id);
+
+	if (layout_states.size() <= props.layout_id || layout_states[props.layout_id].nodes.size() <= props.node_id)
+		return nullptr;
+
+	if (get_type(layout_states[props.layout_id].nodes[props.node_id]) != Window)
+		return nullptr;
+
+	if (gui.get_window_state(compute_window_string(window_id)) == nullptr)
+		return nullptr;
+
+	return gui.get_window_state(compute_window_string(window_id))->renderer.get();
+}
+
 size_t GUIDynamic::generate_id()
 {
 	size_t id = next_id_to_generate;
@@ -1909,7 +1964,7 @@ void GUIDynamic::publish(GUI& gui)
 		{
 			auto& desc = std::get<WindowDesc>(layout.nodes[0].desc);
 
-			gui.window_begin(gui_idstr_prefix + "window" + std::to_string(desc.id),
+			gui.window_begin(compute_window_string(desc.id),
 				desc.size,
 				desc.position
 			);
@@ -2044,6 +2099,11 @@ glm::vec2 GUIDynamic::compute_physical_size(glm::vec4 value, glm::vec2 size_per_
 	return glm::vec2(
 		compute_physical_size(value.x, size_per_avail.x) + compute_physical_size(value.z, size_per_avail.x),
 		compute_physical_size(value.y, size_per_avail.y) + compute_physical_size(value.w, size_per_avail.y));
+}
+
+std::string GUIDynamic::compute_window_string(size_t id)
+{
+	return gui_idstr_prefix + "window" + std::to_string(id);
 }
 
 GUIDynamic::WindowDesc& GUIDynamic::WindowDesc::set_padding(glm::vec4 value)

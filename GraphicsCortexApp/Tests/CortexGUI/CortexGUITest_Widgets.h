@@ -154,12 +154,11 @@ public:
 
 			//static widget2::Window window1;
 			//style.apply(window1);
-			//window1.draggable = true;
-			//window1.publish(gui_d);
+			//window1.drag(gui_d, window1);
+			//window1.publish_begin(gui_d);
 			//gui_d.box_begin();
-			//gui_d.window_end();
-
-
+			//window1.publish_end(gui_d);
+			
 			gui_d.stack_end();
 
 			//gui_d.grid_end();

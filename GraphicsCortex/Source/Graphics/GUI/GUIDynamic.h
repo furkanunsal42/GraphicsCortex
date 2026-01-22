@@ -97,6 +97,12 @@ public:
 	glm::vec2			get_mouse_position_scale_independent();
 	GUI::IOState&		get_io_state();
 
+	::Window*			window_prop_handle();
+	ImmediateRenderer*	window_prop_immediate_renderer();
+
+	::Window*			get_window_handle(size_t window_id);
+	ImmediateRenderer*	get_immediate_renderer(size_t window_id);
+
 	void				publish();
 	void				publish(GUI& gui);
 	time_point			get_current_frame_timepoint();
@@ -380,6 +386,8 @@ private:
 	float			compute_physical_size(float value, float size_per_avail);
 	glm::vec2		compute_physical_size(glm::vec2 value, glm::vec2 size_per_avail);
 	glm::vec2		compute_physical_size(glm::vec4 value, glm::vec2 size_per_avail);
+	std::string		compute_window_string(size_t id);
+
 
 	std::unordered_map<size_t, ResolvedProperties>	resolved_properties;
 	GUI::IOState	io_state;
