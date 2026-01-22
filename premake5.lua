@@ -163,6 +163,8 @@ project "GraphicsCortex"
 		"%{prj.name}/Dependencies/physx/snippetcommon/**.cpp",
 		"%{prj.name}/Dependencies/imgui/**.h",
 		"%{prj.name}/Dependencies/imgui/**.cpp",
+		"%{prj.name}/Dependencies/nanosvg/**.h",
+		"%{prj.name}/Dependencies/nanosvg/**.cpp",
 	}
 
 	removefiles  
@@ -200,7 +202,8 @@ project "GraphicsCortex"
 		"%{prj.name}/Dependencies/physx/include",
 		"%{prj.name}/Dependencies/physx/snippetutils",
 		"%{prj.name}/Dependencies/physx/snippetcommon",
-		"%{prj.name}/Dependencies/freetype/include"
+		"%{prj.name}/Dependencies/freetype/include",
+		"%{prj.name}/Dependencies/nanosvg/"
 	}
 
 	libdirs
@@ -212,7 +215,8 @@ project "GraphicsCortex"
 		"%{prj.name}/Dependencies/GLEW/lib/Release/x64",
 		"%{prj.name}/Dependencies/GLFWx64/lib-vc2022",
 		"%{prj.name}/Dependencies/physx/lib_checked",
-		"%{prj.name}/Dependencies/freetype"
+		"%{prj.name}/Dependencies/freetype",
+		"%{prj.name}/Dependencies/nanosvg",
 	}
 		
 	links
@@ -344,7 +348,8 @@ project "GraphicsCortexApp"
 		"GraphicsCortex/Dependencies/physx/include",
 		"GraphicsCortex/Dependencies/physx/snippetutils",
 		"GraphicsCortex/Dependencies/physx/snippetcommon",
-		"GraphicsCortex/Dependencies/freetype/include"
+		"GraphicsCortex/Dependencies/freetype/include",
+		"GraphicsCortex/Dependencies/nanosvg"
 	}
 
 	links
@@ -442,7 +447,8 @@ project "CortexEditor"
 		"GraphicsCortex/Dependencies/physx/include",
 		"GraphicsCortex/Dependencies/physx/snippetutils",
 		"GraphicsCortex/Dependencies/physx/snippetcommon",
-		"GraphicsCortex/Dependencies/freetype/include"
+		"GraphicsCortex/Dependencies/freetype/include",
+		"GraphicsCortex/Dependencies/nanosvg"
 	}
 
 	links
@@ -541,7 +547,8 @@ project "GraphicsCortexEditor"
 		"GraphicsCortex/Dependencies/physx/include",
 		"GraphicsCortex/Dependencies/physx/snippetutils",
 		"GraphicsCortex/Dependencies/physx/snippetcommon",
-		"GraphicsCortex/Dependencies/freetype/include"
+		"GraphicsCortex/Dependencies/freetype/include",
+		"GraphicsCortex/Dependencies/nanosvg"
 	}
 
 	links
@@ -637,7 +644,8 @@ project "GraphicsCortexEditor"
 		"GraphicsCortex/Dependencies/physx/include",
 		"GraphicsCortex/Dependencies/physx/snippetutils",
 		"GraphicsCortex/Dependencies/physx/snippetcommon",
-		"GraphicsCortex/Dependencies/freetype/include"
+		"GraphicsCortex/Dependencies/freetype/include",
+		"GraphicsCortex/Dependencies/nanosvg"
 	}
 
 	links
@@ -735,7 +743,8 @@ project "CTReconstructor"
 		"GraphicsCortex/Dependencies/physx/include",
 		"GraphicsCortex/Dependencies/physx/snippetutils",
 		"GraphicsCortex/Dependencies/physx/snippetcommon",
-		"GraphicsCortex/Dependencies/freetype/include"
+		"GraphicsCortex/Dependencies/freetype/include",
+		"GraphicsCortex/Dependencies/nanosvg"
 	}
 
 	links
@@ -838,7 +847,8 @@ project "CTReconstructorApp"
 		"GraphicsCortex/Dependencies/physx/include",
 		"GraphicsCortex/Dependencies/physx/snippetutils",
 		"GraphicsCortex/Dependencies/physx/snippetcommon",
-		"GraphicsCortex/Dependencies/freetype/include"
+		"GraphicsCortex/Dependencies/freetype/include",
+		"GraphicsCortex/Dependencies/nanosvg"
 	}
 
 	links
@@ -942,7 +952,8 @@ project "CTAnalyzerNeo"
 		"GraphicsCortex/Dependencies/physx/include",
 		"GraphicsCortex/Dependencies/physx/snippetutils",
 		"GraphicsCortex/Dependencies/physx/snippetcommon",
-		"GraphicsCortex/Dependencies/freetype/include"
+		"GraphicsCortex/Dependencies/freetype/include",
+		"GraphicsCortex/Dependencies/nanosvg"
 	}
 
 	links
@@ -1179,7 +1190,8 @@ includedirs
 	"GraphicsCortex/Dependencies/physx/include",
 	"GraphicsCortex/Dependencies/physx/snippetutils",
 	"GraphicsCortex/Dependencies/physx/snippetcommon",
-	"GraphicsCortex/Dependencies/freetype/include"
+	"GraphicsCortex/Dependencies/freetype/include",
+		"GraphicsCortex/Dependencies/nanosvg"
 }
 
 links
@@ -1281,7 +1293,8 @@ project "RubiksCube"
 		"GraphicsCortex/Dependencies/physx/include",
 		"GraphicsCortex/Dependencies/physx/snippetutils",
 		"GraphicsCortex/Dependencies/physx/snippetcommon",
-		"GraphicsCortex/Dependencies/freetype/include"
+		"GraphicsCortex/Dependencies/freetype/include",
+		"GraphicsCortex/Dependencies/nanosvg"
 	}
 
 	links
@@ -1379,7 +1392,8 @@ project "Gozdiscoptics"
 		"GraphicsCortex/Dependencies/physx/include",
 		"GraphicsCortex/Dependencies/physx/snippetutils",
 		"GraphicsCortex/Dependencies/physx/snippetcommon",
-		"GraphicsCortex/Dependencies/freetype/include"
+		"GraphicsCortex/Dependencies/freetype/include",
+		"GraphicsCortex/Dependencies/nanosvg"
 	}
 
 	links
@@ -1477,7 +1491,8 @@ project "GozdiscopticsMax"
 		"GraphicsCortex/Dependencies/physx/include",
 		"GraphicsCortex/Dependencies/physx/snippetutils",
 		"GraphicsCortex/Dependencies/physx/snippetcommon",
-		"GraphicsCortex/Dependencies/freetype/include"
+		"GraphicsCortex/Dependencies/freetype/include",
+		"GraphicsCortex/Dependencies/nanosvg"
 	}
 
 	links
@@ -1577,7 +1592,8 @@ project "KSP3"
 		"GraphicsCortex/Dependencies/physx/include",
 		"GraphicsCortex/Dependencies/physx/snippetutils",
 		"GraphicsCortex/Dependencies/physx/snippetcommon",
-		"GraphicsCortex/Dependencies/freetype/include"
+		"GraphicsCortex/Dependencies/freetype/include",
+		"GraphicsCortex/Dependencies/nanosvg"
 	}
 
 	links

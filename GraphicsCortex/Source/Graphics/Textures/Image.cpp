@@ -267,8 +267,10 @@ void Image::_read_image_data_svg(const ImageParameters& requested_parameters)
 	else 
 		nsvg_image = nsvgParse((char*)requested_parameters.source_data, "px", 96.0f);
 
-	_width	=	(int32_t)nsvg_image->width;
-	_height =	(int32_t)nsvg_image->height;
+	float scale = std::max(128.0f / nsvg_image->width, 1.0f);
+
+	_width	=	(int32_t)nsvg_image->width		* scale;
+	_height =	(int32_t)nsvg_image->height		* scale;
 	_bytes_per_channel	= 1;
 	_channel_count		= 4;
 
@@ -276,7 +278,7 @@ void Image::_read_image_data_svg(const ImageParameters& requested_parameters)
 
 	_image_data = new unsigned char[_width * _height * _bytes_per_channel * _channel_count];
 
-	nsvgRasterize(nsvg_rast, nsvg_image, 0, 0, 1, _image_data, _width, _height, _width * _channel_count * _bytes_per_channel);
+	nsvgRasterize(nsvg_rast, nsvg_image, 0, 0, scale, _image_data, _width, _height, _width * _channel_count * _bytes_per_channel);
 
 	_image_is_loaded_from_stbi = false;
 	_float_image = false;
@@ -284,6 +286,12 @@ void Image::_read_image_data_svg(const ImageParameters& requested_parameters)
 
 	nsvgDelete(nsvg_image);
 	nsvgDeleteRasterizer(nsvg_rast);
+
+	for (int32_t x = 0; x < _width; x++) {
+		for (int32_t y = 0; y < _height / 2; y++) {
+			std::swap(((int32_t*)_image_data)[y * _width + x], ((int32_t*)_image_data)[(_height - y - 1) * _width + x]);
+		}
+	}
 
 	//resize(requested_parameters.width, requested_parameters.height);
 }

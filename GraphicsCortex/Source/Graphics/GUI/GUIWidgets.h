@@ -208,8 +208,8 @@ namespace widget2 {
 		};
 
 		std::shared_ptr<Texture2D> texture = nullptr;
-		glm::vec2 uv00;
-		glm::vec2 uv11;
+		glm::vec2 uv00 = glm::vec2(0);
+		glm::vec2 uv11 = glm::vec2(1);
 		Type type;
 		
 		void publish(GUIDynamic& gui_dynamic);

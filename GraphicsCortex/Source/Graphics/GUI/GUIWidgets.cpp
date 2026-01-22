@@ -414,8 +414,8 @@ bool widget2::Label::publish_glyph(GUIDynamic& gui_dynamic, size_t end_index, co
 		gui_dynamic.box_begin()
 			.set_target_size(size)
 			.set_margin(glm::vec4(position.x, position.y, 0, 0))
-			.set_uv00(glm::vec2(table.coords_hi.x, 1 - table.coords_hi.y))
-			.set_uv11(glm::vec2(table.coords_low.x, 1 - table.coords_low.y))
+			.set_uv00(glm::vec2(table.coords_low.x, 1 - table.coords_hi.y))
+			.set_uv11(glm::vec2(table.coords_hi.x, 1 - table.coords_low.y))
 			.set_color(text_color)
 			.set_texture_handle(FontBank::get().get_font(font).atlas->texture_handle);
 

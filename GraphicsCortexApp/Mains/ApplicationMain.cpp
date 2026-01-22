@@ -67,8 +67,8 @@ int main() {
 	//CortexGUITest_Dynamic().run();
 	//CortexGUITest_Relative().run();
 	//CortexGUITest_Stateful().run();
-	//CortexGUITest_Widgets().run();
+	CortexGUITest_Widgets().run();
 	//CortexGUITest_Hierarchy().run();
 
-	SVGRenderingTest().run();
+	//SVGRenderingTest().run();
 }

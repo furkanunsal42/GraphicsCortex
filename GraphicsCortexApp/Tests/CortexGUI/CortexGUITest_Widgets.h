@@ -17,16 +17,14 @@ public:
 		constexpr auto fit			= GUIDynamic::fit;
 		constexpr auto invalid_id	= GUIDynamic::invalid_id;
 
-		//Package::load_package("graphics_cortex.hbv");
-		//Package::loaded_package->print_headers();
+		Package::load_package("graphics_cortex.hbv");
+		Package::loaded_package->print_headers();
 
 		widget2::DefaultStyle style;
 
 		GUIDynamic gui_d;
 
 		FontBank::get().load_font("../GraphicsCortex/Fonts/Roboto-Regular.ttf", 32 * gui_d.get_gui_scale());
-
-		std::shared_ptr<Texture2D> texture = gui_d.gui_texture_bank.get_texture("../GraphicsCortex/Images/orange.png", Texture2D::ColorTextureFormat::RGBA8, Texture2D::ColorFormat::RGBA, Texture2D::Type::UNSIGNED_BYTE, glm::ivec2(860, 829));
 
 		while (true) {			
 			
@@ -108,14 +106,15 @@ public:
 			static widget2::ImageButton image_button;
 
 			style.apply(image_button);
-			image_button.image.texture = texture;
+			image_button.image.texture = gui_d.gui_texture_bank.get_texture("play.svg");
+			image_button.image.color = glm::vec4(0.13f, 0.51f, 0.58f, 1);
 			image_button.publish(gui_d);
 
 			static widget2::CheckBox checkbox;
 			static bool checkbox_value = false;
 
 			style.apply(checkbox);
-			checkbox.image.texture = texture;
+			checkbox.image.texture = gui_d.gui_texture_bank.get_texture("check.svg");
 			checkbox.publish(gui_d, checkbox_value);
 
 			static widget2::ComboBox combobox;

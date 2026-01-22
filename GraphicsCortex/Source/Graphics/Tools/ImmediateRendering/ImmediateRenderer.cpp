@@ -425,28 +425,28 @@ void ImmediateRenderer::_update_gpu_buffers()
 		gpu_struct.texture_handle = glm::uvec4(texture_handle, 0, 0);
 
 		gpu_struct.position = glm::vec4(command.position0, 1);
-		gpu_struct.uv		= glm::vec4(command.uv_begin.x, command.uv_begin.y, glm::vec2(0));
+		gpu_struct.uv		= glm::vec4(command.uv_end.x, command.uv_begin.y, glm::vec2(0));
 		data.push_back(gpu_struct);
 
 		gpu_struct.position = glm::vec4(command.position1, 1);
-		gpu_struct.uv = glm::vec4(command.uv_end.x, command.uv_begin.y, glm::vec2(0));
+		gpu_struct.uv = glm::vec4(command.uv_begin.x, command.uv_begin.y, glm::vec2(0));
 		data.push_back(gpu_struct);
 
 		gpu_struct.position = glm::vec4(command.position2, 1);
-		gpu_struct.uv = glm::vec4(command.uv_end.x, command.uv_end.y, glm::vec2(0));
+		gpu_struct.uv = glm::vec4(command.uv_begin.x, command.uv_end.y, glm::vec2(0));
 		data.push_back(gpu_struct);
 
 		if (command.geometry == Quad) {
 			gpu_struct.position = glm::vec4(command.position0, 1);
-			gpu_struct.uv = glm::vec4(command.uv_begin.x, command.uv_begin.y, glm::vec2(0));
+			gpu_struct.uv = glm::vec4(command.uv_end.x, command.uv_begin.y, glm::vec2(0));
 			data.push_back(gpu_struct);
 
 			gpu_struct.position = glm::vec4(command.position2, 1);
-			gpu_struct.uv = glm::vec4(command.uv_end.x, command.uv_end.y, glm::vec2(0));
+			gpu_struct.uv = glm::vec4(command.uv_begin.x, command.uv_end.y, glm::vec2(0));
 			data.push_back(gpu_struct);
 
 			gpu_struct.position = glm::vec4(command.position3, 1);
-			gpu_struct.uv = glm::vec4(command.uv_begin.x, command.uv_end.y, glm::vec2(0));
+			gpu_struct.uv = glm::vec4(command.uv_end.x, command.uv_end.y, glm::vec2(0));
 			data.push_back(gpu_struct);
 		}
 

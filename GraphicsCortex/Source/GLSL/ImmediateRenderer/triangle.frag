@@ -36,6 +36,7 @@ void main(){
 
 	if (v_texture_index.xy != uvec2(0, 0)){
 		frag_color = vec4(texture(sampler2D(v_texture_index.xy), v_uv.xy)) * v_fill_color;
+		//frag_color = vec4(v_uv.xy, 0, 1);
 		return;
 	}
 
