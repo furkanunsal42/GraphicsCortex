@@ -36,7 +36,8 @@ public:
 			style.apply(window0);
 			window0.padding = glm::vec4(0);
 			
-			window0.drag(gui_d, menubar);
+			window0.drag(gui_d, window0);
+			//window0.drag(gui_d, menubar);
 			window0.publish_begin(gui_d);
 			
 			//window0.publish_menubar_begin(gui_d);

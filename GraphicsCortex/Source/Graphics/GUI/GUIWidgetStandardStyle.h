@@ -253,8 +253,7 @@ namespace widget2 {
 		widget.background.border_color3			= glm::vec4(0.45f, 0.44f, 0.42f, 1);
 		widget.background.border_thickness		= glm::vec4(1);
 
-		widget.background.border_thickness.	transition(widget.hover, glm::vec4(1), std::chrono::milliseconds(15));
-		widget.background.border_thickness.	transition(widget.hold, glm::vec4(2), std::chrono::milliseconds(80));
+		widget.background.border_thickness.	transition(widget.check, glm::vec4(0), std::chrono::milliseconds(20));
 		widget.background.color.			transition(widget.check, glm::vec4(0.0, 0.47, 0.84, 1), std::chrono::milliseconds(120));
 		widget.image.color.					transition(widget.check, glm::vec4(1, 1, 1, 1), std::chrono::milliseconds(120));
 
