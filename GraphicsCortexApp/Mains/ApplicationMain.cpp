@@ -31,6 +31,8 @@
 #include "CortexGUI/CortexGUITest_Widgets.h"
 #include "CortexGUI/CortexGUITest_Hierarchy.h"
 
+#include "SVG/SVGRenderingTest.h"
+
 int main() {
 	
 	//WindowSystemTest().run();
@@ -65,7 +67,8 @@ int main() {
 	//CortexGUITest_Dynamic().run();
 	//CortexGUITest_Relative().run();
 	//CortexGUITest_Stateful().run();
-	CortexGUITest_Widgets().run();
+	//CortexGUITest_Widgets().run();
 	//CortexGUITest_Hierarchy().run();
 
+	SVGRenderingTest().run();
 }

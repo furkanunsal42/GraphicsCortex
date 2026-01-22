@@ -8,6 +8,8 @@
 #include "stb_image_write.h"
 #include "stb_image_resize.h"
 #include "tiffio.h"
+#include "nanosvg.h"
+#include "nanosvgrast.h"
 
 #include <filesystem>
 #include "Debuger.h"
@@ -85,7 +87,8 @@ Image::Image(unsigned char* image_data, int width, int height, int depth, int ch
 
 }
 
-Image::Image(ImageParameters parameters)
+Image::Image(ImageParameters parameters) :
+	_vertical_flip(parameters.vertical_flip)
 {
 	_read_image_data(parameters);
 }
@@ -142,6 +145,11 @@ void Image::_read_image_data(const ImageParameters& requested_parameters)
 	
 	if (extension == ".hdr" || extension == ".HDR"){
 		_read_image_data_hdr(requested_parameters);
+		return;
+	}
+
+	if (extension == ".svg" || extension == ".SVG") {
+		_read_image_data_svg(requested_parameters);
 		return;
 	}
 
@@ -245,8 +253,39 @@ void Image::_read_image_data_hdr(const ImageParameters& requested_parameters)
 	_depth = 1;
 	_image_is_loaded_from_stbi = true;
 	_float_image = true;
-
+	
 	resize(requested_parameters.width, requested_parameters.height);
+}
+
+void Image::_read_image_data_svg(const ImageParameters& requested_parameters)
+{
+	NSVGimage*		nsvg_image	= nullptr;
+	NSVGrasterizer* nsvg_rast	= nullptr;
+	
+	if (requested_parameters.source_data == nullptr)
+		nsvg_image = nsvgParseFromFile(requested_parameters.path.c_str(), "px", 96.0f);
+	else 
+		nsvg_image = nsvgParse((char*)requested_parameters.source_data, "px", 96.0f);
+
+	_width	=	(int32_t)nsvg_image->width;
+	_height =	(int32_t)nsvg_image->height;
+	_bytes_per_channel	= 1;
+	_channel_count		= 4;
+
+	nsvg_rast = nsvgCreateRasterizer();
+
+	_image_data = new unsigned char[_width * _height * _bytes_per_channel * _channel_count];
+
+	nsvgRasterize(nsvg_rast, nsvg_image, 0, 0, 1, _image_data, _width, _height, _width * _channel_count * _bytes_per_channel);
+
+	_image_is_loaded_from_stbi = false;
+	_float_image = false;
+	_depth = 1;
+
+	nsvgDelete(nsvg_image);
+	nsvgDeleteRasterizer(nsvg_rast);
+
+	//resize(requested_parameters.width, requested_parameters.height);
 }
 
 void Image::swap_endian()

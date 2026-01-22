@@ -19,8 +19,9 @@ public:
 		int depth;
 		int channel_count;
 		int bytes_per_channel;
-		std::string path;
 		bool vertical_flip;
+		std::string path;
+		unsigned char* source_data = nullptr;
 	};
 
 	Image(int width, int height, int channel_count, int byte_per_channel, bool vertical_flip);
@@ -67,6 +68,7 @@ public:
 	void _read_image_data_raw(const ImageParameters& requested_parameters);
 	void _read_image_data_tiff(const ImageParameters& requested_parameters);
 	void _read_image_data_hdr(const ImageParameters& requested_parameters);
+	void _read_image_data_svg(const ImageParameters& requested_parameters);
 
 	std::string _source_filepath = "";
 	bool _vertical_flip = true;

@@ -6,5 +6,5 @@ CortexPackagerApp ^
 	-add=GraphicsCortex/**.frag ^
 	-add=GraphicsCortex/**.vert ^
 	-add=GraphicsCortex/**.ttf ^
-	-add=GraphicsCortex/Images/**.png
+	-add=GraphicsCortex/GUIContent/**.svg
 pause
