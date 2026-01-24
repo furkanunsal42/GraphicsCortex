@@ -4,6 +4,8 @@
 #include "GUIDynamic.h"
 #include "GLMCout.h"
 
+#include <thread>
+
 GUI::~GUI()
 {
 	if (parent_window != nullptr && owning_parent_window)
@@ -118,6 +120,15 @@ void GUI::render() {
 	bool now_holding_left = false;
 	bool now_holding_right = false;
 
+	std::vector<std::jthread> render_threads;
+
+	std::function<void(WindowState&)> swap_buffers_func = [&](WindowState& state) {
+
+		state.window->context_make_current();
+		state.window->swap_buffers();
+
+		};
+
 	for (std::pair<const std::string, WindowState>& info : windows_state) {
 
 		const std::string& idstr = info.first;
@@ -138,26 +149,30 @@ void GUI::render() {
 			params.depth_test = true;
 			params.cull_face = true;
 			params.cull_face_direction = RenderParameters::CullDirection::FRONT;
-
+			
 			glm::vec2 window_resolution = state.window->get_window_resolution();
 			
 			Camera camera;
 			camera.view_matrix = glm::mat4(1);
 			camera.projection_matrix = glm::ortho(0.0f, window_resolution.x, window_resolution.y, 0.0f, -1024.0f, 1024.0f);
-
+			
 			if (state.renderer != nullptr) {
 				primitive_renderer::set_viewport_position(glm::vec2(0));
 				primitive_renderer::set_viewport_size(window_resolution);
 				state.renderer->render_without_clear(camera, params);
 			}
 
-			state.window->swap_buffers();
+			if (state.renderer != nullptr)
+				state.renderer->clear();
+			
+			//state.window->swap_buffers();
 
 			};
 
 		if (state.window == nullptr) {
 			WindowDescription description;
 			description.w_name						= desc.name;
+			description.w_initial_position			= desc.position;
 			description.w_resolution				= desc.size;
 			description.w_resizable					= desc.is_resizable;
 			description.w_scale_framebuffer_size	= false;
@@ -167,7 +182,6 @@ void GUI::render() {
 			description.context_shared				= parent_window->get_handle();
 
 			state.window = std::make_shared<Window>(description);
-			state.window->set_window_position(desc.position);
 
 			if (state.char_newsletter_event == Newsletter<void()>::invalid_id) {
 				state.char_newsletter_event = state.window->newsletters->on_char_events.subscribe([&](const uint32_t& c) {
@@ -180,6 +194,18 @@ void GUI::render() {
 					io_state.keyboard_events.push_back(k);
 					});
 			}
+
+			//if (state.resolution_newsletter_event == Newsletter<void()>::invalid_id) {
+			//	state.resolution_newsletter_event = state.window->newsletters->on_window_resolution_events.subscribe([&](const glm::ivec2& resolution) {
+			//		state.descriptor.size = resolution;
+			//		});
+			//}
+			//if (state.position_newsletter_event == Newsletter<void()>::invalid_id) {
+			//	state.position_newsletter_event = state.window->newsletters->on_window_position_events.subscribe([&](const glm::ivec2& position) {
+			//		state.descriptor.position = position;
+			//		});
+			//}
+
 			//state.window->newsletters->on_window_refresh_events.subscribe(render_func);
 
 		}
@@ -187,17 +213,24 @@ void GUI::render() {
 		state.window->set_window_name(desc.name);
 		state.window->set_window_decorated(desc.is_decorated);
 		state.window->set_window_resizable(desc.is_resizable);
-		if (!desc.is_resizable) {
-			state.window->set_window_position(desc.position);
+		
+		
+		if (glm::any(glm::greaterThanEqual(desc.size, glm::vec2(1024)))) {
+			if (!state.window->is_window_maximized())
+				state.window->window_maximize();
+		}  
+		else if (glm::all(glm::lessThan(desc.size, glm::vec2(1024))) && state.window->is_window_maximized()) {
+			state.window->window_restore();
 			state.window->set_window_resolution(desc.size);
+			state.window->set_window_position(desc.position);
+		}
+		else {
+			state.window->set_window_resolution(desc.size);
+			state.window->set_window_position(desc.position);
 		}
 
 		state.window->handle_events();
-		
-		if (desc.is_resizable) {
-			desc.position = state.window->get_window_position();
-			desc.size = state.window->get_window_resolution();
-		}
+
 		
 		Window::PressAction left	= state.window->get_mouse_button(Window::MouseButton::LEFT);
 		Window::PressAction right	= state.window->get_mouse_button(Window::MouseButton::RIGHT);
@@ -205,8 +238,8 @@ void GUI::render() {
 		now_holding_right			= now_holding_right	|| right == Window::PressAction::PRESS;
 
 		render_func();
-		if (state.renderer != nullptr)
-			state.renderer->clear();
+		swap_buffers_func(state);
+
 	}
 	
 	window_stack.clear();

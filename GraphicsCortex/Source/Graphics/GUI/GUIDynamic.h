@@ -74,8 +74,8 @@ public:
 	GridDesc&			grid_begin(size_t& id);
 	GridDesc&			grid_begin();
 	GridDesc&			grid_prop();
-	void				grid_add_column(float width);
-	void				grid_add_row(float height);
+	void				grid_add_column(float target_width, float min_width = fit, float max_width = avail);
+	void				grid_add_row(float target_height, float min_height = fit, float max_height = avail);
 	void				grid_region(glm::ivec2 grid_index, glm::ivec2 grid_span = glm::ivec2(1, 1));
 	void				grid_end();
 
@@ -117,7 +117,7 @@ public:
 		glm::vec4	padding				= glm::vec4(10);
 		glm::vec2	target_size			= glm::vec2(fit);
 		glm::vec2	min_size			= glm::vec2(fit);
-		glm::vec2	max_size			= glm::vec2(10240);
+		glm::vec2	max_size			= glm::vec2(avail);
 
 		std::string name				= "CortexGUI Window";
 		glm::vec4	color				= glm::vec4(1, 1, 1, 1);
@@ -221,10 +221,10 @@ public:
 		glm::vec4	padding				= glm::vec4(10);
 		glm::vec2	target_size			= glm::vec2(fit);
 		glm::vec2	min_size			= glm::vec2(fit);
-		glm::vec2	max_size			= glm::vec2(10240);
+		glm::vec2	max_size			= glm::vec2(avail);
 		
-		std::vector<float> columns;
-		std::vector<float> rows;
+		std::vector<glm::vec3> columns;
+		std::vector<glm::vec3> rows;
 
 		bool		permeable_events	= false;
 		bool		pass_through_events = true;
@@ -234,8 +234,8 @@ public:
 		GridDesc&	set_target_size		(glm::vec2	value);
 		GridDesc&	set_min_size		(glm::vec2	value);
 		GridDesc&	set_max_size		(glm::vec2	value);
-		GridDesc&	add_column			(float width);
-		GridDesc&	add_row				(float height);
+		GridDesc&	add_column			(float target_width, float min_width = fit, float max_width = avail);
+		GridDesc&	add_row				(float target_height, float min_height = fit, float max_height = avail);
 		
 		GridDesc&	set_permeable_event	(	bool value	);
 		GridDesc&	set_pass_through_events(bool value	);
@@ -260,7 +260,7 @@ public:
 		glm::vec4	padding				= glm::vec4(10);
 		glm::vec2	target_size			= glm::vec2(fit);
 		glm::vec2	min_size			= glm::vec2(fit);
-		glm::vec2	max_size			= glm::vec2(10240);
+		glm::vec2	max_size			= glm::vec2(avail);
 
 		float		spacing				= 10;
 		bool		is_vertical			= true;

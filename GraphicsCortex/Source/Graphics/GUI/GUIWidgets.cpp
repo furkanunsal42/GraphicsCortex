@@ -246,6 +246,19 @@ void widget2::Window::publish_begin(GUIDynamic& gui_dynamic) {
 		.set_shadow_thickness(shadow_thickness)
 		.set_shadow_color(shadow_color);
 
+	if (gui_dynamic.get_window_handle(id) != nullptr && resolution_change_newsletter == Newsletter<>::invalid_id) {
+
+		resolution_change_newsletter = gui_dynamic.get_window_handle(id)->newsletters->on_window_resolution_events.subscribe([&](const glm::ivec2& resolution) {
+			target_size.value = resolution;
+			});
+
+		position_change_newsletter = gui_dynamic.get_window_handle(id)->newsletters->on_window_position_events.subscribe([&](const glm::ivec2& position) {
+			this->position.value = position;
+			});
+
+
+	}
+
 	resolve_io(gui_dynamic);
 
 	menubar_published = false;
@@ -257,6 +270,37 @@ void widget2::Window::publish_end(GUIDynamic& gui_dynamic) {
 	if (menubar_published)
 		gui_dynamic.grid_end();
 
+	gui_dynamic.window_prop()
+		.set_name(name)
+		.set_is_resizable(is_resizable)
+		.set_is_decorated(has_native_decoration)
+		.set_position(position)
+		.set_padding(padding)
+		.set_target_size(target_size)
+		.set_min_size(min_size)
+		.set_max_size(max_size)
+		.set_color(color)
+		.set_border_thickness(border_thickness)
+		.set_border_rounding(border_rounding)
+		.set_border_color0(border_color0)
+		.set_border_color1(border_color1)
+		.set_border_color2(border_color2)
+		.set_border_color3(border_color3)
+		.set_shadow_thickness(shadow_thickness)
+		.set_shadow_color(shadow_color);
+
+	if (gui_dynamic.get_window_handle(id) != nullptr && !maximize.is_active() && gui_dynamic.get_window_handle(id)->is_window_maximized())
+		maximize.start(gui_dynamic);
+
+	if (gui_dynamic.get_window_handle(id) != nullptr && maximize.is_active() && !gui_dynamic.get_window_handle(id)->is_window_maximized())
+		maximize.finish(gui_dynamic);
+
+	if (gui_dynamic.get_window_handle(id) != nullptr && !iconify.is_active() && gui_dynamic.get_window_handle(id)->is_window_minimized())
+		iconify.start(gui_dynamic);
+
+	if (gui_dynamic.get_window_handle(id) != nullptr && iconify.is_active() && !gui_dynamic.get_window_handle(id)->is_window_minimized())
+		iconify.finish(gui_dynamic);
+
 	gui_dynamic.window_end();
 
 }
@@ -264,12 +308,13 @@ void widget2::Window::publish_end(GUIDynamic& gui_dynamic) {
 void widget2::Window::publish_menubar_begin(GUIDynamic& gui_dynamic) {
 
 	gui_dynamic.grid_begin()
-		.set_target_size(glm::vec2(GUIDynamic::fit))
+		.set_target_size(glm::vec2(GUIDynamic::avail))
+		.set_min_size(glm::vec2(GUIDynamic::fit))
 		.set_padding(glm::vec4(0));
 
-	gui_dynamic.grid_add_column(GUIDynamic::fit);
+	gui_dynamic.grid_add_column(GUIDynamic::avail);
 	gui_dynamic.grid_add_row(GUIDynamic::fit);
-	gui_dynamic.grid_add_row(GUIDynamic::fit);
+	gui_dynamic.grid_add_row(GUIDynamic::avail);
 
 	gui_dynamic.grid_region(glm::ivec2(0, 0));
 
@@ -284,6 +329,8 @@ void widget2::Window::publish_menubar_end(GUIDynamic& gui_dynamic) {
 
 void widget2::Window::drag(GUIDynamic& gui_dynamic, IOWidget& widget) {
 
+	if (maximize.is_active() || iconify.is_active())
+		return;
 
 	if (widget.carry.is_active()) {
 		if (window_position_when_drag_begin == glm::vec2(-1000))
@@ -954,6 +1001,8 @@ void widget2::CheckBox::publish(GUIDynamic& gui_dynamic, bool& checked) {
 	if (!checked && check.is_active()) check.finish(gui_dynamic);
 	if (checked && !check.is_active()) check.start(gui_dynamic);
 
+	image.texture = gui_dynamic.gui_texture_bank.get_texture("check.svg");
+
 }
 
 
@@ -1040,8 +1089,9 @@ void widget2::Menu::publish_begin(GUIDynamic& gui_dynamic) {
 
 	if (drop.is_active()) {
 
-		dropdown.position = gui_dynamic.window_prop().position + get_resolved_properties(gui_dynamic).position + glm::vec2(0, get_resolved_properties(gui_dynamic).size.y);
-		dropdown.drag(gui_dynamic, dropdown);
+		dropdown.position =
+			gui_dynamic.window_prop().position +
+			(get_resolved_properties(gui_dynamic).position + glm::vec2(0, get_resolved_properties(gui_dynamic).size.y)) * gui_dynamic.get_gui_scale();
 
 		dropdown.publish_begin(gui_dynamic);
 		dropdown_stack.publish_begin(gui_dynamic);
@@ -1059,8 +1109,37 @@ void widget2::Menu::publish_end(GUIDynamic& gui_dynamic) {
 		drop.finish(gui_dynamic);
 }
 
+void widget2::MenuItem::publish(GUIDynamic& gui_dynamic, Menu& owner_menu){
+
+	Container::publish_begin(gui_dynamic);
+
+	background.publish(gui_dynamic);
+	label.publish(gui_dynamic, text);
+
+	Container::publish_end(gui_dynamic);
+
+	if (click.is_activated_now(gui_dynamic))
+		select(gui_dynamic, owner_menu);
+
+};
+
+void widget2::MenuItem::select(GUIDynamic& gui_dynamic, Menu& owner_menu) {
+
+	owner_menu.item_selected.impulse(gui_dynamic);
+
+};
+
 void widget2::WindowControls::publish(GUIDynamic& gui_dynamic) {
 	
+	minimize_button.image.texture	= gui_dynamic.gui_texture_bank.get_texture("window-minimize-symbolic-svgrepo-com.svg");
+	close_button.image.texture		= gui_dynamic.gui_texture_bank.get_texture("window-close-symbolic-svgrepo-com.svg");
+
+	if (gui_dynamic.window_prop_handle() != nullptr && gui_dynamic.window_prop_handle()->is_window_maximized())
+		restore_button.image.texture	= gui_dynamic.gui_texture_bank.get_texture("window-restore-symbolic-svgrepo-com.svg");
+	else
+		restore_button.image.texture	= gui_dynamic.gui_texture_bank.get_texture("window-maximize-symbolic-svgrepo-com.svg");
+
+
 	Stack::publish_begin(gui_dynamic);
 	
 	minimize_button.publish(gui_dynamic);

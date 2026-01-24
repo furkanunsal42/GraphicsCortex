@@ -128,6 +128,8 @@ private:
 		std::shared_ptr<ImmediateRenderer> renderer = nullptr;
 		size_t char_newsletter_event = Newsletter<void()>::invalid_id;
 		size_t key_newsletter_event = Newsletter<void()>::invalid_id;
+		size_t resolution_newsletter_event = Newsletter<void()>::invalid_id;
+		size_t position_newsletter_event = Newsletter<void()>::invalid_id;
 		//bool focus = false;
 	};
 

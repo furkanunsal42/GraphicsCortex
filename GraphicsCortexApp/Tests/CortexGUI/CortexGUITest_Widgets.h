@@ -35,37 +35,74 @@ public:
 
 			style.apply(window0);
 			window0.padding = glm::vec4(0);
+			//window0.target_size.value.x = 600;
 			
-			window0.drag(gui_d, window0);
-			//window0.drag(gui_d, menubar);
+			//window0.drag(gui_d, window0);
+			window0.drag(gui_d, menubar);
 			window0.publish_begin(gui_d);
 			
-			//window0.publish_menubar_begin(gui_d);
-			//
-			//style.apply(menubar);
-			//menubar.window_controls.minimize_button.image.texture = texture;
-			//menubar.window_controls.restore_button.image.texture = texture;
-			//menubar.window_controls.close_button.image.texture = texture;
-			//menubar.publish_begin(gui_d);
-			//
-			//static widget2::Menu menu;
-			//
-			//style.apply(menu);
-			//menu.publish_begin(gui_d);
-			//
-			//if (menu.drop.is_active()) {
-			//
-			//}
-			//
-			//menu.publish_end(gui_d);
-			//
-			//menubar.publish_end(gui_d);
-			//
-			//window0.publish_menubar_end(gui_d);
+			if (gui_d.get_window_handle(window0.id) != nullptr && gui_d.get_window_handle(window0.id)->should_close())
+				exit(0);
+
+			window0.publish_menubar_begin(gui_d);
+			
+			style.apply(menubar);
+			menubar.publish_begin(gui_d);
+
+			if (menubar.window_controls.minimize_button.click.is_activated_now(gui_d) && gui_d.get_window_handle(window0.id) != nullptr)
+				gui_d.get_window_handle(window0.id)->window_minimize();
+
+			static bool maximized = false;
+			if (menubar.window_controls.restore_button.click.is_activated_now(gui_d) && gui_d.get_window_handle(window0.id) != nullptr)
+				maximized = !maximized;
+
+			if (menubar.window_controls.close_button.click.is_activated_now(gui_d) && gui_d.get_window_handle(window0.id) != nullptr)
+				gui_d.get_window_handle(window0.id)->set_should_close(true);
+
+			if (maximized)
+				window0.target_size = glm::vec2(avail);
+
+			static widget2::Menu menu;
+			menu.text = U"File";
+
+			style.apply(menu);
+			menu.publish_begin(gui_d);
+			
+			if (menu.drop.is_active()) {
+				static widget2::MenuItem menu_item0;
+				static widget2::MenuItem menu_item1;
+				static widget2::MenuItem menu_item2;
+				static widget2::MenuItem menu_item3;
+				static widget2::MenuItem menu_item4;
+
+				menu_item0.text = U"New";
+				menu_item1.text = U"Open";
+				menu_item4.text = U"Close";
+				menu_item2.text = U"Save";
+				menu_item3.text = U"Save All";
+
+				style.apply(menu_item0);
+				style.apply(menu_item1);
+				style.apply(menu_item2);
+				style.apply(menu_item3);
+				style.apply(menu_item4);
+
+				menu_item0.publish(gui_d, menu);
+				menu_item1.publish(gui_d, menu);
+				menu_item2.publish(gui_d, menu);
+				menu_item3.publish(gui_d, menu);
+				menu_item4.publish(gui_d, menu);
+			}
+
+			menu.publish_end(gui_d);
+			
+			menubar.publish_end(gui_d);
+			
+			window0.publish_menubar_end(gui_d);
 
 
 			gui_d.stack_begin()
-				.set_target_size(glm::vec2(360, fit))
+				.set_target_size(glm::vec2(avail, fit))
 				.set_padding(glm::vec4(20, 20, 20, 20));
 
 			static float slider_value = 12;
@@ -115,7 +152,7 @@ public:
 			static bool checkbox_value = false;
 
 			style.apply(checkbox);
-			checkbox.image.texture = gui_d.gui_texture_bank.get_texture("check.svg");
+
 			checkbox.publish(gui_d, checkbox_value);
 
 			static widget2::ComboBox combobox;
@@ -161,8 +198,6 @@ public:
 			
 			gui_d.stack_end();
 
-			//gui_d.grid_end();
-			//gui_d.window_end();
 			window0.publish_end(gui_d);
 
 			gui_d.publish();
@@ -170,6 +205,12 @@ public:
 			static bool once = true;
 			if (once)
 				gui_d.print_layout();
+			
+
+			//if (once) gui_d.gui_texture_bank.get_texture("play.svg")->get_image(Texture2D::ColorFormat::RGBA, Texture2D::Type::UNSIGNED_BYTE, 0)->save_to_disc("play.png");
+			//if (once) gui_d.gui_texture_bank.get_texture("window-minimize-svgrepo-com.svg")->get_image(Texture2D::ColorFormat::RGBA, Texture2D::Type::UNSIGNED_BYTE, 0)->save_to_disc("window-minimize-svgrepo-com.png");
+
+
 			once = false;
 
 		}

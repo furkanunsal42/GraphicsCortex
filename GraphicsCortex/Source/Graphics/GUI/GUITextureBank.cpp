@@ -14,8 +14,8 @@ std::shared_ptr<Texture2D> GUITextureBank::get_texture(
 	bool vertical_flip
 ) {
 	
-	if (created_textures.find(filepath) != created_textures.end() && !created_textures.at(filepath).expired())
-		return created_textures.at(filepath).lock();
+	if (created_textures.find(filepath) != created_textures.end()/* && !created_textures.at(filepath).expired()*/)
+		return created_textures.at(filepath);// .lock();
 	
 	Image image;
 

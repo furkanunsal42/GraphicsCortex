@@ -8,8 +8,8 @@ namespace widget2 {
 	class Widget {
 	public:
 		GUIDynamic::ResolvedProperties get_resolved_properties(GUIDynamic& gui_dynamic);
-	protected:
 		size_t id = GUIDynamic::invalid_id;
+	protected:
 	};
 
 	struct IOEvent {
@@ -112,6 +112,9 @@ namespace widget2 {
 
 		StyleProperty<glm::vec2> position = glm::vec2(100);
 
+		IOEvent maximize;
+		IOEvent iconify;
+
 		void publish_begin(GUIDynamic& gui_dynamic);
 		void publish_end(GUIDynamic& gui_dynamic);
 
@@ -122,6 +125,20 @@ namespace widget2 {
 
 	private:
 		
+		//if (state.resolution_newsletter_event == Newsletter<void()>::invalid_id) {
+			//	state.resolution_newsletter_event = state.window->newsletters->on_window_resolution_events.subscribe([&](const glm::ivec2& resolution) {
+			//		*state.descriptor.size = resolution;
+			//		});
+			//}
+			//if (state.position_newsletter_event == Newsletter<void()>::invalid_id) {
+			//	state.position_newsletter_event = state.window->newsletters->on_window_position_events.subscribe([&](const glm::ivec2& position) {
+			//		*state.descriptor.position = position;
+			//		});
+			//}
+
+		size_t resolution_change_newsletter = Newsletter<>::invalid_id;
+		size_t position_change_newsletter = Newsletter<>::invalid_id;
+
 		bool menubar_published = false;
 		glm::vec2 window_position_when_drag_begin = glm::vec2(-1000);
 
@@ -384,7 +401,8 @@ namespace widget2 {
 
 		std::u32string text = U"Menu Item";
 
-		void publish(GUIDynamic& gui_dynamic);
+		void select(GUIDynamic& gui_dynamic, Menu& owner_menu);
+		void publish(GUIDynamic& gui_dynamic, Menu& owner_menu);
 
 	};
 

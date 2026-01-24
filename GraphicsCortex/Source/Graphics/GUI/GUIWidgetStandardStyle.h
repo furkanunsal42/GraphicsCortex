@@ -9,7 +9,7 @@ namespace widget2 {
 		widget.padding			= glm::vec4(10);
 		widget.target_size		= glm::vec2(GUIDynamic::fit);
 		widget.min_size			= glm::vec2(GUIDynamic::fit);
-		widget.max_size			= glm::vec2(10240);
+		widget.max_size			= glm::vec2(GUIDynamic::avail);
 		widget.color			= glm::vec4(0.98f, 0.98f, 0.98f, 1);
 		widget.border_thickness	= glm::vec4(0);
 		widget.border_rounding	= glm::vec4(0);
@@ -25,9 +25,9 @@ namespace widget2 {
 	template<>
 	inline void DefaultStyle::apply<Box>(Box& widget) {
 		widget.margin			= glm::vec4(0);
-		widget.target_size		= glm::vec2(128);	
-		widget.min_size			= glm::vec2(GUIDynamic::fit);	
-		widget.max_size			= glm::vec2(10240);	
+		widget.target_size		= glm::vec2(GUIDynamic::fit);	
+		widget.min_size			= glm::vec2(128);	
+		widget.max_size			= glm::vec2(GUIDynamic::avail);
 		widget.color			= glm::vec4(1, 1, 1, 1);
 		widget.border_thickness	= glm::vec4(0);			
 		widget.border_rounding	= glm::vec4(0);		
@@ -44,9 +44,9 @@ namespace widget2 {
 	inline void DefaultStyle::apply<Grid>(Grid& widget) {
 		widget.margin		= glm::vec4(0);	
 		widget.padding		= glm::vec4(0);
-		widget.target_size	= glm::vec2(GUIDynamic::fit);
+		widget.target_size	= glm::vec2(GUIDynamic::avail);
 		widget.min_size		= glm::vec2(GUIDynamic::fit);	
-		widget.max_size		= glm::vec2(10240);
+		widget.max_size		= glm::vec2(GUIDynamic::avail);
 		widget.pass_through_events = true;
 	}
 
@@ -54,9 +54,9 @@ namespace widget2 {
 	inline void DefaultStyle::apply<Stack>(Stack& widget) {
 		widget.margin		= glm::vec4(0);
 		widget.padding		= glm::vec4(0);
-		widget.target_size	= glm::vec2(GUIDynamic::fit);
+		widget.target_size	= glm::vec2(GUIDynamic::avail);
 		widget.min_size		= glm::vec2(GUIDynamic::fit);	
-		widget.max_size		= glm::vec2(10240);
+		widget.max_size		= glm::vec2(GUIDynamic::avail);
 		widget.spacing		= 10;
 		widget.is_vertical	= true;
 		widget.pass_through_events = true;
@@ -73,7 +73,7 @@ namespace widget2 {
 	inline void DefaultStyle::apply<Label>(Label& widget) {
 		apply<Grid>(widget);
 		widget.font			= 1;
-		widget.text_height	= 12;
+		widget.text_height	= 11;
 		widget.text_color	= glm::vec4(0, 0, 0, 1);
 		widget.target_size	= glm::vec2(GUIDynamic::fit);
 
@@ -130,8 +130,8 @@ namespace widget2 {
 		widget.target_size						= glm::vec2(200, 16);
 
 		widget.head.target_size					= glm::vec2(widget.target_size.value.y, widget.target_size.value.y);
-		widget.head.color 						= glm::vec4(0.92, 0.92, 0.92, 1);
-		widget.head.border_rounding 			= glm::vec4(11);
+		widget.head.border_rounding 			= glm::vec4(widget.target_size.value.y / 2);
+		widget.head.color 						= glm::vec4(1, 1, 1, 1);
 		widget.head.color.transition(widget.hover, glm::vec4(0.94, 0.94, 0.94, 1), std::chrono::milliseconds(100));
 		widget.head.color.transition(widget.hold, glm::vec4(0.82, 0.82, 0.82, 1), std::chrono::milliseconds(100));
 
@@ -343,8 +343,12 @@ namespace widget2 {
 		apply<Grid>(widget);
 		apply(widget.background);
 		apply(widget.label);
+		apply(widget.dropdown);
+		apply(widget.dropdown_stack);
 
-		widget.target_size				= glm::vec2(60, 26);
+		widget.padding					= glm::vec4(0);
+
+		widget.target_size				= glm::vec2(60, 22);
 		widget.background.target_size	= glm::vec2(GUIDynamic::avail);
 		widget.label.margin				= glm::vec4(GUIDynamic::avail);
 
@@ -354,12 +358,58 @@ namespace widget2 {
 		//widget.background.border_color2		= glm::vec4(0.46, 0.46, 0.46, 1);
 		//widget.background.border_color3		= glm::vec4(0.46, 0.46, 0.46, 1);
 
-		widget.background.color.transition(widget.hover, glm::vec4(0.81f, 0.85f, 0.9f, 1));
+		widget.background.color = glm::vec4(0, 0, 0, 0);
+		widget.background.color.transition(widget.hover, glm::vec4(0, 0, 0, 0.1));
+		
+		widget.dropdown.color = glm::vec4(0.96, 0.96, 0.96, 1);
+		widget.background.color.transition(widget.drop, glm::vec4(0.96, 0.96, 0.96, 1));
+
+		//widget.background.border_color0 = glm::vec4(0, 0, 0, 0.2);
+		//widget.background.border_color1 = glm::vec4(0, 0, 0, 0.2);
+		//widget.background.border_color2 = glm::vec4(0, 0, 0, 0.2);
+		//widget.background.border_color3 = glm::vec4(0, 0, 0, 0.2);
+		//widget.background.border_thickness.transition(widget.hover, glm::vec4(2));
+
+		widget.dropdown.padding = glm::vec4(0);
+
+		widget.dropdown_stack.target_size = glm::vec2(GUIDynamic::fit);
+		widget.dropdown_stack.spacing = 0;
 
 		widget.background.pass_through_events = true;
 		widget.label.pass_through_events = true;
+		widget.dropdown_stack.pass_through_events = true;
 		widget.pass_through_events = false;
 	}
+
+	template<>
+	inline void DefaultStyle::apply<MenuItem>(MenuItem& widget) {
+		apply<Grid>(widget);
+		apply(widget.background);
+		apply(widget.label);
+
+		widget.target_size = glm::vec2(150, 22);
+
+		widget.background.target_size = glm::vec2(GUIDynamic::avail);
+		widget.background.color = glm::vec4(0.96, 0.96, 0.96, 0);
+		
+		widget.background.color.transition(widget.hover, glm::vec4(0.88, 0.88, 0.88, 1));
+		widget.background.border_thickness = glm::vec4(0);
+		widget.background.border_thickness.transition(widget.hover, glm::vec4(1));
+		
+		widget.background.border_color0 = glm::vec4(0.34, 0.34, 0.34, 1);
+		widget.background.border_color1 = glm::vec4(0.34, 0.34, 0.34, 1);
+		widget.background.border_color2 = glm::vec4(0.34, 0.34, 0.34, 1);
+		widget.background.border_color3 = glm::vec4(0.34, 0.34, 0.34, 1);
+
+		widget.label.margin = glm::vec4(8, GUIDynamic::avail, GUIDynamic::avail, GUIDynamic::avail);
+		widget.label.text_color = glm::vec4(0, 0, 0, 0.8);
+		widget.label.text_color.transition(widget.hover, glm::vec4(0, 0, 0, 1));
+
+		widget.label.pass_through_events = true;
+		widget.background.pass_through_events = true;
+		widget.pass_through_events = true;
+	}
+
 
 	template<>
 	inline void DefaultStyle::apply<WindowControls>(WindowControls& widget) {
@@ -373,21 +423,31 @@ namespace widget2 {
 		widget.spacing					= 0;
 		widget.padding					= glm::vec4(0);
 
-		widget.minimize_button.target_size = glm::vec2(40, 24);
-		widget.restore_button.target_size = glm::vec2(40, 24);
-		widget.close_button.target_size = glm::vec2(40, 24);
+		widget.minimize_button.target_size	= glm::vec2(40, 24);
+		widget.restore_button.target_size	= glm::vec2(40, 24);
+		widget.close_button.target_size		= glm::vec2(40, 24);
 
-		widget.minimize_button.background.color = glm::vec4(1, 1, 1, 1);
-		widget.minimize_button.background.color.transition(widget.minimize_button.hover, glm::vec4(0.8, 0.8, 0.8, 1));
-		widget.minimize_button.background.color.transition(widget.minimize_button.hold, glm::vec4(0.75, 0.75, 0.75, 1));
+		widget.minimize_button.background.border_thickness = glm::vec4(0);
+		widget.minimize_button.background.color = glm::vec4(1, 1, 1, 0);
+		widget.minimize_button.image.color = glm::vec4(0, 0, 0, 0.67);
+		widget.minimize_button.background.color.transition(widget.minimize_button.hover, glm::vec4(0.8, 0.8, 0.8, 1), std::chrono::milliseconds(60));
+		widget.minimize_button.image.color.transition(widget.minimize_button.hover, glm::vec4(0, 0, 0, 1), std::chrono::milliseconds(60));
+		widget.minimize_button.background.color.transition(widget.minimize_button.hold, glm::vec4(0.75, 0.75, 0.75, 1), std::chrono::milliseconds(120));
 
-		widget.restore_button.background.color = glm::vec4(1, 1, 1, 1);
-		widget.restore_button.background.color.transition(widget.restore_button.hover, glm::vec4(0.8, 0.8, 0.8, 1));
+		widget.restore_button.background.border_thickness = glm::vec4(0);
+		widget.restore_button.background.color = glm::vec4(1, 1, 1, 0);
+		widget.restore_button.image.color = glm::vec4(0, 0, 0, 0.67);
+		widget.restore_button.background.color.transition(widget.restore_button.hover, glm::vec4(0.8, 0.8, 0.8, 1), std::chrono::milliseconds(60));
+		widget.restore_button.image.color.transition(widget.restore_button.hover, glm::vec4(0, 0, 0, 1), std::chrono::milliseconds(60));
 		widget.restore_button.background.color.transition(widget.restore_button.hold, glm::vec4(0.75, 0.75, 0.75, 1));
-
-		widget.close_button.background.color = glm::vec4(1, 1, 1, 1);
-		widget.close_button.background.color.transition(widget.close_button.hover, glm::vec4(0.91f, 0.05f, 0.11f, 1));
+		
+		widget.close_button.background.border_thickness = glm::vec4(0);
+		widget.close_button.background.color = glm::vec4(1, 1, 1, 0);
+		widget.close_button.image.color = glm::vec4(0, 0, 0, 0.67);
+		widget.close_button.background.color.transition(widget.close_button.hover, glm::vec4(0.91f, 0.05f, 0.11f, 1), std::chrono::milliseconds(60));
+		widget.close_button.image.color.transition(widget.close_button.hover, glm::vec4(1, 1, 1, 0.7), std::chrono::milliseconds(60));
 		widget.close_button.background.color.transition(widget.close_button.hold, glm::vec4(0.91f, 0.05f, 0.11f, 1));
+
 	}
 
 	template<>
@@ -397,7 +457,9 @@ namespace widget2 {
 		apply(widget.manu_stack);
 		apply(widget.window_controls);
 
-		widget.target_size					= glm::vec2(GUIDynamic::avail, 26);
+		widget.manu_stack.spacing			= 4;
+
+		widget.target_size					= glm::vec2(GUIDynamic::avail, 24);
 		widget.background.target_size		= glm::vec2(GUIDynamic::avail);
 	
 		widget.background.color				= glm::vec4(0.90, 0.90, 0.90, 1);

@@ -15,12 +15,12 @@ public:
 		Texture2D::ColorFormat format = Texture2D::ColorFormat::RGBA,
 		Texture2D::Type type = Texture2D::Type::UNSIGNED_BYTE,
 		glm::ivec2 target_resolution = glm::ivec2(1, 1),
-		int32_t mipmap = 32,
+		int32_t mipmap = 1,
 		bool vertical_flip = true
 	);
 
 private:
 
-	std::unordered_map<std::filesystem::path, std::weak_ptr<Texture2D>> created_textures;
+	std::unordered_map<std::filesystem::path, std::shared_ptr<Texture2D>> created_textures;
 
 };
