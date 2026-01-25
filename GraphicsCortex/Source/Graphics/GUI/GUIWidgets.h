@@ -3,7 +3,7 @@
 #include <chrono>
 #include "Font.h"
 
-namespace widget2 {
+namespace widget {
 
 	class Widget {
 	public:
@@ -444,7 +444,7 @@ namespace widget2 {
 		ImageButton close_button;
 
 		void publish(GUIDynamic& gui_dynamic);
-		void manage(GUIDynamic& gui_dynamic, widget2::Window& window);
+		void manage(GUIDynamic& gui_dynamic, widget::Window& window);
 
 	};
 

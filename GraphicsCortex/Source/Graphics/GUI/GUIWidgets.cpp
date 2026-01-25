@@ -6,20 +6,20 @@
 
 #include <codecvt>
 
-GUIDynamic::ResolvedProperties widget2::Widget::get_resolved_properties(GUIDynamic& gui_dynamic)
+GUIDynamic::ResolvedProperties widget::Widget::get_resolved_properties(GUIDynamic& gui_dynamic)
 {
 	return gui_dynamic.get_resolved_properties(id);
 }
 
-glm::vec2 widget2::IOWidget::get_cursor_position_when_hold_begin(int32_t mouse_button) {
+glm::vec2 widget::IOWidget::get_cursor_position_when_hold_begin(int32_t mouse_button) {
 	return cursor_position_when_hold_begin;
 }
 
-glm::vec2 widget2::IOWidget::get_widget_position_when_hold_begin(int32_t mouse_button) {
+glm::vec2 widget::IOWidget::get_widget_position_when_hold_begin(int32_t mouse_button) {
 	return widget_position_when_hold_begin;
 }
 
-void widget2::IOWidget::resolve_io(GUIDynamic& gui_dynamic)
+void widget::IOWidget::resolve_io(GUIDynamic& gui_dynamic)
 {
 	GUI::MouseEvent event = gui_dynamic.get_resolved_properties(id).event;
 
@@ -78,22 +78,22 @@ void widget2::IOWidget::resolve_io(GUIDynamic& gui_dynamic)
 		carry.finish(gui_dynamic);
 }
 
-void widget2::IOEvent::impulse(GUIDynamic& gui_dynamic) {
+void widget::IOEvent::impulse(GUIDynamic& gui_dynamic) {
 	start(gui_dynamic);
 	finish(gui_dynamic);
 }
 
-void widget2::IOEvent::start(GUIDynamic& gui_dynamic)
+void widget::IOEvent::start(GUIDynamic& gui_dynamic)
 {
 	begin_time = gui_dynamic.get_current_frame_timepoint();
 }
 
-void widget2::IOEvent::finish(GUIDynamic& gui_dynamic)
+void widget::IOEvent::finish(GUIDynamic& gui_dynamic)
 {
 	end_time = gui_dynamic.get_current_frame_timepoint();
 }
 
-bool widget2::IOEvent::is_active()
+bool widget::IOEvent::is_active()
 {
 	if (begin_time == GUIDynamic::invalid_time && end_time == GUIDynamic::invalid_time)
 		return false;
@@ -104,18 +104,18 @@ bool widget2::IOEvent::is_active()
 	return (begin_time > end_time);
 }
 
-bool widget2::IOEvent::is_activated_now(GUIDynamic& gui_dynamic)
+bool widget::IOEvent::is_activated_now(GUIDynamic& gui_dynamic)
 {
 	return begin_time == gui_dynamic.get_current_frame_timepoint();
 }
 
-bool widget2::IOEvent::is_deactivated_now(GUIDynamic& gui_dynamic)
+bool widget::IOEvent::is_deactivated_now(GUIDynamic& gui_dynamic)
 {
 	return end_time == gui_dynamic.get_current_frame_timepoint();
 }
 
 
-void widget2::Box::publish(GUIDynamic& gui_dynamic) {
+void widget::Box::publish(GUIDynamic& gui_dynamic) {
 
 	resolve_io(gui_dynamic);
 
@@ -139,7 +139,7 @@ void widget2::Box::publish(GUIDynamic& gui_dynamic) {
 	//gui_dynamic.box_end();
 }
 
-void widget2::Box::apply_properties_to(GUIDynamic::WindowDesc& desc)
+void widget::Box::apply_properties_to(GUIDynamic::WindowDesc& desc)
 {
 	desc.padding			=  glm::vec4(0);
 	desc.target_size		=  target_size;
@@ -156,7 +156,7 @@ void widget2::Box::apply_properties_to(GUIDynamic::WindowDesc& desc)
 	desc.shadow_color		=  shadow_color;
 }
 
-void widget2::Box::apply_properties_to(GUIDynamic::BoxDesc& desc)
+void widget::Box::apply_properties_to(GUIDynamic::BoxDesc& desc)
 {
 	desc.margin				=  margin;
 	desc.target_size		=  target_size;
@@ -174,7 +174,7 @@ void widget2::Box::apply_properties_to(GUIDynamic::BoxDesc& desc)
 	desc.pass_through_events = pass_through_events;
 }
 
-void widget2::Box::apply_properties_to(GUIDynamic::GridDesc& desc)
+void widget::Box::apply_properties_to(GUIDynamic::GridDesc& desc)
 {
 	desc.margin				=  margin;
 	desc.target_size		=  target_size;
@@ -184,7 +184,7 @@ void widget2::Box::apply_properties_to(GUIDynamic::GridDesc& desc)
 	desc.pass_through_events = pass_through_events;
 }
 
-void widget2::Box::apply_properties_to(GUIDynamic::StackDesc& desc)
+void widget::Box::apply_properties_to(GUIDynamic::StackDesc& desc)
 {
 	desc.margin				=  margin;
 	desc.target_size		=  target_size;
@@ -195,7 +195,7 @@ void widget2::Box::apply_properties_to(GUIDynamic::StackDesc& desc)
 	desc.pass_through_events = pass_through_events;
 }
 
-void widget2::Grid::publish_begin(GUIDynamic& gui_dynamic) {
+void widget::Grid::publish_begin(GUIDynamic& gui_dynamic) {
 
 	resolve_io(gui_dynamic);
 
@@ -211,13 +211,13 @@ void widget2::Grid::publish_begin(GUIDynamic& gui_dynamic) {
 	gui_dynamic.grid_region(glm::ivec2(0));
 }
 
-void widget2::Grid::publish_end(GUIDynamic& gui_dynamic) {
+void widget::Grid::publish_end(GUIDynamic& gui_dynamic) {
 	
 	gui_dynamic.grid_end();
 
 }
 
-void widget2::Stack::publish_begin(GUIDynamic& gui_dynamic) {
+void widget::Stack::publish_begin(GUIDynamic& gui_dynamic) {
 
 	resolve_io(gui_dynamic);
 
@@ -233,13 +233,13 @@ void widget2::Stack::publish_begin(GUIDynamic& gui_dynamic) {
 	gui_dynamic.stack_prop().is_vertical			= is_vertical;
 }
 
-void widget2::Stack::publish_end(GUIDynamic& gui_dynamic) {
+void widget::Stack::publish_end(GUIDynamic& gui_dynamic) {
 
 	gui_dynamic.stack_end();
 
 }
 
-void widget2::Window::publish_begin(GUIDynamic& gui_dynamic) {
+void widget::Window::publish_begin(GUIDynamic& gui_dynamic) {
 
 	gui_dynamic.window_begin(id)
 		.set_name(name)
@@ -308,7 +308,7 @@ void widget2::Window::publish_begin(GUIDynamic& gui_dynamic) {
 	menubar_published = false;
 }
 
-void widget2::Window::publish_end(GUIDynamic& gui_dynamic) {
+void widget::Window::publish_end(GUIDynamic& gui_dynamic) {
 
 	if (menubar_published)
 		gui_dynamic.grid_end();
@@ -388,7 +388,7 @@ void widget2::Window::publish_end(GUIDynamic& gui_dynamic) {
 	gui_dynamic.window_end();
 }
 
-void widget2::Window::publish_menubar_begin(GUIDynamic& gui_dynamic) {
+void widget::Window::publish_menubar_begin(GUIDynamic& gui_dynamic) {
 
 	gui_dynamic.grid_begin()
 		.set_target_size(glm::vec2(GUIDynamic::avail))
@@ -404,13 +404,13 @@ void widget2::Window::publish_menubar_begin(GUIDynamic& gui_dynamic) {
 	menubar_published = true;
 }
 
-void widget2::Window::publish_menubar_end(GUIDynamic& gui_dynamic) {
+void widget::Window::publish_menubar_end(GUIDynamic& gui_dynamic) {
 
 	gui_dynamic.grid_region(glm::ivec2(0, 1));
 
 }
 
-void widget2::Window::drag(GUIDynamic& gui_dynamic, IOWidget& widget) {
+void widget::Window::drag(GUIDynamic& gui_dynamic, IOWidget& widget) {
 
 	if (widget.doubleclick.is_activated_now(gui_dynamic)) {
 		desire_maximal_restore_swap();
@@ -438,7 +438,7 @@ void widget2::Window::drag(GUIDynamic& gui_dynamic, IOWidget& widget) {
 
 }
 
-void widget2::Window::desire_iconify()
+void widget::Window::desire_iconify()
 {
 	does_desire_maximal = false;
 	does_desire_restore = false;
@@ -446,7 +446,7 @@ void widget2::Window::desire_iconify()
 	does_desire_iconify = true;
 }
 
-void widget2::Window::desire_maximal()
+void widget::Window::desire_maximal()
 {
 	does_desire_iconify = false;
 	does_desire_restore = false;
@@ -454,7 +454,7 @@ void widget2::Window::desire_maximal()
 	does_desire_maximal = true;
 }
 
-void widget2::Window::desire_restore()
+void widget::Window::desire_restore()
 {
 	does_desire_iconify = false;
 	does_desire_maximal = false;
@@ -462,7 +462,7 @@ void widget2::Window::desire_restore()
 	does_desire_restore = true;
 }
 
-void widget2::Window::desire_maximal_restore_swap()
+void widget::Window::desire_maximal_restore_swap()
 {
 	does_desire_iconify = false;
 	does_desire_maximal = false;
@@ -470,19 +470,19 @@ void widget2::Window::desire_maximal_restore_swap()
 	does_desire_maximal_restore_swap = true;
 }
 
-void widget2::Container::publish_begin(GUIDynamic& gui_dynamic) {
+void widget::Container::publish_begin(GUIDynamic& gui_dynamic) {
 
 	Grid::publish_begin(gui_dynamic);
 	gui_dynamic.grid_add_column(GUIDynamic::avail);
 	gui_dynamic.grid_add_row(GUIDynamic::avail);
 }
 
-void widget2::Container::publish_end(GUIDynamic& gui_dynamic) {
+void widget::Container::publish_end(GUIDynamic& gui_dynamic) {
 
 	Grid::publish_end(gui_dynamic);
 }
 
-void widget2::Image::publish(GUIDynamic& gui_dynamic)
+void widget::Image::publish(GUIDynamic& gui_dynamic)
 {
 	if (texture == nullptr) {
 		Box::publish(gui_dynamic);
@@ -539,7 +539,7 @@ void widget2::Image::publish(GUIDynamic& gui_dynamic)
 	}
 }
 
-void widget2::Label::publish(GUIDynamic& gui_dynamic, const std::u32string& text)
+void widget::Label::publish(GUIDynamic& gui_dynamic, const std::u32string& text)
 {
 	if (active_global_resources == nullptr || !FontBank::get().does_font_exist(font))
 		return;
@@ -551,7 +551,7 @@ void widget2::Label::publish(GUIDynamic& gui_dynamic, const std::u32string& text
 	publish_end(gui_dynamic, text);
 }
 
-void widget2::Label::publish_begin(GUIDynamic& gui_dynamic, const std::u32string& text) {
+void widget::Label::publish_begin(GUIDynamic& gui_dynamic, const std::u32string& text) {
 	
 	if (active_global_resources == nullptr || !FontBank::get().does_font_exist(font))
 		return;
@@ -567,7 +567,7 @@ void widget2::Label::publish_begin(GUIDynamic& gui_dynamic, const std::u32string
 
 }
 
-bool widget2::Label::publish_glyph(GUIDynamic& gui_dynamic, size_t end_index, const std::u32string& text) {
+bool widget::Label::publish_glyph(GUIDynamic& gui_dynamic, size_t end_index, const std::u32string& text) {
 	
 	bool published_at_least_once = false;
 
@@ -603,12 +603,12 @@ bool widget2::Label::publish_glyph(GUIDynamic& gui_dynamic, size_t end_index, co
 	return published_at_least_once;
 }
 
-float widget2::Label::get_published_advance()
+float widget::Label::get_published_advance()
 {
 	return advance;
 }
 
-float widget2::Label::compute_total_advance(size_t end_index, const std::u32string& text)
+float widget::Label::compute_total_advance(size_t end_index, const std::u32string& text)
 {
 	if (active_global_resources == nullptr || !FontBank::get().does_font_exist(font))
 		return 0;
@@ -632,7 +632,7 @@ float widget2::Label::compute_total_advance(size_t end_index, const std::u32stri
 	return computed_advance;
 }
 
-void widget2::Label::publish_end(GUIDynamic& gui_dynamic, const std::u32string& text) {
+void widget::Label::publish_end(GUIDynamic& gui_dynamic, const std::u32string& text) {
 
 	if (active_global_resources == nullptr || !FontBank::get().does_font_exist(font))
 		return;
@@ -651,7 +651,7 @@ void widget2::Label::publish_end(GUIDynamic& gui_dynamic, const std::u32string& 
 
 }
 
-void widget2::TextInput::publish(GUIDynamic& gui_dynamic, std::u32string& text)
+void widget::TextInput::publish(GUIDynamic& gui_dynamic, std::u32string& text)
 {
 	Container::publish_begin(gui_dynamic);
 
@@ -704,7 +704,7 @@ void widget2::TextInput::publish(GUIDynamic& gui_dynamic, std::u32string& text)
 	Grid::publish_end(gui_dynamic);
 }
 
-void widget2::TextInput::resolve_keyboard_io(GUIDynamic& gui_dynamic, std::u32string& text) {
+void widget::TextInput::resolve_keyboard_io(GUIDynamic& gui_dynamic, std::u32string& text) {
 	
 	for (GUI::KeyboardEvent& e : gui_dynamic.get_io_state().keyboard_events) {
 		if (e.data.index() == 0) {
@@ -982,7 +982,7 @@ void widget2::TextInput::resolve_keyboard_io(GUIDynamic& gui_dynamic, std::u32st
 
 }
 
-void widget2::Slider::publish(GUIDynamic& gui_dynamic, float& value) {
+void widget::Slider::publish(GUIDynamic& gui_dynamic, float& value) {
 
 	Container::publish_begin(gui_dynamic);
 	
@@ -1016,7 +1016,7 @@ namespace {
 	}
 }
 
-void widget2::DragFloat::publish(GUIDynamic& gui_dynamic, float& value) {
+void widget::DragFloat::publish(GUIDynamic& gui_dynamic, float& value) {
 	
 	std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> convert;
 
@@ -1087,7 +1087,7 @@ void widget2::DragFloat::publish(GUIDynamic& gui_dynamic, float& value) {
 	old_value = value;
 }
 
-void widget2::Button::publish(GUIDynamic& gui_dynamic) {
+void widget::Button::publish(GUIDynamic& gui_dynamic) {
 
 	Container::publish_begin(gui_dynamic);
 
@@ -1097,7 +1097,7 @@ void widget2::Button::publish(GUIDynamic& gui_dynamic) {
 	Container::publish_end(gui_dynamic);
 }
 
-void widget2::ImageButton::publish(GUIDynamic& gui_dynamic) {
+void widget::ImageButton::publish(GUIDynamic& gui_dynamic) {
 
 	Container::publish_begin(gui_dynamic);
 	
@@ -1107,7 +1107,7 @@ void widget2::ImageButton::publish(GUIDynamic& gui_dynamic) {
 	Container::publish_end(gui_dynamic);
 }
 
-void widget2::CheckBox::publish(GUIDynamic& gui_dynamic, bool& checked) {
+void widget::CheckBox::publish(GUIDynamic& gui_dynamic, bool& checked) {
 	
 	Container::publish_begin(gui_dynamic);
 	
@@ -1130,7 +1130,7 @@ void widget2::CheckBox::publish(GUIDynamic& gui_dynamic, bool& checked) {
 }
 
 
-void widget2::ComboBox::publish_begin(GUIDynamic& gui_dynamic){
+void widget::ComboBox::publish_begin(GUIDynamic& gui_dynamic){
 		
 	Container::publish_begin(gui_dynamic);
 
@@ -1161,12 +1161,12 @@ void widget2::ComboBox::publish_begin(GUIDynamic& gui_dynamic){
 	}
 }
 
-widget2::ComboBox::ComboBox(std::u32string text)
+widget::ComboBox::ComboBox(std::u32string text)
 {
 	this->text = text;
 }
 
-void widget2::ComboBox::publish_end(GUIDynamic& gui_dynamic){
+void widget::ComboBox::publish_end(GUIDynamic& gui_dynamic){
 	
 	if (drop.is_active()) {
 		dropdown_stack.publish_end(gui_dynamic);
@@ -1177,7 +1177,7 @@ void widget2::ComboBox::publish_end(GUIDynamic& gui_dynamic){
 		drop.finish(gui_dynamic);
 }
 
-void widget2::ComboBoxItem::publish(GUIDynamic& gui_dynamic, ComboBox& owner_combobox) {
+void widget::ComboBoxItem::publish(GUIDynamic& gui_dynamic, ComboBox& owner_combobox) {
 
 	Container::publish_begin(gui_dynamic);
 
@@ -1190,22 +1190,22 @@ void widget2::ComboBoxItem::publish(GUIDynamic& gui_dynamic, ComboBox& owner_com
 		select(gui_dynamic, owner_combobox);
 }
 
-void widget2::ComboBoxItem::select(GUIDynamic& gui_dynamic, ComboBox& owner_combobox)
+void widget::ComboBoxItem::select(GUIDynamic& gui_dynamic, ComboBox& owner_combobox)
 {
 	owner_combobox.text = text;
 	owner_combobox.item_selected.impulse(gui_dynamic);
 }
 
-widget2::ComboBoxItem::ComboBoxItem(std::u32string text)
+widget::ComboBoxItem::ComboBoxItem(std::u32string text)
 {
 	this->text = text;
 }
 
-widget2::Menu::Menu(std::u32string text) {
+widget::Menu::Menu(std::u32string text) {
 	this->text = text;
 }
 
-void widget2::Menu::publish_begin(GUIDynamic& gui_dynamic) {
+void widget::Menu::publish_begin(GUIDynamic& gui_dynamic) {
 
 	Container::publish_begin(gui_dynamic);
 
@@ -1236,7 +1236,7 @@ void widget2::Menu::publish_begin(GUIDynamic& gui_dynamic) {
 	}
 }
 
-void widget2::Menu::publish_end(GUIDynamic& gui_dynamic) {
+void widget::Menu::publish_end(GUIDynamic& gui_dynamic) {
 	
 	if (drop.is_active()) {
 		dropdown_stack.publish_end(gui_dynamic);
@@ -1247,11 +1247,11 @@ void widget2::Menu::publish_end(GUIDynamic& gui_dynamic) {
 		drop.finish(gui_dynamic);
 }
 
-widget2::MenuItem::MenuItem(std::u32string text) {
+widget::MenuItem::MenuItem(std::u32string text) {
 	this->text = text;
 }
 
-void widget2::MenuItem::publish(GUIDynamic& gui_dynamic, Menu& owner_menu){
+void widget::MenuItem::publish(GUIDynamic& gui_dynamic, Menu& owner_menu){
 
 	Container::publish_begin(gui_dynamic);
 
@@ -1265,13 +1265,13 @@ void widget2::MenuItem::publish(GUIDynamic& gui_dynamic, Menu& owner_menu){
 
 };
 
-void widget2::MenuItem::select(GUIDynamic& gui_dynamic, Menu& owner_menu) {
+void widget::MenuItem::select(GUIDynamic& gui_dynamic, Menu& owner_menu) {
 
 	owner_menu.item_selected.impulse(gui_dynamic);
 
 };
 
-void widget2::WindowControls::publish(GUIDynamic& gui_dynamic) {
+void widget::WindowControls::publish(GUIDynamic& gui_dynamic) {
 	
 	minimize_button.image.texture	= gui_dynamic.gui_texture_bank.get_texture("window-minimize-symbolic-svgrepo-com.svg");
 	close_button.image.texture		= gui_dynamic.gui_texture_bank.get_texture("window-close-symbolic-svgrepo-com.svg");
@@ -1291,7 +1291,7 @@ void widget2::WindowControls::publish(GUIDynamic& gui_dynamic) {
 	Stack::publish_end(gui_dynamic);
 }
 
-void widget2::WindowControls::manage(GUIDynamic& gui_dynamic, widget2::Window& window) {
+void widget::WindowControls::manage(GUIDynamic& gui_dynamic, widget::Window& window) {
 	
 	if (minimize_button.click.is_activated_now(gui_dynamic))
 		window.desire_iconify();
@@ -1304,7 +1304,7 @@ void widget2::WindowControls::manage(GUIDynamic& gui_dynamic, widget2::Window& w
 
 }
 
-void widget2::MenuBar::publish_begin(GUIDynamic& gui_dynamic) {
+void widget::MenuBar::publish_begin(GUIDynamic& gui_dynamic) {
 
 	Grid::publish_begin(gui_dynamic);
 
@@ -1323,7 +1323,7 @@ void widget2::MenuBar::publish_begin(GUIDynamic& gui_dynamic) {
 	
 }
 
-void widget2::MenuBar::publish_end(GUIDynamic& gui_dynamic) {
+void widget::MenuBar::publish_end(GUIDynamic& gui_dynamic) {
 
 	manu_stack.publish_end(gui_dynamic);
 	Grid::publish_end(gui_dynamic);

@@ -1,7 +1,7 @@
 #pragma once
 #include "GUIWidgets.h"
 
-namespace widget2 {
+namespace widget {
 
 	template<>
 	inline void DefaultStyle::apply<Window>(Window& widget) {

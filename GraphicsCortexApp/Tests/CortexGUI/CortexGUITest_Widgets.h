@@ -20,7 +20,7 @@ public:
 		Package::load_package("graphics_cortex.hbv");
 		Package::loaded_package->print_headers();
 
-		widget2::DefaultStyle style;
+		widget::DefaultStyle style;
 
 		GUIDynamic gui_d(true);
 
@@ -31,7 +31,7 @@ public:
 
 			gui_d.new_frame();
 
-			static widget2::Window window0;
+			static widget::Window window0;
 
 			style.apply(window0);
 			window0.padding = glm::vec4(0);
@@ -48,7 +48,7 @@ public:
 			
 			window0.publish_menubar_begin(gui_d);
 			
-			static widget2::MenuBar menubar;
+			static widget::MenuBar menubar;
 			
 			style.apply(menubar);
 			menubar.publish_begin(gui_d);
@@ -56,17 +56,17 @@ public:
 			window0.drag(gui_d, menubar);
 			menubar.window_controls.manage(gui_d, window0);
 			
-			static widget2::Menu menu_file(U"File");
+			static widget::Menu menu_file(U"File");
 			
 			style.apply(menu_file);
 			menu_file.publish_begin(gui_d);
 			
 			if (menu_file.drop.is_active()) {
-				static widget2::MenuItem menu_item_new(U"New");
-				static widget2::MenuItem menu_item_open(U"Open");
-				static widget2::MenuItem menu_item_close(U"Close");
-				static widget2::MenuItem menu_item_save(U"Save");
-				static widget2::MenuItem menu_item_save_all(U"Save All");
+				static widget::MenuItem menu_item_new(U"New");
+				static widget::MenuItem menu_item_open(U"Open");
+				static widget::MenuItem menu_item_close(U"Close");
+				static widget::MenuItem menu_item_save(U"Save");
+				static widget::MenuItem menu_item_save_all(U"Save All");
 			
 				style.apply(menu_item_new);
 				style.apply(menu_item_open);
@@ -85,17 +85,17 @@ public:
 			
 			
 			
-			static widget2::Menu menu_edit(U"Edit");
+			static widget::Menu menu_edit(U"Edit");
 			
 			style.apply(menu_edit);
 			menu_edit.publish_begin(gui_d);
 			
 			if (menu_edit.drop.is_active()) {
-				static widget2::MenuItem menu_item_undo(U"Undo");
-				static widget2::MenuItem menu_item_redo(U"Redo");
-				static widget2::MenuItem menu_item_cut(U"Cut");
-				static widget2::MenuItem menu_item_copy(U"Copy");
-				static widget2::MenuItem menu_item_paste(U"Paste");
+				static widget::MenuItem menu_item_undo(U"Undo");
+				static widget::MenuItem menu_item_redo(U"Redo");
+				static widget::MenuItem menu_item_cut(U"Cut");
+				static widget::MenuItem menu_item_copy(U"Copy");
+				static widget::MenuItem menu_item_paste(U"Paste");
 			
 				style.apply(menu_item_undo);
 				style.apply(menu_item_redo);
@@ -123,7 +123,7 @@ public:
 				.set_padding(glm::vec4(20, 20, 20, 20));
 
 			static float slider_value = 12;
-			static widget2::Label label;
+			static widget::Label label;
 
 			style.apply(label);
 			label.text_height = slider_value;
@@ -131,25 +131,25 @@ public:
 			label.text_color.transition(label.hover, glm::vec4(1, 0, 0, 1), std::chrono::milliseconds(100));
 			label.publish(gui_d, U"Hello World!");
 
-			static widget2::TextInput text_input;
+			static widget::TextInput text_input;
 			static std::u32string text_input_str;
 
 			style.apply(text_input);
 			text_input.publish(gui_d, text_input_str);
 			
-			static widget2::Slider slider;
+			static widget::Slider slider;
 
 			style.apply(slider);
 			slider.max_value = 32;
 			slider.min_value = 8;
 			slider.publish(gui_d, slider_value);
 
-			static widget2::DragFloat drag_float;
+			static widget::DragFloat drag_float;
 
 			style.apply(drag_float);
 			drag_float.publish(gui_d, slider_value);
 			
-			static widget2::Button button;
+			static widget::Button button;
 
 			style.apply(button);
 			button.publish(gui_d);
@@ -158,32 +158,32 @@ public:
 				text_input_str = U"";
 			}
 
-			static widget2::ImageButton image_button;
+			static widget::ImageButton image_button;
 
 			style.apply(image_button);
 			image_button.image.texture = gui_d.gui_texture_bank.get_texture("play.svg");
 			image_button.image.color = glm::vec4(0.13f, 0.51f, 0.58f, 1);
 			image_button.publish(gui_d);
 
-			static widget2::CheckBox checkbox;
+			static widget::CheckBox checkbox;
 			static bool checkbox_value = false;
 
 			style.apply(checkbox);
 
 			checkbox.publish(gui_d, checkbox_value);
 
-			static widget2::ComboBox combobox;
+			static widget::ComboBox combobox;
 			
 			style.apply(combobox);
 			combobox.publish_begin(gui_d);
 			
 			if (combobox.drop.is_active()) {
 
-				static widget2::ComboBoxItem item0(U"item0");
-				static widget2::ComboBoxItem item1(U"item1");
-				static widget2::ComboBoxItem item2(U"item2");
-				static widget2::ComboBoxItem item3(U"item3");
-				static widget2::ComboBoxItem item4(U"item4");
+				static widget::ComboBoxItem item0(U"item0");
+				static widget::ComboBoxItem item1(U"item1");
+				static widget::ComboBoxItem item2(U"item2");
+				static widget::ComboBoxItem item3(U"item3");
+				static widget::ComboBoxItem item4(U"item4");
 
 				style.apply(item0);
 				style.apply(item1);
@@ -200,7 +200,7 @@ public:
 
 			combobox.publish_end(gui_d);
 
-			//static widget2::Window window1;
+			//static widget::Window window1;
 			//style.apply(window1);
 			//window1.drag(gui_d, window1);
 			//window1.publish_begin(gui_d);

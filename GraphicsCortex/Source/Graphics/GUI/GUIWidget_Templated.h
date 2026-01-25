@@ -2,30 +2,30 @@
 #include "GUIWidgets.h"
 
 template<typename T>
-widget2::StyleProperty<T>::StyleProperty<T>(T value) : 
+widget::StyleProperty<T>::StyleProperty<T>(T value) : 
 	value(value) { }
 
 template<typename T>
-widget2::StyleProperty<T>::operator T() 
+widget::StyleProperty<T>::operator T() 
 { 
 	return value; 
 }
 template<typename T>
-widget2::StyleProperty<T>& widget2::StyleProperty<T>::transition(T default_value) {
+widget::StyleProperty<T>& widget::StyleProperty<T>::transition(T default_value) {
 	value = value;
 	return *this;
 }
 
 
 template<typename T>
-widget2::StyleProperty<T>& widget2::StyleProperty<T>::transition(const IOEvent& event, T transition_value, duration transition_duration) {
+widget::StyleProperty<T>& widget::StyleProperty<T>::transition(const IOEvent& event, T transition_value, duration transition_duration) {
 	float t = glm::clamp(get_t(event, transition_duration), 0.0f, 1.0f);
 	value = value * (1 - t) + transition_value * t;
 	return *this;
 }
 
 template<typename T>
-float widget2::StyleProperty<T>::get_t(const IOEvent& event, duration transition_duration) {
+float widget::StyleProperty<T>::get_t(const IOEvent& event, duration transition_duration) {
 
 	if (event.begin_time == GUIDynamic::invalid_time && event.end_time == GUIDynamic::invalid_time)
 		return 0;

@@ -20,10 +20,10 @@ public:
 		GUI gui;
 		GUIDynamic gui_d;
 
-		widget2::Window window0;
+		widget::Window window0;
 		window0.draggable = true;
 
-		widget2::Box style_box;
+		widget::Box style_box;
 		style_box.target_size					= glm::vec2(avail, 32);
 		style_box.color							= glm::vec4(1, 1, 1, 1);
 		style_box.on_hover_color				= glm::vec4(1, 0, 1, 1);
@@ -33,15 +33,15 @@ public:
 		//style_box.on_hold_margin				= glm::vec4(20, 0, 20, 0);
 		//style_box.on_hold_margin_transition		= std::chrono::milliseconds(85);
 
-		widget2::Image image;
+		widget::Image image;
 		image.target_size						= glm::vec2(avail, 64);
-		image.type								= widget2::Image::Fit;
+		image.type								= widget::Image::Fit;
 		image.on_hover_color					= glm::vec4(1, 0, 0, 1);
 		image.on_hover_color_transition			= std::chrono::milliseconds(1);
 
 		std::shared_ptr<Texture2D> texture = nullptr;
 
-		widget2::Label label;
+		widget::Label label;
 		label.text								= U"Hello World";
 		label.text_color						= glm::vec4(0, 0, 0, 1);
 		label.on_hover_text_color				= glm::vec4(1, 0, 0, 1);
