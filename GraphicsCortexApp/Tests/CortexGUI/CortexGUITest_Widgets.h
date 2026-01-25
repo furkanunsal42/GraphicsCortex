@@ -35,7 +35,8 @@ public:
 
 			style.apply(window0);
 			window0.padding = glm::vec4(0);
-			//window0.target_size.value.x = 600;
+			window0.target_size.value.x = 600;
+			window0.target_size.value.y = 400;
 			
 			//window0.drag(gui_d, window0);
 			window0.drag(gui_d, menubar);
@@ -49,53 +50,86 @@ public:
 			style.apply(menubar);
 			menubar.publish_begin(gui_d);
 
-			if (menubar.window_controls.minimize_button.click.is_activated_now(gui_d) && gui_d.get_window_handle(window0.id) != nullptr)
-				gui_d.get_window_handle(window0.id)->window_minimize();
+			if (menubar.window_controls.minimize_button.click.is_activated_now(gui_d))
+				window0.desire_iconify();
 
-			static bool maximized = false;
-			if (menubar.window_controls.restore_button.click.is_activated_now(gui_d) && gui_d.get_window_handle(window0.id) != nullptr)
-				maximized = !maximized;
+			if (menubar.window_controls.restore_button.click.is_activated_now(gui_d))
+				window0.desire_maximal_restore_swap();
 
 			if (menubar.window_controls.close_button.click.is_activated_now(gui_d) && gui_d.get_window_handle(window0.id) != nullptr)
 				gui_d.get_window_handle(window0.id)->set_should_close(true);
 
-			if (maximized)
-				window0.target_size = glm::vec2(avail);
+			static widget2::Menu menu_file;
+			menu_file.text = U"File";
 
-			static widget2::Menu menu;
-			menu.text = U"File";
-
-			style.apply(menu);
-			menu.publish_begin(gui_d);
+			style.apply(menu_file);
+			menu_file.publish_begin(gui_d);
 			
-			if (menu.drop.is_active()) {
-				static widget2::MenuItem menu_item0;
-				static widget2::MenuItem menu_item1;
-				static widget2::MenuItem menu_item2;
-				static widget2::MenuItem menu_item3;
-				static widget2::MenuItem menu_item4;
+			if (menu_file.drop.is_active()) {
+				static widget2::MenuItem menu_item_new;
+				static widget2::MenuItem menu_item_open;
+				static widget2::MenuItem menu_item_close;
+				static widget2::MenuItem menu_item_save;
+				static widget2::MenuItem menu_item_save_all;
 
-				menu_item0.text = U"New";
-				menu_item1.text = U"Open";
-				menu_item4.text = U"Close";
-				menu_item2.text = U"Save";
-				menu_item3.text = U"Save All";
+				menu_item_new.text = U"New";
+				menu_item_open.text = U"Open";
+				menu_item_close.text = U"Close";
+				menu_item_save.text = U"Save";
+				menu_item_save_all.text = U"Save All";
 
-				style.apply(menu_item0);
-				style.apply(menu_item1);
-				style.apply(menu_item2);
-				style.apply(menu_item3);
-				style.apply(menu_item4);
+				style.apply(menu_item_new);
+				style.apply(menu_item_open);
+				style.apply(menu_item_close);
+				style.apply(menu_item_save);
+				style.apply(menu_item_save_all);
 
-				menu_item0.publish(gui_d, menu);
-				menu_item1.publish(gui_d, menu);
-				menu_item2.publish(gui_d, menu);
-				menu_item3.publish(gui_d, menu);
-				menu_item4.publish(gui_d, menu);
+				menu_item_new.publish(gui_d,		menu_file);
+				menu_item_open.publish(gui_d,		menu_file);
+				menu_item_close.publish(gui_d,		menu_file);
+				menu_item_save.publish(gui_d,		menu_file);
+				menu_item_save_all.publish(gui_d,	menu_file);
 			}
 
-			menu.publish_end(gui_d);
+			menu_file.publish_end(gui_d);
 			
+
+
+			static widget2::Menu menu_edit;
+			menu_edit.text = U"Edit";
+
+			style.apply(menu_edit);
+			menu_edit.publish_begin(gui_d);
+
+			if (menu_edit.drop.is_active()) {
+				static widget2::MenuItem menu_item_undo;
+				static widget2::MenuItem menu_item_redo;
+				static widget2::MenuItem menu_item_cut;
+				static widget2::MenuItem menu_item_copy;
+				static widget2::MenuItem menu_item_paste;
+
+				menu_item_undo.text = U"Undo";
+				menu_item_redo.text = U"Redo";
+				menu_item_cut.text = U"Cut";
+				menu_item_copy.text = U"Copy";
+				menu_item_paste.text = U"Paste";
+
+				style.apply(menu_item_undo);
+				style.apply(menu_item_redo);
+				style.apply(menu_item_cut);
+				style.apply(menu_item_copy);
+				style.apply(menu_item_paste);
+
+				menu_item_undo.publish(gui_d, menu_edit);
+				menu_item_redo.publish(gui_d, menu_edit);
+				menu_item_cut.publish(gui_d, menu_edit);
+				menu_item_copy.publish(gui_d, menu_edit);
+				menu_item_paste.publish(gui_d, menu_edit);
+			}
+
+			menu_edit.publish_end(gui_d);
+
+
 			menubar.publish_end(gui_d);
 			
 			window0.publish_menubar_end(gui_d);

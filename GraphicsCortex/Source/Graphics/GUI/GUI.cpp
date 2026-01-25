@@ -215,14 +215,14 @@ void GUI::render() {
 		state.window->set_window_resizable(desc.is_resizable);
 		
 		
-		if (glm::any(glm::greaterThanEqual(desc.size, glm::vec2(1024)))) {
-			if (!state.window->is_window_maximized())
-				state.window->window_maximize();
+		if (glm::any(glm::greaterThanEqual(desc.size, glm::vec2(10240)))) {
+			//if (!state.window->is_window_maximized())
+			//	state.window->window_maximize();
 		}  
-		else if (glm::all(glm::lessThan(desc.size, glm::vec2(1024))) && state.window->is_window_maximized()) {
-			state.window->window_restore();
-			state.window->set_window_resolution(desc.size);
-			state.window->set_window_position(desc.position);
+		else if (glm::all(glm::lessThan(desc.size, glm::vec2(10240))) && state.window->is_window_maximized()) {
+			//state.window->window_restore();
+			//state.window->set_window_resolution(desc.size);
+			//state.window->set_window_position(desc.position);
 		}
 		else {
 			state.window->set_window_resolution(desc.size);

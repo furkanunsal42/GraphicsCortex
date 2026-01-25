@@ -694,11 +694,11 @@ GUIDynamic::GridDesc& GUIDynamic::grid_prop(){
 	return std::get<GridDesc>(layout.nodes[layout.last_grid].desc);
 }
 
-void GUIDynamic::grid_add_column(float target_width, float min_width = fit, float max_width = avail){
+void GUIDynamic::grid_add_column(float target_width, float min_width, float max_width){
 	grid_prop().columns.push_back(glm::vec3(target_width, min_width, max_width));
 }
 
-void GUIDynamic::grid_add_row(float target_height, float min_height = fit, float max_height = avail){
+void GUIDynamic::grid_add_row(float target_height, float min_height, float max_height){
 	grid_prop().rows.push_back(glm::vec3(target_height, min_height, max_height));
 }
 
@@ -1369,14 +1369,14 @@ void GUIDynamic::resolve_phase0_fit(){
 			glm::vec2 child_max_size	= node_max_size(node.child);
 			glm::vec2 child_margin		= non_avail(node_margin(node.child));
 
-			if (desc.min_size.x		== fit)		desc.min_size.x		= child_min_size.x					+ child_margin.x + self_padding.x;
-			if (desc.min_size.y		== fit)		desc.min_size.y		= child_min_size.y					+ child_margin.y + self_padding.y;
-			if (desc.target_size.x	== fit)		desc.target_size.x	= non_avail(child_target_size.x)	+ child_margin.x + self_padding.x;
-			if (desc.target_size.y	== fit)		desc.target_size.y	= non_avail(child_target_size.y)	+ child_margin.y + self_padding.y;
-			if (desc.max_size.x		== fit)		desc.max_size.x		= child_max_size.x					+ child_margin.x + self_padding.x;
-			if (desc.max_size.y		== fit)		desc.max_size.y		= child_max_size.y					+ child_margin.y + self_padding.y;
-			if (desc.max_size.x		== avail)	desc.max_size.x		= 10240								+ child_margin.x + self_padding.x;
-			if (desc.max_size.y		== avail)	desc.max_size.y		= 10240								+ child_margin.y + self_padding.y;
+			if (desc.min_size.x		== fit)		desc.min_size.x		= child_min_size.x	+ child_margin.x + self_padding.x;
+			if (desc.min_size.y		== fit)		desc.min_size.y		= child_min_size.y	+ child_margin.y + self_padding.y;
+			if (desc.target_size.x	== fit)		desc.target_size.x	= child_min_size.x	+ child_margin.x + self_padding.x;
+			if (desc.target_size.y	== fit)		desc.target_size.y	= child_min_size.y	+ child_margin.y + self_padding.y;
+			if (desc.max_size.x		== fit)		desc.max_size.x		= child_min_size.x	+ child_margin.x + self_padding.x;
+			if (desc.max_size.y		== fit)		desc.max_size.y		= child_min_size.y	+ child_margin.y + self_padding.y;
+			if (desc.max_size.x		== avail)	desc.max_size.x		= 10240				+ child_margin.x + self_padding.x;
+			if (desc.max_size.y		== avail)	desc.max_size.y		= 10240				+ child_margin.y + self_padding.y;
 
 			break;
 		}
@@ -1402,44 +1402,59 @@ void GUIDynamic::resolve_phase0_fit(){
 			glm::vec2 self_padding = desc.padding;
 
 			for (int32_t column_id = 0; column_id < desc.columns.size(); column_id++) {
-				if (desc.columns[column_id] == fit) {
+				
+				if (desc.columns[column_id].z == avail) desc.columns[column_id].z = 10240;
+
+				if (glm::any(glm::equal(desc.columns[column_id], glm::vec3(fit)))) {
+
 					float max_value = 0;
 					traverse_nodes_children(node_id, [&](size_t child) {
 						if (node_grid_index(child).x == column_id) {
 							if (node_grid_span(child).x != 1) {
-								std::cout << "[GUI Error] grid slot cannot be \"fit\" while containing multi-slot children" << std::endl;
-								ASSERT(false);
+								return;
+								//std::cout << "[GUI Error] grid slot cannot be \"fit\" while containing multi-slot children" << std::endl;
+								//ASSERT(false);
 							}
 							max_value = std::max(max_value, glm::clamp(non_avail(node_target_size(child).x), node_min_size(child).x, node_max_size(child).x)) + non_avail(node_margin(child).x);
 						}
 						});
-					desc.columns[column_id] = max_value;
+
+					if (desc.columns[column_id].x == fit) desc.columns[column_id].x = max_value;
+					if (desc.columns[column_id].y == fit) desc.columns[column_id].y = max_value;
+					if (desc.columns[column_id].z == fit) desc.columns[column_id].z = max_value;
 				}
 			}
 			for (int32_t row_id = 0; row_id < desc.rows.size(); row_id++) {
-				if (desc.rows[row_id] == fit) {
+
+				if (desc.rows[row_id].z == avail) desc.rows[row_id].z = 10240;
+
+				if (glm::any(glm::equal(desc.rows[row_id], glm::vec3(fit)))) {
 					float max_value = 0;
 					traverse_nodes_children(node_id, [&](size_t child) {
 						if (node_grid_index(child).y == row_id) {
 							if (node_grid_span(child).y != 1) {
-								std::cout << "[GUI Error] grid slot cannot be \"fit\" while containing multi-slot children" << std::endl;
-								ASSERT(false);
+								return;
+								//std::cout << "[GUI Error] grid slot cannot be \"fit\" while containing multi-slot children" << std::endl;
+								//ASSERT(false);
 							}
 							
 							max_value = std::max(max_value, glm::clamp(non_avail(node_target_size(child).y), node_min_size(child).y, node_max_size(child).y)) + non_avail(node_margin(child).y);
 						}
 						});
-					desc.rows[row_id] = max_value;
+
+					if (desc.rows[row_id].x == fit) desc.rows[row_id].x = max_value;
+					if (desc.rows[row_id].y == fit) desc.rows[row_id].y = max_value;
+					if (desc.rows[row_id].z == fit) desc.rows[row_id].z = max_value;
 				}
 			}
 
 			glm::vec2 grid_min_size = glm::vec2(0);
 
 			for (int32_t column_id = 0; column_id < desc.columns.size(); column_id++)
-				if (desc.columns[column_id] > 0) grid_min_size.x += desc.columns[column_id];
+				grid_min_size.x += glm::clamp(non_avail(desc.columns[column_id].y), desc.columns[column_id].x, desc.columns[column_id].z);
 
 			for (int32_t row_id = 0; row_id < desc.rows.size(); row_id++)
-				if (desc.rows[row_id] > 0) grid_min_size.y += desc.rows[row_id];
+				grid_min_size.y += glm::clamp(non_avail(desc.rows[row_id].y), desc.rows[row_id].x, desc.rows[row_id].z);
 
 			if (desc.min_size.x == fit)		desc.min_size.x		= grid_min_size.x	+ self_padding.x;
 			if (desc.min_size.y == fit)		desc.min_size.y		= grid_min_size.y	+ self_padding.y;
@@ -1534,8 +1549,8 @@ void GUIDynamic::resolve_phase1_avail_and_position()
 			auto& desc = std::get<WindowDesc>(node.desc);
 
 			// handle maximize
-			if (is_avail(desc.target_size.x))	desc.target_size.x	= 1024;
-			if (is_avail(desc.target_size.y))	desc.target_size.y	= 1024;
+			if (is_avail(desc.target_size.x))	desc.target_size.x	= 10240;
+			if (is_avail(desc.target_size.y))	desc.target_size.y	= 10240;
 
 			desc.size = glm::clamp(desc.target_size, desc.min_size, desc.max_size);
 
@@ -1581,12 +1596,12 @@ void GUIDynamic::resolve_phase1_avail_and_position()
 			glm::ivec2 cells_avails_total = glm::ivec2(0);
 
 			for (int32_t column_id = 0; column_id < desc.columns.size(); column_id++) {
-				cells_avails_total.x += avail_ratio(desc.columns[column_id]);
-				cells_min_size.x += non_avail(desc.columns[column_id]);
+				cells_avails_total.x += avail_ratio(desc.columns[column_id].x);
+				cells_min_size.x += non_avail(desc.columns[column_id].x);
 			}
 			for (int32_t row_id = 0; row_id < desc.rows.size(); row_id++) {
-				cells_avails_total.y += avail_ratio(desc.rows[row_id]);
-				cells_min_size.y += non_avail(desc.rows[row_id]);
+				cells_avails_total.y += avail_ratio(desc.rows[row_id].x);
+				cells_min_size.y += non_avail(desc.rows[row_id].x);
 			}
 
 			glm::vec2 self_size = desc.size - glm::vec2(desc.padding.x + desc.padding.z, desc.padding.y + desc.padding.w);
@@ -1594,14 +1609,14 @@ void GUIDynamic::resolve_phase1_avail_and_position()
 
 			float current_offset = 0;
 			for (int32_t column_id = 0; column_id < desc.columns.size(); column_id++) {
-				current_offset += compute_physical_size(desc.columns[column_id], size_per_avail.x);
-				desc.columns[column_id] = current_offset;
+				current_offset += compute_physical_size(desc.columns[column_id].x, size_per_avail.x);
+				desc.columns[column_id].x = current_offset;
 			}
 
 			current_offset = 0;
 			for (int32_t row_id = 0; row_id < desc.rows.size(); row_id++) {
-				current_offset += compute_physical_size(desc.rows[row_id], size_per_avail.y);
-				desc.rows[row_id] = current_offset;
+				current_offset += compute_physical_size(desc.rows[row_id].x, size_per_avail.y);
+				desc.rows[row_id].x = current_offset;
 			}
 
 			traverse_nodes_children(node_id, [&](size_t child_id) {
@@ -1619,8 +1634,8 @@ void GUIDynamic::resolve_phase1_avail_and_position()
 				glm::ivec2 child_span = node_grid_span(child_id);
 
 				glm::vec2 cell_size = glm::vec2(
-					desc.columns[child_index.x + child_span.x - 1] - (child_index.x > 0 ? desc.columns[child_index.x - 1] : 0),
-					desc.rows[child_index.y + child_span.y - 1] - (child_index.y > 0 ? desc.rows[child_index.y - 1] : 0)
+					desc.columns[child_index.x + child_span.x - 1].x - (child_index.x > 0 ? desc.columns[child_index.x - 1].x : 0),
+					desc.rows[child_index.y + child_span.y - 1].x - (child_index.y > 0 ? desc.rows[child_index.y - 1].x : 0)
 				);
 
 				glm::vec2 child_size_per_avail = compute_size_per_avail(cell_size - child_non_avail_size, child_total_avail);
@@ -1630,8 +1645,8 @@ void GUIDynamic::resolve_phase1_avail_and_position()
 
 				glm::vec2 cell_position =
 					glm::vec2(
-						child_index.x > 0 ? desc.columns[child_index.x - 1] : 0,
-						child_index.y > 0 ? desc.rows[child_index.y - 1] : 0);
+						child_index.x > 0 ? desc.columns[child_index.x - 1].x : 0,
+						child_index.y > 0 ? desc.rows[child_index.y - 1].x : 0);
 
 				node_position(child_id) =
 					desc.position +
@@ -2339,13 +2354,13 @@ GUIDynamic::GridDesc& GUIDynamic::GridDesc::set_max_size(glm::vec2 value)
 	return *this;
 }
 
-GUIDynamic::GridDesc& GUIDynamic::GridDesc::add_column(float width) {
-	columns.push_back(width);
+GUIDynamic::GridDesc& GUIDynamic::GridDesc::add_column(float target_width, float min_width, float max_width) {
+	columns.push_back(glm::vec3(target_width, min_width, max_width));
 	return *this;
 }
 
-GUIDynamic::GridDesc& GUIDynamic::GridDesc::add_row(float height) {
-	rows.push_back(height);
+GUIDynamic::GridDesc& GUIDynamic::GridDesc::add_row(float target_height, float min_height, float max_height) {
+	rows.push_back(glm::vec3(target_height, min_height, max_height));
 	return *this;
 }
 

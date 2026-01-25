@@ -73,7 +73,7 @@ namespace widget2 {
 	inline void DefaultStyle::apply<Label>(Label& widget) {
 		apply<Grid>(widget);
 		widget.font			= 1;
-		widget.text_height	= 11;
+		widget.text_height	= 10;
 		widget.text_color	= glm::vec4(0, 0, 0, 1);
 		widget.target_size	= glm::vec2(GUIDynamic::fit);
 
@@ -317,10 +317,10 @@ namespace widget2 {
 		apply(widget.background);
 		apply(widget.label);
 
-		widget.target_size		= glm::vec2(200, 26);
+		widget.target_size				= glm::vec2(200, 26);
 		
-		widget.background.target_size = glm::vec2(GUIDynamic::avail);
-		widget.background.color = glm::vec4(0.96, 0.96, 0.96, 1);
+		widget.background.target_size	= glm::vec2(GUIDynamic::avail);
+		widget.background.color			= glm::vec4(0.96, 0.96, 0.96, 1);
 		widget.background.color.transition(widget.hover, glm::vec4(0.88, 0.88, 0.88, 1));
 
 		widget.background.border_thickness = glm::vec4(0);
@@ -333,9 +333,9 @@ namespace widget2 {
 
 		widget.label.margin = glm::vec4(8, GUIDynamic::avail, GUIDynamic::avail, GUIDynamic::avail);
 
-		widget.label.pass_through_events = true;
-		widget.background.pass_through_events = true;
-		widget.pass_through_events = true;
+		widget.label.pass_through_events		= true;
+		widget.background.pass_through_events	= true;
+		widget.pass_through_events				= true;
 	}
 
 	template<>
@@ -348,7 +348,7 @@ namespace widget2 {
 
 		widget.padding					= glm::vec4(0);
 
-		widget.target_size				= glm::vec2(60, 22);
+		widget.target_size				= glm::vec2(40, 22);
 		widget.background.target_size	= glm::vec2(GUIDynamic::avail);
 		widget.label.margin				= glm::vec4(GUIDynamic::avail);
 
@@ -370,15 +370,15 @@ namespace widget2 {
 		//widget.background.border_color3 = glm::vec4(0, 0, 0, 0.2);
 		//widget.background.border_thickness.transition(widget.hover, glm::vec4(2));
 
-		widget.dropdown.padding = glm::vec4(0);
+		widget.dropdown.padding				= glm::vec4(0);
 
-		widget.dropdown_stack.target_size = glm::vec2(GUIDynamic::fit);
-		widget.dropdown_stack.spacing = 0;
+		widget.dropdown_stack.target_size	= glm::vec2(GUIDynamic::fit);
+		widget.dropdown_stack.spacing		= 0;
 
-		widget.background.pass_through_events = true;
-		widget.label.pass_through_events = true;
-		widget.dropdown_stack.pass_through_events = true;
-		widget.pass_through_events = false;
+		widget.background.pass_through_events		= true;
+		widget.label.pass_through_events			= true;
+		widget.dropdown_stack.pass_through_events	= true;
+		widget.pass_through_events					= false;
 	}
 
 	template<>
@@ -458,11 +458,15 @@ namespace widget2 {
 		apply(widget.window_controls);
 
 		widget.manu_stack.spacing			= 4;
+		widget.manu_stack.is_vertical		= false;
 
 		widget.target_size					= glm::vec2(GUIDynamic::avail, 24);
 		widget.background.target_size		= glm::vec2(GUIDynamic::avail);
 	
-		widget.background.color				= glm::vec4(0.90, 0.90, 0.90, 1);
+		widget.background.color				= glm::vec4(0.86, 0.86, 0.86, 1);
+		widget.background.border_color3		= glm::vec4(0.71, 0.71, 0.71, 1);
+		widget.background.border_thickness	= glm::vec4(0, 0, 0, 1);
+;
 
 		widget.background.pass_through_events = true;
 		widget.manu_stack.pass_through_events = true;

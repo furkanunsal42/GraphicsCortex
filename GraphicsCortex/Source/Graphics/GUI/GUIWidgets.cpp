@@ -249,19 +249,25 @@ void widget2::Window::publish_begin(GUIDynamic& gui_dynamic) {
 	if (gui_dynamic.get_window_handle(id) != nullptr && resolution_change_newsletter == Newsletter<>::invalid_id) {
 
 		resolution_change_newsletter = gui_dynamic.get_window_handle(id)->newsletters->on_window_resolution_events.subscribe([&](const glm::ivec2& resolution) {
+			if (resolution == glm::ivec2(0))
+				return;
 			target_size.value = resolution;
+			std::cout << resolution << std::endl;
 			});
 
 		position_change_newsletter = gui_dynamic.get_window_handle(id)->newsletters->on_window_position_events.subscribe([&](const glm::ivec2& position) {
+			if (glm::any(glm::lessThanEqual(position, glm::ivec2(-32000))))
+				return;
 			this->position.value = position;
 			});
-
-
 	}
 
 	resolve_io(gui_dynamic);
 
 	menubar_published = false;
+
+	//does_desire_iconify = false;
+	//does_desire_maximal = false;
 
 }
 
@@ -289,20 +295,53 @@ void widget2::Window::publish_end(GUIDynamic& gui_dynamic) {
 		.set_shadow_thickness(shadow_thickness)
 		.set_shadow_color(shadow_color);
 
+	if (gui_dynamic.get_window_handle(id) != nullptr && does_desire_maximal && !gui_dynamic.get_window_handle(id)->is_window_maximized()) {
+		gui_dynamic.get_window_handle(id)->window_maximize();
+		does_desire_maximal = false;
+	}
+
+	if (gui_dynamic.get_window_handle(id) != nullptr && does_desire_iconify && !gui_dynamic.get_window_handle(id)->is_window_minimized()) {
+		gui_dynamic.get_window_handle(id)->window_minimize();
+		does_desire_iconify = false;
+	}
+
+	if (gui_dynamic.get_window_handle(id) != nullptr && does_desire_restore && !gui_dynamic.get_window_handle(id)->is_window_restored()) {
+		gui_dynamic.get_window_handle(id)->window_restore();
+		does_desire_restore = false;
+	}
+
+	if (gui_dynamic.get_window_handle(id) != nullptr && does_desire_maximal_restore_swap) {
+
+		if (gui_dynamic.get_window_handle(id)->is_window_maximized())
+			gui_dynamic.get_window_handle(id)->window_restore();
+		else if(gui_dynamic.get_window_handle(id)->is_window_restored())
+			gui_dynamic.get_window_handle(id)->window_maximize();
+
+		does_desire_maximal_restore_swap = false;
+	}
+
 	if (gui_dynamic.get_window_handle(id) != nullptr && !maximize.is_active() && gui_dynamic.get_window_handle(id)->is_window_maximized())
 		maximize.start(gui_dynamic);
 
-	if (gui_dynamic.get_window_handle(id) != nullptr && maximize.is_active() && !gui_dynamic.get_window_handle(id)->is_window_maximized())
+	if (gui_dynamic.get_window_handle(id) != nullptr && maximize.is_active() && !gui_dynamic.get_window_handle(id)->is_window_maximized()) {
 		maximize.finish(gui_dynamic);
+	}
 
 	if (gui_dynamic.get_window_handle(id) != nullptr && !iconify.is_active() && gui_dynamic.get_window_handle(id)->is_window_minimized())
 		iconify.start(gui_dynamic);
 
-	if (gui_dynamic.get_window_handle(id) != nullptr && iconify.is_active() && !gui_dynamic.get_window_handle(id)->is_window_minimized())
+	if (gui_dynamic.get_window_handle(id) != nullptr && iconify.is_active() && !gui_dynamic.get_window_handle(id)->is_window_minimized()) {
 		iconify.finish(gui_dynamic);
+	}
+
+	if (gui_dynamic.get_window_handle(id) != nullptr && !restore.is_active() && gui_dynamic.get_window_handle(id)->is_window_restored())
+		restore.start(gui_dynamic);
+
+	if (gui_dynamic.get_window_handle(id) != nullptr && restore.is_active() && !gui_dynamic.get_window_handle(id)->is_window_restored()) {
+		restore.finish(gui_dynamic);
+	}
 
 	gui_dynamic.window_end();
-
 }
 
 void widget2::Window::publish_menubar_begin(GUIDynamic& gui_dynamic) {
@@ -344,6 +383,38 @@ void widget2::Window::drag(GUIDynamic& gui_dynamic, IOWidget& widget) {
 	else
 		window_position_when_drag_begin = glm::vec2(-1000);
 
+}
+
+void widget2::Window::desire_iconify()
+{
+	does_desire_maximal = false;
+	does_desire_restore = false;
+	does_desire_maximal_restore_swap = false;
+	does_desire_iconify = true;
+}
+
+void widget2::Window::desire_maximal()
+{
+	does_desire_iconify = false;
+	does_desire_restore = false;
+	does_desire_maximal_restore_swap = false;
+	does_desire_maximal = true;
+}
+
+void widget2::Window::desire_restore()
+{
+	does_desire_iconify = false;
+	does_desire_maximal = false;
+	does_desire_maximal_restore_swap = false;
+	does_desire_restore = true;
+}
+
+void widget2::Window::desire_maximal_restore_swap()
+{
+	does_desire_iconify = false;
+	does_desire_maximal = false;
+	does_desire_restore = false;
+	does_desire_maximal_restore_swap = true;
 }
 
 void widget2::Container::publish_begin(GUIDynamic& gui_dynamic) {

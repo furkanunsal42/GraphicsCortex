@@ -113,6 +113,7 @@ namespace widget2 {
 		StyleProperty<glm::vec2> position = glm::vec2(100);
 
 		IOEvent maximize;
+		IOEvent restore;
 		IOEvent iconify;
 
 		void publish_begin(GUIDynamic& gui_dynamic);
@@ -122,6 +123,11 @@ namespace widget2 {
 		void publish_menubar_end(GUIDynamic& gui_dynamic);
 
 		void drag(GUIDynamic& gui_dynamic, IOWidget& widget);
+
+		void desire_iconify();
+		void desire_maximal();
+		void desire_restore();
+		void desire_maximal_restore_swap();
 
 	private:
 		
@@ -135,6 +141,11 @@ namespace widget2 {
 			//		*state.descriptor.position = position;
 			//		});
 			//}
+
+		bool does_desire_iconify = false;
+		bool does_desire_maximal = false;
+		bool does_desire_maximal_restore_swap = false;
+		bool does_desire_restore = true;
 
 		size_t resolution_change_newsletter = Newsletter<>::invalid_id;
 		size_t position_change_newsletter = Newsletter<>::invalid_id;
