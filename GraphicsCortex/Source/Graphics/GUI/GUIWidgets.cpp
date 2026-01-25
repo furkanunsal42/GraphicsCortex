@@ -419,8 +419,8 @@ void widget2::Window::drag(GUIDynamic& gui_dynamic, IOWidget& widget) {
 
 	if (widget.carry.is_active()) {
 		if (maximize.is_active() || iconify.is_active()) {
-			restored_previous_position	= position;
-			restored_previous_size		= target_size;
+			restored_previous_position	= gui_dynamic.get_io_state().mouse_position - glm::vec2(restored_previous_size.value_or(glm::vec2(0)).x * gui_dynamic.get_gui_scale() / 2, widget.get_cursor_position_when_hold_begin().y + 10);
+			//restored_previous_size		= target_size;
 			desire_restore();
 			return;
 		}

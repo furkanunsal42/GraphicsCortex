@@ -231,6 +231,21 @@ namespace widget2 {
 		void publish_end(GUIDynamic& gui_dynamic);
 	};
 
+	struct ResizeContainer : public Grid {
+
+		void publish(GUIDynamic& gui_dynamic);
+		void publish_begin(GUIDynamic& gui_dynamic);
+		void publish_end(GUIDynamic& gui_dynamic);
+
+	};
+
+	struct ScrollContainer : public Grid {
+		
+		void publish_begin(GUIDynamic& gui_dynamic);
+		void publish_end(GUIDynamic& gui_dynamic);
+
+	};
+
 	struct Image : public Box {
 
 		enum Type {

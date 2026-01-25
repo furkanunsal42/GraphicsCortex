@@ -25,7 +25,7 @@ public:
 		GUIDynamic gui_d(true);
 
 		FontBank::get().load_font("../GraphicsCortex/Fonts/Roboto-Regular.ttf", 32 * gui_d.get_gui_scale());
-
+		
 		while (true) {			
 			static bool once = true;
 
