@@ -7,7 +7,7 @@ namespace widget2 {
 	inline void DefaultStyle::apply<Window>(Window& widget) {
 		
 		widget.padding			= glm::vec4(10);
-		widget.target_size		= glm::vec2(GUIDynamic::fit);
+		//widget.target_size		= glm::vec2(GUIDynamic::fit);
 		widget.min_size			= glm::vec2(GUIDynamic::fit);
 		widget.max_size			= glm::vec2(GUIDynamic::avail);
 		widget.color			= glm::vec4(0.98f, 0.98f, 0.98f, 1);
@@ -25,8 +25,8 @@ namespace widget2 {
 	template<>
 	inline void DefaultStyle::apply<Box>(Box& widget) {
 		widget.margin			= glm::vec4(0);
-		widget.target_size		= glm::vec2(GUIDynamic::fit);	
-		widget.min_size			= glm::vec2(128);	
+		widget.target_size		= glm::vec2(128);	
+		widget.min_size			= glm::vec2(GUIDynamic::fit);
 		widget.max_size			= glm::vec2(GUIDynamic::avail);
 		widget.color			= glm::vec4(1, 1, 1, 1);
 		widget.border_thickness	= glm::vec4(0);			

@@ -123,6 +123,8 @@ void widget2::Box::publish(GUIDynamic& gui_dynamic) {
 
 	gui_dynamic.box_prop().margin			=  margin;
 	gui_dynamic.box_prop().target_size		=  target_size;
+	gui_dynamic.box_prop().min_size			=  min_size;
+	gui_dynamic.box_prop().max_size			=  max_size;
 	gui_dynamic.box_prop().color			=  color;
 	gui_dynamic.box_prop().border_thickness	=  border_thickness;
 	gui_dynamic.box_prop().border_rounding	=  border_rounding;
@@ -139,8 +141,10 @@ void widget2::Box::publish(GUIDynamic& gui_dynamic) {
 
 void widget2::Box::apply_properties_to(GUIDynamic::WindowDesc& desc)
 {
-	desc.padding			= glm::vec4(0);
+	desc.padding			=  glm::vec4(0);
 	desc.target_size		=  target_size;
+	desc.min_size			=  min_size;
+	desc.max_size			=  max_size;
 	desc.color				=  color;
 	desc.border_thickness	=  border_thickness;
 	desc.border_rounding	=  border_rounding;
@@ -156,6 +160,8 @@ void widget2::Box::apply_properties_to(GUIDynamic::BoxDesc& desc)
 {
 	desc.margin				=  margin;
 	desc.target_size		=  target_size;
+	desc.min_size			=  min_size;
+	desc.max_size			=  max_size;
 	desc.color				=  color;
 	desc.border_thickness	=  border_thickness;
 	desc.border_rounding	=  border_rounding;
@@ -172,6 +178,8 @@ void widget2::Box::apply_properties_to(GUIDynamic::GridDesc& desc)
 {
 	desc.margin				=  margin;
 	desc.target_size		=  target_size;
+	desc.min_size			=  min_size;
+	desc.max_size			=  max_size;
 	desc.padding			=  glm::vec4(0);
 	desc.pass_through_events = pass_through_events;
 }
@@ -180,6 +188,8 @@ void widget2::Box::apply_properties_to(GUIDynamic::StackDesc& desc)
 {
 	desc.margin				=  margin;
 	desc.target_size		=  target_size;
+	desc.min_size			=  min_size;
+	desc.max_size			=  max_size;
 	desc.padding			=  glm::vec4(0);
 	desc.spacing			=  0;
 	desc.pass_through_events = pass_through_events;
@@ -194,6 +204,8 @@ void widget2::Grid::publish_begin(GUIDynamic& gui_dynamic) {
 	gui_dynamic.grid_prop().margin		= margin;
 	gui_dynamic.grid_prop().padding		= padding;
 	gui_dynamic.grid_prop().target_size = target_size;
+	gui_dynamic.grid_prop().min_size	= min_size;
+	gui_dynamic.grid_prop().max_size	= max_size;
 	gui_dynamic.grid_prop().pass_through_events = pass_through_events;
 
 	gui_dynamic.grid_region(glm::ivec2(0));
@@ -214,6 +226,8 @@ void widget2::Stack::publish_begin(GUIDynamic& gui_dynamic) {
 	gui_dynamic.stack_prop().margin					= margin;
 	gui_dynamic.stack_prop().padding				= padding;
 	gui_dynamic.stack_prop().target_size			= target_size;
+	gui_dynamic.stack_prop().min_size				= min_size;
+	gui_dynamic.stack_prop().max_size				= max_size;
 	gui_dynamic.stack_prop().spacing				= spacing;
 	gui_dynamic.stack_prop().pass_through_events 	= pass_through_events;
 	gui_dynamic.stack_prop().is_vertical			= is_vertical;
@@ -251,24 +265,47 @@ void widget2::Window::publish_begin(GUIDynamic& gui_dynamic) {
 		resolution_change_newsletter = gui_dynamic.get_window_handle(id)->newsletters->on_window_resolution_events.subscribe([&](const glm::ivec2& resolution) {
 			if (resolution == glm::ivec2(0))
 				return;
-			target_size.value = resolution;
+
+			target_size.value = glm::vec2(resolution) / gui_dynamic.get_gui_scale();
 			std::cout << resolution << std::endl;
+
+			if (restore.is_activated_now(gui_dynamic)) {
+				position	= restored_previous_position.value_or(position);
+				target_size = restored_previous_size.value_or(target_size);
+
+				if (restore_invalidation_counter == 1) {
+					restored_previous_position	= std::nullopt;
+					restored_previous_size		= std::nullopt;
+				}
+				else 
+					restore_invalidation_counter++;
+			}
+				
 			});
 
 		position_change_newsletter = gui_dynamic.get_window_handle(id)->newsletters->on_window_position_events.subscribe([&](const glm::ivec2& position) {
 			if (glm::any(glm::lessThanEqual(position, glm::ivec2(-32000))))
 				return;
 			this->position.value = position;
+
+			if (restore.is_activated_now(gui_dynamic)) {
+				this->position.value = restored_previous_position.value_or(this->position.value);
+				target_size = restored_previous_size.value_or(target_size);
+
+				if (restore_invalidation_counter == 1) {
+					restored_previous_position	= std::nullopt;
+					restored_previous_size		= std::nullopt;
+					restore_invalidation_counter = 0;
+				}
+				else 
+					restore_invalidation_counter++;
+			}
 			});
 	}
 
 	resolve_io(gui_dynamic);
 
 	menubar_published = false;
-
-	//does_desire_iconify = false;
-	//does_desire_maximal = false;
-
 }
 
 void widget2::Window::publish_end(GUIDynamic& gui_dynamic) {
@@ -298,6 +335,8 @@ void widget2::Window::publish_end(GUIDynamic& gui_dynamic) {
 	if (gui_dynamic.get_window_handle(id) != nullptr && does_desire_maximal && !gui_dynamic.get_window_handle(id)->is_window_maximized()) {
 		gui_dynamic.get_window_handle(id)->window_maximize();
 		does_desire_maximal = false;
+		restored_previous_position	= position;
+		restored_previous_size		= target_size;
 	}
 
 	if (gui_dynamic.get_window_handle(id) != nullptr && does_desire_iconify && !gui_dynamic.get_window_handle(id)->is_window_minimized()) {
@@ -312,10 +351,14 @@ void widget2::Window::publish_end(GUIDynamic& gui_dynamic) {
 
 	if (gui_dynamic.get_window_handle(id) != nullptr && does_desire_maximal_restore_swap) {
 
-		if (gui_dynamic.get_window_handle(id)->is_window_maximized())
+		if (gui_dynamic.get_window_handle(id)->is_window_maximized()) {
 			gui_dynamic.get_window_handle(id)->window_restore();
-		else if(gui_dynamic.get_window_handle(id)->is_window_restored())
+		}
+		else if (gui_dynamic.get_window_handle(id)->is_window_restored()) {
+			restored_previous_position = position;
+			restored_previous_size = target_size;
 			gui_dynamic.get_window_handle(id)->window_maximize();
+		}
 
 		does_desire_maximal_restore_swap = false;
 	}
@@ -334,8 +377,9 @@ void widget2::Window::publish_end(GUIDynamic& gui_dynamic) {
 		iconify.finish(gui_dynamic);
 	}
 
-	if (gui_dynamic.get_window_handle(id) != nullptr && !restore.is_active() && gui_dynamic.get_window_handle(id)->is_window_restored())
+	if (gui_dynamic.get_window_handle(id) != nullptr && !restore.is_active() && gui_dynamic.get_window_handle(id)->is_window_restored()) {
 		restore.start(gui_dynamic);
+	}
 
 	if (gui_dynamic.get_window_handle(id) != nullptr && restore.is_active() && !gui_dynamic.get_window_handle(id)->is_window_restored()) {
 		restore.finish(gui_dynamic);
@@ -368,10 +412,14 @@ void widget2::Window::publish_menubar_end(GUIDynamic& gui_dynamic) {
 
 void widget2::Window::drag(GUIDynamic& gui_dynamic, IOWidget& widget) {
 
-	if (maximize.is_active() || iconify.is_active())
-		return;
-
 	if (widget.carry.is_active()) {
+		if (maximize.is_active() || iconify.is_active()) {
+			restored_previous_position	= position;
+			restored_previous_size		= target_size;
+			desire_restore();
+			return;
+		}
+
 		if (window_position_when_drag_begin == glm::vec2(-1000))
 			window_position_when_drag_begin = position;
 

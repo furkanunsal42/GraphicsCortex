@@ -219,7 +219,7 @@ public:
 
 		glm::vec4	margin				= glm::vec4(0);
 		glm::vec4	padding				= glm::vec4(10);
-		glm::vec2	target_size			= glm::vec2(fit);
+		glm::vec2	target_size			= glm::vec2(avail);
 		glm::vec2	min_size			= glm::vec2(fit);
 		glm::vec2	max_size			= glm::vec2(avail);
 		
@@ -258,7 +258,7 @@ public:
 
 		glm::vec4	margin				= glm::vec4(0);
 		glm::vec4	padding				= glm::vec4(10);
-		glm::vec2	target_size			= glm::vec2(fit);
+		glm::vec2	target_size			= glm::vec2(avail);
 		glm::vec2	min_size			= glm::vec2(fit);
 		glm::vec2	max_size			= glm::vec2(avail);
 

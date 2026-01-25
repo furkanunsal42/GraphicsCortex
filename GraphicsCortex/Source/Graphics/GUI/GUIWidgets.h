@@ -97,7 +97,6 @@ namespace widget2 {
 		std::string name = "CortexGUI Window";
 
 		StyleProperty<glm::vec4> padding;
-		StyleProperty<glm::vec2> target_size;
 		StyleProperty<glm::vec2> min_size;
 		StyleProperty<glm::vec2> max_size;
 		StyleProperty<glm::vec4> color;
@@ -110,12 +109,13 @@ namespace widget2 {
 		StyleProperty<glm::vec4> shadow_thickness;
 		StyleProperty<glm::vec4> shadow_color;
 
+		StyleProperty<glm::vec2> target_size = glm::vec2(GUIDynamic::fit);
 		StyleProperty<glm::vec2> position = glm::vec2(100);
 
 		IOEvent maximize;
 		IOEvent restore;
 		IOEvent iconify;
-
+		
 		void publish_begin(GUIDynamic& gui_dynamic);
 		void publish_end(GUIDynamic& gui_dynamic);
 
@@ -141,6 +141,10 @@ namespace widget2 {
 			//		*state.descriptor.position = position;
 			//		});
 			//}
+
+		std::optional<glm::vec2> restored_previous_position = std::nullopt;
+		std::optional<glm::vec2> restored_previous_size = std::nullopt;
+		int32_t restore_invalidation_counter = 0;
 
 		bool does_desire_iconify = false;
 		bool does_desire_maximal = false;

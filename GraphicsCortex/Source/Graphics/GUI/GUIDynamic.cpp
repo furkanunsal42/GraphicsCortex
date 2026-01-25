@@ -1415,7 +1415,7 @@ void GUIDynamic::resolve_phase0_fit(){
 								//std::cout << "[GUI Error] grid slot cannot be \"fit\" while containing multi-slot children" << std::endl;
 								//ASSERT(false);
 							}
-							max_value = std::max(max_value, glm::clamp(non_avail(node_target_size(child).x), node_min_size(child).x, node_max_size(child).x)) + non_avail(node_margin(child).x);
+							max_value = std::max(max_value, glm::clamp(non_avail(node_target_size(child).x), node_min_size(child).x, node_max_size(child).x));// +non_avail(node_margin(child).x);
 						}
 						});
 
@@ -1438,7 +1438,7 @@ void GUIDynamic::resolve_phase0_fit(){
 								//ASSERT(false);
 							}
 							
-							max_value = std::max(max_value, glm::clamp(non_avail(node_target_size(child).y), node_min_size(child).y, node_max_size(child).y)) + non_avail(node_margin(child).y);
+							max_value = std::max(max_value, glm::clamp(non_avail(node_target_size(child).y), node_min_size(child).y, node_max_size(child).y));// +non_avail(node_margin(child).y);
 						}
 						});
 
@@ -1609,13 +1609,13 @@ void GUIDynamic::resolve_phase1_avail_and_position()
 
 			float current_offset = 0;
 			for (int32_t column_id = 0; column_id < desc.columns.size(); column_id++) {
-				current_offset += compute_physical_size(desc.columns[column_id].x, size_per_avail.x);
+				current_offset += glm::clamp(compute_physical_size(desc.columns[column_id].x, size_per_avail.x), desc.columns[column_id].y, desc.columns[column_id].z);
 				desc.columns[column_id].x = current_offset;
 			}
 
 			current_offset = 0;
 			for (int32_t row_id = 0; row_id < desc.rows.size(); row_id++) {
-				current_offset += compute_physical_size(desc.rows[row_id].x, size_per_avail.y);
+				current_offset += glm::clamp(compute_physical_size(desc.rows[row_id].x, size_per_avail.y), desc.rows[row_id].y, desc.rows[row_id].z);
 				desc.rows[row_id].x = current_offset;
 			}
 

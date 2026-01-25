@@ -22,12 +22,13 @@ public:
 
 		widget2::DefaultStyle style;
 
-		GUIDynamic gui_d;
+		GUIDynamic gui_d(true);
 
 		FontBank::get().load_font("../GraphicsCortex/Fonts/Roboto-Regular.ttf", 32 * gui_d.get_gui_scale());
 
 		while (true) {			
-			
+			static bool once = true;
+
 			gui_d.new_frame();
 
 			static widget2::Window window0;
@@ -35,8 +36,11 @@ public:
 
 			style.apply(window0);
 			window0.padding = glm::vec4(0);
-			window0.target_size.value.x = 600;
-			window0.target_size.value.y = 400;
+
+			if (once) {
+				window0.target_size.value.x = 600;
+				window0.target_size.value.y = 400;
+			}
 			
 			//window0.drag(gui_d, window0);
 			window0.drag(gui_d, menubar);
@@ -44,24 +48,24 @@ public:
 			
 			if (gui_d.get_window_handle(window0.id) != nullptr && gui_d.get_window_handle(window0.id)->should_close())
 				exit(0);
-
+			
 			window0.publish_menubar_begin(gui_d);
 			
 			style.apply(menubar);
 			menubar.publish_begin(gui_d);
-
+			
 			if (menubar.window_controls.minimize_button.click.is_activated_now(gui_d))
 				window0.desire_iconify();
-
+			
 			if (menubar.window_controls.restore_button.click.is_activated_now(gui_d))
 				window0.desire_maximal_restore_swap();
-
+			
 			if (menubar.window_controls.close_button.click.is_activated_now(gui_d) && gui_d.get_window_handle(window0.id) != nullptr)
 				gui_d.get_window_handle(window0.id)->set_should_close(true);
-
+			
 			static widget2::Menu menu_file;
 			menu_file.text = U"File";
-
+			
 			style.apply(menu_file);
 			menu_file.publish_begin(gui_d);
 			
@@ -71,65 +75,65 @@ public:
 				static widget2::MenuItem menu_item_close;
 				static widget2::MenuItem menu_item_save;
 				static widget2::MenuItem menu_item_save_all;
-
+			
 				menu_item_new.text = U"New";
 				menu_item_open.text = U"Open";
 				menu_item_close.text = U"Close";
 				menu_item_save.text = U"Save";
 				menu_item_save_all.text = U"Save All";
-
+			
 				style.apply(menu_item_new);
 				style.apply(menu_item_open);
 				style.apply(menu_item_close);
 				style.apply(menu_item_save);
 				style.apply(menu_item_save_all);
-
+			
 				menu_item_new.publish(gui_d,		menu_file);
 				menu_item_open.publish(gui_d,		menu_file);
 				menu_item_close.publish(gui_d,		menu_file);
 				menu_item_save.publish(gui_d,		menu_file);
 				menu_item_save_all.publish(gui_d,	menu_file);
 			}
-
+			
 			menu_file.publish_end(gui_d);
 			
-
-
+			
+			
 			static widget2::Menu menu_edit;
 			menu_edit.text = U"Edit";
-
+			
 			style.apply(menu_edit);
 			menu_edit.publish_begin(gui_d);
-
+			
 			if (menu_edit.drop.is_active()) {
 				static widget2::MenuItem menu_item_undo;
 				static widget2::MenuItem menu_item_redo;
 				static widget2::MenuItem menu_item_cut;
 				static widget2::MenuItem menu_item_copy;
 				static widget2::MenuItem menu_item_paste;
-
+			
 				menu_item_undo.text = U"Undo";
 				menu_item_redo.text = U"Redo";
 				menu_item_cut.text = U"Cut";
 				menu_item_copy.text = U"Copy";
 				menu_item_paste.text = U"Paste";
-
+			
 				style.apply(menu_item_undo);
 				style.apply(menu_item_redo);
 				style.apply(menu_item_cut);
 				style.apply(menu_item_copy);
 				style.apply(menu_item_paste);
-
+			
 				menu_item_undo.publish(gui_d, menu_edit);
 				menu_item_redo.publish(gui_d, menu_edit);
 				menu_item_cut.publish(gui_d, menu_edit);
 				menu_item_copy.publish(gui_d, menu_edit);
 				menu_item_paste.publish(gui_d, menu_edit);
 			}
-
+			
 			menu_edit.publish_end(gui_d);
-
-
+			
+			
 			menubar.publish_end(gui_d);
 			
 			window0.publish_menubar_end(gui_d);
@@ -236,14 +240,8 @@ public:
 
 			gui_d.publish();
 
-			static bool once = true;
 			if (once)
 				gui_d.print_layout();
-			
-
-			//if (once) gui_d.gui_texture_bank.get_texture("play.svg")->get_image(Texture2D::ColorFormat::RGBA, Texture2D::Type::UNSIGNED_BYTE, 0)->save_to_disc("play.png");
-			//if (once) gui_d.gui_texture_bank.get_texture("window-minimize-svgrepo-com.svg")->get_image(Texture2D::ColorFormat::RGBA, Texture2D::Type::UNSIGNED_BYTE, 0)->save_to_disc("window-minimize-svgrepo-com.png");
-
 
 			once = false;
 
