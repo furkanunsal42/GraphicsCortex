@@ -43,7 +43,6 @@ public:
 			}
 			
 			//window0.drag(gui_d, window0);
-			window0.drag(gui_d, menubar);
 			window0.publish_begin(gui_d);
 			
 			if (gui_d.get_window_handle(window0.id) != nullptr && gui_d.get_window_handle(window0.id)->should_close())
@@ -53,7 +52,9 @@ public:
 			
 			style.apply(menubar);
 			menubar.publish_begin(gui_d);
-			
+
+			window0.drag(gui_d, menubar);
+
 			if (menubar.window_controls.minimize_button.click.is_activated_now(gui_d))
 				window0.desire_iconify();
 			

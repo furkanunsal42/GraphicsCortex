@@ -412,6 +412,11 @@ void widget2::Window::publish_menubar_end(GUIDynamic& gui_dynamic) {
 
 void widget2::Window::drag(GUIDynamic& gui_dynamic, IOWidget& widget) {
 
+	if (widget.doubleclick.is_activated_now(gui_dynamic)) {
+		desire_maximal_restore_swap();
+		return;
+	}
+
 	if (widget.carry.is_active()) {
 		if (maximize.is_active() || iconify.is_active()) {
 			restored_previous_position	= position;
