@@ -44,7 +44,7 @@ void widget2::IOWidget::resolve_io(GUIDynamic& gui_dynamic)
 
 	if (hold.is_active() && (gui_dynamic.get_io_state().mouse_state & GUI::LeftRelease)) {
 		hold.finish(gui_dynamic);
-		click_happened = hover.is_active();
+		click_happened = hover.is_active() && !carry.is_active();
 	}
 
 	if (click_happened) {
@@ -1161,6 +1161,11 @@ void widget2::ComboBox::publish_begin(GUIDynamic& gui_dynamic){
 	}
 }
 
+widget2::ComboBox::ComboBox(std::u32string text)
+{
+	this->text = text;
+}
+
 void widget2::ComboBox::publish_end(GUIDynamic& gui_dynamic){
 	
 	if (drop.is_active()) {
@@ -1189,6 +1194,15 @@ void widget2::ComboBoxItem::select(GUIDynamic& gui_dynamic, ComboBox& owner_comb
 {
 	owner_combobox.text = text;
 	owner_combobox.item_selected.impulse(gui_dynamic);
+}
+
+widget2::ComboBoxItem::ComboBoxItem(std::u32string text)
+{
+	this->text = text;
+}
+
+widget2::Menu::Menu(std::u32string text) {
+	this->text = text;
 }
 
 void widget2::Menu::publish_begin(GUIDynamic& gui_dynamic) {
@@ -1233,6 +1247,10 @@ void widget2::Menu::publish_end(GUIDynamic& gui_dynamic) {
 		drop.finish(gui_dynamic);
 }
 
+widget2::MenuItem::MenuItem(std::u32string text) {
+	this->text = text;
+}
+
 void widget2::MenuItem::publish(GUIDynamic& gui_dynamic, Menu& owner_menu){
 
 	Container::publish_begin(gui_dynamic);
@@ -1271,6 +1289,19 @@ void widget2::WindowControls::publish(GUIDynamic& gui_dynamic) {
 	close_button.publish(gui_dynamic);
 
 	Stack::publish_end(gui_dynamic);
+}
+
+void widget2::WindowControls::manage(GUIDynamic& gui_dynamic, widget2::Window& window) {
+	
+	if (minimize_button.click.is_activated_now(gui_dynamic))
+		window.desire_iconify();
+
+	if (restore_button.click.is_activated_now(gui_dynamic))
+		window.desire_maximal_restore_swap();
+
+	if (close_button.click.is_activated_now(gui_dynamic) && gui_dynamic.get_window_handle(window.id) != nullptr)
+		gui_dynamic.get_window_handle(window.id)->set_should_close(true);
+
 }
 
 void widget2::MenuBar::publish_begin(GUIDynamic& gui_dynamic) {

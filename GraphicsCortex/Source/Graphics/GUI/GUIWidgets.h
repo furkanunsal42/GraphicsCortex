@@ -130,17 +130,6 @@ namespace widget2 {
 		void desire_maximal_restore_swap();
 
 	private:
-		
-		//if (state.resolution_newsletter_event == Newsletter<void()>::invalid_id) {
-			//	state.resolution_newsletter_event = state.window->newsletters->on_window_resolution_events.subscribe([&](const glm::ivec2& resolution) {
-			//		*state.descriptor.size = resolution;
-			//		});
-			//}
-			//if (state.position_newsletter_event == Newsletter<void()>::invalid_id) {
-			//	state.position_newsletter_event = state.window->newsletters->on_window_position_events.subscribe([&](const glm::ivec2& position) {
-			//		*state.descriptor.position = position;
-			//		});
-			//}
 
 		std::optional<glm::vec2> restored_previous_position = std::nullopt;
 		std::optional<glm::vec2> restored_previous_size = std::nullopt;
@@ -388,6 +377,9 @@ namespace widget2 {
 
 		std::u32string text = U"ComboBox";
 		
+		ComboBox() = default;
+		ComboBox(std::u32string text);
+
 		void publish_begin(GUIDynamic& gui_dynamic);
 		void publish_end(GUIDynamic& gui_dynamic);
 
@@ -401,6 +393,9 @@ namespace widget2 {
 		Label	label;
 
 		std::u32string text = U"Combo Item";
+
+		ComboBoxItem() = default;
+		ComboBoxItem(std::u32string text);
 
 		void select(GUIDynamic& gui_dynamic, ComboBox& owner_combobox);
 		void publish(GUIDynamic& gui_dynamic, ComboBox& owner_combobox);
@@ -419,6 +414,9 @@ namespace widget2 {
 		IOEvent drop;
 		std::u32string text = U"Menu";
 
+		Menu() = default;
+		Menu(std::u32string text);
+
 		void publish_begin(GUIDynamic& gui_dynamic);
 		void publish_end(GUIDynamic& gui_dynamic);
 
@@ -430,6 +428,9 @@ namespace widget2 {
 		Label	label;
 
 		std::u32string text = U"Menu Item";
+
+		MenuItem() = default;
+		MenuItem(std::u32string text);
 
 		void select(GUIDynamic& gui_dynamic, Menu& owner_menu);
 		void publish(GUIDynamic& gui_dynamic, Menu& owner_menu);
@@ -443,6 +444,7 @@ namespace widget2 {
 		ImageButton close_button;
 
 		void publish(GUIDynamic& gui_dynamic);
+		void manage(GUIDynamic& gui_dynamic, widget2::Window& window);
 
 	};
 

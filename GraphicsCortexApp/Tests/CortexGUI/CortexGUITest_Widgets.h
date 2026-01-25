@@ -32,7 +32,6 @@ public:
 			gui_d.new_frame();
 
 			static widget2::Window window0;
-			static widget2::MenuBar menubar;
 
 			style.apply(window0);
 			window0.padding = glm::vec4(0);
@@ -42,7 +41,6 @@ public:
 				window0.target_size.value.y = 400;
 			}
 			
-			//window0.drag(gui_d, window0);
 			window0.publish_begin(gui_d);
 			
 			if (gui_d.get_window_handle(window0.id) != nullptr && gui_d.get_window_handle(window0.id)->should_close())
@@ -50,38 +48,25 @@ public:
 			
 			window0.publish_menubar_begin(gui_d);
 			
+			static widget2::MenuBar menubar;
+			
 			style.apply(menubar);
 			menubar.publish_begin(gui_d);
 
 			window0.drag(gui_d, menubar);
-
-			if (menubar.window_controls.minimize_button.click.is_activated_now(gui_d))
-				window0.desire_iconify();
+			menubar.window_controls.manage(gui_d, window0);
 			
-			if (menubar.window_controls.restore_button.click.is_activated_now(gui_d))
-				window0.desire_maximal_restore_swap();
-			
-			if (menubar.window_controls.close_button.click.is_activated_now(gui_d) && gui_d.get_window_handle(window0.id) != nullptr)
-				gui_d.get_window_handle(window0.id)->set_should_close(true);
-			
-			static widget2::Menu menu_file;
-			menu_file.text = U"File";
+			static widget2::Menu menu_file(U"File");
 			
 			style.apply(menu_file);
 			menu_file.publish_begin(gui_d);
 			
 			if (menu_file.drop.is_active()) {
-				static widget2::MenuItem menu_item_new;
-				static widget2::MenuItem menu_item_open;
-				static widget2::MenuItem menu_item_close;
-				static widget2::MenuItem menu_item_save;
-				static widget2::MenuItem menu_item_save_all;
-			
-				menu_item_new.text = U"New";
-				menu_item_open.text = U"Open";
-				menu_item_close.text = U"Close";
-				menu_item_save.text = U"Save";
-				menu_item_save_all.text = U"Save All";
+				static widget2::MenuItem menu_item_new(U"New");
+				static widget2::MenuItem menu_item_open(U"Open");
+				static widget2::MenuItem menu_item_close(U"Close");
+				static widget2::MenuItem menu_item_save(U"Save");
+				static widget2::MenuItem menu_item_save_all(U"Save All");
 			
 				style.apply(menu_item_new);
 				style.apply(menu_item_open);
@@ -100,24 +85,17 @@ public:
 			
 			
 			
-			static widget2::Menu menu_edit;
-			menu_edit.text = U"Edit";
+			static widget2::Menu menu_edit(U"Edit");
 			
 			style.apply(menu_edit);
 			menu_edit.publish_begin(gui_d);
 			
 			if (menu_edit.drop.is_active()) {
-				static widget2::MenuItem menu_item_undo;
-				static widget2::MenuItem menu_item_redo;
-				static widget2::MenuItem menu_item_cut;
-				static widget2::MenuItem menu_item_copy;
-				static widget2::MenuItem menu_item_paste;
-			
-				menu_item_undo.text = U"Undo";
-				menu_item_redo.text = U"Redo";
-				menu_item_cut.text = U"Cut";
-				menu_item_copy.text = U"Copy";
-				menu_item_paste.text = U"Paste";
+				static widget2::MenuItem menu_item_undo(U"Undo");
+				static widget2::MenuItem menu_item_redo(U"Redo");
+				static widget2::MenuItem menu_item_cut(U"Cut");
+				static widget2::MenuItem menu_item_copy(U"Copy");
+				static widget2::MenuItem menu_item_paste(U"Paste");
 			
 				style.apply(menu_item_undo);
 				style.apply(menu_item_redo);
@@ -201,17 +179,11 @@ public:
 			
 			if (combobox.drop.is_active()) {
 
-				static widget2::ComboBoxItem item0;
-				static widget2::ComboBoxItem item1;
-				static widget2::ComboBoxItem item2;
-				static widget2::ComboBoxItem item3;
-				static widget2::ComboBoxItem item4;
-
-				item0.text = U"item0";
-				item1.text = U"item1";
-				item2.text = U"item2";
-				item3.text = U"item3";
-				item4.text = U"item4";
+				static widget2::ComboBoxItem item0(U"item0");
+				static widget2::ComboBoxItem item1(U"item1");
+				static widget2::ComboBoxItem item2(U"item2");
+				static widget2::ComboBoxItem item3(U"item3");
+				static widget2::ComboBoxItem item4(U"item4");
 
 				style.apply(item0);
 				style.apply(item1);
