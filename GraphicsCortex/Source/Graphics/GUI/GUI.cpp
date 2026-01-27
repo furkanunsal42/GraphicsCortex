@@ -229,7 +229,7 @@ void GUI::render() {
 			state.window->set_window_position(desc.position);
 		}
 
-		state.window->handle_events();
+		//state.window->handle_events();
 
 		
 		Window::PressAction left	= state.window->get_mouse_button(Window::MouseButton::LEFT);

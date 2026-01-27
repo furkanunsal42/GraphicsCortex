@@ -6,6 +6,11 @@
 
 #include <codecvt>
 
+#define NOMINMAX
+#define GLFW_EXPOSE_NATIVE_WIN32
+#include <GLFW/glfw3native.h>
+#undef DELETE
+
 GUIDynamic::ResolvedProperties widget::Widget::get_resolved_properties(GUIDynamic& gui_dynamic)
 {
 	return gui_dynamic.get_resolved_properties(id);
@@ -480,6 +485,42 @@ void widget::Container::publish_begin(GUIDynamic& gui_dynamic) {
 void widget::Container::publish_end(GUIDynamic& gui_dynamic) {
 
 	Grid::publish_end(gui_dynamic);
+}
+
+void widget::ResizeContainer::publish_begin(GUIDynamic& gui_dynamic) {
+
+	Container::publish_begin(gui_dynamic);
+
+	auto resolved_properties = get_resolved_properties(gui_dynamic);
+
+	glm::vec2 physical_position = resolved_properties.position;
+	glm::vec2 physical_size = resolved_properties.size;
+	
+	if (glm::any(glm::equal(physical_size, glm::vec2(0))))
+		return;
+
+	glm::vec2 relative_cursor_pos = gui_dynamic.get_mouse_position_scale_independent() - physical_position;
+
+	bool is_cursor_in_resize_border =
+		hover.is_active() && (
+			relative_cursor_pos.x < resize_border_thickness.x ||
+			relative_cursor_pos.y < resize_border_thickness.y ||
+			relative_cursor_pos.x > physical_size.x - resize_border_thickness.z ||
+			relative_cursor_pos.y > physical_size.y - resize_border_thickness.w
+			);
+
+	if (is_cursor_in_resize_border)
+		std::cout << "resize" << std::endl;
+
+	//if (glm::any(glm::lessThan(target_size.value, glm::vec2(0))) && resolved_properties.size != glm::vec2(0))
+	//	target_size = get_resolved_properties(gui_dynamic).size / gui_dynamic.get_gui_scale();
+
+}
+
+void widget::ResizeContainer::publish_end(GUIDynamic& gui_dynamic) {
+
+	Container::publish_end(gui_dynamic);
+
 }
 
 void widget::Image::publish(GUIDynamic& gui_dynamic)
@@ -1188,6 +1229,7 @@ void widget::ComboBoxItem::publish(GUIDynamic& gui_dynamic, ComboBox& owner_comb
 
 	if (click.is_activated_now(gui_dynamic))
 		select(gui_dynamic, owner_combobox);
+
 }
 
 void widget::ComboBoxItem::select(GUIDynamic& gui_dynamic, ComboBox& owner_combobox)
@@ -1299,8 +1341,8 @@ void widget::WindowControls::manage(GUIDynamic& gui_dynamic, widget::Window& win
 	if (restore_button.click.is_activated_now(gui_dynamic))
 		window.desire_maximal_restore_swap();
 
-	if (close_button.click.is_activated_now(gui_dynamic) && gui_dynamic.get_window_handle(window.id) != nullptr)
-		gui_dynamic.get_window_handle(window.id)->set_should_close(true);
+	if (close_button.click.is_activated_now(gui_dynamic))
+		window.should_close.start(gui_dynamic);
 
 }
 

@@ -13,25 +13,24 @@ public:
 
 	bool run() {
 
-		constexpr auto avail		= GUIDynamic::avail;
-		constexpr auto fit			= GUIDynamic::fit;
-		constexpr auto invalid_id	= GUIDynamic::invalid_id;
-
 		Package::load_package("graphics_cortex.hbv");
 		Package::loaded_package->print_headers();
 
-		widget::DefaultStyle style;
-
 		GUIDynamic gui_d(true);
 
-		FontBank::get().load_font("../GraphicsCortex/Fonts/Roboto-Regular.ttf", 32 * gui_d.get_gui_scale());
+		widget::DefaultStyle style;
 		
-		while (true) {			
+		FontBank::get().load_font("../GraphicsCortex/Fonts/Roboto-Regular.ttf", 32 * gui_d.get_gui_scale());
+			
+		bool should_close = false;
+		
+		while (!should_close) {
+			
 			static bool once = true;
-
 			gui_d.new_frame();
 
 			static widget::Window window0;
+			should_close = window0.should_close.is_active();
 
 			style.apply(window0);
 			window0.padding = glm::vec4(0);
@@ -40,7 +39,7 @@ public:
 				window0.target_size.value.x = 600;
 				window0.target_size.value.y = 400;
 			}
-			
+
 			window0.publish_begin(gui_d);
 			
 			if (gui_d.get_window_handle(window0.id) != nullptr && gui_d.get_window_handle(window0.id)->should_close())
@@ -83,8 +82,6 @@ public:
 			
 			menu_file.publish_end(gui_d);
 			
-			
-			
 			static widget::Menu menu_edit(U"Edit");
 			
 			style.apply(menu_edit);
@@ -112,14 +109,12 @@ public:
 			
 			menu_edit.publish_end(gui_d);
 			
-			
 			menubar.publish_end(gui_d);
 			
 			window0.publish_menubar_end(gui_d);
 
-
 			gui_d.stack_begin()
-				.set_target_size(glm::vec2(avail, fit))
+				.set_target_size(glm::vec2(GUIDynamic::avail, GUIDynamic::fit))
 				.set_padding(glm::vec4(20, 20, 20, 20));
 
 			static float slider_value = 12;
@@ -199,6 +194,20 @@ public:
 			}
 
 			combobox.publish_end(gui_d);
+
+			static widget::ResizeContainer resize_container;
+
+			style.apply(resize_container);
+			resize_container.publish_begin(gui_d);
+
+			static widget::Box resize_content;
+
+			style.apply(resize_content);
+			resize_content.color = glm::vec4(0, 0, 0, 1);
+			resize_content.pass_through_events = true;
+			resize_content.publish(gui_d);
+			
+			resize_container.publish_end(gui_d);
 
 			//static widget::Window window1;
 			//style.apply(window1);

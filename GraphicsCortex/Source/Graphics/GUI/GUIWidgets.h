@@ -84,9 +84,11 @@ namespace widget {
 	public:
 		
 		template<typename T>
-		void apply(T& widget) = delete;
+		T& apply(T& widget) = delete;
 
 	};
+
+	extern DefaultStyle global_style;
 
 	struct Window : public IOWidget {
 
@@ -115,7 +117,8 @@ namespace widget {
 		IOEvent maximize;
 		IOEvent restore;
 		IOEvent iconify;
-		
+		IOEvent should_close;
+
 		void publish_begin(GUIDynamic& gui_dynamic);
 		void publish_end(GUIDynamic& gui_dynamic);
 
@@ -196,6 +199,8 @@ namespace widget {
 		void publish_begin(GUIDynamic& gui_dynamic);
 		void publish_end(GUIDynamic& gui_dynamic);
 
+
+
 	};
 
 	struct Stack : public IOWidget {
@@ -220,15 +225,16 @@ namespace widget {
 		void publish_end(GUIDynamic& gui_dynamic);
 	};
 
-	struct ResizeContainer : public Grid {
+	struct ResizeContainer : public Container {
 
-		void publish(GUIDynamic& gui_dynamic);
+		glm::vec4 resize_border_thickness;
+
 		void publish_begin(GUIDynamic& gui_dynamic);
 		void publish_end(GUIDynamic& gui_dynamic);
 
 	};
 
-	struct ScrollContainer : public Grid {
+	struct ScrollContainer : public Container {
 		
 		void publish_begin(GUIDynamic& gui_dynamic);
 		void publish_end(GUIDynamic& gui_dynamic);
