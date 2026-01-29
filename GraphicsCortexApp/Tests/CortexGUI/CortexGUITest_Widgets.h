@@ -219,11 +219,29 @@ public:
 			static widget::ScrollContainer scroll_container;
 
 			style.apply(scroll_container);
+			scroll_container.target_size = glm::vec2(150, 150);
+			//scroll_container.min_size = glm::vec2(150, 150);
 
 			scroll_container.publish_begin(gui_d);
 
-			gui_d.box_begin()
-				.set_target_size(glm::vec2(300));
+			gui_d.stack_begin()
+				.set_padding(glm::vec4(0))
+				.set_spacing(0)
+				.set_target_size(glm::vec2(GUIDynamic::avail));
+
+			for (int32_t i = 0; i < 3; i++) {
+				gui_d.box_begin()
+					.set_target_size(glm::vec2(GUIDynamic::avail, 30))
+					.set_color(glm::vec4(1, 0, 0, 1));
+				gui_d.box_begin()
+					.set_target_size(glm::vec2(GUIDynamic::avail, 30))
+					.set_color(glm::vec4(0, 1, 0, 1));
+				gui_d.box_begin()
+					.set_target_size(glm::vec2(GUIDynamic::avail, 30))
+					.set_color(glm::vec4(0, 0, 1, 1));
+			}
+
+			gui_d.stack_end();
 
 			scroll_container.publish_end(gui_d);
 

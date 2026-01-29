@@ -562,10 +562,10 @@ namespace widget {
 		apply(widget.button_up);
 		apply(widget.button_down);
 
-		widget.background_vertical.target_size		= glm::vec2(30, GUIDynamic::avail);
+		widget.background_vertical.target_size		= glm::vec2(18, GUIDynamic::avail);
 		widget.background_vertical.color			= glm::vec4(0.75, 0.75, 0.75, 1);
 
-		widget.background_horizontal.target_size	= glm::vec2(GUIDynamic::avail, 30);
+		widget.background_horizontal.target_size	= glm::vec2(GUIDynamic::avail, 18);
 		widget.background_horizontal.color			= glm::vec4(0.75, 0.75, 0.75, 1);
 
 		//widget.manu_stack.spacing = 4;

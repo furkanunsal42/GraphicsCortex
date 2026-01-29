@@ -474,6 +474,9 @@ namespace widget {
 		void publish_begin(GUIDynamic& gui_dynamic);
 		void publish_end(GUIDynamic& gui_dynamic);
 
+	private:
+
+		size_t internal_grid_id = GUIDynamic::invalid_id;
 	};
 
 	struct Tab {

@@ -1385,31 +1385,40 @@ void widget::MenuBar::publish_end(GUIDynamic& gui_dynamic) {
 
 void widget::ScrollContainer::publish_begin(GUIDynamic& gui_dynamic){
 	
-	Container::publish_begin(gui_dynamic);
-
-	gui_dynamic.grid_add_column(30, 30, GUIDynamic::avail);
-	gui_dynamic.grid_add_row(30, 30, GUIDynamic::avail);
-
-
-	gui_dynamic.grid_begin()
-		.set_target_size(glm::vec2(GUIDynamic::fit));
+	Grid::publish_begin(gui_dynamic);
+	gui_dynamic.grid_add_column(GUIDynamic::avail, GUIDynamic::avail, GUIDynamic::avail);
+	gui_dynamic.grid_add_row(GUIDynamic::avail, GUIDynamic::avail, GUIDynamic::avail);
 
 	gui_dynamic.grid_add_column(GUIDynamic::fit, GUIDynamic::fit, GUIDynamic::avail);
 	gui_dynamic.grid_add_row(GUIDynamic::fit, GUIDynamic::fit, GUIDynamic::avail);
 
 	gui_dynamic.grid_region(glm::ivec2(0), glm::ivec2(1));
 
+	
+	gui_dynamic.grid_begin(internal_grid_id)
+		.set_padding(glm::vec4(0))
+		.set_target_size(glm::vec2(GUIDynamic::avail));
+
+	gui_dynamic.grid_add_column(GUIDynamic::avail, GUIDynamic::fit, GUIDynamic::avail);
+	gui_dynamic.grid_add_row(GUIDynamic::avail, GUIDynamic::fit, GUIDynamic::avail);
+	
+	gui_dynamic.grid_region(glm::ivec2(0));
+
 }
 
 void widget::ScrollContainer::publish_end(GUIDynamic& gui_dynamic){
+
+	//gui_dynamic.grid_prop().set_margin(glm::vec4(0, -40, 0, 0));
+	gui_dynamic.grid_end();
+
+	GUIDynamic::ResolvedProperties properties = gui_dynamic.get_resolved_properties(internal_grid_id);
+
 
 	gui_dynamic.grid_region(glm::ivec2(0, 1));
 	background_horizontal.publish(gui_dynamic);
 
 	gui_dynamic.grid_region(glm::ivec2(1, 0));
 	background_vertical.publish(gui_dynamic);
-
-	gui_dynamic.grid_end();
 
 	Container::publish_end(gui_dynamic);
 
