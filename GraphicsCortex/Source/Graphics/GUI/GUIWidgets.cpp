@@ -487,41 +487,52 @@ void widget::Container::publish_end(GUIDynamic& gui_dynamic) {
 	Grid::publish_end(gui_dynamic);
 }
 
-void widget::ResizeContainer::publish_begin(GUIDynamic& gui_dynamic) {
-
-	Container::publish_begin(gui_dynamic);
-
-	auto resolved_properties = get_resolved_properties(gui_dynamic);
-
-	glm::vec2 physical_position = resolved_properties.position;
-	glm::vec2 physical_size = resolved_properties.size;
-	
-	if (glm::any(glm::equal(physical_size, glm::vec2(0))))
-		return;
-
-	glm::vec2 relative_cursor_pos = gui_dynamic.get_mouse_position_scale_independent() - physical_position;
-
-	bool is_cursor_in_resize_border =
-		hover.is_active() && (
-			relative_cursor_pos.x < resize_border_thickness.x ||
-			relative_cursor_pos.y < resize_border_thickness.y ||
-			relative_cursor_pos.x > physical_size.x - resize_border_thickness.z ||
-			relative_cursor_pos.y > physical_size.y - resize_border_thickness.w
-			);
-
-	if (is_cursor_in_resize_border)
-		std::cout << "resize" << std::endl;
-
-	//if (glm::any(glm::lessThan(target_size.value, glm::vec2(0))) && resolved_properties.size != glm::vec2(0))
-	//	target_size = get_resolved_properties(gui_dynamic).size / gui_dynamic.get_gui_scale();
-
-}
-
-void widget::ResizeContainer::publish_end(GUIDynamic& gui_dynamic) {
-
-	Container::publish_end(gui_dynamic);
-
-}
+//void widget::ResizePlane::publish(GUIDynamic& gui_dynamic) {
+//	
+//	Box::publish(gui_dynamic);
+//
+//	auto resolved_properties = get_resolved_properties(gui_dynamic);
+//
+//	glm::vec2 physical_position = resolved_properties.position;
+//	glm::vec2 physical_size = resolved_properties.size;
+//
+//	if (glm::any(glm::equal(physical_size, glm::vec2(0))))
+//		return;
+//
+//	glm::vec2 relative_cursor_pos = gui_dynamic.get_mouse_position_scale_independent() - physical_position;
+//
+//	bool is_cursor_in_resize_border =
+//		hover.is_active() && (
+//			relative_cursor_pos.x < resize_border_thickness.x ||
+//			relative_cursor_pos.y < resize_border_thickness.y ||
+//			relative_cursor_pos.x > physical_size.x - resize_border_thickness.z ||
+//			relative_cursor_pos.y > physical_size.y - resize_border_thickness.w
+//			);
+//	
+//	if (is_cursor_in_resize_border && hold.is_active()) {
+//
+//		std::cout << "resize" << std::endl;
+//	}
+//
+//	if (glm::any(glm::lessThan(target_size.value, glm::vec2(0))) && resolved_properties.size != glm::vec2(0))
+//		target_size = get_resolved_properties(gui_dynamic).size / gui_dynamic.get_gui_scale();
+//
+//
+//}
+//
+//void widget::ResizeContainer::publish_begin(GUIDynamic& gui_dynamic) {
+//
+//	Container::publish_begin(gui_dynamic);
+//	
+//	resize_plane.publish(gui_dynamic);
+//
+//}
+//
+//void widget::ResizeContainer::publish_end(GUIDynamic& gui_dynamic) {
+//
+//	Container::publish_end(gui_dynamic);
+//
+//}
 
 void widget::Image::publish(GUIDynamic& gui_dynamic)
 {
@@ -1369,5 +1380,37 @@ void widget::MenuBar::publish_end(GUIDynamic& gui_dynamic) {
 
 	manu_stack.publish_end(gui_dynamic);
 	Grid::publish_end(gui_dynamic);
+
+}
+
+void widget::ScrollContainer::publish_begin(GUIDynamic& gui_dynamic){
+	
+	Container::publish_begin(gui_dynamic);
+
+	gui_dynamic.grid_add_column(30, 30, GUIDynamic::avail);
+	gui_dynamic.grid_add_row(30, 30, GUIDynamic::avail);
+
+
+	gui_dynamic.grid_begin()
+		.set_target_size(glm::vec2(GUIDynamic::fit));
+
+	gui_dynamic.grid_add_column(GUIDynamic::fit, GUIDynamic::fit, GUIDynamic::avail);
+	gui_dynamic.grid_add_row(GUIDynamic::fit, GUIDynamic::fit, GUIDynamic::avail);
+
+	gui_dynamic.grid_region(glm::ivec2(0), glm::ivec2(1));
+
+}
+
+void widget::ScrollContainer::publish_end(GUIDynamic& gui_dynamic){
+
+	gui_dynamic.grid_region(glm::ivec2(0, 1));
+	background_horizontal.publish(gui_dynamic);
+
+	gui_dynamic.grid_region(glm::ivec2(1, 0));
+	background_vertical.publish(gui_dynamic);
+
+	gui_dynamic.grid_end();
+
+	Container::publish_end(gui_dynamic);
 
 }

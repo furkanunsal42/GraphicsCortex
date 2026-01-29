@@ -195,19 +195,19 @@ public:
 
 			combobox.publish_end(gui_d);
 
-			static widget::ResizeContainer resize_container;
-
-			style.apply(resize_container);
-			resize_container.publish_begin(gui_d);
-
-			static widget::Box resize_content;
-
-			style.apply(resize_content);
-			resize_content.color = glm::vec4(0, 0, 0, 1);
-			resize_content.pass_through_events = true;
-			resize_content.publish(gui_d);
-			
-			resize_container.publish_end(gui_d);
+			//static widget::ResizeContainer resize_container;
+			//
+			//style.apply(resize_container);
+			//resize_container.publish_begin(gui_d);
+			//
+			//static widget::Box resize_content;
+			//
+			//style.apply(resize_content);
+			//resize_content.color = glm::vec4(0, 0, 0, 1);
+			//resize_content.pass_through_events = true;
+			//resize_content.publish(gui_d);
+			//
+			//resize_container.publish_end(gui_d);
 
 			//static widget::Window window1;
 			//style.apply(window1);
@@ -216,6 +216,17 @@ public:
 			//gui_d.box_begin();
 			//window1.publish_end(gui_d);
 			
+			static widget::ScrollContainer scroll_container;
+
+			style.apply(scroll_container);
+
+			scroll_container.publish_begin(gui_d);
+
+			gui_d.box_begin()
+				.set_target_size(glm::vec2(300));
+
+			scroll_container.publish_end(gui_d);
+
 			gui_d.stack_end();
 
 			window0.publish_end(gui_d);

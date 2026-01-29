@@ -199,7 +199,8 @@ namespace widget {
 		void publish_begin(GUIDynamic& gui_dynamic);
 		void publish_end(GUIDynamic& gui_dynamic);
 
-
+		void make_column_resize_grip(int32_t column_index);
+		void make_row_resize_grip(int32_t row_index);
 
 	};
 
@@ -223,22 +224,6 @@ namespace widget {
 
 		void publish_begin(GUIDynamic& gui_dynamic);
 		void publish_end(GUIDynamic& gui_dynamic);
-	};
-
-	struct ResizeContainer : public Container {
-
-		glm::vec4 resize_border_thickness;
-
-		void publish_begin(GUIDynamic& gui_dynamic);
-		void publish_end(GUIDynamic& gui_dynamic);
-
-	};
-
-	struct ScrollContainer : public Container {
-		
-		void publish_begin(GUIDynamic& gui_dynamic);
-		void publish_end(GUIDynamic& gui_dynamic);
-
 	};
 
 	struct Image : public Box {
@@ -463,6 +448,32 @@ namespace widget {
 		
 		void publish_begin(GUIDynamic& gui_dynamic);
 		void publish_end(GUIDynamic& gui_dynamic);
+	};
+
+	struct ScrollContainer : public Container {
+
+		Box background_vertical;
+		Box head_vertical;
+		ImageButton button_left;
+		ImageButton button_right;
+
+		Box background_horizontal;
+		Box head_horizontal;
+		ImageButton button_down;
+		ImageButton button_up;
+
+		enum ScrollMode {
+			Always,
+			Overflow,
+			Never,
+		};
+
+		ScrollMode vertical_scroll_mode = Overflow;
+		ScrollMode horizontal_scroll_mode = Never;
+
+		void publish_begin(GUIDynamic& gui_dynamic);
+		void publish_end(GUIDynamic& gui_dynamic);
+
 	};
 
 	struct Tab {

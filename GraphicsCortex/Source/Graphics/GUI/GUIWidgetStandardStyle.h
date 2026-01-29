@@ -75,21 +75,38 @@ namespace widget {
 		return widget;
 	}
 
-	template<>
-	inline ResizeContainer& DefaultStyle::apply<ResizeContainer>(ResizeContainer& widget) {
-		apply<Container>(widget);
-
-		widget.margin = glm::vec4(0);
-		widget.padding = glm::vec4(0);
-		widget.resize_border_thickness = glm::vec4(10);
-		widget.target_size = glm::vec2(GUIDynamic::fit);
-		widget.min_size = glm::vec2(GUIDynamic::fit);
-		widget.max_size = glm::vec2(GUIDynamic::avail);
-		
-		widget.pass_through_events = true;
-
-		return widget;
-	}
+	//template<>
+	//inline ResizePlane& DefaultStyle::apply<ResizePlane>(ResizePlane& widget) {
+	//	apply<Box>(widget);
+	//
+	//	widget.margin = glm::vec4(0);
+	//	widget.resize_border_thickness = glm::vec4(10);
+	//	widget.target_size = glm::vec2(32);
+	//	widget.min_size = glm::vec2(GUIDynamic::avail);
+	//	widget.max_size = glm::vec2(GUIDynamic::avail);
+	//
+	//	widget.pass_through_events = true;
+	//
+	//	return widget;
+	//}
+	//
+	//template<>
+	//inline ResizeContainer& DefaultStyle::apply<ResizeContainer>(ResizeContainer& widget) {
+	//	apply<Container>(widget);
+	//	apply(widget.resize_plane);
+	//
+	//	widget.margin = glm::vec4(0);
+	//	widget.padding = glm::vec4(0);
+	//	//widget.resize_border_thickness = glm::vec4(10);
+	//	widget.target_size = glm::vec2(GUIDynamic::fit);
+	//	widget.min_size = glm::vec2(GUIDynamic::fit);
+	//	widget.max_size = glm::vec2(GUIDynamic::avail);
+	//	
+	//	widget.resize_plane.pass_through_events = true;
+	//	widget.pass_through_events = false;
+	//
+	//	return widget;
+	//}
 
 	template<>
 	inline Image& DefaultStyle::apply<Image>(Image& widget) {
@@ -527,6 +544,50 @@ namespace widget {
 		widget.background.pass_through_events = true;
 		widget.manu_stack.pass_through_events = true;
 		widget.window_controls.pass_through_events = false;
+		widget.pass_through_events = false;
+
+		return widget;
+	}
+
+	template<>
+	inline ScrollContainer& DefaultStyle::apply<ScrollContainer>(ScrollContainer& widget) {
+		apply<Container>(widget);
+		apply(widget.background_vertical);
+		apply(widget.head_vertical);
+		apply(widget.button_left);
+		apply(widget.button_right);
+
+		apply(widget.background_horizontal);
+		apply(widget.head_horizontal);
+		apply(widget.button_up);
+		apply(widget.button_down);
+
+		widget.background_vertical.target_size		= glm::vec2(30, GUIDynamic::avail);
+		widget.background_vertical.color			= glm::vec4(0.75, 0.75, 0.75, 1);
+
+		widget.background_horizontal.target_size	= glm::vec2(GUIDynamic::avail, 30);
+		widget.background_horizontal.color			= glm::vec4(0.75, 0.75, 0.75, 1);
+
+		//widget.manu_stack.spacing = 4;
+		//widget.manu_stack.is_vertical = false;
+		//
+		//widget.target_size = glm::vec2(GUIDynamic::avail, 24);
+		//widget.background.target_size = glm::vec2(GUIDynamic::avail);
+		//
+		//widget.background.color = glm::vec4(0.86, 0.86, 0.86, 1);
+		//widget.background.border_color3 = glm::vec4(0.71, 0.71, 0.71, 1);
+		//widget.background.border_thickness = glm::vec4(0, 0, 0, 1);
+		
+		widget.background_vertical.pass_through_events = true;
+		widget.head_vertical.pass_through_events = true;
+		widget.button_left.pass_through_events = true;
+		widget.button_right.pass_through_events = true;
+
+		widget.background_horizontal.pass_through_events = true;
+		widget.head_horizontal.pass_through_events = true;
+		widget.button_up.pass_through_events = true;
+		widget.button_down.pass_through_events = true;
+
 		widget.pass_through_events = false;
 
 		return widget;

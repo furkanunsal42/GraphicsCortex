@@ -52,8 +52,8 @@ public:
 	using time_point = std::chrono::system_clock::time_point;
 	constexpr static time_point	invalid_time = time_point::max();
 
-	static constexpr float		fit   = -1024 * 64 + 32;
-	static constexpr float		avail = -1024 * 64;
+	static constexpr float		fit   = -1024 * 64;
+	static constexpr float		avail = -1024 * 128;
 	static constexpr size_t		invalid_id = 0;
 
 	struct WindowDesc;
