@@ -6,7 +6,7 @@ namespace widget {
 	template<>
 	inline Window& DefaultStyle::apply<Window>(Window& widget) {
 		
-		widget.padding			= glm::vec4(10);
+		widget.padding			= glm::vec4(0);
 		//widget.target_size		= glm::vec2(GUIDynamic::fit);
 		widget.min_size			= glm::vec2(GUIDynamic::fit);
 		widget.max_size			= glm::vec2(GUIDynamic::avail);

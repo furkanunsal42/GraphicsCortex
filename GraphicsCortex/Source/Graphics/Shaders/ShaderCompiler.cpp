@@ -122,8 +122,8 @@ unsigned int Program::compile_shader(unsigned int type, const std::string& shade
 	int compile_status;
 	GLCall(glGetShaderiv(shader_id, GL_COMPILE_STATUS, &compile_status));
 	if (compile_status != GL_TRUE) {
-		char* compile_error_msg = (char*)malloc(1024 * sizeof(char));
-		GLCall(glGetShaderInfoLog(shader_id, 1024, nullptr, compile_error_msg));
+		char* compile_error_msg = (char*)malloc(1024 * 16 * sizeof(char));
+		GLCall(glGetShaderInfoLog(shader_id, 1024 * 16, nullptr, compile_error_msg));
 		std::cout << "shader compile error with massage: " << compile_error_msg << '\n';
 	}
 	return shader_id;

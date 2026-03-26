@@ -11,6 +11,8 @@
 #include <GLFW/glfw3native.h>
 #undef DELETE
 
+widget::DefaultStyle widget::global_style;
+
 GUIDynamic::ResolvedProperties widget::Widget::get_resolved_properties(GUIDynamic& gui_dynamic)
 {
 	return gui_dynamic.get_resolved_properties(id);

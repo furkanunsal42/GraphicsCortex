@@ -424,33 +424,70 @@ ModelMaterial Asset::load_model_material()
 
     std::vector<ModelMaterial::SingleMaterial> single_materials;
     single_materials.resize(submodel_count);
-
+    
     uint32_t texture_count = path_to_index_param.size();
     #pragma omp parallel for
     for (int i = 0; i < texture_count; i++) {
         
         std::shared_ptr<Image> image = nullptr;
         Image::ImageParameters param = Image::detect_image_parameters(image_params[i].path);
+        
+        aiTextureType type = image_params[i].type_index_vector[0].first;
+        
+        switch (type) {
+        case aiTextureType_DIFFUSE: {
+            image = std::make_shared<Image>(image_params[i].path, 4, image_params[i].flip);
+            break;
+        }
+        case aiTextureType_NORMALS: {
+            image = std::make_shared<Image>(image_params[i].path, 3, image_params[i].flip);
+            break;
+        }
+        case aiTextureType_DIFFUSE_ROUGHNESS: {
+            if (image == nullptr) {
+                image = std::make_shared<Image>(image_params[i].path, param.channel_count, image_params[i].flip);
+            }
+            break;
+        }
+        case aiTextureType_METALNESS: {
+            if (image == nullptr) {
+                image = std::make_shared<Image>(image_params[i].path, param.channel_count, image_params[i].flip);
+            }
+            break;
+        }
+        case aiTextureType_AMBIENT_OCCLUSION: {
+            image = std::make_shared<Image>(image_params[i].path, 1, image_params[i].flip);
+            break;
+        }
+        case aiTextureType_HEIGHT: {
+            image = std::make_shared<Image>(image_params[i].path, 1, image_params[i].flip);
+            break;
+        }
+        case aiTextureType_EMISSIVE: {
+            auto image = std::make_shared<Image>(image_params[i].path, 3, image_params[i].flip);
+            break;
+        }
+        }
 
         for (auto& type_index : image_params[i].type_index_vector) {
-            aiTextureType type = type_index.first;;
+            aiTextureType type = image_params[i].type_index_vector[0].first;
             uint32_t submodel_index = type_index.second;
 
             switch (type) {
             case aiTextureType_DIFFUSE: {
-                image = std::make_shared<Image>(image_params[i].path, 4, image_params[i].flip);
+                //image = std::make_shared<Image>(image_params[i].path, 4, image_params[i].flip);
                 single_materials[submodel_index].albedo_image = image;
                 break;
             }
             case aiTextureType_NORMALS: {
-                image = std::make_shared<Image>(image_params[i].path, 3, image_params[i].flip);
+                //image = std::make_shared<Image>(image_params[i].path, 3, image_params[i].flip);
                 single_materials[submodel_index].normal_image = image;
                 break;
             }
             case aiTextureType_DIFFUSE_ROUGHNESS: {
-                if (image == nullptr) {
-                    image = std::make_shared<Image>(image_params[i].path, param.channel_count, image_params[i].flip);
-                }
+                //if (image == nullptr) {
+                    //image = std::make_shared<Image>(image_params[i].path, param.channel_count, image_params[i].flip);
+                //}
 
                 if (param.channel_count != 1)
                     single_materials[submodel_index].roughness_image = std::make_shared<Image>(image->copy_channels(Image::Channel::green));
@@ -460,9 +497,9 @@ ModelMaterial Asset::load_model_material()
                 break;
             }
             case aiTextureType_METALNESS: {
-                if (image == nullptr) {
-                    image = std::make_shared<Image>(image_params[i].path, param.channel_count, image_params[i].flip);
-                }
+                //if (image == nullptr) {
+                //    image = std::make_shared<Image>(image_params[i].path, param.channel_count, image_params[i].flip);
+                //}
 
                 if (param.channel_count != 1)
                     single_materials[submodel_index].metallic_image = std::make_shared<Image>(image->copy_channels(Image::Channel::blue));
@@ -472,17 +509,17 @@ ModelMaterial Asset::load_model_material()
                 break;
             }
             case aiTextureType_AMBIENT_OCCLUSION: {
-                image = std::make_shared<Image>(image_params[i].path, 1, image_params[i].flip);
+                //image = std::make_shared<Image>(image_params[i].path, 1, image_params[i].flip);
                 single_materials[submodel_index].ambient_occlusion_image = image;
                 break;
             }
             case aiTextureType_HEIGHT: {
-                image = std::make_shared<Image>(image_params[i].path, 1, image_params[i].flip);
+                //image = std::make_shared<Image>(image_params[i].path, 1, image_params[i].flip);
                 single_materials[submodel_index].height_image = image;
                 break;
             }
             case aiTextureType_EMISSIVE: {
-                auto image = std::make_shared<Image>(image_params[i].path, 3, image_params[i].flip);
+                //auto image = std::make_shared<Image>(image_params[i].path, 3, image_params[i].flip);
                 single_materials[submodel_index].emissive_image = image;
                 break;
             }

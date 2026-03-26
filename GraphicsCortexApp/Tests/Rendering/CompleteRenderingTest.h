@@ -27,12 +27,13 @@ public:
 		//Asset asset("../GraphicsCortex/Models/sibenik/sibenik.obj");
 		//Asset asset("../GraphicsCortex/Models/sanmiguel/san-miguel.obj");
 		//Asset asset("../GraphicsCortex/Models/sculpture/scene.gltf");
-		//Asset asset("../GraphicsCortex/Models/City/edited_city.obj");
+		Asset asset("../GraphicsCortex/Models/City/edited_city.obj");
 		//Asset asset("../GraphicsCortex/Models/teducar/source/teduCar.fbx");
 		//Asset asset("../GraphicsCortex/Models/Thinker/source/Rodin_Thinker.obj");
 		//Asset asset("../GraphicsCortex/Models/medival/source/medival.fbx");
 		//Asset asset("../GraphicsCortex/Models/bmw/scene.gltf");
-		Asset asset("../GraphicsCortex/Models/Sponza/scene.gltf");
+		//Asset asset("../GraphicsCortex/Models/Sponza/scene.gltf");
+
 		//Asset asset_curtains("../GraphicsCortex/Models/Sponza/NewSponza_Curtains_glTF.gltf");
 		//Asset asset("../GraphicsCortex/Models/circuit/nogaro.obj");
 		//Asset asset("../GraphicsCortex/ModelsKhronos/2.0/Sponza/glTF/Sponza.gltf");

@@ -15,16 +15,16 @@ public:
 
 	class SingleMaterial {
 	public:
-		std::shared_ptr<Texture2D> albedo_texture = nullptr;
-		std::shared_ptr<Texture2D> normal_texture = nullptr;
-		std::shared_ptr<Texture2D> roughness_texture = nullptr;
-		std::shared_ptr<Texture2D> metallic_texture = nullptr;
-		std::shared_ptr<Texture2D> specular_texture = nullptr;
-		std::shared_ptr<Texture2D> height_texture = nullptr;
-		std::shared_ptr<Texture2D> opacity_texture = nullptr;
-		std::shared_ptr<Texture2D> ambient_occlusion_texture = nullptr;
-		std::shared_ptr<Texture2D> refrection_texture = nullptr;
-		std::shared_ptr<Texture2D> emissive_texture = nullptr;
+		std::shared_ptr<Texture2D> albedo_texture				= nullptr;
+		std::shared_ptr<Texture2D> normal_texture				= nullptr;
+		std::shared_ptr<Texture2D> roughness_texture			= nullptr;
+		std::shared_ptr<Texture2D> metallic_texture				= nullptr;
+		std::shared_ptr<Texture2D> specular_texture				= nullptr;
+		std::shared_ptr<Texture2D> height_texture				= nullptr;
+		std::shared_ptr<Texture2D> opacity_texture				= nullptr;
+		std::shared_ptr<Texture2D> ambient_occlusion_texture	= nullptr;
+		std::shared_ptr<Texture2D> refrection_texture			= nullptr;
+		std::shared_ptr<Texture2D> emissive_texture				= nullptr;
 	};
 
 	void load_material(ModelMaterial& model_material);
@@ -41,7 +41,6 @@ public:
 	void clear();
 
 	void update_uniforms(Program& program, material_t material_index);
-
 
 	static const std::string albedo_texture_uniform_name;
 	static const std::string normal_texture_uniform_name;

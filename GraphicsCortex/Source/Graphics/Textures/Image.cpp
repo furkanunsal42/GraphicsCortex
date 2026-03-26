@@ -267,7 +267,7 @@ void Image::_read_image_data_svg(const ImageParameters& requested_parameters)
 	else 
 		nsvg_image = nsvgParse((char*)requested_parameters.source_data, "px", 96.0f);
 
-	float scale = std::max(128.0f / nsvg_image->width, 1.0f);
+	float scale = std::max(256.0f / nsvg_image->width, 1.0f);
 
 	_width	=	(int32_t)nsvg_image->width		* scale;
 	_height =	(int32_t)nsvg_image->height		* scale;

@@ -1591,7 +1591,6 @@ void GUIDynamic::resolve_phase1_avail_and_position()
 			if (node.child == Node::invalid_node)
 				return;
 
-
 			glm::vec2 cells_min_size = glm::vec2(0);
 			glm::ivec2 cells_avails_total = glm::ivec2(0);
 
