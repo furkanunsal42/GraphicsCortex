@@ -246,7 +246,7 @@ float get_directional_light_shadow(int directional_light_index){
                         vec3(d_frag_ligth_space.xy + vec2(x, y) * texelSize,
                         cascade)
                         ).r; 
-            shadow += (d_light_space_distance /*- bias*/ - 0.0001) > pcfDepth ? 1.0 : 0.0;        
+            shadow += (d_light_space_distance /*- bias*/ - 0.000001) > pcfDepth ? 1.0 : 0.0;        
         }    
     }
     shadow /= 9.0;

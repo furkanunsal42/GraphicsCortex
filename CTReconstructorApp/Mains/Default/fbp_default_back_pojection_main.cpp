@@ -2,7 +2,7 @@
 
 int main() {
 	std::filesystem::path working_directory = std::filesystem::absolute(".");
-	working_directory = "C:\\Users\\furkan.unsal\\Desktop\\drive\\20250716111737.002\\[vg-data] 20250716111737.002";
+	working_directory = "C:\\Users\\FurkanPC\\Desktop\\drive\\new_data\\xbox\\[vg-data] 20250818150439.488";
 
 	ct_reconstructor::init();
 
