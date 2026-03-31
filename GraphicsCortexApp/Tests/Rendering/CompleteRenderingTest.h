@@ -18,7 +18,7 @@ public:
 		glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
 		glm::ivec2 resolution = default_window->get_framebuffer_resolution();
-		RenderPipeline pipeline(resolution.x, resolution.y, Texture2D::ColorTextureFormat::RGBA8, Texture2D::DepthStencilTextureFormat::DEPTH24_STENCIL8, 0);
+		RenderPipeline pipeline(resolution.x, resolution.y, Texture2D::ColorTextureFormat::RGBA8, Texture2D::DepthStencilTextureFormat::DEPTH24_STENCIL8, 4);
 		pipeline.push_render_pass(std::make_shared<RenderPass_Clear>(glm::vec4(0, 0, 0, 1)));
 		pipeline.push_render_pass(std::make_shared<RenderPass_Shadowmaps>());
 		pipeline.push_render_pass(std::make_shared<RenderPass_Forward>());
@@ -27,12 +27,12 @@ public:
 		//Asset asset("../GraphicsCortex/Models/sibenik/sibenik.obj");
 		//Asset asset("../GraphicsCortex/Models/sanmiguel/san-miguel.obj");
 		//Asset asset("../GraphicsCortex/Models/sculpture/scene.gltf");
-		Asset asset("../GraphicsCortex/Models/City/edited_city.obj");
+		//Asset asset("../GraphicsCortex/Models/City/edited_city.obj");
 		//Asset asset("../GraphicsCortex/Models/teducar/source/teduCar.fbx");
 		//Asset asset("../GraphicsCortex/Models/Thinker/source/Rodin_Thinker.obj");
 		//Asset asset("../GraphicsCortex/Models/medival/source/medival.fbx");
 		//Asset asset("../GraphicsCortex/Models/bmw/scene.gltf");
-		//Asset asset("../GraphicsCortex/Models/Sponza/scene.gltf");
+		Asset asset("../GraphicsCortex/Models/Sponza/scene.gltf");
 
 		//Asset asset_curtains("../GraphicsCortex/Models/Sponza/NewSponza_Curtains_glTF.gltf");
 		//Asset asset("../GraphicsCortex/Models/circuit/nogaro.obj");
