@@ -703,6 +703,10 @@ project "CTReconstructor"
 	{
 		"%{prj.name}/Dependencies/half_precision/include/**.h",
 		"%{prj.name}/Dependencies/half_precision/include/**.hpp",
+		"%{prj.name}/Dependencies/nelder_mead/include/**.h",
+		"%{prj.name}/Dependencies/nelder_mead/include/**.hpp",
+		"%{prj.name}/Dependencies/nelder_mead2/include/**.h",
+		"%{prj.name}/Dependencies/nelder_mead2/include/**.hpp",
 		"%{prj.name}/Source/**.h", 
 		"%{prj.name}/Source/**.cpp",
 	}
@@ -716,6 +720,8 @@ project "CTReconstructor"
 	{
 		"%{prj.name}/Source",
 		"%{prj.name}/Dependencies/half_precision/include",
+		"%{prj.name}/Dependencies/nelder_mead/include",
+		"%{prj.name}/Dependencies/nelder_mead2/include",
 		"CortexPackager/Source",
 		"GraphicsCortex/Source/Graphics/RenderPasses",
 		"GraphicsCortex/Source/System",
@@ -804,6 +810,10 @@ project "CTReconstructorApp"
 	{
 		"CTReconstructor/Dependencies/half_precision/include/**.h",
 		"CTReconstructor/Dependencies/half_precision/include/**.hpp",
+		"CTReconstructor/Dependencies/nelder_mead/include/**.h",
+		"CTReconstructor/Dependencies/nelder_mead/include/**.hpp",
+		"CTReconstructor/Dependencies/nelder_mead2/include/**.h",
+		"CTReconstructor/Dependencies/nelder_mead2/include/**.hpp",
 		"CTReconstructor/Source/**.h",
 		"CTReconstructor/Source/**.cpp",
 		"%{prj.name}/Source/**.h", 
@@ -820,6 +830,8 @@ project "CTReconstructorApp"
 		"%{prj.name}/Source",
 		"CTReconstructor/Source",
 		"CTReconstructor/Dependencies/half_precision/include",
+		"CTReconstructor/Dependencies/nelder_mead/include",
+		"CTReconstructor/Dependencies/nelder_mead2/include",
 		"CortexPackager/Source",
 		"GraphicsCortex/Source/Graphics/RenderPasses",
 		"GraphicsCortex/Source/System",
