@@ -160,8 +160,8 @@ void ComputeProgram::compile_shader(const Shader& shader)
 				int value_position_begin = name_position_end;
 				while (value_position_begin < line.size() && is_char_whitespace(line.at(value_position_begin))) { value_position_begin++; }
 
-				int value_position_end = value_position_begin;
-				while (value_position_end < line.size() && !is_char_whitespace(line.at(value_position_end))) { value_position_end++; }
+				int value_position_end = line.size() - 1;
+				//while (value_position_end < line.size() && !is_char_whitespace(line.at(value_position_end))) { value_position_end++; }
 
 				std::string define_name = line.substr(name_position_begin, name_position_end-name_position_begin);
 				bool has_key = value_position_begin != value_position_end;
