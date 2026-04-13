@@ -239,6 +239,8 @@ public:
 	template<typename TextureType>
 	static std::string ColorTextureFormat_to_OpenGL_compute_Sampler_type();
 	static std::string ColorTextureFormat_to_OpenGL_compute_Image_format(ColorTextureFormat color_texture_format);
+	static std::string ColorTextureFormat_to_OpenGL_compute_Image_type(ColorTextureFormat color_texture_format, int32_t dimention);
+
 	template<typename TextureType>
 	static std::string ColorTextureFormat_to_OpenGL_compute_Image_type(ColorTextureFormat color_texture_format);
 
