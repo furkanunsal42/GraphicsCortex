@@ -175,6 +175,8 @@ public:
 	ColorTextureFormat get_internal_format_color();
 	DepthStencilTextureFormat get_internal_format_depthstencil();
 
+	std::shared_ptr<Texture2DArray> create_texture_with_same_parameters();
+
 private:
 	unsigned int target = GL_TEXTURE_2D_ARRAY;
 	unsigned int multisample_amount = 0;

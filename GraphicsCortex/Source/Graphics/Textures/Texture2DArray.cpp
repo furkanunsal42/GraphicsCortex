@@ -778,6 +778,25 @@ Texture2DArray::DepthStencilTextureFormat Texture2DArray::get_internal_format_de
 	return depth_stencil_texture_format;
 }
 
+std::shared_ptr<Texture2DArray> Texture2DArray::create_texture_with_same_parameters()
+{
+	std::shared_ptr<Texture2DArray> new_texture;
+	if (is_color_texture)
+		new_texture = std::make_shared<Texture2DArray>(width, height, texture_count, color_texture_format, mipmap_levels, mipmap_bias, multisample_amount);
+	else
+		new_texture = std::make_shared<Texture2DArray>(width, height, texture_count, depth_stencil_texture_format, mipmap_levels, mipmap_bias, multisample_amount);
+
+	new_texture->mipmap_begin_level = mipmap_begin_level;
+	new_texture->is_bindless = is_bindless;
+	new_texture->wrap_u = wrap_u;
+	new_texture->wrap_v = wrap_v;
+	new_texture->mipmap_min_filter = mipmap_min_filter;
+	new_texture->min_filter = min_filter;
+	new_texture->mag_filter = mag_filter;
+
+	return new_texture;
+}
+
 
 void Texture2DArray::_set_texture_parameters()
 {
