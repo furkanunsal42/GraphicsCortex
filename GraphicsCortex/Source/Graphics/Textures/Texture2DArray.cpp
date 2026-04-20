@@ -1162,12 +1162,26 @@ void Texture2DArray::clear(glm::vec4 clear_data, int mipmap_target)
 	clear(clear_data, 0, 0, 0, width, height, texture_count, mipmap_target);
 }
 
+void Texture2DArray::clear(glm::ivec4 clear_data, int mipmap_target)
+{
+	clear(clear_data, 0, 0, 0, width, height, texture_count, mipmap_target);		
+}
+
+void Texture2DArray::clear(glm::uvec4 clear_data, int mipmap_target)
+{
+	clear(clear_data, 0, 0, 0, width, height, texture_count, mipmap_target);	
+}
+
 void Texture2DArray::clear(unsigned char clear_data, int x, int y, int z, int width, int height, int depth, int mipmap_target)
 {
 	if (!_texture_allocated) 
 		_allocate_texture();
 
-	GLCall(glClearTexSubImage(id, mipmap_target, x, y, z, width, height, depth, GL_RED, GL_UNSIGNED_BYTE, &clear_data));
+	uint32_t type = GL_RED;
+	if (is_intager_ColorTextureFormat(get_internal_format_color()) || is_unsigned_intager_ColorTextureFormat(get_internal_format_color()))
+		type = GL_RED_INTEGER;
+
+	GLCall(glClearTexSubImage(id, mipmap_target, x, y, z, width, height, depth, type, GL_UNSIGNED_BYTE, &clear_data));
 }
 
 void Texture2DArray::clear(float clear_data, int x, int y, int z, int width, int height, int depth, int mipmap_target)
@@ -1175,7 +1189,11 @@ void Texture2DArray::clear(float clear_data, int x, int y, int z, int width, int
 	if (!_texture_allocated) 
 		_allocate_texture();
 
-	GLCall(glClearTexSubImage(id, mipmap_target, x, y, z, width, height, depth, GL_RED, GL_FLOAT, &clear_data));
+	uint32_t type = GL_RED;
+	if (is_intager_ColorTextureFormat(get_internal_format_color()) || is_unsigned_intager_ColorTextureFormat(get_internal_format_color()))
+		type = GL_RED_INTEGER;
+
+	GLCall(glClearTexSubImage(id, mipmap_target, x, y, z, width, height, depth, type, GL_FLOAT, &clear_data));
 }
 
 void Texture2DArray::clear(glm::vec2 clear_data, int x, int y, int z, int width, int height, int depth, int mipmap_target)
@@ -1183,7 +1201,11 @@ void Texture2DArray::clear(glm::vec2 clear_data, int x, int y, int z, int width,
 	if (!_texture_allocated) 
 		_allocate_texture();
 
-	GLCall(glClearTexSubImage(id, mipmap_target, x, y, z, width, height, depth, GL_RG, GL_FLOAT, &clear_data));
+	uint32_t type = GL_RG;
+	if (is_intager_ColorTextureFormat(get_internal_format_color()) || is_unsigned_intager_ColorTextureFormat(get_internal_format_color()))
+		type = GL_RG_INTEGER;
+
+	GLCall(glClearTexSubImage(id, mipmap_target, x, y, z, width, height, depth, type, GL_FLOAT, &clear_data));
 }
 
 void Texture2DArray::clear(glm::vec3 clear_data, int x, int y, int z, int width, int height, int depth, int mipmap_target)
@@ -1191,7 +1213,11 @@ void Texture2DArray::clear(glm::vec3 clear_data, int x, int y, int z, int width,
 	if (!_texture_allocated) 
 		_allocate_texture();
 
-	GLCall(glClearTexSubImage(id, mipmap_target, x, y, z, width, height, depth, GL_RGB, GL_FLOAT, &clear_data));
+	uint32_t type = GL_RGB;
+	if (is_intager_ColorTextureFormat(get_internal_format_color()) || is_unsigned_intager_ColorTextureFormat(get_internal_format_color()))
+		type = GL_RGB_INTEGER;
+
+	GLCall(glClearTexSubImage(id, mipmap_target, x, y, z, width, height, depth, type, GL_FLOAT, &clear_data));
 }
 
 void Texture2DArray::clear(glm::vec4 clear_data, int x, int y, int z, int width, int height, int depth, int mipmap_target)
@@ -1199,5 +1225,34 @@ void Texture2DArray::clear(glm::vec4 clear_data, int x, int y, int z, int width,
 	if (!_texture_allocated) 
 		_allocate_texture();
 
-	GLCall(glClearTexSubImage(id, mipmap_target, x, y, z, width, height, depth, GL_RGBA, GL_FLOAT, &clear_data));
+	uint32_t type = GL_RGBA;
+	if (is_intager_ColorTextureFormat(get_internal_format_color()) || is_unsigned_intager_ColorTextureFormat(get_internal_format_color()))
+		type = GL_RGBA_INTEGER;
+
+	GLCall(glClearTexSubImage(id, mipmap_target, x, y, z, width, height, depth, type, GL_FLOAT, &clear_data));
+}
+
+void Texture2DArray::clear(glm::ivec4 clear_data, int x, int y, int z, int width, int height, int depth, int mipmap_target)
+{
+	if (!_texture_allocated)
+		_allocate_texture();
+
+	uint32_t type = GL_RGBA;
+	if (is_intager_ColorTextureFormat(get_internal_format_color()) || is_unsigned_intager_ColorTextureFormat(get_internal_format_color()))
+		type = GL_RGBA_INTEGER;
+
+
+	GLCall(glClearTexSubImage(id, mipmap_target, x, y, z, width, height, depth, type, GL_INT, &clear_data));
+}
+
+void Texture2DArray::clear(glm::uvec4 clear_data, int x, int y, int z, int width, int height, int depth, int mipmap_target)
+{
+	if (!_texture_allocated)
+		_allocate_texture();
+
+	uint32_t type = GL_RGBA;
+	if (is_intager_ColorTextureFormat(get_internal_format_color()) || is_unsigned_intager_ColorTextureFormat(get_internal_format_color()))
+		type = GL_RGBA_INTEGER;
+
+	GLCall(glClearTexSubImage(id, mipmap_target, x, y, z, width, height, depth, type, GL_UNSIGNED_INT, &clear_data));
 }

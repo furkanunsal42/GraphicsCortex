@@ -94,11 +94,15 @@ public:
 	void clear(glm::vec2 clear_data, int mipmap_target = 0);
 	void clear(glm::vec3 clear_data, int mipmap_target = 0);
 	void clear(glm::vec4 clear_data, int mipmap_target = 0);
+	void clear(glm::ivec4 clear_data, int mipmap_target = 0);
+	void clear(glm::uvec4 clear_data, int mipmap_target = 0);
 	void clear(unsigned char clear_data,	int x, int y, int width, int height, int mipmap_target = 0);
 	void clear(float clear_data,	 int x, int y, int width, int height, int mipmap_target = 0);
 	void clear(glm::vec2 clear_data, int x, int y, int width, int height, int mipmap_target = 0);
 	void clear(glm::vec3 clear_data, int x, int y, int width, int height, int mipmap_target = 0);
 	void clear(glm::vec4 clear_data, int x, int y, int width, int height, int mipmap_target = 0);
+	void clear(glm::ivec4 clear_data, int x, int y, int width, int height, int mipmap_target = 0);
+	void clear(glm::uvec4 clear_data, int x, int y, int width, int height, int mipmap_target = 0);
 
 	SamplingFilter query_mag_filter();
 	SamplingFilter query_min_filter();
