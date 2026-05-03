@@ -111,6 +111,94 @@ int TextureBase2::ColorTextureFormat_to_OpenGL(ColorTextureFormat color_texture_
 	return 0;
 }
 
+TextureBase2::ColorTextureFormat TextureBase2::OpenGL_to_ColorTextureFormat(int color_texture_format)
+{
+	switch (color_texture_format) {
+	case GL_RED:								return ColorTextureFormat::RED;
+	case GL_RG:									return ColorTextureFormat::RG;
+	case GL_RGB:								return ColorTextureFormat::RGB;
+	case GL_BGR:								return ColorTextureFormat::BGR;
+	case GL_RGBA:								return ColorTextureFormat::RGBA;
+	case GL_BGRA:								return ColorTextureFormat::BGRA;
+	case GL_R8:									return ColorTextureFormat::R8;
+	case GL_R8_SNORM:							return ColorTextureFormat::R8_SNORM;
+	case GL_R16:								return ColorTextureFormat::R16;
+	case GL_R16_SNORM:							return ColorTextureFormat::R16_SNORM;
+	case GL_RG8:								return ColorTextureFormat::RG8;
+	case GL_RG8_SNORM:							return ColorTextureFormat::RG8_SNORM;
+	case GL_RG16:								return ColorTextureFormat::RG16;
+	case GL_RG16_SNORM:							return ColorTextureFormat::RG16_SNORM;
+	case GL_R3_G3_B2:							return ColorTextureFormat::R3_G3_B2;
+	case GL_RGB4:								return ColorTextureFormat::RGB4;
+	case GL_RGB5:								return ColorTextureFormat::RGB5;
+	case GL_RGB8:								return ColorTextureFormat::RGB8;
+	case GL_RGB8_SNORM:							return ColorTextureFormat::RGB8_SNORM;
+	case GL_RGB10:								return ColorTextureFormat::RGB10;
+	case GL_RGB12:								return ColorTextureFormat::RGB12;
+	case GL_RGB16_SNORM:						return ColorTextureFormat::RGB16_SNORM;
+	case GL_RGBA2:								return ColorTextureFormat::RGBA2;
+	case GL_RGBA4:								return ColorTextureFormat::RGBA4;
+	case GL_RGB5_A1:							return ColorTextureFormat::RGB5_A1;
+	case GL_RGBA8:								return ColorTextureFormat::RGBA8;
+	case GL_RGBA8_SNORM:						return ColorTextureFormat::RGBA8_SNORM;
+	case GL_RGB10_A2:							return ColorTextureFormat::RGB10_A2;
+	case GL_RGB10_A2UI:							return ColorTextureFormat::RGB10_A2UI;
+	case GL_RGBA12:								return ColorTextureFormat::RGBA12;
+	case GL_RGBA16:								return ColorTextureFormat::RGBA16;
+	case GL_SRGB8:								return ColorTextureFormat::SRGB8;
+	case GL_SRGB8_ALPHA8:						return ColorTextureFormat::SRGB8_ALPHA8;
+	case GL_R16F:								return ColorTextureFormat::R16F;
+	case GL_RG16F:								return ColorTextureFormat::RG16F;
+	case GL_RGB16F:								return ColorTextureFormat::RGB16F;
+	case GL_RGBA16F:							return ColorTextureFormat::RGBA16F;
+	case GL_R32F:								return ColorTextureFormat::R32F;
+	case GL_RG32F:								return ColorTextureFormat::RG32F;
+	case GL_RGB32F:								return ColorTextureFormat::RGB32F;
+	case GL_RGBA32F:							return ColorTextureFormat::RGBA32F;
+	case GL_R11F_G11F_B10F:						return ColorTextureFormat::R11F_G11F_B10F;
+	case GL_RGB9_E5:							return ColorTextureFormat::RGB9_E5;
+	case GL_R8I:								return ColorTextureFormat::R8I;
+	case GL_R8UI:								return ColorTextureFormat::R8UI;
+	case GL_R16I:								return ColorTextureFormat::R16I;
+	case GL_R16UI:								return ColorTextureFormat::R16UI;
+	case GL_R32I:								return ColorTextureFormat::R32I;
+	case GL_R32UI:								return ColorTextureFormat::R32UI;
+	case GL_RG8I:								return ColorTextureFormat::RG8I;
+	case GL_RG8UI:								return ColorTextureFormat::RG8UI;
+	case GL_RG16I:								return ColorTextureFormat::RG16I;
+	case GL_RG16UI:								return ColorTextureFormat::RG16UI;
+	case GL_RG32I:								return ColorTextureFormat::RG32I;
+	case GL_RG32UI:								return ColorTextureFormat::RG32UI;
+	case GL_RGB8I:								return ColorTextureFormat::RGB8I;
+	case GL_RGB8UI:								return ColorTextureFormat::RGB8UI;
+	case GL_RGB16I:								return ColorTextureFormat::RGB16I;
+	case GL_RGB16UI:							return ColorTextureFormat::RGB16UI;
+	case GL_RGB32I:								return ColorTextureFormat::RGB32I;
+	case GL_RGB32UI:							return ColorTextureFormat::RGB32UI;
+	case GL_RGBA8I:								return ColorTextureFormat::RGBA8I;
+	case GL_RGBA8UI:							return ColorTextureFormat::RGBA8UI;
+	case GL_RGBA16I:							return ColorTextureFormat::RGBA16I;
+	case GL_RGBA16UI:							return ColorTextureFormat::RGBA16UI;
+	case GL_RGBA32I:							return ColorTextureFormat::RGBA32I;
+	case GL_RGBA32UI:							return ColorTextureFormat::RGBA32UI;
+	case GL_COMPRESSED_RED:						return ColorTextureFormat::COMPRESSED_RED;
+	case GL_COMPRESSED_RG:						return ColorTextureFormat::COMPRESSED_RG;
+	case GL_COMPRESSED_RGB:						return ColorTextureFormat::COMPRESSED_RGB;
+	case GL_COMPRESSED_RGBA:					return ColorTextureFormat::COMPRESSED_RGBA;
+	case GL_COMPRESSED_SRGB:					return ColorTextureFormat::COMPRESSED_SRGB;
+	case GL_COMPRESSED_SRGB_ALPHA:				return ColorTextureFormat::COMPRESSED_SRGB_ALPHA;
+	case GL_COMPRESSED_RED_RGTC1:				return ColorTextureFormat::COMPRESSED_RED_RGTC1;
+	case GL_COMPRESSED_SIGNED_RED_RGTC1:		return ColorTextureFormat::COMPRESSED_SIGNED_RED_RGTC1;
+	case GL_COMPRESSED_RG_RGTC2:				return ColorTextureFormat::COMPRESSED_RG_RGTC2;
+	case GL_COMPRESSED_SIGNED_RG_RGTC2:			return ColorTextureFormat::COMPRESSED_SIGNED_RG_RGTC2;
+	case GL_COMPRESSED_RGBA_BPTC_UNORM:			return ColorTextureFormat::COMPRESSED_RGBA_BPTC_UNORM;
+	case GL_COMPRESSED_SRGB_ALPHA_BPTC_UNORM:	return ColorTextureFormat::COMPRESSED_SRGB_ALPHA_BPTC_UNORM;
+	case GL_COMPRESSED_RGB_BPTC_SIGNED_FLOAT:	return ColorTextureFormat::COMPRESSED_RGB_BPTC_SIGNED_FLOAT;
+	case GL_COMPRESSED_RGB_BPTC_UNSIGNED_FLOAT:	return ColorTextureFormat::COMPRESSED_RGB_BPTC_UNSIGNED_FLOAT;
+	}
+	return ColorTextureFormat(0);
+}
+
 int TextureBase2::DepthStencilTextureFormat_to_OpenGL(DepthStencilTextureFormat depth_stencil_texture_format)
 {
 	switch (depth_stencil_texture_format) {

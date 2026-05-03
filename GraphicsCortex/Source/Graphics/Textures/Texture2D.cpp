@@ -6,6 +6,7 @@
 #include <memory>
 #include <functional>
 #include "AsyncBuffer.h"
+#include "GLMCout.h"
 
 namespace {
 	void read_image(const std::string& filename, Image** output_image, unsigned int texture_width, unsigned int texture_height, int desired_channels) {
@@ -27,6 +28,82 @@ namespace {
 		if (texture_width != 0 && texture_height != 0)
 			(*output_image)->resize(texture_width, texture_height);
 	}
+}
+
+Texture2D::Texture2D(unsigned int external_opengl_id)
+{
+	if (external_opengl_id == 0) {
+		std::cout << "[OpenGL Error] Texture2D is tried to be created from externel id but external texture ID is 0" << std::endl;
+		ASSERT(false);
+	}
+
+	GLint query_target;
+	glGetTextureParameteriv(external_opengl_id, GL_TEXTURE_TARGET, &query_target);
+
+	bool is_valid_2d = (query_target == GL_TEXTURE_2D ||
+		query_target == GL_TEXTURE_2D_MULTISAMPLE);
+
+	if (!is_valid_2d) {
+		std::cout << "[OpenGL Error] Texture2D is created from externel id but external texture ID is not a GL_TEXTURE_2D or GL_TEXTURE_2D_MULTISAMPLE" << std::endl;
+		ASSERT(false);
+	}
+
+	id = external_opengl_id;
+	_texture_generated = true;
+	_texture_allocated = true;
+	_texture_handle_created = false;
+	is_bindless = false;
+
+	width = query_width(0);
+	height = query_height(0);
+
+	//this->color_texture_format = OpenGL_to_ColorTextureFormat(query_internal_format(0));
+	this->color_texture_format = Texture2D::ColorTextureFormat::RGBA8;
+	is_color_texture = true;
+
+	GLCall(glGetTextureLevelParameteriv(id, 0, GL_TEXTURE_SAMPLES, (int*)&multisample_amount));
+
+	if (multisample_amount > 0) {
+		target = GL_TEXTURE_2D_MULTISAMPLE;
+	}
+	else {
+		target = GL_TEXTURE_2D;
+	}
+	
+	std::cout << width << ", " << height << std::endl;
+	std::cout << multisample_amount << std::endl;
+	std::cout << target << std::endl;
+
+
+	// 4. Query Mipmap Levels
+	// We check if it is an immutable-storage texture (created with glTextureStorage)
+	//GLint is_immutable;
+	//GLCall(glGetTextureParameteriv(id, GL_TEXTURE_IMMUTABLE_FORMAT, &is_immutable));
+	//
+	//if (is_immutable) {
+	//	GLCall(glGetTextureParameteriv(id, GL_TEXTURE_IMMUTABLE_LEVELS, (int*)&mipmap_levels));
+	//}
+	//else {
+	//	// Fallback for legacy textures: calculate range between base and max levels
+	//	GLint base_level, max_level;
+	//	GLCall(glGetTextureParameteriv(id, GL_TEXTURE_BASE_LEVEL, &base_level));
+	//	GLCall(glGetTextureParameteriv(id, GL_TEXTURE_MAX_LEVEL, &max_level));
+	//	mipmap_levels = max_level - base_level + 1;
+	//	mipmap_begin_level = base_level;
+	//}
+
+	mipmap_begin_level = query_min_lod();
+	mipmap_bias = query_lod_bias();
+	mipmap_levels = query_max_lod();
+
+	wrap_u = query_wrap_u();
+	wrap_v = query_wrap_v();
+
+	mipmap_min_filter = query_mipmap_min_filter();
+	min_filter = query_min_filter();
+	mag_filter = query_mag_filter();	
+
+	is_externally_generated_texture = true;
 }
 
 Texture2D::Texture2D(const Image& image, ColorTextureFormat internal_format, ColorFormat format, Type type, int mipmap_levels, float mipmap_bias, int multisample) :
@@ -75,7 +152,7 @@ Texture2D::~Texture2D()
 
 void Texture2D::release()
 {
-	if (_texture_generated) {
+	if (_texture_generated && !is_externally_generated_texture) {
 		GLCall(glDeleteTextures(1, &id));
 	}
 	_texture_generated = false;
@@ -378,9 +455,32 @@ void Texture2D::copy_to_texture(Texture2D& target_texture, int32_t self_mipmap, 
 
 void Texture2D::copy_to_texture(Texture2D& target_texture, int32_t self_mipmap, int32_t target_mipmap, glm::ivec2 copy_size, glm::ivec2 self_offset, glm::ivec2 target_offset)
 {
+	if (copy_size.x == 0) copy_size.x = glm::min(target_texture.get_size().x - target_offset.x, get_size().x - self_offset.x);
+	if (copy_size.y == 0) copy_size.y = glm::min(target_texture.get_size().y - target_offset.y, get_size().y - self_offset.y);
+
+	glm::ivec2 source_mip_size = glm::max(glm::ivec2(1), this->get_size() >> self_mipmap);
+	glm::ivec2 target_mip_size = glm::max(glm::ivec2(1), target_texture.get_size() >> target_mipmap);
+
+	if (self_offset.x < 0 || self_offset.y < 0 || target_offset.x < 0 || target_offset.y < 0) {
+		std::cout << "[OpenGL Error] Texture2D::copy_to_texture() is called with invalid size. source:" << get_size() << ", target:" << target_texture.get_size() << std::endl;
+		ASSERT(false);
+	}
+
+	glm::ivec2 max_source_copy = source_mip_size - self_offset;
+	glm::ivec2 max_target_copy = target_mip_size - target_offset;
+
+	glm::ivec2 safe_copy_size;
+	safe_copy_size.x = std::min({ copy_size.x, max_source_copy.x, max_target_copy.x });
+	safe_copy_size.y = std::min({ copy_size.y, max_source_copy.y, max_target_copy.y });
+
+	if (safe_copy_size.x <= 0 || safe_copy_size.y <= 0) {
+		std::cout << "[OpenGL Error] Texture2D::copy_to_texture() is called with invalid offset. source:" << get_size() << ", target:" << target_texture.get_size() << std::endl;
+		ASSERT(false);
+	}
+
 	glm::ivec3 self_offset3 = glm::ivec3(self_offset, 0);
 	glm::ivec3 target_offset3 = glm::ivec3(target_offset, 0);
-	glm::ivec3 copy_size3 = glm::ivec3(copy_size, 0);
+	glm::ivec3 copy_size3 = glm::ivec3(safe_copy_size, 1);
 
 	GLCall(glCopyImageSubData(
 		id, target, self_mipmap,

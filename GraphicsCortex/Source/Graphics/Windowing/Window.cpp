@@ -77,9 +77,20 @@ Window::Window(void* context)
     OpenGLBackend::_init_glew();
 }
 
+bool Window::is_any_current()
+{
+	OpenGLBackend::_init_glfw();
+	GLFWwindow* current_handle = glfwGetCurrentContext();
+	return current_handle != nullptr;
+}
+
 std::shared_ptr<Window> Window::create_from_current()
 {
+	OpenGLBackend::_init_glfw();
+	OpenGLBackend::_init_glew();
 	GLFWwindow* current_handle = glfwGetCurrentContext();
+	context_to_global_resources[current_handle] = GlobalResources();
+	shared_context_to_root_context[current_handle] = current_handle;
 	auto window = std::shared_ptr<Window>(new Window((void*)current_handle));
 	window->context_make_current(); // to set global resources
 	return window;

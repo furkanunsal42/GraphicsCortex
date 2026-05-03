@@ -216,6 +216,7 @@ public:
 	static int SamplingFilter_to_OpenGL(SamplingFilter filter);
 	static int WrapMode_to_OpenGL(WrapMode wrap_mode);
 	static int ColorTextureFormat_to_OpenGL(ColorTextureFormat color_texture_format);
+	static ColorTextureFormat OpenGL_to_ColorTextureFormat(int color_texture_format);
 	static int DepthStencilTextureFormat_to_OpenGL(DepthStencilTextureFormat depth_stencil_texture_format);
 	static int Type_to_OpenGL(Type type);
 	static int ColorFormat_to_OpenGL(ColorFormat color_format);
@@ -226,6 +227,7 @@ public:
 	static int ColorTextureFormat_channels(ColorTextureFormat color_texture_format);
 	static int ColorTextureFormat_bytes_per_channel(ColorTextureFormat color_texture_format);
 	static int ColorTextureFormat_bytes_per_pixel(ColorTextureFormat color_texture_format);
+
 
 	static ColorFormat ColorTextureFormat_to_ColorFormat(ColorTextureFormat color_texture_format);
 	static Type ColorTextureFormat_to_Type(ColorTextureFormat color_texture_format);

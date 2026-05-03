@@ -63,6 +63,7 @@ public:
 		GraphicsAPI api = OpenGL, uint32_t context_version_major = 4, uint32_t context_version_minor = 6
 	);
 
+	static bool is_any_current();
 	static std::shared_ptr<Window> create_from_current();
 
 	Window(const Window& other) = delete;

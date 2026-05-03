@@ -35,6 +35,8 @@ public:
 	Texture2D& operator=(const Texture2D& other) = delete;
 	Texture2D& operator=(Texture2D&& other) = default;
 
+	Texture2D(unsigned int external_opengl_id);
+
 	Texture2D(const Image& image, ColorTextureFormat internal_format, ColorFormat format, Type type, int mipmap_levels = 1, float mipmap_bias = 0.0f, int multisample = 0);
 	Texture2D(const std::string& image_filepath, ColorTextureFormat internal_format, ColorFormat format, Type type, int mipmap_levels = 1, float mipmap_bias = 0.0f, int multisample = 0);
 	Texture2D(int width, int height, ColorTextureFormat internal_format, int mipmap_levels = 1, float mipmap_bias = 0.0f, int multisample = 0);
@@ -152,10 +154,10 @@ public:
 private:
 	unsigned int target = GL_TEXTURE_2D;
 	unsigned int multisample_amount = 0;
-	
+	bool is_externally_generated_texture = false;
 	int width;
 	int height;
-
+	
 	union {
 		ColorTextureFormat color_texture_format;
 		DepthStencilTextureFormat depth_stencil_texture_format;
