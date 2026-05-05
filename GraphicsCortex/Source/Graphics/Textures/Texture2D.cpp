@@ -70,11 +70,6 @@ Texture2D::Texture2D(unsigned int external_opengl_id)
 		target = GL_TEXTURE_2D;
 	}
 	
-	std::cout << width << ", " << height << std::endl;
-	std::cout << multisample_amount << std::endl;
-	std::cout << target << std::endl;
-
-
 	// 4. Query Mipmap Levels
 	// We check if it is an immutable-storage texture (created with glTextureStorage)
 	//GLint is_immutable;
