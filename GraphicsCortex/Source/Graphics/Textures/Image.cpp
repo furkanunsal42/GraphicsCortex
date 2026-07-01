@@ -11,6 +11,8 @@
 #include "nanosvg.h"
 #include "nanosvgrast.h"
 
+#include "glm.hpp"
+
 #include <filesystem>
 #include "Debuger.h"
 
@@ -709,6 +711,107 @@ Image Image::copy_channels(Channel new_red_source)
 	}
 
 	return Image(new_image_ptr, _width, _height, _depth, new_channel_count, _bytes_per_channel, _vertical_flip);
+}
+
+Image Image::copy_channels_from_sources(
+	const ChannelSource& r,
+	const ChannelSource& g,
+	const ChannelSource& b,
+	const ChannelSource& a)
+{
+	uint32_t new_channel_count = 0;
+
+	if (r.image != nullptr) new_channel_count = 1;
+	if (g.image != nullptr) new_channel_count = 2;
+	if (b.image != nullptr) new_channel_count = 3;
+	if (a.image != nullptr) new_channel_count = 4;
+
+	int32_t bytes_per_channel = 0;
+
+	if (r.image != nullptr && bytes_per_channel == 0) bytes_per_channel = r.image->get_byte_per_channel();
+	if (g.image != nullptr && bytes_per_channel == 0) bytes_per_channel = g.image->get_byte_per_channel();
+	if (b.image != nullptr && bytes_per_channel == 0) bytes_per_channel = b.image->get_byte_per_channel();
+	if (a.image != nullptr && bytes_per_channel == 0) bytes_per_channel = a.image->get_byte_per_channel();
+
+	if (bytes_per_channel == 0) {
+		ASSERT(false);
+	}
+
+	bool bytes_per_channel_mismatch = false;
+
+	if (r.image != nullptr && r.image->get_byte_per_channel() != bytes_per_channel) bytes_per_channel_mismatch = true;
+	if (g.image != nullptr && g.image->get_byte_per_channel() != bytes_per_channel) bytes_per_channel_mismatch = true;
+	if (b.image != nullptr && b.image->get_byte_per_channel() != bytes_per_channel) bytes_per_channel_mismatch = true;
+	if (a.image != nullptr && a.image->get_byte_per_channel() != bytes_per_channel) bytes_per_channel_mismatch = true;
+
+	if (bytes_per_channel_mismatch) {
+		ASSERT(false);
+	}
+
+	glm::ivec3 resolution = glm::ivec3(0);
+
+	if (a.image != nullptr) resolution = glm::ivec3(a.image->get_width(), a.image->get_height(), a.image->get_depth());
+	if (b.image != nullptr) resolution = glm::ivec3(b.image->get_width(), b.image->get_height(), b.image->get_depth());
+	if (g.image != nullptr) resolution = glm::ivec3(g.image->get_width(), g.image->get_height(), g.image->get_depth());
+	if (r.image != nullptr) resolution = glm::ivec3(r.image->get_width(), r.image->get_height(), r.image->get_depth());
+
+	bool resolution_mismatch = false;
+
+	if (r.image != nullptr && resolution != glm::ivec3(r.image->get_width(), r.image->get_height(), r.image->get_depth())) resolution_mismatch = true;
+	if (g.image != nullptr && resolution != glm::ivec3(g.image->get_width(), g.image->get_height(), g.image->get_depth())) resolution_mismatch = true; 
+	if (b.image != nullptr && resolution != glm::ivec3(b.image->get_width(), b.image->get_height(), b.image->get_depth())) resolution_mismatch = true; 
+	if (a.image != nullptr && resolution != glm::ivec3(a.image->get_width(), a.image->get_height(), a.image->get_depth())) resolution_mismatch = true; 
+
+	if (resolution_mismatch) {
+		ASSERT(false);
+	}
+
+	bool channel_count_mismatch = false;
+
+	if (r.image != nullptr && r.image->get_channel_count() < 1) channel_count_mismatch = true;
+	if (g.image != nullptr && g.image->get_channel_count() < 2) channel_count_mismatch = true;
+	if (b.image != nullptr && b.image->get_channel_count() < 3) channel_count_mismatch = true;
+	if (a.image != nullptr && a.image->get_channel_count() < 4) channel_count_mismatch = true;
+
+	if (channel_count_mismatch) {
+		ASSERT(false);
+	}
+
+	uint32_t offsets[4] = {
+		Channel_to_offset(r.channel),
+		Channel_to_offset(g.channel),
+		Channel_to_offset(b.channel),
+		Channel_to_offset(a.channel),
+	};
+
+	uint8_t* datas[4] = {
+		r.image != nullptr ? r.image->_image_data : nullptr,
+		g.image != nullptr ? g.image->_image_data : nullptr,
+		b.image != nullptr ? b.image->_image_data : nullptr,
+		a.image != nullptr ? a.image->_image_data : nullptr,
+	};
+
+	size_t pixel_count = (size_t)resolution.x * resolution.y * resolution.z;
+	uint8_t* new_image_ptr = new uint8_t[bytes_per_channel * new_channel_count * pixel_count];
+
+	if (bytes_per_channel == 1) {
+		for (size_t pixel = 0; pixel < pixel_count; pixel++)
+			for (int32_t channel = 0; channel < new_channel_count; channel++)
+				((uint8_t*)new_image_ptr)[pixel * new_channel_count + channel] = datas[channel] != nullptr ? ((uint8_t*)datas[channel])[pixel * new_channel_count + offsets[channel]] : 0;
+	}
+
+	if (bytes_per_channel == 2) {
+		for (size_t pixel = 0; pixel < pixel_count; pixel++)
+			for (int32_t channel = 0; channel < new_channel_count; channel++)
+				((uint16_t*)new_image_ptr)[pixel * new_channel_count + channel] = datas[channel] != nullptr ? ((uint16_t*)datas[channel])[pixel * new_channel_count + offsets[channel]] : 0;
+	}
+	if (bytes_per_channel == 4) {
+		for (size_t pixel = 0; pixel < pixel_count; pixel++)
+			for (int32_t channel = 0; channel < new_channel_count; channel++)
+				((uint32_t*)new_image_ptr)[pixel * new_channel_count + channel] = datas[channel] != nullptr ? ((uint32_t*)datas[channel])[pixel * new_channel_count + offsets[channel]] : 0;
+	}
+
+	return Image(new_image_ptr, resolution.x, resolution.y, resolution.z, new_channel_count, bytes_per_channel, false); // flip?
 }
 
 unsigned char* Image::get_image_data() {

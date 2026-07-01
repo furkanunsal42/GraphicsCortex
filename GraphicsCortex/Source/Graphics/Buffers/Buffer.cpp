@@ -217,6 +217,36 @@ void Buffer::bind_as_index_buffer()
 	GLCall(glBindBuffer(_target_index_buffer, id));
 }
 
+void Buffer::bind_as_draw_indirect_buffer()
+{
+	if (!_buffer_generated) {
+		std::cout << "[OpenGL Error] released Buffer tried to bind_as_draw_indirect_buffer()" << std::endl;
+		ASSERT(false);
+	}
+
+	if (!_buffer_allocated) {
+		std::cout << "[OpenGL Warning] Buffer tried to bind_as_draw_indirect_buffer() but no user data was loaded yet" << std::endl;
+		_allocate_buffer(_buffer_size);
+	}
+
+	GLCall(glBindBuffer(_target_draw_indirect, id));
+}
+
+void Buffer::bind_as_parameter_buffer()
+{
+	if (!_buffer_generated) {
+		std::cout << "[OpenGL Error] released Buffer tried to bind_as_parameter_buffer()" << std::endl;
+		ASSERT(false);
+	}
+
+	if (!_buffer_allocated) {
+		std::cout << "[OpenGL Warning] Buffer tried to bind_as_parameter_buffer() but no user data was loaded yet" << std::endl;
+		_allocate_buffer(_buffer_size);
+	}
+
+	GLCall(glBindBuffer(_target_parameter, id));
+}
+
 void Buffer::unbind()
 {
 	GLCall(glBindBuffer(_target_download, 0));

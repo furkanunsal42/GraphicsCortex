@@ -24,6 +24,8 @@
 #include "Model.h"
 #include "Asset/Asset.h"
 #include "Buffer.h"
+#include "ResizableBuffer.h"
+#include "DynamicBuffer.h"
 #include "VertexAttributeBuffer.h"
 #include "Mesh.h"
 #include "UniformBuffer.h"
@@ -53,6 +55,8 @@
 
 #include "RenderParameters.h"
 #include "PrimitiveRenderer.h"
+
+#include "AdvancedRendering/UnifiedRenderer.h"
 
 #include "Rendering/RenderPipeline.h"
 #include "RenderPasses/RenderPass_Clear.h"

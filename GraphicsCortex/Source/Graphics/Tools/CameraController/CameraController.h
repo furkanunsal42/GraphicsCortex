@@ -13,10 +13,11 @@ public:
 	glm::vec3 camera_origin = glm::vec3(0);
 	float camera_distance = 5;
 	Camera camera;
-
+	float cached_horizontal_sign = 1.0f;
 	float scroll_sensitivity = 1.4;
 
 	void handle_movements(Window& window, double deltatime);
+	void handle_movements(glm::vec2 cursor_position, glm::vec2 scroll, bool mouse_button_left, bool mouse_button_right, bool mouse_button_middle);
 	glm::vec3 get_camera_position();
 	glm::vec3 get_camera_forward();
 

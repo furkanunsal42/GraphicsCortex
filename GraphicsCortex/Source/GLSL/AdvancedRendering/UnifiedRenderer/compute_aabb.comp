@@ -1,0 +1,168 @@
+#<compute shader>
+
+#version 460 core
+
+const uint invalid_id = 0xFFFFFFFF;
+
+struct MeshData {
+    uint vertex_begin;
+    uint vertex_count;
+    uint index_begin;
+    uint index_count;
+    uint format_id;
+    uint _padding0, _padding1, _padding2;
+    // map the vec4 memory to uint arrays so atomicCompSwap can target them.
+    uint aabb_min[4];
+    uint aabb_max[4];
+};
+
+struct VertexFormatData {
+    uint stride_in_bytes;
+    uint padding0;
+    uint padding1;
+    uint padding2;
+    uint attributes[16];
+};
+
+struct MeshJob {
+    uint mesh_id;
+    uint chunk_start_index;
+};
+
+layout (std430, binding = 0) buffer mesh_job_buffer {
+    MeshJob jobs[];
+};
+
+layout (std430, binding = 1) buffer mesh_buffer {
+    MeshData meshes[];
+};
+
+layout (std430, binding = 2) buffer format_buffer {
+    VertexFormatData formats[];
+};
+
+layout (std430, binding = 4) buffer unified_vertex_buffer {
+    uint vertices[];
+};
+
+uniform uint job_count;
+
+layout(local_size_x = 64, local_size_y = 1, local_size_z = 1) in;
+
+shared vec3 local_min[64];
+shared vec3 local_max[64];
+
+#define ATOMIC_MIN_FLOAT(mem_addr, value) \
+{ \
+    uint old_val = mem_addr; \
+    uint assumed; \
+    do { \
+        assumed = old_val; \
+        float new_val = min(uintBitsToFloat(assumed), (value)); \
+        old_val = atomicCompSwap(mem_addr, assumed, floatBitsToUint(new_val)); \
+    } while (assumed != old_val); \
+}
+
+#define ATOMIC_MAX_FLOAT(mem_addr, value) \
+{ \
+    uint old_val = mem_addr; \
+    uint assumed; \
+    do { \
+        assumed = old_val; \
+        float new_val = max(uintBitsToFloat(assumed), (value)); \
+        old_val = atomicCompSwap(mem_addr, assumed, floatBitsToUint(new_val)); \
+    } while (assumed != old_val); \
+}
+
+// --- Binary Search Resolver ---
+uint find_job_index(uint global_chunk_id) {
+    uint left = 0;
+    uint right = job_count - 1;
+    uint result = 0;
+
+    while (left <= right) {
+        uint mid = (left + right) / 2u;
+        if (global_chunk_id >= jobs[mid].chunk_start_index) {
+            result = mid;         // this is a candidate
+            left = mid + 1;       // look for a tighter fit on the right
+        } else {
+            right = mid - 1;      // too far right, go left
+        }
+    }
+    return result;
+}
+
+void main()
+{
+    if (job_count == 0) return;
+
+    uint thread_idx         = gl_LocalInvocationID.x;
+    uint global_chunk_id    = gl_WorkGroupID.x;
+
+    // Because global_chunk_id is uniform across the workgroup, all 64 threads 
+    // will arrive at the exact same job_idx. No shared memory pollution!
+    uint job_idx = find_job_index(global_chunk_id);
+    
+    uint mesh_id = jobs[job_idx].mesh_id;
+    uint local_chunk_id = global_chunk_id - jobs[job_idx].chunk_start_index;
+    
+    uint v_begin   = meshes[mesh_id].vertex_begin;
+    uint v_count   = meshes[mesh_id].vertex_count;
+    uint format_id = meshes[mesh_id].format_id;
+
+    vec3 thread_min = vec3(1e30);
+    vec3 thread_max = vec3(-1e30);
+
+    // 2. fetch vertex data
+    if (format_id != invalid_id && v_count > 0) 
+    {
+        VertexFormatData fmt = formats[format_id];
+        uint stride = fmt.stride_in_bytes;
+        uint attr_0_offset = fmt.attributes[0] & 0xFFFF; 
+
+        uint target_vertex = (local_chunk_id * gl_WorkGroupSize.x) + thread_idx;
+
+        if (target_vertex < v_count) 
+        {
+            uint byte_address = v_begin + (target_vertex * stride) + attr_0_offset;
+            uint word_idx = byte_address / 4;
+            
+            vec3 pos;
+            pos.x = uintBitsToFloat(vertices[word_idx]);
+            pos.y = uintBitsToFloat(vertices[word_idx + 1]);
+            pos.z = uintBitsToFloat(vertices[word_idx + 2]);
+
+            thread_min = pos;
+            thread_max = pos;
+        }
+    }
+
+    local_min[thread_idx] = thread_min;
+    local_max[thread_idx] = thread_max;
+
+    barrier();
+    memoryBarrierShared();
+
+    // 3. parallel shared memory reduction
+    for (uint s = 32; s > 0; s >>= 1) 
+    {
+        if (thread_idx < s) {
+            local_min[thread_idx] = min(local_min[thread_idx], local_min[thread_idx + s]);
+            local_max[thread_idx] = max(local_max[thread_idx], local_max[thread_idx + s]);
+        }
+        barrier();
+        memoryBarrierShared();
+    }
+
+    // 4. global atomic write
+    if (thread_idx == 0) 
+    {
+        ATOMIC_MIN_FLOAT(meshes[mesh_id].aabb_min[0], local_min[0].x);
+        ATOMIC_MIN_FLOAT(meshes[mesh_id].aabb_min[1], local_min[0].y);
+        ATOMIC_MIN_FLOAT(meshes[mesh_id].aabb_min[2], local_min[0].z);
+        
+        ATOMIC_MAX_FLOAT(meshes[mesh_id].aabb_max[0], local_max[0].x);
+        ATOMIC_MAX_FLOAT(meshes[mesh_id].aabb_max[1], local_max[0].y);
+        ATOMIC_MAX_FLOAT(meshes[mesh_id].aabb_max[2], local_max[0].z);
+    }
+}

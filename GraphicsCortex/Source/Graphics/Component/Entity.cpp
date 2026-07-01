@@ -1,4 +1,5 @@
 #include "Entity.h"
+#include "Entity.h"
 
 Entity::~Entity() {
 	for (auto& component : _components) {

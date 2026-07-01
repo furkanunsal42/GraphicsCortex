@@ -61,7 +61,8 @@ public:
 
 		for (uint32_t comp_i = 0; comp_i < lights_comps.size(); comp_i++) {
 
-			auto transform_c = lights_comps[comp_i]->get_entity()->get_component<TransformComponent>();
+			auto transform_c = lights_comps[comp_i]->get_entity
+			()->get_component<TransformComponent>();
 			if (transform_c == nullptr) continue;
 
 			//std::cout << transform_c->transform[2].x << " " << transform_c->transform[2].y << " " << transform_c->transform[2].z << std::endl;
@@ -189,9 +190,9 @@ public:
 			if (material_c != nullptr)
 				program = material_c->get_program();
 			if (program != nullptr) {
-				program->update_uniform(directional_light_buffer_name, *directional_lights_buffer);
-				program->update_uniform(point_light_buffer_name, *point_lights_buffer);
-				program->update_uniform(spot_light_buffer_name, *spot_lights_buffer);
+				program->update_uniform_as_uniform_buffer(directional_light_buffer_name, *directional_lights_buffer);
+				program->update_uniform_as_uniform_buffer(point_light_buffer_name, *point_lights_buffer);
+				program->update_uniform_as_uniform_buffer(spot_light_buffer_name, *spot_lights_buffer);
 				if (irradiance_map_exists)
 					program->update_uniform("irradiance_texture", *irradiance_texture);
 				if (sky_prefiltered_map_exists)
@@ -201,7 +202,7 @@ public:
 				if (d_shadowmap_exists)
 					program->update_uniform("d_shadowmap_textures", *d_shadowmap_textures);
 				if (d_shadowmap_buffer_exists)
-					program->update_uniform("d_shadowmaps_buffer", *d_shadowmap_buffer);
+					program->update_uniform_as_uniform_buffer("d_shadowmaps_buffer", *d_shadowmap_buffer);
 			}
 		
 			mesh_renderer->render(camera);

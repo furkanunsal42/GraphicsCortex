@@ -33,6 +33,16 @@
 
 #include "SVG/SVGRenderingTest.h"
 
+#include "DynamicMemory/DynamicMemoryTest.h"
+
+#include "UnifiedRenderer/DynamicMemoryTest.h"
+#include "UnifiedRenderer/BasicRenderTest.h"
+#include "UnifiedRenderer/BasicMeshedRenderingTest.h"
+
+#include "ECS/ECSTest.h"
+
+#include "AssetImport/PBRParserTest.h"
+
 int main() {
 	
 	//WindowSystemTest().run();
@@ -50,7 +60,7 @@ int main() {
 
 	//MeshRendererTest().run();
 	//ShadowmapsTest().run();
-	CompleteRenderingTest().run();
+	//CompleteRenderingTest().run();
 
 	//ChannelSplitingTest().run();
 	//HDRLoadingTest().run();
@@ -71,4 +81,14 @@ int main() {
 	//CortexGUITest_Hierarchy().run();
 
 	//SVGRenderingTest().run();
+
+	//DynamicMemoryTest().run();
+
+	//UnifiedRendererAABBTest().run();
+	//BasicRenderTest().run();
+	BasicMeshedRenderingTest().run();
+
+	//ECSTest().run();
+
+	//PBRParserTest().run();
 }

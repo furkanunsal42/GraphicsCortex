@@ -343,6 +343,63 @@ void Texture1D::wait_async_load()
 	async_load_happening = false;
 }
 
+void Texture1D::copy_to_texture(Texture1D& target_texture, int32_t self_mipmap, int32_t target_mipmap)
+{
+	int32_t copy_size = 0;
+	copy_to_texture(target_texture, self_mipmap, target_mipmap, copy_size, 0, 0);
+}
+
+void Texture1D::copy_to_texture(Texture1D& target_texture, int32_t self_mipmap, int32_t target_mipmap, int32_t copy_size, int32_t self_offset, int32_t target_offset)
+{
+	target_texture.force_allocation();
+
+	if (self_offset < 0 || target_offset < 0) {
+		std::cout << "[OpenGL Error] Texture1D::copy_to_texture() called with negative offset." << std::endl;
+		ASSERT(false);
+	}
+
+	int32_t source_mip_size = std::max(1, this->get_size().x >> self_mipmap);
+	int32_t target_mip_size = std::max(1, target_texture.get_size().x >> target_mipmap);
+
+	if (copy_size == 0) {
+		copy_size = std::min(target_mip_size - target_offset, source_mip_size - self_offset);
+	}
+
+	int32_t max_source_copy = source_mip_size - self_offset;
+	int32_t max_target_copy = target_mip_size - target_offset;
+
+	if (copy_size > max_source_copy || copy_size > max_target_copy || copy_size <= 0)
+	{
+		std::cout << "[OpenGL Error] Texture1D::copy_to_texture() copy_size exceeds bounds or is <= 0.\n"
+			<< "copy size: " << copy_size << "\n"
+			<< "max source: " << max_source_copy << "\n"
+			<< "max target: " << max_target_copy << std::endl;
+		ASSERT(false);
+	}
+
+	bool invalid_format = false;
+	if (is_color_texture != target_texture.is_color_texture)
+		invalid_format = true;
+	if (is_color_texture && this->get_internal_format_color() != target_texture.get_internal_format_color())
+		invalid_format = true;
+	if (!is_color_texture && this->get_internal_format_depthstencil() != target_texture.get_internal_format_depthstencil())
+		invalid_format = true;
+
+	if (invalid_format)
+	{
+		std::cout << "[OpenGL Error] Texture1D::copy_to_texture() is called with unmatching formated textures" << std::endl;
+		ASSERT(false);
+	}
+
+	GLCall(glCopyImageSubData(
+		id, target, self_mipmap,
+		self_offset, 0, 0,
+		target_texture.id, target_texture.target, target_mipmap,
+		target_offset, 0, 0,
+		copy_size, 1, 1
+	));
+}
+
 void Texture1D::_set_texture_parameters()
 {
     if (_texture_handle_created) {
@@ -1044,4 +1101,22 @@ Texture1D::ColorTextureFormat Texture1D::get_internal_format_color()
 Texture1D::DepthStencilTextureFormat Texture1D::get_internal_format_depthstencil()
 {
 	return depth_stencil_texture_format;
+}
+
+std::shared_ptr<Texture1D> Texture1D::create_texture_with_same_parameters()
+{
+	std::shared_ptr<Texture1D> new_texture;
+	if (is_color_texture)
+		new_texture = std::make_shared<Texture1D>(width, color_texture_format, mipmap_levels, mipmap_bias);
+	else
+		new_texture = std::make_shared<Texture1D>(width, depth_stencil_texture_format, mipmap_levels, mipmap_bias);
+
+	new_texture->mipmap_begin_level = mipmap_begin_level;
+	new_texture->is_bindless = is_bindless;
+	new_texture->wrap_u = wrap_u;
+	new_texture->mipmap_min_filter = mipmap_min_filter;
+	new_texture->min_filter = min_filter;
+	new_texture->mag_filter = mag_filter;
+
+	return new_texture;
 }

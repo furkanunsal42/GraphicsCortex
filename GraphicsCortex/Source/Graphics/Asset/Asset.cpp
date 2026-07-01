@@ -18,21 +18,21 @@ Asset::Asset(const std::filesystem::path& asset_path, const AssetImportDescripti
     this->importer = new Assimp::Importer();
 
     scene = ((Assimp::Importer*)this->importer)->ReadFile(asset_path.string(),
-        aiProcess_Triangulate |
-        aiProcess_SortByPType |
-        aiProcess_CalcTangentSpace | // calculate tangents and bitangents if possible
-        aiProcess_JoinIdenticalVertices | // join identical vertices/ optimize indexing
-        aiProcess_ValidateDataStructure | // perform a full validation of the loader's output
-        aiProcess_ImproveCacheLocality | // improve the cache locality of the output vertices
-        aiProcess_RemoveRedundantMaterials | // remove redundant materials
-        //aiProcess_FindDegenerates  // remove degenerated polygons from the import
-        //aiProcess_FindInvalidData | // detect invalid model data, such as invalid normal vectors
-        aiProcess_GenUVCoords | // convert spherical, cylindrical, box and planar mapping to proper UVs
-        aiProcess_TransformUVCoords | // preprocess UV transformations (scaling, translation ...)
-        aiProcess_FindInstances | // search for instanced meshes and remove them by references to one master
-        aiProcess_LimitBoneWeights | // limit bone weights to 4 per vertex
-        aiProcess_OptimizeMeshes | // join small meshes, if possible;
-        aiProcess_SplitByBoneCount // split meshes with too many bones. Necessary for our (limited) hardware skinning shader
+        aiProcess_Triangulate               |
+        aiProcess_SortByPType               |
+        aiProcess_CalcTangentSpace          | // calculate tangents and bitangents if possible
+        aiProcess_JoinIdenticalVertices     | // join identical vertices/ optimize indexing
+        aiProcess_ValidateDataStructure     | // perform a full validation of the loader's output
+        aiProcess_ImproveCacheLocality      | // improve the cache locality of the output vertices
+        aiProcess_RemoveRedundantMaterials  | // remove redundant materials
+        //aiProcess_FindDegenerates         | // remove degenerated polygons from the import
+        //aiProcess_FindInvalidData         | // detect invalid model data, such as invalid normal vectors
+        aiProcess_GenUVCoords               | // convert spherical, cylindrical, box and planar mapping to proper UVs
+        aiProcess_TransformUVCoords         | // preprocess UV transformations (scaling, translation ...)
+        aiProcess_FindInstances             | // search for instanced meshes and remove them by references to one master
+        aiProcess_LimitBoneWeights          | // limit bone weights to 4 per vertex
+        aiProcess_OptimizeMeshes            | // join small meshes, if possible;
+        aiProcess_SplitByBoneCount            // split meshes with too many bones. Necessary for our (limited) hardware skinning shader
     );
 
     if (scene == nullptr ) {
@@ -406,14 +406,15 @@ ModelMaterial Asset::load_model_material()
             std::filesystem::path image_path = search_image_path(std::filesystem::path(assimp_path.C_Str()), filepath);
             if (image_path == "") continue;
                
-            if (path_to_index_param.find(image_path) != path_to_index_param.end())
-                path_to_index_param[image_path].type_index_vector.push_back(std::pair(type, submodel_index));
-            else {
+            if (path_to_index_param.find(image_path) == path_to_index_param.end())
+            {
                 _ImageParam params;
                 params.path = image_path.string();
-                params.type_index_vector.push_back(std::pair(type, submodel_index));
                 path_to_index_param[image_path] = params;
             }
+
+            path_to_index_param[image_path].type_index_vector.push_back(std::pair(type, submodel_index));
+
         }
     }
 

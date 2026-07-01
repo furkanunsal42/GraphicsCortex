@@ -67,7 +67,10 @@ inline std::vector<T> Buffer::get_data(size_t managed_buffer_offset_by_count, si
 	
 	char* buffer = (char*)get_data(managed_buffer_offset_in_bytes, size_in_bytes);
 
-	return std::vector<T>((T*)buffer, (T*)(buffer + size_in_bytes));
+	std::vector<T> result((T*)buffer, (T*)(buffer + size_in_bytes));
+
+	delete[] buffer;
+	return result;
 }
 
 template<typename T>
@@ -77,7 +80,10 @@ inline std::vector<T> Buffer::get_data(size_t managed_buffer_offset_by_count){
 
 	char* buffer = (char*)get_data(managed_buffer_offset_in_bytes);
 
-	return std::vector<T>((T*)buffer, (T*)(buffer + _buffer_size - managed_buffer_offset_in_bytes));
+	std::vector<T> result((T*)buffer, (T*)(buffer + _buffer_size - managed_buffer_offset_in_bytes));
+
+	delete[] buffer;
+	return result;
 }
 
 template<typename T>
@@ -85,7 +91,10 @@ inline std::vector<T> Buffer::get_data(){
 
 	char* buffer = (char*)get_data();
 
-	return std::vector<T>((T*)buffer, (T*)(buffer + _buffer_size));
+	std::vector<T> result((T*)buffer, (T*)(buffer + _buffer_size));
+
+	delete[] buffer;
+	return result;
 }
 
 namespace {

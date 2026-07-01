@@ -46,6 +46,54 @@ void CameraController::handle_movements(Window& window, double deltatime)
 	camera.update_matrixes();
 }
 
+void CameraController::handle_movements(glm::vec2 cursor_position, glm::vec2 scroll, bool mouse_button_left, bool mouse_button_right, bool mouse_button_middle)
+{
+	camera_distance += -scroll.y * scroll_sensitivity;
+
+	if (mouse_button_right) {
+		if (!movement_focus) {
+			cursor_position_when_movement_begin = cursor_position;
+
+			// CALCULATE ONCE: Check if camera is inverted at the start of the click
+			glm::vec3 current_up = camera.rotation_quat * glm::vec3(0, 1, 0);
+			float up_dot = glm::dot(current_up, glm::vec3(0, 1, 0));
+			cached_horizontal_sign = (up_dot >= 0.0f) ? 1.0f : -1.0f;
+
+			movement_focus = true;
+		}
+	}
+	else {
+		movement_focus = false;
+	}
+
+	if (movement_focus) {
+		glm::dvec2 position = cursor_position;
+
+		// Your exact math and casting
+		float delta_x = glm::radians((position.x - cursor_position_when_movement_begin.x));
+		float delta_y = glm::radians((position.y - cursor_position_when_movement_begin.y));
+		cursor_position_when_movement_begin = cursor_position;
+
+		// Use the CACHED sign from when the click started
+		float yaw_angle = -delta_x * camera.mouse_sensitivity * cached_horizontal_sign;
+		float pitch_angle = -delta_y * camera.mouse_sensitivity;
+
+		// Standard incremental application
+		glm::quat global_yaw = glm::angleAxis(yaw_angle, glm::vec3(0, 1, 0));
+
+		glm::vec3 local_right = camera.rotation_quat * glm::vec3(1, 0, 0);
+		glm::quat local_pitch = glm::angleAxis(pitch_angle, local_right);
+
+		camera.rotation_quat = global_yaw * local_pitch * camera.rotation_quat;
+		camera.rotation_quat = glm::normalize(camera.rotation_quat);
+	}
+
+	glm::vec3 forward_vector = (camera.rotation_quat * glm::vec3(0, 0, -1));
+	camera.position = camera_origin - forward_vector * camera_distance;
+
+	camera.update_matrixes();
+}
+
 glm::vec3 CameraController::get_camera_position()
 {
 	camera.position = camera_origin - get_camera_forward() * camera_distance;

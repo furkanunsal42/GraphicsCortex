@@ -493,6 +493,70 @@ void Texture2DArray::wait_async_load()
 	async_images.clear();
 }
 
+void Texture2DArray::copy_to_texture(Texture2DArray& target_texture, int32_t self_mipmap, int32_t target_mipmap)
+{
+	glm::ivec3 copy_size = glm::ivec3(0);
+	copy_to_texture(target_texture, self_mipmap, target_mipmap, copy_size, glm::ivec3(0), glm::ivec3(0));
+}
+
+void Texture2DArray::copy_to_texture(Texture2DArray& target_texture, int32_t self_mipmap, int32_t target_mipmap, glm::ivec3 copy_size, glm::ivec3 self_offset, glm::ivec3 target_offset)
+{
+	target_texture.force_allocation();
+
+	if (self_offset.x < 0 || self_offset.y < 0 || self_offset.z < 0 || target_offset.x < 0 || target_offset.y < 0 || target_offset.z < 0) {
+		std::cout << "[OpenGL Error] Texture2DArray::copy_to_texture() called with negative offset." << std::endl;
+		ASSERT(false);
+	}
+
+	glm::ivec3 source_mip_size = this->get_size();
+	source_mip_size.x = glm::max(1, source_mip_size.x >> self_mipmap);
+	source_mip_size.y = glm::max(1, source_mip_size.y >> self_mipmap);
+
+	glm::ivec3 target_mip_size = target_texture.get_size();
+	target_mip_size.x = glm::max(1, target_mip_size.x >> target_mipmap);
+	target_mip_size.y = glm::max(1, target_mip_size.y >> target_mipmap);
+
+	if (copy_size.x == 0) copy_size.x = glm::min(target_mip_size.x - target_offset.x, source_mip_size.x - self_offset.x);
+	if (copy_size.y == 0) copy_size.y = glm::min(target_mip_size.y - target_offset.y, source_mip_size.y - self_offset.y);
+	if (copy_size.z == 0) copy_size.z = glm::min(target_mip_size.z - target_offset.z, source_mip_size.z - self_offset.z);
+
+	glm::ivec3 max_source_copy = source_mip_size - self_offset;
+	glm::ivec3 max_target_copy = target_mip_size - target_offset;
+
+	if (copy_size.x > max_source_copy.x || copy_size.y > max_source_copy.y || copy_size.z > max_source_copy.z ||
+		copy_size.x > max_target_copy.x || copy_size.y > max_target_copy.y || copy_size.z > max_target_copy.z ||
+		copy_size.x <= 0 || copy_size.y <= 0 || copy_size.z <= 0)
+	{
+		std::cout << "[OpenGL Error] Texture2DArray::copy_to_texture() copy_size exceeds bounds or is <= 0.\n"
+			<< "copy size: " << copy_size.x << ", " << copy_size.y << ", " << copy_size.z << "\n"
+			<< "max source: " << max_source_copy.x << ", " << max_source_copy.y << ", " << max_source_copy.z << "\n"
+			<< "max target: " << max_target_copy.x << ", " << max_target_copy.y << ", " << max_target_copy.z << std::endl;
+		ASSERT(false);
+	}
+
+	bool invalid_format = false;
+	if (is_color_texture != target_texture.is_color_texture)
+		invalid_format = true;
+	if (is_color_texture && this->get_internal_format_color() != target_texture.get_internal_format_color())
+		invalid_format = true;
+	if (!is_color_texture && this->get_internal_format_depthstencil() != target_texture.get_internal_format_depthstencil())
+		invalid_format = true;
+
+	if (invalid_format)
+	{
+		std::cout << "[OpenGL Error] Texture2DArray::copy_to_texture() is called with unmatching formated textures" << std::endl;
+		ASSERT(false);
+	}
+
+	GLCall(glCopyImageSubData(
+		id, target, self_mipmap,
+		self_offset.x, self_offset.y, self_offset.z,
+		target_texture.id, target_texture.target, target_mipmap,
+		target_offset.x, target_offset.y, target_offset.z,
+		copy_size.x, copy_size.y, copy_size.z
+	));
+}
+
 
 Texture2DArray::SamplingFilter Texture2DArray::query_mag_filter()
 {

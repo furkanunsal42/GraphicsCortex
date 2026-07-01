@@ -3,18 +3,21 @@
 #include <unordered_map>
 
 #include "UniformBuffer.h"
+#include "Buffer.h"
 
 class BindlessTextureBank {
 public:
 
-	void add_texture(Texture2D& bindless_texture);
-	void remove_texture(Texture2D& bindless_texture);
-	uint32_t get_texture_offset(Texture2D& bindless_texture);
-	bool is_texture_present(Texture2D& bindless_texture);
-	
-	void clear();
+	static constexpr uint32_t invalid_offset = std::numeric_limits<uint32_t>::max();
 
-	std::shared_ptr<UniformBuffer> get_texture_handle_buffer();
+	uint32_t	add(std::shared_ptr<Texture2D> bindless_texture);
+	void		remove(Texture2D& bindless_texture);
+	bool		does_exist(Texture2D& bindless_texture);
+	uint32_t	get_offset(Texture2D& bindless_texture);
+
+	void		clear();
+	
+	Buffer&		get_texture_handle_buffer();
 
 private:
 	

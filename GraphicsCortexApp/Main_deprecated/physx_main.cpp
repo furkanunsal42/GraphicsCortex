@@ -1,8 +1,8 @@
-#include "API/GraphicsCortex.h"
+#include "GraphicsCortex.h"
 
 
 int main() {
-	PhysicsScene scene;
+	PhysicsScene& scene = PhysicsScene::get();
 
 	PhysicsObject box(create_geometry::box(1.0f, 1.0f, 1.0f), PhysicsObject::DYNAMIC, true);
 	scene.add_actor(box);

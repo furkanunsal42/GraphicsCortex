@@ -6,22 +6,22 @@
 #include "Texture2DArray.h"
 #include "TextureCubeMap.h"
 #include "Buffer.h"
-
+#include "UniformBuffer.h"
 #include <sstream>
-
-ComputeProgram::ComputeProgram(const Shader& shader, const std::vector<std::pair<std::string, std::string>>& preprocessing_key_values)
-{
-	set_preprocessor(preprocessing_key_values);
-	
-	_generate_program();
-	compile_shader(shader);
-}
 
 ComputeProgram::ComputeProgram(const std::vector<std::pair<std::string, std::string>>& preprocessing_key_values)
 {
 	set_preprocessor(preprocessing_key_values);
 
 	_generate_program();
+}
+
+ComputeProgram::ComputeProgram(const Shader& shader, const std::vector<std::pair<std::string, std::string>>& preprocessing_key_values)
+{
+	set_preprocessor(preprocessing_key_values);
+
+	_generate_program();
+	compile_shader(shader);
 }
 
 ComputeProgram::~ComputeProgram()
@@ -178,6 +178,11 @@ void ComputeProgram::compile_shader(const Shader& shader)
 		shader_to_use = variant;
 	}
 
+	//std::cout << "/////////////" << std::endl;
+	//std::cout << shader_to_use.filename << std::endl;
+	//std::cout << shader_to_use.compute_shader << std::endl;
+	//std::cout << "/////////////" << std::endl;
+
 	unsigned int compute_shader;
 	GLCall(compute_shader = glCreateShader(GL_COMPUTE_SHADER));
 	const char* string = shader_to_use.compute_shader.c_str();
@@ -194,7 +199,7 @@ void ComputeProgram::compile_shader(const Shader& shader)
 		GLCall(glGetShaderInfoLog(compute_shader, max_length, &max_length, &info_log[0]));
 		GLCall(glDeleteShader(compute_shader));
 
-		std::cout << "[OpenGL Error] Compute Shader \"" << shader.filename << "\" failed to compiler with message : " << info_log << std::endl;;
+		std::cout << "[OpenGL Error] Compute Shader \"" << shader.filename << "\" failed to compiler with message : " << info_log << std::endl;
 		//ASSERT(false);
 		return;
 	}

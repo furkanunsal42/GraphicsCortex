@@ -6,8 +6,7 @@ Program default_program::debug::flatcolor_program()
 		"../GraphicsCortex/Source/GLSL/Debug/basic.vert",
 		"../GraphicsCortex/Source/GLSL/Debug/flatcolor.frag"
 	);
-	Program program(default_shader);
-	return program;
+	return Program(default_shader);
 }
 
 Program default_program::debug::normal_program()
@@ -16,8 +15,7 @@ Program default_program::debug::normal_program()
 		"../GraphicsCortex/Source/GLSL/Debug/basic.vert",
 		"../GraphicsCortex/Source/GLSL/Debug/normal.frag"
 	);
-	Program program(default_shader);
-	return program;
+	return Program(default_shader);
 }
 
 Program default_program::debug::normal_abs_program()
@@ -26,8 +24,7 @@ Program default_program::debug::normal_abs_program()
 		"../GraphicsCortex/Source/GLSL/Debug/basic.vert",
 		"../GraphicsCortex/Source/GLSL/Debug/normalabs.frag"
 	);
-	Program program(default_shader);
-	return program;
+	return Program(default_shader);
 }
 
 Program default_program::debug::texcoord_program()
@@ -36,8 +33,7 @@ Program default_program::debug::texcoord_program()
 		"../GraphicsCortex/Source/GLSL/Debug/basic.vert",
 		"../GraphicsCortex/Source/GLSL/Debug/texcoord.frag"
 	);
-	Program program(default_shader);
-	return program;
+	return Program(default_shader);
 }
 
 Program default_program::debug::texcoord_abs_program()
@@ -46,8 +42,7 @@ Program default_program::debug::texcoord_abs_program()
 		"../GraphicsCortex/Source/GLSL/Debug/basic.vert",
 		"../GraphicsCortex/Source/GLSL/Debug/texcoordabs.frag"
 	);
-	Program program(default_shader);
-	return program;
+	return Program(default_shader);
 }
 
 Program default_program::debug::texcoord_pattern_program()
@@ -56,8 +51,7 @@ Program default_program::debug::texcoord_pattern_program()
 		"../GraphicsCortex/Source/GLSL/Debug/basic.vert",
 		"../GraphicsCortex/Source/GLSL/Debug/texcoord_pattern.frag"
 	);
-	Program program(default_shader);
-	return program;
+	return Program(default_shader);
 }
 
 
@@ -130,8 +124,7 @@ Program default_program::surface_program()
 		"../GraphicsCortex/Source/GLSL/Surface/surface.vert",
 		"../GraphicsCortex/Source/GLSL/Surface/surface.frag"
 	);
-	Program program = Program(default_shader);
-	return program;
+	return Program(default_shader);
 }
 
 Program default_program::text_program()
@@ -140,8 +133,7 @@ Program default_program::text_program()
 		"../GraphicsCortex/Source/GLSL/Text/text.vert",
 		"../GraphicsCortex/Source/GLSL/Text/text.frag"
 	);
-	Program program = Program(default_shader);
-	return program;
+	return Program(default_shader);
 }
 
 std::shared_ptr<Program> default_program::surface_program_s()

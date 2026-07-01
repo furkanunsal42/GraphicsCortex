@@ -7,6 +7,7 @@
 #include <functional>
 #include "AsyncBuffer.h"
 #include "GLMCout.h"
+#include "Texture1D.h"
 
 namespace {
 	void read_image(const std::string& filename, Image** output_image, unsigned int texture_width, unsigned int texture_height, int desired_channels) {
@@ -450,39 +451,53 @@ void Texture2D::copy_to_texture(Texture2D& target_texture, int32_t self_mipmap, 
 
 void Texture2D::copy_to_texture(Texture2D& target_texture, int32_t self_mipmap, int32_t target_mipmap, glm::ivec2 copy_size, glm::ivec2 self_offset, glm::ivec2 target_offset)
 {
-	if (copy_size.x == 0) copy_size.x = glm::min(target_texture.get_size().x - target_offset.x, get_size().x - self_offset.x);
-	if (copy_size.y == 0) copy_size.y = glm::min(target_texture.get_size().y - target_offset.y, get_size().y - self_offset.y);
+	target_texture.force_allocation();
+
+	if (self_offset.x < 0 || self_offset.y < 0 || target_offset.x < 0 || target_offset.y < 0) {
+		std::cout << "[OpenGL Error] Texture2D::copy_to_texture() called with negative offset." << std::endl;
+		ASSERT(false);
+	}
 
 	glm::ivec2 source_mip_size = glm::max(glm::ivec2(1), this->get_size() >> self_mipmap);
 	glm::ivec2 target_mip_size = glm::max(glm::ivec2(1), target_texture.get_size() >> target_mipmap);
 
-	if (self_offset.x < 0 || self_offset.y < 0 || target_offset.x < 0 || target_offset.y < 0) {
-		std::cout << "[OpenGL Error] Texture2D::copy_to_texture() is called with invalid size. source:" << get_size() << ", target:" << target_texture.get_size() << std::endl;
-		ASSERT(false);
-	}
+	if (copy_size.x == 0) copy_size.x = glm::min(target_mip_size.x - target_offset.x, source_mip_size.x - self_offset.x);
+	if (copy_size.y == 0) copy_size.y = glm::min(target_mip_size.y - target_offset.y, source_mip_size.y - self_offset.y);
 
 	glm::ivec2 max_source_copy = source_mip_size - self_offset;
 	glm::ivec2 max_target_copy = target_mip_size - target_offset;
 
-	glm::ivec2 safe_copy_size;
-	safe_copy_size.x = std::min({ copy_size.x, max_source_copy.x, max_target_copy.x });
-	safe_copy_size.y = std::min({ copy_size.y, max_source_copy.y, max_target_copy.y });
-
-	if (safe_copy_size.x <= 0 || safe_copy_size.y <= 0) {
-		std::cout << "[OpenGL Error] Texture2D::copy_to_texture() is called with invalid offset. source:" << get_size() << ", target:" << target_texture.get_size() << std::endl;
+	if (copy_size.x > max_source_copy.x || copy_size.y > max_source_copy.y ||
+		copy_size.x > max_target_copy.x || copy_size.y > max_target_copy.y ||
+		copy_size.x <= 0 || copy_size.y <= 0)
+	{
+		std::cout << "[OpenGL Error] Texture2D::copy_to_texture() copy_size exceeds bounds or is <= 0.\n"
+			<< "copy size: " << copy_size.x << ", " << copy_size.y << "\n"
+			<< "max source: " << max_source_copy.x << ", " << max_source_copy.y << "\n"
+			<< "max target: " << max_target_copy.x << ", " << max_target_copy.y << std::endl;
 		ASSERT(false);
 	}
 
-	glm::ivec3 self_offset3 = glm::ivec3(self_offset, 0);
-	glm::ivec3 target_offset3 = glm::ivec3(target_offset, 0);
-	glm::ivec3 copy_size3 = glm::ivec3(safe_copy_size, 1);
+	bool invalid_format = false;
+	if (is_color_texture != target_texture.is_color_texture)
+		invalid_format = true;
+	if (is_color_texture && this->get_internal_format_color() != target_texture.get_internal_format_color())
+		invalid_format = true;
+	if (!is_color_texture && this->get_internal_format_depthstencil() != target_texture.get_internal_format_depthstencil())
+		invalid_format = true;
+
+	if (invalid_format)
+	{
+		std::cout << "[OpenGL Error] Texture2D::copy_to_texture() is called with unmatching formated textures" << std::endl;
+		ASSERT(false);
+	}
 
 	GLCall(glCopyImageSubData(
 		id, target, self_mipmap,
-		self_offset3.x, self_offset3.y, self_offset3.z,
+		self_offset.x, self_offset.y, 0,
 		target_texture.id, target_texture.target, target_mipmap,
-		target_offset3.x, target_offset3.y, target_offset3.z,
-		copy_size3.x, copy_size3.y, copy_size3.z
+		target_offset.x, target_offset.y, 0,
+		copy_size.x, copy_size.y, 1
 	));
 }
 
@@ -853,7 +868,6 @@ Texture2D::DepthStencilTextureFormat Texture2D::get_internal_format_depthstencil
 	return depth_stencil_texture_format;
 }
 
-
 std::shared_ptr<Texture2D> Texture2D::create_texture_with_same_parameters()
 {
 	std::shared_ptr<Texture2D> new_texture;
@@ -872,8 +886,6 @@ std::shared_ptr<Texture2D> Texture2D::create_texture_with_same_parameters()
 
 	return new_texture;
 }
-
-
 
 std::shared_ptr<Image> Texture2D::get_image(ColorFormat format, Type type, int mipmap_level)
 {

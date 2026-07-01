@@ -72,10 +72,8 @@ public:
 
 	void wait_async_load();
 
-	/*
-	void copy_to_texture(Texture2D& target_texture, int self_mipmap, int target_mipmap);
-	void copy_to_texture(Texture2D& target_texture, int self_mipmap, int target_mipmap, int self_x, int self_y, int width, int height, int target_x, int target_y);
-	*/
+	void copy_to_texture(Texture1D& target_texture, int32_t self_mipmap = 0, int32_t target_mipmap = 0);
+	void copy_to_texture(Texture1D& target_texture, int32_t self_mipmap, int32_t target_mipmap, int32_t copy_size, int32_t self_offset = int32_t(0), int32_t target_offset = int32_t(0));
 
 	std::shared_ptr<Image> get_image(ColorFormat format, Type type, int mipmap_level);
 	std::shared_ptr<Image> get_image(ColorFormat format, Type type, int mipmap_level, int x, int width);
@@ -154,6 +152,8 @@ public:
 
 	ColorTextureFormat get_internal_format_color();
 	DepthStencilTextureFormat get_internal_format_depthstencil();
+
+	std::shared_ptr<Texture1D> create_texture_with_same_parameters();
 
 private:
 	unsigned int target = GL_TEXTURE_1D;

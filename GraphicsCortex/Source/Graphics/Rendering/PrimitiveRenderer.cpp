@@ -276,6 +276,177 @@ void primitive_renderer::render(
 	);
 }
 
+void primitive_renderer::render(
+	Framebuffer& framebuffer, 
+	Program& program, 
+	VertexAttributeBuffer& vab, 
+	Buffer& index_buffer, 
+	Buffer& draw_indirect_buffer, 
+	Buffer& count_parameter_buffer, 
+	PrimitiveType primitive, 
+	IndexType index_type, 
+	const RenderParameters& render_parameters, 
+	size_t draw_indirect_buffer_offset, 
+	size_t draw_indirect_buffer_size, 
+	size_t draw_indirect_buffer_stride,
+	size_t parameter_buffer_offset
+) {
+	framebuffer.bind_draw();
+	render(
+		program,
+		vab,
+		index_buffer,
+		draw_indirect_buffer,
+		count_parameter_buffer,
+		primitive,
+		index_type,
+		render_parameters,
+		draw_indirect_buffer_offset,
+		draw_indirect_buffer_size,
+		draw_indirect_buffer_stride,
+		parameter_buffer_offset
+	);
+}
+
+void primitive_renderer::render(
+	Program& program,
+	VertexAttributeBuffer& vab,
+	Buffer& index_buffer,
+	Buffer& draw_indirect_buffer,
+	Buffer& count_parameter_buffer,
+	PrimitiveType primitive,
+	IndexType index_type,
+	const RenderParameters& render_parameters,
+	size_t draw_indirect_buffer_offset,
+	size_t draw_indirect_buffer_size,
+	size_t draw_indirect_buffer_stride,
+	size_t parameter_buffer_offset
+) {
+	struct DrawElementsIndirectCommand {
+		uint32_t	count;
+		uint32_t	instanceCount;
+		uint32_t	firstIndex;
+		int32_t		baseVertex;
+		uint32_t	baseInstance;
+	};
+
+	render_parameters.apply();
+	
+	program.bind();
+	
+	draw_indirect_buffer.bind_as_draw_indirect_buffer();
+	count_parameter_buffer.bind_as_parameter_buffer();
+	
+	vab.bind();
+	index_buffer.bind_as_index_buffer();
+
+	if (draw_indirect_buffer_size == 0)
+		draw_indirect_buffer_size = draw_indirect_buffer.get_buffer_size_in_bytes();
+	
+	if (draw_indirect_buffer_stride == 0)
+		draw_indirect_buffer_stride = sizeof(DrawElementsIndirectCommand);
+
+	if (draw_indirect_buffer_stride < sizeof(DrawElementsIndirectCommand)) {
+		std::cout << "[OpenGL Error] primitive_renderer::render() is called with indirect buffer but given stride is too low to tightly pack DrawElementsIndirectCommand" << std::endl;
+		ASSERT(false);
+	}
+
+	size_t max_draw_count = draw_indirect_buffer_size / draw_indirect_buffer_stride;
+
+	GLCall(glMultiDrawElementsIndirectCount(
+		PrimitiveType_to_GL(primitive), 
+		IndexType_to_GL(index_type), 
+		std::bit_cast<void*>(draw_indirect_buffer_offset),
+		parameter_buffer_offset,
+		max_draw_count,
+		draw_indirect_buffer_stride
+	));
+}
+
+void primitive_renderer::render(
+	Framebuffer& framebuffer,
+	Program& program,
+	VertexAttributeBuffer& vab,
+	Buffer& index_buffer,
+	Buffer& draw_indirect_buffer,
+	size_t drawcall_count,
+	PrimitiveType primitive,
+	IndexType index_type,
+	const RenderParameters& render_parameters,
+	size_t draw_indirect_buffer_offset,
+	size_t draw_indirect_buffer_size,
+	size_t draw_indirect_buffer_stride
+) {
+	framebuffer.bind_draw();
+	render(
+		program,
+		vab,
+		index_buffer,
+		draw_indirect_buffer,
+		drawcall_count,
+		primitive,
+		index_type,
+		render_parameters,
+		draw_indirect_buffer_offset,
+		draw_indirect_buffer_size,
+		draw_indirect_buffer_stride
+	);
+}
+
+void primitive_renderer::render(
+	Program& program,
+	VertexAttributeBuffer& vab,
+	Buffer& index_buffer,
+	Buffer& draw_indirect_buffer,
+	size_t drawcall_count,
+	PrimitiveType primitive,
+	IndexType index_type,
+	const RenderParameters& render_parameters,
+	size_t draw_indirect_buffer_offset,
+	size_t draw_indirect_buffer_size,
+	size_t draw_indirect_buffer_stride
+) {
+
+	struct DrawElementsIndirectCommand {
+		uint32_t	count;
+		uint32_t	instanceCount;
+		uint32_t	firstIndex;
+		int32_t		baseVertex;
+		uint32_t	baseInstance;
+	};
+
+	render_parameters.apply();
+	
+	program.bind();
+	
+	draw_indirect_buffer.bind_as_draw_indirect_buffer();
+	
+	vab.bind();
+	index_buffer.bind_as_index_buffer();
+
+	if (draw_indirect_buffer_size == 0)
+		draw_indirect_buffer_size = draw_indirect_buffer.get_buffer_size_in_bytes();
+	
+	if (draw_indirect_buffer_stride == 0)
+		draw_indirect_buffer_stride = sizeof(DrawElementsIndirectCommand);
+
+	if (draw_indirect_buffer_stride < sizeof(DrawElementsIndirectCommand)) {
+		std::cout << "[OpenGL Error] primitive_renderer::render() is called with indirect buffer but given stride is too low to tightly pack DrawElementsIndirectCommand" << std::endl;
+		ASSERT(false);
+	}
+
+	if (drawcall_count == 0)
+		drawcall_count = draw_indirect_buffer_size / draw_indirect_buffer_stride;
+
+	GLCall(glMultiDrawElementsIndirect(
+		PrimitiveType_to_GL(primitive), 
+		IndexType_to_GL(index_type), 
+		std::bit_cast<void*>(draw_indirect_buffer_offset),
+		drawcall_count,
+		draw_indirect_buffer_stride
+	));
+}
+
 void primitive_renderer::clear(Framebuffer& framebuffer, float red, float green, float blue, float alpha)
 {
 	framebuffer.bind_draw();

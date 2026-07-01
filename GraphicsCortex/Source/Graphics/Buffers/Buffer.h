@@ -9,18 +9,17 @@
 #include <iostream>
 #include <array>
 
-// draw indirect buffer
-// dispatch indirect buffer
-
 class VertexAttributeBuffer;
 class Mesh;
 class ComputeProgram;
+class Program;
 
 class Buffer {
 
 	friend VertexAttributeBuffer;
 	friend Mesh;
 	friend ComputeProgram;
+	friend Program;
 
 public:
 
@@ -65,6 +64,8 @@ public:
 	void bind_as_transform_feedback(unsigned int buffer_slot, size_t offset, size_t size);
 	void bind_as_vertex_buffer();
 	void bind_as_index_buffer();
+	void bind_as_draw_indirect_buffer();	// offset and size is specified at the drawcall
+	void bind_as_parameter_buffer();		// offset is specified at the drawcall
 	void unbind();
 
 	bool wait_to_sycronize_download(int64_t timeout_ms);
@@ -174,6 +175,8 @@ private:
 	static const _bind_target _target_vertex_buffer			= GL_ARRAY_BUFFER;
 	static const _bind_target _target_storage_buffer		= GL_SHADER_STORAGE_BUFFER;
 	static const _bind_target _target_transform_feedback	= GL_TRANSFORM_FEEDBACK_BUFFER;
+	static const _bind_target _target_draw_indirect			= GL_DRAW_INDIRECT_BUFFER;
+	static const _bind_target _target_parameter				= GL_PARAMETER_BUFFER;
 
 	MemoryType _buffer_memory_type = MemoryType::GPU_BUFFER;
 	size_t _buffer_size = 0;

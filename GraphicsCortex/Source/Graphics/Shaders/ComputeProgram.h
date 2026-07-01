@@ -1,8 +1,6 @@
 #pragma once
 #include "ShaderCompiler.h"
 
-class Buffer;
-
 class ComputeProgram {
 public:
 	unsigned int id;
@@ -109,7 +107,6 @@ public:
 	void update_uniform(const std::string& name, const glm::mat3& a);
 	void update_uniform(const std::string& name, const glm::mat4& a);
 	void update_uniform(const std::string& name, const glm::mat3x4& a);
-
 
 private:
 

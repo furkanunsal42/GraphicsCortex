@@ -89,10 +89,8 @@ public:
 
 	void wait_async_load();
 
-	/*
-	void copy_to_texture(Texture2D& target_texture, int self_mipmap, int target_mipmap);
-	void copy_to_texture(Texture2D& target_texture, int self_mipmap, int target_mipmap, int self_x, int self_y, int width, int height, int target_x, int target_y);
-	*/
+	void copy_to_texture(Texture2DArray& target_texture, int32_t self_mipmap = 0, int32_t target_mipmap = 0);
+	void copy_to_texture(Texture2DArray& target_texture, int32_t self_mipmap, int32_t target_mipmap, glm::ivec3 copy_size, glm::ivec3 self_offset = glm::ivec3(0), glm::ivec3 target_offset = glm::ivec3(0));
 
 	std::shared_ptr<Image> get_image(int texture_index, ColorFormat format, Type type, int mipmap_level);
 	std::shared_ptr<Image> get_image(int texture_index, ColorFormat format, Type type, int mipmap_level, int x, int y, int width, int height);

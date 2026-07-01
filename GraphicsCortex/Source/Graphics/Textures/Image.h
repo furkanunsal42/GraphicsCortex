@@ -48,6 +48,19 @@ public:
 	Image copy_channels(Channel new_red_source, Channel new_green_source);
 	Image copy_channels(Channel new_red_source);
 
+	
+	struct ChannelSource {
+		const Image* image;
+		Channel channel;
+	};
+	
+	static Image copy_channels_from_sources(
+		const ChannelSource& r,
+		const ChannelSource& g,
+		const ChannelSource& b,
+		const ChannelSource& a
+	);
+
 	uint8_t* get_image_data();
 	int get_width() const;
 	int get_height() const;

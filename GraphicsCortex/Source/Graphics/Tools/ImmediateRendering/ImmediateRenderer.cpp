@@ -463,7 +463,8 @@ void ImmediateRenderer::_update_gpu_buffers()
 void ImmediateRenderer::clear()
 {
 	commands.clear();
-	vab->get_buffer_slot(0).buffer->clear();
+	if (vab != nullptr && vab->get_buffer_slot(0).buffer != nullptr)
+		vab->get_buffer_slot(0).buffer->clear();
 	point_commands_vertex_count = 0;
 	line_commands_vertex_count = 0;
 	triangle_commands_vertex_count = 0;

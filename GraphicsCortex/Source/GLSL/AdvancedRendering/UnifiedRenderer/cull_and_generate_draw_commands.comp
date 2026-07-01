@@ -1,0 +1,121 @@
+#<compute shader>
+
+#version 460 core
+
+#define id gl_GlobalInvocationID
+
+layout(local_size_x = 64, local_size_y = 1, local_size_z = 1) in;
+
+const uint invalid_id = 0xFFFFFFFF;
+
+struct DrawCommand {
+    uint count;
+    uint instanceCount;
+    uint firstIndex;
+    uint baseVertex;
+    uint baseInstance;
+};
+
+struct ObjectMaterialData {
+    uint object_id;
+    uint material_id;
+};
+
+struct MeshData {
+    uint vertex_begin;
+    uint vertex_count;
+    uint index_begin;
+    uint index_count;
+    uint format_id;
+    uint _padding0, _padding1, _padding2;
+    vec4 aabb_min;
+    vec4 aabb_max;
+};
+
+struct ObjectData {
+    mat4 model_matrix;
+    vec4 aabb_min_mesh_id;
+    vec4 aabb_max;
+};
+
+layout(std430, binding = 0) readonly buffer mesh_buffer { 
+    MeshData meshes[]; 
+};
+
+layout(std430, binding = 1) readonly buffer object_buffer { 
+    ObjectData objects[]; 
+};
+
+layout(std430, binding = 2) readonly buffer object_material_buffer { 
+    ObjectMaterialData pass_data[]; 
+};
+
+layout(std430, binding = 3) buffer draw_command_counter { 
+    uint draw_count; 
+};
+
+layout(std430, binding = 4) writeonly buffer pass_command_buffer { 
+    DrawCommand commands[]; 
+};
+
+uniform uint total_pass_objects;
+uniform vec4 frustum_planes[6];
+
+bool is_visible(vec3 local_min, vec3 local_max, mat4 model_matrix) {
+    
+    vec4 corners[8] = {
+        vec4(local_min.x, local_min.y, local_min.z, 1.0),
+        vec4(local_max.x, local_min.y, local_min.z, 1.0),
+        vec4(local_min.x, local_max.y, local_min.z, 1.0),
+        vec4(local_max.x, local_max.y, local_min.z, 1.0),
+        vec4(local_min.x, local_min.y, local_max.z, 1.0),
+        vec4(local_max.x, local_min.y, local_max.z, 1.0),
+        vec4(local_min.x, local_max.y, local_max.z, 1.0),
+        vec4(local_max.x, local_max.y, local_max.z, 1.0)
+    };
+
+    for (int p = 0; p < 6; ++p) {
+        bool all_corners_outside = true;
+        for (int c = 0; c < 8; ++c) {
+            vec4 world_pos = model_matrix * corners[c];
+            if (dot(frustum_planes[p].xyz, world_pos.xyz) + frustum_planes[p].w >= 0.0) {
+                all_corners_outside = false;
+                break; 
+            }
+        }
+        if (all_corners_outside) return false;
+    }
+
+    return true;
+}
+
+void main() {
+    uint pass_idx = id.x;
+    
+    if (pass_idx >= total_pass_objects) return;
+
+    uint obj_id = pass_data[pass_idx].object_id;
+    ObjectData obj = objects[obj_id];
+    
+    uint mesh_id = floatBitsToUint(obj.aabb_min_mesh_id.w);
+    if (mesh_id == invalid_id) return;
+
+    MeshData mesh = meshes[mesh_id];
+    if (mesh.index_count == 0) return;
+
+    if (!is_visible(mesh.aabb_min.xyz, mesh.aabb_max.xyz, obj.model_matrix)) {
+        return; 
+    }
+
+    uint draw_slot = atomicAdd(draw_count, 1);
+
+    commands[draw_slot].count         = mesh.index_count;
+    commands[draw_slot].instanceCount = 1;
+    commands[draw_slot].firstIndex    = mesh.index_begin / 4; // Assuming 32-bit indices
+    commands[draw_slot].baseVertex    = 0;
+    
+    // TRICK: Store the original pass_idx! 
+    // This allows the vertex shader to simply do: `pass_data[gl_BaseInstance]`
+    // No need for a separate visible_id_buffer anymore!
+    commands[draw_slot].baseInstance  = pass_idx; 
+}

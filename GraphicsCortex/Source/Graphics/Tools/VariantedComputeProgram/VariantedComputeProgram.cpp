@@ -112,3 +112,59 @@ bool operator==(const VariantDefinitions& A, const VariantDefinitions& B)
 {
 	return A.definitions == B.definitions;
 }
+
+///////////////////////////////////////////////////////////////////////////
+
+VariantedProgram::VariantedProgram(size_t maximum_variant_count) :
+	maximum_variant_count(maximum_variant_count)
+{
+
+}
+
+VariantedProgram::VariantedProgram(Shader shader, size_t maximum_variant_count) :
+	maximum_variant_count(maximum_variant_count), shader(std::make_unique<Shader>(shader))
+{
+
+}
+
+void VariantedProgram::set_shader(Shader shader)
+{
+	release_all_variants();
+	this->shader = std::make_unique<Shader>(shader);
+}
+
+void VariantedProgram::begin_variant()
+{
+	current_macros.clear();
+}
+
+void VariantedProgram::variant_define(const std::string& macro_name, const std::string& macro_value)
+{
+	current_macros[macro_name] = macro_value;
+}
+
+std::shared_ptr<Program> VariantedProgram::get_current_variant()
+{
+	bool shader_variant_exists = programs.find(current_macros) != programs.end();
+	size_t variant_count_overflow = (maximum_variant_count == 0 || programs.size() <= maximum_variant_count) ?
+		0 : programs.size() - maximum_variant_count;
+
+	if (!shader_variant_exists) {
+		for (size_t i = 0; i < variant_count_overflow; i++)
+			programs.erase(programs.begin());
+
+		programs[current_macros] = std::make_shared<Program>(*shader, current_macros.definitions);
+	}
+
+	return programs.at(current_macros);
+}
+
+void VariantedProgram::release_current_variant()
+{
+	programs.erase(current_macros);
+}
+
+void VariantedProgram::release_all_variants()
+{
+	programs.clear();
+}

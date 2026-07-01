@@ -6,6 +6,7 @@
 #include <memory>
 
 class VariantedComputeProgram;
+class VariantedProgram;
 
 class VariantDefinitions {
 public:
@@ -28,6 +29,8 @@ public:
 
 private:
 	friend VariantedComputeProgram;
+	friend VariantedProgram;
+
 	std::vector<std::pair<std::string, std::string>> definitions;
 };
 
@@ -77,6 +80,31 @@ public:
 private:
 
 	std::unordered_map<VariantDefinitions, std::shared_ptr<ComputeProgram>, Hash_VariantDefinitions> programs;
+	VariantDefinitions current_macros;
+	std::unique_ptr<Shader> shader = nullptr;
+	size_t maximum_variant_count = 0;
+};
+
+
+
+class VariantedProgram {
+public:
+
+	VariantedProgram(size_t maximum_variant_count = 0);
+	VariantedProgram(Shader shader, size_t maximum_variant_count = 0);
+
+	void set_shader(Shader shader);
+
+	void begin_variant();
+	void variant_define(const std::string& macro_name, const std::string& macro_value);
+	std::shared_ptr<Program> get_current_variant();
+
+	void release_current_variant();
+	void release_all_variants();
+
+private:
+
+	std::unordered_map<VariantDefinitions, std::shared_ptr<Program>, Hash_VariantDefinitions> programs;
 	VariantDefinitions current_macros;
 	std::unique_ptr<Shader> shader = nullptr;
 	size_t maximum_variant_count = 0;
