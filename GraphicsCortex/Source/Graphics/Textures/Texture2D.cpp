@@ -1131,7 +1131,7 @@ void Texture2D::clear(glm::vec4 clear_data, int x, int y, int width, int height,
 	if (is_intager_ColorTextureFormat(get_internal_format_color()) || is_unsigned_intager_ColorTextureFormat(get_internal_format_color()))
 		type = GL_RGBA_INTEGER;
 
-	
+
 	GLCall(glClearTexSubImage(id, mipmap_target, x, y, 0, width, height, 1, type, GL_FLOAT, &clear_data));
 }
 

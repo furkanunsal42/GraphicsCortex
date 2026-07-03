@@ -7,6 +7,7 @@
 #include <functional>
 
 #include "TransformHierarchySystem.h"
+#include "GLMCout.h"
 
 struct MeshComponent2 {
     uint32_t mesh_id = UnifiedRenderer::invalid_id;
@@ -21,8 +22,8 @@ struct RendererComponent2 {
     bool does_cast_shadow = true;
     bool does_recieve_shadow = true;
 
-    uint32_t render_object_id   = UnifiedRenderer::invalid_id;
-    uint32_t current_layer_id   = UnifiedRenderer::invalid_id;
+    uint32_t render_object_id = UnifiedRenderer::invalid_id;
+    uint32_t current_layer_id = UnifiedRenderer::invalid_id;
 };
 
 class RendererSyncSystem : public ISystem {
@@ -43,29 +44,22 @@ public:
 
             renderer_comp.render_object_id = UnifiedRenderer::get().create_object(
                 UnifiedRenderer::invalid_id,
-                glm::mat4(1.0f),
-                UnifiedRenderer::invalid_id
+                glm::mat4(1.0f)
             );
 
-            uint32_t target_layer = layer_resolver(e, s);
-            renderer_comp.current_layer_id = target_layer;
-
-            if (target_layer != UnifiedRenderer::invalid_id) {
-                UnifiedRenderer::get().get_render_layer(target_layer).object_add(
-                    renderer_comp.render_object_id,
-                    UnifiedRenderer::invalid_id
-                );
-            }
+            // We intentionally defer assigning the layer to the update() loop 
+            // so we can validate if the mesh and material exist first!
+            renderer_comp.current_layer_id = UnifiedRenderer::invalid_id;
 
             dirty_entities.insert(e);
             });
 
-        
+
         scene.on_remove<RendererComponent2>().subscribe([this](CortexScene& s, Entity2 e) {
             auto& renderer_comp = s.get<RendererComponent2>(e);
             if (renderer_comp.render_object_id != UnifiedRenderer::invalid_id) {
 
-                
+
                 if (renderer_comp.current_layer_id != UnifiedRenderer::invalid_id) {
                     UnifiedRenderer::get().get_render_layer(renderer_comp.current_layer_id).
                         object_remove(renderer_comp.render_object_id);
@@ -101,18 +95,27 @@ public:
 
             if (ctx.scene.has<TransformComponent2>(e)) {
                 auto& transform_comp = ctx.scene.get<TransformComponent2>(e);
-                render_obj.set_transform(transform_comp.global_matrix);
+                render_obj.set_model_matrix(transform_comp.global_matrix);
             }
 
+            uint32_t target_mesh = UnifiedRenderer::invalid_id;
             if (ctx.scene.has<MeshComponent2>(e)) {
                 auto& mesh_comp = ctx.scene.get<MeshComponent2>(e);
-                render_obj.set_mesh(mesh_comp.mesh_id);
+                target_mesh = mesh_comp.mesh_id;
+                render_obj.set_mesh(target_mesh);
             }
 
             uint32_t target_layer = layer_resolver(e, ctx.scene);
+
             uint32_t target_material = ctx.scene.has<MaterialComponent2>(e)
                 ? ctx.scene.get<MaterialComponent2>(e).material_id
                 : UnifiedRenderer::invalid_id;
+
+            // PREVENT SUBMISSION: If the mesh or material is invalid, force the layer to invalid.
+            // This ensures it gets safely removed from any active pass and prevents rendering.
+            if (target_mesh == UnifiedRenderer::invalid_id || target_material == UnifiedRenderer::invalid_id) {
+                target_layer = UnifiedRenderer::invalid_id;
+            }
 
             // Handle Dynamic Layer Switching (e.g. an object becomes transparent mid-game)
             if (renderer_comp.current_layer_id != target_layer) {

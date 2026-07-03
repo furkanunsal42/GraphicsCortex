@@ -111,7 +111,7 @@ void main() {
 
     commands[draw_slot].count         = mesh.index_count;
     commands[draw_slot].instanceCount = 1;
-    commands[draw_slot].firstIndex    = mesh.index_begin / 4; // Assuming 32-bit indices
+    commands[draw_slot].firstIndex    = mesh.index_begin / 4;
     commands[draw_slot].baseVertex    = 0;
     
     // TRICK: Store the original pass_idx! 

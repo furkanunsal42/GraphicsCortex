@@ -38,13 +38,14 @@
 #include "UnifiedRenderer/DynamicMemoryTest.h"
 #include "UnifiedRenderer/BasicRenderTest.h"
 #include "UnifiedRenderer/BasicMeshedRenderingTest.h"
+#include "UnifiedRenderer/DeferredRendererTest.h"
 
 #include "ECS/ECSTest.h"
 
 #include "AssetImport/PBRParserTest.h"
 
 int main() {
-	
+
 	//WindowSystemTest().run();
 	//SingleMeshRenderingTest().run();
 	//SingleMeshIndexedRenderingTest().run();
@@ -86,7 +87,8 @@ int main() {
 
 	//UnifiedRendererAABBTest().run();
 	//BasicRenderTest().run();
-	BasicMeshedRenderingTest().run();
+	//BasicMeshedRenderingTest().run();
+	DeferredRendererTest().run();
 
 	//ECSTest().run();
 

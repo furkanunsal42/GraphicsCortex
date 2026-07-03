@@ -1,6 +1,7 @@
 #include "Asset.h"
 #include "PBRParser.h"
 #include "AdvancedRendering/UnifiedRenderer.h"
+#include "AdvancedRendering/CortexRendererBase.h"
 #include "ECS/Prefab.h"
 #include "ECS_Systems/TransformHierarchySystem.h"
 #include "ECS_Systems/RenderingSystem.h"
@@ -41,9 +42,11 @@ Prefab Asset::load_prefab()
             return texture_cache[key];
         }
         auto texture = std::make_shared<Texture2D>(
-            *img, tex_format, col_format, type, mipmap, 0, 0
+            img->get_width(), img->get_height(), tex_format, 1, 0, 0
         );
         texture->is_bindless = true;
+        texture->load_data(*img, col_format, type, 0);
+        texture->generate_mipmap();
         uint32_t tex_id = renderer.create_texture(texture);
         texture_cache[key] = tex_id;
         return tex_id;
@@ -123,19 +126,26 @@ Prefab Asset::load_prefab()
         std::shared_ptr<Image> final_emissive = emissive_img ? image_cache[emissive_key] : nullptr;
         std::shared_ptr<Image> final_refraction = refraction_img ? image_cache[refraction_key] : nullptr;
 
+        mat_info.allocate(CortexRendererBase::pbr_tex_count);
+
         if (final_albedo) {
-            mat_info.push_back(get_or_create_texture(
+            Texture2D::ColorFormat format =
+                final_albedo->get_channel_count() == 3 ? Texture2D::ColorFormat::RGB :
+                final_albedo->get_channel_count() == 4 ? Texture2D::ColorFormat::RGBA :
+                Texture2D::ColorFormat::RGBA;
+
+            mat_info.set_texture(CortexRendererBase::pbr_tex_albedo_opacity, get_or_create_texture(
                 albedo_final_key, 
                 final_albedo, 
                 Texture2D::ColorTextureFormat::RGBA8, 
-                Texture2D::ColorFormat::RGBA,
+                format,
                 Texture2D::Type::UNSIGNED_BYTE,
                 32
             ));
         }
 
         if (final_arm) {
-            mat_info.push_back(get_or_create_texture(
+            mat_info.set_texture(CortexRendererBase::pbr_tex_ao_roughness_metallic, get_or_create_texture(
                 arm_final_key, 
                 final_arm, 
                 Texture2D::ColorTextureFormat::RGB8, 
@@ -146,7 +156,7 @@ Prefab Asset::load_prefab()
         }
 
         if (final_normal) {
-            mat_info.push_back(get_or_create_texture(
+            mat_info.set_texture(CortexRendererBase::pbr_tex_normal, get_or_create_texture(
                 normal_key, 
                 final_normal, 
                 Texture2D::ColorTextureFormat::RGB8, 
@@ -157,7 +167,7 @@ Prefab Asset::load_prefab()
         }
 
         if (final_emissive) {
-            mat_info.push_back(get_or_create_texture(
+            mat_info.set_texture(CortexRendererBase::pbr_tex_emissive, get_or_create_texture(
                 emissive_key, 
                 final_emissive, 
                 Texture2D::ColorTextureFormat::R8, 
@@ -168,7 +178,7 @@ Prefab Asset::load_prefab()
         }
 
         if (final_refraction) {
-            mat_info.push_back(get_or_create_texture(
+            mat_info.set_texture(CortexRendererBase::pbr_tex_refrection, get_or_create_texture(
                 refraction_key, 
                 final_refraction, 
                 Texture2D::ColorTextureFormat::R8, 
@@ -186,57 +196,118 @@ Prefab Asset::load_prefab()
     // ====================================================================
     std::vector<uint32_t> loaded_meshes(ai_scene->mNumMeshes, UnifiedRenderer::invalid_id);
 
-    for (uint32_t i = 0; i < ai_scene->mNumMeshes; i++) {
+    for (uint32_t i = 1; i < ai_scene->mNumMeshes; i++) {
         aiMesh* ai_mesh = ai_scene->mMeshes[i];
+
+        std::vector<float> vertex_data;
 
         uint32_t mesh_id = renderer.create_mesh(PrimitiveType::triangle);
         UnifiedRenderer::MeshInfo& mesh_info = renderer.get_mesh(mesh_id);
 
-        // Configure Vertex Format (e.g., Pos: 12, Norm: 12, UV: 8 -> 32 bytes)
-        mesh_info.set_attribute(0, UnifiedRenderer::AttributeType::f32_3, 0);  // Position
-        mesh_info.set_attribute(1, UnifiedRenderer::AttributeType::f32_3, 12); // Normal
-        mesh_info.set_attribute(2, UnifiedRenderer::AttributeType::f32_2, 24); // UV
-        mesh_info.set_vertex_stride(32);
-
-        std::vector<float> vertex_data;
-        vertex_data.reserve(ai_mesh->mNumVertices * 8);
+        uint16_t current_offset = 0;
+        bool first_iteration = true;
 
         for (uint32_t v = 0; v < ai_mesh->mNumVertices; v++) {
-            vertex_data.push_back(ai_mesh->mVertices[v].x);
-            vertex_data.push_back(ai_mesh->mVertices[v].y);
-            vertex_data.push_back(ai_mesh->mVertices[v].z);
+            
+            if (ai_mesh->HasPositions()) {
+                if (first_iteration) {
+                    mesh_info.set_attribute(CortexRendererBase::attrib_position, UnifiedRenderer::AttributeType::f32_3, current_offset);
+                    current_offset += sizeof(glm::vec3);
+                }
+
+                vertex_data.push_back(ai_mesh->mVertices[v].x);
+                vertex_data.push_back(ai_mesh->mVertices[v].y);
+                vertex_data.push_back(ai_mesh->mVertices[v].z);
+            }
+            else {
+                ASSERT(false);
+            }
 
             if (ai_mesh->HasNormals()) {
+                if (first_iteration) {
+                    mesh_info.set_attribute(CortexRendererBase::attrib_normal, UnifiedRenderer::AttributeType::f32_3, current_offset);
+                    current_offset += sizeof(glm::vec3);
+                }
+
                 vertex_data.push_back(ai_mesh->mNormals[v].x);
                 vertex_data.push_back(ai_mesh->mNormals[v].y);
                 vertex_data.push_back(ai_mesh->mNormals[v].z);
             }
-            else {
-                vertex_data.push_back(0.0f); vertex_data.push_back(1.0f); vertex_data.push_back(0.0f);
+
+            if (ai_mesh->HasTangentsAndBitangents()) {
+                if (first_iteration) {
+                    mesh_info.set_attribute(CortexRendererBase::attrib_tangent, UnifiedRenderer::AttributeType::f32_3, current_offset);
+                    current_offset += sizeof(glm::vec3);
+                }
+
+                vertex_data.push_back(ai_mesh->mTangents[v].x);
+                vertex_data.push_back(ai_mesh->mTangents[v].y);
+                vertex_data.push_back(ai_mesh->mTangents[v].z);
+
+                if (first_iteration) {
+                    mesh_info.set_attribute(CortexRendererBase::attrib_bitangent, UnifiedRenderer::AttributeType::f32_3, current_offset);
+                    current_offset += sizeof(glm::vec3);
+                }
+
+                vertex_data.push_back(ai_mesh->mBitangents[v].x);
+                vertex_data.push_back(ai_mesh->mBitangents[v].y);
+                vertex_data.push_back(ai_mesh->mBitangents[v].z);
             }
 
-            if (ai_mesh->mTextureCoords[0]) {
+            if (ai_mesh->HasTextureCoords(0)) {
+                if (first_iteration) {
+                    mesh_info.set_attribute(CortexRendererBase::attrib_uv0, UnifiedRenderer::AttributeType::f32_2, current_offset);
+                    current_offset += sizeof(glm::vec2);
+                }
+
                 vertex_data.push_back(ai_mesh->mTextureCoords[0][v].x);
                 vertex_data.push_back(ai_mesh->mTextureCoords[0][v].y);
             }
-            else {
-                vertex_data.push_back(0.0f); vertex_data.push_back(0.0f);
+
+            if (ai_mesh->HasTextureCoords(1)) {
+                if (first_iteration) {
+                    mesh_info.set_attribute(CortexRendererBase::attrib_uv1, UnifiedRenderer::AttributeType::f32_2, current_offset);
+                    current_offset += sizeof(glm::vec2);
+                }
+
+                vertex_data.push_back(ai_mesh->mTextureCoords[1][v].x);
+                vertex_data.push_back(ai_mesh->mTextureCoords[1][v].y);
             }
+
+            if (ai_mesh->HasVertexColors(0)) {
+                if (first_iteration) {
+                    mesh_info.set_attribute(CortexRendererBase::attrib_vertex_color, UnifiedRenderer::AttributeType::f32_4, current_offset);
+                    current_offset += sizeof(glm::vec4);
+                }
+
+                vertex_data.push_back(ai_mesh->mColors[0][v].r);
+                vertex_data.push_back(ai_mesh->mColors[0][v].g);
+                vertex_data.push_back(ai_mesh->mColors[0][v].b);
+                vertex_data.push_back(ai_mesh->mColors[0][v].a);
+            }
+
+            /*if (ai_mesh->HasBones()) {
+                vertex_data.push_back(ai_mesh->mBones[0][v].);
+            }*/
+            
+            first_iteration = false;
         }
 
         std::vector<uint32_t> index_data;
         for (uint32_t f = 0; f < ai_mesh->mNumFaces; f++) {
-            aiFace face = ai_mesh->mFaces[f];
+            aiFace& face = ai_mesh->mFaces[f];
             for (uint32_t ind = 0; ind < face.mNumIndices; ind++) {
                 index_data.push_back(face.mIndices[ind]);
             }
         }
 
-        // Upload to UnifiedRenderer (assuming DynamicBuffer logic handles upload natively)
+        mesh_info.set_vertex_stride(current_offset);
+        
         mesh_info.allocate_vertices(vertex_data.size() * sizeof(float));
         mesh_info.allocate_indices(index_data.size() * sizeof(uint32_t));
 
-        // TODO: Copy vertex_data & index_data to UnifiedRenderer's mapped GPU memory
+        mesh_info.load_vertices(vertex_data.data(), vertex_data.size() * sizeof(float));
+        mesh_info.load_indices(index_data.data(), index_data.size() * sizeof(uint32_t));
 
         loaded_meshes[i] = mesh_id;
     }

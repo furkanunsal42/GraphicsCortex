@@ -21,11 +21,13 @@ struct TransformComponent2 {
 class TransformHierarchySystem : public ISystem {
 private:
     std::unordered_set<Entity2> dirty_entities;
+    bool disable_listening = false;
 
 public:
     TransformHierarchySystem(CortexScene& scene) {
         // Subscribe to changes. We just flag them as dirty here.
         auto mark_dirty = [this](CortexScene& s, Entity2 e) {
+            if (disable_listening) return;
             dirty_entities.insert(e);
             };
 
@@ -59,7 +61,9 @@ public:
         for (Entity2 root : roots_to_process) {
             // IMPORTANT: We use access() instead of replace() to silently mutate the data.
             // If we used replace(), the system would trigger its own events endlessly!
-            auto& transform = ctx.scene.access<TransformComponent2>(root);
+            disable_listening = true;
+            auto& transform = ctx.scene.replace<TransformComponent2>(root);
+            disable_listening = false;
 
             glm::mat4 parent_matrix = glm::identity<glm::mat4>();
             if (transform.parent_id != Entity2::invalid_entity) {
@@ -88,7 +92,9 @@ private:
         Entity2 current_child = first_child;
 
         while (current_child != Entity2::invalid_entity) {
-            auto& child_transform = scene.access<TransformComponent2>(current_child);
+            disable_listening = true;
+            auto& child_transform = scene.replace<TransformComponent2>(current_child);
+            disable_listening = false;
 
             glm::mat4 local_matrix = calculate_local_matrix(child_transform);
             child_transform.global_matrix = parent_matrix * local_matrix;

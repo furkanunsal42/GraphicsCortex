@@ -14,7 +14,7 @@
 
 #include <functional>
 
-class BasicMeshedRenderingTest : public TestBench {
+class DeferredRendererTest : public TestBench {
 public:
 
 	bool run() {
@@ -27,36 +27,37 @@ public:
 
 		default_init();
 
-		Renderer_FlatColor	renderer;
+		Renderer_Deferred	renderer;
 		CortexScene			scene;
 		SystemPipeline		systems;
-		
-		renderer.setup();
+
+		renderer.init(glm::ivec2(1920, 1080));
 
 		systems.add_system<TransformHierarchySystem>(scene);
 		systems.add_system<RendererSyncSystem>(scene, renderer.layer_sorter);
 
 		//Asset	asset("../GraphicsCortex/Models/dragon_new/dragon_new.fbx");
 		Asset	asset("../GraphicsCortex/Models/Sponza/scene.gltf");
+
 		Prefab	prefab = asset.load_prefab();
-		
+
 		auto entity = scene.create_entity(prefab);
 
 		Camera camera;
-		camera.fov = 70;
-		camera.max_distance  = 200.0f;
-		camera.screen_width	 = 1920;
+		camera.fov = 90;
+		camera.max_distance = 200.0f;
+		camera.screen_width = 1920;
 		camera.screen_height = 1080;
 
 		while (!default_window->should_close()) {
-			
+
 			double deltatime = default_window->handle_events(true);
 			camera.handle_movements((GLFWwindow*)default_window->get_handle(), deltatime);
 			camera.update_matrixes();
-			
+
 			scene.replace<TransformComponent2>(entity).local_position += glm::vec3(10, 0, 0) * (float)deltatime;
 
-			SystemContext ctx {
+			SystemContext ctx{
 				.scene = scene,
 				.delta_time = 0.16f,
 			};

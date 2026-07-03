@@ -79,7 +79,7 @@ public:
     MeshInfo&           get_mesh(uint32_t mesh_id);
     void                iterate_meshes(std::function<void(uint32_t, MeshInfo&)> lambda);
 
-    uint32_t            create_object(uint32_t mesh_id = invalid_id, glm::mat4 model_matrix = glm::identity<glm::mat4>(), uint32_t parent_object_id = invalid_id);
+    uint32_t            create_object(uint32_t mesh_id = invalid_id, glm::mat4 model_matrix = glm::identity<glm::mat4>());
     void                release_object(uint32_t object_id);
     ObjectInfo&         get_object(uint32_t object_id);
     void                iterate_objects(std::function<void(uint32_t, ObjectInfo&)> lambda);
@@ -161,6 +161,7 @@ public:
 
         void                set_vertex_stride(uint32_t stride_in_bytes);
         uint32_t            get_vertex_stride();
+        void                push_attribute(int32_t location, AttributeType type);
         void                set_attribute(int32_t location, AttributeType type, uint16_t byte_offset);
         AttributeType       get_attributte_type(int32_t location);
         uint16_t            get_attribute_offset(int32_t location);
@@ -199,12 +200,9 @@ public:
     };
 
     struct MaterialInfo {
-        void                push_back(uint32_t texture_id);
-        void                insert(uint32_t index, uint32_t texture_id);
-        void                erase(uint32_t index);
-        uint32_t            find(uint32_t texture_id);
-        uint32_t            at(uint32_t index);
-        uint32_t            back();
+        void                allocate(size_t texture_count);
+        void                set_texture(uint32_t index, uint32_t texture_id);
+        uint32_t            get_texture(uint32_t index);
         size_t              size();
     private:
         std::vector<uint32_t> textures;
@@ -216,17 +214,13 @@ public:
     };
 
     struct ObjectInfo {
-        void                set_transform(glm::mat4 model_matrix);
-        glm::mat4           get_transform();
+        void                set_model_matrix(glm::mat4 model_matrix);
+        glm::mat4           get_model_matrix();
         void                set_mesh(uint32_t mesh);
         uint32_t            get_mesh();
-        void                set_parent(uint32_t parent_id);
-        uint32_t            get_parent();
-        uint32_t            get_child();
-        uint32_t            get_sibling();
+
     private:
-        glm::mat4           model_matrix                = glm::identity<glm::mat4>();   // final
-        glm::mat4           transform                   = glm::identity<glm::mat4>();   // relative to parent
+        glm::mat4           model_matrix                = glm::identity<glm::mat4>();
         uint32_t            mesh                        = invalid_id;
         bool                is_transform_up_to_date     = false;
         bool                is_mesh_up_to_date          = false;

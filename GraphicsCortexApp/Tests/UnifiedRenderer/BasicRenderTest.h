@@ -76,7 +76,8 @@ public:
 		uint32_t red = renderer.create_texture(green_texture);
 
 		uint32_t material = renderer.create_material();
-		renderer.get_material(material).push_back(red);
+		renderer.get_material(material).allocate(1);
+		renderer.get_material(material).set_texture(0, red);
 
 		uint32_t layer	= renderer.create_render_layer();
 		flatcolor.flatcolor.render_pass().set_render_layer(layer);
@@ -92,6 +93,8 @@ public:
 		camera.max_distance  = 200.0f;
 		camera.screen_width	 = 1920;
 		camera.screen_height = 1080;
+
+		/*renderer.get_object(object).set_model_matrix(glm::translate(glm::mat4(1), glm::vec3(3, 0, 0)));*/
 
 		while (!default_window->should_close()) {
 

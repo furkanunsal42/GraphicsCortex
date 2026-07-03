@@ -197,16 +197,14 @@ void UnifiedRenderer::iterate_meshes(std::function<void(uint32_t, MeshInfo&)> la
 	}
 }
 
-uint32_t UnifiedRenderer::create_object(uint32_t mesh_id, glm::mat4 model_matrix, uint32_t parent_object_id)
+uint32_t UnifiedRenderer::create_object(uint32_t mesh_id, glm::mat4 model_matrix)
 {
 	uint32_t object = object_handle_generator.generate_id();
 	ObjectInfo info;
 	info.owner = this;
-	info.transform	= model_matrix;
-	info.mesh		= mesh_id;
-	info.self_id	= object;
-	info.set_parent(parent_object_id);	// for child, sibling management
-	objects[object] = info;
+	info.model_matrix	= model_matrix;
+	info.mesh			= mesh_id;
+	objects[object]		= info;
 	return object;
 }
 
@@ -363,7 +361,8 @@ void UnifiedRenderer::MeshInfo::load_vertices(void* data, size_t size_in_bytes, 
 		ASSERT(false);
 	}
 
-	owner->unified_vertex_buffer.buffer.get_buffer().load_data(offset_in_bytes, 0, size_in_bytes, data);
+	size_t vertex_begin = owner->unified_vertex_buffer.buffer.get_offset(vertex_begin_v);
+	owner->unified_vertex_buffer.buffer.get_buffer().load_data(vertex_begin + offset_in_bytes, 0, size_in_bytes, data);
 
 	is_aabb_up_to_date = false;
 	owner->a_mesh_modified = true;
@@ -380,8 +379,9 @@ void UnifiedRenderer::MeshInfo::load_indices(void* data, size_t size_in_bytes, s
 		std::cout << "[UnifiedRenderer Error] UnifiedRenderer::MeshInfo::load_indices() is called with out of bound data" << std::endl;
 		ASSERT(false);
 	}
-
-	owner->unified_index_buffer.buffer.get_buffer().load_data(offset_in_bytes, 0, size_in_bytes, data);
+	
+	size_t index_begin = owner->unified_index_buffer.buffer.get_offset(index_begin_v);
+	owner->unified_index_buffer.buffer.get_buffer().load_data(index_begin + offset_in_bytes, 0, size_in_bytes, data);
 
 	is_aabb_up_to_date = false;
 	owner->a_mesh_modified = true;
@@ -399,7 +399,8 @@ void UnifiedRenderer::MeshInfo::get_vertices(void* data, size_t size_in_bytes, s
 		ASSERT(false);
 	}
 
-	owner->unified_vertex_buffer.buffer.get_buffer().get_data(offset_in_bytes, 0, size_in_bytes, data);
+	size_t vertex_begin = owner->unified_vertex_buffer.buffer.get_offset(vertex_begin_v);
+	owner->unified_vertex_buffer.buffer.get_buffer().get_data(vertex_begin + offset_in_bytes, 0, size_in_bytes, data);
 
 }
 
@@ -415,7 +416,8 @@ void UnifiedRenderer::MeshInfo::get_indices(void* data, size_t size_in_bytes, si
 		ASSERT(false);
 	}
 
-	owner->unified_index_buffer.buffer.get_buffer().get_data(offset_in_bytes, 0, size_in_bytes, data);
+	size_t index_begin = owner->unified_index_buffer.buffer.get_offset(index_begin_v);
+	owner->unified_index_buffer.buffer.get_buffer().get_data(index_begin + offset_in_bytes, 0, size_in_bytes, data);
 
 }
 
@@ -426,7 +428,8 @@ void UnifiedRenderer::MeshInfo::clear_vertices(uint8_t value, size_t size_in_byt
 		ASSERT(false);
 	}
 
-	owner->unified_vertex_buffer.buffer.get_buffer().clear(offset_in_bytes, size_in_bytes, value);
+	size_t vertex_begin = owner->unified_vertex_buffer.buffer.get_offset(vertex_begin_v);
+	owner->unified_vertex_buffer.buffer.get_buffer().clear(vertex_begin + offset_in_bytes, size_in_bytes, value);
 
 	is_aabb_up_to_date = false;
 	owner->a_mesh_modified = true;
@@ -439,7 +442,8 @@ void UnifiedRenderer::MeshInfo::clear_indices(uint8_t value, size_t size_in_byte
 		ASSERT(false);
 	}
 
-	owner->unified_index_buffer.buffer.get_buffer().clear(offset_in_bytes, size_in_bytes, value);
+	size_t index_begin = owner->unified_index_buffer.buffer.get_offset(index_begin_v);
+	owner->unified_index_buffer.buffer.get_buffer().clear(index_begin + offset_in_bytes, size_in_bytes, value);
 
 	is_aabb_up_to_date = false;
 	owner->a_mesh_modified = true;
@@ -542,61 +546,48 @@ glm::vec4 UnifiedRenderer::TextureInfo::get_color() {
 	return color;
 }
 
-void UnifiedRenderer::MaterialInfo::push_back(uint32_t texture_id) {
-	textures.push_back(texture_id);
+void UnifiedRenderer::MaterialInfo::allocate(size_t size) {
+	if (textures.size() == size)
+		return;
+	textures.resize(size, invalid_id);
 	is_up_to_date = false;
 	owner->a_material_modified = true;
 }
 
-void UnifiedRenderer::MaterialInfo::insert(uint32_t index, uint32_t texture_id) {
-	textures.insert(textures.begin() + index, texture_id);
-	is_up_to_date = false;
-	owner->a_material_modified = true;
-}
-
-void UnifiedRenderer::MaterialInfo::erase(uint32_t index) {
-	textures.erase(textures.begin() + index),
-	is_up_to_date = false;
-	owner->a_material_modified = true;
-}
-
-uint32_t UnifiedRenderer::MaterialInfo::find(uint32_t texture_id) {
-	for (int32_t i = 0; i < textures.size(); i++)
-		if (textures[i] == texture_id)
-			return i;
-	return -1;
-}
-
-uint32_t UnifiedRenderer::MaterialInfo::at(uint32_t index) {
+void UnifiedRenderer::MaterialInfo::set_texture(uint32_t index, uint32_t texture_id) {
 	if (index >= textures.size()) {
-		std::cout << "[UnifiedRenderer Error] UnifiedRenderer::MaterialInfo::at() is called with out of bounds index" << std::endl;
+		std::cout << "[UnifiedRenderer Error] UnififedRenderer::MaterialInfo::set_texture() is called with an out of bound index" << std::endl;
+		ASSERT(false);
+	}
+	if (textures[index] == texture_id)
+		return;
+	textures[index] = texture_id;
+	is_up_to_date = false;
+	owner->a_material_modified = true;
+}
+
+uint32_t UnifiedRenderer::MaterialInfo::get_texture(uint32_t index) {
+	if (index >= textures.size()) {
+		std::cout << "[UnifiedRenderer Error] UnififedRenderer::MaterialInfo::get_texture() is called with an out of bound index" << std::endl;
 		ASSERT(false);
 	}
 	return textures[index];
-}
-
-uint32_t UnifiedRenderer::MaterialInfo::back() {
-	if (textures.size() == 0) {
-		std::cout << "[UnifiedRenderer Error] UnifiedRenderer::MaterialInfo::back() is called but no elements exist" << std::endl;
-		ASSERT(false);
-	}
-	return textures.back();
 }
 
 size_t UnifiedRenderer::MaterialInfo::size() {
 	return textures.size();
 }
 
-void UnifiedRenderer::ObjectInfo::set_transform(glm::mat4 model_matrix) {
-	if (transform == model_matrix)
+void UnifiedRenderer::ObjectInfo::set_model_matrix(glm::mat4 model_matrix) {
+	if (this->model_matrix == model_matrix)
 		return;
-	transform = model_matrix;
+	this->model_matrix = model_matrix;
 	is_transform_up_to_date = false;
 	owner->a_transform_modified = true;
 }
 
-glm::mat4 UnifiedRenderer::ObjectInfo::get_transform() {
-	return transform;
+glm::mat4 UnifiedRenderer::ObjectInfo::get_model_matrix() {
+	return model_matrix;
 }
 
 void UnifiedRenderer::ObjectInfo::set_mesh(uint32_t mesh) {
@@ -609,94 +600,6 @@ void UnifiedRenderer::ObjectInfo::set_mesh(uint32_t mesh) {
 
 uint32_t UnifiedRenderer::ObjectInfo::get_mesh() {
 	return mesh;
-}
-
-void UnifiedRenderer::ObjectInfo::set_parent(uint32_t parent_id) {
-	if (this->parent == parent_id)
-		return;
-	
-	// remove from old parent
-	if (this->parent != invalid_id) {
-		if (owner->objects.find(this->parent) == owner->objects.end()) {
-			std::cout << "[UnifiedRenderer Error] UnifiedRenderer::ObjectInfo::set_parent() is called but given old parent doesn't exist" << std::endl;
-			ASSERT(false);
-		}
-		ObjectInfo& parent = owner->objects.at(this->parent);
-		
-		if (parent.child == self_id) {
-			parent.child = this->sibling;
-		}
-		else {
-			uint32_t sibling_id = parent.child;
-			while (sibling_id != invalid_id) {
-				if (owner->objects.find(sibling_id) == owner->objects.end()) {
-					std::cout << "[UnifiedRenderer Error] UnifiedRenderer::ObjectInfo::set_parent() is called but a sibling doesn't exist" << std::endl;
-					ASSERT(false);
-				}
-
-				ObjectInfo& sibling = owner->objects.at(sibling_id);
-
-				if (sibling.sibling == self_id) {
-					sibling.sibling = this->sibling;
-					break;
-				}
-
-				sibling_id = sibling.sibling;
-			}
-		}
-	}
-
-	this->sibling = invalid_id;
-	this->parent = parent_id;
-
-	// insert itself as new parent's child
-	if (parent_id != invalid_id) {
-		if (owner->objects.find(parent_id) == owner->objects.end()) {
-			std::cout << "[UnifiedRenderer Error] UnifiedRenderer::ObjectInfo::set_parent() is called but given parent_id doesn't exist" << std::endl;
-			ASSERT(false);
-		}
-		ObjectInfo& parent = owner->objects.at(parent_id);
-		
-		if (parent.child == invalid_id)
-		{
-			parent.child = self_id;
-		}
-		else {
-			uint32_t sibling_id = parent.child;
-			while (true) {
-
-				if (owner->objects.find(sibling_id) == owner->objects.end()) {
-					std::cout << "[UnifiedRenderer Error] UnifiedRenderer::ObjectInfo::set_parent() is called but a sibling doesn't exist" << std::endl;
-					ASSERT(false);
-				}
-
-				ObjectInfo& sibling = owner->objects.at(sibling_id);
-
-				if (sibling.sibling == invalid_id) {
-					sibling.sibling = self_id;
-					break;
-				}
-
-				sibling_id = sibling.sibling;
-			}
-		}
-		
-	}
-
-	is_transform_up_to_date = false;
-	owner->a_transform_modified = true;
-}
-
-uint32_t UnifiedRenderer::ObjectInfo::get_parent() {
-	return parent;
-}
-
-uint32_t UnifiedRenderer::ObjectInfo::get_child() {
-	return child;
-}
-
-uint32_t UnifiedRenderer::ObjectInfo::get_sibling() {
-	return sibling;
 }
 
 void UnifiedRenderer::RenderLayerInfo::object_add(uint32_t object_id, uint32_t material_id) {
@@ -956,69 +859,69 @@ UnifiedRenderer::RenderPassInfo::program_t UnifiedRenderer::RenderPassInfo::get_
 
 void UnifiedRenderer::update_parent_object_matricies()
 {
-	if (!a_transform_modified) return;
+	//if (!a_transform_modified) return;
 
-	std::vector<uint32_t> stack;
+	//std::vector<uint32_t> stack;
 
-	for (auto& [object_id, object] : objects) {
-		if (!object.is_transform_up_to_date) {
+	//for (auto& [object_id, object] : objects) {
+	//	if (!object.is_transform_up_to_date) {
 
-			bool has_dirty_ancestor = false;
-			uint32_t ancestor_id = object.parent;
+	//		bool has_dirty_ancestor = false;
+	//		uint32_t ancestor_id = object.parent;
 
-			// Go up the chain to check if any parent is also dirty
-			while (ancestor_id != invalid_id) {
-				if (objects.find(ancestor_id) == objects.end()) {
-					std::cout << "[UnifiedRenderer Error] update_parent_object_matricies() is called but a parent_id doesn not exist" << std::endl;
-					ASSERT(false);
-				}
+	//		// Go up the chain to check if any parent is also dirty
+	//		while (ancestor_id != invalid_id) {
+	//			if (objects.find(ancestor_id) == objects.end()) {
+	//				std::cout << "[UnifiedRenderer Error] update_parent_object_matricies() is called but a parent_id doesn not exist" << std::endl;
+	//				ASSERT(false);
+	//			}
 
-				if (!objects.at(ancestor_id).is_transform_up_to_date) {
-					has_dirty_ancestor = true;
-					break;
-				}
-				ancestor_id = objects.at(ancestor_id).parent;
-			}
+	//			if (!objects.at(ancestor_id).is_transform_up_to_date) {
+	//				has_dirty_ancestor = true;
+	//				break;
+	//			}
+	//			ancestor_id = objects.at(ancestor_id).parent;
+	//		}
 
-			if (!has_dirty_ancestor) {
-				stack.push_back(object_id);
-			}
-		}
-	}
+	//		if (!has_dirty_ancestor) {
+	//			stack.push_back(object_id);
+	//		}
+	//	}
+	//}
 
-	while (!stack.empty()) {
-		uint32_t current_id = stack.back();
-		stack.pop_back();
+	//while (!stack.empty()) {
+	//	uint32_t current_id = stack.back();
+	//	stack.pop_back();
 
-		ObjectInfo& current = objects.at(current_id);
+	//	ObjectInfo& current = objects.at(current_id);
 
-		if (current.parent == invalid_id) {
-			current.model_matrix = current.transform;
-		}
-		else {
-			if (objects.find(current.parent) == objects.end()) {
-				std::cout << "[UnifiedRenderer Error] update_parent_object_matricies() is called but a parent_id doesn not exist" << std::endl;
-				ASSERT(false);
-			}
-			ObjectInfo& parent = objects.at(current.parent);
-			current.model_matrix = parent.model_matrix * current.transform;
-		}
+	//	if (current.parent == invalid_id) {
+	//		current.model_matrix = current.transform;
+	//	}
+	//	else {
+	//		if (objects.find(current.parent) == objects.end()) {
+	//			std::cout << "[UnifiedRenderer Error] update_parent_object_matricies() is called but a parent_id doesn not exist" << std::endl;
+	//			ASSERT(false);
+	//		}
+	//		ObjectInfo& parent = objects.at(current.parent);
+	//		current.model_matrix = parent.model_matrix * current.transform;
+	//	}
 
-		current.is_transform_up_to_date = true;
-		current.is_mesh_up_to_date		= false;	// force write to vram in later stage
+	//	current.is_transform_up_to_date = true;
+	//	current.is_mesh_up_to_date		= false;	// force write to vram in later stage
 
-		uint32_t child_id = current.child;
-		while (child_id != invalid_id) {
-			if (objects.find(child_id) == objects.end()) {
-				std::cout << "[UnifiedRenderer Error] update_parent_object_matricies() is called but a child_id doesn not exist" << std::endl;
-				ASSERT(false);
-			}
-			stack.push_back(child_id);
-			child_id = objects.at(child_id).sibling;
-		}
-	}
+	//	uint32_t child_id = current.child;
+	//	while (child_id != invalid_id) {
+	//		if (objects.find(child_id) == objects.end()) {
+	//			std::cout << "[UnifiedRenderer Error] update_parent_object_matricies() is called but a child_id doesn not exist" << std::endl;
+	//			ASSERT(false);
+	//		}
+	//		stack.push_back(child_id);
+	//		child_id = objects.at(child_id).sibling;
+	//	}
+	//}
 
-	a_transform_modified = false;
+	//a_transform_modified = false;
 }
 
 
@@ -1058,9 +961,9 @@ void UnifiedRenderer::update_meshes()
 
 			MeshData data;
 			data.vertex_begin	= mesh.get_vertex_begin();
-			data.vertex_count	= mesh.vertex_size_in_bytes / mesh.local_format.stride_in_bytes;
+			data.vertex_count	= mesh.get_vertex_size_in_bytes()	/ mesh.local_format.stride_in_bytes;
 			data.index_begin	= mesh.get_index_begin();
-			data.index_count	= mesh.get_index_size_in_bytes() / sizeof(uint32_t);
+			data.index_count	= mesh.get_index_size_in_bytes()	/ sizeof(uint32_t);
 			data.format_id		= mesh.format_id;
 			data.aabb_min		= glm::vec4(glm::vec3(+std::numeric_limits<float>::max()), -1);
 			data.aabb_max		= glm::vec4(glm::vec3(-std::numeric_limits<float>::max()), -1);
@@ -1155,21 +1058,37 @@ void UnifiedRenderer::update_materials()
 		texture_data.reserve(material.textures.size());
 
 		for (uint32_t texture_id : material.textures) {
-			if (textures.find(texture_id) == textures.end()) {
+			
+			TextureData data;
+
+			if (texture_id != invalid_id && textures.find(texture_id) == textures.end()) {
 				std::cout << "[UnifiedRenderer Error] update_materials() called but a referenced texture_id doesn't exist" << std::endl;
 				ASSERT(false);
 			}
+			else if (texture_id == invalid_id) {
+				
+				glm::uvec2 invalid_handle	= glm::uvec2(0);
+				glm::uvec4 invalid_color	= glm::vec4(1);
+				std::memcpy(&data.handle, &invalid_handle, sizeof(glm::uvec2));
 
-			TextureInfo& texture_info = textures.at(texture_id);
+				data.color.x = glm::packHalf2x16(glm::vec2(invalid_color.r, invalid_color.g));
+				data.color.y = glm::packHalf2x16(glm::vec2(invalid_color.b, invalid_color.a));
 
-			TextureData data;
-			if (texture_info.texture != nullptr)
-				std::memcpy(&data.handle, &texture_info.texture->texture_handle, sizeof(glm::uvec2));
+			}
+			else {
 
-			data.color.x = glm::packHalf2x16(glm::vec2(texture_info.color.r, texture_info.color.g));
-			data.color.y = glm::packHalf2x16(glm::vec2(texture_info.color.b, texture_info.color.a));
+				TextureInfo& texture_info = textures.at(texture_id);
+
+				if (texture_info.texture != nullptr)
+					std::memcpy(&data.handle, &texture_info.texture->texture_handle, sizeof(glm::uvec2));
+
+				data.color.x = glm::packHalf2x16(glm::vec2(texture_info.color.r, texture_info.color.g));
+				data.color.y = glm::packHalf2x16(glm::vec2(texture_info.color.b, texture_info.color.a));
+
+			}
 
 			texture_data.push_back(data);
+
 		}
 
 		size_t required_texture_size = material.textures.size() * sizeof(TextureData);
@@ -1193,12 +1112,12 @@ void UnifiedRenderer::update_objects()
 	if (!an_object_modified) return;
 
 	for (auto& [object_id, object] : objects) {
-		if (object.is_mesh_up_to_date) continue;
+		if (object.is_mesh_up_to_date && object.is_transform_up_to_date) continue;
 
-		if (meshes.find(object.mesh) == meshes.end()) {
+		/*if (meshes.find(object.mesh) == meshes.end()) {
 			std::cout << "[UnifiedRenderer Error] UnifiedRenderer::update_objects() is called but an object references a mesh_id that doesn't exist" << std::endl;
 			ASSERT(false);
-		}
+		}*/
 
 		ObjectData data;
 		data.model_matrix		= object.model_matrix;
@@ -1209,6 +1128,7 @@ void UnifiedRenderer::update_objects()
 		object_buffer.get_buffer().load_data(object_id * sizeof(ObjectData), 0, sizeof(ObjectData), &data);
 
 		object.is_mesh_up_to_date		= true;
+		object.is_transform_up_to_date	= true;
 	}
 
 	an_object_modified = false;
@@ -1298,10 +1218,14 @@ void UnifiedRenderer::compute_mesh_aabbs()
 			mesh.is_aabb_up_to_date = true;
 		}
 	}
+
+	if (aabb_computation_jobs.size() == 0) {
+		a_mesh_modified = false;
+		return;
+	}
 	
 	mesh_job_buffer.require_and_shrink(sizeof(MeshJob)* aabb_computation_jobs.size());
 	mesh_job_buffer.get_buffer().load_data(0, 0, sizeof(MeshJob)* aabb_computation_jobs.size(), aabb_computation_jobs.data());
-	
 
 	kernel.update_uniform_as_storage_buffer("mesh_job_buffer",			mesh_job_buffer.get_buffer());
 	kernel.update_uniform_as_storage_buffer("mesh_buffer",				mesh_buffer.get_buffer());
