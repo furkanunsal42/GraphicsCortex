@@ -45,6 +45,8 @@ Prefab Asset::load_prefab()
             img->get_width(), img->get_height(), tex_format, 1, 0, 0
         );
         texture->is_bindless = true;
+        texture->wrap_u = Texture2D::WrapMode::REPEAT;
+        texture->wrap_v = Texture2D::WrapMode::REPEAT;
         texture->load_data(*img, col_format, type, 0);
         texture->generate_mipmap();
         uint32_t tex_id = renderer.create_texture(texture);
@@ -52,7 +54,12 @@ Prefab Asset::load_prefab()
         return tex_id;
         };
 
-    std::vector<uint32_t> loaded_materials(ai_scene->mNumMaterials);
+    struct MaterialInfoWithMetadata {
+        uint32_t material_id = UnifiedRenderer::invalid_id;
+        bool is_transparent = false;
+    };
+
+    std::vector<MaterialInfoWithMetadata> loaded_materials(ai_scene->mNumMaterials);
 
     for (uint32_t i = 0; i < ai_scene->mNumMaterials; i++) {
         aiMaterial* ai_mat = ai_scene->mMaterials[i];
@@ -188,7 +195,9 @@ Prefab Asset::load_prefab()
             ));
         }
 
-        loaded_materials[i] = mat_id;
+        loaded_materials[i].material_id     = mat_id;
+        loaded_materials[i].is_transparent  = opacity_img != nullptr;
+
     }
 
     // ====================================================================
@@ -196,7 +205,7 @@ Prefab Asset::load_prefab()
     // ====================================================================
     std::vector<uint32_t> loaded_meshes(ai_scene->mNumMeshes, UnifiedRenderer::invalid_id);
 
-    for (uint32_t i = 1; i < ai_scene->mNumMeshes; i++) {
+    for (uint32_t i = 0; i < ai_scene->mNumMeshes; i++) {
         aiMesh* ai_mesh = ai_scene->mMeshes[i];
 
         std::vector<float> vertex_data;
@@ -312,16 +321,10 @@ Prefab Asset::load_prefab()
         loaded_meshes[i] = mesh_id;
     }
 
-    // ====================================================================
-    // 3. ASSEMBLE PREFAB HIERARCHY
-    // ====================================================================
-
-    // Recursive lambda to traverse the node tree
     std::function<void(aiNode*, int32_t)> process_node = [&](aiNode* node, int32_t parent_index) {
 
-        // 1. Create a blueprint in the Prefab linked to the parent
-        int32_t current_index = prefab.create_entity(parent_index);
-        auto& blueprint = prefab.get_entity(current_index);
+        int32_t current_index   = prefab.create_entity(parent_index);
+        auto& blueprint         = prefab.get_entity(current_index);
 
         // 2. Extract LOCAL Transform
         aiVector3D ai_scale, ai_pos;
@@ -345,10 +348,11 @@ Prefab Asset::load_prefab()
             blueprint.add(mesh_comp);
 
             MaterialComponent2 mat_comp;
-            mat_comp.material_id = loaded_materials[ai_scene->mMeshes[mesh_idx]->mMaterialIndex];
+            mat_comp.material_id = loaded_materials[ai_scene->mMeshes[mesh_idx]->mMaterialIndex].material_id;
             blueprint.add(mat_comp);
 
             RendererComponent2 ren_comp;
+            ren_comp.is_transparent = loaded_materials[ai_scene->mMeshes[mesh_idx]->mMaterialIndex].is_transparent;
             blueprint.add(ren_comp);
 
         }
@@ -370,10 +374,11 @@ Prefab Asset::load_prefab()
                 child_blueprint.add(mesh_comp);
 
                 MaterialComponent2 mat_comp;
-                mat_comp.material_id = loaded_materials[ai_scene->mMeshes[mesh_idx]->mMaterialIndex];
+                mat_comp.material_id = loaded_materials[ai_scene->mMeshes[mesh_idx]->mMaterialIndex].material_id;
                 child_blueprint.add(mat_comp);
 
                 RendererComponent2 ren_comp;
+                ren_comp.is_transparent = loaded_materials[ai_scene->mMeshes[mesh_idx]->mMaterialIndex].is_transparent;
                 child_blueprint.add(ren_comp);
             }
         }

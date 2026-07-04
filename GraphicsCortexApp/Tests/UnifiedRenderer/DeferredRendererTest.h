@@ -37,7 +37,8 @@ public:
 		systems.add_system<RendererSyncSystem>(scene, renderer.layer_sorter);
 
 		//Asset	asset("../GraphicsCortex/Models/dragon_new/dragon_new.fbx");
-		Asset	asset("../GraphicsCortex/Models/Sponza/scene.gltf");
+		//Asset	asset("../GraphicsCortex/Models/Sponza/scene.gltf");
+		Asset asset("../GraphicsCortex/ModelsKhronos/2.0/Sponza/glTF/Sponza.gltf");
 
 		Prefab	prefab = asset.load_prefab();
 

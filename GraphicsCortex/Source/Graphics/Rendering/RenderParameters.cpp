@@ -192,4 +192,11 @@ void RenderParameters::apply() const
 	GLCall(glPointSize(point_size));
 	GLCall(glLineWidth(line_width));
 
+	if (_debug_wireframe) {
+		GLCall(glPolygonMode(GL_FRONT_AND_BACK , GL_LINE));
+	}
+	else {
+		GLCall(glPolygonMode(GL_FRONT_AND_BACK, GL_FILL));
+	}
+
 }

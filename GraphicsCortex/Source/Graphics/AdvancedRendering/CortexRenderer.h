@@ -43,7 +43,7 @@ public:
 	uint32_t transparent_layer	= UnifiedRenderer::invalid_id;
 
 	RendererSyncSystem::LayerResolver layer_sorter = [this](Entity2 e, CortexScene& scene) -> uint32_t {
-		return this->solid_layer;
+		return scene.get<RendererComponent2>(e).is_transparent ? this->transparent_layer : this->solid_layer;
 		};
 
 	URenderPass_Presnet present;
@@ -68,7 +68,7 @@ public:
 		g_buffer.render(camera);
 
 		present.blit();
-
 	}
+
 
 };

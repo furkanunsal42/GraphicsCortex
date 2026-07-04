@@ -18,6 +18,7 @@ public:
 	};
 
 	class PrintASystem : public ISystem {
+		
 		void update(SystemContext& ctx) override {
 			auto view = ctx.scene.view<ComponentA>();
 
@@ -29,6 +30,7 @@ public:
 	};
 
 	class PrintABSystem : public ISystem {
+
 		void update(SystemContext& ctx) override {
 			auto view = ctx.scene.view<ComponentA, ComponentB>();
 

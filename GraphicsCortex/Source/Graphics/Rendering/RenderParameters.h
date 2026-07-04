@@ -92,6 +92,7 @@ public:
 	float point_size = 1;
 	float line_width = 1;
 	
+	bool _debug_wireframe = false;
 	//bool stencil_test_seperate = false;
 	//StencilOperation stencil_operation_backface_on_stencil_fail = KEEP;
 	//StencilOperation stencil_operation_backface_on_depth_fail = KEEP;

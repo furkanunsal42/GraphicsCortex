@@ -1,0 +1,35 @@
+#<compute shader>
+
+#version 460 core
+
+#define id gl_GlobalInvocationID
+
+layout(local_size_x = 16, local_size_y = 16, local_size_z = 1) in;
+
+layout(binding = 0) uniform samplerCube source_cubemap;
+layout(binding = 1, rgba16f) restrict writeonly uniform image2D target_equiangular_texture;
+
+uniform ivec2 target_resolution;
+
+const float PI		= 3.14159265359;
+const float TWO_PI	= 6.28318530718;
+
+void main() {
+
+	if(id.x >= target_resolution.x || id.y >= target_resolution.y) return;
+
+	vec2 uv = (vec2(id.xy) + 0.5) / vec2(target_resolution);
+
+	float theta = (uv.x - 0.5) * TWO_PI;
+	float phi   = (uv.y - 0.5) * PI;
+
+	vec3 dir;
+	dir.x = cos(phi) * cos(theta);
+	dir.y = sin(phi);
+	dir.z = cos(phi) * sin(theta);
+
+	vec4 color = texture(source_cubemap, dir);
+
+	imageStore(target_equiangular_texture, ivec2(id.xy), color);
+
+}

@@ -9,15 +9,21 @@ struct SystemContext {
 class ISystem {
 public:
     virtual ~ISystem() = default;
-    virtual void update(SystemContext& ctx) = 0;
+    virtual void init(CortexScene& scene)       {;}
+    virtual void release(CortexScene& scene)    {;}
+    virtual void update(SystemContext& ctx)     = 0;
 };
 
 class SystemPipeline {
 public:
     
+    //~SystemPipeline();
+
     template<typename T, typename... Args>
     void add_system(Args&&... args);
     
+    //   remove_system<T>();
+
     void execute_all(SystemContext& ctx);
 
 private:

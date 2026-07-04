@@ -836,11 +836,11 @@ UnifiedRenderer::RenderPassInfo::program_t UnifiedRenderer::RenderPassInfo::get_
 		GenericType generic_type			= attribute_infos[i].generic_type;
 		GenericType expended_generic_type	= generic_type_to_expended_generic_type(generic_type);
 
-		std::string expended_type_name	= generic_type_to_glsl_type(expended_generic_type);
-		std::string type_name		= generic_type_to_glsl_type(generic_type);
+		std::string expended_type_name		= generic_type_to_glsl_type(expended_generic_type);
+		std::string type_name				= generic_type_to_glsl_type(generic_type);
 
-		std::string variable_name	= attribute_infos[i].variable_name;
-		std::string fetch_function	= "fetch_" + expended_type_name + "(addr, type)";
+		std::string variable_name			= attribute_infos[i].variable_name;
+		std::string fetch_function			= "fetch_" + expended_type_name + "(addr, type)";
 
 		// fetch generic expended type and cast it to attribute spesific type
 		varianted_program->variant_define("PULL_ATTRIBUTE_" + std::to_string(i), 

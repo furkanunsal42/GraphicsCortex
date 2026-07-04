@@ -28,7 +28,7 @@ Asset::Asset(const std::filesystem::path& asset_path, const AssetImportDescripti
         //aiProcess_FindDegenerates         | // remove degenerated polygons from the import
         //aiProcess_FindInvalidData         | // detect invalid model data, such as invalid normal vectors
         aiProcess_GenUVCoords               | // convert spherical, cylindrical, box and planar mapping to proper UVs
-        aiProcess_TransformUVCoords         | // preprocess UV transformations (scaling, translation ...)
+        //aiProcess_TransformUVCoords         | // preprocess UV transformations (scaling, translation ...)
         aiProcess_FindInstances             | // search for instanced meshes and remove them by references to one master
         aiProcess_LimitBoneWeights          | // limit bone weights to 4 per vertex
         aiProcess_OptimizeMeshes            | // join small meshes, if possible;

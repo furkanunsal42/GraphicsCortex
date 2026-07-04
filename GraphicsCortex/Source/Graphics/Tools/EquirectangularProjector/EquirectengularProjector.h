@@ -14,6 +14,7 @@ public:
 
 	void project_to_cubemap(Texture2D& equirectangular_texture, TextureCubeMap& cubemap_texture, uint32_t mipmap = 0);
 
+
 	//void project_to_equirectangular(TextureCubeMap& cubemap_texture, Texture2D& equirectangular_texture);
 	//std::shared_ptr<Texture2D> project_to_equirectangular(TextureCubeMap& cubemap_texture);
 

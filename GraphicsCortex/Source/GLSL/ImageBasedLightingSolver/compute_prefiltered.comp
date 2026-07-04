@@ -1,0 +1,113 @@
+#<compute shader>
+
+#version 460 core
+
+#define id gl_GlobalInvocationID
+
+layout(local_size_x = 16, local_size_y = 16, local_size_z = 1) in;
+
+layout(binding = 0) uniform samplerCube environment_map;
+// We bind a specific mip-level of the target cubemap
+layout(binding = 1, rgba16f) restrict writeonly uniform imageCube prefilter_map;
+
+uniform ivec3 target_resolution; // Resolution of the CURRENT mip level
+uniform float roughness;         // Roughness level for this mip
+uniform float resolution;        // Resolution of the SOURCE environment map (e.g., 1024.0)
+
+const float PI = 3.14159265359;
+
+// --- Hammersley Sequence for Low-Discrepancy Random points ---
+float RadicalInverse_VdC(uint bits) {
+    bits = (bits << 16u) | (bits >> 16u);
+    bits = ((bits & 0x55555555u) << 1u) | ((bits & 0xAAAAAAAAu) >> 1u);
+    bits = ((bits & 0x33333333u) << 2u) | ((bits & 0xCCCCCCCCu) >> 2u);
+    bits = ((bits & 0x0F0F0F0Fu) << 4u) | ((bits & 0xF0F0F0F0u) >> 4u);
+    bits = ((bits & 0x00FF00FFu) << 8u) | ((bits & 0xFF00FF00u) >> 8u);
+    return float(bits) * 2.3283064365386963e-10; // / 0x100000000
+}
+
+vec2 Hammersley(uint i, uint N) {
+    return vec2(float(i)/float(N), RadicalInverse_VdC(i));
+}
+
+// --- Importance Sampling GGX ---
+vec3 ImportanceSampleGGX(vec2 Xi, vec3 N, float roughness) {
+
+    float a = roughness*roughness;
+
+    float phi = 2.0 * PI * Xi.x;
+    float cosTheta = sqrt((1.0 - Xi.y) / (1.0 + (a*a - 1.0) * Xi.y));
+    float sinTheta = sqrt(1.0 - cosTheta*cosTheta);
+
+    // Spherical to Cartesian
+    vec3 H;
+    H.x = cos(phi) * sinTheta;
+    H.y = sin(phi) * sinTheta;
+    H.z = cosTheta;
+
+    // Tangent to World
+    vec3 up        = abs(N.z) < 0.999 ? vec3(0.0, 0.0, 1.0) : vec3(1.0, 0.0, 0.0);
+    vec3 tangent   = normalize(cross(up, N));
+    vec3 bitangent = cross(N, tangent);
+
+    vec3 sampleVec = tangent * H.x + bitangent * H.y + N * H.z;
+    return normalize(sampleVec);
+
+}
+
+void main() {
+
+    if(id.x >= target_resolution.x || id.y >= target_resolution.y) return;
+
+    vec2 uv = (vec2(id.xy) + 0.5) / vec2(target_resolution.xy);
+    uv = uv * 2.0 - 1.0;
+
+    vec3 dir;
+    switch(id.z) {
+        case 0: dir = vec3( 1.0, -uv.y, -uv.x); break;
+        case 1: dir = vec3(-1.0, -uv.y,  uv.x); break;
+        case 2: dir = vec3( uv.x,  1.0,  uv.y); break;
+        case 3: dir = vec3( uv.x, -1.0, -uv.y); break;
+        case 4: dir = vec3( uv.x, -uv.y,  1.0); break;
+        case 5: dir = vec3(-uv.x, -uv.y, -1.0); break;
+    }
+
+    vec3 N = normalize(dir);
+
+    // Make the simplifying assumption that V equals R equals the normal 
+    vec3 R = N;
+    vec3 V = R;
+
+    const uint SAMPLE_COUNT = 1024u;
+    vec3 prefilteredColor = vec3(0.0);
+    float totalWeight = 0.0;
+
+    for(uint i = 0u; i < SAMPLE_COUNT; ++i) {
+        vec2 Xi = Hammersley(i, SAMPLE_COUNT);
+        vec3 H  = ImportanceSampleGGX(Xi, N, roughness);
+        vec3 L  = normalize(2.0 * dot(V, H) * H - V);
+
+        float NdotL = max(dot(N, L), 0.0);
+        if(NdotL > 0.0) {
+        
+            // Mitigate bright spots by sampling environment map mips based on PDF
+            float NdotH = max(dot(N, H), 0.0);
+            float HdotV = max(dot(H, V), 0.0);
+            float D   = (roughness * roughness * roughness * roughness) / (PI * pow(NdotH*NdotH * (roughness*roughness*roughness*roughness - 1.0) + 1.0, 2.0));
+            float pdf = (D * NdotH / (4.0 * HdotV)) + 0.0001; 
+
+            float saTexel  = 4.0 * PI / (6.0 * resolution * resolution);
+            float saSample = 1.0 / (float(SAMPLE_COUNT) * pdf + 0.0001);
+
+            float mipLevel = roughness == 0.0 ? 0.0 : 0.5 * log2(saSample / saTexel); 
+
+            prefilteredColor += textureLod(environment_map, L, mipLevel).rgb * NdotL;
+            totalWeight      += NdotL;
+        }
+    }
+
+    prefilteredColor = prefilteredColor / totalWeight;
+
+    imageStore(prefilter_map, ivec3(id), vec4(prefilteredColor, 1.0));
+
+}

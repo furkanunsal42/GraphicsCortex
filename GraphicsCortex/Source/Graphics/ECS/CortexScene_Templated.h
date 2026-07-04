@@ -108,18 +108,19 @@ void CortexScene::View<T, Other...>::Iterator::advance_to_valid() {
     }
 }
 template<typename T, typename... Other>
-CortexScene::View<T, Other...>::Iterator::Iterator(CortexScene* s, entity_iterator start, entity_iterator finish) : 
+inline CortexScene::View<T, Other...>::Iterator::Iterator(CortexScene* s, entity_iterator start, entity_iterator finish) :
     scene(s), it(start), end(finish) 
 {
     advance_to_valid();
 }
 
 template<typename T, typename... Other>
-CortexScene::View<T, Other...>::Iterator& CortexScene::View<T, Other...>::Iterator::operator++() {
+inline CortexScene::View<T, Other...>::Iterator& CortexScene::View<T, Other...>::Iterator::operator++() {
     ++it;
     advance_to_valid();
     return *this;
 }
+
 template<typename T, typename... Other>
 bool CortexScene::View<T, Other...>::Iterator::operator!=(const Iterator& other) const 
 { 

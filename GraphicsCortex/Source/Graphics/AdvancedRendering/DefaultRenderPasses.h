@@ -129,6 +129,7 @@ public:
 
 		RenderParameters param(true);
 		param.blend = false;
+		param.cull_face = false;
 		render_pass().set_parameters(param);
 
 		inout_depth_stencil_texture = std::make_shared<Texture2D>(
@@ -189,6 +190,19 @@ private:
 
 	Framebuffer fb;
 	Framebuffer	old_framebuffer;
+};
+
+class URenderPass_SkyBox : public UnifiedRendererPassBase {
+public:
+
+	void init(glm::ivec2 resolution) {
+
+	}
+
+	void render(Camera& camera) {
+
+	}
+
 };
 
 class URenderPass_Depth : public UnifiedRendererPassBase {
@@ -256,10 +270,6 @@ class URenderPass_SSReflection {
 };
 
 class URenderPass_SSBloom {
-
-};
-
-class URenderPass_SkyBox {
 
 };
 
