@@ -4,13 +4,14 @@
 
 #define id gl_GlobalInvocationID
 
+#define target_texture_format rgba16
+
 layout(local_size_x = 16, local_size_y = 16, local_size_z = 1) in;
 
-layout(binding = 0) uniform sampler2D source_equiangular_texture;
-layout(binding = 1, rgba16f) restrict writeonly uniform imageCube target_cubemap;
+layout(binding = 0)                         uniform sampler2D source_equiangular_texture;
+layout(binding = 1, target_texture_format)  uniform imageCube target_cubemap;
 
-uniform ivec2 source_resolution;
-uniform ivec3 target_resolution;
+uniform int target_resolution;
 
 const vec2 invAtan = vec2(0.1591, 0.3183);
 
@@ -23,9 +24,9 @@ vec2 sample_spherical_map(vec3 v) {
 
 void main() {
     
-    if(id.x >= target_resolution.x || id.y >= target_resolution.y) return;
+    if(id.x >= target_resolution || id.y >= target_resolution) return;
 
-    vec2 uv = (vec2(id.xy) + 0.5) / vec2(target_resolution);
+    vec2 uv = (vec2(id.xy) + 0.5) / target_resolution;
     uv = uv * 2.0 - 1.0;
 
     vec3 dir;

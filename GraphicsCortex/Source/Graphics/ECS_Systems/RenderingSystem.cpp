@@ -40,14 +40,60 @@ RendererSyncSystem::RendererSyncSystem(CortexScene& scene, LayerResolver resolve
         }
         };
 
+    auto mark_dirty_environment = [this](CortexScene& s, Entity2 e) {
+        if (s.has<EnvironmentComponent2>(e)) {
+            dirty_environments.insert(e);
+        }
+        };
+
     scene.on_replace<TransformComponent2>().subscribe(mark_dirty);
     scene.on_replace<MeshComponent2>().subscribe(mark_dirty);
     scene.on_replace<MaterialComponent2>().subscribe(mark_dirty);
     scene.on_replace<RendererComponent2>().subscribe(mark_dirty);
+
+    scene.on_replace<EnvironmentComponent2>().subscribe(mark_dirty_environment);
 }
 
 void RendererSyncSystem::update(SystemContext& ctx) {
-    if (dirty_entities.empty()) return;
+
+    if (dirty_entities.empty() && dirty_environments.empty()) return;
+
+    for (Entity2 e : dirty_environments) {
+        if (!ctx.scene.has<EnvironmentComponent2>(e)) continue;
+
+        EnvironmentComponent2& environment = ctx.scene.access<EnvironmentComponent2>(e);
+
+        if (environment.skybox_texture.index() == 0) {
+
+            if (std::get<0>(environment.skybox_texture) == nullptr) 
+                continue;
+
+            std::shared_ptr<TextureCubeMap> skybox_cubemap = std::make_shared<TextureCubeMap>(512, TextureCubeMap::ColorTextureFormat::RGBA16F, 1, 0);
+            image_based_lighting_solver.project_to_cubemap(*std::get<0>(environment.skybox_texture), *skybox_cubemap);
+            environment.skybox_texture = skybox_cubemap;
+        }
+
+        if (environment.skybox_texture.index() == 1) {
+            
+            if (std::get<1>(environment.skybox_texture) == nullptr)
+                continue;
+
+            if (environment.irradiance_texture == nullptr)
+                environment.irradiance_texture = std::make_shared<TextureCubeMap>(512, TextureCubeMap::ColorTextureFormat::RGBA16F, 1, 0);
+            
+            if (environment.prefiltered_environment_texture == nullptr)
+                environment.prefiltered_environment_texture = std::make_shared<TextureCubeMap>(512, TextureCubeMap::ColorTextureFormat::RGBA16F, 9, 0);
+
+            if (environment.brdf_lut_texture == nullptr)
+                environment.brdf_lut_texture = std::make_shared<Texture2D>(512, 512, Texture2D::ColorTextureFormat::R16F, 1, 0, 0);
+            
+            image_based_lighting_solver.calculate_sky_irradiance_texture    (*std::get<1>(environment.skybox_texture), *environment.irradiance_texture);
+            image_based_lighting_solver.calculate_sky_prefiltered_texture   (*std::get<1>(environment.skybox_texture), *environment.prefiltered_environment_texture);
+            image_based_lighting_solver.calculate_sky_brdf_texture          (*std::get<1>(environment.skybox_texture), *environment.brdf_lut_texture);
+        }
+    }
+
+    dirty_environments.clear();
 
     for (Entity2 e : dirty_entities) {
         if (!ctx.scene.has<RendererComponent2>(e)) continue;
@@ -108,4 +154,20 @@ void RendererSyncSystem::update(SystemContext& ctx) {
     }
 
     dirty_entities.clear();
+}
+
+void EnvironmentComponent2::set_skybox_texture(std::shared_ptr<TextureCubeMap> skybox_texture)
+{
+    this->skybox_texture            = skybox_texture;
+    irradiance_texture              = nullptr;
+    prefiltered_environment_texture = nullptr;
+    brdf_lut_texture                = nullptr;
+}
+
+void EnvironmentComponent2::set_skybox_texture(std::shared_ptr<Texture2D> skybox_texture) 
+{
+    this->skybox_texture            = skybox_texture;
+    irradiance_texture              = nullptr;
+    prefiltered_environment_texture = nullptr;
+    brdf_lut_texture                = nullptr;
 }

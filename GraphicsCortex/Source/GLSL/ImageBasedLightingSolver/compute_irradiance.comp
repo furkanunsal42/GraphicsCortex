@@ -6,8 +6,8 @@
 
 layout(local_size_x = 16, local_size_y = 16, local_size_z = 1) in;
 
-layout(binding = 0) uniform samplerCube environment_map;
-layout(binding = 1, rgba16f) restrict writeonly uniform imageCube irradiance_map;
+layout(binding = 0)             uniform samplerCube environment_map;
+layout(binding = 1, rgba16f)    uniform imageCube irradiance_map;
 
 uniform ivec3 target_resolution; // The size of the irradiance map (e.g., 32x32x6)
 
